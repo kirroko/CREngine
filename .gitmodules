@@ -1,0 +1,9 @@
+[submodule "GAM200TESTENGINE/vendor/spdlog"]
+	path = GAM200TESTENGINE/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "GAM200TESTE"]
+	path = GAM200TESTE
+	url = https://github.com/gabime/spdlog
+[submodule "GAM200TESTENGINE/vendor/GLFW"]
+	path = GAM200TESTENGINE/vendor/GLFW
+	url = https://github.com/glfw/glfw
