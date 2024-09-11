@@ -112,6 +112,13 @@ void Renderer::init()
     }
     glfwMakeContextCurrent(window); // GLFW not the brightest, after creating the window, I need to tell it to use the window
 
+    // Sets a function to handle mouse movement events
+    glfwSetCursorPosCallback(window, mouse_callback);
+    // Sets a function to handle mouse scroll events
+    glfwSetScrollCallback(window, scroll_callback);
+    // tell GLFW to capture the mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     gladLoadGL();
 
     glViewport(0, 0, screen_width, screen_height); // starting x pos, starting y pos, width, height
