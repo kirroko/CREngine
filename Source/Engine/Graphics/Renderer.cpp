@@ -125,12 +125,6 @@ void Renderer::init()
 
     glEnable(GL_DEPTH_TEST);
 
-    shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
-    vao = new VAO();
-    vbo = new VBO(vertices_test, sizeof(vertices_test));
-    ebo = new EBO(indices_test, sizeof(indices_test));
-    container = new Texture("../Assets/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-    smile = new Texture("../Assets/Textures/awesomeface.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     setUpScene();
 }
 
@@ -143,22 +137,36 @@ void Renderer::setUpScene()
     setUpBuffers();
 
     // Load textures
-    container->texUnit(*shaderProgram, "tex0", 0);
-    smile->texUnit(*shaderProgram, "tex1", 1);
+    setUpTextures();
 }
 
 void Renderer::setUpShaders() 
 {
-
+    shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 }
 
-void Renderer::setUpBuffers() {
+void Renderer::setUpBuffers() 
+{
+    // Initialize VAO, VBO, and EBO
+    vao = new VAO();
+    vbo = new VBO(vertices_test, sizeof(vertices_test));
+    ebo = new EBO(indices_test, sizeof(indices_test));
+
+    // Bind the VAO to start setting it up
     vao->Bind();
 
     // Links VBO attributes such as coordinates and colors to VAO
     vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
     vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+}
+
+void Renderer::setUpTextures()
+{
+    container = new Texture("../Assets/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    smile = new Texture("../Assets/Textures/awesomeface.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
+    container->texUnit(*shaderProgram, "tex0", 0);
+    smile->texUnit(*shaderProgram, "tex1", 1);
 }
 
 void Renderer::render()

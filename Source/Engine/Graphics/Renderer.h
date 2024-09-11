@@ -40,5 +40,6 @@ private:
     void setUpScene();
     void setUpShaders();
     void setUpBuffers(); 
+    void setUpTextures();
 };
 #endif
