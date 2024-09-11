@@ -30,7 +30,7 @@
     <ClInclude Include="..\Source\Engine\Graphics\shaderClass.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Engine\Graphics\Sprite.h">
+    <ClInclude Include="..\Source\Engine\Graphics\Renderer.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Engine\Graphics\Texture.h">
@@ -56,7 +56,7 @@
     <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\Sprite.cpp">
+    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp">

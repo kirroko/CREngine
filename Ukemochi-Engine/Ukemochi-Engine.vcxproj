@@ -149,7 +149,7 @@
     <ClInclude Include="..\Source\Engine\Graphics\Camera.h" />
     <ClInclude Include="..\Source\Engine\Graphics\EBO.h" />
     <ClInclude Include="..\Source\Engine\Graphics\shaderClass.h" />
-    <ClInclude Include="..\Source\Engine\Graphics\Sprite.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\Renderer.h" />
     <ClInclude Include="..\Source\Engine\Graphics\Texture.h" />
     <ClInclude Include="..\Source\Engine\Graphics\VAO.h" />
     <ClInclude Include="..\Source\Engine\Graphics\VBO.h" />
@@ -160,7 +160,7 @@
     <ClCompile Include="..\Source\Engine\Graphics\glad.c" />
     <ClCompile Include="..\Source\Engine\Graphics\Main.cpp" />
     <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\Sprite.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="..\Source\Engine\Graphics\stb.cpp" />
     <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp" />
     <ClCompile Include="..\Source\Engine\Graphics\VAO.cpp" />
