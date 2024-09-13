@@ -19,13 +19,18 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{0c47a6f9-2a25-4c37-a8e7-03de6fd30593}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Logs">
+      <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Engine\Graphics\Camera.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Engine\Graphics\EBO.h">
-      <Filter>Header Files\Graphics</Filter>
+    <ClInclude Include="src\PreCompile.h" />
+    <ClInclude Include="src\Ukemochi-Engine.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Application.h">
+      <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Engine\Graphics\shaderClass.h">
       <Filter>Header Files\Graphics</Filter>
@@ -39,40 +44,29 @@
     <ClInclude Include="..\Source\Engine\Graphics\VAO.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Engine\Graphics\VBO.h">
-      <Filter>Header Files\Graphics</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h">
+      <Filter>Ukemochi-Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h">
+      <Filter>Ukemochi-Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h">
+      <Filter>Ukemochi-Engine\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Window.h">
+      <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Engine\Graphics\Camera.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\EBO.cpp">
-      <Filter>Source Files\Graphics</Filter>
+    <ClCompile Include="src\PreCompile.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Application.cpp">
+      <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\Main.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\VAO.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\VBO.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\glad.c">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Engine\Graphics\stb.cpp">
-      <Filter>Source Files\Graphics</Filter>
+    <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
+      <Filter>Ukemochi-Engine\Logs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
