@@ -87,8 +87,6 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -131,8 +129,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -148,63 +144,27 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <ExternalWarningLevel>Level3</ExternalWarningLevel>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
-    </Link>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\WindowsWindow.h" />
-    <ClInclude Include="src\PreCompile.h" />
-    <ClInclude Include="src\Ukemochi-Engine.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Application.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Core.h" />
-    <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\Camera.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\EBO.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\shaderClass.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\Renderer.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\Texture.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\VAO.h" />
+    <ClInclude Include="..\Source\Engine\Graphics\VBO.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\WindowsWindow.cpp" />
-    <ClCompile Include="src\PreCompile.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
-      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
-    </ProjectReference>
+    <ClCompile Include="..\Source\Engine\Graphics\Camera.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\EBO.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\glad.c" />
+    <ClCompile Include="..\Source\Engine\Graphics\Main.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\stb.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\VAO.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\VBO.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
