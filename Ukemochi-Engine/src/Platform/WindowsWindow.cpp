@@ -1,4 +1,4 @@
-#include "UMEpch.h"
+#include "PreCompile.h"
 #include "WindowsWindow.h"
 
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"
@@ -152,14 +152,46 @@ namespace UME {
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
+		UpdateFPS();
+		
 
-		// Calculate FPS
-		auto currentTime = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> deltaTime = currentTime - m_LastFrameTime;
-		m_LastFrameTime = currentTime;
+	}
 
-		// Update the FPS
-		m_FPS = 1.0f / deltaTime.count();
+	void WindowsWindow::UpdateFPS()
+	{
+		// Get the current time
+		static double prev_time = glfwGetTime();
+		double curr_time = glfwGetTime();
+		static double delta_time = 0.0;
+
+		// Calculate the delta time between frames
+		delta_time = curr_time - prev_time;
+		prev_time = curr_time;
+
+		// FPS calculation variables
+		static double count = 0.0;        // Count of frames
+		static double start_time = glfwGetTime(); // Start time for FPS calculation
+		static double fps_calc_interval = 1.0;   // Interval to update FPS (in seconds)
+
+		// Increment frame count
+		++count;
+
+		// Calculate elapsed time since the start of the FPS calculation
+		double elapsed_time = curr_time - start_time;
+
+		// If the elapsed time exceeds the FPS calculation interval, update the FPS
+		if (elapsed_time > fps_calc_interval)
+		{
+			m_FPS = count / elapsed_time; // FPS = frame count / elapsed time
+			start_time = curr_time;        // Reset start time
+			count = 0.0;                  // Reset frame count
+		}
+
+		// Create a new title string with FPS
+		std::string newTitle = m_Data.Title + " - FPS: " + std::to_string(static_cast<int>(m_FPS));
+
+		// Set the new window title
+		glfwSetWindowTitle(m_Window, newTitle.c_str());
 	}
 
 	void WindowsWindow::SetVsync(bool enabled)

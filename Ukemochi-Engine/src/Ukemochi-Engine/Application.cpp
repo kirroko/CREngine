@@ -1,6 +1,6 @@
-#include "UMEpch.h"
+#include "PreCompile.h"
 #include "Application.h"
-#include "Ukemochi-Engine/Log.h"
+#include "Ukemochi-Engine/Logs/Log.h"
 
 #include <GLFW/glfw3.h>
 
@@ -40,7 +40,7 @@ namespace UME {
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
-			//float fps = m_Window->GetFPS();
+			float fps = m_Window->GetFPS();
 			//UME_ENGINE_INFO("FPS: {0}", fps);
 		}
 	}

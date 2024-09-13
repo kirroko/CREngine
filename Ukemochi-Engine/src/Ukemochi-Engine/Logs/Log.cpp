@@ -1,6 +1,6 @@
-#include "UMEpch.h"
+#include "PreCompile.h"
 
-#include "Log.h"
+#include "../Logs/Log.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace UME {

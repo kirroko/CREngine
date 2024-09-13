@@ -23,8 +23,8 @@ project "Ukemochi-Engine"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "UMEpch.h"
-	pchsource "Ukemochi-Engine/src/UMEpch.cpp"
+	pchheader "PreCompile.h"
+	pchsource "Ukemochi-Engine/src/PreCompile.cpp"
 
 	files
 	{

@@ -24,6 +24,8 @@ namespace UME {
 
 		float GetFPS() const { return m_FPS; } // New method to get the current FPS
 
+		void UpdateFPS();
+
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
