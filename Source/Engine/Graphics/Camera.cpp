@@ -5,37 +5,37 @@
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;
-    if (direction == FORWARD)
-        Position += Front * velocity;
-    if (direction == BACKWARD)
-        Position -= Front * velocity;
+    if (direction == UP)
+        Position.y += velocity;
+    if (direction == DOWN)
+        Position.y -= velocity;
     if (direction == LEFT)
-        Position -= Right * velocity;
+        Position.x -= velocity;
     if (direction == RIGHT)
-        Position += Right * velocity;
+        Position.x += velocity;
 }
 
-// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
-{
-    xoffset *= MouseSensitivity;
-    yoffset *= MouseSensitivity;
-
-    Yaw += xoffset;
-    Pitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch)
-    {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
-    }
-
-    // update Front, Right and Up Vectors using the updated Euler angles
-    updateCameraVectors();
-}
+//// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+//void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+//{
+//    xoffset *= MouseSensitivity;
+//    yoffset *= MouseSensitivity;
+//
+//    Yaw += xoffset;
+//    Pitch += yoffset;
+//
+//    // make sure that when pitch is out of bounds, screen doesn't get flipped
+//    if (constrainPitch)
+//    {
+//        if (Pitch > 89.0f)
+//            Pitch = 89.0f;
+//        if (Pitch < -89.0f)
+//            Pitch = -89.0f;
+//    }
+//
+//    // update Front, Right and Up Vectors using the updated Euler angles
+//    updateCameraVectors();
+//}
 
 // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 void Camera::ProcessMouseScroll(float yoffset)
@@ -55,12 +55,16 @@ void Camera::processInput(GLFWwindow* window, float deltaTime)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        ProcessKeyboard(FORWARD, deltaTime);
+        ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        ProcessKeyboard(BACKWARD, deltaTime);
+        ProcessKeyboard(DOWN, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        rotate_state = !rotate_state;
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+        scale_state = !scale_state;
 }
 

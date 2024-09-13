@@ -24,8 +24,8 @@ public:
     void render();
     void cleanUp();
 
-    static int const screen_height = 800;
-    static int const screen_width = 600;
+    static int const screen_width = 1600;
+    static int const screen_height = 900;
 
 private:
     GLFWwindow* window;

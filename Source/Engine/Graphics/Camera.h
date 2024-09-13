@@ -8,8 +8,8 @@
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
-    FORWARD,
-    BACKWARD,
+    UP,
+    DOWN,
     LEFT,
     RIGHT
 };
@@ -39,6 +39,9 @@ public:
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
+
+    GLboolean rotate_state = false;
+    GLboolean scale_state = false;
 
     GLfloat lastX;
     GLfloat lastY;
@@ -72,16 +75,12 @@ public:
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+    //void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
     void processInput(GLFWwindow* window, float deltaTime);
-
-    void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
-
-    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles

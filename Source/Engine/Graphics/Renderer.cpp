@@ -1,60 +1,32 @@
 #include "Renderer.h"
 
 GLfloat vertices_test[] = {
-    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+    // Positions           // Colors           // Texture Coords
+    -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f,  // Bottom-left
+     0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // Bottom-right
+     0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 1.0f,  // Top-right
 
-    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,1.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f
+     0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 1.0f,  // Top-right
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // Top-left
+    -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f   // Bottom-left
 };
 
+GLfloat backgroundVertices[] = {
+    // Positions        // Texture Coords
+    -1.0f,  1.0f, 0.0f,  0.0f, 1.0f,   // Top-left
+    -1.0f, -1.0f, 0.0f,  0.0f, 0.0f,   // Bottom-left
+     1.0f, -1.0f, 0.0f,  1.0f, 0.0f,   // Bottom-right
+     1.0f,  1.0f, 0.0f,  1.0f, 1.0f    // Top-right
+};
+
+GLuint backgroundIndices[] = {
+    0, 1, 2,  // First triangle
+    0, 2, 3   // Second triangle
+};
+
+
 glm::vec3 cubePositions_test[] = {
-    glm::vec3(0.0f,  0.0f,  0.0f),
-    glm::vec3(2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3(2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3(1.3f, -2.0f, -2.5f),
-    glm::vec3(1.5f,  2.0f, -2.5f),
-    glm::vec3(1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
+    glm::vec3(0.0f,  0.0f,  0.0f)
 };
 
 // Indices for vertices order
@@ -63,7 +35,7 @@ GLuint indices_test[] = {  // note that we start from 0!
     0, 3, 2 // Lower triangle
 };
 
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
+//void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 // camera
@@ -113,7 +85,8 @@ void Renderer::init()
     glfwMakeContextCurrent(window); // GLFW not the brightest, after creating the window, I need to tell it to use the window
 
     // Sets a function to handle mouse movement events
-    glfwSetCursorPosCallback(window, mouse_callback);
+    //glfwSetCursorPosCallback(window, mouse_callback);
+   
     // Sets a function to handle mouse scroll events
     glfwSetScrollCallback(window, scroll_callback);
     // tell GLFW to capture the mouse
@@ -159,22 +132,21 @@ void Renderer::setUpBuffers()
     vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
     vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+
 }
 
 void Renderer::setUpTextures()
 {
     container = new Texture("../Assets/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-    smile = new Texture("../Assets/Textures/awesomeface.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     container->texUnit(*shaderProgram, "tex0", 0);
+
+    smile = new Texture("../Assets/Textures/Moon Floor.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
     smile->texUnit(*shaderProgram, "tex1", 1);
 }
 
 void Renderer::render()
 {
-    // pass projection matrix to shader (as projection matrix rarely changes there's no need to do this per frame)
-    // -----------------------------------------------------------------------------------------------------------
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)screen_width / (float)screen_height, 0.1f, 100.0f);
-    shaderProgram->setMat4("projection", projection);
 
     // Main Rendering Loop
     while (!glfwWindowShouldClose(window)) // This condition will only happen when I press the close button or if another function tells the window to close
@@ -195,35 +167,32 @@ void Renderer::render()
         // Clean the back buffer and assign the new color to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        container->Bind();
-        smile->Bind();
-
         // Tell OpenGL which Shader Program we want to use
         shaderProgram->Activate();
 
         // pass projection matrix to shader (note that in this case it could change every frame)
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screen_width / (float)screen_height, 0.1f, 100.0f);
+        glm::mat4 projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
         shaderProgram->setMat4("projection", projection);
 
         // camera/view transformation
         glm::mat4 view = camera.GetViewMatrix();
         shaderProgram->setMat4("view", view);
-
+        
         // Bind the VAO so OpenGL knows to use it
         vao->Bind();
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions_test[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shaderProgram->setMat4("model", model);
+        container->Bind();
+        smile->Bind();
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, cubePositions_test[0]);
+        if (camera.rotate_state)
+            model = glm::rotate(model, (GLfloat)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        if (camera.scale_state)
+            model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        shaderProgram->setMat4("model", model);
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        //BoxCollider::drawBox();
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
 
@@ -277,28 +246,28 @@ void Renderer::cleanUp() {
     glfwTerminate();
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    camera.ProcessMouseMovement(xoffset, yoffset);
-}
+//// glfw: whenever the mouse moves, this callback is called
+//// -------------------------------------------------------
+//void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+//{
+//    float xpos = static_cast<float>(xposIn);
+//    float ypos = static_cast<float>(yposIn);
+//
+//    if (firstMouse)
+//    {
+//        lastX = xpos;
+//        lastY = ypos;
+//        firstMouse = false;
+//    }
+//
+//    float xoffset = xpos - lastX;
+//    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+//
+//    lastX = xpos;
+//    lastY = ypos;
+//
+//    camera.ProcessMouseMovement(xoffset, yoffset);
+//}
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
