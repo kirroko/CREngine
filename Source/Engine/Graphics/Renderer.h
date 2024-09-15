@@ -34,12 +34,14 @@ private:
     VBO* vbo;
     EBO* ebo;
     Texture* container;
-    Texture* smile;
+    Texture* moon_floor;
     
 
     void setUpScene();
     void setUpShaders();
     void setUpBuffers(); 
     void setUpTextures();
+
+    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 };
 #endif

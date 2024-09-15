@@ -1,14 +1,11 @@
 #include "Renderer.h"
 
 GLfloat vertices_test[] = {
-    // Positions           // Colors           // Texture Coords
-    -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f,  // Bottom-left
-     0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // Bottom-right
-     0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 1.0f,  // Top-right
-
-     0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 1.0f,  // Top-right
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // Top-left
-    -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f   // Bottom-left
+//   COORDINATES            / COLORS            / TexCoord  //
+    -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
+    -0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
+     0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
+     0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
 };
 
 GLfloat backgroundVertices[] = {
@@ -56,7 +53,7 @@ Renderer::Renderer()
     vbo = nullptr;
     ebo = nullptr;
     container = nullptr;
-    smile = nullptr;
+    moon_floor = nullptr;
 };
 
 Renderer::~Renderer()
@@ -127,7 +124,8 @@ void Renderer::setUpBuffers()
 
     // Bind the VAO to start setting it up
     vao->Bind();
-
+    vbo->Bind();
+    ebo->Bind();
     // Links VBO attributes such as coordinates and colors to VAO
     vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
     vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -138,11 +136,12 @@ void Renderer::setUpBuffers()
 
 void Renderer::setUpTextures()
 {
-    container = new Texture("../Assets/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-    container->texUnit(*shaderProgram, "tex0", 0);
+    moon_floor = new Texture("../Assets/Textures/Moon Floor.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    moon_floor->texUnit(*shaderProgram, "tex0", 0);
 
-    smile = new Texture("../Assets/Textures/Moon Floor.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE);
-    smile->texUnit(*shaderProgram, "tex1", 1);
+    container = new Texture("../Assets/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGB, GL_UNSIGNED_BYTE);
+    container->texUnit(*shaderProgram, "tex1", 1);
+
 }
 
 void Renderer::render()
@@ -181,7 +180,7 @@ void Renderer::render()
         // Bind the VAO so OpenGL knows to use it
         vao->Bind();
         container->Bind();
-        smile->Bind();
+        moon_floor->Bind();
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePositions_test[0]);
         if (camera.rotate_state)
@@ -190,9 +189,9 @@ void Renderer::render()
             model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
         shaderProgram->setMat4("model", model);
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
 
@@ -234,11 +233,11 @@ void Renderer::cleanUp() {
         delete container;     // Free the memory for the container texture
         container = nullptr;
     }
-    if (smile) 
+    if (moon_floor)
     {
-        smile->Delete();      // Clean up texture resource
-        delete smile;         // Free the memory for the smile texture
-        smile = nullptr;
+        moon_floor->Delete();      // Clean up texture resource
+        delete moon_floor;         // Free the memory for the smile texture
+        moon_floor = nullptr;
     }
 
 
@@ -274,4 +273,15 @@ void Renderer::cleanUp() {
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+{
+    GLfloat vertices[] = {
+        //   COORDINATES        / COLORS            / TexCoord  //
+        -0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
+        -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
+         0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
+         0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
+    };
 }
