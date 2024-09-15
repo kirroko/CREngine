@@ -1,5 +1,6 @@
 #ifndef RENDERER_CLASS_H
 #define RENDERER_CLASS_H
+#include<iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
@@ -12,7 +13,6 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
-#include "Camera.h"
 
 class Renderer
 {
@@ -34,14 +34,14 @@ private:
     VBO* vbo;
     EBO* ebo;
     Texture* container;
-    Texture* moon_floor;
-    
+
 
     void setUpScene();
     void setUpShaders();
-    void setUpBuffers(); 
+    void setUpBuffers();
     void setUpTextures();
 
     void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+
 };
 #endif

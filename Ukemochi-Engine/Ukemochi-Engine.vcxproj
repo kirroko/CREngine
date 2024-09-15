@@ -146,7 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Engine\Graphics\Camera.h" />
     <ClInclude Include="..\Source\Engine\Graphics\EBO.h" />
     <ClInclude Include="..\Source\Engine\Graphics\shaderClass.h" />
     <ClInclude Include="..\Source\Engine\Graphics\Renderer.h" />
@@ -155,7 +154,6 @@
     <ClInclude Include="..\Source\Engine\Graphics\VBO.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\Engine\Graphics\Camera.cpp" />
     <ClCompile Include="..\Source\Engine\Graphics\EBO.cpp" />
     <ClCompile Include="..\Source\Engine\Graphics\glad.c" />
     <ClCompile Include="..\Source\Engine\Graphics\Main.cpp" />
