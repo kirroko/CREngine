@@ -157,6 +157,12 @@
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h" />
     <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
@@ -171,6 +177,11 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
   </ItemGroup>
   <ItemGroup>

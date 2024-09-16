@@ -47,6 +47,12 @@
     <ClInclude Include="src\Ukemochi-Engine\Window.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -59,5 +65,10 @@
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
   </ItemGroup>
 </Project>
