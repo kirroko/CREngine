@@ -125,9 +125,9 @@ void Renderer::render()
 
 		// Assigns a value to the uniform; NOTE: Must always be done after activating the Shader Program
 		shaderProgram->setFloat("scale", 0.5);
-		// Bind the VAO so OpenGL knows to use it
 		// Binds texture so that is appears in rendering
 		container->Bind();
+		// Bind the VAO so OpenGL knows to use it
 		vao->Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -150,4 +150,27 @@ void Renderer::cleanUp()
 
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
+	// Define the vertices for the box
+	GLfloat vertices[] = {
+		x, y, 0.0f,                // Bottom-left
+		x, y + height, 0.0f,       // Top-left
+		x + width, y + height, 0.0f, // Top-right
+		x + width, y, 0.0f         // Bottom-right
+	};
+
+	// Define indices to form two triangles
+	GLuint indices[] = {
+		0, 1, 2, // First triangle
+		0, 2, 3  // Second triangle
+	};
+
+	setUpScene();
+
+	// Draw the box
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	// Unbind everything
+	vao->Unbind();
+	vbo->Unbind();
+	ebo->Unbind();
 }

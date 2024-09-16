@@ -27,6 +27,7 @@ public:
     static int const screen_width = 1600;
     static int const screen_height = 900;
 
+    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 private:
     GLFWwindow* window;
     Shader* shaderProgram;
@@ -41,7 +42,6 @@ private:
     void setUpBuffers();
     void setUpTextures();
 
-    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 
 };
 #endif
