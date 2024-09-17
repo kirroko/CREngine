@@ -145,7 +145,7 @@ void Renderer::render()
 		// Bind the VAO so OpenGL knows to use it
 		vao->Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLE_FAN, 102, GL_UNSIGNED_INT, 0);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -159,6 +159,7 @@ void Renderer::cleanUp()
 	vao->Delete();
 	vbo->Delete();
 	ebo->Delete();
+	if(use_texture)
 	container->Delete();
 	shaderProgram->Delete();
 }
@@ -207,52 +208,28 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
 
 	// Convert radius from screen space to NDC scaling
-	GLfloat new_radius = (2.0f * radius) / screen_width;
+	GLfloat new_radius_x = (2.0f * radius) / screen_width;
+	GLfloat new_radius_y = (2.0f * radius) / screen_height;
 
 	// Arrays for vertices and indices
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
 
-	// Add the center vertex of the circle
-	vertices.push_back(new_x);         // x coordinate of center
-	vertices.push_back(new_y);         // y coordinate of center
-	vertices.push_back(0.0f);          // z coordinate (since it's a 2D object)
-	vertices.push_back(1.0f);          // R (color)
-	vertices.push_back(1.0f);          // G (color)
-	vertices.push_back(1.0f);          // B (color)
-	vertices.push_back(0.5f);          // Texture coordinate x (if using texture)
-	vertices.push_back(0.5f);          // Texture coordinate y (if using texture)
+	// Add center vertex
+	vertices.push_back(new_x);
+	vertices.push_back(new_y);
 
-	// Generate vertices along the circumference of the circle
-	for (int i = 0; i <= segments; i++) {
-		float theta = 2.0f * 3.1415926f * float(i) / float(segments); // Angle in radians
+	// Generate vertices around the circle
+	for (int i = 0; i <= segments; ++i) {
+		GLfloat angle = i * 2.0f * 3.1415926f / segments;
+		GLfloat dx = cosf(angle) * new_radius_x;
+		GLfloat dy = sinf(angle) * new_radius_y;
+		vertices.push_back(new_x + dx);
+		vertices.push_back(new_y + dy);
 
-		// Calculate the vertex positions
-		GLfloat vx = new_x + new_radius * cosf(theta);
-		GLfloat vy = new_y + new_radius * sinf(theta);
-
-		// Push the vertex to the vertices array
-		vertices.push_back(vx);         // x coordinate
-		vertices.push_back(vy);         // y coordinate
-		vertices.push_back(0.0f);       // z coordinate
-		vertices.push_back(1.0f);       // R (color)
-		vertices.push_back(1.0f);       // G (color)
-		vertices.push_back(1.0f);       // B (color)
-		vertices.push_back((cosf(theta) + 1.0f) / 2.0f); // Texture coordinate x
-		vertices.push_back((sinf(theta) + 1.0f) / 2.0f); // Texture coordinate y
-
-		// Add the indices (using triangle fan method)
-		if (i > 0) {
-			indices.push_back(0);    // Center vertex index
-			indices.push_back(i);    // Current vertex index
-			indices.push_back(i + 1); // Next vertex index (wrap around for last point)
-		}
+		// Index the vertices for triangle fan
+		indices.push_back(i + 1);
 	}
-
-	// Last triangle to close the circle (connect last point to the first)
-	indices.push_back(0);    // Center vertex
-	indices.push_back(segments); // Last circumference vertex
-	indices.push_back(1);    // First circumference vertex
 
 	// Set up shaders, buffers, and textures as usual
 	createWindow();

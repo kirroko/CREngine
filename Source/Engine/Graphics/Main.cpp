@@ -9,7 +9,7 @@ int main() {
     //renderer.drawBox(800.0f, 450.0f, 400.f, 250.f, false);
     //renderer.drawBox(0.0f, 0.0f, 400.f, 250.f, true);
 
-    renderer.drawCircle(800.0f, 450.0f, 200.f, false);
+    renderer.drawCircle(80.0f, 450.0f, 200.f, true, 100);
 
     return 0;
 }
