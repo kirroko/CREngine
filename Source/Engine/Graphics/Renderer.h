@@ -1,18 +1,20 @@
 #ifndef RENDERER_CLASS_H
 #define RENDERER_CLASS_H
+#include<iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath> // Might need to remove later on
+#include <vector> // Might need to remove later on
 
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
-#include "Camera.h"
 
 class Renderer
 {
@@ -24,8 +26,11 @@ public:
     void render();
     void cleanUp();
 
-    static int const screen_height = 800;
-    static int const screen_width = 600;
+    static int const screen_width = 1600;
+    static int const screen_height = 900;
+
+    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture);
+    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments = 100);
 
 private:
     GLFWwindow* window;
@@ -34,12 +39,14 @@ private:
     VBO* vbo;
     EBO* ebo;
     Texture* container;
-    Texture* smile;
-    
+    GLboolean use_texture;
 
     void setUpScene();
     void setUpShaders();
-    void setUpBuffers(); 
+    void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
     void setUpTextures();
+    void createWindow();
+
+
 };
 #endif
