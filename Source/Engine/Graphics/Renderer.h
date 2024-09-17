@@ -27,7 +27,7 @@ public:
     static int const screen_width = 1600;
     static int const screen_height = 900;
 
-    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture);
 private:
     GLFWwindow* window;
     Shader* shaderProgram;
@@ -35,12 +35,13 @@ private:
     VBO* vbo;
     EBO* ebo;
     Texture* container;
-
+    GLboolean use_texture;
 
     void setUpScene();
     void setUpShaders();
-    void setUpBuffers();
+    void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
     void setUpTextures();
+    void createWindow();
 
 
 };

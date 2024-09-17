@@ -24,6 +24,7 @@ Renderer::Renderer()
 	vbo = nullptr;
 	ebo = nullptr;
 	container = nullptr;
+	use_texture = false;
 };
 
 Renderer::~Renderer()
@@ -31,7 +32,7 @@ Renderer::~Renderer()
 	cleanUp();
 }
 
-void Renderer::init()
+void Renderer::createWindow()
 {
 	// Initialize GLFW
 	glfwInit();
@@ -60,9 +61,23 @@ void Renderer::init()
 	// Specify the viewport of OpenGL in the Window
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	glViewport(0, 0, 1600, 900);
+}
+
+void Renderer::init()
+{
+	createWindow();
 
 	// Sets up scene
-	setUpScene();
+	//setUpScene();
+
+	// Load shaders
+	setUpShaders();
+
+	// Set up VAO, VBO, EBO
+	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices)); 
+
+	// Load textures
+	setUpTextures(); 
 }
 
 void Renderer::setUpScene()
@@ -71,7 +86,7 @@ void Renderer::setUpScene()
 	setUpShaders();
 
 	// Set up VAO, VBO, EBO
-	setUpBuffers();
+	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
 
 	// Load textures
 	setUpTextures();
@@ -89,12 +104,12 @@ void Renderer::setUpShaders()
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 }
 
-void Renderer::setUpBuffers()
+void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize)
 {
 	// Initialize VAO, VBO, and EBO
 	vao = new VAO();
-	vbo = new VBO(vertices, sizeof(vertices));
-	ebo = new EBO(indices, sizeof(indices));
+	vbo = new VBO(vertices, vertSize);
+	ebo = new EBO(indices, indexSize);
 
 	// Bind the VAO to start setting it up
 	vao->Bind();
@@ -122,15 +137,15 @@ void Renderer::render()
 
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram->Activate();
+		shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
 
-		// Assigns a value to the uniform; NOTE: Must always be done after activating the Shader Program
-		shaderProgram->setFloat("scale", 0.5);
 		// Binds texture so that is appears in rendering
+		if(use_texture)
 		container->Bind();
 		// Bind the VAO so OpenGL knows to use it
 		vao->Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_INT, 0);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -148,29 +163,39 @@ void Renderer::cleanUp()
 	shaderProgram->Delete();
 }
 
-void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
 {
+	// Convert screen coordinates to normalized device coordinates (NDC)
+	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+
+	// Convert width and height from screen space to NDC scaling
+	GLfloat new_width = (2.0f * width) / screen_width;
+	GLfloat new_height = (2.0f * height) / screen_height;
+
 	// Define the vertices for the box
-	GLfloat vertices[] = {
-		x, y, 0.0f,                // Bottom-left
-		x, y + height, 0.0f,       // Top-left
-		x + width, y + height, 0.0f, // Top-right
-		x + width, y, 0.0f         // Bottom-right
+	GLfloat vertices_box[] = {
+		new_x, new_y, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,						// Top-left
+		new_x, new_y - new_height, 0.0f,  1.0f, 0.0f, 0.0f,	0.0f, 0.0f,				// Bottom-left
+		new_x + new_width, new_y - new_height, 0.0f, 1.0f, 1.0f, 1.0f,	1.0f, 0.0f,		// Bottom-right
+		new_x + new_width, new_y, 0.0f, 0.0f, 0.0f, 1.0f,	1.0f, 1.0f				// Top-right
 	};
 
 	// Define indices to form two triangles
-	GLuint indices[] = {
+	GLuint indices_box[] = {
 		0, 1, 2, // First triangle
 		0, 2, 3  // Second triangle
 	};
 
-	setUpScene();
-
-	// Draw the box
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	// Unbind everything
-	vao->Unbind();
-	vbo->Unbind();
-	ebo->Unbind();
+	// Set up shaders, buffers, and textures
+	createWindow();
+	setUpShaders();
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+	if (enable_texture)
+	{
+		setUpTextures();
+		use_texture = true;
+	}
+	render();
+	cleanUp();
 }
