@@ -218,7 +218,7 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 	// Add center vertex
 	vertices.push_back(new_x);
 	vertices.push_back(new_y);
-
+	
 	// Generate vertices around the circle
 	for (int i = 0; i <= segments; ++i) {
 		GLfloat angle = i * 2.0f * 3.1415926f / segments;
@@ -231,6 +231,20 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 		indices.push_back(i + 1);
 	}
 
+	// Add the final vertex, explicitly setting it equal to the first perimeter vertex to close the circle
+	vertices.push_back(vertices[2]);  // First perimeter vertex x (index 2)
+	vertices.push_back(vertices[3]);  // First perimeter vertex y (index 3)
+
+	// Close the circle by connecting the last vertex to the first perimeter vertex
+	indices.push_back(1);
+
+	for (int i = 0; i < vertices.size(); i += 2) {
+		std::cout << "Vertex " << i / 2 << ": (" << vertices[i] << ", " << vertices[i + 1] << ")\n";
+	}
+	// After indices are generated, print them to check
+	for (size_t i = 0; i < indices.size(); i++) {
+		std::cout << "Index " << i << ": " << indices[i] << std::endl;
+	}
 	// Set up shaders, buffers, and textures as usual
 	createWindow();
 	setUpShaders();
