@@ -199,3 +199,72 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLbo
 	render();
 	cleanUp();
 }
+
+void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments)
+{
+	// Convert screen coordinates to normalized device coordinates (NDC)
+	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+
+	// Convert radius from screen space to NDC scaling
+	GLfloat new_radius = (2.0f * radius) / screen_width;
+
+	// Arrays for vertices and indices
+	std::vector<GLfloat> vertices;
+	std::vector<GLuint> indices;
+
+	// Add the center vertex of the circle
+	vertices.push_back(new_x);         // x coordinate of center
+	vertices.push_back(new_y);         // y coordinate of center
+	vertices.push_back(0.0f);          // z coordinate (since it's a 2D object)
+	vertices.push_back(1.0f);          // R (color)
+	vertices.push_back(1.0f);          // G (color)
+	vertices.push_back(1.0f);          // B (color)
+	vertices.push_back(0.5f);          // Texture coordinate x (if using texture)
+	vertices.push_back(0.5f);          // Texture coordinate y (if using texture)
+
+	// Generate vertices along the circumference of the circle
+	for (int i = 0; i <= segments; i++) {
+		float theta = 2.0f * 3.1415926f * float(i) / float(segments); // Angle in radians
+
+		// Calculate the vertex positions
+		GLfloat vx = new_x + new_radius * cosf(theta);
+		GLfloat vy = new_y + new_radius * sinf(theta);
+
+		// Push the vertex to the vertices array
+		vertices.push_back(vx);         // x coordinate
+		vertices.push_back(vy);         // y coordinate
+		vertices.push_back(0.0f);       // z coordinate
+		vertices.push_back(1.0f);       // R (color)
+		vertices.push_back(1.0f);       // G (color)
+		vertices.push_back(1.0f);       // B (color)
+		vertices.push_back((cosf(theta) + 1.0f) / 2.0f); // Texture coordinate x
+		vertices.push_back((sinf(theta) + 1.0f) / 2.0f); // Texture coordinate y
+
+		// Add the indices (using triangle fan method)
+		if (i > 0) {
+			indices.push_back(0);    // Center vertex index
+			indices.push_back(i);    // Current vertex index
+			indices.push_back(i + 1); // Next vertex index (wrap around for last point)
+		}
+	}
+
+	// Last triangle to close the circle (connect last point to the first)
+	indices.push_back(0);    // Center vertex
+	indices.push_back(segments); // Last circumference vertex
+	indices.push_back(1);    // First circumference vertex
+
+	// Set up shaders, buffers, and textures as usual
+	createWindow();
+	setUpShaders();
+	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
+
+	// Conditionally set up and bind the texture if the flag is true
+	if (useTexture) {
+		setUpTextures();  // Load and bind the texture if needed
+		container->Bind(); // Bind the texture to be drawn
+	}
+
+	render();
+	cleanUp();
+}

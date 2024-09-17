@@ -7,6 +7,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath> // Might need to remove later on
+#include <vector> // Might need to remove later on
 
 #include "shaderClass.h"
 #include "VAO.h"
@@ -28,6 +30,8 @@ public:
     static int const screen_height = 900;
 
     void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture);
+    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments = 100);
+
 private:
     GLFWwindow* window;
     Shader* shaderProgram;
