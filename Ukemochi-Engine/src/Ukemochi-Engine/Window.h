@@ -34,9 +34,6 @@ namespace UME {
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 
-		// FPS related method
-		virtual float GetFPS() const = 0;  // Declare GetFPS as virtual
-
 		//Windows attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVsync(bool enabled) = 0;

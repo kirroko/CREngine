@@ -22,9 +22,6 @@ namespace UME {
 		void SetVsync(bool enabled) override;
 		bool IsVsync() const override;
 
-		float GetFPS() const { return m_FPS; } // New method to get the current FPS
-
-		void UpdateFPS();
 
 	private:
 		virtual void Init(const WindowProps& props);
@@ -43,7 +40,6 @@ namespace UME {
 		};
 
 		WindowData m_Data;
-		std::chrono::high_resolution_clock::time_point m_LastFrameTime;
-		float m_FPS = 0.0f; // Stores the current FPS
+
 	};
 }

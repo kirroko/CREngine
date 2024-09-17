@@ -162,6 +162,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
+    <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
     <ClInclude Include="src\Ukemochi-Engine\Window.h" />
   </ItemGroup>
@@ -171,6 +172,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
   </ItemGroup>
   <ItemGroup>

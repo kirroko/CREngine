@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 	UME_INFO("Yes! Var = {0}", a);
 
 	auto app = UME::CreateApplication();
-	app->run();
+	app->GameLoop();
 	delete app;
 }
 

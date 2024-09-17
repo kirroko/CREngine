@@ -13,7 +13,7 @@ namespace UME {
 	public:
 		Application();
 		virtual ~Application();
-		void run();
+		void GameLoop();
 
 		void EventIsOn(Event& e);
 

@@ -47,6 +47,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Window.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -59,5 +60,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
   </ItemGroup>
 </Project>
