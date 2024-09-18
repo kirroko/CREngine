@@ -16,5 +16,5 @@
 #include "Ukemochi-Engine/Logs/Log.h"
 
 #ifdef CR_PLATFORM_WINDOWS
-#include <Windows.h>
+#include "../src/Platform/WindowsWindow.h"
 #endif

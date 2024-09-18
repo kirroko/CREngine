@@ -168,8 +168,8 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
+    <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
@@ -182,6 +182,7 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
   </ItemGroup>
   <ItemGroup>

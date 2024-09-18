@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#include "Window.h"
+#include "../Platform/WindowsWindow.h"
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 
@@ -13,7 +13,7 @@ namespace UME {
 	public:
 		Application();
 		virtual ~Application();
-		void run();
+		void GameLoop();
 
 		void EventIsOn(Event& e);
 
