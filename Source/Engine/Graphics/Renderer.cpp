@@ -206,7 +206,7 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-
+	GLfloat z = 0.0f;
 	// Convert radius from screen space to NDC scaling
 	GLfloat new_radius_x = (2.0f * radius) / screen_width;
 	GLfloat new_radius_y = (2.0f * radius) / screen_height;
@@ -218,7 +218,13 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 	// Add center vertex
 	vertices.push_back(new_x);
 	vertices.push_back(new_y);
-	
+	vertices.push_back(z);
+	vertices.push_back(1.0f);   // Color (r)
+	vertices.push_back(1.0f);   // Color (g)
+	vertices.push_back(1.0f);   // Color (b)
+	vertices.push_back(0.5f);   // Texture coordinate (s) - center of the texture
+	vertices.push_back(0.5f);   // Texture coordinate (t)
+
 	// Generate vertices around the circle
 	for (int i = 0; i <= segments; ++i) {
 		GLfloat angle = i * 2.0f * 3.1415926f / segments;
@@ -226,25 +232,23 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 		GLfloat dy = sinf(angle) * new_radius_y;
 		vertices.push_back(new_x + dx);
 		vertices.push_back(new_y + dy);
+		vertices.push_back(z);
+
+		// Color
+		vertices.push_back(1.0f);  // Color r
+		vertices.push_back(1.0f);  // Color g
+		vertices.push_back(1.0f);  // Color b
+
+		// Texture coordinates
+		vertices.push_back(0.5f + cosf(angle) * 0.5f);  // s (normalized)
+		vertices.push_back(0.5f + sinf(angle) * 0.5f);  // t (normalized)
 
 		// Index the vertices for triangle fan
 		indices.push_back(i + 1);
 	}
 
-	// Add the final vertex, explicitly setting it equal to the first perimeter vertex to close the circle
-	vertices.push_back(vertices[2]);  // First perimeter vertex x (index 2)
-	vertices.push_back(vertices[3]);  // First perimeter vertex y (index 3)
-
-	// Close the circle by connecting the last vertex to the first perimeter vertex
 	indices.push_back(1);
 
-	for (int i = 0; i < vertices.size(); i += 2) {
-		std::cout << "Vertex " << i / 2 << ": (" << vertices[i] << ", " << vertices[i + 1] << ")\n";
-	}
-	// After indices are generated, print them to check
-	for (size_t i = 0; i < indices.size(); i++) {
-		std::cout << "Index " << i << ": " << indices[i] << std::endl;
-	}
 	// Set up shaders, buffers, and textures as usual
 	createWindow();
 	setUpShaders();
