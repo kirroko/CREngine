@@ -30,7 +30,7 @@ public:
     static int const screen_height = 900;
 
     void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture);
-    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments = 100);
+    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments = 1000);
 
 private:
     GLFWwindow* window;
