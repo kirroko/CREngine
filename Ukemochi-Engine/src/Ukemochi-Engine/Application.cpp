@@ -36,7 +36,6 @@ namespace UME {
 
 	void Application::GameLoop()
 	{
-		double lastTime = glfwGetTime();
 		double accumulator = 0.0;
 		const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
 
@@ -45,13 +44,11 @@ namespace UME {
 
 		while (m_running)
 		{
-			double currentTime = glfwGetTime();
-			double deltaTime = currentTime - lastTime;
-			lastTime = currentTime;
-			accumulator += deltaTime;
-
-			// Update the frame rate controller
 			g_FrameRateController.Update();
+
+			// Use deltaTime from the FrameRateController
+			double deltaTime = g_FrameRateController.GetDeltaTime();
+			accumulator += deltaTime;
 
 			// Run game logic at a fixed time step (e.g., 60 times per second)
 			while (accumulator >= fixedTimeStep)
@@ -64,6 +61,7 @@ namespace UME {
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
 
+			double currentTime = glfwGetTime();
 			// Only log/display the FPS every second (or defined interval)
 			if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
 			{
