@@ -173,6 +173,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
@@ -206,6 +209,8 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
