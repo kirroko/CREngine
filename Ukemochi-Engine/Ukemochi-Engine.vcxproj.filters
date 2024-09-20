@@ -25,6 +25,9 @@
     <Filter Include="Ukemochi-Engine\Physics">
       <UniqueIdentifier>{c2315259-2b15-4728-afd3-a848c4c9310a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\ECS">
+      <UniqueIdentifier>{c667aea3-3fd1-4c83-aa1a-017155dee41d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\WindowsWindow.h">
@@ -134,6 +137,24 @@
     <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h">
       <Filter>Ukemochi-Engine\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -196,6 +217,21 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp">
       <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
