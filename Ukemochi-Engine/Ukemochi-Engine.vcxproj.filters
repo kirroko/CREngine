@@ -253,4 +253,9 @@
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </None>
+  </ItemGroup>
 </Project>
