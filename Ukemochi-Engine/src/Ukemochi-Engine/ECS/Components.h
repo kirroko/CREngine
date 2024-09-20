@@ -17,11 +17,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    struct Transform
-    {
-        // Vec3?
-        float position_x, position_y, position_z;
-        float rotation_x, rotation_y, rotation_z;
-        float scale_x, scale_y, scale_z;
-    };
+	struct Transform
+	{
+		// Vec3?
+		float position_x, position_y, position_z;
+		float rotation_x, rotation_y, rotation_z;
+		float scale_x, scale_y, scale_z;
+	};
+
+	struct Rigidbody2D
+	{
+		// Vec2 position
+		// Vec2 velocity
+		// Vec2 acceleration
+		//
+		double direction;
+		double angle;
+		double angular_velocity;
+		double angular_acceleration;
+
+		// Vec2 initial_position
+		// Vec2 position_prev
+		// Vec2 scale
+		bool active;
+	};
+
+	struct CircleCollider2D
+	{
+		// vec2 m_center;
+		float m_radius;
+	};
+
+	struct BoxCollider2D
+	{
+		// vec2 min
+		// vec2 max
+	};
 }

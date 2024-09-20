@@ -21,41 +21,48 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    class ECS
-    {
-        std::unique_ptr<ComponentManager> m_ComponentManager;
-        std::unique_ptr<EntityManager> m_EntityManager;
-        std::unique_ptr<SystemManager> m_SystemManager;
+	class ECS
+	{
+		std::unique_ptr<ComponentManager> m_ComponentManager;
+		std::unique_ptr<EntityManager> m_EntityManager;
+		std::unique_ptr<SystemManager> m_SystemManager;
 
-    public:
-        // Create pointers to each manager
-        void Init();
+		ECS();
+	public:
+		static ECS& GetInstance()
+		{
+			static ECS* instance = new ECS();
+			return *instance;
+		}
 
-        Entity CreateEntity();
+		// Create pointers to each manager
+		void Init();
 
-        void DestroyEntity(Entity entity);
-        
-        // Component methods
-        template<typename T>
-        void RegisterComponent();
+		Entity CreateEntity();
 
-        template<typename T>
-        void AddComponent(Entity entity, T component);
+		void DestroyEntity(Entity entity);
 
-        template<typename T>
-        void RemoveComponent(Entity entity);
+		// Component methods
+		template<typename T>
+		void RegisterComponent();
 
-        template<typename T>
-        T& GetComponent(Entity entity);
+		template<typename T>
+		void AddComponent(Entity entity, T component);
 
-        template<typename T>
-        ComponentType GetComponentType();
+		template<typename T>
+		void RemoveComponent(Entity entity);
 
-        // System methods
-        template<typename T>
-        std::shared_ptr<T> RegisterSystem();
+		template<typename T>
+		T& GetComponent(Entity entity);
 
-        template<typename T>
-        void SetSystemSignature(Signature signature);
-    };
+		template<typename T>
+		ComponentType GetComponentType();
+
+		// System methods
+		template<typename T>
+		std::shared_ptr<T> RegisterSystem();
+
+		template<typename T>
+		void SetSystemSignature(Signature signature);
+	};
 }
