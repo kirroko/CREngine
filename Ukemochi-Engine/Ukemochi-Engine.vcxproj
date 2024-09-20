@@ -173,7 +173,6 @@
     <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
     <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
