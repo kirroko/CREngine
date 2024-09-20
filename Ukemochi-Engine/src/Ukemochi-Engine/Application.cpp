@@ -3,15 +3,19 @@
 #include "Ukemochi-Engine/Logs/Log.h"
 #include "FrameController.h"
 #include <iomanip>
+#include <Ukemochi-Engine/Input.h>
 #include <GLFW/glfw3.h>
 
 namespace UME {
 
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
 	{
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		s_Instance = this;
+		WindowProps props; // You can customize these properties if needed
+		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 	}
 
@@ -25,7 +29,7 @@ namespace UME {
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
 
-		UME_ENGINE_TRACE("{0}", e.ToString());
+		//UME_ENGINE_TRACE("{0}", e.ToString());
 	}
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
@@ -60,6 +64,11 @@ namespace UME {
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
+			if (Input::IsKeyPressed(GLFW_KEY_W))
+			{
+				// If 'W' key is pressed, move forward
+				UME_ENGINE_INFO("W key is pressed");
+			}
 
 			double currentTime = glfwGetTime();
 			// Only log/display the FPS every second (or defined interval)

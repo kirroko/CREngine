@@ -21,40 +21,23 @@ namespace UME {
 		}
 	};
 
-	class Window
-	{
-	public:
-		using EventCallbackFn = std::function<void(Event&)>;
 
-		virtual ~Window() {}
-
-		virtual void OnUpdate() = 0;
-
-		virtual unsigned int GetWidth() const = 0;
-		virtual unsigned int GetHeight() const = 0;
-
-		// Windows attributes
-		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
-		virtual void SetVsync(bool enabled) = 0;
-		virtual bool IsVsync() const = 0;
-
-		static Window* Create(const WindowProps& props = WindowProps()); // Implemented in platform-specific code
-	};
-
-	class WindowsWindow : public Window
+	class WindowsWindow
 	{
 	public:
 		WindowsWindow(const WindowProps& props);
-		virtual ~WindowsWindow();
+		~WindowsWindow();
 
-		void OnUpdate() override;
+		void OnUpdate();
 
-		unsigned int GetWidth() const override { return m_Data.Width; }
-		unsigned int GetHeight() const override { return m_Data.Height; }
+		unsigned int GetWidth() const { return m_Data.Width; }
+		unsigned int GetHeight() const { return m_Data.Height; }
 
-		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		void SetVsync(bool enabled) override;
-		bool IsVsync() const override { return m_Data.VSync; }
+		void SetEventCallback(const std::function<void(Event&)>& callback) { m_Data.EventCallback = callback; }
+		void SetVsync(bool enabled);
+		bool IsVsync() const { return m_Data.VSync; }
+
+		void* GetNativeWindow() const { return m_Window; }
 
 	private:
 		void Init(const WindowProps& props);
@@ -68,12 +51,11 @@ namespace UME {
 			unsigned int Width, Height;
 			bool VSync;
 
-			EventCallbackFn EventCallback;
+			std::function<void(Event&)> EventCallback;
 		};
 
 		WindowData m_Data;
 		static bool s_GLFWInitialized;
-
 	};
 
 } // namespace UME

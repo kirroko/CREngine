@@ -44,8 +44,17 @@
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Input.h">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\KeyCode.h">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h">
       <Filter>Ukemochi-Engine\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h">
+      <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Window.h">
       <Filter>Ukemochi-Engine</Filter>
@@ -60,6 +69,9 @@
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Input.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">

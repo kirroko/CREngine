@@ -17,11 +17,16 @@ namespace UME {
 
 		void EventIsOn(Event& e);
 
+		static Application& Get() { return *s_Instance; }
+		WindowsWindow& GetWindow() { return *m_Window; } // Access the current window
+
 	private:
 
 		bool IsWindowClose(WindowCloseEvent& e);
-		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<WindowsWindow> m_Window;
 		bool m_running = true;
+
+		static Application* s_Instance;
 	};
 
 	// To be defined in CLIENT (GAME)
