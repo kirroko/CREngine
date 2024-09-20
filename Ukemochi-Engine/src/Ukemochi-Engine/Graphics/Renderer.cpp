@@ -1,3 +1,4 @@
+#include "PreCompile.h"
 #include "Renderer.h"
 
 // Vertices coordinates
@@ -37,7 +38,7 @@ void Renderer::createWindow()
 	// Initialize GLFW
 	glfwInit();
 
-	// Tell GLFW what version of OpenGL we are using 
+	// Tell GLFW what version of OpenGL we are using
 	// In this case we are using OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -74,10 +75,10 @@ void Renderer::init()
 	setUpShaders();
 
 	// Set up VAO, VBO, EBO
-	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices)); 
+	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
 
 	// Load textures
-	setUpTextures(); 
+	setUpTextures();
 }
 
 void Renderer::setUpScene()
@@ -140,8 +141,8 @@ void Renderer::render()
 		shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
 
 		// Binds texture so that is appears in rendering
-		if(use_texture)
-		container->Bind();
+		if (use_texture)
+			container->Bind();
 		// Bind the VAO so OpenGL knows to use it
 		vao->Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
@@ -159,8 +160,8 @@ void Renderer::cleanUp()
 	vao->Delete();
 	vbo->Delete();
 	ebo->Delete();
-	if(use_texture)
-	container->Delete();
+	if (use_texture)
+		container->Delete();
 	shaderProgram->Delete();
 }
 

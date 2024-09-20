@@ -1,4 +1,5 @@
-#include"EBO.h"
+#include "PreCompile.h"
+#include "EBO.h"
 
 // Constructor that generates a Elements Buffer Object and links it to indices
 EBO::EBO(GLuint* indices, GLsizeiptr size)

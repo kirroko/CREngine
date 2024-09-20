@@ -184,7 +184,6 @@
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Main.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\stb.cpp" />
@@ -193,17 +192,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Source\Engine\Graphics\EBO.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\glad.c" />
-    <ClCompile Include="..\Source\Engine\Graphics\Main.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\stb.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\VAO.cpp" />
-    <ClCompile Include="..\Source\Engine\Graphics\VBO.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
