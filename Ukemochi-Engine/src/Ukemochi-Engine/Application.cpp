@@ -4,10 +4,9 @@
 #include "FrameController.h"
 #include <iomanip>
 #include <Ukemochi-Engine/Input.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace UME {
-
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 	Application* Application::s_Instance = nullptr;
 
@@ -21,7 +20,6 @@ namespace UME {
 
 	Application::~Application()
 	{
-
 	}
 
 	void Application::EventIsOn(Event& e)
@@ -89,5 +87,4 @@ namespace UME {
 			}
 		}
 	}
-
 }

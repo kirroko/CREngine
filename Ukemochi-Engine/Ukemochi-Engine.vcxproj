@@ -79,7 +79,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -102,7 +102,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -129,7 +129,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -157,6 +157,12 @@
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h" />
     <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
@@ -173,7 +179,6 @@
     <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
     <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
@@ -181,6 +186,11 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c" />

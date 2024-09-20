@@ -57,7 +57,8 @@ project "Ukemochi-Engine"
 		defines
 		{
 			"UME_PLATFORM_WINDOWS",
-			"UME_BUILD_DLL"
+			"UME_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
