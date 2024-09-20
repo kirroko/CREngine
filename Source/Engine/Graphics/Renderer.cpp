@@ -164,6 +164,22 @@ void Renderer::cleanUp()
 	shaderProgram->Delete();
 }
 
+void Renderer::addObjects(const GameObject& object)
+{
+	testObjects.push_back(object);
+}
+
+void Renderer::renderObjects()
+{
+	for (auto& obj : testObjects)
+	{
+		if (obj.type == ObjectType::Box)
+		{
+			//drawBox();
+		}
+	}
+}
+
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC)

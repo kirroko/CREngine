@@ -16,6 +16,26 @@
 #include "EBO.h"
 #include "Texture.h"
 
+enum class ObjectType { Box, Circle };
+
+class GameObject {
+
+public:
+    ObjectType type;
+    GLfloat x, y;
+    GLfloat width, height;
+    GLfloat radius;
+    GLboolean enable_texture;
+
+    GameObject(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
+        : type(ObjectType::Box), x(x), y(y), width(width), height(height), enable_texture(enable_texture) {};
+
+    GameObject(GLfloat x, GLfloat y, GLfloat radius, GLboolean enable_texture)
+        : type(ObjectType::Circle), x(x), y(y), radius(radius), enable_texture(enable_texture) {};
+
+};
+
+
 class Renderer
 {
 public:
@@ -25,6 +45,11 @@ public:
     void init();
     void render();
     void cleanUp();
+
+    std::vector<GameObject> testObjects;
+
+    void addObjects(const GameObject& object);
+    void renderObjects();
 
     static int const screen_width = 1600;
     static int const screen_height = 900;
