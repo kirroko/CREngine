@@ -46,7 +46,7 @@ namespace UME {
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
 		//Init GameStateManager
-		GSM_Initialize(GS_STATES::GS_MAINMENU);
+		GSM_Initialize(GS_STATES::GS_LEVEL1);
 
 		while (gsm_current != GS_STATES::GS_QUIT && m_running)
 		{

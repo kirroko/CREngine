@@ -15,6 +15,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 
 #include "GSM.h"
 #include "MainMenu.h"
+#include "Level1.h"
 #include <iostream>
 
 int gsm_current = 0, gsm_previous = 0, gsm_next = 0;
@@ -47,12 +48,12 @@ void GSM_Update()//updating the gamestate when the game is running
 		break;
 	case GS_LEVEL1:
 		//change gamestate to level 1
-		//gsm_fpLoad = Level1_Load;
-		//gsm_fpInitialize = Level1_Initialize;
-		//gsm_fpUpdate = Level1_Update;
-		//gsm_fpDraw = Level1_Draw;
-		//gsm_fpFree = Level1_Free;
-		//gsm_fpUnload = Level1_Unload;
+		gsm_fpLoad = Level1_Load;
+		gsm_fpInitialize = Level1_Initialize;
+		gsm_fpUpdate = Level1_Update;
+		gsm_fpDraw = Level1_Draw;
+		gsm_fpFree = Level1_Free;
+		gsm_fpUnload = Level1_Unload;
 		break;
 	case GS_RESTART:
 		break;
