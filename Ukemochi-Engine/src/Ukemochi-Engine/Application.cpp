@@ -4,8 +4,10 @@
 #include "FrameController.h"
 #include <iomanip>
 #include <Ukemochi-Engine/Input.h>
-#include <glad/glad.h>
+//#include <glad/glad.h>
+#include "Ukemochi-Engine/Graphics/Renderer.h"
 
+Renderer render;
 namespace UME {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 	Application* Application::s_Instance = nullptr;
@@ -59,9 +61,12 @@ namespace UME {
 				accumulator -= fixedTimeStep;
 			}
 
-			glClearColor(1, 0, 1, 1);
+			/*glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-			m_Window->OnUpdate();
+			m_Window->OnUpdate();*/
+
+			render.drawBox(0, 0, 100, 100, true);
+
 			if (Input::IsKeyPressed(GLFW_KEY_W))
 			{
 				// If 'W' key is pressed, move forward
