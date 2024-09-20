@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
+IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
 
 include "Ukemochi-Engine/vendor/GLFW"
+include "Ukemochi-Engine/vendor/Glad"
 
 project "Ukemochi-Engine"
 	location "Ukemochi-Engine"
@@ -36,12 +38,15 @@ project "Ukemochi-Engine"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
+
 	}
 
 	links
 	{
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 	filter "system:windows"
@@ -52,7 +57,8 @@ project "Ukemochi-Engine"
 		defines
 		{
 			"UME_PLATFORM_WINDOWS",
-			"UME_BUILD_DLL"
+			"UME_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
