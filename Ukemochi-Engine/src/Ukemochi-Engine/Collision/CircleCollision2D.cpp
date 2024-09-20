@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "CircleCollision2D.h"
-#include "../Math/MathUtils.h" // for Math::abs
+#include "../Math/MathUtils.h" // for abs
 
 namespace Ukemochi
 {

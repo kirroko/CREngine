@@ -4,8 +4,8 @@
 \file       MathUtils.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 11, 2024
-\brief      This file contains the implementation of the math utility functions.
+\date       Sept 20, 2024
+\brief      This file contains the declaration of the math utility functions.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -57,9 +57,13 @@ namespace Ukemochi
         return (lhs > rhs) ? lhs : rhs;
     }
 
-    // Get the absolute value of x.
-    float abs(float x)
-    {
-        return x >= 0 ? x : -x;
-    }
+    /*!***********************************************************************
+    \brief
+     Get the absolute value of x.
+    \param[in] x
+     The input value to absolute.
+    \return
+     The absolute value.
+    *************************************************************************/
+    float abs(float x);
 }

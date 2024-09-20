@@ -202,6 +202,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />

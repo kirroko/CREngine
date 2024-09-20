@@ -194,5 +194,8 @@
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
