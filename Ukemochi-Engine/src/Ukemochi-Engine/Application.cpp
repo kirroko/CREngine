@@ -4,7 +4,7 @@
 #include "FrameController.h"
 #include <iomanip>
 #include <Ukemochi-Engine/Input.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace UME {
 

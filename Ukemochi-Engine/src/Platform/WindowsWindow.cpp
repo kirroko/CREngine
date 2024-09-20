@@ -4,7 +4,8 @@
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 
-#include <GLFW/glfw3.h> 
+//#include <GLFW/glfw3.h> 
+#include <glad/glad.h>
 
 namespace UME {
 
@@ -44,7 +45,7 @@ namespace UME {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
-		//int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		//UME_ENGINE_ASSERT(status, "Failed to initialize GLAD");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVsync(true);
