@@ -183,6 +183,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />

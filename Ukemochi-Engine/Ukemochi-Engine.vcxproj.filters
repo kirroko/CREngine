@@ -116,5 +116,8 @@
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
