@@ -18,16 +18,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-	Entity EntityManager::CreateEntity()
+	EntityID EntityManager::CreateEntity()
 	{
-		Entity id = m_AvailableEntities.front();
+		EntityID id = m_AvailableEntities.front();
 		m_AvailableEntities.pop();
 		++m_ulLivingEntityCount;
 
 		return id;
 	}
 
-	void EntityManager::DestroyEntity(Entity entity)
+	void EntityManager::DestroyEntity(EntityID entity)
 	{
 		m_Signatures[entity].reset();
 
@@ -35,12 +35,12 @@ namespace Ukemochi
 		--m_ulLivingEntityCount;
 	}
 
-	void EntityManager::SetSignature(Entity entity, Signature signature)
+	void EntityManager::SetSignature(EntityID entity, SignatureID signature)
 	{
 		m_Signatures[entity] = signature;
 	}
 
-	Signature EntityManager::GetSignature(Entity entity)
+	SignatureID EntityManager::GetSignature(EntityID entity)
 	{
 		return m_Signatures[entity];
 	}

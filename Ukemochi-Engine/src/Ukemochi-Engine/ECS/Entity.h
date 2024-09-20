@@ -15,9 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #pragma once
 
-#include <bitset>
-#include <queue>
-#include <array>
+#include "PreCompile.h"
 
 namespace Ukemochi
 {
