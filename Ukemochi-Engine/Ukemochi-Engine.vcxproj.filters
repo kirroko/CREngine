@@ -13,6 +13,9 @@
     <Filter Include="Ukemochi-Engine\Logs">
       <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Graphics">
+      <UniqueIdentifier>{9e18843b-6b81-406e-9561-f14d36259758}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\WindowsWindow.h">
@@ -59,6 +62,24 @@
     <ClInclude Include="src\Ukemochi-Engine\Window.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -76,6 +97,42 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Engine\Graphics\EBO.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\glad.c" />
+    <ClCompile Include="..\Source\Engine\Graphics\Main.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\stb.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\VAO.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\VBO.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Main.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\stb.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

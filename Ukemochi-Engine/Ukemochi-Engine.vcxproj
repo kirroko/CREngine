@@ -163,6 +163,12 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
@@ -176,16 +182,28 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Main.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\stb.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
-      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="vendor\Glad\Glad.vcxproj">
-      <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
-    </ProjectReference>
+    <ClCompile Include="..\Source\Engine\Graphics\EBO.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\glad.c" />
+    <ClCompile Include="..\Source\Engine\Graphics\Main.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\shaderClass.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Renderer.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\stb.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\Texture.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\VAO.cpp" />
+    <ClCompile Include="..\Source\Engine\Graphics\VBO.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
