@@ -3,10 +3,10 @@
 #include<iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb/stb_image.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "../vendor/stb/stb_image.h"
+#include "../vendor/glm/glm/glm.hpp"
+#include <../vendor/glm/glm/gtc/matrix_transform.hpp>
+#include <../vendor/glm/glm/gtc/type_ptr.hpp>
 #include <cmath> // Might need to remove later on
 #include <vector> // Might need to remove later on
 

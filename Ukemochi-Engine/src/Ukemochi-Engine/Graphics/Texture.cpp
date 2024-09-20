@@ -1,5 +1,7 @@
 #include "PreCompile.h"
 #include"Texture.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../vendor/stb/stb_image.h"
 
 Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
 {
