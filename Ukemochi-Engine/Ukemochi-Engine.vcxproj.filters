@@ -16,6 +16,15 @@
     <Filter Include="Ukemochi-Engine\Graphics">
       <UniqueIdentifier>{9e18843b-6b81-406e-9561-f14d36259758}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Math">
+      <UniqueIdentifier>{72fc8c7a-ebc5-4996-9e3b-84d699b1188b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Collision">
+      <UniqueIdentifier>{da129a25-d8f6-43c7-af2d-4b4facf8dee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Physics">
+      <UniqueIdentifier>{c2315259-2b15-4728-afd3-a848c4c9310a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\WindowsWindow.h">
@@ -80,6 +89,33 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollision2D.h">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollision2D.h">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h">
+      <Filter>Ukemochi-Engine\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -121,6 +157,30 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Collision\BoxCollision2D.cpp">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Collision\CircleCollision2D.cpp">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Physics\Rigidbody2D.cpp">
+      <Filter>Ukemochi-Engine\Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

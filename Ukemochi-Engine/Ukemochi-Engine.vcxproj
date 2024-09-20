@@ -156,6 +156,9 @@
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollision2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollision2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
     <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\ApplicationEvent.h" />
@@ -172,7 +175,13 @@
     <ClInclude Include="src\Ukemochi-Engine\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +190,9 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\BoxCollision2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\CircleCollision2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c" />
@@ -192,6 +204,11 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Physics\Rigidbody2D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
