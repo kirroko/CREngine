@@ -9,7 +9,8 @@ project "Glad"
 	{
 		"include/glad/glad.h",
 		"include/KHR/khrplatform.h",
-		"src/glad.c"
+		"src/glad.c",
+		"vendor/stb/stb_image.h"
 	}
 
 	filter "system:windows"
@@ -19,7 +20,8 @@ project "Glad"
 		
 	includedirs
 	{
-		"include"
+		"include",
+		"vendor/stb"
 	}
 
 	filter "configurations:Debug"

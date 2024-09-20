@@ -15,6 +15,7 @@
 *.ipdb
 *.pch
 *.recipe
+*.html
 bin
 Debug
 Release
