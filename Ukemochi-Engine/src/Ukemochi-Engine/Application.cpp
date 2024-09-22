@@ -64,8 +64,15 @@ namespace UME {
 			/*glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();*/
+			
+			//// Add a box and a circle
+			//render.addObjects(GameObject(100.0f, 200.0f, 50.0f, 50.0f, true));  // Box
+			//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
+			//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
 
-			render.drawBox(0, 0, 100, 100, true);
+			//// Render all objects
+			//render.renderObjects();
+			render.drawBox(0.0f, 0.0f, 100.f, 100.f, true);
 
 			if (Input::IsKeyPressed(GLFW_KEY_W))
 			{

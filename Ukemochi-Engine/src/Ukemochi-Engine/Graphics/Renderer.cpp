@@ -174,47 +174,50 @@ void Renderer::renderObjects()
 {
 	for (auto& obj : testObjects)
 	{
-		if (obj.type == ObjectType::Box)
+		if (obj.type == ObjectType::Box) 
 		{
-			//drawBox();
+			drawBox(obj.x, obj.y, obj.width, obj.height, obj.enable_texture);
+		}
+		else if (obj.type == ObjectType::Circle) {
+			drawCircle(obj.x, obj.y, obj.radius, obj.enable_texture, 100);  // Default 100 segments
 		}
 	}
 }
 
-void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
+void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture) 
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
+	// Convert screen coordinates to normalized device coordinates (NDC) 
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-
-	// Convert width and height from screen space to NDC scaling
+	// Convert width and height from screen space to NDC scaling 
 	GLfloat new_width = (2.0f * width) / screen_width;
 	GLfloat new_height = (2.0f * height) / screen_height;
-
-	// Define the vertices for the box
+	// Adjust vertices so that the position (x, y) represents the center of the box 
+	GLfloat half_width = new_width / 2.0f;
+	GLfloat half_height = new_height / 2.0f;
+	// Define the vertices for the box, centered around (new_x, new_y) 
 	GLfloat vertices_box[] = {
-		new_x, new_y, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,						// Top-left
-		new_x, new_y - new_height, 0.0f,  1.0f, 0.0f, 0.0f,	0.0f, 0.0f,				// Bottom-left
-		new_x + new_width, new_y - new_height, 0.0f, 1.0f, 1.0f, 1.0f,	1.0f, 0.0f,		// Bottom-right
-		new_x + new_width, new_y, 0.0f, 0.0f, 0.0f, 1.0f,	1.0f, 1.0f				// Top-right
+	new_x - half_width, new_y + half_height, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // Top-left  
+	new_x - half_width, new_y - half_height, 0.0f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
+	new_x + half_width, new_y - half_height, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,   // Bottom-right  
+	new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
 	};
-
-	// Define indices to form two triangles
+	// Define indices to form two triangles 
 	GLuint indices_box[] = {
-		0, 1, 2, // First triangle
-		0, 2, 3  // Second triangle
+	0, 1, 2, // First triangle  
+	0, 2, 3  // Second triangle
 	};
 
 	// Set up shaders, buffers, and textures
-	createWindow();
+	createWindow(); 
 	setUpShaders();
-	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box)); 
 	if (enable_texture)
 	{
 		setUpTextures();
 		use_texture = true;
 	}
-	render();
+	render(); 
 	cleanUp();
 }
 
