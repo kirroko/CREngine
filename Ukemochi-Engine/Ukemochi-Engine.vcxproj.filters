@@ -28,6 +28,9 @@
     <Filter Include="Ukemochi-Engine\ECS">
       <UniqueIdentifier>{c667aea3-3fd1-4c83-aa1a-017155dee41d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Game">
+      <UniqueIdentifier>{fadd6f64-3e3c-40ee-84ec-50d0975a2445}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\WindowsWindow.h">
@@ -155,6 +158,19 @@
     <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h">
       <Filter>Ukemochi-Engine\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="src\Game\GameStateList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -233,6 +249,20 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp">
       <Filter>Ukemochi-Engine\ECS</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

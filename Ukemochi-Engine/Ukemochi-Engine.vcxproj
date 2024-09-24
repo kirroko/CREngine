@@ -152,6 +152,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game\GameStateList.h" />
     <ClInclude Include="src\Platform\WindowsWindow.h" />
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
@@ -172,6 +173,10 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
@@ -205,6 +210,9 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
@@ -233,6 +241,7 @@
     <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
     <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
     <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
