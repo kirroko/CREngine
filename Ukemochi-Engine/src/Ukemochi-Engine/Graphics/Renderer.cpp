@@ -208,11 +208,10 @@ void Renderer::cleanUp()
 
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath)
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
+	// Convert screen coordinates to normalized device coordinates (NDC) 
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-
-	// Convert width and height from screen space to NDC scaling
+	// Convert width and height from screen space to NDC scaling 
 	GLfloat new_width = (2.0f * width) / screen_width;
 	GLfloat new_height = (2.0f * height) / screen_height;
 
@@ -227,11 +226,10 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
 		new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
 	};
-
-	// Define indices to form two triangles
+	// Define indices to form two triangles 
 	GLuint indices_box[] = {
-		0, 1, 2, // First triangle
-		0, 2, 3  // Second triangle
+	0, 1, 2, // First triangle  
+	0, 2, 3  // Second triangle
 	};
 
 	// Set up buffers
