@@ -234,4 +234,18 @@
       <Filter>Ukemochi-Engine\ECS</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+  </ItemGroup>
 </Project>

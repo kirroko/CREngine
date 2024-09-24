@@ -48,3 +48,4 @@ namespace Ukemochi
 		SignatureID GetSignature(EntityID entity);
 	};
 }
+// 0x4B45414E

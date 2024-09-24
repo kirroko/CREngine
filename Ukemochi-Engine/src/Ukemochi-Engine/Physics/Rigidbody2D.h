@@ -16,39 +16,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
+#include "../ECS/Systems.h" // Inherit from System
 #include "../Math/Vector2D.h" // for Vector2D
 #include "../Math/Matrix3x3.h" // for Matrix3x3
 #include "../Collision/BoxCollision2D.h" // temp for testing collision
 
 namespace Ukemochi
 {
-    class Rigidbody2D
-    {
-    public: // private:
-        Mtx33 transform{};
-        Vec2 position{};
-        Vec2 velocity{};
-        Vec2 acceleration{};
+	class PhysicsSystem : public System
+	{
+	public: // private:
+		Mtx33 transform{};
+		Vec2 position{};
+		Vec2 velocity{};
+		Vec2 acceleration{};
 
-        double direction{};
-        double angle{};
-        double angular_velocity{};
-        double angular_acceleration{};
+		double direction{};
+		double angle{};
+		double angular_velocity{};
+		double angular_acceleration{};
 
-        AABB bounding_box{};
-        Vec2 initial_position{};
-        Vec2 position_prev{};
-        Vec2 scale{};
-        bool active{};
+		AABB bounding_box{};
+		Vec2 initial_position{};
+		Vec2 position_prev{};
+		Vec2 scale{};
+		bool active{};
 
-    public:
-        Rigidbody2D()
-            : transform(Mtx33{}), position(Vec2{}), velocity(Vec2{}), direction(0.0) {}
-        Rigidbody2D(Mtx33 trans, Vec2 pos, Vec2 vel, double dir)
-            : transform(trans), position(pos), velocity(vel), direction(dir) {}
-    };
+	public:
+		PhysicsSystem()
+			: transform(Mtx33{}), position(Vec2{}), velocity(Vec2{}), direction(0.0) {}
+		PhysicsSystem(Mtx33 trans, Vec2 pos, Vec2 vel, double dir)
+			: transform(trans), position(pos), velocity(vel), direction(dir) {}
+	};
 
-    Rigidbody2D rb;
-    
-    void UpdateRigidbody();
+	PhysicsSystem rb;
+
+	void UpdateRigidbody();
 }

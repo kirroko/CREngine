@@ -228,6 +228,12 @@
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
