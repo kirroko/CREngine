@@ -64,7 +64,7 @@ namespace UME {
 		ECS::GetInstance().SetSystemSignature<PhysicsSystem>(sig);
 
 		// Our entities within the game world.
-		std::vector<EntityID> entities(ENTITY_COUNT);
+		std::vector<EntityID> entities(MAX_ENTITIES);
 
 		// Create entities
 		for (auto& entity : entities)
@@ -98,7 +98,7 @@ namespace UME {
 
 			//Init Scene
 			gsm_fpInitialize();
-			
+
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
@@ -167,7 +167,6 @@ namespace UME {
 
 			gsm_previous = gsm_current = gsm_next;
 		}
-
 
 		//while (m_running)
 		//{

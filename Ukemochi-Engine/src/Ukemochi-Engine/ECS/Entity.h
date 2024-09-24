@@ -21,8 +21,8 @@ namespace Ukemochi
 {
 	using EntityID = unsigned long int;       // A type alias representing Entity type (Their ID)
 	using ComponentTypeID = unsigned char; // A type alias representing Component type (Their ID)
-	const EntityID MAX_ENTITIES = 5000;
-	const ComponentTypeID MAX_COMPONENTS = 32;
+	const EntityID MAX_ENTITIES = 2501;   // Maximum number of entities that can be registered
+	const ComponentTypeID MAX_COMPONENTS = 32; // Maximum number of components that can be registered
 	using SignatureID = std::bitset<MAX_COMPONENTS>; // a type alias representing components bit signature (0x111 to represent 3 components)
 
 	// Manage the Entities
