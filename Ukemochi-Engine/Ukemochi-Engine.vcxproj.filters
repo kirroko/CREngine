@@ -128,10 +128,10 @@
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h">
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollision2D.h">
+    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollider2D.h">
       <Filter>Ukemochi-Engine\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollision2D.h">
+    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollider2D.h">
       <Filter>Ukemochi-Engine\Collision</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h">
@@ -158,7 +158,6 @@
     <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h">
       <Filter>Ukemochi-Engine\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\GameStateList.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
@@ -209,12 +208,6 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp">
       <Filter>Ukemochi-Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Collision\BoxCollision2D.cpp">
-      <Filter>Ukemochi-Engine\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Collision\CircleCollision2D.cpp">
-      <Filter>Ukemochi-Engine\Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp">
       <Filter>Ukemochi-Engine\Collision</Filter>

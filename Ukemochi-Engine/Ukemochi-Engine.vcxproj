@@ -152,13 +152,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\GameStateList.h" />
     <ClInclude Include="src\Platform\WindowsWindow.h" />
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollision2D.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollision2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollider2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollider2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
     <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
@@ -201,8 +200,6 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Collision\BoxCollision2D.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Collision\CircleCollision2D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />

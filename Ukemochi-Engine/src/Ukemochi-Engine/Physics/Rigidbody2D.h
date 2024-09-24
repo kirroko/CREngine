@@ -4,7 +4,7 @@
 \file       Rigidbody2D.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 16, 2024
+\date       Sept 24, 2024
 \brief      This file contains the declaration of the Rigidbody2D class.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -18,37 +18,35 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../Math/Vector2D.h" // for Vector2D
 #include "../Math/Matrix3x3.h" // for Matrix3x3
-#include "../Collision/BoxCollision2D.h" // temp for testing collision
+#include "../Collision/BoxCollider2D.h" // for BoxCollider2D struct
 
 namespace Ukemochi
 {
+    const float GRAVITY = -9.8f;
+
     class Rigidbody2D
     {
     public: // private:
         Mtx33 transform{};
-        Vec2 position{};
-        Vec2 velocity{};
-        Vec2 acceleration{};
-
-        double direction{};
-        double angle{};
-        double angular_velocity{};
-        double angular_acceleration{};
-
-        AABB bounding_box{};
-        Vec2 initial_position{};
+        Vec2 position_curr{};
         Vec2 position_prev{};
-        Vec2 scale{};
-        bool active{};
+        Vec2 velocity{};
+        Vec2 acceleration{ 7.f, 7.f };
+        Vec2 scale{ 100.f, 100.f };
+
+        float direction{};
+        float angle{};
+        float angular_velocity{};
+        float angular_acceleration{};
+
+        Vec2 initial_position{};
+        Ukemochi::BoxCollider2D box_collider;
+        bool active{ true };
 
     public:
-        Rigidbody2D()
-            : transform(Mtx33{}), position(Vec2{}), velocity(Vec2{}), direction(0.0) {}
-        Rigidbody2D(Mtx33 trans, Vec2 pos, Vec2 vel, double dir)
-            : transform(trans), position(pos), velocity(vel), direction(dir) {}
-    };
+        //Rigidbody2D() : transform(Mtx33{}), position(Vec2{}), velocity(Vec2{}), movement_speed(1.0f), direction(0.0f) {}
+        //Rigidbody2D(Mtx33 trans, Vec2 pos, Vec2 vel, float speed, float dir) : transform(trans), position(pos), velocity(vel), movement_speed(speed), direction(dir) {}
 
-    Rigidbody2D rb;
-    
-    void UpdateRigidbody();
+        void UpdateRigidbody(BoxCollider2D& box);
+    };
 }

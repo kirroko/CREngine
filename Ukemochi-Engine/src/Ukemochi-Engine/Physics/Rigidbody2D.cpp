@@ -4,7 +4,7 @@
 \file       Rigidbody2D.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 16, 2024
+\date       Sept 24, 2024
 \brief      This file contains the definition of the Rigidbody2D class.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -14,64 +14,34 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header
 *******************************************************************/
 
-#include "Rigidbody2D.h"
 #include "PreCompile.h"
+#include "Rigidbody2D.h"
+#include "../FrameController.h"
 
 namespace Ukemochi
 {
-    void UpdateRigidbody()
+    void Rigidbody2D::UpdateRigidbody(BoxCollider2D& box)
     {
-        // if (!rb.active)
-        //     return;
+        if (!active)
+            return;
 
         // Apply gravity to the player
-        // rb.velocity.y += static_cast<float>(GRAVITY * AEFrameRateControllerGetFrameTime());
+       // rb.velocity.y += static_cast<float>(GRAVITY * AEFrameRateControllerGetFrameTime());
 
         // Save previous position
-        // rb.position_prev = rb.position;
-        // rb.position_prev.x = rb.position.x;
-        // rb.position_prev.y = rb.position.y;
+        position_prev = position_curr;
+        position_prev.x = position_curr.x;
+        position_prev.y = position_curr.y;
 
         // Get the bounding box size
-        // rb.bounding_box.min = {-Collision::BOUNDING_RECT_SIZE * rb.scale.x + rb.position_prev.x,
-        //                        -Collision::BOUNDING_RECT_SIZE * rb.scale.y + rb.position_prev.y};
-        // rb.bounding_box.max = {Collision::BOUNDING_RECT_SIZE * rb.scale.x + rb.position_prev.x,
-        //                        Collision::BOUNDING_RECT_SIZE * rb.scale.y + rb.position_prev.y};
+        box.min = { -Ukemochi::BOUNDING_BOX_SIZE * scale.x + position_prev.x,
+                           -Ukemochi::BOUNDING_BOX_SIZE * scale.y + position_prev.y };
+        box.max = { Ukemochi::BOUNDING_BOX_SIZE * scale.x + position_prev.x,
+                               Ukemochi::BOUNDING_BOX_SIZE * scale.y + position_prev.y };
 
         // Update position based on velocity
-        // rb.position = (rb.velocity + rb.position) * (float)AEFrameRateControllerGetFrameTime();
-
-        // Check collision...
-        // float tFirst;
-        // if (Collision::CollisionIntersection_RectRect(rb.bounding_box, rb.velocity, other.bounding_box, other.velocity, tFirst))
-        // {
-        //     // Reset the player position
-        //     rb.position = rb.initial_position;
-        // }
-
-        // // Computing the transformation matrices of the game object instances
-        // for (i = 0; i < GAME_OBJ_INST_NUM_MAX; ++i)
-        // {
-        //     Math::Mtx33 scale{}, rot{}, trans{};
-        //     pInst = sGameObjInstList + i;
-
-        //     // skip non-active object
-        //     if ((pInst->flag & FLAG_ACTIVE) == 0)
-        //         continue;
-
-        //     // Compute the scaling matrix
-        //     AEMtx33Scale(&scale, pInst->scale.x, pInst->scale.y);
-
-        //     // Compute the rotation matrix
-        //     AEMtx33Rot(&rot, pInst->dirCurr);
-
-        //     // Compute the translation matrix
-        //     AEMtx33Trans(&trans, pInst->posCurr.x, pInst->posCurr.y);
-
-        //     // Concatenate the 3 matrix in the object instance's "transform" matrix
-        //     AEMtx33Concat(&pInst->transform, &rot, &scale);
-        //     AEMtx33Concat(&pInst->transform, &trans, &pInst->transform);
-        // }
+        position_curr += velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+        //position = (velocity + position) * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
 
         // // Computing the transformation matrices of the game object instances
         // for (unsigned int i = 0; i < GAME_OBJ_INST_NUM_MAX; ++i)

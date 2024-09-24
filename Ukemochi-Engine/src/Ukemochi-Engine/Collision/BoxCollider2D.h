@@ -1,11 +1,11 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file       CircleCollision2D.h
+\file       BoxCollider2D.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 11, 2024
-\brief      This file contains the declaration of the CircleCollision2D system.
+\date       Sept 24, 2024
+\brief      This file contains the declaration of the BoxCollider2D struct.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -17,31 +17,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../Math/Vector2D.h" // for Vec2
-#include "BoxCollision2D.h" // for AABB
 
 namespace Ukemochi
 {
     /*!***********************************************************************
     \brief
-     Represent a circle structure.
+     Axis-Aligned Bounding Box (BoxCollider2D) structure.
     *************************************************************************/
-    struct Circle
+    struct BoxCollider2D
     {
-        Vec2 m_center;
-        float m_radius;
+        Vec2 min;
+        Vec2 max;
     };
 
     /*!***********************************************************************
     \brief
-     Implementation of collision detection between two circles.
-    \param[in] circle1
-     The first circle.
-    \param[in] circle2
-     The second circle.
-    \return
-     True if the circles intersect, false otherwise.
+     Normalized bounding box (width and height) sizes - BoxCollider2D collision data.
     *************************************************************************/
-    bool CollisionIntersection_CircleCircle(const Circle &circle1, const Circle &circle2);
-
-    bool CollisionIntersection_CircleAABB(const Circle &circle, const AABB &aabb);
+    const float BOUNDING_BOX_SIZE = 0.5f;
 }
