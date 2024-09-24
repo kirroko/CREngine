@@ -9,32 +9,13 @@
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
 #include <cmath> // Might need to remove later on
 #include <vector> // Might need to remove later on
+#include <algorithm>
 
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
-
-enum class ObjectType { Box, Circle };
-
-class GameObject {
-
-public:
-    ObjectType type;
-    GLfloat x, y;
-    GLfloat width, height;
-    GLfloat radius;
-    GLboolean enable_texture;
-
-    GameObject(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
-        : type(ObjectType::Box), x(x), y(y), width(width), height(height), enable_texture(enable_texture) {};
-
-    GameObject(GLfloat x, GLfloat y, GLfloat radius, GLboolean enable_texture)
-        : type(ObjectType::Circle), x(x), y(y), radius(radius), enable_texture(enable_texture) {};
-
-};
-
 
 class Renderer
 {
@@ -46,30 +27,25 @@ public:
     void render();
     void cleanUp();
 
-    std::vector<GameObject> testObjects;
-
-    void addObjects(const GameObject& object);
-    void renderObjects();
-
     static int const screen_width = 1600;
     static int const screen_height = 900;
 
-    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture);
-    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments = 1000);
+    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath = "");
+    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath = "", GLint segments = 1000);
 
 private:
     GLFWwindow* window;
     Shader* shaderProgram;
-    VAO* vao;
-    VBO* vbo;
-    EBO* ebo;
-    Texture* container;
-    GLboolean use_texture;
+    std::vector<VAO*> vaos;
+    std::vector<VBO*> vbos;
+    std::vector<EBO*> ebos;
+    std::vector<size_t> indices_count;
+    std::vector<GLboolean> textures_enabled;
+    std::vector<Texture*> textures;
 
-    void setUpScene();
     void setUpShaders();
     void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
-    void setUpTextures();
+    void setUpTextures(const std::string& texturePath);
     void createWindow();
 
 

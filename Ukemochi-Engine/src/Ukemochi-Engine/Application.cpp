@@ -18,6 +18,7 @@ namespace UME {
 		WindowProps props; // You can customize these properties if needed
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
+		render.init();
 	}
 
 	Application::~Application()
@@ -46,6 +47,10 @@ namespace UME {
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
+
+		render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
+		render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+
 		while (m_running)
 		{
 			g_FrameRateController.Update();
@@ -65,8 +70,9 @@ namespace UME {
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();*/
 
-			render.drawBox(0, 0, 100, 100, true);
-
+			//render.drawBox(0, 0, 100, 100, true);
+			render.render();
+			m_Window->OnUpdate();
 			if (Input::IsKeyPressed(GLFW_KEY_W))
 			{
 				// If 'W' key is pressed, move forward
