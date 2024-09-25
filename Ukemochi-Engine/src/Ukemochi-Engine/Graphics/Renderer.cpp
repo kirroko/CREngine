@@ -1,6 +1,19 @@
+/*!
+ * @file    Renderer.cpp
+ * @brief   This file contains the implementation of the Renderer class responsible for 
+			handling OpenGL rendering, including setting up shaders, buffers, textures, 
+			and rendering 2D objects like boxes and circles.
+ * @author  t.shunzhitomy@digipen.edu
+ * @date    25/09/2024
+ */
 #include "PreCompile.h"
 #include "Renderer.h"
 
+
+/*!
+ * @brief Constructor for the Renderer class.
+ * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
+ */
 Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
@@ -10,52 +23,30 @@ Renderer::Renderer()
 	EBO* ebos = nullptr;
 };
 
+/*!
+ * @brief Destructor for the Renderer class.
+ * Calls the cleanUp() method to release all allocated OpenGL resources.
+ */
 Renderer::~Renderer()
 {
 	cleanUp();
 }
 
-void Renderer::createWindow()
-{
-	// Initialize GLFW
-	glfwInit();
-
-	// Tell GLFW what version of OpenGL we are using
-	// In this case we are using OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// Tell GLFW we are using the CORE profile
-	// So that means we only have the modern functions
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// Create a GLFWwindow object of 1600 by 900 pixels
-	window = glfwCreateWindow(1600, 900, "Cozy Racoons", NULL, NULL);
-	// Error check if the window fails to create
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-	}
-	// Introduce the window into the current context
-	glfwMakeContextCurrent(window);
-
-	//Load GLAD so it configures OpenGL
-	gladLoadGL();
-	// Specify the viewport of OpenGL in the Window
-	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 1600, 900);
-}
-
+/*!
+ * @brief Initializes the renderer, including loading shaders.
+ * This function should be called once at the beginning to set up necessary resources.
+ */
 void Renderer::init()
 {
-	// Create window
-	//createWindow();
-
 	// Load shaders
 	setUpShaders();
-
 }
 
+/*!
+ * @brief Loads and sets up a texture based on the given file path.
+ * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
+ * @param texturePath The file path to the texture to be loaded.
+ */
 void Renderer::setUpTextures(const std::string& texturePath)
 {
 	// If a texture file path is provided, load and store the texture
@@ -90,12 +81,23 @@ void Renderer::setUpTextures(const std::string& texturePath)
 	}
 }
 
+/*!
+ * @brief Loads and sets up the shaders to be used for rendering.
+ * Currently loads vertex and fragment shaders from the specified paths.
+ */
 void Renderer::setUpShaders()
 {
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
-	//shaderProgram = new Shader("default.vert", "default.frag");
 }
 
+/*!
+ * @brief Sets up the Vertex Array Object (VAO), Vertex Buffer Object (VBO), and Element Buffer Object (EBO) for the given vertices and indices.
+ * This function prepares the OpenGL buffers for rendering the object.
+ * @param vertices Pointer to the vertex data.
+ * @param vertSize The size of the vertex data in bytes.
+ * @param indices Pointer to the index data.
+ * @param indexSize The size of the index data in bytes.
+ */
 void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize)
 {
 	// Create new VAO, VBO, and EBO for each object
@@ -122,42 +124,42 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	ebos.push_back(ebo);
 }
 
+/*!
+ * @brief Renders all the objects (boxes and circles) using the set up VAOs, VBOs, EBOs, and textures.
+ */
 void Renderer::render()
 {
-
-		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.f);
-		// Clean the back buffer and assign the new color to it
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Tell OpenGL which Shader Program we want to use
-		shaderProgram->Activate();
-		//shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
-
-		// Loop over each VAO and draw objects
-		for (size_t i = 0; i < vaos.size(); ++i)
-		{
-			vaos[i]->Bind();
-
-			// Binds texture so that is appears in rendering
-			if (textures_enabled[i])
-			{
-				textures[i]->Bind();
-				shaderProgram->setBool("useTexture", true);
-			}
-			else
-			{
-				shaderProgram->setBool("useTexture", false);
-			}
-			glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
-		}
-		//// Swap the back buffer with the front buffer
-		//glfwSwapBuffers(window);
-		//// Take care of all GLFW events
-		//glfwPollEvents();
+	// Specify the color of the background
+	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
+	// Clean the back buffer and assign the new color to it
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	// Tell OpenGL which Shader Program we want to use
+	shaderProgram->Activate();
+	//shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
+	
+	// Loop over each VAO and draw objects
+	for (size_t i = 0; i < vaos.size(); ++i)
+	{
+		vaos[i]->Bind();
+	
+		// Binds texture so that is appears in rendering
+		if (textures_enabled[i])
+		{
+			textures[i]->Bind();
+			shaderProgram->setBool("useTexture", true);
+		}
+		else
+		{
+			shaderProgram->setBool("useTexture", false);
+		}
+		glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+	}
 }
 
+/*!
+ * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).
+ */
 void Renderer::cleanUp()
 {
 	// Delete all VAOs, VBOs, and EBOs
@@ -185,7 +187,8 @@ void Renderer::cleanUp()
 	// Delete all textures
 	for (size_t i = 0; i < textures.size(); ++i)
 	{
-		if (textures[i]) {
+		if (textures[i]) 
+		{
 			textures[i]->Delete();  // Delete the OpenGL texture
 			delete textures[i];     // Deallocate memory for the texture object
 		}
@@ -198,14 +201,24 @@ void Renderer::cleanUp()
 	textures_enabled.clear();
 
 	// Delete the shader program
-	if (shaderProgram) {
+	if (shaderProgram) 
+	{
 		shaderProgram->Delete();
 		delete shaderProgram;  // Deallocate memory
 		shaderProgram = nullptr;
 	}
 }
 
-
+/*!
+ * @brief Draws a 2D box with the given position, dimensions, and texture, 
+		  starting position is the top left of screen. It starts from the 
+		  center of the box.
+ * @param x The x-coordinate of the center of the box (in screen space).
+ * @param y The y-coordinate of the center of the box (in screen space).
+ * @param width The width of the box (in screen space).
+ * @param height The height of the box (in screen space).
+ * @param texturePath The file path to the texture for the box.
+ */
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC) 
@@ -238,10 +251,21 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 	// Store the number of indices for this box (6 indices: two triangles)
 	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
 
+	// Set up the texture for the box
 	setUpTextures(texturePath);
 }
 
-
+/*!
+ * @brief Draws a 2D circle with the given position, radius, and texture, 
+		  starting position is the top left of screen. It starts from the 
+		  center of the box.
+ * @param x The x-coordinate of the center of the circle (in screen space).
+ * @param y The y-coordinate of the center of the circle (in screen space).
+ * @param radius The radius of the circle (in screen space).
+ * @param texturePath The file path to the texture for the circle.
+ * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles), 
+		  by default it is set to 1000.
+ */
 void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath, GLint segments)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC)
@@ -296,6 +320,6 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::strin
 	// Set up buffers
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
 
-
+	// Set up the texture for the circle
 	setUpTextures(texturePath);
 }
