@@ -1,10 +1,12 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file Components.h
+\file	Components.h
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 15/09/24
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
 \brief Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc)
 
 Copyright (C) 2024 DigiPen Institute of Technology.

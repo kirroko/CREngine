@@ -1,10 +1,12 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file Component.h
+\file	Component.h
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 15/09/24
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
 \brief To manage all the the different components that needed to be added or removed
 
 Copyright (C) 2024 DigiPen Institute of Technology.

@@ -1,3 +1,20 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file	Registry.tpp
+\par	Ukemochi
+\author WONG JUN YU, Kean, junyukean.wong, 2301234
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief A registry where all components are stored.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "Registry.h"
 
 namespace Ukemochi
@@ -8,11 +25,11 @@ namespace Ukemochi
 		assert(m_EntityToIndexMap.find(entity) == m_EntityToIndexMap.end() && "Component added to same entity more than once.");
 
 		// Put new entry at end and update the maps
-		size_t newIndex = mSize;
+		size_t newIndex = m_Size;
 		m_EntityToIndexMap[entity] = newIndex;
 		m_IndexToEntityMap[newIndex] = entity;
 		m_ComponentArray[newIndex] = component;
-		++mSize;
+		++m_Size;
 	}
 
 	template <typename T>

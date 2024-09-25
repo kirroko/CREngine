@@ -1,3 +1,21 @@
+/* Start Header ************************************************************************/
+/*!
+\file       Application.cpp
+\par		Ukemochi
+\author 	HURNG Kai Rui, h.kairui, 230xxxx, h.kairui\@digipen.edu (50%)
+\co-authors x, x, 230xxxx, x\@digipen.edu (x%)
+			Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (x%)
+			x, x, 230xxxx, x\@digipen.edu (x%)
+			x, x, 230xxxx, x\@digipen.edu (x%)
+\par        Course: CSD2400/CSD2401
+\date   	25-09-2024
+\brief      This file contains the function definitions of application.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the prior written consent of
+DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 #include "PreCompile.h"
 #include "Application.h"
 #include "Game/GSM.h"
@@ -10,8 +28,6 @@
 #include <glad/glad.h>
 
 using namespace Ukemochi;
-
-#define ENTITY_COUNT 5
 
 namespace UME {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)

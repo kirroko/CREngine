@@ -243,9 +243,6 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp">
       <Filter>Ukemochi-Engine\ECS</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp">
-      <Filter>Ukemochi-Engine\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp">
       <Filter>Ukemochi-Engine\ECS</Filter>
     </ClCompile>
