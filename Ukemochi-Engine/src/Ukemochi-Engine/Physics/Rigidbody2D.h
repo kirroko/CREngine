@@ -22,8 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    const float GRAVITY = -9.8f;
-
     class Rigidbody2D
     {
     public: // private:
@@ -46,7 +44,5 @@ namespace Ukemochi
     public:
         //Rigidbody2D() : transform(Mtx33{}), position(Vec2{}), velocity(Vec2{}), movement_speed(1.0f), direction(0.0f) {}
         //Rigidbody2D(Mtx33 trans, Vec2 pos, Vec2 vel, float speed, float dir) : transform(trans), position(pos), velocity(vel), movement_speed(speed), direction(dir) {}
-
-        void UpdateRigidbody(BoxCollider2D& box);
     };
 }

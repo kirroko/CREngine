@@ -191,6 +191,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Window.h" />
   </ItemGroup>
@@ -223,7 +224,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Physics\Rigidbody2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

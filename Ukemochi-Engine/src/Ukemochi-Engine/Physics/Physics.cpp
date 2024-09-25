@@ -1,11 +1,11 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file       Rigidbody2D.cpp
+\file       Physics.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 24, 2024
-\brief      This file contains the definition of the Rigidbody2D class.
+\date       Sept 25, 2024
+\brief      This file contains the definition of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -15,32 +15,32 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Rigidbody2D.h"
-#include "../FrameController.h"
+#include "Physics.h"            // for forward declaration
+#include "../FrameController.h" // for GetDeltaTime
 
 namespace Ukemochi
 {
-    void Rigidbody2D::UpdateRigidbody(BoxCollider2D& box)
+    void Physics::UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box)
     {
-        if (!active)
+        if (!rb.active)
             return;
 
         // Apply gravity to the player
        // rb.velocity.y += static_cast<float>(GRAVITY * AEFrameRateControllerGetFrameTime());
 
         // Save previous position
-        position_prev = position_curr;
-        position_prev.x = position_curr.x;
-        position_prev.y = position_curr.y;
+        rb.position_prev = rb.position_curr;
+        // rb.position_prev.x = rb.position_curr.x;
+        // rb.position_prev.y = rb.position_curr.y;
 
         // Get the bounding box size
-        box.min = { -Ukemochi::BOUNDING_BOX_SIZE * scale.x + position_prev.x,
-                           -Ukemochi::BOUNDING_BOX_SIZE * scale.y + position_prev.y };
-        box.max = { Ukemochi::BOUNDING_BOX_SIZE * scale.x + position_prev.x,
-                               Ukemochi::BOUNDING_BOX_SIZE * scale.y + position_prev.y };
+        box.min = { -Ukemochi::BOUNDING_BOX_SIZE * rb.scale.x + rb.position_prev.x,
+                           -Ukemochi::BOUNDING_BOX_SIZE * rb.scale.y + rb.position_prev.y };
+        box.max = { Ukemochi::BOUNDING_BOX_SIZE * rb.scale.x + rb.position_prev.x,
+                               Ukemochi::BOUNDING_BOX_SIZE * rb.scale.y + rb.position_prev.y };
 
         // Update position based on velocity
-        position_curr += velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+        rb.position_curr += rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
         //position = (velocity + position) * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
 
         // // Computing the transformation matrices of the game object instances
