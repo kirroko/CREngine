@@ -1,31 +1,13 @@
 #include "PreCompile.h"
 #include "Renderer.h"
 
-// Vertices coordinates
-GLfloat vertices[] =
-{	//     COORDINATES   /        COLORS      /   TexCoord  //
-	-0.5f, -0.5f, 0.0f,    1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
-	-0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
-	 0.5f,  0.5f, 0.0f,    0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
-	 0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
-};
-
-// Indices for vertices order
-GLuint indices[] =
-{
-	0, 2, 1, // Upper triangle
-	0, 3, 2 // Lower triangle
-};
-
 Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
 	shaderProgram = nullptr;
-	vao = nullptr;
-	vbo = nullptr;
-	ebo = nullptr;
-	container = nullptr;
-	use_texture = false;
+	VAO* vaos = nullptr;
+	VBO* vbos = nullptr;
+	EBO* ebos = nullptr;
 };
 
 Renderer::~Renderer()
@@ -66,71 +48,83 @@ void Renderer::createWindow()
 
 void Renderer::init()
 {
-	createWindow();
-
-	// Sets up scene
-	//setUpScene();
+	// Create window
+	//createWindow();
 
 	// Load shaders
 	setUpShaders();
 
-	// Set up VAO, VBO, EBO
-	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
-
-	// Load textures
-	setUpTextures();
 }
 
-void Renderer::setUpScene()
+void Renderer::setUpTextures(const std::string& texturePath)
 {
-	// Load shaders
-	setUpShaders();
+	// If a texture file path is provided, load and store the texture
+	if (!texturePath.empty())
+	{
+		// Extract the file extension and determine format (GL_RGBA for PNG, GL_RGB for JPG)
+		std::string extension = texturePath.substr(texturePath.find_last_of(".") + 1);
+		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
-	// Set up VAO, VBO, EBO
-	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
+		GLenum format;
+		if (extension == "png")
+			format = GL_RGBA;  // PNG files have transparency
+		else if (extension == "jpg" || extension == "jpeg")
+			format = GL_RGB;   // JPG files do not have transparency
+		else
+		{
+			std::cerr << "Warning: Unrecognized image format. Defaulting to GL_RGB." << std::endl;
+			format = GL_RGB;
+		}
 
-	// Load textures
-	setUpTextures();
-}
-
-void Renderer::setUpTextures()
-{
-	container = new Texture("../Assets/Textures/container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-	container->texUnit(*shaderProgram, "tex0", 0);
+		// Load and store the texture with the determined format
+		Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, format, GL_UNSIGNED_BYTE);
+		textures.push_back(texture);
+		textures_enabled.push_back(true);
+		texture->texUnit(*shaderProgram, "tex0", 0);
+	}
+	else
+	{
+		// No texture provided
+		textures.push_back(nullptr);  // No texture for this object
+		textures_enabled.push_back(false);
+	}
 }
 
 void Renderer::setUpShaders()
 {
-	//shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	//shaderProgram = new Shader("default.vert", "default.frag");
 }
 
 void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize)
 {
-	// Initialize VAO, VBO, and EBO
-	vao = new VAO();
-	vbo = new VBO(vertices, vertSize);
-	ebo = new EBO(indices, indexSize);
+	// Create new VAO, VBO, and EBO for each object
+	VAO* vao = new VAO();
+	VBO* vbo = new VBO(vertices, vertSize);
+	EBO* ebo = new EBO(indices, indexSize);
 
-	// Bind the VAO to start setting it up
+	// Bind the VAO and set up the attributes
 	vao->Bind();
 	vbo->Bind();
 	ebo->Bind();
-	// Links VBO attributes such as coordinates and colors to VAO
 	vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 	vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-	// Unbind all to prevent accidentally modifying them
+	// Unbind after setting
 	vao->Unbind();
 	vbo->Unbind();
 	ebo->Unbind();
+
+	// Store the buffers in the list
+	vaos.push_back(vao);
+	vbos.push_back(vbo);
+	ebos.push_back(ebo);
 }
 
 void Renderer::render()
 {
-	while (!glfwWindowShouldClose(window))
-	{
+
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 		// Clean the back buffer and assign the new color to it
@@ -138,87 +132,117 @@ void Renderer::render()
 
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram->Activate();
-		shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
+		//shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
 
-		// Binds texture so that is appears in rendering
-		if (use_texture)
-			container->Bind();
-		// Bind the VAO so OpenGL knows to use it
-		vao->Bind();
-		// Draw primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLE_FAN, 102, GL_UNSIGNED_INT, 0);
-		// Swap the back buffer with the front buffer
-		glfwSwapBuffers(window);
-		// Take care of all GLFW events
-		glfwPollEvents();
-	}
+		// Loop over each VAO and draw objects
+		for (size_t i = 0; i < vaos.size(); ++i)
+		{
+			vaos[i]->Bind();
+
+			// Binds texture so that is appears in rendering
+			if (textures_enabled[i])
+			{
+				textures[i]->Bind();
+				shaderProgram->setBool("useTexture", true);
+			}
+			else
+			{
+				shaderProgram->setBool("useTexture", false);
+			}
+			glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+		}
+		//// Swap the back buffer with the front buffer
+		//glfwSwapBuffers(window);
+		//// Take care of all GLFW events
+		//glfwPollEvents();
+	
 }
 
 void Renderer::cleanUp()
 {
-	// Delete all the objects we've created
-	vao->Delete();
-	vbo->Delete();
-	ebo->Delete();
-	if (use_texture)
-		container->Delete();
-	shaderProgram->Delete();
-}
-
-void Renderer::addObjects(const GameObject& object)
-{
-	testObjects.push_back(object);
-}
-
-void Renderer::renderObjects()
-{
-	for (auto& obj : testObjects)
+	// Delete all VAOs, VBOs, and EBOs
+	for (size_t i = 0; i < vaos.size(); ++i)
 	{
-		if (obj.type == ObjectType::Box)
-		{
-			//drawBox();
+		vaos[i]->Delete();
+		delete vaos[i]; // Deallocate memory
+	}
+	for (size_t i = 0; i < vbos.size(); ++i)
+	{
+		vbos[i]->Delete();
+		delete vbos[i]; // Deallocate memory
+	}
+	for (size_t i = 0; i < ebos.size(); ++i)
+	{
+		ebos[i]->Delete();
+		delete ebos[i]; // Deallocate memory
+	}
+
+	// Clear the vectors after deleting the objects
+	vaos.clear();
+	vbos.clear();
+	ebos.clear();
+
+	// Delete all textures
+	for (size_t i = 0; i < textures.size(); ++i)
+	{
+		if (textures[i]) {
+			textures[i]->Delete();  // Delete the OpenGL texture
+			delete textures[i];     // Deallocate memory for the texture object
 		}
+	}
+
+	// Clear the textures vector
+	textures.clear();
+
+	// Clear the textures_enabled vector as well
+	textures_enabled.clear();
+
+	// Delete the shader program
+	if (shaderProgram) {
+		shaderProgram->Delete();
+		delete shaderProgram;  // Deallocate memory
+		shaderProgram = nullptr;
 	}
 }
 
-void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
+
+void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath)
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
+	// Convert screen coordinates to normalized device coordinates (NDC) 
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-
-	// Convert width and height from screen space to NDC scaling
+	// Convert width and height from screen space to NDC scaling 
 	GLfloat new_width = (2.0f * width) / screen_width;
 	GLfloat new_height = (2.0f * height) / screen_height;
 
-	// Define the vertices for the box
+	// Adjust vertices so that the position (x, y) represents the center of the box
+	GLfloat half_width = new_width / 2.0f;
+	GLfloat half_height = new_height / 2.0f;
+
+	// Define the vertices for the box, centered around (new_x, new_y)
 	GLfloat vertices_box[] = {
-		new_x, new_y, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,						// Top-left
-		new_x, new_y - new_height, 0.0f,  1.0f, 0.0f, 0.0f,	0.0f, 0.0f,				// Bottom-left
-		new_x + new_width, new_y - new_height, 0.0f, 1.0f, 1.0f, 1.0f,	1.0f, 0.0f,		// Bottom-right
-		new_x + new_width, new_y, 0.0f, 0.0f, 0.0f, 1.0f,	1.0f, 1.0f				// Top-right
+		new_x - half_width, new_y + half_height, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Top-left
+		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
+		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
+		new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
 	};
-
-	// Define indices to form two triangles
+	// Define indices to form two triangles 
 	GLuint indices_box[] = {
-		0, 1, 2, // First triangle
-		0, 2, 3  // Second triangle
+	0, 1, 2, // First triangle  
+	0, 2, 3  // Second triangle
 	};
 
-	// Set up shaders, buffers, and textures
-	createWindow();
-	setUpShaders();
+	// Set up buffers
 	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
-	if (enable_texture)
-	{
-		setUpTextures();
-		use_texture = true;
-	}
-	render();
-	cleanUp();
+
+	// Store the number of indices for this box (6 indices: two triangles)
+	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
+
+	setUpTextures(texturePath);
 }
 
-void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments)
+
+void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath, GLint segments)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
@@ -242,8 +266,10 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 	vertices.push_back(0.5f);   // Texture coordinate (s) - center of the texture
 	vertices.push_back(0.5f);   // Texture coordinate (t)
 
+
 	// Generate vertices around the circle
-	for (int i = 0; i <= segments; ++i) {
+	for (int i = 0; i <= segments; ++i)
+	{
 		GLfloat angle = i * 2.0f * 3.1415926f / segments;
 		GLfloat dx = cosf(angle) * new_radius_x;
 		GLfloat dy = sinf(angle) * new_radius_y;
@@ -264,19 +290,12 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTex
 		indices.push_back(i + 1);
 	}
 
-	indices.push_back(1);
+	// Store the number of indices for this object
+	indices_count.push_back(indices.size());
 
-	// Set up shaders, buffers, and textures as usual
-	createWindow();
-	setUpShaders();
+	// Set up buffers
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
 
-	// Conditionally set up and bind the texture if the flag is true
-	if (useTexture) {
-		setUpTextures();  // Load and bind the texture if needed
-		container->Bind(); // Bind the texture to be drawn
-	}
 
-	render();
-	cleanUp();
+	setUpTextures(texturePath);
 }
