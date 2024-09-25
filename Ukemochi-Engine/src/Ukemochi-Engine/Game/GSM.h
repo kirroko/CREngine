@@ -11,12 +11,15 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 */
 /* End Header **************************************************************************/
 #pragma once
+namespace Ukemochi
+{
 
-typedef void(*FP)(void);
+	typedef void(*FP)(void);
 
-extern int gsm_current, gsm_previous, gsm_next;
+	extern int gsm_current, gsm_previous, gsm_next;
 
-extern FP gsm_fpLoad, gsm_fpInitialize, gsm_fpUpdate, gsm_fpDraw, gsm_fpFree, gsm_fpUnload;
+	extern FP gsm_fpLoad, gsm_fpInitialize, gsm_fpUpdate, gsm_fpDraw, gsm_fpFree, gsm_fpUnload;
 
-void GSM_Initialize(int startingState);//initialize the state manager
-void GSM_Update();//updating the gamestate when the game is running
+	void GSM_Initialize(int startingState);//initialize the state manager
+	void GSM_Update();//updating the gamestate when the game is running
+}
