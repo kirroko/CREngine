@@ -14,8 +14,8 @@ namespace UME {
 		unsigned int Height;
 
 		WindowProps(const std::string& title = "Cozy Raccoon Engine",
-			unsigned int width = 1600,
-			unsigned int height = 900)
+			unsigned int width = 1920,
+			unsigned int height = 1080)
 			: Title(title), Width(width), Height(height)
 		{
 		}
