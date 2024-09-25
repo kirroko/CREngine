@@ -21,6 +21,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/**
+	 * @brief A system is a collection of entities that share the same signature.
+	 *		This allows you to iterate over all entities that have the same components inside your systems class via inheritance.
+	 */
 	class System
 	{
 	public:
@@ -45,3 +49,5 @@ namespace Ukemochi
 		void EntitySignatureChanged(EntityID entity, SignatureID entitySignature);
 	};
 }
+#include "Systems.tpp"
+// 0x4B45414E

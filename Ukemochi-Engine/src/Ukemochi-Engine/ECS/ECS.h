@@ -28,7 +28,6 @@ namespace Ukemochi
 		std::unique_ptr<EntityManager> m_EntityManager;
 		std::unique_ptr<SystemManager> m_SystemManager;
 
-		ECS();
 	public:
 		static ECS& GetInstance()
 		{
@@ -67,3 +66,5 @@ namespace Ukemochi
 		void SetSystemSignature(SignatureID signature);
 	};
 }
+#include "ECS.tpp"
+// 0x4B45414E

@@ -3,9 +3,15 @@
 #include "Game/GSM.h"
 #include "Ukemochi-Engine/Logs/Log.h"
 #include "FrameController.h"
+#include "Physics/Rigidbody2D.h"
+#include "ECS/ECS.h"
 #include <iomanip>
 #include <Ukemochi-Engine/Input.h>
 #include <glad/glad.h>
+
+using namespace Ukemochi;
+
+#define ENTITY_COUNT 5
 
 namespace UME {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
@@ -39,6 +45,35 @@ namespace UME {
 
 	void Application::GameLoop()
 	{
+		ECS::GetInstance().Init();
+
+		// Register your components
+		ECS::GetInstance().RegisterComponent<Transform>();
+		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
+		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
+		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
+
+		// Register your systems
+		ECS::GetInstance().RegisterSystem<PhysicsSystem>();
+
+		// Set a signature to your system
+		// Each system will have a signature to determine which entities it will process
+		SignatureID sig;
+		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		ECS::GetInstance().SetSystemSignature<PhysicsSystem>(sig);
+
+		// Our entities within the game world.
+		std::vector<EntityID> entities(MAX_ENTITIES);
+
+		// Create entities
+		for (auto& entity : entities)
+		{
+			entity = ECS::GetInstance().CreateEntity();
+			ECS::GetInstance().AddComponent(entity, Transform());
+			ECS::GetInstance().AddComponent(entity, Rigidbody2D());
+		}
+
 		double accumulator = 0.0;
 		const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
 
@@ -63,7 +98,7 @@ namespace UME {
 
 			//Init Scene
 			gsm_fpInitialize();
-			
+
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
@@ -132,7 +167,6 @@ namespace UME {
 
 			gsm_previous = gsm_current = gsm_next;
 		}
-
 
 		//while (m_running)
 		//{
