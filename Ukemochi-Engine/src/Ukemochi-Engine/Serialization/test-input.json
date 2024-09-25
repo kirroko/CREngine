@@ -1,0 +1,16 @@
+{
+    "Game Objects": [
+        {
+            "Name": "dingus",
+            "Health": 1000,
+            "Attack": 3000,
+            "Weapon": "Chakram"
+        },
+        {
+            "Name": "bruh",
+            "Health": 300,
+            "Attack": 6000,
+            "Weapon": "Dagger"
+        }
+    ]
+}

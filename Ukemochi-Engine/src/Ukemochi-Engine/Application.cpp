@@ -68,6 +68,8 @@ namespace UME {
 				UME_ENGINE_INFO("W key is pressed");
 			}
 
+			//test comment
+
 			double currentTime = glfwGetTime();
 			// Only log/display the FPS every second (or defined interval)
 			if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
