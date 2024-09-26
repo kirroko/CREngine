@@ -57,3 +57,5 @@ namespace Ukemochi
 		size_t m_Size;
 	};
 }
+#include "Registry.tpp"
+// 0x4B45414E
