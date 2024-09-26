@@ -46,23 +46,23 @@ namespace UME {
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
 		//Init GameStateManager
-		GSM_Initialize(GS_STATES::GS_MAINMENU);
+		Ukemochi::GSM_Initialize(Ukemochi::GS_STATES::GS_MAINMENU);
 
-		while (gsm_current != GS_STATES::GS_QUIT && m_running)
+		while (Ukemochi::gsm_current != Ukemochi::GS_STATES::GS_QUIT && m_running)
 		{
 			//current state != restart
-			if (gsm_current != GS_STATES::GS_RESTART)
+			if (Ukemochi::gsm_current != Ukemochi::GS_STATES::GS_RESTART)
 			{
-				GSM_Update();
-				gsm_fpLoad();
+				Ukemochi::GSM_Update();
+				Ukemochi::gsm_fpLoad();
 			}
 			else
 			{
-				gsm_next = gsm_current = gsm_previous;
+				Ukemochi::gsm_next = Ukemochi::gsm_current = Ukemochi::gsm_previous;
 			}
 
 			//Init Scene
-			gsm_fpInitialize();
+			Ukemochi::gsm_fpInitialize();
 			
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -74,7 +74,7 @@ namespace UME {
 			}
 
 			//Current Scene
-			while (gsm_current == gsm_next && m_running)
+			while (Ukemochi::gsm_current == Ukemochi::gsm_next && m_running)
 			{
 				//************ FPS ************
 				g_FrameRateController.Update();
@@ -97,8 +97,8 @@ namespace UME {
 				m_Window->OnUpdate();
 
 				//Update and Draw current scene
-				gsm_fpUpdate();
-				gsm_fpDraw();
+				Ukemochi::gsm_fpUpdate();
+				Ukemochi::gsm_fpDraw();
 
 				//************ FPS ************
 				double currentTime = glfwGetTime();
@@ -122,15 +122,15 @@ namespace UME {
 			}
 
 			//Free scene
-			gsm_fpFree();
+			Ukemochi::gsm_fpFree();
 
 			//If game not restart unload Scene
-			if (gsm_next != GS_STATES::GS_RESTART)
+			if (Ukemochi::gsm_next != Ukemochi::GS_STATES::GS_RESTART)
 			{
-				gsm_fpUnload();
+				Ukemochi::gsm_fpUnload();
 			}
 
-			gsm_previous = gsm_current = gsm_next;
+			Ukemochi::gsm_previous = Ukemochi::gsm_current = Ukemochi::gsm_next;
 		}
 
 
