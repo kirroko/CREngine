@@ -6,6 +6,7 @@
 #include <Ukemochi-Engine/Input.h>
 //#include <glad/glad.h>
 #include "Ukemochi-Engine/Graphics/Renderer.h"
+#include "ImGui/ImGuiCore.h"
 
 Renderer render;
 namespace UME {
@@ -19,18 +20,21 @@ namespace UME {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 		render.init();
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 	}
 
 	Application::~Application()
 	{
+		imguiInstance.ImGuiClean();
 	}
 
 	void Application::EventIsOn(Event& e)
 	{
+		imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-
-		//UME_ENGINE_TRACE("{0}", e.ToString());
+		UME_ENGINE_TRACE("{0}", e.ToString());
 	}
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
@@ -77,7 +81,13 @@ namespace UME {
 
 			//render.drawBox(0, 0, 100, 100, true);
 			render.render();
-			m_Window->OnUpdate();
+
+			imguiInstance.NewFrame();
+
+
+			imguiInstance.ImGuiUpdate(); // Render ImGui elements
+
+
 			if (Input::IsKeyPressed(GLFW_KEY_W))
 			{
 				// If 'W' key is pressed, move forward
@@ -101,6 +111,8 @@ namespace UME {
 				// Update the last time we displayed the FPS
 				lastFPSDisplayTime = currentTime;
 			}
+
+			m_Window->OnUpdate();
 		}
 	}
 }

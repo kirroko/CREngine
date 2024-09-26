@@ -4,8 +4,14 @@
     <Filter Include="Platform">
       <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform\ImGuiOpenGl">
+      <UniqueIdentifier>{B984C8FE-A513-52C8-4E32-66C33AA0626E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine">
       <UniqueIdentifier>{9D9C9A89-0928-084E-1239-8B427E43644E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\ECS">
+      <UniqueIdentifier>{6797BCD8-D3F8-99E6-5C66-E098C8C6D0A5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Ukemochi-Engine\Events">
       <UniqueIdentifier>{E155E845-CD4F-1198-B6BC-A7A8A2557704}</UniqueIdentifier>
@@ -13,11 +19,17 @@
     <Filter Include="Ukemochi-Engine\Graphics">
       <UniqueIdentifier>{7DE5B8FC-690A-087D-9255-ED0C7ED9069B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\ImGui">
+      <UniqueIdentifier>{87539FFA-F3BF-5AF5-BCB3-F25228DF7C5D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Logs">
       <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.h">
+      <Filter>Platform\ImGuiOpenGl</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -28,6 +40,24 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Core.h">
       <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h">
       <Filter>Ukemochi-Engine</Filter>
@@ -65,6 +95,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h">
+      <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Input.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
@@ -77,20 +110,32 @@
     <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
-    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h" />
-    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h" />
-    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h" />
-    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h" />
-    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
+      <Filter>Platform\ImGuiOpenGl</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\PreCompile.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp">
       <Filter>Ukemochi-Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
       <Filter>Ukemochi-Engine</Filter>
@@ -113,16 +158,14 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp">
+      <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Input.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
   </ItemGroup>
 </Project>

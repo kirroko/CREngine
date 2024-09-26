@@ -3,6 +3,7 @@
 #include "../Platform/WindowsWindow.h"
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
+#include "ImGui/ImGuiCore.h"
 
 namespace UME {
 
@@ -27,6 +28,8 @@ namespace UME {
 		bool m_running = true;
 
 		static Application* s_Instance;
+
+		UseImGui imguiInstance;
 	};
 
 	// To be defined in CLIENT (GAME)
