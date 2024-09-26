@@ -49,7 +49,8 @@ namespace UME {
 
 
 		render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
-		render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+		render.drawBox(800.f, 450.f, 100.f, 100.f);
 
 		while (m_running)
 		{
@@ -66,18 +67,23 @@ namespace UME {
 				accumulator -= fixedTimeStep;
 			}
 
-			/*glClearColor(1, 0, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
-			m_Window->OnUpdate();*/
-			
-			//// Add a box and a circle
-			//render.addObjects(GameObject(100.0f, 200.0f, 50.0f, 50.0f, true));  // Box
-			//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
-			//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
+			// Get the current time
+			double Time = glfwGetTime();
 
-			//render.drawBox(0, 0, 100, 100, true);
+			// Check for 'S' key press and toggle scaling, using a debounce timer
+			if (Input::IsKeyPressed(GLFW_KEY_S))
+			{
+				render.ToggleInputsForScale();
+			}
+
+			if (Input::IsKeyPressed(GLFW_KEY_R))
+			{
+				render.ToggleInputsForRotation();
+			}
+		
 			render.render();
 			m_Window->OnUpdate();
+
 			if (Input::IsKeyPressed(GLFW_KEY_W))
 			{
 				// If 'W' key is pressed, move forward

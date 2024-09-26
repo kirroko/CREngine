@@ -9,7 +9,6 @@
 #include "PreCompile.h"
 #include "Renderer.h"
 
-
 /*!
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
@@ -134,15 +133,55 @@ void Renderer::render()
 	// Clean the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	// Tell OpenGL which Shader Program we want to use
-	shaderProgram->Activate();
-	//shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
-	
+	//// Hard-code the scaling factor for testing
+	//bool applyScaling = true;  // Toggle this manually to enable/disable scaling
+	//float scaleFactor = applyScaling ? 0.5f : 1.0f;
+
+	//// Hard-code the rotation angle for testing
+	//rotation_angle += 0.01f;  // Increment the rotation for continuous rotation (or set a fixed angle)
+
+	//// Tell OpenGL which Shader Program we want to use
+	//shaderProgram->Activate();
+	//
+	//// Apply a scaling transformation using GLM
+	//glm::mat4 model = glm::mat4(1.0f);  // Identity matrix
+	//model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));  // Apply rotation around the Z-axis
+	//model = glm::scale(model, glm::vec3(scaleFactor, scaleFactor, 1.0f));  // Scale in x and y
+
+	//// Send the model matrix to the vertex shader
+	//shaderProgram->setMat4("model", model);
+
 	// Loop over each VAO and draw objects
 	for (size_t i = 0; i < vaos.size(); ++i)
 	{
 		vaos[i]->Bind();
-	
+
+		// Create the model matrix
+		glm::mat4 model = glm::mat4(1.0f);  // Identity matrix
+
+		// Apply scaling if enabled
+		if (scale_enabled)
+		{
+			model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));  // Apply scaling
+		}
+
+		// Apply rotation if enabled
+		if (rotation_enabled)
+		{
+			// Apply the fixed rotation speed
+			rotation_angle += rotation_speed;  // Fixed speed of 0.01f radians
+
+			// Cap the rotation angle between 0 and 360 degrees
+			if (rotation_angle >= 360.0f)
+				rotation_angle -= 360.0f;
+
+			// Apply rotation to the model matrix
+			model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
+		}
+
+		// Send the model matrix to the shader
+		shaderProgram->setMat4("model", model);
+
 		// Binds texture so that is appears in rendering
 		if (textures_enabled[i])
 		{
@@ -253,6 +292,10 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 
 	// Set up the texture for the box
 	setUpTextures(texturePath);
+
+	//debug_mode_enabled = true;
+	if (debug_mode_enabled)
+		drawDebugBox(x, y, width, height);
 }
 
 /*!
@@ -323,3 +366,64 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::strin
 	// Set up the texture for the circle
 	setUpTextures(texturePath);
 }
+
+void Renderer::ToggleInputsForScale()
+{
+	scale_enabled = !scale_enabled;
+	// Adjust scale factor when toggled
+	if (scale_enabled)
+	scale_factor = 0.5f;
+	else
+	scale_factor = 1.0f;
+}
+
+void Renderer::ToggleInputsForRotation()
+{
+	rotation_enabled = !rotation_enabled;
+	if (!rotation_enabled)
+	{
+		rotation_angle = 0.f;
+	}
+}
+
+
+void Renderer::drawDebugBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+{
+	//// Convert screen coordinates to NDC
+	//GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	//GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+
+	//// Convert width and height from screen space to NDC scaling
+	//GLfloat new_width = (2.0f * width) / screen_width;
+	//GLfloat new_height = (2.0f * height) / screen_height;
+
+	//// Adjust vertices so that the position (x, y) represents the center of the box
+	//GLfloat half_width = new_width / 2.0f;
+	//GLfloat half_height = new_height / 2.0f;
+
+	//// Define the vertices for the AABB (wireframe)
+	//GLfloat vertices_box[] = {
+	//	new_x - half_width, new_y + half_height, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Top-left
+	//	new_x - half_width, new_y - half_height, 0.0f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
+	//	new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
+	//	new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
+	//};
+
+	//// Indices for drawing the box outline
+	//GLuint indices_box[] = {
+	//	0, 1, 2, 3  // Connecting all the edges to form a loop
+	//};
+
+	//// Double-check the sizes before passing them to setUpBuffers
+	//std::cout << "Vertices size: " << sizeof(vertices_box) << std::endl;
+	//std::cout << "Indices size: " << sizeof(indices_box) << std::endl;
+
+	//// Set up buffers and draw lines
+	//setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	//// Draw using GL_LINE_LOOP for a clean wireframe outline
+	//glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);  // 4 vertices form the loop
+
+	//std::cout << "hi\n";
+}
+

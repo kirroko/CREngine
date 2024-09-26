@@ -83,6 +83,15 @@ public:
      */
     void drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath = "", GLint segments = 1000);
 
+    // Function to Keyboard input
+    void ToggleInputsForScale();
+    GLboolean scale_enabled = false;  // Scale toggle state
+    void ToggleInputsForRotation(); 
+    GLboolean rotation_enabled = false;  // Tracks whether rotation is enabled 
+    GLfloat rotation_angle = 0.01f;    // The current rotation angle 
+    GLfloat rotation_speed = 0.01f;   // Degrees per second for rotation 
+    GLdouble lastRotationTime = 0.0;  // Time tracking for rotation update 
+
 private:
     /*!
     * @brief Pointer to the Shader object, which handles the OpenGL shaders.
@@ -138,6 +147,12 @@ private:
      * @param texturePath The file path to the texture to be loaded.
      */
     void setUpTextures(const std::string& texturePath);
+
+    GLboolean debug_mode_enabled;
+    void drawDebugBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+
+    GLfloat scale_factor = 1.0f;
+   
 
 };
 #endif
