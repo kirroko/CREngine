@@ -175,6 +175,7 @@
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
@@ -233,6 +235,13 @@
     <ProjectReference Include="vendor\Glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,6 +14,8 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "PreCompile.h"
 #include "GSM.h"
 #include "MainMenu.h"
+#include "Level1.h"
+#include <iostream>
 
 namespace Ukemochi
 {
@@ -21,23 +23,23 @@ namespace Ukemochi
 
 	FP gsm_fpLoad = nullptr, gsm_fpInitialize = nullptr, gsm_fpUpdate = nullptr, gsm_fpDraw = nullptr, gsm_fpFree = nullptr, gsm_fpUnload = nullptr;
 
-	void GSM_Initialize(int startingState)//initialize the state manager
+	void GSM_Initialize(int startingState) // initialize the state manager
 	{
 		gsm_current = gsm_previous = gsm_next = startingState;
 
-		//some additional code
-		//std::cout << "GSM:Initialize" << '\n';
+		// some additional code
+		// std::cout << "GSM:Initialize" << '\n';
 	}
 
-	void GSM_Update()//updating the gamestate when the game is running
+	void GSM_Update() // updating the gamestate when the game is running
 	{
-		//some unfinished code here
-		//std::cout << "GSM:Update" << '\n';
+		// some unfinished code here
+		// std::cout << "GSM:Update" << '\n';
 
 		switch (gsm_current)
 		{
 		case GS_MAINMENU:
-			//change gamestate to level mainmenu
+			// change gamestate to level mainmenu
 			gsm_fpLoad = MainMenu_Load;
 			gsm_fpInitialize = MainMenu_Initialize;
 			gsm_fpUpdate = MainMenu_Update;
@@ -46,13 +48,13 @@ namespace Ukemochi
 			gsm_fpUnload = MainMenu_Unload;
 			break;
 		case GS_LEVEL1:
-			//change gamestate to level 1
-			//gsm_fpLoad = Level1_Load;
-			//gsm_fpInitialize = Level1_Initialize;
-			//gsm_fpUpdate = Level1_Update;
-			//gsm_fpDraw = Level1_Draw;
-			//gsm_fpFree = Level1_Free;
-			//gsm_fpUnload = Level1_Unload;
+			// change gamestate to level 1
+			gsm_fpLoad = Level1_Load;
+			gsm_fpInitialize = Level1_Initialize;
+			gsm_fpUpdate = Level1_Update;
+			gsm_fpDraw = Level1_Draw;
+			gsm_fpFree = Level1_Free;
+			gsm_fpUnload = Level1_Unload;
 			break;
 		case GS_RESTART:
 			break;
@@ -61,6 +63,5 @@ namespace Ukemochi
 		default:
 			break;
 		}
-
 	}
 }

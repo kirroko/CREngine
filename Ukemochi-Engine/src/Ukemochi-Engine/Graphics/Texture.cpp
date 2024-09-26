@@ -1,8 +1,27 @@
+/*!
+ * @file    Texture.cpp
+ * @brief   This file contains the implementation of the Texture class, responsible for loading, binding, and managing OpenGL textures.
+ *          It includes functionality to bind textures to shaders and manage their lifecycle (e.g., creation, binding, and deletion).
+ *          The class interacts with shaders to apply textures to objects during rendering.
+ *          The STB image library is used to load image files into OpenGL textures.
+ * @author  t.shunzhitomy@digipen.edu
+ * @date    25/09/2024
+ */
+
 #include "PreCompile.h"
 #include"Texture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../vendor/stb/stb_image.h"
 
+ /*!
+  * @brief Constructor that loads and creates an OpenGL texture from an image file.
+  *        The texture is assigned to a specific texture unit and configured with filtering and wrapping options.
+  * @param image The path to the image file to load as a texture.
+  * @param texType The type of texture (e.g., GL_TEXTURE_2D).
+  * @param slot The texture unit slot to bind the texture to (e.g., GL_TEXTURE0).
+  * @param format The format of the image data (e.g., GL_RGBA or GL_RGB).
+  * @param pixelType The data type of the image's pixel data (e.g., GL_UNSIGNED_BYTE).
+  */
 Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
 {
 	// Assigns the type of the texture ot the texture object
@@ -45,6 +64,13 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 	glBindTexture(texType, 0);
 }
 
+/*!
+ * @brief Assigns a texture unit to a shader uniform.
+ *        This function links the texture to the shader by specifying the texture unit.
+ * @param shader The shader program to which the texture will be assigned.
+ * @param uniform The name of the uniform variable in the shader.
+ * @param unit The texture unit to assign (e.g., 0 for GL_TEXTURE0).
+ */
 void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 {
 	// Gets the location of the uniform
@@ -55,16 +81,25 @@ void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 	glUniform1i(texUni, unit);
 }
 
+/*!
+ * @brief Binds the texture, making it active for subsequent OpenGL operations.
+ */
 void Texture::Bind()
 {
 	glBindTexture(type, ID);
 }
 
+/*!
+ * @brief Unbinds the texture, deactivating it for subsequent OpenGL operations.
+ */
 void Texture::Unbind()
 {
 	glBindTexture(type, 0);
 }
 
+/*!
+ * @brief Deletes the texture from OpenGL, freeing its resources.
+ */
 void Texture::Delete()
 {
 	glDeleteTextures(1, &ID);

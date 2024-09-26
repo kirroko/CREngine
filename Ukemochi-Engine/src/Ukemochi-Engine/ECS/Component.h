@@ -58,3 +58,5 @@ namespace Ukemochi
 		void EntityDestroyed(EntityID entity);
 	};
 }
+#include "Component.tpp"
+// 0x4B45414E
