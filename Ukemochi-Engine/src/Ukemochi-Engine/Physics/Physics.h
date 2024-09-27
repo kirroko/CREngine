@@ -16,9 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include "Rigidbody2D.h"                // for Rigidbody2D component
-#include "../Collision/BoxCollider2D.h" // for BoxCollider2D component
-#include "../ECS/Systems.h"             // for System inheritance
+#include "../ECS/Components.h" // for Rigidbody2D, BoxCollider2D components
+#include "../ECS/Systems.h"    // for System inheritance
 
 namespace Ukemochi
 {

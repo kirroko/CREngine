@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header
 *******************************************************************/
 #pragma once
+
 #include "PreCompile.h"
 #include "../Math/Vector2D.h" // for Vec2 struct
 
@@ -29,6 +30,10 @@ namespace Ukemochi
 		Vec2 scale;
 	};
 
+	/*!***********************************************************************
+    \brief
+     Rigidbody2D component structure.
+    *************************************************************************/
 	struct Rigidbody2D
 	{
 		Vec2 position_curr{};
@@ -41,16 +46,22 @@ namespace Ukemochi
 		float angle{};
 		float angular_velocity{};
 		float angular_acceleration{};
-
-		bool active{ true };
 	};
 
+	/*!***********************************************************************
+    \brief
+     CircleCollider2D component structure.
+    *************************************************************************/
 	struct CircleCollider2D
 	{
 		Vec2 m_center;
 		float m_radius;
 	};
 
+	/*!***********************************************************************
+    \brief
+     BoxCollider2D (Axis-Aligned Bounding Box) component structure.
+    *************************************************************************/
 	struct BoxCollider2D
 	{
 		Vec2 min;

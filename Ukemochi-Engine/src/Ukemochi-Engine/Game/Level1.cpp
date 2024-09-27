@@ -21,8 +21,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "../Physics/Physics.h"			// for physics system
 //#include "../Graphics/Renderer.h"		// for render system
 
-#include "../Collision/BoxCollider2D.h" // for BoxCollider2D component
-#include "../Physics/Rigidbody2D.h"		// for Rigidbody2D component
+#include "../ECS/Components.h" // for Rigidbody2D, BoxCollider2D component
 
 // --- TEMP player variables ---
 Ukemochi::BoxCollider2D player_box_collider;
