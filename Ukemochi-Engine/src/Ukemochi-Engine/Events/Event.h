@@ -8,7 +8,7 @@ namespace UME {
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved, AppTick,
-		AppUpdate, AppRender, KeyPressed, KeyReleased, MouseButtonPressed, MouseButtonReleased,
+		AppUpdate, AppRender, KeyPressed, KeyReleased, KeyTyped, MouseButtonPressed, MouseButtonReleased,
 		MouseMoved, MouseScrolled
 	};
 

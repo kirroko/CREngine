@@ -13,9 +13,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
 IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
+IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
 
 include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
+include "Ukemochi-Engine/vendor/imgui"
 
 project "Ukemochi-Engine"
 	location "Ukemochi-Engine"
@@ -39,7 +41,8 @@ project "Ukemochi-Engine"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}"
 
 	}
 
@@ -47,6 +50,7 @@ project "Ukemochi-Engine"
 	{
 		"GLFW",
 		"Glad",
+		"ImGui",
 		"opengl32.lib"
 	}
 	filter "system:windows"

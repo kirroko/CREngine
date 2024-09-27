@@ -18,6 +18,7 @@
 #include <Ukemochi-Engine/Input.h>
 //#include <glad/glad.h>
 #include "Ukemochi-Engine/Graphics/Renderer.h"
+#include "ImGui/ImGuiCore.h"
 
 Renderer render;
 using namespace Ukemochi;
@@ -33,18 +34,21 @@ namespace UME {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 		render.init();
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 	}
 
 	Application::~Application()
 	{
+		imguiInstance.ImGuiClean();
 	}
 
 	void Application::EventIsOn(Event& e)
 	{
+		imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-
-		//UME_ENGINE_TRACE("{0}", e.ToString());
+		UME_ENGINE_TRACE("{0}", e.ToString());
 	}
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
@@ -154,6 +158,20 @@ namespace UME {
 					//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
 					//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
 
+			//render.drawBox(0, 0, 100, 100, true);
+			render.render();
+
+			imguiInstance.NewFrame();
+
+
+			imguiInstance.ImGuiUpdate(); // Render ImGui elements
+
+
+			if (Input::IsKeyPressed(GLFW_KEY_W))
+			{
+				// If 'W' key is pressed, move forward
+				UME_ENGINE_INFO("W key is pressed");
+			}
 					//render.drawBox(0, 0, 100, 100, true);
 					render.render();
 					m_Window->OnUpdate();
