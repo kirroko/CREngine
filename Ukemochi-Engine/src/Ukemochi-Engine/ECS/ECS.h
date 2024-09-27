@@ -74,6 +74,9 @@ namespace Ukemochi
 		std::shared_ptr<T> RegisterSystem();
 
 		template<typename T>
+		std::shared_ptr<T> GetSystem();
+
+		template<typename T>
 		void SetSystemSignature(SignatureID signature);
 	};
 }

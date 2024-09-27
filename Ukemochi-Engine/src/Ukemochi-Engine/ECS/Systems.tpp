@@ -33,6 +33,16 @@ namespace Ukemochi
 	}
 
 	template <typename T>
+	std::shared_ptr<T> SystemManager::GetSystem()
+	{
+		const char* typeName = typeid(T).name();
+		
+		assert(m_Systems.find(typeName) != m_Systems.end() && "System used before registered.");
+
+		return std::static_pointer_cast<T>(m_Systems[typeName]);
+	}
+
+	template <typename T>
 	void SystemManager::SetSystemSignature(SignatureID signature)
 	{
 		const char* typeName = typeid(T).name();

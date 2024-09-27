@@ -80,6 +80,7 @@ namespace UME {
 		ECS::GetInstance().RegisterSystem<Collision>();
 		ECS::GetInstance().RegisterComponent<SpriteRender>();
 		auto render = ECS::GetInstance().RegisterSystem<Renderer>();
+		auto physics = ECS::GetInstance().GetSystem<PhysicsSystem>();
 		render->init();
 
 		// Set a signature to your system
