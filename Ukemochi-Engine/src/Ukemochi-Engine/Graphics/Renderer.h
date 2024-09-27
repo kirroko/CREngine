@@ -89,9 +89,10 @@ public:
     void ToggleInputsForRotation(); 
     GLboolean rotation_enabled = false;  // Tracks whether rotation is enabled 
     GLfloat rotation_angle = 0.01f;    // The current rotation angle 
-    GLfloat rotation_speed = 0.01f;   // Degrees per second for rotation 
-    GLdouble lastRotationTime = 0.0;  // Time tracking for rotation update 
-
+    GLfloat rotation_speed = 0.5f;   // Degrees per second for rotation 
+    
+    void drawDebugBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+    GLboolean debug_mode_enabled = false;
 private:
     /*!
     * @brief Pointer to the Shader object, which handles the OpenGL shaders.
@@ -148,8 +149,8 @@ private:
      */
     void setUpTextures(const std::string& texturePath);
 
-    GLboolean debug_mode_enabled;
-    void drawDebugBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+   
+    
 
     GLfloat scale_factor = 1.0f;
    

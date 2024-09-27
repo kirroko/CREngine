@@ -104,15 +104,14 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	VBO* vbo = new VBO(vertices, vertSize);
 	EBO* ebo = new EBO(indices, indexSize);
 
-	// Bind the VAO and set up the attributes
 	vao->Bind();
 	vbo->Bind();
 	ebo->Bind();
+
 	vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 	vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-	// Unbind after setting
 	vao->Unbind();
 	vbo->Unbind();
 	ebo->Unbind();
@@ -132,29 +131,15 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	// Clean the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	//// Hard-code the scaling factor for testing
-	//bool applyScaling = true;  // Toggle this manually to enable/disable scaling
-	//float scaleFactor = applyScaling ? 0.5f : 1.0f;
-
-	//// Hard-code the rotation angle for testing
-	//rotation_angle += 0.01f;  // Increment the rotation for continuous rotation (or set a fixed angle)
-
-	//// Tell OpenGL which Shader Program we want to use
-	//shaderProgram->Activate();
-	//
-	//// Apply a scaling transformation using GLM
-	//glm::mat4 model = glm::mat4(1.0f);  // Identity matrix
-	//model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));  // Apply rotation around the Z-axis
-	//model = glm::scale(model, glm::vec3(scaleFactor, scaleFactor, 1.0f));  // Scale in x and y
-
-	//// Send the model matrix to the vertex shader
-	//shaderProgram->setMat4("model", model);
+	glEnable(GL_DEPTH_TEST);
 
 	// Loop over each VAO and draw objects
 	for (size_t i = 0; i < vaos.size(); ++i)
 	{
 		vaos[i]->Bind();
+
+		// Activate the shader program
+		shaderProgram->Activate();
 
 		// Create the model matrix
 		glm::mat4 model = glm::mat4(1.0f);  // Identity matrix
@@ -192,8 +177,24 @@ void Renderer::render()
 		{
 			shaderProgram->setBool("useTexture", false);
 		}
-		glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+
+		if (debug_mode_enabled)
+		{
+			// Render regular objects with fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Ensure normal objects are drawn filled
+			glDrawElements(GL_LINE_LOOP, indices_count[i], GL_UNSIGNED_INT, 0);
+		}
+		else
+		{
+			// Render regular objects with fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Ensure normal objects are drawn filled
+			glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+		}
+		
+
+		vaos[i]->Unbind();
 	}
+
 }
 
 /*!
@@ -293,9 +294,6 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 	// Set up the texture for the box
 	setUpTextures(texturePath);
 
-	//debug_mode_enabled = true;
-	if (debug_mode_enabled)
-		drawDebugBox(x, y, width, height);
 }
 
 /*!
@@ -384,46 +382,5 @@ void Renderer::ToggleInputsForRotation()
 	{
 		rotation_angle = 0.f;
 	}
-}
-
-
-void Renderer::drawDebugBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
-{
-	//// Convert screen coordinates to NDC
-	//GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	//GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-
-	//// Convert width and height from screen space to NDC scaling
-	//GLfloat new_width = (2.0f * width) / screen_width;
-	//GLfloat new_height = (2.0f * height) / screen_height;
-
-	//// Adjust vertices so that the position (x, y) represents the center of the box
-	//GLfloat half_width = new_width / 2.0f;
-	//GLfloat half_height = new_height / 2.0f;
-
-	//// Define the vertices for the AABB (wireframe)
-	//GLfloat vertices_box[] = {
-	//	new_x - half_width, new_y + half_height, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Top-left
-	//	new_x - half_width, new_y - half_height, 0.0f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
-	//	new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
-	//	new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
-	//};
-
-	//// Indices for drawing the box outline
-	//GLuint indices_box[] = {
-	//	0, 1, 2, 3  // Connecting all the edges to form a loop
-	//};
-
-	//// Double-check the sizes before passing them to setUpBuffers
-	//std::cout << "Vertices size: " << sizeof(vertices_box) << std::endl;
-	//std::cout << "Indices size: " << sizeof(indices_box) << std::endl;
-
-	//// Set up buffers and draw lines
-	//setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
-
-	//// Draw using GL_LINE_LOOP for a clean wireframe outline
-	//glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);  // 4 vertices form the loop
-
-	//std::cout << "hi\n";
 }
 
