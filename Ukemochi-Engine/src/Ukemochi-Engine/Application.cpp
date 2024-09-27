@@ -9,8 +9,11 @@
 #include <Ukemochi-Engine/Input.h>
 //#include <glad/glad.h>
 #include "Ukemochi-Engine/Graphics/Renderer.h"
+#include "Audio/Audio.h"
+
 
 Renderer render;
+
 using namespace Ukemochi;
 
 namespace UME {
@@ -83,6 +86,11 @@ namespace UME {
 
 		render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
 		render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+
+		Audio audio;
+		audio.CreateGroup("test");
+		audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
+		audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
 
 		while (m_running)
 		{
