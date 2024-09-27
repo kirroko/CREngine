@@ -133,6 +133,8 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
+	drawBox(800.f, 450.f, 100.f, 100.f, "");
+
 	// Loop over each VAO and draw objects
 	for (size_t i = 0; i < vaos.size(); ++i)
 	{
@@ -178,21 +180,16 @@ void Renderer::render()
 			shaderProgram->setBool("useTexture", false);
 		}
 
-		if (debug_mode_enabled)
-		{
-			// Render regular objects with fill mode
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Ensure normal objects are drawn filled
-			glDrawElements(GL_LINE_LOOP, indices_count[i], GL_UNSIGNED_INT, 0);
-		}
-		else
-		{
-			// Render regular objects with fill mode
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Ensure normal objects are drawn filled
-			glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+
+		// If debug mode is enabled, draw wireframe outlines
+		if (debug_mode_enabled) {
+			shaderProgram->setBool("debug", true);
+			drawBoxOutline(800.f, 450.f, 100.f, 100.f);
 		}
 		
-
 		vaos[i]->Unbind();
+
 	}
 
 }
@@ -274,16 +271,19 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 
 	// Define the vertices for the box, centered around (new_x, new_y)
 	GLfloat vertices_box[] = {
-		new_x - half_width, new_y + half_height, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
-		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
+		new_x - half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 0.0f,   0.0f, 1.0f,   // Top-left
+		new_x - half_width, new_y - half_height, 0.0f,  0.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
+		new_x + half_width, new_y - half_height, 0.0f,  0.0f, 0.0f, 0.0f,   1.0f, 0.0f,   // Bottom-right
+		new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 0.0f,   1.0f, 1.0f    // Top-right
 	};
 	// Define indices to form two triangles 
 	GLuint indices_box[] = {
 	0, 1, 2, // First triangle  
 	0, 2, 3  // Second triangle
 	};
+
+	// ** Set the object color for the filled box (e.g., white) **
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set uniform to white
 
 	// Set up buffers
 	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
@@ -293,7 +293,6 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 
 	// Set up the texture for the box
 	setUpTextures(texturePath);
-
 }
 
 /*!
@@ -384,3 +383,46 @@ void Renderer::ToggleInputsForRotation()
 	}
 }
 
+
+void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height) {
+	// Convert screen coordinates to normalized device coordinates (NDC)
+	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+	GLfloat new_width = (2.0f * width) / screen_width;
+	GLfloat new_height = (2.0f * height) / screen_height;
+
+	GLfloat half_width = new_width / 2.0f;
+	GLfloat half_height = new_height / 2.0f;
+
+	// Define the vertices for the box outline (positions only)
+	GLfloat vertices_box[] = {
+		new_x - half_width, new_y + half_height, 0.0f,  // Top-left
+		new_x - half_width, new_y - half_height, 0.0f,  // Bottom-left
+		new_x + half_width, new_y - half_height, 0.0f,  // Bottom-right
+		new_x + half_width, new_y + half_height, 0.0f   // Top-right
+	};
+
+	// Activate the shader program
+	shaderProgram->Activate();
+
+	// ** Set the wireframe color to red **
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
+
+	// Set to wireframe mode and increase line width for visibility
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2.0f);  // Make the wireframe lines thicker
+
+	// Enable the vertex attribute for position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices_box);
+
+	// Draw the outline using GL_LINE_LOOP
+	glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+	// Disable the vertex array and reset to fill mode
+	glDisableVertexAttribArray(0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	// Reset line width back to default
+	glLineWidth(1.0f);
+}

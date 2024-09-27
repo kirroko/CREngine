@@ -48,9 +48,9 @@ namespace UME {
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
 
-		//render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
+		
 		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
-		render.drawBox(800.f, 450.f, 100.f, 100.f);
+		
 		//render.drawDebugBox(0.f, 0.f, 100.f, 100.f);
 
 		bool isToggling = false;
@@ -71,7 +71,7 @@ namespace UME {
 
 			// Get the current time
 			double Time = glfwGetTime();
-
+			
 			// Check for 'S' key press and toggle scaling
 			if (Input::IsKeyPressed(GLFW_KEY_S))
 			{
@@ -93,19 +93,15 @@ namespace UME {
 			{
 				if (!isToggling)
 				{
-					
+					render.debug_mode_enabled = !render.debug_mode_enabled;
 					isToggling = true;
 				}
 			}
 			else
-			isToggling = false;
-
-			
-
-			if (Input::IsKeyPressed(GLFW_KEY_D))
 			{
-				render.debug_mode_enabled = !render.debug_mode_enabled;
+				isToggling = false;
 			}
+
 
 			render.render();
 			m_Window->OnUpdate();

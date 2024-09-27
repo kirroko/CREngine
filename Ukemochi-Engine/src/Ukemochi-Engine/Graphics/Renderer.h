@@ -91,7 +91,7 @@ public:
     GLfloat rotation_angle = 0.01f;    // The current rotation angle 
     GLfloat rotation_speed = 0.5f;   // Degrees per second for rotation 
     
-    void drawDebugBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+    void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     GLboolean debug_mode_enabled = false;
 private:
     /*!
