@@ -37,6 +37,19 @@ namespace UME
 		ImGui::NewFrame();
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
+
+		static bool showAnotherWindow = true;
+		if (showAnotherWindow)
+		{
+			ImGui::Begin("Another Window", &showAnotherWindow);   // Create a window called "Another Window"
+			ImGui::Text("This is another window!");               // Display some text
+			if (ImGui::Button("Close Me"))                        // Close button logic
+			{
+				WindowCloseEvent event;
+				app.EventIsOn(event);
+			}
+			ImGui::End();
+		}
 		/*ImGui::Begin("Sample Window");
 		ImGui::Text("Hello, world!");
 		ImGui::End();*/
