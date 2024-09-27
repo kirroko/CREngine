@@ -33,7 +33,7 @@ namespace Ukemochi
 	public:
 		static ECS& GetInstance()
 		{
-			static ECS* instance = new ECS();
+			static std::unique_ptr<ECS> instance(new ECS());
 			return *instance;
 		}
 
@@ -44,10 +44,19 @@ namespace Ukemochi
 
 		void DestroyEntity(EntityID entity);
 
-		// Component methods
+		/**
+		 * @brief Register a component type with the ECS
+		 * @tparam T The component type to register
+		 */
 		template<typename T>
 		void RegisterComponent();
 
+		/**
+		 * @brief Add a component to an entity
+		 * @tparam T The component type to add
+		 * @param entity The entity to add the component to
+		 * @param component The component to add
+		 */
 		template<typename T>
 		void AddComponent(EntityID entity, T component);
 

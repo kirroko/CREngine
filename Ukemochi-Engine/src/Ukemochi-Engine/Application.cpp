@@ -28,7 +28,7 @@ DigiPen Institute of Technology is prohibited.
 //#include <glad/glad.h>
 #include "Ukemochi-Engine/Graphics/Renderer.h"
 
-Renderer render;
+//Renderer render;
 using namespace Ukemochi;
 
 namespace UME {
@@ -41,7 +41,6 @@ namespace UME {
 		WindowProps props; // You can customize these properties if needed
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
-		render.init();
 	}
 
 	Application::~Application()
@@ -71,9 +70,12 @@ namespace UME {
 		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
 		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
+		ECS::GetInstance().RegisterComponent<SpriteRender>();
 
 		// Register your systems
 		ECS::GetInstance().RegisterSystem<PhysicsSystem>();
+		auto render = ECS::GetInstance().RegisterSystem<Renderer>();
+		render->init();
 
 		// Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
@@ -82,15 +84,37 @@ namespace UME {
 		sig.set(ECS::GetInstance().GetComponentType<Transform>());
 		ECS::GetInstance().SetSystemSignature<PhysicsSystem>(sig);
 
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<SpriteRender>());
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		ECS::GetInstance().SetSystemSignature<Renderer>(sig);
+
 		// Our entities within the game world.
-		std::vector<EntityID> entities(MAX_ENTITIES);
+		std::vector<EntityID> entities(1);
+
+		std::default_random_engine generator;
+		std::uniform_real_distribution<float> randPosition(450.0f, 800.0f);
+		std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
+		std::uniform_real_distribution<float> randScale(100.0f, 500.0f);
+
+		float scale = randScale(generator);
 
 		// Create entities
 		for (auto& entity : entities)
 		{
 			entity = ECS::GetInstance().CreateEntity();
-			ECS::GetInstance().AddComponent(entity, Transform());
+			ECS::GetInstance().AddComponent(entity, Transform{
+				Vec2(randPosition(generator),randPosition(generator)),
+				Vec2(randRotation(generator),randRotation(generator)),
+				Vec2(scale,scale)
+				});
 			ECS::GetInstance().AddComponent(entity, Rigidbody2D());
+			ECS::GetInstance().AddComponent(entity, SpriteRender{
+				"../Assets/Textures/container.jpg",
+				SPRITE_SHAPE::BOX,
+				true,
+				1.0f
+				});
 		}
 
 		double accumulator = 0.0;
@@ -99,8 +123,8 @@ namespace UME {
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
-		render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
-		render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+		//render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
+		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
 
 		while (m_running)
 		{
@@ -124,9 +148,10 @@ namespace UME {
 				//Init Scene
 				gsm_fpInitialize();
 
-				glClearColor(1, 0, 1, 1);
-				glClear(GL_COLOR_BUFFER_BIT);
-				m_Window->OnUpdate();
+				//glClearColor(1, 0, 1, 1);
+				//glClear(GL_COLOR_BUFFER_BIT);
+				//m_Window->OnUpdate();
+
 				if (Input::IsKeyPressed(GLFW_KEY_W))
 				{
 					// If 'W' key is pressed, move forward
@@ -161,7 +186,8 @@ namespace UME {
 					//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
 
 					//render.drawBox(0, 0, 100, 100, true);
-					render.render();
+					//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+					render->render();
 					m_Window->OnUpdate();
 					if (Input::IsKeyPressed(GLFW_KEY_W))
 					{
@@ -207,6 +233,6 @@ namespace UME {
 			}
 		}
 
-		render.cleanUp();
+		render->cleanUp();
 	}
 }

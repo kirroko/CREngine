@@ -32,17 +32,19 @@ namespace Ukemochi
 
 	void SystemManager::EntitySignatureChanged(EntityID entity, SignatureID entitySignature)
 	{
+		// Notify each system that an entity's signature changed
 		for (auto const& pair : m_Systems)
 		{
 			auto const& type = pair.first;
 			auto const& system = pair.second;
 			auto const& systemSignature = m_Signatures[type];
 
+			// Entity signature matches system signature - insert into set
 			if ((entitySignature & systemSignature) == systemSignature)
 			{
 				system->m_Entities.insert(entity);
 			}
-			else
+			else // Entity signature does not match system signature - erase from set
 			{
 				system->m_Entities.erase(entity);
 			}
