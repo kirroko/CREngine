@@ -1,3 +1,11 @@
+/*!
+ * @file    Renderer.h
+ * @brief   This file contains the declaration of the Renderer class responsible
+			for handling OpenGL rendering, including setting up shaders, buffers,
+			textures, and rendering 2D objects like boxes and circles.
+ * @author  t.shunzhitomy@digipen.edu
+ * @date    25/09/2024
+ */
 #ifndef RENDERER_CLASS_H
 #define RENDERER_CLASS_H
 #include<iostream>
@@ -9,69 +17,137 @@
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
 #include <cmath> // Might need to remove later on
 #include <vector> // Might need to remove later on
+#include <algorithm>
 
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include "../ECS/ECS.h"
 
-enum class ObjectType { Box, Circle };
-
-class GameObject {
-
-public:
-    ObjectType type;
-    GLfloat x, y;
-    GLfloat width, height;
-    GLfloat radius;
-    GLboolean enable_texture;
-
-    GameObject(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture)
-        : type(ObjectType::Box), x(x), y(y), width(width), height(height), enable_texture(enable_texture) {};
-
-    GameObject(GLfloat x, GLfloat y, GLfloat radius, GLboolean enable_texture)
-        : type(ObjectType::Circle), x(x), y(y), radius(radius), enable_texture(enable_texture) {};
-
-};
-
-
-class Renderer
+ /*!
+  * @class Renderer
+  * @brief A class that manages OpenGL rendering, shader setup, texture handling, and rendering 2D objects like boxes and circles.
+  */
+class Renderer : public Ukemochi::System
 {
 public:
-    Renderer();
-    ~Renderer();
+	/*!
+	 * @brief Constructor for the Renderer class.
+	 * Initializes OpenGL objects and prepares the renderer.
+	 */
+	Renderer();
+	/*!
+	* @brief Destructor for the Renderer class.
+	* Cleans up all allocated OpenGL resources.
+	*/
+	~Renderer();
 
-    void init();
-    void render();
-    void cleanUp();
+	/*!
+	 * @brief Initializes the renderer by setting up necessary resources, such as shaders.
+	 * This function should be called once before rendering any objects.
+	 */
+	void init();
 
-    std::vector<GameObject> testObjects;
+	/*!
+	 * @brief Renders all the objects (boxes and circles) set up by the renderer.
+	 * This function is responsible for drawing each VAO and applying its corresponding texture.
+	 */
+	void render();
 
-    void addObjects(const GameObject& object);
-    void renderObjects();
+	/*!
+	 * @brief Cleans up and releases all OpenGL resources (e.g., VAOs, VBOs, EBOs, textures, shaders).
+	 */
+	void cleanUp();
 
-    static int const screen_width = 1600;
-    static int const screen_height = 900;
+	static int const screen_width = 1600;
+	static int const screen_height = 900;
 
-    void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLboolean enable_texture);
-    void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLboolean useTexture, GLint segments = 1000);
+	/*!
+	 * @brief Draws a 2D box at the specified position with the given dimensions and optional texture.
+	 * @param x The x-coordinate of the center of the box (in screen space).
+	 * @param y The y-coordinate of the center of the box (in screen space).
+	 * @param width The width of the box (in screen space).
+	 * @param height The height of the box (in screen space).
+	 * @param texturePath Optional file path to the texture for the box. Default is an empty string, indicating no texture.
+	 */
+	void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath = "");
+
+	/*!
+	 * @brief Draws a 2D circle at the specified position with the given radius and optional texture.
+	 * @param x The x-coordinate of the center of the circle (in screen space).
+	 * @param y The y-coordinate of the center of the circle (in screen space).
+	 * @param radius The radius of the circle (in screen space).
+	 * @param texturePath Optional file path to the texture for the circle. Default is an empty string, indicating no texture.
+	 * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles). Default is 1000.
+	 */
+	void drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath = "", GLint segments = 1000);
 
 private:
-    GLFWwindow* window;
-    Shader* shaderProgram;
-    VAO* vao;
-    VBO* vbo;
-    EBO* ebo;
-    Texture* container;
-    GLboolean use_texture;
+	/*!
+	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
+	*/
+	Shader* shaderProgram;
 
-    void setUpScene();
-    void setUpShaders();
-    void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
-    void setUpTextures();
-    void createWindow();
+	/*!
+	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.
+	 */
+	std::vector<VAO*> vaos;
 
+	/*!
+	* @brief Vector storing the pointers to VBOs (Vertex Buffer Objects) used for rendering.
+	*/
+	std::vector<VBO*> vbos;
 
+	/*!
+	 * @brief Vector storing the pointers to EBOs (Element Buffer Objects) used for rendering.
+	 */
+	std::vector<EBO*> ebos;
+
+	/*!
+	 * @brief Vector storing the number of indices for each object, used for rendering with glDrawElements().
+	 */
+	std::vector<size_t> indices_count;
+
+	/*!
+	 * @brief Vector storing boolean flags indicating whether a texture is enabled for each object.
+	 */
+	std::vector<GLboolean> textures_enabled;
+
+	/*!
+	 * @brief Vector storing pointers to Texture objects used by the renderer.
+	 */
+	std::vector<Texture*> textures;
+
+	/*!
+	* @brief Texture cache to manage loaded textures
+	*/
+	std::unordered_map<std::string, Texture*> textureCache;
+
+	/*!
+	 * @brief Sets up and compiles the shaders used by the renderer.
+	 */
+	void setUpShaders();
+
+	/*!
+	 * @brief Sets up the VAO, VBO, and EBO for an object.
+	 * @param vertices Pointer to the vertex data.
+	 * @param vertSize The size of the vertex data in bytes.
+	 * @param indices Pointer to the index data.
+	 * @param indexSize The size of the index data in bytes.
+	 */
+	void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
+
+	/*!
+	* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
+	*/
+	void cleanUpBuffers();
+
+	/*!
+	 * @brief Loads and sets up the texture for an object based on the provided file path.
+	 * @param texturePath The file path to the texture to be loaded.
+	 */
+	void setUpTextures(const std::string& texturePath);
 };
 #endif

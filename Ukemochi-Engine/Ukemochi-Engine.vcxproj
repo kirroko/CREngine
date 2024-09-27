@@ -78,7 +78,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -101,7 +101,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -128,7 +128,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -153,10 +153,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Factory.h" />
+    <ClInclude Include="src\Game\GameStateList.h" />
     <ClInclude Include="src\Platform\WindowsWindow.h" />
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollision2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollision2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
     <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
     <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h" />
@@ -170,6 +174,10 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
@@ -179,7 +187,14 @@
     <ClInclude Include="src\Ukemochi-Engine\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,12 +204,17 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\BoxCollision2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\CircleCollision2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
@@ -204,6 +224,12 @@
     <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Physics\Rigidbody2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
@@ -212,6 +238,13 @@
     <ProjectReference Include="vendor\Glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\Serialization\test-input.json" />
