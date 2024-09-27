@@ -49,7 +49,7 @@ project "Ukemochi-Engine"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.Fmod}"
+		"%{IncludeDir.Fmod}",
 		"%{IncludeDir.ImGui}"
 
 	}
