@@ -102,6 +102,13 @@ namespace UME {
 
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int character)
+			{
+				WindowData& info = *(WindowData*)(glfwGetWindowUserPointer(window));
+				KeyTypedEvent event(character);
+				info.EventCallback(event);
+			});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& info = *(WindowData*)(glfwGetWindowUserPointer(window));

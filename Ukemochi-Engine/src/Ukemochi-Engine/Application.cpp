@@ -3,14 +3,23 @@
 #include "Game/GSM.h"
 #include "Ukemochi-Engine/Logs/Log.h"
 #include "FrameController.h"
-#include "Physics/Rigidbody2D.h"
+
+// System Includes
+#include "Physics/Physics.h" // for physics system
+#include "Collision/Collision.h" // for collision system
+
+// Component Includes
+#include "Physics/Rigidbody2D.h" // for Rigidbody2D component
+#include "Collision/BoxCollider2D.h" // for BoxCollider2D component
+#include "Collision/CircleCollider2D.h" // for CircleCollider2D component
+
 #include "ECS/ECS.h"
 #include <iomanip>
 #include <Ukemochi-Engine/Input.h>
 //#include <glad/glad.h>
 #include "Ukemochi-Engine/Graphics/Renderer.h"
 #include "Audio/Audio.h"
-
+#include "ImGui/ImGuiCore.h"
 
 Renderer render;
 
@@ -27,18 +36,21 @@ namespace UME {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 		render.init();
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 	}
 
 	Application::~Application()
 	{
+		imguiInstance.ImGuiClean();
 	}
 
 	void Application::EventIsOn(Event& e)
 	{
+		imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-
-		//UME_ENGINE_TRACE("{0}", e.ToString());
+		UME_ENGINE_TRACE("{0}", e.ToString());
 	}
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
@@ -54,18 +66,21 @@ namespace UME {
 		// Register your components
 		ECS::GetInstance().RegisterComponent<Transform>();
 		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
-		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
+		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 
 		// Register your systems
-		ECS::GetInstance().RegisterSystem<PhysicsSystem>();
+		ECS::GetInstance().RegisterSystem<Physics>();
+		ECS::GetInstance().RegisterSystem<Collision>();
 
 		// Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
 		SignatureID sig;
-		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
 		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		ECS::GetInstance().SetSystemSignature<PhysicsSystem>(sig);
+		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+		ECS::GetInstance().SetSystemSignature<Physics>(sig);
+
+		//ECS::GetInstance().SetSystemSignature<Collision>(sig);
 
 		// Our entities within the game world.
 		std::vector<EntityID> entities(MAX_ENTITIES);
@@ -150,8 +165,22 @@ namespace UME {
 					//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
 					//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
 
+			//render.drawBox(0, 0, 100, 100, true);
+			//render.render();
+
+
+
+			if (Input::IsKeyPressed(GLFW_KEY_W))
+			{
+				// If 'W' key is pressed, move forward
+				UME_ENGINE_INFO("W key is pressed");
+			}
 					//render.drawBox(0, 0, 100, 100, true);
 					render.render();
+					imguiInstance.NewFrame();
+
+
+					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					m_Window->OnUpdate();
 					if (Input::IsKeyPressed(GLFW_KEY_W))
 					{

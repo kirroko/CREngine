@@ -14,12 +14,17 @@ IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
 IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
 IncludeDir ["Fmod"] = "Ukemochi-Engine/vendor/Fmod/inc"
+IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
+
+
 LibraryDir = {}
 LibraryDir["Fmod"] = "Ukemochi-Engine/vendor/Fmod/lib"
 
+
+include "Ukemochi-Engine/vendor/Fmod"
 include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
-include "Ukemochi-Engine/vendor/Fmod"
+include "Ukemochi-Engine/vendor/imgui"
 
 project "Ukemochi-Engine"
 	location "Ukemochi-Engine"
@@ -45,6 +50,7 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.Fmod}"
+		"%{IncludeDir.ImGui}"
 
 	}
 	
@@ -57,8 +63,9 @@ project "Ukemochi-Engine"
 	{
 		"GLFW",
 		"Glad",
+		"fmod_vc",
+		"ImGui",
 		"opengl32.lib",
-		"fmod_vc"
 	}
 	filter "system:windows"
 		cppdialect "C++17"

@@ -1,11 +1,11 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file       Rigidbody2D.h
+\file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 24, 2024
-\brief      This file contains the declaration of the Rigidbody2D component.
+\date       Sept 25, 2024
+\brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -16,32 +16,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include "../Math/Vector2D.h" // for Vector2D
-#include "../Math/Matrix3x3.h" // for Matrix3x3
+#include "Rigidbody2D.h"                // for Rigidbody2D component
 #include "../Collision/BoxCollider2D.h" // for BoxCollider2D component
+#include "../ECS/Systems.h"             // for System inheritance
 
 namespace Ukemochi
 {
+    const float GRAVITY = -9.8f;
+
     /*!***********************************************************************
     \brief
-     Rigidbody2D component structure.
+     Normalized bounding box (width and height) sizes - BoxCollider2D collision data.
     *************************************************************************/
-    struct Rigidbody2D
+    const float BOUNDING_BOX_SIZE = 0.5f;
+
+    class Physics : public System
     {
-        Vec2 position_curr{};
-        Vec2 position_prev{};
-        Vec2 velocity{};
-        Vec2 acceleration{ 7.f, 7.f };
-        Vec2 scale{ 100.f, 100.f };
-
-        float direction{};
-        float angle{};
-        float angular_velocity{};
-        float angular_acceleration{};
-
-        // temp
-        Mtx33 transform{};
-        Vec2 initial_position{};
-        bool active{ true };
+    public:
+        void UpdatePhysics();
+        static void UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box);
     };
 }
