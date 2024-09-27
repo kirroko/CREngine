@@ -17,7 +17,7 @@
       <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Ukemochi-Engine\Serialization">
-      <UniqueIdentifier>{30a48382-1bbb-43af-b918-ece9dfd1ec1d}</UniqueIdentifier>
+      <UniqueIdentifier>{f1ce0ebd-f4f8-428d-9df1-6e90fb076071}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +86,7 @@
     <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h" />
     <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h" />
     <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h" />
-    <ClInclude Include="..\..\Documents\Serialization\Serialisation.h">
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
@@ -130,12 +130,13 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
-    <ClCompile Include="..\..\Documents\Serialization\Serialization.cpp">
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Documents\Serialization\test-input.json">
+    <None Include="src\Ukemochi-Engine\test-input.json" />
+    <None Include="src\Ukemochi-Engine\Serialization\test-input.json">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </None>
   </ItemGroup>
