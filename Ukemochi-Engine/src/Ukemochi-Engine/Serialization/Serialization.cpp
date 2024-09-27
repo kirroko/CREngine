@@ -1,7 +1,7 @@
 #include "PreCompile.h"
 #include "Serialization.h"
 
-std::string LoadJSON(const std::string& file_name)
+std::string Serialization::LoadJSON(const std::string& file_name)
 {
 	using namespace rapidjson;
 
@@ -21,9 +21,9 @@ std::string LoadJSON(const std::string& file_name)
 		{
 			sample << "Character " << i << " :\n";
 			sample << "Name : " << game_objects[i]["Name"].GetString() << std::endl;
-			sample << "Health : " << game_objects[i]["Health"].GetInt() << std::endl;
-			sample << "Attack : " << game_objects[i]["Attack"].GetInt() << std::endl;
-			sample << "Weapon : " << game_objects[i]["Weapon"].GetString() << std::endl;
+			sample << "X_Scale : " << game_objects[i]["x_scale"].GetFloat() << std::endl;
+			sample << "Y_Scale : " << game_objects[i]["y_scale"].GetFloat() << std::endl;
+			sample << " : " << game_objects[i]["Weapon"].GetString() << std::endl;
 
 		}
 	}
@@ -31,7 +31,7 @@ std::string LoadJSON(const std::string& file_name)
 	return sample.str();
 }
 
-void PushJSON(const std::string& file_name, rapidjson::Document& pushing )
+void Serialization::PushJSON(const std::string& file_name, rapidjson::Document& pushing )
 {
 	using namespace rapidjson;
 	

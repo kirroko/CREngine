@@ -19,9 +19,14 @@ constexpr size_t BUFFER_SIZE{ 65536 };
 	@brief
 	tentatively returns string to debug.When Game Object class is establish can change to void and set values straight to be stored in variables
 */
-std::string LoadJSON(const std::string & file_name);
 
-void PushJSON(const std::string& file_name, rapidjson::Document& pushing);
+class Serialization
+{
+	std::string LoadJSON(const std::string& file_name);
+
+	void PushJSON(const std::string& file_name, rapidjson::Document& pushing);
+};
+
 
 
 
