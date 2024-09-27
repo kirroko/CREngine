@@ -22,9 +22,9 @@ constexpr size_t BUFFER_SIZE{ 65536 };
 
 class Serialization
 {
-	std::string LoadJSON(const std::string& file_name);
+	bool LoadJSON(const std::string& file_name, rapidjson::Document& storage);
 
-	void PushJSON(const std::string& file_name, rapidjson::Document& pushing);
+	bool PushJSON(const std::string& file_name, rapidjson::Document& pushing);
 };
 
 

@@ -1,16 +1,18 @@
 {
-    "Game Objects": [
-        {
-            "Name": "dingus",
-            "Health": 1000,
-            "Attack": 3000,
-            "Weapon": "Chakram"
-        },
-        {
-            "Name": "bruh",
-            "Health": 300,
-            "Attack": 6000,
-            "Weapon": "Dagger"
-        }
-    ]
+  "Game Objects": [
+    {
+      "Name": "box",
+      "x_val": 500,
+      "y_val": 200,
+      "width": 300,
+      "height": 400
+    },
+    {
+      "Name": "circle",
+      "x_val": 500,
+      "y_val": 200,
+      "radius": 350,
+      "segments": 50
+    }
+  ]
 }
