@@ -18,11 +18,39 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Collision.h"			// for forward declaration
 #include "../Math/MathUtils.h"  // for min, max, abs
 #include "../FrameController.h" // for GetDeltaTime
+#include "../ECS/ECS.h"
+#include "../Graphics/Renderer.h"
 
 namespace Ukemochi
 {
 	void Collision::CheckCollisions()
 	{
+		for (auto& entity : m_Entities)
+		{
+			// Get references of the first entity components
+			auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+			auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+
+			for (auto& entity2 : m_Entities)
+			{
+				// Get references of the second entity components
+				auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+				auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
+
+				float tLast;
+				if (Collision::CollisionIntersection_BoxBox(box, rb.velocity, box2, rb2.velocity, tLast))
+				{
+					// do collision response
+					//player_rb.position = player_rb.initial_position;
+					std::cout << "box box collided\n";
+				}
+				if (Collision::CollisionIntersection_BoxScreen(box, ECS::GetInstance().GetSystem<Renderer>()->screen_width, ECS::GetInstance().GetSystem<Renderer>()->screen_height))
+				{
+					//std::cout << "box collided with game screen boundary\n";
+				}
+			}
+		}
+
 		//// if the entity has a box collider
 		//if (list_of_entities[i] has box collider)
 

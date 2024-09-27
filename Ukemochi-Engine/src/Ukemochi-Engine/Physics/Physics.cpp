@@ -25,27 +25,40 @@ namespace Ukemochi
     {
         for (auto& entity : m_Entities)
         {
+            // Get references of entity components
+            auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
             auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
             auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+
+            // Get the bounding box size
+            box.min = { -Ukemochi::BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+                               -Ukemochi::BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+            box.max = { Ukemochi::BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+                                   Ukemochi::BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+
+            // Update position based on velocity
+            trans.position += rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
         }
     }
 
-    void Physics::UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box)
+    void Physics::UpdatePhysics(EntityID entity)
     {
         // Apply gravity to the player
        // rb.velocity.y += static_cast<float>(GRAVITY * AEFrameRateControllerGetFrameTime());
 
         // Save previous position
-        rb.position_prev = rb.position_curr;
+        //rb.position_prev = rb.position_curr;
 
         // Get the bounding box size
-        box.min = { -Ukemochi::BOUNDING_BOX_SIZE * rb.scale.x + rb.position_prev.x,
+        /*box.min = { -Ukemochi::BOUNDING_BOX_SIZE * rb.scale.x + rb.position_prev.x,
                            -Ukemochi::BOUNDING_BOX_SIZE * rb.scale.y + rb.position_prev.y };
         box.max = { Ukemochi::BOUNDING_BOX_SIZE * rb.scale.x + rb.position_prev.x,
-                               Ukemochi::BOUNDING_BOX_SIZE * rb.scale.y + rb.position_prev.y };
+                               Ukemochi::BOUNDING_BOX_SIZE * rb.scale.y + rb.position_prev.y };*/
 
         // Update position based on velocity
-        rb.position_curr += rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+        //auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+        //auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+        //trans.position += rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
         //position = (velocity + position) * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
 
         // // Computing the transformation matrices of the game object instances

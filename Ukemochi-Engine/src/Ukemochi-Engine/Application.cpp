@@ -23,16 +23,15 @@ DigiPen Institute of Technology is prohibited.
 #include "FrameController.h"
 
 // System Includes
-#include "Physics/Physics.h" // for physics system
-#include "Collision/Collision.h" // for collision system
+#include <Ukemochi-Engine/Input.h> // for input system
+#include "Physics/Physics.h"	   // for physics system
+#include "Collision/Collision.h"   // for collision system
+#include "Graphics/Renderer.h"     // for graphics system
 
 #include "ECS/ECS.h"
 #include <iomanip>
-#include <Ukemochi-Engine/Input.h>
 //#include <glad/glad.h>
-#include "Ukemochi-Engine/Graphics/Renderer.h"
 
-//Renderer render;
 using namespace Ukemochi;
 
 namespace UME {
@@ -45,6 +44,42 @@ namespace UME {
 		WindowProps props; // You can customize these properties if needed
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
+
+		// Set up ECS
+		ECS::GetInstance().Init();
+
+		// Register your components
+		ECS::GetInstance().RegisterComponent<Transform>();
+		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
+		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
+		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
+		ECS::GetInstance().RegisterComponent<SpriteRender>();
+
+		// Register your systems
+		ECS::GetInstance().RegisterSystem<Physics>();
+		ECS::GetInstance().RegisterSystem<Collision>();
+		ECS::GetInstance().RegisterSystem<Renderer>();
+
+		// Set a signature to your system
+		// Each system will have a signature to determine which entities it will process
+
+		// For physics system
+		SignatureID sig;
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+		ECS::GetInstance().SetSystemSignature<Physics>(sig);
+
+		// For renderer system
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		sig.set(ECS::GetInstance().GetComponentType<SpriteRender>());
+		ECS::GetInstance().SetSystemSignature<Renderer>(sig);
+
+		// For collision system
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
+		ECS::GetInstance().SetSystemSignature<Collision>(sig);
 	}
 
 	Application::~Application()
@@ -67,64 +102,6 @@ namespace UME {
 
 	void Application::GameLoop()
 	{
-		ECS::GetInstance().Init();
-
-		// Register your components
-		ECS::GetInstance().RegisterComponent<Transform>();
-		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
-		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
-		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
-
-		// Register your systems
-		ECS::GetInstance().RegisterSystem<Physics>();
-		ECS::GetInstance().RegisterSystem<Collision>();
-		ECS::GetInstance().RegisterComponent<SpriteRender>();
-		auto render = ECS::GetInstance().RegisterSystem<Renderer>();
-		auto physics = ECS::GetInstance().GetSystem<PhysicsSystem>();
-		render->init();
-
-		// Set a signature to your system
-		// Each system will have a signature to determine which entities it will process
-		SignatureID sig;
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
-		ECS::GetInstance().SetSystemSignature<Physics>(sig);
-
-		//ECS::GetInstance().SetSystemSignature<Collision>(sig);
-
-		sig.reset();
-		sig.set(ECS::GetInstance().GetComponentType<SpriteRender>());
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		ECS::GetInstance().SetSystemSignature<Renderer>(sig);
-
-		// Our entities within the game world.
-		std::vector<EntityID> entities(1);
-
-		std::default_random_engine generator;
-		std::uniform_real_distribution<float> randPosition(450.0f, 800.0f);
-		std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
-		std::uniform_real_distribution<float> randScale(100.0f, 500.0f);
-
-		float scale = randScale(generator);
-
-		// Create entities
-		for (auto& entity : entities)
-		{
-			entity = ECS::GetInstance().CreateEntity();
-			ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2(randPosition(generator),randPosition(generator)),
-				Vec2(randRotation(generator),randRotation(generator)),
-				Vec2(scale,scale)
-				});
-			ECS::GetInstance().AddComponent(entity, Rigidbody2D());
-			ECS::GetInstance().AddComponent(entity, SpriteRender{
-				"../Assets/Textures/container.jpg",
-				SPRITE_SHAPE::BOX,
-				true,
-				1.0f
-				});
-		}
-
 		double accumulator = 0.0;
 		const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
 
@@ -195,7 +172,7 @@ namespace UME {
 
 					//render.drawBox(0, 0, 100, 100, true);
 					//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
-					render->render();
+					//render->render();
 					m_Window->OnUpdate();
 					if (Input::IsKeyPressed(GLFW_KEY_W))
 					{
@@ -241,6 +218,6 @@ namespace UME {
 			}
 		}
 
-		render->cleanUp();
+		//render->cleanUp();
 	}
 }

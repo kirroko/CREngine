@@ -190,8 +190,8 @@ void Renderer::render()
 		if (!spriteRender.visible)
 			continue;
 
-		if (UME::Input::IsKeyPressed(UME_KEY_D))
-			transform.position.x += 10;
+		/*if (UME::Input::IsKeyPressed(UME_KEY_D))
+			transform.position.x += 10;*/
 
 		drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRender.texturePath);
 	}

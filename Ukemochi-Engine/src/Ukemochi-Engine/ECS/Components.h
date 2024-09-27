@@ -4,7 +4,7 @@
 \file		Components.h
 \par		Ukemochi
 \author		WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
-\co-authors
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
 \par		junyukean.wong\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		26/09/24
@@ -36,16 +36,23 @@ namespace Ukemochi
     *************************************************************************/
 	struct Rigidbody2D
 	{
-		Vec2 position_curr{};
-		Vec2 position_prev{};
 		Vec2 velocity{};
-		Vec2 acceleration{ 7.f, 7.f };
-		Vec2 scale{ 100.f, 100.f };
+		Vec2 acceleration{};
 
 		float direction{};
 		float angle{};
 		float angular_velocity{};
 		float angular_acceleration{};
+	};
+
+	/*!***********************************************************************
+	\brief
+	 BoxCollider2D (Axis-Aligned Bounding Box) component structure.
+	*************************************************************************/
+	struct BoxCollider2D
+	{
+		Vec2 min;
+		Vec2 max;
 	};
 
 	/*!***********************************************************************
@@ -56,16 +63,6 @@ namespace Ukemochi
 	{
 		Vec2 m_center;
 		float m_radius;
-	};
-
-	/*!***********************************************************************
-    \brief
-     BoxCollider2D (Axis-Aligned Bounding Box) component structure.
-    *************************************************************************/
-	struct BoxCollider2D
-	{
-		Vec2 min;
-		Vec2 max;
 	};
 
 	typedef enum { BOX, CIRCLE } SPRITE_SHAPE;

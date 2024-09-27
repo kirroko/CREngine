@@ -33,6 +33,6 @@ namespace Ukemochi
     {
     public:
         void UpdatePhysics();
-        static void UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box);
+        void UpdatePhysics(EntityID entity);
     };
 }
