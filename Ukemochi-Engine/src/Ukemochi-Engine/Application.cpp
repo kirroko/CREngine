@@ -159,12 +159,8 @@ namespace UME {
 					//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
 
 			//render.drawBox(0, 0, 100, 100, true);
-			render.render();
+			//render.render();
 
-			imguiInstance.NewFrame();
-
-
-			imguiInstance.ImGuiUpdate(); // Render ImGui elements
 
 
 			if (Input::IsKeyPressed(GLFW_KEY_W))
@@ -174,6 +170,10 @@ namespace UME {
 			}
 					//render.drawBox(0, 0, 100, 100, true);
 					render.render();
+					imguiInstance.NewFrame();
+
+
+					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					m_Window->OnUpdate();
 					if (Input::IsKeyPressed(GLFW_KEY_W))
 					{
