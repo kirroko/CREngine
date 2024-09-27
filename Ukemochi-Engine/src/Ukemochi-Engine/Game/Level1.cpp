@@ -16,7 +16,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "Level1.h"
 #include <iostream>
 
-#include "../Input.h"					// for user input
+#include "../Input/Input.h"					// for user input
 #include "../Collision/Collision.h"		// for collision system
 #include "../Physics/Physics.h"			// for physics system
 //#include "../Graphics/Renderer.h"		// for render system

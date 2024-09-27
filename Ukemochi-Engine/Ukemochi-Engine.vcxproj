@@ -189,15 +189,15 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Input.h" />
-    <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
-    <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
   </ItemGroup>
@@ -226,7 +226,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />

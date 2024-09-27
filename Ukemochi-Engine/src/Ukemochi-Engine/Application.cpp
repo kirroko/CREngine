@@ -15,7 +15,7 @@
 
 #include "ECS/ECS.h"
 #include <iomanip>
-#include <Ukemochi-Engine/Input.h>
+#include <Ukemochi-Engine/Input/Input.h>
 //#include <glad/glad.h>
 #include "Ukemochi-Engine/Graphics/Renderer.h"
 #include "Audio/Audio.h"
