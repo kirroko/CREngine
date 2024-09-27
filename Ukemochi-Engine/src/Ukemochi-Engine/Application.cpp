@@ -75,6 +75,7 @@ namespace UME {
 		// Register your systems
 		ECS::GetInstance().RegisterSystem<PhysicsSystem>();
 		auto render = ECS::GetInstance().RegisterSystem<Renderer>();
+		auto physics = ECS::GetInstance().GetSystem<PhysicsSystem>();
 		render->init();
 
 		// Set a signature to your system

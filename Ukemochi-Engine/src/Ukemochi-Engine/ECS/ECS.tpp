@@ -78,6 +78,12 @@ namespace Ukemochi
 	}
 
 	template <typename T>
+	std::shared_ptr<T> ECS::GetSystem()
+	{
+		return m_SystemManager->GetSystem<T>();
+	}
+
+	template <typename T>
 	void ECS::SetSystemSignature(SignatureID signature)
 	{
 		m_SystemManager->SetSystemSignature<T>(signature);
