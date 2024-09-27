@@ -209,7 +209,6 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />

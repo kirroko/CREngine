@@ -1,3 +1,20 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file	Systems.tpp
+\par	Ukemochi
+\author WONG JUN YU, Kean, junyukean.wong, 2301234
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief	To maintain a record of registered systems and their signatures.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "Systems.h"
 
 namespace Ukemochi
@@ -13,6 +30,16 @@ namespace Ukemochi
 		m_Systems.insert({ typeName, system });
 
 		return system;
+	}
+
+	template <typename T>
+	std::shared_ptr<T> SystemManager::GetSystem()
+	{
+		const char* typeName = typeid(T).name();
+		
+		assert(m_Systems.find(typeName) != m_Systems.end() && "System used before registered.");
+
+		return std::static_pointer_cast<T>(m_Systems[typeName]);
 	}
 
 	template <typename T>

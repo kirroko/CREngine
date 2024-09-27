@@ -16,9 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include "BoxCollider2D.h"    // for BoxCollider2D component
-#include "CircleCollider2D.h" // for CircleCollider2D component
-#include "../ECS/Systems.h"   // for System inheritance
+#include "../ECS/Components.h" // for CircleCollider2D, BoxCollider2D components
+#include "../ECS/Systems.h"    // for System inheritance
 
 namespace Ukemochi
 {
@@ -45,7 +44,7 @@ namespace Ukemochi
         \return
          True if there is an intersection, false otherwise.
         *************************************************************************/
-        static bool CollisionIntersection_BoxBox(const BoxCollider2D& box1,
+        bool CollisionIntersection_BoxBox(const BoxCollider2D& box1,
             const Vec2& vel1,
             const BoxCollider2D& box2,
             const Vec2& vel2,
@@ -61,7 +60,7 @@ namespace Ukemochi
         \return
          True if the circles intersect, false otherwise.
         *************************************************************************/
-        static bool CollisionIntersection_CircleCircle(const CircleCollider2D& circle1, const CircleCollider2D& circle2);
+        bool CollisionIntersection_CircleCircle(const CircleCollider2D& circle1, const CircleCollider2D& circle2);
 
         /*!***********************************************************************
         \brief
@@ -73,7 +72,7 @@ namespace Ukemochi
         \return
          True if the circle and box intersect, false otherwise.
         *************************************************************************/
-        static bool CollisionIntersection_CircleBox(const CircleCollider2D& circle, const BoxCollider2D& box);
+        bool CollisionIntersection_CircleBox(const CircleCollider2D& circle, const BoxCollider2D& box);
 
         /*!***********************************************************************
         \brief
@@ -87,7 +86,7 @@ namespace Ukemochi
         \return
          True if the box and screen boundary intersect, false otherwise.
         *************************************************************************/
-        static bool CollisionIntersection_BoxScreen(const BoxCollider2D& box, const int screen_width, const int screen_height);
+        bool CollisionIntersection_BoxScreen(const BoxCollider2D& box, const int screen_width, const int screen_height);
 
         void CollisionResponse_BoxBox();
         void CollisionResponse_CircleCircle();

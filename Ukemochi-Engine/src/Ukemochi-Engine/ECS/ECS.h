@@ -1,11 +1,13 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file ECS.h
+\file	ECS.h
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 15/09/24
-\brief The ECS will coordinator between the Component, Entity and System managers
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief	The ECS will coordinator between the Component, Entity and System managers
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -31,7 +33,7 @@ namespace Ukemochi
 	public:
 		static ECS& GetInstance()
 		{
-			static ECS* instance = new ECS();
+			static std::unique_ptr<ECS> instance(new ECS());
 			return *instance;
 		}
 
@@ -42,10 +44,19 @@ namespace Ukemochi
 
 		void DestroyEntity(EntityID entity);
 
-		// Component methods
+		/**
+		 * @brief Register a component type with the ECS
+		 * @tparam T The component type to register
+		 */
 		template<typename T>
 		void RegisterComponent();
 
+		/**
+		 * @brief Add a component to an entity
+		 * @tparam T The component type to add
+		 * @param entity The entity to add the component to
+		 * @param component The component to add
+		 */
 		template<typename T>
 		void AddComponent(EntityID entity, T component);
 
@@ -61,6 +72,9 @@ namespace Ukemochi
 		// System methods
 		template<typename T>
 		std::shared_ptr<T> RegisterSystem();
+
+		template<typename T>
+		std::shared_ptr<T> GetSystem();
 
 		template<typename T>
 		void SetSystemSignature(SignatureID signature);

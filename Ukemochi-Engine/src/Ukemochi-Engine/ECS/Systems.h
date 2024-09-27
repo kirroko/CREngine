@@ -1,11 +1,13 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file Systems.h
+\file	Systems.h
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 16/09/24
-\brief To maintain a record of registered systems and their signatures.
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief	To maintain a record of registered systems and their signatures.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -40,6 +42,9 @@ namespace Ukemochi
 	public:
 		template <typename T>
 		std::shared_ptr<T> RegisterSystem();
+
+		template <typename T>
+		std::shared_ptr<T> GetSystem();
 
 		template <typename T>
 		void SetSystemSignature(SignatureID signature);
