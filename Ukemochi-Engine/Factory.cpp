@@ -7,7 +7,7 @@ static std::string out_file_path("../src/Ukemochi-Engine/Serialization/test-outp
 void Factory::CloneObject(int count, const std::string& type)
 {
 	using namespace rapidjson;
-	GameObject object;
+	GameObj object;
 	Document storage;
 	bool success = Serialization::LoadJSON(in_file_path, storage);
 	if (success)
