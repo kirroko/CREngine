@@ -30,7 +30,10 @@ DigiPen Institute of Technology is prohibited.
 
 #include "ECS/ECS.h"
 #include <iomanip>
+
 //#include <glad/glad.h>
+#include "Audio/Audio.h"
+#include "ImGui/ImGuiCore.h"
 
 using namespace Ukemochi;
 
@@ -80,18 +83,22 @@ namespace UME {
 		sig.set(ECS::GetInstance().GetComponentType<Transform>());
 		sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
 		ECS::GetInstance().SetSystemSignature<Collision>(sig);
+
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 	}
 
 	Application::~Application()
 	{
+		imguiInstance.ImGuiClean();
 	}
 
 	void Application::EventIsOn(Event& e)
 	{
+		imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-
-		//UME_ENGINE_TRACE("{0}", e.ToString());
+		UME_ENGINE_TRACE("{0}", e.ToString());
 	}
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
@@ -110,6 +117,11 @@ namespace UME {
 
 		//render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
 		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+
+		Audio audio;
+		audio.CreateGroup("test");
+		audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
+		audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
 
 		while (m_running)
 		{
@@ -170,9 +182,24 @@ namespace UME {
 					//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
 					//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
 
+			//render.drawBox(0, 0, 100, 100, true);
+			//render.render();
+
+
+
+			if (Input::IsKeyPressed(GLFW_KEY_W))
+			{
+				// If 'W' key is pressed, move forward
+				UME_ENGINE_INFO("W key is pressed");
+			}
 					//render.drawBox(0, 0, 100, 100, true);
 					//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
 					//render->render();
+					
+					imguiInstance.NewFrame();
+
+
+					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					m_Window->OnUpdate();
 					if (Input::IsKeyPressed(GLFW_KEY_W))
 					{
@@ -217,7 +244,5 @@ namespace UME {
 				gsm_previous = gsm_current = gsm_next;
 			}
 		}
-
-		//render->cleanUp();
 	}
 }

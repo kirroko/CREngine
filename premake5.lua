@@ -13,9 +13,18 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
 IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
+IncludeDir ["Fmod"] = "Ukemochi-Engine/vendor/Fmod/inc"
+IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
 
+
+LibraryDir = {}
+LibraryDir["Fmod"] = "Ukemochi-Engine/vendor/Fmod/lib"
+
+
+include "Ukemochi-Engine/vendor/Fmod"
 include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
+include "Ukemochi-Engine/vendor/imgui"
 
 project "Ukemochi-Engine"
 	location "Ukemochi-Engine"
@@ -24,9 +33,6 @@ project "Ukemochi-Engine"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-	pchheader "PreCompile.h"
-	pchsource "Ukemochi-Engine/src/PreCompile.cpp"
 
 	files
 	{
@@ -39,15 +45,24 @@ project "Ukemochi-Engine"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.Fmod}",
+		"%{IncludeDir.ImGui}"
 
 	}
+	
+	libdirs
+    {
+        "%{LibraryDir.Fmod}" -- Add FMOD library directory
+    }
 
 	links
 	{
 		"GLFW",
 		"Glad",
-		"opengl32.lib"
+		"fmod_vc",
+		"ImGui",
+		"opengl32.lib",
 	}
 	filter "system:windows"
 		cppdialect "C++17"

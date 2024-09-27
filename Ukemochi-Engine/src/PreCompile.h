@@ -19,6 +19,7 @@
 
 #include "Ukemochi-Engine/Logs/Log.h"
 #include "Ukemochi-Engine/Game/GameStateList.h"
+#include "Ukemochi-Engine/Audio/AudioList.h"
 
 #ifdef CR_PLATFORM_WINDOWS
 #include "../src/Platform/WindowsWindow.h"
