@@ -1,17 +1,17 @@
 {
   "Game Objects": [
     {
-      "Name": "box",
+      "name": "box",
       "x_val": 500,
       "y_val": 200,
-      "width": 300,
-      "height": 400
+      "width": 150,
+      "height": 150
     },
     {
-      "Name": "circle",
+      "name": "circle",
       "x_val": 500,
       "y_val": 200,
-      "radius": 350,
+      "radius": 150,
       "segments": 50
     }
   ]

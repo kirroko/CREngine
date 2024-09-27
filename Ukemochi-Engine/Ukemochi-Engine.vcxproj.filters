@@ -19,6 +19,9 @@
     <Filter Include="Ukemochi-Engine\Serialization">
       <UniqueIdentifier>{f1ce0ebd-f4f8-428d-9df1-6e90fb076071}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Factory">
+      <UniqueIdentifier>{ff824d99-f81e-41a2-8690-febe735201ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\WindowsWindow.h">
@@ -89,6 +92,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="Factory.h">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -132,6 +138,9 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Factory.cpp">
+      <Filter>Ukemochi-Engine\Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

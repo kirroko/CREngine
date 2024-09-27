@@ -28,7 +28,7 @@ bool Serialization::LoadJSON(const std::string& file_name, rapidjson::Document& 
 	{
 		for (SizeType i = 0; i < game_objects.Size(); i++)
 		{
-			std::string obj_type = game_objects[i]["Name"].GetString();
+			std::string obj_type = game_objects[i]["name"].GetString();
 			if (obj_type.compare("box") == 0)
 			{
 				sample << "Object " << i + 1 << " :\n";
@@ -49,7 +49,7 @@ bool Serialization::LoadJSON(const std::string& file_name, rapidjson::Document& 
 				sample << "Radius : " << game_objects[i]["radius"].GetInt() << std::endl;
 				sample << "Segments : " << game_objects[i]["segments"].GetInt() << std::endl;
 
-				std::cout << sample.str()
+				std::cout << sample.str();
 			}
 		}
 	}
