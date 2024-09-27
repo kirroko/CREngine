@@ -11,7 +11,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 */
 /* End Header **************************************************************************/
 
-#include "PreCompile.h"
+#include "GameStateList.h"
 #include "GSM.h"
 #include "MainMenu.h"
 #include "Level1.h"

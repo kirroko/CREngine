@@ -11,6 +11,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 */
 /* End Header **************************************************************************/
 #pragma once
+#include "GameStateList.h"
 namespace Ukemochi
 {
 

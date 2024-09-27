@@ -34,9 +34,6 @@ project "Ukemochi-Engine"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "PreCompile.h"
-	pchsource "Ukemochi-Engine/src/PreCompile.cpp"
-
 	files
 	{
 		"%{prj.name}/src/**.h",

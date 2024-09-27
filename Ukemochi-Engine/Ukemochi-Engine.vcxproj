@@ -76,8 +76,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -90,7 +89,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\Fmod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
@@ -100,8 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -118,7 +116,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\Fmod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
@@ -128,8 +126,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -146,7 +143,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\Fmod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
@@ -191,22 +188,21 @@
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp" />
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
-    <ClCompile Include="src\PreCompile.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\PreCompile.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Audio\Audio.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp" />
@@ -234,6 +230,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
