@@ -18,6 +18,8 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "Level1.h"
 #include <iostream>
 
+using namespace Ukemochi;
+
 int gsm_current = 0, gsm_previous = 0, gsm_next = 0;
 
 FP gsm_fpLoad = nullptr, gsm_fpInitialize = nullptr, gsm_fpUpdate = nullptr, gsm_fpDraw = nullptr, gsm_fpFree = nullptr, gsm_fpUnload = nullptr;
