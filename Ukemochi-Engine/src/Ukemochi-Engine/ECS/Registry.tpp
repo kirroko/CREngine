@@ -1,3 +1,20 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file	Registry.tpp
+\par	Ukemochi
+\author WONG JUN YU, Kean, junyukean.wong, 2301234
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief A registry where all components are stored.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "Registry.h"
 
 namespace Ukemochi

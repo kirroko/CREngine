@@ -1,13 +1,40 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file	ECS.tpp
+\par	Ukemochi
+\author WONG JUN YU, Kean, junyukean.wong, 2301234
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief	The ECS will coordinator between the Component, Entity and System managers
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "ECS.h"
 
 namespace Ukemochi
 {
+	/**
+	* @brief Register a component type with the ECS
+	* @tparam T The component type to register
+	*/
 	template <typename T>
 	void ECS::RegisterComponent()
 	{
 		m_ComponentManager->RegisterComponent<T>();
 	}
 
+	/**
+	* @brief Add a component to an entity, also update each system m_Entity list
+	* @tparam T The component type to add
+	* @param entity The entity to add the component to
+	* @param component The component to add
+	*/
 	template <typename T>
 	void ECS::AddComponent(EntityID entity, T component)
 	{

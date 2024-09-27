@@ -2,9 +2,11 @@
 *****************************************************************/
 /*!
 \file ECS.cpp
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 15/09/24
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
 \brief This file contains the definition of the member function of ECS
 
 Copyright (C) 2024 DigiPen Institute of Technology.
