@@ -16,16 +16,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include "Rigidbody2D.h"                // for Rigidbody2D class
-#include "../Collision/BoxCollider2D.h" // for BoxCollider2D struct
+#include "Rigidbody2D.h"                // for Rigidbody2D component
+#include "../Collision/BoxCollider2D.h" // for BoxCollider2D component
+#include "../ECS/Systems.h"             // for System inheritance
 
 namespace Ukemochi
 {
     const float GRAVITY = -9.8f;
 
-    class Physics
+    /*!***********************************************************************
+    \brief
+     Normalized bounding box (width and height) sizes - BoxCollider2D collision data.
+    *************************************************************************/
+    const float BOUNDING_BOX_SIZE = 0.5f;
+
+    class Physics : public System
     {
     public:
+        void UpdatePhysics();
         static void UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box);
     };
 }

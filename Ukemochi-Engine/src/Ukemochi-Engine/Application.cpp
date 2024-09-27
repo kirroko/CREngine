@@ -3,7 +3,16 @@
 #include "Game/GSM.h"
 #include "Ukemochi-Engine/Logs/Log.h"
 #include "FrameController.h"
-#include "Physics/Rigidbody2D.h"
+
+// System Includes
+#include "Physics/Physics.h" // for physics system
+#include "Collision/Collision.h" // for collision system
+
+// Component Includes
+#include "Physics/Rigidbody2D.h" // for Rigidbody2D component
+#include "Collision/BoxCollider2D.h" // for BoxCollider2D component
+#include "Collision/CircleCollider2D.h" // for CircleCollider2D component
+
 #include "ECS/ECS.h"
 #include <iomanip>
 #include <Ukemochi-Engine/Input.h>
@@ -50,18 +59,21 @@ namespace UME {
 		// Register your components
 		ECS::GetInstance().RegisterComponent<Transform>();
 		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
-		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
+		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 
 		// Register your systems
-		ECS::GetInstance().RegisterSystem<PhysicsSystem>();
+		ECS::GetInstance().RegisterSystem<Physics>();
+		ECS::GetInstance().RegisterSystem<Collision>();
 
 		// Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
 		SignatureID sig;
-		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
 		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		ECS::GetInstance().SetSystemSignature<PhysicsSystem>(sig);
+		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+		ECS::GetInstance().SetSystemSignature<Physics>(sig);
+
+		//ECS::GetInstance().SetSystemSignature<Collision>(sig);
 
 		// Our entities within the game world.
 		std::vector<EntityID> entities(MAX_ENTITIES);

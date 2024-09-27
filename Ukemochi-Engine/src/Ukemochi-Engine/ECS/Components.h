@@ -15,42 +15,42 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #pragma once
 
+#include "../Math/Vector2D.h" // for Vec2 struct
+
 namespace Ukemochi
 {
 	struct Transform
 	{
-		// Vec3?
-		float position_x, position_y, position_z;
-		float rotation_x, rotation_y, rotation_z;
-		float scale_x, scale_y, scale_z;
+		Vec2 position;
+		Vec2 rotation;
+		Vec2 scale;
 	};
 
-	struct Rigidbody2D
+	/*struct Rigidbody2D
 	{
-		// Vec2 position
-		// Vec2 velocity
-		// Vec2 acceleration
-		//
-		double direction;
-		double angle;
-		double angular_velocity;
-		double angular_acceleration;
+		Vec2 position_curr{};
+		Vec2 position_prev{};
+		Vec2 velocity{};
+		Vec2 acceleration{ 7.f, 7.f };
+		Vec2 scale{ 100.f, 100.f };
 
-		// Vec2 initial_position
-		// Vec2 position_prev
-		// Vec2 scale
-		bool active;
-	};
+		float direction{};
+		float angle{};
+		float angular_velocity{};
+		float angular_acceleration{};
 
-	struct CircleCollider2D
+		bool active{ true };
+	};*/
+
+	/*struct CircleCollider2D
 	{
-		// vec2 m_center;
+		Vec2 m_center;
 		float m_radius;
-	};
+	};*/
 
-	struct BoxCollider2D
+	/*struct BoxCollider2D
 	{
-		// vec2 min
-		// vec2 max
-	};
+		Vec2 min;
+		Vec2 max;
+	};*/
 }

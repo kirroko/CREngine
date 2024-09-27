@@ -5,7 +5,7 @@
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
 \date       Sept 24, 2024
-\brief      This file contains the declaration of the Rigidbody2D class.
+\brief      This file contains the declaration of the Rigidbody2D component.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -18,14 +18,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../Math/Vector2D.h" // for Vector2D
 #include "../Math/Matrix3x3.h" // for Matrix3x3
-#include "../Collision/BoxCollider2D.h" // for BoxCollider2D struct
+#include "../Collision/BoxCollider2D.h" // for BoxCollider2D component
 
 namespace Ukemochi
 {
-    class Rigidbody2D
+    /*!***********************************************************************
+    \brief
+     Rigidbody2D component structure.
+    *************************************************************************/
+    struct Rigidbody2D
     {
-    public: // private:
-        Mtx33 transform{};
         Vec2 position_curr{};
         Vec2 position_prev{};
         Vec2 velocity{};
@@ -37,12 +39,9 @@ namespace Ukemochi
         float angular_velocity{};
         float angular_acceleration{};
 
+        // temp
+        Mtx33 transform{};
         Vec2 initial_position{};
-        Ukemochi::BoxCollider2D box_collider;
         bool active{ true };
-
-    public:
-        //Rigidbody2D() : transform(Mtx33{}), position(Vec2{}), velocity(Vec2{}), movement_speed(1.0f), direction(0.0f) {}
-        //Rigidbody2D(Mtx33 trans, Vec2 pos, Vec2 vel, float speed, float dir) : transform(trans), position(pos), velocity(vel), movement_speed(speed), direction(dir) {}
     };
 }

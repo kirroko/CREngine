@@ -5,7 +5,7 @@
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
 \date       Sept 24, 2024
-\brief      This file contains the declaration of the CircleCollider2D struct.
+\brief      This file contains the declaration of the CircleCollider2D component.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -22,7 +22,7 @@ namespace Ukemochi
 {
     /*!***********************************************************************
     \brief
-     CircleCollider2D (CircleCollider2D) structure.
+     CircleCollider2D component structure.
     *************************************************************************/
     struct CircleCollider2D
     {

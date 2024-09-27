@@ -16,12 +16,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include "BoxCollider2D.h"    // for BoxCollider2D struct
-#include "CircleCollider2D.h" // for CircleCollider2D struct
+#include "BoxCollider2D.h"    // for BoxCollider2D component
+#include "CircleCollider2D.h" // for CircleCollider2D component
+#include "../ECS/Systems.h"   // for System inheritance
 
 namespace Ukemochi
 {
-    class Collision
+    class Collision : public System
     {
     public:
         void CheckCollisions();

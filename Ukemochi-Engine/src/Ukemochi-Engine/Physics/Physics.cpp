@@ -17,9 +17,22 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Physics.h"            // for forward declaration
 #include "../FrameController.h" // for GetDeltaTime
+#include "../ECS/ECS.h"
 
 namespace Ukemochi
 {
+    void Physics::UpdatePhysics()
+    {
+        for (auto& entity : m_Entities)
+        {
+            auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+            auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+
+            if (!rb.active)
+                return;
+        }
+    }
+
     void Physics::UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box)
     {
         if (!rb.active)
@@ -30,8 +43,6 @@ namespace Ukemochi
 
         // Save previous position
         rb.position_prev = rb.position_curr;
-        // rb.position_prev.x = rb.position_curr.x;
-        // rb.position_prev.y = rb.position_curr.y;
 
         // Get the bounding box size
         box.min = { -Ukemochi::BOUNDING_BOX_SIZE * rb.scale.x + rb.position_prev.x,
