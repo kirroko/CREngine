@@ -27,17 +27,11 @@ namespace Ukemochi
         {
             auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
             auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
-
-            if (!rb.active)
-                return;
         }
     }
 
     void Physics::UpdatePhysics(Rigidbody2D& rb, BoxCollider2D& box)
     {
-        if (!rb.active)
-            return;
-
         // Apply gravity to the player
        // rb.velocity.y += static_cast<float>(GRAVITY * AEFrameRateControllerGetFrameTime());
 
