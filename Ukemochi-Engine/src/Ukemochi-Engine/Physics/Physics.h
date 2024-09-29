@@ -4,7 +4,7 @@
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 25, 2024
+\date       Sept 29, 2024
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -21,6 +21,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /*!***********************************************************************
+    \brief
+     Gravity constant to simulate gravity for physics.
+    *************************************************************************/
     const float GRAVITY = -9.8f;
 
     /*!***********************************************************************
@@ -33,6 +37,5 @@ namespace Ukemochi
     {
     public:
         void UpdatePhysics();
-        void UpdatePhysics(EntityID entity);
     };
 }
