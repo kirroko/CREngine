@@ -3,9 +3,8 @@
 /*!
 \file		Components.h
 \par		Ukemochi
-\author		WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
+\author		WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\par		junyukean.wong\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		26/09/24
 \brief		Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc)
@@ -23,22 +22,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/*!***********************************************************************
+	\brief
+	 Transform component structure.
+	*************************************************************************/
 	struct Transform
 	{
-		Vec2 position;
-		Vec2 rotation;
-		Vec2 scale;
+		Vec2 position{};
+		Vec2 rotation{};
+		Vec2 scale{};
 	};
 
 	/*!***********************************************************************
-    \brief
-     Rigidbody2D component structure.
-    *************************************************************************/
+	\brief
+	 Rigidbody2D component structure.
+	*************************************************************************/
 	struct Rigidbody2D
 	{
 		Vec2 velocity{};
 		Vec2 acceleration{};
-		
+
 		bool is_kinematic{};
 
 		// bool use_gravity{};
@@ -63,9 +66,9 @@ namespace Ukemochi
 	};
 
 	/*!***********************************************************************
-    \brief
-     CircleCollider2D component structure.
-    *************************************************************************/
+	\brief
+	 CircleCollider2D component structure.
+	*************************************************************************/
 	struct CircleCollider2D
 	{
 		Vec2 m_center{};
@@ -74,6 +77,10 @@ namespace Ukemochi
 
 	typedef enum { BOX, CIRCLE } SPRITE_SHAPE;
 
+	/*!***********************************************************************
+	\brief
+	 SpriteRender component structure.
+	*************************************************************************/
 	struct SpriteRender
 	{
 		std::string texturePath;				// Path to the texture file (sprite)
@@ -82,4 +89,6 @@ namespace Ukemochi
 		bool visible;							// Is the object visible?
 		float opacity;							// Opacity of the object
 	};
+
+	// TODO: Whenever adding new components, please check the TODO and update files accordingly, PLEASE CHECK 0x4B45414E
 }

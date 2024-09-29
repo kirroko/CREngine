@@ -1,12 +1,12 @@
 /* Start Header ************************************************************************/
 /*!
-\file    Level1.cpp
-\author  Tan Si Han, t.sihan, 2301264
+\file		Level1.cpp
+\author		Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\par     t.sihan@digipen.edu
-\date    20/09/2024
-\brief   This files contains the definction of functions in Level1.
-
+			WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\par		Course: CSD2400/CSD2401
+\date		20/09/2024
+\brief		This files contains the definction of functions in Level1.
 
 Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure of this file or its contents without the prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -25,11 +25,13 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "../Physics/Physics.h"	    // for physics system
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
+#include "../Factory/Factory.h"		// for factory system
 
 namespace Ukemochi
 {
 	// --- TEMP player variables ---
 	EntityID player_entity;
+	GameObject player;
 	const float SPRITE_SCALE = 100.f;
 	const float ENTITY_ACCEL = 250.f;
 
@@ -62,25 +64,39 @@ namespace Ukemochi
 				1.0f
 			});*/
 
-		// Create player entity
-		player_entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(player_entity, Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+			// Create player entity
+		player = GameObjectFactory::CreateObject("../Assets/Player.json"); // CREATING OBJECT FROM JSON FILE (DATA-DRIVEN)
+		//player_entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(player_entity, Transform{
+		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE, SPRITE_SCALE}
+		//	});
+		//ECS::GetInstance().AddComponent(player_entity, Rigidbody2D{ Vec2{}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, false });
+		//ECS::GetInstance().AddComponent(player_entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, true });
+		//ECS::GetInstance().AddComponent(player_entity, SpriteRender{
+		//		"../Assets/Textures/Ukemochi.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
+
+		// Create static entity
+		GameObject container_0 = GameObjectFactory::CreateObject();
+		container_0.AddComponent(Transform{ Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
 				Vec2{},
-				Vec2{SPRITE_SCALE, SPRITE_SCALE}
-			});
-		ECS::GetInstance().AddComponent(player_entity, Rigidbody2D{ Vec2{}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, false });
-		ECS::GetInstance().AddComponent(player_entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, true });
-		ECS::GetInstance().AddComponent(player_entity, SpriteRender{
-				"../Assets/Textures/Ukemochi.png",
+				Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f} });
+		container_0.AddComponent(Rigidbody2D{ Vec2{},Vec2{}, true });
+		container_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		container_0.AddComponent(SpriteRender{
+				"../Assets/Textures/container.jpg",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
 			});
-
-		// Create static entity
-		EntityID entity = ECS::GetInstance().CreateEntity();
+		/*EntityID entity = ECS::GetInstance().CreateEntity();
 		ECS::GetInstance().AddComponent(entity, Transform{
 				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
@@ -94,109 +110,204 @@ namespace Ukemochi
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
-			});
+			});*/
 
-		// Create dynamic entity
-		entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
-				Vec2{},
-				Vec2{SPRITE_SCALE, SPRITE_SCALE}
-			});
-		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
-		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{} });
-		ECS::GetInstance().AddComponent(entity, SpriteRender{
+			// Create dynamic entity
+		GameObject worm_0 = GameObjectFactory::CreateObject();
+		worm_0.AddComponent(Transform{ Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+					ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+					Vec2{},
+					Vec2{SPRITE_SCALE, SPRITE_SCALE} });
+		worm_0.AddComponent(Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
+		worm_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		worm_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Worm.png",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
 			});
 
+		//entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(entity, Transform{
+		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE, SPRITE_SCALE}
+		//	});
+		//ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
+		//ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{} });
+		//ECS::GetInstance().AddComponent(entity, SpriteRender{
+		//		"../Assets/Textures/Worm.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
+
 		// Create dynamic entity
-		entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.25f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f},
-				Vec2{},
-				Vec2{SPRITE_SCALE, SPRITE_SCALE}
-			});
-		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
-		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{} });
-		ECS::GetInstance().AddComponent(entity, SpriteRender{
-				"../Assets/Textures/Worm.png",
-				SPRITE_SHAPE::BOX,
-				true,
-				1.0f
-			});
+		GameObject worm_1 = GameObjectFactory::CloneObject(worm_0); // CLONING ANOTHER OBJECT 1
+		UME_ENGINE_INFO("Worm 1 Old Position: x: {0} y: {1}", worm_1.GetComponent<Transform>().position.x, worm_1.GetComponent<Transform>().position.y);
+		worm_1.GetComponent<Transform>().position.x = ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.25f;
+		worm_1.GetComponent<Transform>().position.y = ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f;
+		UME_ENGINE_INFO("Worm 1 New Position: x: {0} y: {1}", worm_1.GetComponent<Transform>().position.x, worm_1.GetComponent<Transform>().position.y);
+
+		GameObject worm_2 = GameObjectFactory::CloneObject(worm_0); // CLONING ANOTHER OBJECT 2
+		worm_2.GetComponent<Transform>().position.x = ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f;
+		worm_2.GetComponent<Transform>().position.y = ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f;
+
+		//GameObject worm_1 = GameObjectFactory::CreateObject();
+		//worm_1.AddComponent(Transform{ Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.25f,
+		//			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f},
+		//			Vec2{},
+		//			Vec2{SPRITE_SCALE, SPRITE_SCALE} });
+		//worm_1.AddComponent(Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
+		//worm_1.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		//worm_1.AddComponent(SpriteRender{
+		//		"../Assets/Textures/Worm.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
+
+		//entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(entity, Transform{
+		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.25f,
+		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE, SPRITE_SCALE}
+		//	});
+		//ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
+		//ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{} });
+		//ECS::GetInstance().AddComponent(entity, SpriteRender{
+		//		"../Assets/Textures/Worm.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
 
 		// Create left door entity
-		entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2{0,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-				Vec2{},
-				Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
-			});
-		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
-		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
-		ECS::GetInstance().AddComponent(entity, SpriteRender{
+		GameObject door_0 = GameObjectFactory::CreateObject();
+		door_0.AddComponent(Transform{ Vec2{0,
+					ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+					Vec2{},
+					Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f} });
+		door_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		door_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		door_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
 			});
+
+		//entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(entity, Transform{
+		//		Vec2{0,
+		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
+		//	});
+		//ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
+		//ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		//ECS::GetInstance().AddComponent(entity, SpriteRender{
+		//		"../Assets/Textures/Moon Floor.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
 
 		// Create right door entity
-		entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2{(float)ECS::GetInstance().GetSystem<Renderer>()->screen_width,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-				Vec2{},
-				Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
-			});
-		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
-		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
-		ECS::GetInstance().AddComponent(entity, SpriteRender{
+		GameObject door_1 = GameObjectFactory::CreateObject();
+		door_1.AddComponent(Transform{
+					Vec2{(float)ECS::GetInstance().GetSystem<Renderer>()->screen_width,
+					ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+					Vec2{},
+					Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f} });
+		door_1.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		door_1.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		door_1.AddComponent(SpriteRender{
 				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
 			});
+
+		//entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(entity, Transform{
+		//		Vec2{(float)ECS::GetInstance().GetSystem<Renderer>()->screen_width,
+		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
+		//	});
+		//ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
+		//ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		//ECS::GetInstance().AddComponent(entity, SpriteRender{
+		//		"../Assets/Textures/Moon Floor.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
 
 		// Create top door entity
-		entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		GameObject door_2 = GameObjectFactory::CreateObject();
+		door_2.AddComponent(Transform{ Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 				0},
 				Vec2{},
-				Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
-			});
-		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
-		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
-		ECS::GetInstance().AddComponent(entity, SpriteRender{
+				Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f} });
+		door_2.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		door_2.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		door_2.AddComponent(SpriteRender{
 				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
 			});
 
+		//entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(entity, Transform{
+		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		//		0},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
+		//	});
+		//ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
+		//ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		//ECS::GetInstance().AddComponent(entity, SpriteRender{
+		//		"../Assets/Textures/Moon Floor.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
+
 		// Create bottom door entity
-		entity = ECS::GetInstance().CreateEntity();
-		ECS::GetInstance().AddComponent(entity, Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		GameObject door_3 = GameObjectFactory::CreateObject();
+		door_3.AddComponent(Transform{ Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 				(float)ECS::GetInstance().GetSystem<Renderer>()->screen_height},
 				Vec2{},
-				Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
-			});
-		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
-		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
-		ECS::GetInstance().AddComponent(entity, SpriteRender{
+				Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f} });
+		door_3.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		door_3.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		door_3.AddComponent(SpriteRender{
 				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
 			});
+
+		//entity = ECS::GetInstance().CreateEntity();
+		//ECS::GetInstance().AddComponent(entity, Transform{
+		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		//		(float)ECS::GetInstance().GetSystem<Renderer>()->screen_height},
+		//		Vec2{},
+		//		Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
+		//	});
+		//ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
+		//ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		//ECS::GetInstance().AddComponent(entity, SpriteRender{
+		//		"../Assets/Textures/Moon Floor.png",
+		//		SPRITE_SHAPE::BOX,
+		//		true,
+		//		1.0f
+		//	});
 
 		//std::default_random_engine generator;
 		//std::uniform_real_distribution<float> randPosition(450.0f, 800.0f);
@@ -233,17 +344,20 @@ namespace Ukemochi
 		// Press 'W' or up key to move the player up
 		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player.GetComponent<Rigidbody2D>();
 			player_rb.velocity.y = -player_rb.acceleration.y;
 		}
 		// Press 'S' or down key to move the player down
 		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
 		{
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.y = player_rb.acceleration.y;
 		}
 		else
 		{
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.y = 0.0f; // Stop moving the player in the y axis
 		}
@@ -251,17 +365,20 @@ namespace Ukemochi
 		// Press 'A' or left key to move the player left
 		if (UME::Input::IsKeyPressed(UME_KEY_A) || UME::Input::IsKeyPressed(UME_KEY_LEFT))
 		{
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.x = -player_rb.acceleration.x;
 		}
 		// Press 'D' or right key to move the player to the right
 		else if (UME::Input::IsKeyPressed(UME_KEY_D) || UME::Input::IsKeyPressed(UME_KEY_RIGHT))
 		{
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.x = player_rb.acceleration.x;
 		}
 		else
 		{
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.x = 0.0f; // Stop moving the player in the x axis
 		}

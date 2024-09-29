@@ -27,13 +27,15 @@ namespace Ukemochi
 	const ComponentTypeID MAX_COMPONENTS = 32; // Maximum number of components that can be registered
 	using SignatureID = std::bitset<MAX_COMPONENTS>; // a type alias representing components bit signature (0x111 to represent 3 components)
 
-	// Manage the Entities
+	/**
+	 * @brief To distribute entity IDs and keeping record of which IDs are in use and which are not. It also function to keep track what
+	 */
 	class EntityManager
 	{
 		std::queue<EntityID> m_AvailableEntities{};           // Queue of unused entity IDs
 		std::array<SignatureID, MAX_ENTITIES> m_Signatures{}; // Array of signatures where the index corresponds to the entity ID
 
-		unsigned long int m_ulLivingEntityCount{};
+		unsigned long int m_LivingEntityCount{};
 
 	public:
 		EntityManager()
@@ -44,7 +46,17 @@ namespace Ukemochi
 			}
 		};
 
+		/**
+		 * @brief Take an ID from the front of the queue and return to user
+		 *
+		 * @return EntityID a entity ID free for usage
+		 */
 		EntityID CreateEntity();
+		/**
+		 * @brief Reset entity's corresponding component signature and push back the EntityID into the queue for recycling
+		 *
+		 * @param entity The ID to release
+		 */
 		void DestroyEntity(EntityID entity);
 		void SetSignature(EntityID entity, SignatureID signature);
 		SignatureID GetSignature(EntityID entity);

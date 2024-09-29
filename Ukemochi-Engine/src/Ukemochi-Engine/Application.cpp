@@ -3,10 +3,7 @@
 \file       Application.cpp
 \par		Ukemochi
 \author 	HURNG Kai Rui, h.kairui, 230xxxx, h.kairui\@digipen.edu (50%)
-\co-authors x, x, 230xxxx, x\@digipen.edu (x%)
-			Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (x%)
-			x, x, 230xxxx, x\@digipen.edu (x%)
-			x, x, 230xxxx, x\@digipen.edu (x%)
+\co-authors
 \par        Course: CSD2400/CSD2401
 \date   	25-09-2024
 \brief      This file contains the function definitions of application.
@@ -21,6 +18,7 @@ DigiPen Institute of Technology is prohibited.
 #include "Game/GSM.h"
 #include "Ukemochi-Engine/Logs/Log.h"
 #include "FrameController.h"
+#include "Serialization/Serialization.h"
 
 // System Includes
 #include "Input/Input.h" // for input system
@@ -45,26 +43,34 @@ namespace UME {
 	{
 		s_Instance = this;
 		WindowProps props; // You can customize these properties if needed
+
+		rapidjson::Document doc;
+		Serialization::LoadJSON("../Assets/config.json", doc);
+		rapidjson::Value& window = doc["Window"];
+		props.Title = window["Title"].GetString();
+		props.Width = window["Width"].GetInt();
+		props.Height = window["Height"].GetInt();
+
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
 		// Set up ECS
 		ECS::GetInstance().Init();
 
-		// Register your components
+		// TODO: Register your components
 		ECS::GetInstance().RegisterComponent<Transform>();
 		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
 		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
 		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<SpriteRender>();
 
-		// Register your systems
+		// TODO: Register your systems
 		ECS::GetInstance().RegisterSystem<Physics>();
 		ECS::GetInstance().RegisterSystem<Collision>();
 		ECS::GetInstance().RegisterSystem<Renderer>();
 
 		// Set a signature to your system
-		// Each system will have a signature to determine which entities it will process
+		// TODO: Each system will have a signature to determine which entities it will process
 
 		// For physics system
 		SignatureID sig;
@@ -185,19 +191,16 @@ namespace UME {
 			//render.drawBox(0, 0, 100, 100, true);
 			//render.render();
 
-
-
-			if (Input::IsKeyPressed(GLFW_KEY_W))
-			{
-				// If 'W' key is pressed, move forward
-				UME_ENGINE_INFO("W key is pressed");
-			}
+					if (Input::IsKeyPressed(GLFW_KEY_W))
+					{
+						// If 'W' key is pressed, move forward
+						UME_ENGINE_INFO("W key is pressed");
+					}
 					//render.drawBox(0, 0, 100, 100, true);
 					//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
 					//render->render();
-					
-					imguiInstance.NewFrame();
 
+					imguiInstance.NewFrame();
 
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					m_Window->OnUpdate();

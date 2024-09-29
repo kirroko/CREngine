@@ -20,21 +20,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/**
+	 * @brief Take an ID from the front of the queue and return to user
+	 *
+	 * @return EntityID a entity ID free for usage
+	 */
 	EntityID EntityManager::CreateEntity()
 	{
+		assert(m_LivingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
+
 		EntityID id = m_AvailableEntities.front();
 		m_AvailableEntities.pop();
-		++m_ulLivingEntityCount;
+		++m_LivingEntityCount;
 
 		return id;
 	}
 
+	/**
+	 * @brief Reset entity's corresponding component signature and push back the EntityID into the queue for recycling
+	 * 
+	 * @param entity The ID to release
+	 */
 	void EntityManager::DestroyEntity(EntityID entity)
 	{
 		m_Signatures[entity].reset();
 
 		m_AvailableEntities.push(entity);
-		--m_ulLivingEntityCount;
+		--m_LivingEntityCount;
 	}
 
 	void EntityManager::SetSignature(EntityID entity, SignatureID signature)

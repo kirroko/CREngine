@@ -40,7 +40,7 @@ namespace Ukemochi
 	}
 
 	template <typename T>
-	ComponentTypeID ComponentManager::GetComponentType()
+	const ComponentTypeID ComponentManager::GetComponentType()
 	{
 		const char* typeName = typeid(T).name();
 
