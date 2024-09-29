@@ -37,6 +37,12 @@
     <Filter Include="Ukemochi-Engine\Logs">
       <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Serialization">
+      <UniqueIdentifier>{f1ce0ebd-f4f8-428d-9df1-6e90fb076071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Factory">
+      <UniqueIdentifier>{ff824d99-f81e-41a2-8690-febe735201ef}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Math">
       <UniqueIdentifier>{966B54F0-82FA-DDB9-2B19-F2B41787EE5F}</UniqueIdentifier>
     </Filter>

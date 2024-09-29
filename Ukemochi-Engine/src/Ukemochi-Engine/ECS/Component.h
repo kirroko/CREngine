@@ -22,6 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Ukemochi
 {
 	// The component manager class that manages all the different component arrays that are attached to the component type
+	/**
+	 * @brief Holds all unique ID of every type of component
+	 */
 	class ComponentManager
 	{
 		// Here is where we store all the known component types whose ID = ComponentType (i.e transform, sprite, etc)
@@ -42,7 +45,7 @@ namespace Ukemochi
 		void RegisterComponent();
 
 		template <typename T>
-		ComponentTypeID GetComponentType();
+		const ComponentTypeID GetComponentType();
 
 		// Add a component to an entity
 		template<typename T>

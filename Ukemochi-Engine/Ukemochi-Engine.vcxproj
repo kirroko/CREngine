@@ -152,6 +152,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Factory.h" />
+    <ClInclude Include="src\Game\GameStateList.h" />
     <ClInclude Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.h" />
     <ClInclude Include="src\Platform\WindowsWindow.h" />
     <ClInclude Include="src\PreCompile.h" />
@@ -197,9 +199,12 @@
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Factory.cpp" />
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp" />
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
     <ClCompile Include="src\PreCompile.cpp" />
@@ -223,6 +228,7 @@
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
@@ -241,6 +247,10 @@
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\Serialization\test-input.json" />
+    <None Include="src\Ukemochi-Engine\test-input.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
