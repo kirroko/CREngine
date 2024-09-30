@@ -9,7 +9,6 @@
 #include "PreCompile.h"
 #include "Renderer.h"
 
-
 /*!
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
@@ -105,15 +104,14 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	VBO* vbo = new VBO(vertices, vertSize);
 	EBO* ebo = new EBO(indices, indexSize);
 
-	// Bind the VAO and set up the attributes
 	vao->Bind();
 	vbo->Bind();
 	ebo->Bind();
+
 	vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 	vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-	// Unbind after setting
 	vao->Unbind();
 	vbo->Unbind();
 	ebo->Unbind();
@@ -129,31 +127,73 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
+	// Get the current time
+	float currentFrame = glfwGetTime();  // This will return time in seconds
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;  // Save the current frame for the next iteration
+
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
-	// Clean the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	// Tell OpenGL which Shader Program we want to use
-	shaderProgram->Activate();
-	//shaderProgram->setBool("useTexture", use_texture ? 1 : 0);
-	
-	// Loop over each VAO and draw objects
-	for (size_t i = 0; i < vaos.size(); ++i)
-	{
+	glEnable(GL_DEPTH_TEST);
+
+	drawBox(800.f, 450.f, 100.f, 100.f, "../Assets/Textures/container.jpg");
+	drawCircle(400.f, 400.f, 100.f);
+
+	for (size_t i = 0; i < vaos.size(); ++i) {
 		vaos[i]->Bind();
-	
-		// Binds texture so that is appears in rendering
+
+		shaderProgram->Activate();
+
+		glm::mat4 model = glm::mat4(1.0f);
+		if (scale_enabled)
+			model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
+		// Apply rotation if enabled
+		if (rotation_enabled)
+		{ 
+			GLfloat rotationSpeed = 1.0f;  // Rotate 45 degrees per second
+
+			// Update the rotation angle based on deltaTime
+			rotation_angle += rotationSpeed * deltaTime;
+
+			// Cap the rotation angle between 0 and 360 degrees
+			if (rotation_angle >= 360.0f) 
+				rotation_angle -= 360.0f;
+			
+		
+			// Apply rotation to the model matrix 
+			model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
+		}
+
+		shaderProgram->setMat4("model", model);
+
 		if (textures_enabled[i])
 		{
 			textures[i]->Bind();
 			shaderProgram->setBool("useTexture", true);
 		}
 		else
-		{
 			shaderProgram->setBool("useTexture", false);
+
+		// Draw the filled square
+		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
+		glDrawElements(GL_TRIANGLE_FAN, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
+
+		// If debug mode is enabled, draw the wireframe outline
+		if (debug_mode_enabled)
+		{
+			vaos[i]->Unbind(); // Unbind the object VAO
+			drawBoxOutline(800.f, 450.f, 100.f, 100.f);  // Wireframe for square
+			drawCircleOutline(400.f, 400.f, 100.f);  // Wireframe for circle
+			shaderProgram->setBool("debug", true);
+
+			// Rebind the VAO before moving to the next object
+			vaos[i]->Bind();
 		}
-		glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+		else
+			shaderProgram->setBool("debug", false);
+
+		vaos[i]->Unbind();
 	}
 }
 
@@ -221,6 +261,7 @@ void Renderer::cleanUp()
  */
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath)
 {
+
 	// Convert screen coordinates to normalized device coordinates (NDC) 
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
@@ -234,16 +275,19 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 
 	// Define the vertices for the box, centered around (new_x, new_y)
 	GLfloat vertices_box[] = {
-		new_x - half_width, new_y + half_height, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Bottom-left
+		new_x - half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f, 1.0f,   // Top-left
+		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f, 0.0f,   // Bottom-left
 		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f,  0.0f, 0.0f, 1.0f,   1.0f, 1.0f    // Top-right
+		new_x + half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 1.0f    // Top-right
 	};
 	// Define indices to form two triangles 
 	GLuint indices_box[] = {
 	0, 1, 2, // First triangle  
 	0, 2, 3  // Second triangle
 	};
+
+	// ** Set the object color for the filled box (e.g., white) **
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set uniform to white
 
 	// Set up buffers
 	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
@@ -268,6 +312,7 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
  */
 void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath, GLint segments)
 {
+
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
@@ -323,3 +368,119 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::strin
 	// Set up the texture for the circle
 	setUpTextures(texturePath);
 }
+
+void Renderer::ToggleInputsForScale()
+{
+	scale_enabled = !scale_enabled;
+	// Adjust scale factor when toggled
+	if (scale_enabled)
+	scale_factor = 0.5f;
+	else
+	scale_factor = 1.0f;
+}
+
+void Renderer::ToggleInputsForRotation()
+{
+	rotation_enabled = !rotation_enabled;
+	if (!rotation_enabled)
+	{
+		rotation_angle = 0.f;
+	}
+}
+
+
+void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+{
+	// Convert screen coordinates to normalized device coordinates (NDC)
+	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+	GLfloat new_width = (2.0f * width) / screen_width;
+	GLfloat new_height = (2.0f * height) / screen_height;
+
+	GLfloat half_width = new_width / 2.0f;
+	GLfloat half_height = new_height / 2.0f;
+
+	// Define the vertices for the box outline (positions only)
+	GLfloat vertices_box[] = {
+		new_x - half_width, new_y + half_height, 0.0f,  // Top-left
+		new_x - half_width, new_y - half_height, 0.0f,  // Bottom-left
+		new_x + half_width, new_y - half_height, 0.0f,  // Bottom-right
+		new_x + half_width, new_y + half_height, 0.0f   // Top-right
+	};
+
+	// Activate the shader program
+	shaderProgram->Activate();
+
+	// Disable the texture for the wireframe rendering
+	shaderProgram->setBool("useTexture", false);  // Ensure no texture is bound
+
+	// Set the wireframe color to red
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
+
+	// Set to wireframe mode and increase line width for visibility
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2.0f);  // Make the wireframe lines thicker
+
+	// Draw the outline using GL_LINE_LOOP
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices_box);
+	glDrawArrays(GL_LINE_LOOP, 0, 4);  // This will only draw the outline of the square
+
+	// Reset polygon mode back to fill for future drawings
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDisableVertexAttribArray(0);
+
+	// Reset line width to default
+	glLineWidth(1.0f);
+}
+
+
+void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments) {
+	// Convert screen coordinates to normalized device coordinates (NDC)
+	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+	GLfloat z = 0.0f;
+
+	// Convert radius from screen space to NDC scaling
+	GLfloat new_radius_x = (2.0f * radius) / screen_width;
+	GLfloat new_radius_y = (2.0f * radius) / screen_height;
+
+	// Define vertices for the circle's outline
+	std::vector<GLfloat> vertices;
+
+	// Generate outer vertices for the circle's circumference
+	for (int i = 0; i < segments; ++i)  // Only generate 'segments' outer points, skip center vertex
+	{
+		GLfloat angle = i * 2.0f * 3.1415926f / segments;
+		GLfloat dx = cosf(angle) * new_radius_x;
+		GLfloat dy = sinf(angle) * new_radius_y;
+		vertices.push_back(new_x + dx);  // X
+		vertices.push_back(new_y + dy);  // Y
+		vertices.push_back(z);           // Z (depth)
+	}
+
+	// Activate the shader program
+	shaderProgram->Activate();
+
+	// Set the wireframe color to red
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
+
+	// Set to wireframe mode and increase line width for visibility
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2.0f);  // Make the wireframe lines thicker
+
+	// Enable the vertex attribute for position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices.data());
+
+	// Draw the outline of the circle using GL_LINE_LOOP
+	glDrawArrays(GL_LINE_LOOP, 0, segments);
+
+	// Disable the vertex array and reset to fill mode
+	glDisableVertexAttribArray(0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	// Reset line width to default
+	glLineWidth(1.0f);
+}
+

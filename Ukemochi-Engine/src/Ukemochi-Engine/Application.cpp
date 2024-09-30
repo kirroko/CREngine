@@ -81,9 +81,14 @@ namespace UME {
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
-		render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
-		render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
 
+		
+		//render.drawCircle(800.f, 450.f, 100.f, "../Assets/Textures/container.jpg");
+		
+		//render.drawBox(800.f, 450.f, 100.f, 100.f, "");
+
+
+		bool isToggling = false;
 		while (m_running)
 		{
 			g_FrameRateController.Update();
@@ -103,17 +108,50 @@ namespace UME {
 					gsm_next = gsm_current = gsm_previous;
 				}
 
-				//Init Scene
-				gsm_fpInitialize();
+			gsm_fpInitialize();
 
-				glClearColor(1, 0, 1, 1);
-				glClear(GL_COLOR_BUFFER_BIT);
-				m_Window->OnUpdate();
-				if (Input::IsKeyPressed(GLFW_KEY_W))
+			// Get the current time
+			double Time = glfwGetTime();
+			
+			// Check for 'S' key press and toggle scaling
+			if (Input::IsKeyPressed(GLFW_KEY_S))
+			{
+				if (!isToggling)
 				{
-					// If 'W' key is pressed, move forward
-					UME_ENGINE_INFO("W key is pressed");
+					render.ToggleInputsForScale();
+					isToggling = true;
 				}
+			}
+			else if (Input::IsKeyPressed(GLFW_KEY_R))
+			{
+				if (!isToggling)
+				{
+					render.ToggleInputsForRotation();
+					isToggling = true;
+				}
+			}
+			else if (Input::IsKeyPressed(GLFW_KEY_D))
+			{
+				if (!isToggling)
+				{
+					render.debug_mode_enabled = !render.debug_mode_enabled;
+					isToggling = true;
+				}
+			}
+			else
+			{
+				isToggling = false;
+			}
+
+
+			render.render();
+			m_Window->OnUpdate();
+
+			if (Input::IsKeyPressed(GLFW_KEY_W))
+			{
+				// If 'W' key is pressed, move forward
+				UME_ENGINE_INFO("W key is pressed");
+			}
 
 				//Current Scene
 				while (gsm_current == gsm_next && m_running)

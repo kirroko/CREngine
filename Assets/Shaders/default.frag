@@ -14,10 +14,14 @@ uniform sampler2D tex0;
 
 uniform bool useTexture;
 
+uniform vec3 objectColor;
+
 void main()
 {
 	if(useTexture)
 	FragColor = texture(tex0, texCoord);
 	else
-	FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);
+	FragColor = vec4(objectColor, 1.0f);
+
+	
 }
