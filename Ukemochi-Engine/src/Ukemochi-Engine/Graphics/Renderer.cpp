@@ -185,10 +185,7 @@ void Renderer::render()
 
 		drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
 	}
-
-	drawBox(800.f, 450.f, 100.f, 100.f, "../Assets/Textures/container.jpg");
-	drawCircle(400.f, 400.f, 100.f);
-
+	
 	for (size_t i = 0; i < vaos.size(); ++i) {
 		vaos[i]->Bind();
 
