@@ -120,6 +120,11 @@ namespace UME {
 		//Set up SceneManager
 		SceneManager sceneManger;
 
+		//Audio audio;
+		//audio.CreateGroup("test");
+		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
+		//audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
+
 		//while engine running
 		while (gsm_current != GS_STATES::GS_QUIT && m_running)
 		{

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "../Math/Vector2D.h" // for Vec2 struct
+#include "../Audio/Audio.h"
 
 namespace Ukemochi
 {
@@ -85,8 +86,8 @@ namespace Ukemochi
 
 	struct AudioSource
 	{
-		FMOD::Sound* pSounds;
-		FMOD::Channel* pChannels;
-		FMOD::ChannelGroup* pChannelGroups;
+		//FMOD::Sound pSounds;
+		//FMOD::Channel pChannels;
+		//FMOD::ChannelGroup pChannelGroups;
 	};
 }

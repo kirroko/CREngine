@@ -11,6 +11,11 @@ namespace Ukemochi
     class Audio : public System
     {
     public:
+        static Audio& GetInstance()
+        {
+            static std::unique_ptr<Audio> instance(new Audio());
+            return *instance;
+        }
         Audio();
         ~Audio();
 

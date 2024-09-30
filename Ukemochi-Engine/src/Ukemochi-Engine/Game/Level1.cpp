@@ -25,6 +25,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "../Physics/Physics.h"	    // for physics system
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
+#include "../Audio/Audio.h"			//for audio
 
 namespace Ukemochi
 {
@@ -37,10 +38,16 @@ namespace Ukemochi
 	{
 		//some code here
 		//std::cout << "Level1:Load" << '\n';
+		//audio.CreateGroup("test");
+		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
+
+		Audio::GetInstance().CreateGroup("test");
+		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
 	}
 
 	void Level1_Initialize()//Initialize the game at the start of Level1
 	{
+		Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
 		//some code here
 		//std::cout << "Level1:Initialize" << '\n';
 
@@ -222,10 +229,13 @@ namespace Ukemochi
 		//		1.0f
 		//		});
 		//}
+
+		//audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
 	}
 
 	void Level1_Update()//Level1 game runtime
 	{
+
 		//some code here
 		//std::cout << "Level1:Update" << '\n';
 
