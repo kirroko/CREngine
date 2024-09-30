@@ -1,11 +1,13 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file Entity.h
+\file	Entity.h
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 15/09/24
-\brief The ECS that in charge of distributing entity IDs and keeping record of which IDs are in use and which are not.
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
+\brief	The ECS that in charge of distributing entity IDs and keeping record of which IDs are in use and which are not.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -19,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-	using EntityID = unsigned long int;       // A type alias representing Entity type (Their ID)
+	using EntityID = unsigned long long int;       // A type alias representing Entity type (Their ID)
 	using ComponentTypeID = unsigned char; // A type alias representing Component type (Their ID)
 	const EntityID MAX_ENTITIES = 2501;   // Maximum number of entities that can be registered
 	const ComponentTypeID MAX_COMPONENTS = 32; // Maximum number of components that can be registered

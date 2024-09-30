@@ -1,10 +1,12 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file Systems.cpp
+\file	Systems.cpp
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 16/09/24
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	16/09/24
 \brief This file contains the definition of the member function of SystemManager
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -18,29 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-	//template <typename T>
-	//std::shared_ptr<T> SystemManager::RegisterSystem()
-	//{
-	//	const char* typeName = typeid(T).name();
-
-	//	assert(m_Systems.find(typeName) == m_Systems.end() && "Registering system more than once.");
-
-	//	auto system = std::make_shared<T>();
-	//	m_Systems.insert({ typeName, system });
-
-	//	return system;
-	//}
-
-	//template <typename T>
-	//void SystemManager::SetSystemSignature(SignatureID signature)
-	//{
-	//	const char* typeName = typeid(T).name();
-
-	//	assert(m_Systems.find(typeName) != m_Systems.end() && "System used before registered.");
-
-	//	m_Signatures.insert({ typeName, signature });
-	//}
-
 	void SystemManager::EntityDestroyed(EntityID entity)
 	{
 		for (auto const& pair : m_Systems)
@@ -53,17 +32,19 @@ namespace Ukemochi
 
 	void SystemManager::EntitySignatureChanged(EntityID entity, SignatureID entitySignature)
 	{
+		// Notify each system that an entity's signature changed
 		for (auto const& pair : m_Systems)
 		{
 			auto const& type = pair.first;
 			auto const& system = pair.second;
 			auto const& systemSignature = m_Signatures[type];
 
+			// Entity signature matches system signature - insert into set
 			if ((entitySignature & systemSignature) == systemSignature)
 			{
 				system->m_Entities.insert(entity);
 			}
-			else
+			else // Entity signature does not match system signature - erase from set
 			{
 				system->m_Entities.erase(entity);
 			}

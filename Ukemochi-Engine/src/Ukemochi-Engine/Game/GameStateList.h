@@ -1,10 +1,13 @@
 #pragma once
 
-enum GS_STATES
+namespace Ukemochi
 {
-	GS_MAINMENU = 0,
-	GS_LEVEL1,
+	enum GS_STATES
+	{
+		GS_MAINMENU = 0,
+		GS_LEVEL1,
 
-	GS_QUIT,
-	GS_RESTART
-};
+		GS_QUIT,
+		GS_RESTART
+	};
+}

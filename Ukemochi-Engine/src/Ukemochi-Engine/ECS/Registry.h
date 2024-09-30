@@ -1,10 +1,12 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file Registry.h
+\file	Registry.h
+\par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par junyukean.wong\@digipen.edu
-\date 15/09/24
+\par	junyukean.wong\@digipen.edu
+\par	Course: CSD2400/CSD2401
+\date	15/09/24
 \brief A registry where all components are stored.
 
 Copyright (C) 2024 DigiPen Institute of Technology.

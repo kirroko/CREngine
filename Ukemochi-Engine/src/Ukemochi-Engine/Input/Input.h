@@ -8,6 +8,7 @@ namespace UME {
 	{
 	public:
 		static bool IsKeyPressed(int Keycode);
+		static bool IsKeyTriggered(int Keycode);
 		static bool IsMouseButtonPressed(int Mousecode);
 		static std::pair<float,float> GetMousePosition();
 		static float GetMouseX();

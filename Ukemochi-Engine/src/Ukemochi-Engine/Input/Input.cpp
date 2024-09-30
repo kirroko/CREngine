@@ -1,16 +1,35 @@
 #include "PreCompile.h"
-#include "Application.h"
+#include "../Application.h"
 #include "Input.h"
-#include "Application.h"
 #include <GLFW/glfw3.h>
 
 namespace UME {
+
+	static std::unordered_map<int, bool> keyPressedMap;
 
 	bool Input::IsKeyPressed(int Keycode)
 	{
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		int state = glfwGetKey(window, Keycode);
 		return state == GLFW_PRESS;
+	}
+
+	bool Input::IsKeyTriggered(int Keycode)
+	{
+		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		int state = glfwGetKey(window, Keycode);
+
+		if (state == GLFW_PRESS && !keyPressedMap[Keycode])
+		{
+			keyPressedMap[Keycode] = true;
+			return true;  // Key triggered for the first time
+		}
+		else if (state == GLFW_RELEASE)
+		{
+			keyPressedMap[Keycode] = false;
+		}
+
+		return false;  // Key not triggered, or it's still held down
 	}
 
 	bool Input::IsMouseButtonPressed(int Keycode)

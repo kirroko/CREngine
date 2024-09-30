@@ -9,6 +9,8 @@
 #include "PreCompile.h"
 #include "Renderer.h"
 
+using namespace Ukemochi;
+
 /*!
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
@@ -51,6 +53,15 @@ void Renderer::setUpTextures(const std::string& texturePath)
 	// If a texture file path is provided, load and store the texture
 	if (!texturePath.empty())
 	{
+		// Check if the texture is already loaded in the cache and reuse existing texture
+		auto it = textureCache.find(texturePath);
+		if (it != textureCache.end())
+		{
+			textures.push_back(it->second);
+			textures_enabled.push_back(true);
+			return;
+		}
+
 		// Extract the file extension and determine format (GL_RGBA for PNG, GL_RGB for JPG)
 		std::string extension = texturePath.substr(texturePath.find_last_of(".") + 1);
 		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
@@ -71,6 +82,8 @@ void Renderer::setUpTextures(const std::string& texturePath)
 		textures.push_back(texture);
 		textures_enabled.push_back(true);
 		texture->texUnit(*shaderProgram, "tex0", 0);
+
+		textureCache[texturePath] = texture;
 	}
 	else
 	{
@@ -120,6 +133,34 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vaos.push_back(vao);
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
+}
+
+/*!
+* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
+*/
+void Renderer::cleanUpBuffers()
+{
+	for (auto& vao : vaos)
+	{
+		vao->Delete();
+		delete vao;
+	}
+
+	for (auto& vbo : vbos)
+	{
+		vbo->Delete();
+		delete vbo;
+	}
+
+	for (auto& ebo : ebos)
+	{
+		ebo->Delete();
+		delete ebo;
+	}
+
+	vaos.clear();
+	vbos.clear();
+	ebos.clear();
 }
 
 /*!
@@ -195,6 +236,8 @@ void Renderer::render()
 
 		vaos[i]->Unbind();
 	}
+
+	cleanUpBuffers();
 }
 
 /*!
@@ -227,7 +270,7 @@ void Renderer::cleanUp()
 	// Delete all textures
 	for (size_t i = 0; i < textures.size(); ++i)
 	{
-		if (textures[i]) 
+		if (textures[i])
 		{
 			textures[i]->Delete();  // Delete the OpenGL texture
 			delete textures[i];     // Deallocate memory for the texture object
@@ -240,8 +283,11 @@ void Renderer::cleanUp()
 	// Clear the textures_enabled vector as well
 	textures_enabled.clear();
 
+	// Clear texture cache
+	textureCache.clear();
+
 	// Delete the shader program
-	if (shaderProgram) 
+	if (shaderProgram)
 	{
 		shaderProgram->Delete();
 		delete shaderProgram;  // Deallocate memory
@@ -250,8 +296,8 @@ void Renderer::cleanUp()
 }
 
 /*!
- * @brief Draws a 2D box with the given position, dimensions, and texture, 
-		  starting position is the top left of screen. It starts from the 
+ * @brief Draws a 2D box with the given position, dimensions, and texture,
+		  starting position is the top left of screen. It starts from the
 		  center of the box.
  * @param x The x-coordinate of the center of the box (in screen space).
  * @param y The y-coordinate of the center of the box (in screen space).
@@ -265,7 +311,7 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 	// Convert screen coordinates to normalized device coordinates (NDC) 
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	// Convert width and height from screen space to NDC scaling 
+	// Convert width and height from screen space to NDC scaling
 	GLfloat new_width = (2.0f * width) / screen_width;
 	GLfloat new_height = (2.0f * height) / screen_height;
 
@@ -280,9 +326,9 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
 		new_x + half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 1.0f    // Top-right
 	};
-	// Define indices to form two triangles 
+	// Define indices to form two triangles
 	GLuint indices_box[] = {
-	0, 1, 2, // First triangle  
+	0, 1, 2, // First triangle
 	0, 2, 3  // Second triangle
 	};
 
@@ -300,14 +346,14 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 }
 
 /*!
- * @brief Draws a 2D circle with the given position, radius, and texture, 
-		  starting position is the top left of screen. It starts from the 
+ * @brief Draws a 2D circle with the given position, radius, and texture,
+		  starting position is the top left of screen. It starts from the
 		  center of the box.
  * @param x The x-coordinate of the center of the circle (in screen space).
  * @param y The y-coordinate of the center of the circle (in screen space).
  * @param radius The radius of the circle (in screen space).
  * @param texturePath The file path to the texture for the circle.
- * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles), 
+ * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles),
 		  by default it is set to 1000.
  */
 void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath, GLint segments)
@@ -334,7 +380,6 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::strin
 	vertices.push_back(1.0f);   // Color (b)
 	vertices.push_back(0.5f);   // Texture coordinate (s) - center of the texture
 	vertices.push_back(0.5f);   // Texture coordinate (t)
-
 
 	// Generate vertices around the circle
 	for (int i = 0; i <= segments; ++i)

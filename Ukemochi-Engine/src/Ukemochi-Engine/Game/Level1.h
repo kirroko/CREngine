@@ -12,14 +12,17 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 /* End Header **************************************************************************/
 #pragma once
 
-void Level1_Load();//Load all necessary assets before start of Level1
+namespace Ukemochi
+{
+	void Level1_Load();//Load all necessary assets before start of Level1
 
-void Level1_Initialize();//Initialize the game at the start of Level1
+	void Level1_Initialize();//Initialize the game at the start of Level1
 
-void Level1_Update();//Level1 game runtime
+	void Level1_Update();//Level1 game runtime
 
-void Level1_Draw();//rendering of the game for Level1
+	void Level1_Draw();//rendering of the game for Level1
 
-void Level1_Free();//release unused assets/variable memories
+	void Level1_Free();//release unused assets/variable memories
 
-void Level1_Unload();//unload the level
+	void Level1_Unload();//unload the level
+}
