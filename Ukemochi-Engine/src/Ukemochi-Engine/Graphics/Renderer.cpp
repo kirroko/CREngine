@@ -127,6 +127,11 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
+	// Get the current time
+	float currentFrame = glfwGetTime();  // This will return time in seconds
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;  // Save the current frame for the next iteration
+
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -146,8 +151,10 @@ void Renderer::render()
 		// Apply rotation if enabled
 		if (rotation_enabled)
 		{ 
-			float constantSpeed = 1.0f;  // Try a constant value like 1.0f degrees per frame
-			rotation_angle += constantSpeed;
+			GLfloat rotationSpeed = 1.0f;  // Rotate 45 degrees per second
+
+			// Update the rotation angle based on deltaTime
+			rotation_angle += rotationSpeed * deltaTime;
 
 			// Cap the rotation angle between 0 and 360 degrees
 			if (rotation_angle >= 360.0f) 

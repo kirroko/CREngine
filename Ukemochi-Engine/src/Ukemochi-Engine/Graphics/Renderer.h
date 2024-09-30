@@ -95,6 +95,8 @@ public:
     void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
     GLboolean debug_mode_enabled = false;
     GLboolean isSquare = false;
+    GLfloat deltaTime = 0.0f;
+    GLfloat lastFrame = 0.0f;
 
 private:
     /*!
