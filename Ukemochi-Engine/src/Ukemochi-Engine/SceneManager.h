@@ -36,28 +36,5 @@ namespace Ukemochi
 		void TransitionToScene();
 
 	private:
-		int currentScene;
-	};
-
-	class Scene
-	{
-	public:
-		Scene(SceneLists name);
-		~Scene();
-
-		void AddEntity(EntityID entity);
-		void RemoveEntity(EntityID entity);
-		void ClearEntities();
-
-		// Load resources (textures, meshes, etc.)
-		void LoadResources();
-		// Unload resources when the scene is no longer needed
-		void UnloadResources();
-
-		int GetSceneName();
-
-	private:
-		SceneLists sceneName;
-		// You can add resource managers for textures, sounds, etc.
 	};
 }

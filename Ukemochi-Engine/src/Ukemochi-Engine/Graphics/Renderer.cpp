@@ -244,15 +244,33 @@ void Renderer::cleanUp()
 	vbos.clear();
 	ebos.clear();
 
+	int numOfTexture = textureCache.size();
+	bool* check = new bool[numOfTexture];
+	for (int i = 0; i < numOfTexture; i++)
+	{
+		check[i] = false;
+	}
 	// Delete all textures
 	for (size_t i = 0; i < textures.size(); ++i)
 	{
 		if (textures[i])
 		{
 			textures[i]->Delete();  // Delete the OpenGL texture
-			delete textures[i];     // Deallocate memory for the texture object
+			for (int j = 0; j< numOfTexture; j++)
+			{
+				if (textures[i]->ID == j && check[j] == false)
+				{
+					delete textures[i];     // Deallocate memory for the texture object
+					textures[i] = nullptr;
+					check[j] = true;
+					break;
+				}
+
+			}
+
 		}
 	}
+	delete[] check;
 
 	// Clear the textures vector
 	textures.clear();

@@ -4,10 +4,11 @@
 #include <fmod.hpp>
 #include <iostream>
 #include <vector>
+#include "../ECS/Systems.h"
 
 namespace Ukemochi
 {
-    class Audio
+    class Audio : public System
     {
     public:
         Audio();

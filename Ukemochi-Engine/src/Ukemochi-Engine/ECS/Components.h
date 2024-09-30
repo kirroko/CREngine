@@ -82,4 +82,11 @@ namespace Ukemochi
 		bool visible;							// Is the object visible?
 		float opacity;							// Opacity of the object
 	};
+
+	struct AudioSource
+	{
+		FMOD::Sound* pSounds;
+		FMOD::Channel* pChannels;
+		FMOD::ChannelGroup* pChannelGroups;
+	};
 }

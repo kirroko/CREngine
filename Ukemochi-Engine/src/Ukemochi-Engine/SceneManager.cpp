@@ -9,7 +9,7 @@ namespace Ukemochi
 {
 	SceneManager::SceneManager()
 	{
-		Audio audio;
+		//Audio audio;
 		// Set up ECS
 		ECS::GetInstance().Init();
 
@@ -20,10 +20,12 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<SpriteRender>();
 
+
 		// Register your systems
 		ECS::GetInstance().RegisterSystem<Physics>();
 		ECS::GetInstance().RegisterSystem<Collision>();
 		ECS::GetInstance().RegisterSystem<Renderer>();
+		ECS::GetInstance().RegisterSystem<Audio>();
 
 		// Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
@@ -48,26 +50,17 @@ namespace Ukemochi
 	
 		//init GSM
 		GSM_Initialize(GS_LEVEL1);
-		currentScene = GS_LEVEL1;
-		//OnGameStateChanged(SL_LEVEL1);
 	}
 
 	SceneManager::~SceneManager()
 	{
-		ClearScene();
+	
 	}
 
 	void SceneManager::LoadScene()
 	{
-		// Clear any existing scene
-		ClearScene();
-
 		//update GSM
 		GSM_Update();
-
-		// Load the new scene from a file
-		currentScene = gsm_current;
-
 
 		// Load resources associated with the scene
 		gsm_fpLoad();
@@ -133,65 +126,26 @@ namespace Ukemochi
 
 	void SceneManager::InitScene()
 	{
-		if (currentScene != gsm_current)
-		{
-			// No current scene to initialize
-			return;
-		}
-
+		gsm_fpInitialize();
 		//init ECS here e.g. player
 
 	}
 
 	void SceneManager::Update(float deltaTime)
 	{
-		if (currentScene!=gsm_current || gsm_current == GS_PAUSED)
-		{
-			// No scene to update OR Do not update if paused
-			return;
-		}
+		//Update
+		gsm_fpUpdate();
+		//update ECS
 
-		//current state != restart
-		if (gsm_current != GS_STATES::GS_RESTART)
-		{
-			//load scene
-			
-			GSM_Update();
-			gsm_fpLoad();
-		}
-		else
-		{
-			gsm_next = gsm_current = gsm_previous;
-		}
-
-		//init scene
-		gsm_fpInitialize();
-
-		while (gsm_current == gsm_next)
-		{
-			//Update and Draw current scene
-			gsm_fpUpdate();
-			//update ECS
-			gsm_fpDraw();
-		}
-		//Free scene
-		gsm_fpFree();
-
-		//If game not restart unload Scene
-		if (gsm_next != GS_STATES::GS_RESTART)
-		{
-			gsm_fpUnload();
-		}
-
-		gsm_previous = gsm_current = gsm_next;
-		//OnGameStateChanged(gsm_next);
+		//Draw
+		gsm_fpDraw();
 	}
 
 	void SceneManager::ClearScene()
 	{
-		if (currentScene == gsm_current)
+		//if (currentScene == gsm_current)
 		{
-			gsm_fpFree();
+			gsm_fpUnload();
 			// Unload the resources associated with the current scene
 			//currentScene->UnloadResources();
 
@@ -199,7 +153,6 @@ namespace Ukemochi
 			//currentScene->ClearEntities();
 
 			// Clear the ECS entities and components
-			
 
 			// Reset the scene
 			//currentScene.reset();
@@ -208,7 +161,7 @@ namespace Ukemochi
 
 	void SceneManager::SaveScene(int saveFile)
 	{
-		if (currentScene != gsm_current)
+		//if (currentScene != gsm_current)
 		{
 			// No scene to save
 			return;
@@ -231,61 +184,4 @@ namespace Ukemochi
 		// Clear the current scene and load the new one
 		LoadScene();
 	}
-
-
-//#Scene
-
-	Scene::Scene(SceneLists curr)
-	{
-		sceneName = curr;
-	}
-
-	Scene::~Scene()
-	{
-		ClearEntities();
-	}
-
-	void Scene::AddEntity(EntityID entity)
-	{
-		// Add the entity to the ECS (this is optional since ECS might already manage the entities globally)
-		// However, keeping a local list of entity IDs within the scene can be helpful for cleanup or scene-specific actions
-	}
-
-	void Scene::RemoveEntity(EntityID entity)
-	{
-		// Remove the entity from the ECS
-	}
-
-	void Scene::ClearEntities()
-	{
-		// Assuming the ECS can clear scene-specific entities or we keep track of scene entities,
-		// you would clear them here. Since ECS is global, you can just call ECS::Get().clear() if needed.
-
-	}
-
-	void Scene::LoadResources()
-	{
-		// Example resource loading logic
-		// Load textures, meshes, sounds, etc.
-		// Use a resource manager or asset loader
-		// Pseudo-code:
-		// ResourceManager::Get().loadTexture("player.png");
-		// ResourceManager::Get().loadMesh("level1.obj");
-
-	}
-
-	void Scene::UnloadResources()
-	{
-		// Example resource unloading logic
-		// Pseudo-code:
-		// ResourceManager::Get().unloadTexture("player.png");
-		// ResourceManager::Get().unloadMesh("level1.obj");
-
-	}
-
-	int Scene::GetSceneName()
-	{
-		return sceneName;
-	}
-
 }

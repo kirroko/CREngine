@@ -104,6 +104,7 @@ namespace UME {
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
 	{
+		gsm_current = GS_STATES::GS_QUIT;
 		m_running = false;
 		return true;
 	}
@@ -119,62 +120,137 @@ namespace UME {
 		//Set up SceneManager
 		SceneManager sceneManger;
 
-		//while engine runing
-		while (m_running)
+		//while engine running
+		while (gsm_current != GS_STATES::GS_QUIT && m_running)
 		{
-			glClearColor(1, 0, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			//************ FPS ************
-			g_FrameRateController.Update();
-
-			// Use deltaTime from the FrameRateController
-			double deltaTime = g_FrameRateController.GetDeltaTime();
-			accumulator += deltaTime;
-
-			// Run game logic at a fixed time step (e.g., 60 times per second)
-			while (accumulator >= fixedTimeStep)
+			//ENGINE STATES
+			if (gsm_current == GS_ENGINE)
 			{
-				// Update game logic with a fixed delta time
-				accumulator -= fixedTimeStep;
-			}
+				glClearColor(1, 0, 1, 1);
+				glClear(GL_COLOR_BUFFER_BIT);
 
-			double currentTime = glfwGetTime();
-			// Only log/display the FPS every second (or defined interval)
-			if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+				//************ FPS ************
+				g_FrameRateController.Update();
+
+				//************ FPS ************
+				// Use deltaTime from the FrameRateController
+				double deltaTime = g_FrameRateController.GetDeltaTime();
+				accumulator += deltaTime;
+
+				// Run game logic at a fixed time step (e.g., 60 times per second)
+				while (accumulator >= fixedTimeStep)
+				{
+					// Update game logic with a fixed delta time
+					accumulator -= fixedTimeStep;
+				}
+				//************ FPS ************
+
+				//************ Display FPS ************
+				double currentTime = glfwGetTime();
+				// Only log/display the FPS every second (or defined interval)
+				if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+				{
+					double fps = g_FrameRateController.GetFPS();
+
+					// Use std::ostringstream to format the FPS with 2 decimal places
+					std::ostringstream oss;
+					oss << std::fixed << std::setprecision(2) << fps;
+					std::string fpsString = oss.str();
+
+					// Log or display the FPS
+					UME_ENGINE_INFO("FPS: {0}", fpsString);
+
+					// Update the last time we displayed the FPS
+					lastFPSDisplayTime = currentTime;
+				}
+				//************ Display FPS ************
+
+				//************ Render IMGUI ************
+				imguiInstance.NewFrame();
+				imguiInstance.ImGuiUpdate(); // Render ImGui elements
+				//************ Render IMGUI ************
+
+				m_Window->OnUpdate();
+			}
+			else //in game state
 			{
-				double fps = g_FrameRateController.GetFPS();
 
-				// Use std::ostringstream to format the FPS with 2 decimal places
-				std::ostringstream oss;
-				oss << std::fixed << std::setprecision(2) << fps;
-				std::string fpsString = oss.str();
+				//current state != restart
+				if (gsm_current != GS_STATES::GS_RESTART)
+				{
+					sceneManger.LoadScene();
+				}
+				else
+				{
+					gsm_next = gsm_current = gsm_previous;
+				}
 
-				// Log or display the FPS
-				UME_ENGINE_INFO("FPS: {0}", fpsString);
+				//Init Scene
+				sceneManger.InitScene();
 
-				// Update the last time we displayed the FPS
-				lastFPSDisplayTime = currentTime;
+				while (gsm_current == gsm_next && m_running)
+				{
+					glClearColor(1, 0, 1, 1);
+					glClear(GL_COLOR_BUFFER_BIT);
+
+					//************ FPS ************
+					g_FrameRateController.Update();
+
+					// Use deltaTime from the FrameRateController
+					double deltaTime = g_FrameRateController.GetDeltaTime();
+					accumulator += deltaTime;
+
+					// Run game logic at a fixed time step (e.g., 60 times per second)
+					while (accumulator >= fixedTimeStep)
+					{
+						// Update game logic with a fixed delta time
+						accumulator -= fixedTimeStep;
+					}
+					//************ FPS ************
+
+					//************ Update & Draw ************
+					sceneManger.Update(deltaTime);
+					//************ Update & Draw ************
+
+					//************ Render IMGUI ************
+					imguiInstance.NewFrame();
+					imguiInstance.ImGuiUpdate(); // Render ImGui elements
+					//************ Render IMGUI ************
+					
+					//************ Display FPS ************
+					double currentTime = glfwGetTime();
+					// Only log/display the FPS every second (or defined interval)
+					if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+					{
+						double fps = g_FrameRateController.GetFPS();
+
+						// Use std::ostringstream to format the FPS with 2 decimal places
+						std::ostringstream oss;
+						oss << std::fixed << std::setprecision(2) << fps;
+						std::string fpsString = oss.str();
+
+						// Log or display the FPS
+						UME_ENGINE_INFO("FPS: {0}", fpsString);
+
+						// Update the last time we displayed the FPS
+						lastFPSDisplayTime = currentTime;
+					}
+					//************ Display FPS ************
+
+					//Update window
+					m_Window->OnUpdate();
+				}
+				//Free scene
+				gsm_fpFree();
+				//If game not restart unload Scene
+				if (gsm_next != GS_STATES::GS_RESTART)
+				{
+					sceneManger.ClearScene();
+				}
+
+				gsm_previous = gsm_current = gsm_next;
 			}
-			//************ FPS ************
-
-
-			sceneManger.Update(deltaTime);
-
-			imguiInstance.NewFrame();
-			imguiInstance.ImGuiUpdate(); // Render ImGui elements
-
-			m_Window->OnUpdate();
 		}
-
-
-
-
-
-
-
-
-
 
 		//render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
 		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
