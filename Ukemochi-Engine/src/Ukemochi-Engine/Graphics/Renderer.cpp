@@ -1,7 +1,7 @@
 /*!
  * @file    Renderer.cpp
- * @brief   This file contains the implementation of the Renderer class responsible for 
-			handling OpenGL rendering, including setting up shaders, buffers, textures, 
+ * @brief   This file contains the implementation of the Renderer class responsible for
+			handling OpenGL rendering, including setting up shaders, buffers, textures,
 			and rendering 2D objects like boxes and circles.
  * @author  t.shunzhitomy@digipen.edu
  * @date    25/09/2024
@@ -178,6 +178,14 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
+	for (auto& entity : m_Entities)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+		drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
+	}
+
 	drawBox(800.f, 450.f, 100.f, 100.f, "../Assets/Textures/container.jpg");
 	drawCircle(400.f, 400.f, 100.f);
 
@@ -191,18 +199,17 @@ void Renderer::render()
 			model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
 		// Apply rotation if enabled
 		if (rotation_enabled)
-		{ 
+		{
 			GLfloat rotationSpeed = 1.0f;  // Rotate 45 degrees per second
 
 			// Update the rotation angle based on deltaTime
 			rotation_angle += rotationSpeed * deltaTime;
 
 			// Cap the rotation angle between 0 and 360 degrees
-			if (rotation_angle >= 360.0f) 
+			if (rotation_angle >= 360.0f)
 				rotation_angle -= 360.0f;
-			
-		
-			// Apply rotation to the model matrix 
+
+			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 
@@ -307,8 +314,7 @@ void Renderer::cleanUp()
  */
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath)
 {
-
-	// Convert screen coordinates to normalized device coordinates (NDC) 
+	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
 	// Convert width and height from screen space to NDC scaling
@@ -358,7 +364,6 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
  */
 void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath, GLint segments)
 {
-
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
@@ -419,9 +424,9 @@ void Renderer::ToggleInputsForScale()
 	scale_enabled = !scale_enabled;
 	// Adjust scale factor when toggled
 	if (scale_enabled)
-	scale_factor = 0.5f;
+		scale_factor = 0.5f;
 	else
-	scale_factor = 1.0f;
+		scale_factor = 1.0f;
 }
 
 void Renderer::ToggleInputsForRotation()
@@ -432,7 +437,6 @@ void Renderer::ToggleInputsForRotation()
 		rotation_angle = 0.f;
 	}
 }
-
 
 void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
@@ -478,7 +482,6 @@ void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat heigh
 	// Reset line width to default
 	glLineWidth(1.0f);
 }
-
 
 void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments) {
 	// Convert screen coordinates to normalized device coordinates (NDC)
@@ -528,4 +531,3 @@ void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint seg
 	// Reset line width to default
 	glLineWidth(1.0f);
 }
-

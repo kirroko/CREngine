@@ -115,19 +115,10 @@ namespace UME {
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
-		//render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
-		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
-
 		Audio audio;
 		audio.CreateGroup("test");
 		audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
 		audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
-
-		
-		//render.drawCircle(800.f, 450.f, 100.f, "../Assets/Textures/container.jpg");
-		
-		//render.drawBox(800.f, 450.f, 100.f, 100.f, "");
-
 
 		bool isToggling = false;
 		while (m_running)
@@ -149,50 +140,18 @@ namespace UME {
 					gsm_next = gsm_current = gsm_previous;
 				}
 
-			gsm_fpInitialize();
+				gsm_fpInitialize();
 
-			// Get the current time
-			double Time = glfwGetTime();
-			
-			// Check for 'S' key press and toggle scaling
-			if (Input::IsKeyPressed(GLFW_KEY_S))
-			{
-				if (!isToggling)
+				// Get the current time
+				double Time = glfwGetTime();
+
+				m_Window->OnUpdate();
+
+				if (Input::IsKeyPressed(GLFW_KEY_W))
 				{
-					render.ToggleInputsForScale();
-					isToggling = true;
+					// If 'W' key is pressed, move forward
+					UME_ENGINE_INFO("W key is pressed");
 				}
-			}
-			else if (Input::IsKeyPressed(GLFW_KEY_R))
-			{
-				if (!isToggling)
-				{
-					render.ToggleInputsForRotation();
-					isToggling = true;
-				}
-			}
-			else if (Input::IsKeyPressed(GLFW_KEY_D))
-			{
-				if (!isToggling)
-				{
-					render.debug_mode_enabled = !render.debug_mode_enabled;
-					isToggling = true;
-				}
-			}
-			else
-			{
-				isToggling = false;
-			}
-
-
-			render.render();
-			m_Window->OnUpdate();
-
-			if (Input::IsKeyPressed(GLFW_KEY_W))
-			{
-				// If 'W' key is pressed, move forward
-				UME_ENGINE_INFO("W key is pressed");
-			}
 
 				//Current Scene
 				while (gsm_current == gsm_next && m_running)
@@ -212,34 +171,11 @@ namespace UME {
 					}
 					//************ FPS ************
 
-					/*glClearColor(1, 0, 1, 1);
-					glClear(GL_COLOR_BUFFER_BIT);
-					m_Window->OnUpdate();*/
-
-					//// Add a box and a circle
-					//render.addObjects(GameObject(100.0f, 200.0f, 50.0f, 50.0f, true));  // Box
-					//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
-					//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
-
-			//render.drawBox(0, 0, 100, 100, true);
-			//render.render();
-
-
-
-			if (Input::IsKeyPressed(GLFW_KEY_W))
-			{
-				// If 'W' key is pressed, move forward
-				UME_ENGINE_INFO("W key is pressed");
-			}
-					//render.drawBox(0, 0, 100, 100, true);
-					//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
-					//render->render();
-					
 					imguiInstance.NewFrame();
-
 
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					m_Window->OnUpdate();
+
 					if (Input::IsKeyPressed(GLFW_KEY_W))
 					{
 						// If 'W' key is pressed, move forward
