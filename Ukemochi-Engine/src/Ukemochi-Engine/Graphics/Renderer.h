@@ -92,6 +92,7 @@ public:
     GLfloat rotation_speed = 0.5f;   // Degrees per second for rotation 
     
     void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+    void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
     GLboolean debug_mode_enabled = false;
 private:
     /*!

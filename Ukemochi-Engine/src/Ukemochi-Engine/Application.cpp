@@ -49,9 +49,10 @@ namespace UME {
 
 
 		
-		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
+		//render.drawCircle(800.f, 450.f, 100.f, "../Assets/Textures/container.jpg");
 		
-		//render.drawDebugBox(0.f, 0.f, 100.f, 100.f);
+		//render.drawBox(800.f, 450.f, 100.f, 100.f, "");
+
 
 		bool isToggling = false;
 		while (m_running)
