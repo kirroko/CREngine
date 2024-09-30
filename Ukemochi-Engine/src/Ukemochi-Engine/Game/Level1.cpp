@@ -42,14 +42,13 @@ namespace Ukemochi
 		//audio.CreateGroup("test");
 		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
 
-		Audio::GetInstance().CreateGroup("test");
 		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
 		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\SFX_jump.wav)");
 	}
 
 	void Level1_Initialize()//Initialize the game at the start of Level1
 	{
-		Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
+		Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 		//some code here
 		//std::cout << "Level1:Initialize" << '\n';
 
@@ -210,10 +209,11 @@ namespace Ukemochi
 		//std::default_random_engine generator;
 		//std::uniform_real_distribution<float> randPosition(450.0f, 800.0f);
 		//std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
-		//std::uniform_real_distribution<float> randScale(100.0f, 500.0f);
+		//std::uniform_real_distribution<float> randScale(100.0f, 150.f);
 
 		//float scale = randScale(generator);
 
+		//std::vector<EntityID> entities(MAX_ENTITIES-9);
 		//// Create entities
 		//for (auto& entity : entities)
 		//{
@@ -223,9 +223,9 @@ namespace Ukemochi
 		//		Vec2(randRotation(generator),randRotation(generator)),
 		//		Vec2(scale,scale)
 		//		});
-		//	ECS::GetInstance().AddComponent(entity, Rigidbody2D());
+		//	//ECS::GetInstance().AddComponent(entity, Rigidbody2D());
 		//	ECS::GetInstance().AddComponent(entity, SpriteRender{
-		//		"../Assets/Textures/container.jpg",
+		//		"../Assets/Textures/Worm.png",
 		//		SPRITE_SHAPE::BOX,
 		//		true,
 		//		1.0f
@@ -289,13 +289,14 @@ namespace Ukemochi
 		{
 			audioVolume -= 0.01f;
 			audioVolume = audioVolume < 0 ? 0 : audioVolume;
-			Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
 		if (UME::Input::IsKeyPressed(GLFW_KEY_O))
 		{
 			audioVolume += 0.01f;
 			audioVolume = audioVolume < 0 ? 0 : audioVolume;
-			Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
 		}
 	}
 
@@ -321,6 +322,6 @@ namespace Ukemochi
 
 		// Unload the renderer system
 		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
-		Audio::GetInstance().StopAllSoundsInGroup(ChannelGroups::MENUAUDIO);
+		Audio::GetInstance().StopAllSoundsInGroup(ChannelGroups::LEVEL1);
 	}
 }

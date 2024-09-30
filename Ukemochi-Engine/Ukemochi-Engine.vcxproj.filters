@@ -180,6 +180,7 @@
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\SceneList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -270,5 +271,6 @@
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp" />
   </ItemGroup>
 </Project>

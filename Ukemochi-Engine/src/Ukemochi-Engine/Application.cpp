@@ -35,6 +35,7 @@ DigiPen Institute of Technology is prohibited.
 #include "Audio/Audio.h"
 #include "ImGui/ImGuiCore.h"
 #include "SceneManager.h"
+#include <crtdbg.h>				// To check for memory leaks
 
 using namespace Ukemochi;
 
@@ -108,7 +109,7 @@ namespace UME {
 		m_running = false;
 		return true;
 	}
-#include <crtdbg.h>				// To check for memory leaks
+
 	void Application::GameLoop()
 	{
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

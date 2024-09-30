@@ -178,6 +178,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />

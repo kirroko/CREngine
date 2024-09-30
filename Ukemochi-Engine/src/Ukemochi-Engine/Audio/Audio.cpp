@@ -24,6 +24,7 @@ namespace Ukemochi
             std::cerr << "FMOD system initialization failed: " << result << std::endl;
             return;
         }
+        CreateGroup();
     }
 
 
@@ -69,19 +70,38 @@ namespace Ukemochi
         numOfAudios = 0;
     }
 
-    void Audio::CreateGroup(const char* groupname)
+    void Audio::CreateGroup()
     {
         FMOD::ChannelGroup* group = nullptr;
         FMOD_RESULT result;
 
-        result = pSystem->createChannelGroup(groupname, &group);
-        if (result != FMOD_OK)
+        for (int i = 0; i < LAST; i++)
         {
-            std::cerr << "Failed to create music channel group: " << result << std::endl;
-            return;
-        }
+            ChannelGroups channel = static_cast<ChannelGroups>(i);
+            switch (channel)
+            {
+            case Ukemochi::ENGINEAUDIO:
+                result = pSystem->createChannelGroup("ENGINE", &group);
+                break;
+            case Ukemochi::MENUAUDIO:
+                result = pSystem->createChannelGroup("MENU", &group);
+                break;
+            case Ukemochi::LEVEL1:
+                result = pSystem->createChannelGroup("LEVEL1", &group);
+                break;
+            case Ukemochi::LAST:
+                break;
+            default:
+                break;
+            }
 
-        pChannelGroups.push_back(group);
+            if (result != FMOD_OK)
+            {
+                std::cerr << "Failed to create music channel group: " << result << std::endl;
+                return;
+            }
+            pChannelGroups.push_back(group);
+        }
     }
 
     bool Audio::LoadSound(const char* filePath)
@@ -171,6 +191,14 @@ namespace Ukemochi
         }
     }
 
+    void Audio::SetAudioVolume(int soundIndex, float volume)
+    {
+        if (soundIndex < pChannelGroups.size())
+        {
+            pChannels[soundIndex]->setVolume(volume);
+        }
+    }
+
     void Audio::SetGroupVolume(int groupIndex, float volume)
     {
         if (groupIndex < pChannelGroups.size())
@@ -191,5 +219,14 @@ namespace Ukemochi
     {
         // Update the FMOD system regularly
         pSystem->update();
+    }
+    bool Audio::IsPlaying(int soundIndex)
+    {
+        bool isPlaying = false;
+        if (soundIndex < numOfAudios && pChannels[soundIndex] != nullptr)
+        {
+            pChannels[soundIndex]->isPlaying(&isPlaying);
+        }
+        return isPlaying;
     }
 }

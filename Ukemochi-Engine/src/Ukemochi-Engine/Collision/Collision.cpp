@@ -56,7 +56,10 @@ namespace Ukemochi
 				if (CollisionIntersection_BoxBox(box, rb.velocity, box2, rb2.velocity, tLast))
 				{
 					CollisionResponse_BoxBox(box, box2, trans, trans2, rb, rb2);
-					Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::MENUAUDIO);
+					if (!Audio::GetInstance().IsPlaying(HIT))
+					{
+						Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+					}
 				}
 
 			}

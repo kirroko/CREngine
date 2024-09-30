@@ -18,14 +18,16 @@ namespace Ukemochi
         }
         Audio();
         ~Audio();
-        void CreateGroup(const char* groupname);
+        void CreateGroup();
         bool LoadSound(const char* filePath);
         void PlaySoundInGroup(int soundIndex, int groupIndex);
         void StopSound(int soundIndex);
         void ToggleSoundInGroup(int soundIndex, int groupIndex);
+        void SetAudioVolume(int soundIndex, float volume);
         void SetGroupVolume(int groupIndex, float volume);
         void StopAllSoundsInGroup(int groupIndex);
         void Update();
+        bool IsPlaying(int soundIndex);
 
     private:
         FMOD::System* pSystem;

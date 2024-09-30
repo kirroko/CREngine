@@ -9,6 +9,9 @@ namespace Ukemochi
 
 	enum ChannelGroups
 	{
-		MENUAUDIO = 0
+		ENGINEAUDIO = 0,
+		MENUAUDIO,
+		LEVEL1,
+		LAST
 	};
 }

@@ -15,6 +15,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "GSM.h"
 #include "MainMenu.h"
 #include "Level1.h"
+#include "Level2.h"
 #include <iostream>
 
 namespace Ukemochi
@@ -55,6 +56,15 @@ namespace Ukemochi
 			gsm_fpDraw = Level1_Draw;
 			gsm_fpFree = Level1_Free;
 			gsm_fpUnload = Level1_Unload;
+			break;
+		case GS_LEVEL2:
+			// change gamestate to level 1
+			gsm_fpLoad = Level2_Load;
+			gsm_fpInitialize = Level2_Initialize;
+			gsm_fpUpdate = Level2_Update;
+			gsm_fpDraw = Level2_Draw;
+			gsm_fpFree = Level2_Free;
+			gsm_fpUnload = Level2_Unload;
 			break;
 		case GS_RESTART:
 			break;

@@ -7,6 +7,7 @@ namespace Ukemochi
 		GS_ENGINE = 0,
 		GS_MAINMENU,
 		GS_LEVEL1,
+		GS_LEVEL2,
 
 		GS_PAUSED,
 		GS_QUIT,
