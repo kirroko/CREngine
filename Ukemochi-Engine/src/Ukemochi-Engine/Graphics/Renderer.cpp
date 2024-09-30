@@ -133,7 +133,7 @@ void Renderer::render()
 	glEnable(GL_DEPTH_TEST);
 
 	drawBox(800.f, 450.f, 100.f, 100.f, "../Assets/Textures/container.jpg");
-	//drawCircle(400.f, 400.f, 100.f);
+	drawCircle(400.f, 400.f, 100.f);
 
 	for (size_t i = 0; i < vaos.size(); ++i) {
 		vaos[i]->Bind();
@@ -170,21 +170,24 @@ void Renderer::render()
 
 		// Draw the filled square
 		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
-		glDrawElements(GL_TRIANGLE_FAN, indices_count[i], GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLE_FAN, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
 
 		// If debug mode is enabled, draw the wireframe outline
-		if (debug_mode_enabled) 
+		if (debug_mode_enabled)
 		{
-			drawBoxOutline(800.f, 450.f, 100.f, 100.f);  // Draw only the outline
-			//drawCircleOutline(400.f, 400.f, 100.f);
+			vaos[i]->Unbind(); // Unbind the object VAO
+			drawBoxOutline(800.f, 450.f, 100.f, 100.f);  // Wireframe for square
+			drawCircleOutline(400.f, 400.f, 100.f);  // Wireframe for circle
 			shaderProgram->setBool("debug", true);
+
+			// Rebind the VAO before moving to the next object
+			vaos[i]->Bind();
 		}
 		else
 			shaderProgram->setBool("debug", false);
 
 		vaos[i]->Unbind();
 	}
-
 }
 
 /*!
@@ -251,6 +254,7 @@ void Renderer::cleanUp()
  */
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath)
 {
+
 	// Convert screen coordinates to normalized device coordinates (NDC) 
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
@@ -301,6 +305,7 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
  */
 void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath, GLint segments)
 {
+
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
 	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
@@ -377,7 +382,7 @@ void Renderer::ToggleInputsForRotation()
 }
 
 
-void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height) 
+void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
@@ -399,6 +404,9 @@ void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat heigh
 	// Activate the shader program
 	shaderProgram->Activate();
 
+	// Disable the texture for the wireframe rendering
+	shaderProgram->setBool("useTexture", false);  // Ensure no texture is bound
+
 	// Set the wireframe color to red
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
@@ -406,7 +414,7 @@ void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat heigh
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);  // Make the wireframe lines thicker
 
-	// Draw the outline using GL_LINE_LOOP (instead of GL_TRIANGLES or GL_QUADS)
+	// Draw the outline using GL_LINE_LOOP
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices_box);
 	glDrawArrays(GL_LINE_LOOP, 0, 4);  // This will only draw the outline of the square
@@ -418,6 +426,7 @@ void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat heigh
 	// Reset line width to default
 	glLineWidth(1.0f);
 }
+
 
 void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments) {
 	// Convert screen coordinates to normalized device coordinates (NDC)

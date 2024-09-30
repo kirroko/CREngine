@@ -94,6 +94,8 @@ public:
     void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
     GLboolean debug_mode_enabled = false;
+    GLboolean isSquare = false;
+
 private:
     /*!
     * @brief Pointer to the Shader object, which handles the OpenGL shaders.

@@ -16,8 +16,6 @@ uniform bool useTexture;
 
 uniform vec3 objectColor;
 
-uniform bool debug;
-
 void main()
 {
 	if(useTexture)
@@ -25,6 +23,5 @@ void main()
 	else
 	FragColor = vec4(objectColor, 1.0f);
 
-	if(debug)
-	FragColor = vec4(objectColor, 1.0f);
+	
 }
