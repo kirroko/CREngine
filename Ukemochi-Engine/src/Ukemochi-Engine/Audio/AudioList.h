@@ -4,7 +4,7 @@ namespace Ukemochi
 	enum AudioList
 	{
 		BGM = 0,
-		MENU
+		HIT,
 	};
 
 	enum ChannelGroups

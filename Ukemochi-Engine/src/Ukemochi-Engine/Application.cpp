@@ -108,9 +108,11 @@ namespace UME {
 		m_running = false;
 		return true;
 	}
-
+#include <crtdbg.h>				// To check for memory leaks
 	void Application::GameLoop()
 	{
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 		double accumulator = 0.0;
 		const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
 
@@ -119,17 +121,19 @@ namespace UME {
 
 		//Set up SceneManager
 		SceneManager sceneManger;
-
-		//Audio audio;
-		//audio.CreateGroup("test");
-		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
-		//audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
-
 		//while engine running
 		while (gsm_current != GS_STATES::GS_QUIT && m_running)
 		{
+			if (Input::IsKeyPressed(GLFW_KEY_1))
+			{
+				gsm_next = GS_LEVEL1;
+				gsm_previous = gsm_current = gsm_next;
+				// If 'W' key is pressed, move forward
+				UME_ENGINE_INFO("1 key is pressed");
+			}
+
 			//ENGINE STATES
-			if (gsm_current == GS_ENGINE)
+			if (gsm_current == GS_ENGINE && gsm_current == gsm_next)
 			{
 				glClearColor(1, 0, 1, 1);
 				glClear(GL_COLOR_BUFFER_BIT);
@@ -177,7 +181,7 @@ namespace UME {
 
 				m_Window->OnUpdate();
 			}
-			else //in game state
+			else if (gsm_current != GS_ENGINE && gsm_current == gsm_next)//in game state
 			{
 
 				//current state != restart
@@ -212,6 +216,14 @@ namespace UME {
 						accumulator -= fixedTimeStep;
 					}
 					//************ FPS ************
+
+					if (Input::IsKeyPressed(GLFW_KEY_2))
+					{
+						gsm_next = GS_ENGINE;
+						//gsm_previous = gsm_current = gsm_next;
+						// If 'W' key is pressed, move forward
+						UME_ENGINE_INFO("2 key is pressed");
+					}
 
 					//************ Update & Draw ************
 					sceneManger.Update(deltaTime);

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h" // for GetDeltaTime
 #include "../ECS/ECS.h"
 #include "../Graphics/Renderer.h"
+#include "../Audio/Audio.h"
 
 namespace Ukemochi
 {
@@ -53,7 +54,11 @@ namespace Ukemochi
 				// Check collision between entities
 				float tLast;
 				if (CollisionIntersection_BoxBox(box, rb.velocity, box2, rb2.velocity, tLast))
+				{
 					CollisionResponse_BoxBox(box, box2, trans, trans2, rb, rb2);
+					Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::MENUAUDIO);
+				}
+
 			}
 
 			// Check collision between entities and the screen boundaries
@@ -246,6 +251,7 @@ namespace Ukemochi
 				rb1.velocity.x = -rb1.velocity.x;
 			if (!box2.is_player)
 				rb2.velocity.x = -rb2.velocity.x;
+
 		}
 
 		// Box 1 right and box 2 left collision response
@@ -274,6 +280,7 @@ namespace Ukemochi
 				rb1.velocity.x = -rb1.velocity.x;
 			if (!box2.is_player)
 				rb2.velocity.x = -rb2.velocity.x;
+
 		}
 
 		// Box 1 top and box 2 bottom collision response
@@ -302,6 +309,7 @@ namespace Ukemochi
 				rb1.velocity.y = -rb1.velocity.y;
 			if (!box2.is_player)
 				rb2.velocity.y = -rb2.velocity.y;
+
 		}
 
 		// Box 1 bottom and box 2 top collision response
@@ -330,6 +338,7 @@ namespace Ukemochi
 				rb1.velocity.y = -rb1.velocity.y;
 			if (!box2.is_player)
 				rb2.velocity.y = -rb2.velocity.y;
+
 		}
 	}
 

@@ -18,7 +18,6 @@ namespace Ukemochi
         }
         Audio();
         ~Audio();
-
         void CreateGroup(const char* groupname);
         bool LoadSound(const char* filePath);
         void PlaySoundInGroup(int soundIndex, int groupIndex);

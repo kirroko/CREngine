@@ -35,8 +35,10 @@ namespace Ukemochi
             if (sound)
             {
                 sound->release();
+                sound = nullptr;
             }
         }
+        pSounds.clear();
 
         // Release all channel groups
         for (auto group : pChannelGroups)
@@ -44,14 +46,27 @@ namespace Ukemochi
             if (group)
             {
                 group->release();
+                group = nullptr;
             }
         }
+        pChannelGroups.clear();
+
+        for (auto chanel : pChannels)
+        {
+            if (chanel)
+            {
+                chanel = nullptr;
+            }
+        }
+        pChannels.clear();
 
         // Release FMOD system
         if (pSystem)
         {
-            pSystem->release();
+            pSystem = nullptr;
         }
+
+        numOfAudios = 0;
     }
 
     void Audio::CreateGroup(const char* groupname)

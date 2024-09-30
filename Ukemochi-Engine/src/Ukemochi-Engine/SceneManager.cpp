@@ -49,7 +49,7 @@ namespace Ukemochi
 		ECS::GetInstance().SetSystemSignature<Collision>(sig);
 	
 		//init GSM
-		GSM_Initialize(GS_LEVEL1);
+		GSM_Initialize(GS_ENGINE);
 	}
 
 	SceneManager::~SceneManager()
@@ -143,39 +143,40 @@ namespace Ukemochi
 
 	void SceneManager::ClearScene()
 	{
-		//if (currentScene == gsm_current)
-		{
-			gsm_fpUnload();
-			// Unload the resources associated with the current scene
-			//currentScene->UnloadResources();
-
-			// Clear all entities in the scene
-			//currentScene->ClearEntities();
-
-			// Clear the ECS entities and components
-
-			// Reset the scene
-			//currentScene.reset();
-		}
+		gsm_fpUnload();
+		// Clear the ECS entities and components
 	}
 
-	void SceneManager::SaveScene(int saveFile)
-	{
-		//if (currentScene != gsm_current)
+	void SceneManager::SaveScene()
+	{	
+		const std::string saveFile = "save.txt";
+		// Open file for writing
+		std::ofstream file(saveFile);
+		if (file.is_open())
 		{
-			// No scene to save
-			return;
-		}
+			// Save the name of the current scene
+			file << "Scene Name: " << static_cast<GS_STATES>(gsm_current) << std::endl;
 
-		// Example: Saving scene logic to file (pseudo-code)
-		// This can be extended with proper serialization logic for saving entity states, components, etc.
-		//std::ofstream file(saveFile);
-		//if (file.is_open())
+			// Iterate through each entity in the scene
+			//for (auto& entity : //ECS)
+			//{
+			//	file << "Entity ID: " << entity.GetID() << std::endl;
+
+			//	// Save each component of the entity
+			//	for (auto& component : entity.GetComponents())
+			//	{
+			//		file << "Component: " << component.GetType() << std::endl;
+			//		// Serialize component-specific data
+			//		component.Serialize(file);
+			//	}
+			//}
+
+			// Close the file
+			file.close();
+		}
+		else
 		{
-			//file << "Scene Name: " << currentScene->GetName() << std::endl;
-			// Save each entity and its components
-			// Add your specific logic for saving entity data
-		//	file.close();
+			std::cerr << "Failed to open file: " << saveFile << std::endl;
 		}
 	}
 

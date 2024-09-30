@@ -244,33 +244,58 @@ void Renderer::cleanUp()
 	vbos.clear();
 	ebos.clear();
 
-	int numOfTexture = textureCache.size();
-	bool* check = new bool[numOfTexture];
-	for (int i = 0; i < numOfTexture; i++)
+	int numOfTexture = 0;
+	
+	for (size_t i = 0; i < textures.size(); i++)
 	{
-		check[i] = false;
+		if (textures[i]->ID > numOfTexture)
+		{
+			numOfTexture = textures[i]->ID;
+		}
 	}
+
 	// Delete all textures
 	for (size_t i = 0; i < textures.size(); ++i)
 	{
 		if (textures[i])
 		{
 			textures[i]->Delete();  // Delete the OpenGL texture
-			for (int j = 0; j< numOfTexture; j++)
+			if (textures[i]->ID != textures[i]->type) // if deleted alr
 			{
-				if (textures[i]->ID == j && check[j] == false)
-				{
-					delete textures[i];     // Deallocate memory for the texture object
-					textures[i] = nullptr;
-					check[j] = true;
-					break;
-				}
-
+				delete textures[i];     // Deallocate memory for the texture object
+				
 			}
+			textures[i] = nullptr;
 
 		}
 	}
-	delete[] check;
+	
+	//bool* check = new bool[numOfTexture+1];
+	//for (int i = 0; i < numOfTexture; i++)
+	//{
+	//	check[i] = false;
+	//}
+	//// Delete all textures
+	//for (size_t i = 0; i < textures.size(); ++i)
+	//{
+	//	if (textures[i])
+	//	{
+	//		textures[i]->Delete();  // Delete the OpenGL texture
+	//		for (int j = 0; j<=numOfTexture; j++)
+	//		{
+	//			if (textures[i]->ID !=NULL && textures[i]->ID == j && check[j] == false)
+	//			{
+	//				delete textures[i];     // Deallocate memory for the texture object
+	//				textures[i] = nullptr;
+	//				check[j] = true;
+	//				break;
+	//			}
+
+	//		}
+
+	//	}
+	//}
+	//delete[] check;
 
 	// Clear the textures vector
 	textures.clear();

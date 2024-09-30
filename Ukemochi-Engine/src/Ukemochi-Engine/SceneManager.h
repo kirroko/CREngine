@@ -2,7 +2,6 @@
 #include "PreCompile.h"
 #include "ECS/ECS.h"
 #include "Game/GSM.h"
-#include "SceneList.h"
 
 namespace Ukemochi
 {
@@ -30,7 +29,7 @@ namespace Ukemochi
 		void ClearScene();
 
 		// Save the current scene to a file
-		void SaveScene(int saveFile);
+		void SaveScene();
 
 		// Optional: Transition to a different scene
 		void TransitionToScene();

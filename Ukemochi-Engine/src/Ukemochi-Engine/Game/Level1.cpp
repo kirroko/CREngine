@@ -33,6 +33,7 @@ namespace Ukemochi
 	EntityID player_entity;
 	const float SPRITE_SCALE = 100.f;
 	const float ENTITY_ACCEL = 250.f;
+	float audioVolume = 1;
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
@@ -43,6 +44,7 @@ namespace Ukemochi
 
 		Audio::GetInstance().CreateGroup("test");
 		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
+		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\SFX_jump.wav)");
 	}
 
 	void Level1_Initialize()//Initialize the game at the start of Level1
@@ -282,6 +284,19 @@ namespace Ukemochi
 
 		// Check collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+
+		if (UME::Input::IsKeyPressed(GLFW_KEY_P))
+		{
+			audioVolume -= 0.01f;
+			audioVolume = audioVolume < 0 ? 0 : audioVolume;
+			Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+		}
+		if (UME::Input::IsKeyPressed(GLFW_KEY_O))
+		{
+			audioVolume += 0.01f;
+			audioVolume = audioVolume < 0 ? 0 : audioVolume;
+			Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+		}
 	}
 
 	void Level1_Draw()//rendering of the game for Level1
@@ -306,5 +321,6 @@ namespace Ukemochi
 
 		// Unload the renderer system
 		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
+		Audio::GetInstance().StopAllSoundsInGroup(ChannelGroups::MENUAUDIO);
 	}
 }
