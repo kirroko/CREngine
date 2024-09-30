@@ -38,21 +38,28 @@ namespace Ukemochi
 	{
 		Vec2 velocity{};
 		Vec2 acceleration{};
+		
+		bool is_kinematic{};
 
-		float direction{};
+		// bool use_gravity{};
+		/*float direction{};
 		float angle{};
 		float angular_velocity{};
-		float angular_acceleration{};
+		float angular_acceleration{};*/
 	};
 
 	/*!***********************************************************************
 	\brief
-	 BoxCollider2D (Axis-Aligned Bounding Box) component structure.
+	 BoxCollider2D component structure.
 	*************************************************************************/
 	struct BoxCollider2D
 	{
-		Vec2 min;
-		Vec2 max;
+		Vec2 min{};
+		Vec2 max{};
+
+		int collision_flag{};
+		bool is_player{};
+		bool is_trigger{};
 	};
 
 	/*!***********************************************************************
@@ -61,8 +68,8 @@ namespace Ukemochi
     *************************************************************************/
 	struct CircleCollider2D
 	{
-		Vec2 m_center;
-		float m_radius;
+		Vec2 m_center{};
+		float m_radius{};
 	};
 
 	typedef enum { BOX, CIRCLE } SPRITE_SHAPE;
