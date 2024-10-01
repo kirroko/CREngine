@@ -25,7 +25,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "../Physics/Physics.h"	    // for physics system
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
-
+Renderer render_test;
 namespace Ukemochi
 {
 	// --- TEMP player variables ---
@@ -265,6 +265,13 @@ namespace Ukemochi
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.x = 0.0f; // Stop moving the player in the x axis
 		}
+
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_I))
+			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
+		else if (UME::Input::IsKeyTriggered(GLFW_KEY_O))
+			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
+		else if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
+			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = !ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled;
 		// --- End User Input ---
 
 		// Update the entities physics

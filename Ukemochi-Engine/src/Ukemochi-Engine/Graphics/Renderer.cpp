@@ -177,15 +177,24 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	//std::cout << "scale_enabled in Render: " << scale_enabled << std::endl;
 
 	for (auto& entity : m_Entities)
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
+		
 		drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
+
+		// If debug mode is enabled, draw the outline
+		if (debug_mode_enabled) {
+			if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+				drawBoxOutline(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
+			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
+		}
 	}
-	
+
 	for (size_t i = 0; i < vaos.size(); ++i) {
 		vaos[i]->Bind();
 
@@ -223,20 +232,6 @@ void Renderer::render()
 		// Draw the filled square
 		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
 		glDrawElements(GL_TRIANGLE_FAN, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
-
-		// If debug mode is enabled, draw the wireframe outline
-		if (debug_mode_enabled)
-		{
-			vaos[i]->Unbind(); // Unbind the object VAO
-			drawBoxOutline(800.f, 450.f, 100.f, 100.f);  // Wireframe for square
-			drawCircleOutline(400.f, 400.f, 100.f);  // Wireframe for circle
-			shaderProgram->setBool("debug", true);
-
-			// Rebind the VAO before moving to the next object
-			vaos[i]->Bind();
-		}
-		else
-			shaderProgram->setBool("debug", false);
 
 		vaos[i]->Unbind();
 	}
