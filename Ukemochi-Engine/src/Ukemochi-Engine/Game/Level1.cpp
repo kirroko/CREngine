@@ -278,11 +278,11 @@ namespace Ukemochi
 			player_rb.velocity.x = 0.0f; // Stop moving the player in the x axis
 		}
 
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_I))
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
-		else if (UME::Input::IsKeyTriggered(GLFW_KEY_O))
+		else if (UME::Input::IsKeyTriggered(GLFW_KEY_Y))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
-		else if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
+		else if (UME::Input::IsKeyTriggered(GLFW_KEY_U))
 			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = !ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled;
 		// --- End User Input ---
 
