@@ -225,6 +225,35 @@ namespace UME {
 						// If 'W' key is pressed, move forward
 						UME_ENGINE_INFO("2 key is pressed");
 					}
+					//// Check for 'S' key press and toggle scaling
+					//if (Input::IsKeyPressed(GLFW_KEY_S))
+					//{
+					//	if (!isToggling)
+					//	{
+					//		render.ToggleInputsForScale();
+					//		isToggling = true;
+					//	}
+					//}
+					//else if (Input::IsKeyPressed(GLFW_KEY_R))
+					//{
+					//	if (!isToggling)
+					//	{
+					//		render.ToggleInputsForRotation();
+					//		isToggling = true;
+					//	}
+					//}
+					//else if (Input::IsKeyPressed(GLFW_KEY_D))
+					//{
+					//	if (!isToggling)
+					//	{
+					//		render.debug_mode_enabled = !render.debug_mode_enabled;
+					//		isToggling = true;
+					//	}
+					//}
+					//else
+					//{
+					//	isToggling = false;
+					//}
 
 					//************ Update & Draw ************
 					sceneManger.Update(deltaTime);

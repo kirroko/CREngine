@@ -277,6 +277,13 @@ namespace Ukemochi
 			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
 			player_rb.velocity.x = 0.0f; // Stop moving the player in the x axis
 		}
+
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_I))
+			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
+		else if (UME::Input::IsKeyTriggered(GLFW_KEY_O))
+			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
+		else if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
+			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = !ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled;
 		// --- End User Input ---
 
 		// Update the entities physics
