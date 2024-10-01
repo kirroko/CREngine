@@ -215,5 +215,13 @@ private:
 	 */
 	GLfloat lastFrame = 0.0f;
 
+	// Animation control
+	float elapsedTime = 0.0f;  // Time since last frame
+	float frameDuration = 0.1f;  // Time per frame (0.1 seconds per frame)
+	int currentFrame = 0;  // Start at the first frame
+	int totalFrames = 8;   // Total number of frames in the sprite sheet
+	int frameWidth = 64;   // Width of a single frame in the sprite sheet
+	int frameHeight = 64;  // Height of a single frame in the sprite sheet
+	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int currentFrame, int totalFrames, int frameWidth, int frameHeight);
 };
 #endif
