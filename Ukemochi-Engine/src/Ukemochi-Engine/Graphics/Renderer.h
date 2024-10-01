@@ -84,15 +84,36 @@ public:
 	 */
 	void drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath = "", GLint segments = 1000);
 
-    // Function to Keyboard input
+	/*!
+	 * @brief Toggles scale transformation for objects based on input.
+	 */
     void ToggleInputsForScale();
     
+	/*!
+	 * @brief Toggles rotation transformation for objects based on input.
+	 */
     void ToggleInputsForRotation(); 
    
-    
+	/*!
+	* @brief Draws the outline of a 2D box at the specified position with the given dimensions.
+	* @param x The x-coordinate of the center of the box (in screen space).
+	* @param y The y-coordinate of the center of the box (in screen space).
+	* @param width The width of the box (in screen space).
+	* @param height The height of the box (in screen space).
+	*/
     void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	/*!
+	 * @brief Draws the outline of a 2D circle at the specified position with the given radius.
+	 * @param x The x-coordinate of the center of the circle (in screen space).
+	 * @param y The y-coordinate of the center of the circle (in screen space).
+	 * @param radius The radius of the circle (in screen space).
+	 * @param segments The number of segments to use for rendering the circle. Default is 1000.
+	 */
     void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
     
+	/*! 
+	 * @brief Debug mode flag to enable drawing of object outlines. 
+	 */
 	GLboolean debug_mode_enabled = false;
 
 private:
@@ -161,13 +182,37 @@ private:
 	 */
 	void setUpTextures(const std::string& texturePath);
 
+	/*! 
+	 * @brief Scale factor applied to objects when scaling is enabled. 
+	 */
 	GLfloat scale_factor{};
+
+	/*! 
+	 * @brief Flag to enable or disable scaling of objects. 
+	 */
 	GLboolean scale_enabled = false;
 
+	/*! @brief Flag to enable or disable rotation of objects. */
 	GLboolean rotation_enabled = false;
+
+	/*! 
+	 * @brief Angle for rotating objects (in degrees). 
+	 */
 	GLfloat rotation_angle{};
+
+	/*! 
+	 * @brief Speed at which objects rotate (degrees per second). 
+	 */
 	GLfloat rotationSpeed = 1.0f;
+
+	/*! 
+	 * @brief Time elapsed between the current and previous frame. 
+	 */
 	GLfloat deltaTime = 0.0f;
+
+	/*! 
+	 * @brief Time recorded for the previous frame, used for calculating deltaTime. 
+	 */
 	GLfloat lastFrame = 0.0f;
 
 };
