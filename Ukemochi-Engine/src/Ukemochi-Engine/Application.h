@@ -4,6 +4,8 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "ImGui/ImGuiCore.h"
+#pragma warning(push)
+#pragma warning(disable : 4251)
 
 namespace UME {
 
@@ -35,5 +37,5 @@ namespace UME {
 	// To be defined in CLIENT (GAME)
 	Application* CreateApplication();
 }
-
+#pragma warning(pop)
 

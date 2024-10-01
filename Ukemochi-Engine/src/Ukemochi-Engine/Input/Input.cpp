@@ -1,3 +1,21 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       Input.cpp
+\author     Hurng Kai Rui, h.kairui, 2301278
+\par        email: h.kairui\@digipen.edu
+\date       Sept 23, 2024
+\brief      This file implements input handling functions for the Ukemochi
+            Engine, providing functionalities to check key and mouse button 
+            states, and retrieve mouse position.
+
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "PreCompile.h"
 #include "../Application.h"
 #include "Input.h"
@@ -5,8 +23,12 @@
 
 namespace UME {
 
-	static std::unordered_map<int, bool> keyPressedMap;
-
+	static std::unordered_map<int, bool> keyPressedMap; ///< Map to track key press states
+	/*!
+	\brief Checks if a key is currently pressed.
+	\param Keycode The key to check.
+	\return True if the key is pressed, false otherwise.
+	*/
 	bool Input::IsKeyPressed(int Keycode)
 	{
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -14,6 +36,11 @@ namespace UME {
 		return state == GLFW_PRESS;
 	}
 
+	/*!
+	\brief Checks if a key is triggered (pressed for the first time).
+	\param Keycode The key to check.
+	\return True if the key is triggered, false otherwise.
+	*/
 	bool Input::IsKeyTriggered(int Keycode)
 	{
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -32,6 +59,11 @@ namespace UME {
 		return false;  // Key not triggered, or it's still held down
 	}
 
+	/*!
+	\brief Checks if a mouse button is currently pressed.
+	\param Keycode The mouse button to check.
+	\return True if the mouse button is pressed, false otherwise.
+	*/
 	bool Input::IsMouseButtonPressed(int Keycode)
 	{
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -39,6 +71,10 @@ namespace UME {
 		return state == GLFW_PRESS;
 	}
 
+	/*!
+	\brief Gets the current mouse position.
+	\return A pair containing the x and y coordinates of the mouse.
+	*/
 	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -47,12 +83,20 @@ namespace UME {
 		return { static_cast<float>(xpos), static_cast<float>(ypos) };
 	}
 
+	/*!
+	\brief Gets the current x coordinate of the mouse position.
+	\return The x coordinate of the mouse.
+	*/
 	float Input::GetMouseX()
 	{
 		auto [x, y] = GetMousePosition();
 		return x;
 	}
 
+	/*!
+	\brief Gets the current y coordinate of the mouse position.
+	\return The y coordinate of the mouse.
+	*/
 	float Input::GetMouseY()
 	{
 		auto [x, y] = GetMousePosition();

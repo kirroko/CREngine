@@ -119,6 +119,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
@@ -179,8 +182,6 @@
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\SceneList.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -218,6 +219,9 @@
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
@@ -271,6 +275,5 @@
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp" />
   </ItemGroup>
 </Project>

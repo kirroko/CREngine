@@ -1,3 +1,22 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       ImGuiCore.cpp
+\author     Hurng Kai Rui, h.kairui, 2301278
+\par        email: h.kairui\@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the implementation of the UseImGui class,
+            which manages the initialization, rendering, and event handling 
+            for ImGui within the engine.
+
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
+
 #include "PreCompile.h"
 #include "ImGuiCore.h"
 
@@ -8,9 +27,13 @@
 
 namespace UME
 {
-	float UseImGui::m_Time = 0.0f;
+	float UseImGui::m_Time = 0.0f; //!< Time since last frame for calculating DeltaTime.
 
-	void UseImGui::ImGuiInit(GLFWwindow* window)
+	/*!
+	\brief Initializes the ImGui context and sets up OpenGL.
+	\param window Pointer to the GLFW window (unused in this implementation).
+	*/
+	void UseImGui::ImGuiInit(GLFWwindow* /*window*/)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -22,12 +45,14 @@ namespace UME
 
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
-
+	/*!
+	\brief Prepares a new ImGui frame and handles window dimensions and timing.
+	*/
 	void UseImGui::NewFrame()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
 		float time = (float)glfwGetTime();
 		io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
@@ -55,18 +80,27 @@ namespace UME
 		ImGui::End();*/
 	}
 
+	/*!
+	\brief Renders the current ImGui frame and draws the UI.
+	*/
 	void UseImGui::ImGuiUpdate()
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
+	/*!
+	\brief Cleans up ImGui resources.
+	*/
 	void UseImGui::ImGuiClean()
 	{
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui::DestroyContext();
 	}
-
+	/*!
+	\brief Dispatches events to ImGui for handling input.
+	\param event Reference to the event to be dispatched.
+	*/
 	void UseImGui::OnEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
@@ -80,6 +114,7 @@ namespace UME
 		dispatcher.Dispatch<WindowResizeEvent>(UME_BIND_EVENT(UseImGui::IsWindowResizeEvent));
 	}
 
+	// Mouse and keyboard event handling
 	bool UseImGui::IsMouseButtonPressedEvent(MouseButtonPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -130,6 +165,7 @@ namespace UME
 
 	bool UseImGui::IsWindowResizeEvent(WindowResizeEvent& e)
 	{
+		(void)e;// Suppress the unused parameter warning
 		return false;
 	}
 

@@ -105,6 +105,7 @@ namespace UME {
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
 	{
+		(void)e;// Suppress the unused parameter warning
 		gsm_current = GS_STATES::GS_QUIT;
 		m_running = false;
 		return true;
