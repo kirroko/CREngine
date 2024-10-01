@@ -193,7 +193,7 @@ namespace Ukemochi
 
     void Audio::SetAudioVolume(int soundIndex, float volume)
     {
-        if (soundIndex < pChannelGroups.size())
+        if (soundIndex < pChannels.size() && pChannels[soundIndex] != nullptr)
         {
             pChannels[soundIndex]->setVolume(volume);
         }
@@ -201,7 +201,7 @@ namespace Ukemochi
 
     void Audio::SetGroupVolume(int groupIndex, float volume)
     {
-        if (groupIndex < pChannelGroups.size())
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
         {
             pChannelGroups[groupIndex]->setVolume(volume);  // Set the volume for the specific group
         }
@@ -209,7 +209,7 @@ namespace Ukemochi
 
     void Audio::StopAllSoundsInGroup(int groupIndex)
     {
-        if (groupIndex < pChannelGroups.size())
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
         {
             pChannelGroups[groupIndex]->stop();  // Stop all sounds in the specified group
         }
