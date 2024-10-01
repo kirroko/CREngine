@@ -86,18 +86,14 @@ public:
 
     // Function to Keyboard input
     void ToggleInputsForScale();
-    GLboolean scale_enabled = false;  // Scale toggle state
+    
     void ToggleInputsForRotation(); 
-    GLboolean rotation_enabled = false;  // Tracks whether rotation is enabled 
-    GLfloat rotation_angle = 0.01f;    // The current rotation angle 
-    GLfloat rotation_speed = 0.5f;   // Degrees per second for rotation 
+   
     
     void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
-    GLboolean debug_mode_enabled = false;
-    GLboolean isSquare = false;
-    GLfloat deltaTime = 0.0f;
-    GLfloat lastFrame = 0.0f;
+    
+	GLboolean debug_mode_enabled = false;
 
 private:
 	/*!
@@ -165,8 +161,14 @@ private:
 	 */
 	void setUpTextures(const std::string& texturePath);
 
-    GLfloat scale_factor = 1.0f;
-   
+	GLfloat scale_factor{};
+	GLboolean scale_enabled = false;
+
+	GLboolean rotation_enabled = false;
+	GLfloat rotation_angle{};
+	GLfloat rotationSpeed = 1.0f;
+	GLfloat deltaTime = 0.0f;
+	GLfloat lastFrame = 0.0f;
 
 };
 #endif

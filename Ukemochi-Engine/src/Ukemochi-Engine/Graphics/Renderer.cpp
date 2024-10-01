@@ -206,7 +206,6 @@ void Renderer::render()
 		// Apply rotation if enabled
 		if (rotation_enabled)
 		{
-			GLfloat rotationSpeed = 1.0f;  // Rotate 45 degrees per second
 
 			// Update the rotation angle based on deltaTime
 			rotation_angle += rotationSpeed * deltaTime;
