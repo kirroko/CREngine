@@ -189,7 +189,8 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-
+	
+	
 	// Draw the animated sprite
 	drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", currentFrame, totalFrames, frameWidth, frameHeight);
 
@@ -208,6 +209,9 @@ void Renderer::render()
 				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
 		}
 	}
+
+	// Background
+	drawBox(800.f, 450.f, screen_width, screen_height, "../Assets/Textures/terrain.png");
 
 	for (size_t i = 0; i < vaos.size(); ++i) {
 		vaos[i]->Bind();
