@@ -1,3 +1,20 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file		Serialization.cpp
+\par		Ukemochi
+\author		Pek Jun Kai Gerald, p.junkaigerald@digipen.edu, 2301334
+\co-authors
+\par		Course: CSD2400/CSD2401
+\date		20/09/24
+\brief		This file contains the definition of the functions in the Serialization namespace.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "PreCompile.h"
 #include "Serialization.h"
 
@@ -14,45 +31,6 @@ bool Serialization::LoadJSON(const std::string& file_name, rapidjson::Document& 
 	IStreamWrapper isw(input);
 	storage.ParseStream(isw);
 
-	std::stringstream sample{};
-
-	sample << "Game Objects:\n";
-
-	const Value& game_objects = storage["Game Objects"];
-	if (!game_objects.IsArray())
-	{
-		input.close();
-		return false;
-	}
-	else
-	{
-		for (SizeType i = 0; i < game_objects.Size(); i++)
-		{
-			std::string obj_type = game_objects[i]["name"].GetString();
-			if (obj_type.compare("box") == 0)
-			{
-				sample << "Object " << i + 1 << " :\n";
-				sample << "Name : " << obj_type << std::endl;
-				sample << "X Value : " << game_objects[i]["x_val"].GetInt() << std::endl;
-				sample << "Y Value : " << game_objects[i]["y_val"].GetInt() << std::endl;
-				sample << "Width : " << game_objects[i]["width"].GetInt() << std::endl;
-				sample << "Height : " << game_objects[i]["height"].GetInt() << std::endl;
-
-				std::cout << sample.str();
-			}
-			else
-			{
-				sample << "Object " << i + 1 << " :\n";
-				sample << "Name : " << obj_type << std::endl;
-				sample << "X Value : " << game_objects[i]["x_val"].GetInt() << std::endl;
-				sample << "Y Value : " << game_objects[i]["y_val"].GetInt() << std::endl;
-				sample << "Radius : " << game_objects[i]["radius"].GetInt() << std::endl;
-				sample << "Segments : " << game_objects[i]["segments"].GetInt() << std::endl;
-
-				std::cout << sample.str();
-			}
-		}
-	}
 	input.close();
 	return true;
 }

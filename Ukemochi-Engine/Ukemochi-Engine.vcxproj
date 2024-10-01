@@ -152,7 +152,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Factory.h" />
     <ClInclude Include="src\Game\GameStateList.h" />
     <ClInclude Include="src\Platform\WindowsWindow.h" />
     <ClInclude Include="src\PreCompile.h" />
@@ -174,6 +173,8 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game Object\Factory.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game Object\GameObject.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
@@ -198,7 +199,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Factory.cpp" />
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
     <ClCompile Include="src\PreCompile.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -212,6 +212,8 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game Object\Factory.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game Object\GameObject.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />

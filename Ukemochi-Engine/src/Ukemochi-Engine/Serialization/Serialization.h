@@ -1,18 +1,33 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file		Serialization.h
+\par		Ukemochi
+\author		Pek Jun Kai Gerald, p.junkaigerald@digipen.edu, 2301334
+\co-authors
+\par		Course: CSD2400/CSD2401
+\date		20/09/24
+\brief		This file contains the declaration of the Serialization namespace and its functions.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #pragma once
 
-#include "../rapidjson/document.h"
-#include "../rapidjson/prettywriter.h"
-#include "../rapidjson/filereadstream.h"
-#include "../rapidjson/istreamwrapper.h"
-#include "../rapidjson/ostreamwrapper.h"
+#include "../include/rapidjson/document.h"
+#include "../include/rapidjson/prettywriter.h"
+#include "../include/rapidjson/filereadstream.h"
+#include "../include/rapidjson/istreamwrapper.h"
+#include "../include/rapidjson/ostreamwrapper.h"
+
 
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <cstdio>
-constexpr size_t BUFFER_SIZE{ 65536 };
 
 /*
 	@author Gerald

@@ -44,6 +44,8 @@ namespace Ukemochi
 
 		void DestroyEntity(EntityID entity);
 
+		EntityID CloneEntity(EntityID entity);
+
 		/**
 		 * @brief Register a component type with the ECS
 		 * @tparam T The component type to register
@@ -52,7 +54,7 @@ namespace Ukemochi
 		void RegisterComponent();
 
 		/**
-		 * @brief Add a component to an entity
+		 * @brief Add a component to an entity.
 		 * @tparam T The component type to add
 		 * @param entity The entity to add the component to
 		 * @param component The component to add

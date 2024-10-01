@@ -19,9 +19,6 @@
     <Filter Include="Ukemochi-Engine\Serialization">
       <UniqueIdentifier>{f1ce0ebd-f4f8-428d-9df1-6e90fb076071}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ukemochi-Engine\Factory">
-      <UniqueIdentifier>{ff824d99-f81e-41a2-8690-febe735201ef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Ukemochi-Engine\Math">
       <UniqueIdentifier>{72fc8c7a-ebc5-4996-9e3b-84d699b1188b}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,9 @@
     </Filter>
     <Filter Include="Ukemochi-Engine\Game">
       <UniqueIdentifier>{fadd6f64-3e3c-40ee-84ec-50d0975a2445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Game Object">
+      <UniqueIdentifier>{56da4eaf-9528-4dde-8ef1-96e2f8c44ed9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +177,15 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
+      <Filter>Ukemochi-Engine\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game Object\Factory.h">
+      <Filter>Ukemochi-Engine\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game Object\GameObject.h">
+      <Filter>Ukemochi-Engine\Game Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -240,13 +249,15 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ECS\Registry.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="Factory.cpp">
-      <Filter>Ukemochi-Engine\Factory</Filter>
+    <ClCompile Include="src\Ukemochi-Engine\Game Object\Factory.cpp">
+      <Filter>Ukemochi-Engine\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game Object\GameObject.cpp">
+      <Filter>Ukemochi-Engine\Game Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
