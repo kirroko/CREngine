@@ -69,12 +69,16 @@ project "Ukemochi-Engine"
 		staticruntime "On"
 		systemversion "latest"
 
+		warnings "Extra"  -- Set warning level to 4 (equivalent to /W4)
+
 		defines
 		{
 			"UME_PLATFORM_WINDOWS",
 			"UME_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
+
+		buildoptions { "/wd6285", "/wd26451","/wd26498","/wd26800" }  -- Disable specific warnings globally
 
 		postbuildcommands
 		{
@@ -123,6 +127,10 @@ project "Ukemochi-Game"
 		staticruntime "On"
 		systemversion "latest"
 
+		warnings "Extra"  -- Set warning level to 4 (equivalent to /W4)
+
+		buildoptions { "/wd6285", "/wd26451","/wd26498" }  -- Disable specific warnings globally
+		
 		defines
 		{
 			"UME_PLATFORM_WINDOWS"
