@@ -39,9 +39,9 @@ namespace UME {
 		\param width The width of the window.
 		\param height The height of the window.
 		*/
-		WindowProps(const std::string& title = "Cozy Raccoon Engine",
-			unsigned int width = 1600,
-			unsigned int height = 900)
+		WindowProps(std::string& title,
+			unsigned int width,
+			unsigned int height)
 			: Title(title), Width(width), Height(height)
 		{
 		}

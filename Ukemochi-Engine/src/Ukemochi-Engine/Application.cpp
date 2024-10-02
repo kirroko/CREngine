@@ -5,7 +5,7 @@
 \author 	HURNG Kai Rui, h.kairui, 230xxxx, h.kairui\@digipen.edu (50%)
 \co-authors x, x, 230xxxx, x\@digipen.edu (x%)
 			Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (x%)
-			x, x, 230xxxx, x\@digipen.edu (x%)
+			Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (5%)
 			x, x, 230xxxx, x\@digipen.edu (x%)
 \par        Course: CSD2400/CSD2401
 \date   	25-09-2024
@@ -27,7 +27,7 @@ DigiPen Institute of Technology is prohibited.
 #include "Physics/Physics.h"	   // for physics system
 #include "Collision/Collision.h"   // for collision system
 #include "Graphics/Renderer.h"     // for graphics system
-
+#include "Serialization/Serialization.h" //load json
 #include "ECS/ECS.h"
 #include <iomanip>
 
@@ -46,7 +46,25 @@ namespace UME {
 	Application::Application()
 	{
 		s_Instance = this;
-		WindowProps props; // You can customize these properties if needed
+
+		unsigned int win_width, win_height;
+		std::string win_title;
+		rapidjson::Document config;
+		bool success = Serialization::LoadJSON("../Assets/config.json", config);
+		if (success)
+		{
+			const rapidjson::Value& window = config["Window"];
+			win_title = window["Title"].GetString();
+			win_height = window["Height"].GetUint();
+			win_width = window["Width"].GetUint();
+		}
+		else
+		{
+			win_title = "DEFAULT";
+			win_height = 900;
+			win_width = 1600;
+		}
+		WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
