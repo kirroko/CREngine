@@ -32,7 +32,7 @@ namespace Ukemochi
 
         const float MIN_OFFSET = 0.001f;
 
-        int screen_width, screen_height;
+        int screen_width{}, screen_height{};
 
     public:
         /*!***********************************************************************
