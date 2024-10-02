@@ -168,6 +168,9 @@ void Renderer::cleanUpBuffers()
  */
 void Renderer::render()
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// Get the current time
 	float currentFrameTime = glfwGetTime();  // This will return time in seconds
 	deltaTime = currentFrameTime - lastFrame;
