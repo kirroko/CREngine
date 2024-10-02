@@ -32,14 +32,14 @@ namespace Ukemochi
 	};
 
 	/*!***********************************************************************
-    \brief
-     Rigidbody2D component structure.
-    *************************************************************************/
+	\brief
+	 Rigidbody2D component structure.
+	*************************************************************************/
 	struct Rigidbody2D
 	{
 		Vec2 velocity{};
 		Vec2 acceleration{};
-		
+
 		bool is_kinematic{};
 
 		// bool use_gravity{};
@@ -64,9 +64,9 @@ namespace Ukemochi
 	};
 
 	/*!***********************************************************************
-    \brief
-     CircleCollider2D component structure.
-    *************************************************************************/
+	\brief
+	 CircleCollider2D component structure.
+	*************************************************************************/
 	struct CircleCollider2D
 	{
 		Vec2 m_center{};
@@ -77,11 +77,11 @@ namespace Ukemochi
 
 	struct SpriteRender
 	{
-		std::string texturePath;				// Path to the texture file (sprite)
-		SPRITE_SHAPE shape;						// Draw as BOX | Circle
+		std::string texturePath{};				// Path to the texture file (sprite)
+		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;						// Draw as BOX | Circle
 
-		bool visible;							// Is the object visible?
-		float opacity;							// Opacity of the object
+		bool visible = true;							// Is the object visible?
+		float opacity = 1.0f;							// Opacity of the object
 	};
 
 	struct AudioSource
