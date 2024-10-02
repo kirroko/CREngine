@@ -169,15 +169,30 @@ void Renderer::cleanUpBuffers()
 void Renderer::render()
 {
 	// Get the current time
-	float currentFrame = glfwGetTime();  // This will return time in seconds
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;  // Save the current frame for the next iteration
+	float currentFrameTime = glfwGetTime();  // This will return time in seconds
+	deltaTime = currentFrameTime - lastFrame;
+	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
+
+	// Update the animation frame based on elapsed time
+	elapsedTime += deltaTime;
+
+	if (elapsedTime >= frameDuration) {
+		currentFrame++;  // Move to the next frame
+		if (currentFrame >= totalFrames) {
+			currentFrame = 0;  // Loop back to the first frame
+		}
+		elapsedTime = 0.0f;  // Reset elapsed time
+	}
+	
 
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	//std::cout << "scale_enabled in Render: " << scale_enabled << std::endl;
+	
+	
+	// Draw the animated sprite
+	drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", currentFrame, totalFrames, frameWidth, frameHeight);
 
 	for (auto& entity : m_Entities)
 	{
@@ -194,6 +209,9 @@ void Renderer::render()
 				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
 		}
 	}
+
+	// Background
+	drawBox(800.f, 450.f, screen_width, screen_height, "../Assets/Textures/terrain.png");
 
 	for (size_t i = 0; i < vaos.size(); ++i) {
 		vaos[i]->Bind();
@@ -536,3 +554,56 @@ void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint seg
 	// Reset line width to default
 	glLineWidth(1.0f);
 }
+
+void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int currentFrame, int totalFrames, int frameWidth, int frameHeight)
+{
+	// Convert screen coordinates to normalized device coordinates (NDC)
+	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
+	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
+	// Convert width and height from screen space to NDC scaling
+	GLfloat new_width = (2.0f * width) / screen_width;
+	GLfloat new_height = (2.0f * height) / screen_height;
+
+	// Adjust vertices so that the position (x, y) represents the center of the box
+	GLfloat half_width = new_width / 2.0f;
+	GLfloat half_height = new_height / 2.0f;
+
+	// Calculate the UV coordinates based on the current frame and total number of frames (single row)
+	float uvX = (currentFrame * frameWidth) / (float)(totalFrames * frameWidth);  // X position of the frame in the texture
+	float uvY = 0.0f;  // Since it's a single row, Y is always 0
+	float uvWidth = frameWidth / (float)(totalFrames * frameWidth);  // Width of one frame in texture UV space
+	float uvHeight = 1.0f;  // Height in UV space
+
+	// Flip the UVs to correct the upside-down texture
+	float uvTop = uvY + uvHeight;  // Flipped UV top (invert Y)
+	float uvBottom = uvY;          // Flipped UV bottom
+
+	// Define the vertices for the box, with texture coordinates for the current frame
+	GLfloat vertices_box[] = {
+		// Position               // Color         // Texture coords (UVs)
+		new_x - half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX, uvTop,                     // Top-left
+		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX, uvBottom,                  // Bottom-left
+		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX + uvWidth, uvBottom,        // Bottom-right
+		new_x + half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX + uvWidth, uvTop            // Top-right
+	};
+
+	// Define indices to form two triangles
+	GLuint indices_box[] = {
+		0, 1, 2, // First triangle
+		0, 2, 3  // Second triangle
+	};
+
+	// ** Set the object color for the filled box (e.g., white) **
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set uniform to white
+
+	// Set up buffers (same as in your drawBox function)
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	// Store the number of indices for this box (6 indices: two triangles)
+	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
+
+	// Set up the texture for the box
+	setUpTextures(texturePath);
+}
+
+

@@ -1,10 +1,26 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       Core.h
+\author     
+\date       Sept 15, 2024
+\brief      This file contains macro definitions and configurations for the
+			Ukemochi Engine, including DLL export settings,
+			and assertion handling.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #pragma once
 
 #ifdef UME_PLATFORM_WINDOWS
 	#ifdef UME_BUILD_DLL
-		#define UME_API _declspec(dllexport)
+		#define UME_API __declspec(dllexport)
 	#else 
-		#define UME_API _declspec(dllimport)
+		#define UME_API __declspec(dllimport)
 	#endif
 #else
 	#error UME ONLY SUPPORTS WINDOWS!

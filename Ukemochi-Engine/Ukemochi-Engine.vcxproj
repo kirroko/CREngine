@@ -83,6 +83,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -109,6 +110,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -136,6 +138,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -198,7 +201,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
-    <ClInclude Include="src\Ukemochi-Engine\SceneList.h" />
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>

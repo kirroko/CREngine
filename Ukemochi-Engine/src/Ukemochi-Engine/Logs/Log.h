@@ -1,25 +1,59 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       Log.h
+\author     Hurng Kai Rui, h.kairui, 2301278
+\par        email: h.kairui\@digipen.edu
+\date       Sept 14, 2024
+\brief      This file defines the logging interface for the Ukemochi 
+            Engine, providing static methods for logging messages 
+            from both the engine and client(game) perspectives using 
+            the spdlog library.
+
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #pragma once
 #include "../Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 
+#pragma warning(push)
+#pragma warning(disable : 4251)  // Disable warning C4251
 
 namespace UME {
 
 	class UME_API Log
 	{
 	public:
+		/*!
+		\brief Initializes the logging system.
+		*/
 		static void Init();
-
+		/*!
+		\brief Gets the engine logger.
+		\return A reference to the engine logger.
+		*/
 		inline static std::shared_ptr<spdlog::logger>& GetEngineLogger() { return s_EngineLogger; }
+
+		/*!
+		\brief Gets the client logger.
+		\return A reference to the client logger.
+		*/
 		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
 	private:
-		static std::shared_ptr<spdlog::logger> s_EngineLogger;
-		static std::shared_ptr<spdlog::logger> s_ClientLogger;
+		static std::shared_ptr<spdlog::logger> s_EngineLogger; ///< Logger for engine messages
+		static std::shared_ptr<spdlog::logger> s_ClientLogger; ///< Logger for client/game messages
 	};
 
 }
+
+#pragma warning(pop)  // Re-enable the warning
 
 // Engine log macros
 #define UME_ENGINE_TRACE(...) ::UME::Log::GetEngineLogger() -> trace(__VA_ARGS__)
