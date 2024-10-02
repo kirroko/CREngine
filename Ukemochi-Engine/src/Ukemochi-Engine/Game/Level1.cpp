@@ -46,13 +46,14 @@ namespace Ukemochi
 		//audio.CreateGroup("test");
 		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
 
-		//Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)"); //TODO: Make in relation to project
-		//Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\SFX_jump.wav)");
+		Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+		Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
 	}
 
 	void Level1_Initialize()//Initialize the game at the start of Level1
 	{
 		Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
+		Audio::GetInstance().SetAudioVolume(BGM, 0.05f);
 		//some code here
 		//std::cout << "Level1:Initialize" << '\n';
 

@@ -23,7 +23,7 @@ namespace Ukemochi
 		void InitScene();
 
 		// Update the scene and its entities
-		void Update(float deltaTime);
+		void Update(double deltaTime);
 
 		// Clear current scene (entities and resources)
 		void ClearScene();

@@ -95,7 +95,7 @@ namespace Ukemochi
 
 			if (type == "Entity")
 			{
-				EntityID entity = ECS::GetInstance().CreateEntity();
+				//EntityID entity = ECS::GetInstance().CreateEntity();
 
 				// Read entity's components
 				std::string componentType;
@@ -131,7 +131,7 @@ namespace Ukemochi
 
 	}
 
-	void SceneManager::Update(float deltaTime)
+	void SceneManager::Update(double deltaTime)
 	{
 		//Update
 		gsm_fpUpdate();

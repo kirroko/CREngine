@@ -73,7 +73,7 @@ namespace Ukemochi
     void Audio::CreateGroup()
     {
         FMOD::ChannelGroup* group = nullptr;
-        FMOD_RESULT result;
+        FMOD_RESULT result = FMOD_RESULT_FORCEINT;
 
         for (int i = 0; i < LAST; i++)
         {
