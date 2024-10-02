@@ -293,7 +293,7 @@ namespace Ukemochi
 		else if (UME::Input::IsKeyTriggered(GLFW_KEY_Y))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
 		else if (UME::Input::IsKeyTriggered(GLFW_KEY_U))
-			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = !ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled;
+			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled);
 		// --- End User Input ---
 
 		// Update the entities physics

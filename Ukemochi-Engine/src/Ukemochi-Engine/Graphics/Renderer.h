@@ -220,8 +220,8 @@ private:
 	float frameDuration = 0.1f;  // Time per frame (0.1 seconds per frame)
 	int currentFrame = 0;  // Start at the first frame
 	int totalFrames = 8;   // Total number of frames in the sprite sheet
-	int frameWidth = 64;   // Width of a single frame in the sprite sheet
-	int frameHeight = 64;  // Height of a single frame in the sprite sheet
-	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int currentFrame, int totalFrames, int frameWidth, int frameHeight);
+	/*int frameHeight = 64;
+	int frameWidth = 64;*/
+	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int frameWidth);
 };
 #endif

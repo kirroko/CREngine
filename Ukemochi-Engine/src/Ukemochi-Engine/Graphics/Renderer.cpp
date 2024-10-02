@@ -19,9 +19,9 @@ Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
 	shaderProgram = nullptr;
-	VAO* vaos = nullptr;
-	VBO* vbos = nullptr;
-	EBO* ebos = nullptr;
+	vaos.clear(); 
+	vbos.clear(); 
+	ebos.clear(); 
 };
 
 /*!
@@ -172,7 +172,7 @@ void Renderer::render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Get the current time
-	float currentFrameTime = glfwGetTime();  // This will return time in seconds
+	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());  // This will return time in seconds
 	deltaTime = currentFrameTime - lastFrame;
 	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
 
@@ -194,7 +194,7 @@ void Renderer::render()
 	glEnable(GL_DEPTH_TEST);
 	
 	// Draw the animated sprite
-	drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", currentFrame, totalFrames, frameWidth, frameHeight);
+	drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", 64);
 
 	for (auto& entity : m_Entities)
 	{
@@ -285,9 +285,9 @@ void Renderer::cleanUp()
 	vbos.clear();
 	ebos.clear();
 
-	int numOfTexture = textureCache.size();
+	size_t numOfTexture = textureCache.size();
 	bool* check = new bool[numOfTexture];
-	for (int i = 0; i < numOfTexture; i++)
+	for (size_t i = 0; i < numOfTexture; i++)
 	{
 		check[i] = false;
 	}
@@ -298,7 +298,7 @@ void Renderer::cleanUp()
 		if (textures[i])
 		{
 			textures[i]->Delete();  // Delete the OpenGL texture
-			for (int j = 0; j < numOfTexture; j++)
+			for (size_t j = 0; j < numOfTexture; j++)
 			{
 				if (textures[i]->ID == j && check[j] == false)
 				{
@@ -450,7 +450,7 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::strin
 
 void Renderer::ToggleInputsForScale()
 {
-	scale_enabled = !scale_enabled;
+	scale_enabled = static_cast<GLboolean>(!scale_enabled);
 	// Adjust scale factor when toggled
 	if (scale_enabled)
 		scale_factor = 0.5f;
@@ -460,7 +460,7 @@ void Renderer::ToggleInputsForScale()
 
 void Renderer::ToggleInputsForRotation()
 {
-	rotation_enabled = !rotation_enabled;
+	rotation_enabled = static_cast<GLboolean>(!rotation_enabled);
 	if (!rotation_enabled)
 	{
 		rotation_angle = 0.f;
@@ -561,7 +561,7 @@ void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint seg
 	glLineWidth(1.0f);
 }
 
-void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int currentFrame, int totalFrames, int frameWidth, int frameHeight)
+void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath,int frameWidth)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
