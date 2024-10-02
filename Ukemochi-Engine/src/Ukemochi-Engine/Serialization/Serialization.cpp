@@ -3,8 +3,9 @@
 /*!
 \file		Serialization.cpp
 \par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald@digipen.edu, 2301334
+\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334
 \co-authors
+\par		p.junkaigerald\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		20/09/24
 \brief		This file contains the definition of the functions in the Serialization namespace.

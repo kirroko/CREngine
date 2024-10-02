@@ -26,6 +26,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure 
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
 #include "../Audio/Audio.h"			//for audio
+#include "../Factory/Factory.h"		//for Game Objects and its related functions
 
 namespace Ukemochi
 {
@@ -34,6 +35,8 @@ namespace Ukemochi
 	const float SPRITE_SCALE = 100.f;
 	const float ENTITY_ACCEL = 250.f;
 	float audioVolume = 1;
+	std::string player_data{ "../Assets/Player.json" };
+	GameObject player_obj;
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
@@ -42,8 +45,8 @@ namespace Ukemochi
 		//audio.CreateGroup("test");
 		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
 
-		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
-		Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\SFX_jump.wav)");
+		//Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)"); //TODO: Make in relation to project
+		//Audio::GetInstance().LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\SFX_jump.wav)");
 	}
 
 	void Level1_Initialize()//Initialize the game at the start of Level1
@@ -71,7 +74,7 @@ namespace Ukemochi
 			});*/
 
 		// Create player entity
-		player_entity = ECS::GetInstance().CreateEntity();
+		/*player_entity = ECS::GetInstance().CreateEntity();
 		ECS::GetInstance().AddComponent(player_entity, Transform{
 				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
@@ -85,7 +88,8 @@ namespace Ukemochi
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
-			});
+			});*/
+		player_obj = GameObjectFactory::CreateObject(player_data);
 
 		// Create static entity
 		EntityID entity = ECS::GetInstance().CreateEntity();
@@ -245,36 +249,42 @@ namespace Ukemochi
 		// Press 'W' or up key to move the player up
 		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 			player_rb.velocity.y = -player_rb.acceleration.y;
 		}
 		// Press 'S' or down key to move the player down
 		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 			player_rb.velocity.y = player_rb.acceleration.y;
 		}
 		else
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 			player_rb.velocity.y = 0.0f; // Stop moving the player in the y axis
 		}
 
 		// Press 'A' or left key to move the player left
 		if (UME::Input::IsKeyPressed(UME_KEY_A) || UME::Input::IsKeyPressed(UME_KEY_LEFT))
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 			player_rb.velocity.x = -player_rb.acceleration.x;
 		}
 		// Press 'D' or right key to move the player to the right
 		else if (UME::Input::IsKeyPressed(UME_KEY_D) || UME::Input::IsKeyPressed(UME_KEY_RIGHT))
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 			player_rb.velocity.x = player_rb.acceleration.x;
 		}
 		else
 		{
-			auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			//auto& player_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(player_entity);
+			auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 			player_rb.velocity.x = 0.0f; // Stop moving the player in the x axis
 		}
 
@@ -304,6 +314,13 @@ namespace Ukemochi
 			audioVolume += 0.01f;
 			audioVolume = audioVolume < 0 ? 0 : audioVolume;
 			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+		}
+		
+
+		//test cloning
+		if (UME::Input::IsKeyPressed(GLFW_KEY_C))
+		{
+			GameObject Clone = GameObjectFactory::CloneObject(player_obj);
 		}
 	}
 
