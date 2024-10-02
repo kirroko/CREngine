@@ -3,6 +3,7 @@
 \file    Level1.cpp
 \author  Tan Si Han, t.sihan, 2301264
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
+\co-authors Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
 \par     t.sihan@digipen.edu
 \date    20/09/2024
 \brief   This files contains the definction of functions in Level1.
@@ -89,6 +90,8 @@ namespace Ukemochi
 				true,
 				1.0f
 			});*/
+
+		// Create player entity
 		player_obj = GameObjectFactory::CreateObject(player_data);
 
 		// Create static entity
@@ -318,8 +321,9 @@ namespace Ukemochi
 		
 
 		//test cloning
-		if (UME::Input::IsKeyPressed(GLFW_KEY_C))
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_L))
 		{
+			std::cout << "Cloning Player Object\n";
 			GameObject Clone = GameObjectFactory::CloneObject(player_obj);
 		}
 	}
