@@ -3,8 +3,9 @@
 /*!
 \file		Factory.cpp
 \par		Ukemochi
-\author
+\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334
 \co-authors
+\par		p.junkaigerald\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		29/09/24
 \brief		This file contains the definition of the GameObjectFactory class.
