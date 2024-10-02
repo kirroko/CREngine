@@ -83,30 +83,22 @@ namespace Ukemochi
          Implementation of collision detection between a box and the screen boundaries.
         \param[in/out] box
          The box to collide.
-        \param[in] screen_width
-         The width of the game screen.
-        \param[in] screen_height
-         The height of the game screen.
         \return
          Collision flags if the box and screen boundary intersect, no flag otherwise.
         *************************************************************************/
-        int CollisionIntersection_BoxScreen(BoxCollider2D& box, const int screen_width, const int screen_height);
+        int CollisionIntersection_BoxScreen(BoxCollider2D& box);
 
         /*!***********************************************************************
         \brief
          Collision response for collision between a box and the screen boundaries.
         \param[in] box
          The box that collided.
-        \param[in] screen_width
-         The width of the game screen.
-        \param[in] screen_height
-         The height of the game screen.
         \param[out] trans
          The transform component attached to the collided object.
         \param[out] rb
          The rigidbody component attached to the collided object.
         *************************************************************************/
-        void CollisionResponse_BoxScreen(const BoxCollider2D& box, const int screen_width, const int screen_height, Transform& trans, Rigidbody2D& rb);
+        void CollisionResponse_BoxScreen(const BoxCollider2D& box, Transform& trans, Rigidbody2D& rb);
 
         /*!***********************************************************************
         \brief

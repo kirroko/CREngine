@@ -31,8 +31,9 @@ namespace Ukemochi
 	void Collision::CheckCollisions()
 	{
 		// Get the screen width and height
-		screen_width = ECS::GetInstance().GetSystem<Renderer>()->screen_width;
-		screen_height = ECS::GetInstance().GetSystem<Renderer>()->screen_height;
+		auto renderer_system = ECS::GetInstance().GetSystem<Renderer>();
+		screen_width = renderer_system->screen_width;
+		screen_height = renderer_system->screen_height;
 
 		for (auto& entity : m_Entities)
 		{
@@ -56,17 +57,16 @@ namespace Ukemochi
 				if (CollisionIntersection_BoxBox(box, rb.velocity, box2, rb2.velocity, tLast))
 				{
 					CollisionResponse_BoxBox(box, box2, trans, trans2, rb, rb2);
-					if (!Audio::GetInstance().IsPlaying(HIT))
-					{
-						Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-					}
-				}
 
+					// Play a sound effect on collision
+					if (!Audio::GetInstance().IsPlaying(HIT))
+						Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+				}
 			}
 
 			// Check collision between entities and the screen boundaries
-			if (CollisionIntersection_BoxScreen(box, screen_width, screen_height))
-				CollisionResponse_BoxScreen(box, screen_width, screen_height, trans, rb);
+			if (CollisionIntersection_BoxScreen(box))
+				CollisionResponse_BoxScreen(box, trans, rb);
 		}
 	}
 
@@ -254,7 +254,6 @@ namespace Ukemochi
 				rb1.velocity.x = -rb1.velocity.x;
 			if (!box2.is_player)
 				rb2.velocity.x = -rb2.velocity.x;
-
 		}
 
 		// Box 1 right and box 2 left collision response
@@ -283,7 +282,6 @@ namespace Ukemochi
 				rb1.velocity.x = -rb1.velocity.x;
 			if (!box2.is_player)
 				rb2.velocity.x = -rb2.velocity.x;
-
 		}
 
 		// Box 1 top and box 2 bottom collision response
@@ -312,7 +310,6 @@ namespace Ukemochi
 				rb1.velocity.y = -rb1.velocity.y;
 			if (!box2.is_player)
 				rb2.velocity.y = -rb2.velocity.y;
-
 		}
 
 		// Box 1 bottom and box 2 top collision response
@@ -341,7 +338,6 @@ namespace Ukemochi
 				rb1.velocity.y = -rb1.velocity.y;
 			if (!box2.is_player)
 				rb2.velocity.y = -rb2.velocity.y;
-
 		}
 	}
 
@@ -350,14 +346,10 @@ namespace Ukemochi
 	 Implementation of collision detection between a box and the screen boundaries.
 	\param[in/out] box
 	 The box to collide.
-	\param[in] screen_width
-	 The width of the game screen.
-	\param[in] screen_height
-	 The height of the game screen.
 	\return
 	 True if the box and screen boundary intersect, false otherwise.
 	*************************************************************************/
-	int Collision::CollisionIntersection_BoxScreen(BoxCollider2D& box, const int screen_width, const int screen_height)
+	int Collision::CollisionIntersection_BoxScreen(BoxCollider2D& box)
 	{
 		// might require +-camera delta if the camera is movable
 		//if (box.min.x < -cameraDelta.x)
@@ -389,10 +381,12 @@ namespace Ukemochi
 	 Collision response for collision between a box and the screen boundaries.
 	\param[in] box
 	 The box that collided.
+	\param[out] trans
+	 The transform component attached to the collided object.
 	\param[out] rb
-	 The rigidbody attached to the collided object.
+	 The rigidbody component attached to the collided object.
 	*************************************************************************/
-	void Collision::CollisionResponse_BoxScreen(const BoxCollider2D& box, const int screen_width, const int screen_height, Transform& trans, Rigidbody2D& rb)
+	void Collision::CollisionResponse_BoxScreen(const BoxCollider2D& box, Transform& trans, Rigidbody2D& rb)
 	{
 		// Left collision response
 		if (box.collision_flag & COLLISION_LEFT)

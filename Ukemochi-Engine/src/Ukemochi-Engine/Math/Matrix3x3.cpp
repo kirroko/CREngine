@@ -15,10 +15,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Matrix3x3.h"
+#include "Matrix3x3.h" // for forward declaration
 #include "MathUtils.h" // for PIOVER180
-#include <cstring> // for memcpy
-#include <cmath>   // for sinf, cosf
+#include <cstring>     // for memcpy
+#include <cmath>       // for sinf, cosf
 
 namespace Ukemochi
 {
@@ -28,7 +28,7 @@ namespace Ukemochi
     \param[in] pArr
      The array of 9 floats.
     *************************************************************************/
-    Matrix3x3::Matrix3x3(const float *pArr)
+    Matrix3x3::Matrix3x3(const float* pArr) : m{ 0.0f }
     {
         if (pArr)
             memcpy(m, pArr, sizeof(float) * 9);
@@ -44,7 +44,7 @@ namespace Ukemochi
     \return
      A reference to the matrix.
     *************************************************************************/
-    Matrix3x3 &Matrix3x3::operator=(const Matrix3x3 &rhs)
+    Matrix3x3& Matrix3x3::operator=(const Matrix3x3& rhs)
     {
         if (this != &rhs)
             memcpy(m, rhs.m, sizeof(float) * 9);
@@ -59,7 +59,7 @@ namespace Ukemochi
     \return
      A reference to the matrix.
     *************************************************************************/
-    Matrix3x3 &Matrix3x3::operator*=(const Matrix3x3 &rhs)
+    Matrix3x3& Matrix3x3::operator*=(const Matrix3x3& rhs)
     {
         Matrix3x3 result;
         for (int row = 0; row < 3; ++row)
@@ -85,7 +85,7 @@ namespace Ukemochi
     \return
      The matrix of the product of the two matrices.
     *************************************************************************/
-    Matrix3x3 operator*(const Matrix3x3 &lhs, const Matrix3x3 &rhs)
+    Matrix3x3 operator*(const Matrix3x3& lhs, const Matrix3x3& rhs)
     {
         Matrix3x3 result;
         for (int row = 0; row < 3; ++row)
@@ -110,7 +110,7 @@ namespace Ukemochi
     \return
      The vector of the product of the matrix and vector.
     *************************************************************************/
-    Vector2D operator*(const Matrix3x3 &lhs, const Vector2D &rhs)
+    Vector2D operator*(const Matrix3x3& lhs, const Vector2D& rhs)
     {
         Vector2D result;
         result.x = lhs.m00 * rhs.x + lhs.m01 * rhs.y + lhs.m02;
@@ -124,7 +124,7 @@ namespace Ukemochi
     \param[out] pResult
      The identity matrix.
     *************************************************************************/
-    void Mtx33Identity(Matrix3x3 &pResult)
+    void Mtx33Identity(Matrix3x3& pResult)
     {
         pResult.m00 = 1.0f; pResult.m01 = 0.0f; pResult.m02 = 0.0f;
         pResult.m10 = 0.0f; pResult.m11 = 1.0f; pResult.m12 = 0.0f;
@@ -141,7 +141,7 @@ namespace Ukemochi
     \param[in] y
      The translation in the y-axis.
     *************************************************************************/
-    void Mtx33Translate(Matrix3x3 &pResult, float x, float y)
+    void Mtx33Translate(Matrix3x3& pResult, float x, float y)
     {
         Mtx33Identity(pResult);
         pResult.m02 = x;
@@ -156,7 +156,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx33RotRad(Matrix3x3 &pResult, float angle)
+    void Mtx33RotRad(Matrix3x3& pResult, float angle)
     {
         float cos_angle = cosf(angle);
         float sin_angle = sinf(angle);
@@ -173,7 +173,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in degrees.
     *************************************************************************/
-    void Mtx33RotDeg(Matrix3x3 &pResult, float angle)
+    void Mtx33RotDeg(Matrix3x3& pResult, float angle)
     {
         Mtx33RotRad(pResult, angle * PIOVER180);
     }
@@ -188,7 +188,7 @@ namespace Ukemochi
     \param[in] y
      The scale factor in the y-axis.
     *************************************************************************/
-    void Mtx33Scale(Matrix3x3 &pResult, float x, float y)
+    void Mtx33Scale(Matrix3x3& pResult, float x, float y)
     {
         Mtx33Identity(pResult);
         pResult.m00 = x;
@@ -203,7 +203,7 @@ namespace Ukemochi
     \param[in] pMtx
      The input matrix to transpose.
     *************************************************************************/
-    void Mtx33Transpose(Matrix3x3 &pResult, const Matrix3x3 &pMtx)
+    void Mtx33Transpose(Matrix3x3& pResult, const Matrix3x3& pMtx)
     {
         pResult.m00 = pMtx.m00; pResult.m01 = pMtx.m10; pResult.m02 = pMtx.m20;
         pResult.m10 = pMtx.m01; pResult.m11 = pMtx.m11; pResult.m12 = pMtx.m21;
@@ -220,12 +220,12 @@ namespace Ukemochi
     \param[in] pMtx
      The input matrix to invert.
     *************************************************************************/
-    void Mtx33Inverse(Matrix3x3 *pResult, float *determinant, const Matrix3x3 &pMtx)
+    void Mtx33Inverse(Matrix3x3* pResult, float* determinant, const Matrix3x3& pMtx)
     {
         // Calculate the determinant (det(M))
         *determinant = pMtx.m00 * (pMtx.m11 * pMtx.m22 - pMtx.m21 * pMtx.m12)
-                     - pMtx.m01 * (pMtx.m10 * pMtx.m22 - pMtx.m20 * pMtx.m12)
-                     + pMtx.m02 * (pMtx.m10 * pMtx.m21 - pMtx.m20 * pMtx.m11);
+            - pMtx.m01 * (pMtx.m10 * pMtx.m22 - pMtx.m20 * pMtx.m12)
+            + pMtx.m02 * (pMtx.m10 * pMtx.m21 - pMtx.m20 * pMtx.m11);
 
         // Check if matrix is invertible
         if (*determinant == 0.0f)

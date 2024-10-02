@@ -20,6 +20,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( disable : 4201 )
+#endif
+
     /*!***********************************************************************
     \brief
      Represents a 3x3 matrix with individual components, or as an single or double array.
@@ -41,8 +46,8 @@ namespace Ukemochi
          Default constructor.
         *************************************************************************/
         Matrix3x3() : m00(0.0f), m01(0.0f), m02(0.0f),
-                      m10(0.0f), m11(0.0f), m12(0.0f),
-                      m20(0.0f), m21(0.0f), m22(0.0f) {}
+            m10(0.0f), m11(0.0f), m12(0.0f),
+            m20(0.0f), m21(0.0f), m22(0.0f) {}
 
         /*!***********************************************************************
         \brief
@@ -68,8 +73,8 @@ namespace Ukemochi
         *************************************************************************/
         Matrix3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
             : m00(m00), m01(m01), m02(m02),
-              m10(m10), m11(m11), m12(m12),
-              m20(m20), m21(m21), m22(m22) {}
+            m10(m10), m11(m11), m12(m12),
+            m20(m20), m21(m21), m22(m22) {}
 
         /*!***********************************************************************
         \brief
@@ -77,7 +82,7 @@ namespace Ukemochi
         \param[in] pArr
          The array of 9 floats.
         *************************************************************************/
-        Matrix3x3(const float *pArr);
+        Matrix3x3(const float* pArr);
 
         /*!***********************************************************************
         \brief
@@ -85,7 +90,7 @@ namespace Ukemochi
         \param[in] rhs
          The matrix to copy.
         *************************************************************************/
-        Matrix3x3(const Matrix3x3 &rhs) = default;
+        Matrix3x3(const Matrix3x3& rhs) = default;
 
         /*!***********************************************************************
         \brief
@@ -95,7 +100,7 @@ namespace Ukemochi
         \return
          A reference to the matrix.
         *************************************************************************/
-        Matrix3x3 &operator=(const Matrix3x3 &rhs);
+        Matrix3x3& operator=(const Matrix3x3& rhs);
 
         /*!***********************************************************************
         \brief
@@ -105,9 +110,14 @@ namespace Ukemochi
         \return
          A reference to the matrix.
         *************************************************************************/
-        Matrix3x3 &operator*=(const Matrix3x3 &rhs);
+        Matrix3x3& operator*=(const Matrix3x3& rhs);
 
     } Matrix3x3, Mtx33;
+
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( default : 4201 )
+#endif
 
     /*!***********************************************************************
     \brief
@@ -119,7 +129,7 @@ namespace Ukemochi
     \return
      The matrix of the product of the two matrices.
     *************************************************************************/
-    Matrix3x3 operator*(const Matrix3x3 &lhs, const Matrix3x3 &rhs);
+    Matrix3x3 operator*(const Matrix3x3& lhs, const Matrix3x3& rhs);
 
     /*!***********************************************************************
     \brief
@@ -131,7 +141,7 @@ namespace Ukemochi
     \return
      The vector of the product of the matrix and vector.
     *************************************************************************/
-    Vector2D operator*(const Matrix3x3 &pMtx, const Vector2D &rhs);
+    Vector2D operator*(const Matrix3x3& pMtx, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -139,7 +149,7 @@ namespace Ukemochi
     \param[out] pResult
      The identity matrix.
     *************************************************************************/
-    void Mtx33Identity(Matrix3x3 &pResult);
+    void Mtx33Identity(Matrix3x3& pResult);
 
     /*!***********************************************************************
     \brief
@@ -151,7 +161,7 @@ namespace Ukemochi
     \param[in] y
      The translation in the y-axis.
     *************************************************************************/
-    void Mtx33Translate(Matrix3x3 &pResult, float x, float y);
+    void Mtx33Translate(Matrix3x3& pResult, float x, float y);
 
     /*!***********************************************************************
     \brief
@@ -161,7 +171,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx33RotRad(Matrix3x3 &pResult, float angle);
+    void Mtx33RotRad(Matrix3x3& pResult, float angle);
 
     /*!***********************************************************************
     \brief
@@ -171,7 +181,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in degrees.
     *************************************************************************/
-    void Mtx33RotDeg(Matrix3x3 &pResult, float angle);
+    void Mtx33RotDeg(Matrix3x3& pResult, float angle);
 
     /*!***********************************************************************
     \brief
@@ -183,7 +193,7 @@ namespace Ukemochi
     \param[in] y
      The scale factor in the y-axis.
     *************************************************************************/
-    void Mtx33Scale(Matrix3x3 &pResult, float x, float y);
+    void Mtx33Scale(Matrix3x3& pResult, float x, float y);
 
     /*!***********************************************************************
     \brief
@@ -193,7 +203,7 @@ namespace Ukemochi
     \param[in] pMtx
      The input matrix to transpose.
     *************************************************************************/
-    void Mtx33Transpose(Matrix3x3 &pResult, const Matrix3x3 &pMtx);
+    void Mtx33Transpose(Matrix3x3& pResult, const Matrix3x3& pMtx);
 
     /*!***********************************************************************
     \brief
@@ -205,5 +215,5 @@ namespace Ukemochi
     \param[in] pMtx
      The input matrix to invert.
     *************************************************************************/
-    void Mtx33Inverse(Matrix3x3 *pResult, float *determinant, const Matrix3x3 &pMtx);
+    void Mtx33Inverse(Matrix3x3* pResult, float* determinant, const Matrix3x3& pMtx);
 }

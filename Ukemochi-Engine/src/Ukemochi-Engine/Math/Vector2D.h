@@ -18,10 +18,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    /*!***********************************************************************
-    \brief
-     Represents a 2D vector with x and y components, or as an array.
-    *************************************************************************/
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( disable : 4201 )
+#endif
+
+/*!***********************************************************************
+\brief
+ Represents a 2D vector with x and y components, or as an array.
+*************************************************************************/
     typedef union Vector2D
     {
         struct
@@ -53,7 +58,7 @@ namespace Ukemochi
         \param[in] rhs
          The vector to copy.
         *************************************************************************/
-        Vector2D(const Vector2D &rhs) = default;
+        Vector2D(const Vector2D& rhs) = default;
 
         /*!***********************************************************************
         \brief
@@ -63,7 +68,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector2D &operator=(const Vector2D &rhs) = default;
+        Vector2D& operator=(const Vector2D& rhs) = default;
 
         /*!***********************************************************************
         \brief
@@ -73,7 +78,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector2D &operator+=(const Vector2D &rhs);
+        Vector2D& operator+=(const Vector2D& rhs);
 
         /*!***********************************************************************
         \brief
@@ -83,7 +88,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector2D &operator-=(const Vector2D &rhs);
+        Vector2D& operator-=(const Vector2D& rhs);
 
         /*!***********************************************************************
         \brief
@@ -93,7 +98,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector2D &operator*=(float rhs);
+        Vector2D& operator*=(float rhs);
 
         /*!***********************************************************************
         \brief
@@ -103,7 +108,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector2D &operator/=(float rhs);
+        Vector2D& operator/=(float rhs);
 
         /*!***********************************************************************
         \brief
@@ -115,6 +120,11 @@ namespace Ukemochi
 
     } Vector2D, Vec2;
 
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( default : 4201 )
+#endif
+
     /*!***********************************************************************
     \brief
      Binary addition operator for two vectors.
@@ -125,7 +135,7 @@ namespace Ukemochi
     \return
      The vector of the sum of the two vectors.
     *************************************************************************/
-    Vector2D operator+(const Vector2D &lhs, const Vector2D &rhs);
+    Vector2D operator+(const Vector2D& lhs, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -137,7 +147,7 @@ namespace Ukemochi
     \return
      The vector of the difference of the two vectors.
     *************************************************************************/
-    Vector2D operator-(const Vector2D &lhs, const Vector2D &rhs);
+    Vector2D operator-(const Vector2D& lhs, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -149,7 +159,7 @@ namespace Ukemochi
     \return
      The vector of the product of the vector and scalar.
     *************************************************************************/
-    Vector2D operator*(const Vector2D &lhs, float rhs);
+    Vector2D operator*(const Vector2D& lhs, float rhs);
 
     /*!***********************************************************************
     \brief
@@ -161,7 +171,7 @@ namespace Ukemochi
     \return
      The vector of the product of the scalar and vector.
     *************************************************************************/
-    Vector2D operator*(float lhs, const Vector2D &rhs);
+    Vector2D operator*(float lhs, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -173,7 +183,7 @@ namespace Ukemochi
     \return
      The vector of the division of the vector and scalar.
     *************************************************************************/
-    Vector2D operator/(const Vector2D &lhs, float rhs);
+    Vector2D operator/(const Vector2D& lhs, float rhs);
 
     /*!***********************************************************************
     \brief
@@ -183,7 +193,7 @@ namespace Ukemochi
     \param[in] vec
      The input vector.
     *************************************************************************/
-    void Vec2Normalize(Vector2D &pResult, const Vector2D &vec);
+    void Vec2Normalize(Vector2D& pResult, const Vector2D& vec);
 
     /*!***********************************************************************
     \brief
@@ -193,7 +203,7 @@ namespace Ukemochi
     \return
      The length of the vector.
     *************************************************************************/
-    float Vec2Length(const Vector2D &vec);
+    float Vec2Length(const Vector2D& vec);
 
     /*!***********************************************************************
     \brief
@@ -203,7 +213,7 @@ namespace Ukemochi
     \return
      The squared length of the vector.
     *************************************************************************/
-    float Vec2SquareLength(const Vector2D &vec);
+    float Vec2SquareLength(const Vector2D& vec);
 
     /*!***********************************************************************
     \brief
@@ -215,7 +225,7 @@ namespace Ukemochi
     \return
      The distance of the two vectors.
     *************************************************************************/
-    float Vec2Distance(const Vector2D &lhs, const Vector2D &rhs);
+    float Vec2Distance(const Vector2D& lhs, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -227,7 +237,7 @@ namespace Ukemochi
     \return
      The squared distance of the two vectors.
     *************************************************************************/
-    float Vec2SquareDistance(const Vector2D &lhs, const Vector2D &rhs);
+    float Vec2SquareDistance(const Vector2D& lhs, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -239,7 +249,7 @@ namespace Ukemochi
     \return
      The dot product of the two vectors.
     *************************************************************************/
-    float Vec2DotProduct(const Vector2D &lhs, const Vector2D &rhs);
+    float Vec2DotProduct(const Vector2D& lhs, const Vector2D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -251,5 +261,5 @@ namespace Ukemochi
     \return
      The magnitude of the cross product of the two vectors.
     *************************************************************************/
-    float Vec2CrossProductMagnitude(const Vector2D &lhs, const Vector2D &rhs);
+    float Vec2CrossProductMagnitude(const Vector2D& lhs, const Vector2D& rhs);
 }
