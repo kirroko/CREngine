@@ -25,7 +25,7 @@ namespace Ukemochi
     \brief
      Gravity constant to simulate gravity for physics.
     *************************************************************************/
-    const float GRAVITY = -9.8f;
+    //const float GRAVITY = -9.8f;
 
     /*!***********************************************************************
     \brief

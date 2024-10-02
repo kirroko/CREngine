@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "MathUtils.h"
+#include "MathUtils.h" // for forward declaration
 
 namespace Ukemochi
 {

@@ -20,6 +20,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( disable : 4201 )
+#endif
+
     /*!***********************************************************************
     \brief
      Represents a 4x4 matrix with individual components, or as an single or double array.
@@ -42,9 +47,9 @@ namespace Ukemochi
          Default constructor.
         *************************************************************************/
         Matrix4x4() : m00(0.0f), m01(0.0f), m02(0.0f), m03(0.0f),
-                      m10(0.0f), m11(0.0f), m12(0.0f), m13(0.0f),
-                      m20(0.0f), m21(0.0f), m22(0.0f), m23(0.0f),
-                      m30(0.0f), m31(0.0f), m32(0.0f), m33(0.0f) {}
+            m10(0.0f), m11(0.0f), m12(0.0f), m13(0.0f),
+            m20(0.0f), m21(0.0f), m22(0.0f), m23(0.0f),
+            m30(0.0f), m31(0.0f), m32(0.0f), m33(0.0f) {}
 
         /*!***********************************************************************
         \brief
@@ -84,9 +89,9 @@ namespace Ukemochi
         *************************************************************************/
         Matrix4x4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
             : m00(m00), m01(m01), m02(m02), m03(m03),
-              m10(m10), m11(m11), m12(m12), m13(m13),
-              m20(m20), m21(m21), m22(m22), m23(m23),
-              m30(m30), m31(m31), m32(m32), m33(m33) {}
+            m10(m10), m11(m11), m12(m12), m13(m13),
+            m20(m20), m21(m21), m22(m22), m23(m23),
+            m30(m30), m31(m31), m32(m32), m33(m33) {}
 
         /*!***********************************************************************
         \brief
@@ -94,7 +99,7 @@ namespace Ukemochi
         \param[in] pArr
          The array of 16 floats.
         *************************************************************************/
-        Matrix4x4(const float *pArr);
+        Matrix4x4(const float* pArr);
 
         /*!***********************************************************************
         \brief
@@ -102,7 +107,7 @@ namespace Ukemochi
         \param[in] rhs
          The matrix to copy.
         *************************************************************************/
-        Matrix4x4(const Matrix4x4 &rhs) = default;
+        Matrix4x4(const Matrix4x4& rhs) = default;
 
         /*!***********************************************************************
         \brief
@@ -112,7 +117,7 @@ namespace Ukemochi
         \return
          A reference to the matrix.
         *************************************************************************/
-        Matrix4x4 &operator=(const Matrix4x4 &rhs);
+        Matrix4x4& operator=(const Matrix4x4& rhs);
 
         /*!***********************************************************************
         \brief
@@ -122,9 +127,14 @@ namespace Ukemochi
         \return
          A reference to the matrix.
         *************************************************************************/
-        Matrix4x4 &operator*=(const Matrix4x4 &rhs);
+        Matrix4x4& operator*=(const Matrix4x4& rhs);
 
     } Matrix4x4, Mtx44;
+
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( default : 4201 )
+#endif
 
     /*!***********************************************************************
     \brief
@@ -136,7 +146,7 @@ namespace Ukemochi
     \return
      The matrix of the product of the two matrices.
     *************************************************************************/
-    Matrix4x4 operator*(const Matrix4x4 &lhs, const Matrix4x4 &rhs);
+    Matrix4x4 operator*(const Matrix4x4& lhs, const Matrix4x4& rhs);
 
     /*!***********************************************************************
     \brief
@@ -148,7 +158,7 @@ namespace Ukemochi
     \return
      The vector of the product of the matrix and vector.
     *************************************************************************/
-    Vector3D operator*(const Matrix4x4 &pMtx, const Vector3D &rhs);
+    Vector3D operator*(const Matrix4x4& pMtx, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -156,7 +166,7 @@ namespace Ukemochi
     \param[out] pResult
      The identity matrix.
     *************************************************************************/
-    void Mtx44Identity(Matrix4x4 &pResult);
+    void Mtx44Identity(Matrix4x4& pResult);
 
     /*!***********************************************************************
     \brief
@@ -170,7 +180,7 @@ namespace Ukemochi
     \param[in] z
      The translation in the z-axis.
     *************************************************************************/
-    void Mtx44Translate(Matrix4x4 &pResult, float x, float y, float z);
+    void Mtx44Translate(Matrix4x4& pResult, float x, float y, float z);
 
     /*!***********************************************************************
     \brief
@@ -180,7 +190,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx44RotXRad(Matrix4x4 &pResult, float angle);
+    void Mtx44RotXRad(Matrix4x4& pResult, float angle);
 
     /*!***********************************************************************
     \brief
@@ -190,7 +200,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx44RotYRad(Matrix4x4 &pResult, float angle);
+    void Mtx44RotYRad(Matrix4x4& pResult, float angle);
 
     /*!***********************************************************************
     \brief
@@ -200,7 +210,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx44RotZRad(Matrix4x4 &pResult, float angle);
+    void Mtx44RotZRad(Matrix4x4& pResult, float angle);
 
     /*!***********************************************************************
     \brief
@@ -214,7 +224,7 @@ namespace Ukemochi
     \param[in] z
      The scale factor in the z-axis.
     *************************************************************************/
-    void Mtx44Scale(Matrix4x4 &pResult, float x, float y, float z);
+    void Mtx44Scale(Matrix4x4& pResult, float x, float y, float z);
 
     /*!***********************************************************************
     \brief
@@ -224,5 +234,5 @@ namespace Ukemochi
     \param[in] pMtx
      The input matrix to transpose.
     *************************************************************************/
-    void Mtx44Transpose(Matrix4x4 &pResult, const Matrix4x4 &pMtx);
+    void Mtx44Transpose(Matrix4x4& pResult, const Matrix4x4& pMtx);
 }

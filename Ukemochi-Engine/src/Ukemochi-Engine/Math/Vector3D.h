@@ -18,6 +18,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( disable : 4201 )
+#endif
+
     /*!***********************************************************************
     \brief
      Represents a 3D vector with x, y and z components, or as an array.
@@ -55,7 +60,7 @@ namespace Ukemochi
         \param[in] rhs
          The vector to copy.
         *************************************************************************/
-        Vector3D(const Vector3D &rhs) = default;
+        Vector3D(const Vector3D& rhs) = default;
 
         /*!***********************************************************************
         \brief
@@ -65,7 +70,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector3D &operator=(const Vector3D &rhs) = default;
+        Vector3D& operator=(const Vector3D& rhs) = default;
 
         /*!***********************************************************************
         \brief
@@ -75,7 +80,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector3D &operator+=(const Vector3D &rhs);
+        Vector3D& operator+=(const Vector3D& rhs);
 
         /*!***********************************************************************
         \brief
@@ -85,7 +90,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector3D &operator-=(const Vector3D &rhs);
+        Vector3D& operator-=(const Vector3D& rhs);
 
         /*!***********************************************************************
         \brief
@@ -95,7 +100,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector3D &operator*=(float rhs);
+        Vector3D& operator*=(float rhs);
 
         /*!***********************************************************************
         \brief
@@ -105,7 +110,7 @@ namespace Ukemochi
         \return
          A reference to the vector.
         *************************************************************************/
-        Vector3D &operator/=(float rhs);
+        Vector3D& operator/=(float rhs);
 
         /*!***********************************************************************
         \brief
@@ -117,6 +122,11 @@ namespace Ukemochi
 
     } Vector3D, Vec3;
 
+#ifdef _MSC_VER
+    // Supress warning: nonstandard extension used : nameless struct/union
+#pragma warning( default : 4201 )
+#endif
+
     /*!***********************************************************************
     \brief
      Binary addition operator for two vectors.
@@ -127,7 +137,7 @@ namespace Ukemochi
     \return
      The vector of the sum of the two vectors.
     *************************************************************************/
-    Vector3D operator+(const Vector3D &lhs, const Vector3D &rhs);
+    Vector3D operator+(const Vector3D& lhs, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -139,7 +149,7 @@ namespace Ukemochi
     \return
      The vector of the difference of the two vectors.
     *************************************************************************/
-    Vector3D operator-(const Vector3D &lhs, const Vector3D &rhs);
+    Vector3D operator-(const Vector3D& lhs, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -151,7 +161,7 @@ namespace Ukemochi
     \return
      The vector of the product of the vector and scalar.
     *************************************************************************/
-    Vector3D operator*(const Vector3D &lhs, float rhs);
+    Vector3D operator*(const Vector3D& lhs, float rhs);
 
     /*!***********************************************************************
     \brief
@@ -163,7 +173,7 @@ namespace Ukemochi
     \return
      The vector of the product of the scalar and vector.
     *************************************************************************/
-    Vector3D operator*(float lhs, const Vector3D &rhs);
+    Vector3D operator*(float lhs, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -175,7 +185,7 @@ namespace Ukemochi
     \return
      The vector of the division of the vector and scalar.
     *************************************************************************/
-    Vector3D operator/(const Vector3D &lhs, float rhs);
+    Vector3D operator/(const Vector3D& lhs, float rhs);
 
     /*!***********************************************************************
     \brief
@@ -185,7 +195,7 @@ namespace Ukemochi
     \param[in] vec
      The input vector.
     *************************************************************************/
-    void Vec3Normalize(Vector3D &pResult, const Vector3D &vec);
+    void Vec3Normalize(Vector3D& pResult, const Vector3D& vec);
 
     /*!***********************************************************************
     \brief
@@ -195,7 +205,7 @@ namespace Ukemochi
     \return
      The length of the vector.
     *************************************************************************/
-    float Vec3Length(const Vector3D &vec);
+    float Vec3Length(const Vector3D& vec);
 
     /*!***********************************************************************
     \brief
@@ -205,7 +215,7 @@ namespace Ukemochi
     \return
      The squared length of the vector.
     *************************************************************************/
-    float Vec3SquareLength(const Vector3D &vec);
+    float Vec3SquareLength(const Vector3D& vec);
 
     /*!***********************************************************************
     \brief
@@ -217,7 +227,7 @@ namespace Ukemochi
     \return
      The distance of the two vectors.
     *************************************************************************/
-    float Vec3Distance(const Vector3D &lhs, const Vector3D &rhs);
+    float Vec3Distance(const Vector3D& lhs, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -229,7 +239,7 @@ namespace Ukemochi
     \return
      The squared distance of the two vectors.
     *************************************************************************/
-    float Vec3SquareDistance(const Vector3D &lhs, const Vector3D &rhs);
+    float Vec3SquareDistance(const Vector3D& lhs, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -241,7 +251,7 @@ namespace Ukemochi
     \return
      The dot product of the two vectors.
     *************************************************************************/
-    float Vec3DotProduct(const Vector3D &lhs, const Vector3D &rhs);
+    float Vec3DotProduct(const Vector3D& lhs, const Vector3D& rhs);
 
     /*!***********************************************************************
     \brief
@@ -253,5 +263,5 @@ namespace Ukemochi
     \return
      The magnitude of the cross product of the two vectors.
     *************************************************************************/
-    float Vec3CrossProductMagnitude(const Vector3D &lhs, const Vector3D &rhs);
+    float Vec3CrossProductMagnitude(const Vector3D& lhs, const Vector3D& rhs);
 }

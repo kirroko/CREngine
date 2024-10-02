@@ -60,7 +60,6 @@ namespace Ukemochi
      The absolute value.
     *************************************************************************/
     float abs(float x);
-
 }
 
 #include "MathUtils.tpp"

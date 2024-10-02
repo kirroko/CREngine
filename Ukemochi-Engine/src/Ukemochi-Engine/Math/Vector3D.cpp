@@ -15,8 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Vector3D.h" // for Vector3D
-#include <cmath> // for sqrt
+#include "Vector3D.h" // for forward declaration
+#include <cmath>      // for sqrt
 
 namespace Ukemochi
 {
@@ -28,7 +28,7 @@ namespace Ukemochi
     \return
      A reference to the vector.
     *************************************************************************/
-    Vector3D &Vector3D::operator+=(const Vector3D &rhs)
+    Vector3D& Vector3D::operator+=(const Vector3D& rhs)
     {
         x += rhs.x;
         y += rhs.y;
@@ -44,7 +44,7 @@ namespace Ukemochi
     \return
      A reference to the vector.
     *************************************************************************/
-    Vector3D &Vector3D::operator-=(const Vector3D &rhs)
+    Vector3D& Vector3D::operator-=(const Vector3D& rhs)
     {
         x -= rhs.x;
         y -= rhs.y;
@@ -60,7 +60,7 @@ namespace Ukemochi
     \return
      A reference to the vector.
     *************************************************************************/
-    Vector3D &Vector3D::operator*=(float rhs)
+    Vector3D& Vector3D::operator*=(float rhs)
     {
         x *= rhs;
         y *= rhs;
@@ -76,7 +76,7 @@ namespace Ukemochi
     \return
      A reference to the vector.
     *************************************************************************/
-    Vector3D &Vector3D::operator/=(float rhs)
+    Vector3D& Vector3D::operator/=(float rhs)
     {
         if (rhs != 0.0f)
         {
@@ -108,7 +108,7 @@ namespace Ukemochi
     \return
      The vector of the sum of the two vectors.
     *************************************************************************/
-    Vector3D operator+(const Vector3D &lhs, const Vector3D &rhs)
+    Vector3D operator+(const Vector3D& lhs, const Vector3D& rhs)
     {
         return Vector3D(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
     }
@@ -123,7 +123,7 @@ namespace Ukemochi
     \return
      The vector of the difference of the two vectors.
     *************************************************************************/
-    Vector3D operator-(const Vector3D &lhs, const Vector3D &rhs)
+    Vector3D operator-(const Vector3D& lhs, const Vector3D& rhs)
     {
         return Vector3D(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
     }
@@ -138,7 +138,7 @@ namespace Ukemochi
     \return
      The vector of the product of the vector and scalar.
     *************************************************************************/
-    Vector3D operator*(const Vector3D &lhs, float rhs)
+    Vector3D operator*(const Vector3D& lhs, float rhs)
     {
         return Vector3D(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
     }
@@ -153,7 +153,7 @@ namespace Ukemochi
     \return
      The vector of the product of the scalar and vector.
     *************************************************************************/
-    Vector3D operator*(float lhs, const Vector3D &rhs)
+    Vector3D operator*(float lhs, const Vector3D& rhs)
     {
         return Vector3D(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
     }
@@ -168,7 +168,7 @@ namespace Ukemochi
     \return
      The vector of the division of the vector and scalar.
     *************************************************************************/
-    Vector3D operator/(const Vector3D &lhs, float rhs)
+    Vector3D operator/(const Vector3D& lhs, float rhs)
     {
         if (rhs == 0.0f)
             return lhs;
@@ -183,7 +183,7 @@ namespace Ukemochi
     \param[in] vec
      The input vector.
     *************************************************************************/
-    void Vec3Normalize(Vector3D &pResult, const Vector3D &vec)
+    void Vec3Normalize(Vector3D& pResult, const Vector3D& vec)
     {
         float length = Vec3Length(vec);
         if (length != 0.0f)
@@ -202,7 +202,7 @@ namespace Ukemochi
     \return
      The length of the vector.
     *************************************************************************/
-    float Vec3Length(const Vector3D &vec)
+    float Vec3Length(const Vector3D& vec)
     {
         return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
     }
@@ -215,7 +215,7 @@ namespace Ukemochi
     \return
      The squared length of the vector.
     *************************************************************************/
-    float Vec3SquareLength(const Vector3D &vec)
+    float Vec3SquareLength(const Vector3D& vec)
     {
         return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
     }
@@ -230,7 +230,7 @@ namespace Ukemochi
     \return
      The distance of the two vectors.
     *************************************************************************/
-    float Vec3Distance(const Vector3D &lhs, const Vector3D &rhs)
+    float Vec3Distance(const Vector3D& lhs, const Vector3D& rhs)
     {
         return Vec3Length(lhs - rhs);
     }
@@ -245,7 +245,7 @@ namespace Ukemochi
     \return
      The squared distance of the two vectors.
     *************************************************************************/
-    float Vec3SquareDistance(const Vector3D &lhs, const Vector3D &rhs)
+    float Vec3SquareDistance(const Vector3D& lhs, const Vector3D& rhs)
     {
         return Vec3SquareLength(lhs - rhs);
     }
@@ -260,7 +260,7 @@ namespace Ukemochi
     \return
      The dot product of the two vectors.
     *************************************************************************/
-    float Vec3DotProduct(const Vector3D &lhs, const Vector3D &rhs)
+    float Vec3DotProduct(const Vector3D& lhs, const Vector3D& rhs)
     {
         return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
     }
@@ -275,7 +275,7 @@ namespace Ukemochi
     \return
      The magnitude of the cross product of the two vectors.
     *************************************************************************/
-    float Vec3CrossProductMagnitude(const Vector3D &lhs, const Vector3D &rhs)
+    float Vec3CrossProductMagnitude(const Vector3D& lhs, const Vector3D& rhs)
     {
         Vector3D cross_product = Vector3D(
             lhs.y * rhs.z - lhs.z * rhs.y,

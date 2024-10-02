@@ -15,9 +15,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Matrix4x4.h"
-#include <cstring> // for memcpy
-#include <cmath>   // for sinf, cosf
+#include "Matrix4x4.h" // for forward declaration
+#include <cstring>     // for memcpy
+#include <cmath>       // for sinf, cosf
 
 namespace Ukemochi
 {
@@ -27,7 +27,7 @@ namespace Ukemochi
     \param[in] pArr
      The array of 16 floats.
     *************************************************************************/
-    Matrix4x4::Matrix4x4(const float *pArr)
+    Matrix4x4::Matrix4x4(const float* pArr) : m{ 0.0f }
     {
         if (pArr)
             memcpy(m, pArr, sizeof(float) * 16);
@@ -43,7 +43,7 @@ namespace Ukemochi
     \return
      A reference to the matrix.
     *************************************************************************/
-    Matrix4x4 &Matrix4x4::operator=(const Matrix4x4 &rhs)
+    Matrix4x4& Matrix4x4::operator=(const Matrix4x4& rhs)
     {
         if (this != &rhs)
             memcpy(m, rhs.m, sizeof(float) * 16);
@@ -58,7 +58,7 @@ namespace Ukemochi
     \return
      A reference to the matrix.
     *************************************************************************/
-    Matrix4x4 &Matrix4x4::operator*=(const Matrix4x4 &rhs)
+    Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& rhs)
     {
         Matrix4x4 result;
         for (int row = 0; row < 4; ++row)
@@ -84,7 +84,7 @@ namespace Ukemochi
     \return
      The matrix of the product of the two matrices.
     *************************************************************************/
-    Matrix4x4 operator*(const Matrix4x4 &lhs, const Matrix4x4 &rhs)
+    Matrix4x4 operator*(const Matrix4x4& lhs, const Matrix4x4& rhs)
     {
         Matrix4x4 result;
         for (int row = 0; row < 4; ++row)
@@ -109,7 +109,7 @@ namespace Ukemochi
     \return
      The vector of the product of the matrix and vector.
     *************************************************************************/
-    Vector3D operator*(const Matrix4x4 &lhs, const Vector3D &rhs)
+    Vector3D operator*(const Matrix4x4& lhs, const Vector3D& rhs)
     {
         Vector3D result;
         result.x = lhs.m00 * rhs.x + lhs.m01 * rhs.y + lhs.m02 * rhs.z + lhs.m03;
@@ -124,7 +124,7 @@ namespace Ukemochi
     \param[out] pResult
      The identity matrix.
     *************************************************************************/
-    void Mtx44Identity(Matrix4x4 &pResult)
+    void Mtx44Identity(Matrix4x4& pResult)
     {
         pResult.m00 = 1.0f; pResult.m01 = 0.0f; pResult.m02 = 0.0f; pResult.m03 = 0.0f;
         pResult.m10 = 0.0f; pResult.m11 = 1.0f; pResult.m12 = 0.0f; pResult.m13 = 0.0f;
@@ -144,7 +144,7 @@ namespace Ukemochi
     \param[in] z
      The translation in the z-axis.
     *************************************************************************/
-    void Mtx44Translate(Matrix4x4 &pResult, float x, float y, float z)
+    void Mtx44Translate(Matrix4x4& pResult, float x, float y, float z)
     {
         Mtx44Identity(pResult);
         pResult.m03 = x;
@@ -160,7 +160,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx44RotXRad(Matrix4x4 &pResult, float angle)
+    void Mtx44RotXRad(Matrix4x4& pResult, float angle)
     {
         Mtx44Identity(pResult);
         pResult.m11 = cosf(angle);
@@ -177,7 +177,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx44RotYRad(Matrix4x4 &pResult, float angle)
+    void Mtx44RotYRad(Matrix4x4& pResult, float angle)
     {
         Mtx44Identity(pResult);
         pResult.m00 = cosf(angle);
@@ -194,7 +194,7 @@ namespace Ukemochi
     \param[in] angle
      The angle of rotation in radians.
     *************************************************************************/
-    void Mtx44RotZRad(Matrix4x4 &pResult, float angle)
+    void Mtx44RotZRad(Matrix4x4& pResult, float angle)
     {
         Mtx44Identity(pResult);
         pResult.m00 = cosf(angle);
@@ -215,7 +215,7 @@ namespace Ukemochi
     \param[in] z
      The scale factor in the z-axis.
     *************************************************************************/
-    void Mtx44Scale(Matrix4x4 &pResult, float x, float y, float z)
+    void Mtx44Scale(Matrix4x4& pResult, float x, float y, float z)
     {
         Mtx44Identity(pResult);
         pResult.m00 = x;
@@ -231,7 +231,7 @@ namespace Ukemochi
     \param[in] pMtx
      The input matrix to transpose.
     *************************************************************************/
-    void Mtx44Transpose(Matrix4x4 &pResult, const Matrix4x4 &pMtx)
+    void Mtx44Transpose(Matrix4x4& pResult, const Matrix4x4& pMtx)
     {
         for (int row = 0; row < 4; ++row)
             for (int col = 0; col < 4; ++col)
