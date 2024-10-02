@@ -162,8 +162,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
     <ClInclude Include="src\Ukemochi-Engine\Audio\Audio.h" />
     <ClInclude Include="src\Ukemochi-Engine\Audio\AudioList.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollider2D.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollider2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
     <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
@@ -177,6 +175,8 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
@@ -200,8 +200,8 @@
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp" />
@@ -214,6 +214,8 @@
     <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
@@ -235,6 +237,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
@@ -246,6 +249,12 @@
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

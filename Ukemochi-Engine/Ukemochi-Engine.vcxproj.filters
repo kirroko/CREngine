@@ -62,12 +62,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Audio\AudioList.h">
       <Filter>Ukemochi-Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Collision\BoxCollider2D.h">
-      <Filter>Ukemochi-Engine\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Collision\CircleCollider2D.h">
-      <Filter>Ukemochi-Engine\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h">
       <Filter>Ukemochi-Engine\Collision</Filter>
     </ClInclude>
@@ -176,12 +170,12 @@
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h">
       <Filter>Ukemochi-Engine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Physics\Rigidbody2D.h">
-      <Filter>Ukemochi-Engine\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -275,5 +269,14 @@
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
   </ItemGroup>
 </Project>

@@ -38,5 +38,56 @@ namespace Ukemochi
 		m_ComponentManager->EntityDestroyed(entity);
 		m_SystemManager->EntityDestroyed(entity);
 	}
+
+	EntityID ECS::CloneEntity(EntityID entity)
+	{
+		EntityID newEntity = m_EntityManager->CreateEntity();
+
+		SignatureID originalSignature = m_EntityManager->GetSignature(entity);
+		m_EntityManager->SetSignature(newEntity, originalSignature);
+
+		// TODO: Keep updating components as the list grows
+		auto transform = m_ComponentManager->GetComponentType<Transform>();
+		auto rigidbody2D = m_ComponentManager->GetComponentType<Rigidbody2D>();
+		auto cirlceCollider = m_ComponentManager->GetComponentType<CircleCollider2D>();
+		auto boxCollider = m_ComponentManager->GetComponentType<BoxCollider2D>();
+		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
+
+		// Iterate through all possible components
+		for (ComponentTypeID i = 0; i < MAX_COMPONENTS; ++i)
+		{
+			if (originalSignature.test(i))
+			{
+				// TODO: Keep Updating components as the list grows
+				if (i == transform)
+				{
+					Transform originalComponent = m_ComponentManager->GetComponent<Transform>(entity);
+					AddComponent<Transform>(newEntity, originalComponent);
+				}
+				else if (i == rigidbody2D)
+				{
+					Rigidbody2D originalComponent = m_ComponentManager->GetComponent<Rigidbody2D>(entity);
+					AddComponent<Rigidbody2D>(newEntity, originalComponent);
+				}
+				else if (i == cirlceCollider)
+				{
+					CircleCollider2D originalComponent = m_ComponentManager->GetComponent<CircleCollider2D>(entity);
+					AddComponent<CircleCollider2D>(newEntity, originalComponent);
+				}
+				else if (i == boxCollider)
+				{
+					BoxCollider2D originalComponent = m_ComponentManager->GetComponent<BoxCollider2D>(entity);
+					AddComponent<BoxCollider2D>(newEntity, originalComponent);
+				}
+				else if (i == spriteRenderer)
+				{
+					SpriteRender originalComponent = m_ComponentManager->GetComponent<SpriteRender>(entity);
+					AddComponent<SpriteRender>(newEntity, originalComponent);
+				}
+			}
+		}
+
+		return newEntity;
+	}
 }
 // 0x4B45414E
