@@ -168,6 +168,9 @@ void Renderer::cleanUpBuffers()
  */
 void Renderer::render()
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// Get the current time
 	float currentFrameTime = glfwGetTime();  // This will return time in seconds
 	deltaTime = currentFrameTime - lastFrame;
@@ -189,7 +192,6 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	
 	
 	// Draw the animated sprite
 	drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", currentFrame, totalFrames, frameWidth, frameHeight);
@@ -283,14 +285,11 @@ void Renderer::cleanUp()
 	vbos.clear();
 	ebos.clear();
 
-	int numOfTexture = 0;
-	
-	for (size_t i = 0; i < textures.size(); i++)
+	int numOfTexture = textureCache.size();
+	bool* check = new bool[numOfTexture];
+	for (int i = 0; i < numOfTexture; i++)
 	{
-		if (textures[i]->ID > numOfTexture)
-		{
-			numOfTexture = textures[i]->ID;
-		}
+		check[i] = false;
 	}
 
 	// Delete all textures
@@ -299,13 +298,20 @@ void Renderer::cleanUp()
 		if (textures[i])
 		{
 			textures[i]->Delete();  // Delete the OpenGL texture
-			if (textures[i]->ID != textures[i]->type) // if deleted alr
+			for (int j = 0; j < numOfTexture; j++)
 			{
-				delete textures[i];     // Deallocate memory for the texture object
+				if (textures[i]->ID == j && check[j] == false)
+				{
+					delete textures[i];  // Deallocate memory for the texture object
+					textures[i] = nullptr;
+					check[j] = true;
+					break;
+				}
 			}
-			textures[i] = nullptr;
 		}
 	}
+	delete[] check;
+
 
 	// Clear the textures vector
 	textures.clear();

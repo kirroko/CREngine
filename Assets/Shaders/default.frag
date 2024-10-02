@@ -19,7 +19,11 @@ uniform vec3 objectColor;
 void main()
 {
 	if(useTexture)
-	FragColor = texture(tex0, texCoord);
+	{
+		vec4 texColor = texture(tex0, texCoord);
+    	if (texColor.a < 0.1) discard;  // Optional: Discard pixels with low alpha
+    	FragColor = texColor;
+	}
 	else
 	FragColor = vec4(objectColor, 1.0f);
 

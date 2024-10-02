@@ -102,7 +102,7 @@ namespace Ukemochi
 		ECS::GetInstance().AddComponent(entity, Rigidbody2D{ Vec2{}, Vec2{}, true });
 		ECS::GetInstance().AddComponent(entity, BoxCollider2D{ Vec2{}, Vec2{} });
 		ECS::GetInstance().AddComponent(entity, SpriteRender{
-				"",
+				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX,
 				true,
 				1.0f
