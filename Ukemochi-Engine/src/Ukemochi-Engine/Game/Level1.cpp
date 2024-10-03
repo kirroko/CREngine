@@ -317,6 +317,7 @@ namespace Ukemochi
 		{
 			audioVolume += 0.01f;
 			audioVolume = audioVolume < 0 ? 0 : audioVolume;
+			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
 		}
 		
