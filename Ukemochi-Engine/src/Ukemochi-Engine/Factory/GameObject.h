@@ -28,7 +28,7 @@ namespace Ukemochi
 		std::string m_Name;
 		std::string m_Tag;
 
-		EntityID m_InstanceID;
+		EntityID m_InstanceID{};
 	public:
 		GameObject() = default;
 		GameObject(EntityID id, std::string name = "GameObject", std::string tag = "Default") : m_Name(name), m_Tag(tag), m_InstanceID(id) {};

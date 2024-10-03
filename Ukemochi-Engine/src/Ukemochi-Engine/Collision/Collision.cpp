@@ -59,8 +59,8 @@ namespace Ukemochi
 					CollisionResponse_BoxBox(box, box2, trans, trans2, rb, rb2);
 
 					// Play a sound effect on collision
-					if (!Audio::GetInstance().IsPlaying(HIT))
-						Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+					//if (!Audio::GetInstance().IsPlaying(HIT))
+					//	Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 				}
 			}
 

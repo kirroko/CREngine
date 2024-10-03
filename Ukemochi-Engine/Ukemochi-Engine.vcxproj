@@ -185,6 +185,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Sprite.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />

@@ -176,6 +176,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
     <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -272,6 +273,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />

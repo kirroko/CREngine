@@ -68,42 +68,6 @@ namespace UME {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
-		//// Set up ECS
-		//ECS::GetInstance().Init();
-
-		//// Register your components
-		//ECS::GetInstance().RegisterComponent<Transform>();
-		//ECS::GetInstance().RegisterComponent<Rigidbody2D>();
-		//ECS::GetInstance().RegisterComponent<BoxCollider2D>();
-		//ECS::GetInstance().RegisterComponent<CircleCollider2D>();
-		//ECS::GetInstance().RegisterComponent<SpriteRender>();
-
-		//// Register your systems
-		//ECS::GetInstance().RegisterSystem<Physics>();
-		//ECS::GetInstance().RegisterSystem<Collision>();
-		//ECS::GetInstance().RegisterSystem<Renderer>();
-
-		//// Set a signature to your system
-		//// Each system will have a signature to determine which entities it will process
-
-		//// For physics system
-		//SignatureID sig;
-		//sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		//sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
-		//ECS::GetInstance().SetSystemSignature<Physics>(sig);
-
-		//// For renderer system
-		//sig.reset();
-		//sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		//sig.set(ECS::GetInstance().GetComponentType<SpriteRender>());
-		//ECS::GetInstance().SetSystemSignature<Renderer>(sig);
-
-		//// For collision system
-		//sig.reset();
-		//sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		//sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
-		//ECS::GetInstance().SetSystemSignature<Collision>(sig);
-
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
 		imguiInstance.ImGuiInit(glfwWindow);
 	}
@@ -155,7 +119,7 @@ namespace UME {
 			//ENGINE STATES
 			if (gsm_current == GS_ENGINE && gsm_current == gsm_next)
 			{
-				glClearColor(1, 0, 1, 1);
+				glClearColor(0, 0, 0, 1);
 				glClear(GL_COLOR_BUFFER_BIT);
 
 				//************ FPS ************
@@ -203,7 +167,6 @@ namespace UME {
 			}
 			else if (gsm_current != GS_ENGINE && gsm_current == gsm_next)//in game state
 			{
-
 				//current state != restart
 				if (gsm_current != GS_STATES::GS_RESTART)
 				{
@@ -219,7 +182,7 @@ namespace UME {
 
 				while (gsm_current == gsm_next && m_running)
 				{
-					glClearColor(1, 0, 1, 1);
+					glClearColor(0, 0, 0, 1);
 					glClear(GL_COLOR_BUFFER_BIT);
 
 					//************ FPS ************
@@ -241,38 +204,9 @@ namespace UME {
 					{
 						gsm_next = GS_ENGINE;
 						//gsm_previous = gsm_current = gsm_next;
-						// If 'W' key is pressed, move forward
+
 						UME_ENGINE_INFO("2 key is pressed");
 					}
-					//// Check for 'S' key press and toggle scaling
-					//if (Input::IsKeyPressed(GLFW_KEY_S))
-					//{
-					//	if (!isToggling)
-					//	{
-					//		render.ToggleInputsForScale();
-					//		isToggling = true;
-					//	}
-					//}
-					//else if (Input::IsKeyPressed(GLFW_KEY_R))
-					//{
-					//	if (!isToggling)
-					//	{
-					//		render.ToggleInputsForRotation();
-					//		isToggling = true;
-					//	}
-					//}
-					//else if (Input::IsKeyPressed(GLFW_KEY_D))
-					//{
-					//	if (!isToggling)
-					//	{
-					//		render.debug_mode_enabled = !render.debug_mode_enabled;
-					//		isToggling = true;
-					//	}
-					//}
-					//else
-					//{
-					//	isToggling = false;
-					//}
 
 					//************ Update & Draw ************
 					sceneManger.Update(deltaTime);
@@ -282,7 +216,7 @@ namespace UME {
 					imguiInstance.NewFrame();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					//************ Render IMGUI ************
-					
+
 					//************ Display FPS ************
 					double currentTime = glfwGetTime();
 					// Only log/display the FPS every second (or defined interval)
@@ -388,8 +322,6 @@ namespace UME {
 		//	//render.drawBox(0, 0, 100, 100, true);
 		//	//render.render();
 
-
-
 		//	if (Input::IsKeyPressed(GLFW_KEY_W))
 		//	{
 		//		// If 'W' key is pressed, move forward
@@ -398,9 +330,8 @@ namespace UME {
 		//			//render.drawBox(0, 0, 100, 100, true);
 		//			//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
 		//			//render->render();
-		//			
+		//
 		//			imguiInstance.NewFrame();
-
 
 		//			imguiInstance.ImGuiUpdate(); // Render ImGui elements
 		//			m_Window->OnUpdate();

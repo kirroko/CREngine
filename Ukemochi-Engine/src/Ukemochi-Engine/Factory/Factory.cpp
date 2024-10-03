@@ -44,7 +44,6 @@ namespace Ukemochi
 		if (success)
 		{
 			const Value& object = storage["GameObject"];
-			assert(object.IsObject() && "JSON file invalid!");
 
 			std::string name = object["Name"].GetString();
 			std::string tag = object["Tag"].GetString();
@@ -55,7 +54,7 @@ namespace Ukemochi
 				{
 					ECS::GetInstance().AddComponent(entity, Transform{
 						Vec2(comps["Position"][0].GetFloat(),comps["Position"][1].GetFloat()),
-						Vec2(comps["Rotation"][0].GetFloat(),comps["Rotation"][1].GetFloat()),
+						comps["Rotation"].GetFloat(),
 						Vec2(comps["Scale"][0].GetFloat(),comps["Scale"][1].GetFloat())
 						}); // Default Component
 				}
@@ -90,9 +89,7 @@ namespace Ukemochi
 
 					ECS::GetInstance().AddComponent(entity, SpriteRender{
 						TexturePath,
-						comps["Shape"].GetInt() == 0 ? BOX : CIRCLE,
-						comps["Visible"].GetBool(),
-						comps["Opacity"].GetFloat()
+						comps["Shape"].GetInt() == 0 ? BOX : CIRCLE
 						}); // Default Component
 				}
 			}

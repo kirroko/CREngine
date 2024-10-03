@@ -32,10 +32,17 @@ public:
 	VBO(GLfloat* vertices, GLsizeiptr size);
 
 	/*!
+	 * @brief Updates the vertex data in the VBO with new data.
+	 * @param vertices A pointer to the new array of vertex data.
+	 * @param size The size of the new vertex data in bytes.
+	 */
+	void UpdateData(GLfloat* vertices, GLsizeiptr size);
+
+	/*!
 	 * @brief Binds the VBO, making it the current active buffer in OpenGL.
 	 */
 	void Bind();
-	
+
 	/*!
 	 * @brief Unbinds the VBO, making no Vertex Buffer Object currently bound.
 	 */

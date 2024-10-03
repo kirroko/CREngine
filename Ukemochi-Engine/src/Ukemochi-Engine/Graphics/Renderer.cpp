@@ -19,9 +19,9 @@ Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
 	shaderProgram = nullptr;
-	vaos.clear(); 
-	vbos.clear(); 
-	ebos.clear(); 
+	vaos.clear();
+	vbos.clear();
+	ebos.clear();
 };
 
 /*!
@@ -54,11 +54,12 @@ void Renderer::setUpTextures(const std::string& texturePath)
 	if (!texturePath.empty())
 	{
 		// Check if the texture is already loaded in the cache and reuse existing texture
+		// 0x4B45414E | We use entity spriteRenderer.texturePath as key to store the texture and retrieve honestly this is a work around not a solution
 		auto it = textureCache.find(texturePath);
 		if (it != textureCache.end())
 		{
-			textures.push_back(it->second);
-			textures_enabled.push_back(true);
+			//textures.push_back(it->second);
+			//textures_enabled.push_back(true);
 			return;
 		}
 
@@ -79,18 +80,18 @@ void Renderer::setUpTextures(const std::string& texturePath)
 
 		// Load and store the texture with the determined format
 		Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, format, GL_UNSIGNED_BYTE);
-		textures.push_back(texture);
-		textures_enabled.push_back(true);
+		//textures.push_back(texture);
+		//textures_enabled.push_back(true);
 		texture->texUnit(*shaderProgram, "tex0", 0);
 
 		textureCache[texturePath] = texture;
 	}
-	else
-	{
-		// No texture provided
-		textures.push_back(nullptr);  // No texture for this object
-		textures_enabled.push_back(false);
-	}
+	//else
+	//{
+	//	// No texture provided
+	//	textures.push_back(nullptr);  // No texture for this object
+	//	textures_enabled.push_back(false);
+	//}
 }
 
 /*!
@@ -161,6 +162,7 @@ void Renderer::cleanUpBuffers()
 	vaos.clear();
 	vbos.clear();
 	ebos.clear();
+	indices_count.clear();
 }
 
 /*!
@@ -186,22 +188,30 @@ void Renderer::render()
 		}
 		elapsedTime = 0.0f;  // Reset elapsed time
 	}
-	
 
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	
-	// Draw the animated sprite
-	drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", 64);
 
+	// Draw the animated sprite
+	// drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", 64);
+
+	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-		
-		drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
+
+		// 0x4B45414E | functions here sets up a new vertices and indices for the object
+		if (spriteRenderer.animated)
+			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath, 64);
+		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+			drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
+		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+			drawCircle(transform.position.x, transform.position.y, 100.f, spriteRenderer.texturePath);
+
+		//drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
 
 		// If debug mode is enabled, draw the outline
 		if (debug_mode_enabled) {
@@ -210,14 +220,9 @@ void Renderer::render()
 			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
 				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
 		}
-	}
 
-	// Background
-	drawBox(800.f, 450.f, screen_width, screen_height, "../Assets/Textures/terrain.png");
-
-	for (size_t i = 0; i < vaos.size(); ++i) {
-		vaos[i]->Bind();
-
+		// 0x4B45414E | We do a draw call here
+		vaos[entity_count]->Bind();
 		shaderProgram->Activate();
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -226,34 +231,79 @@ void Renderer::render()
 		// Apply rotation if enabled
 		if (rotation_enabled)
 		{
+			//// Update the rotation angle based on deltaTime
+			//rotation_angle += rotationSpeed * deltaTime;
 
-			// Update the rotation angle based on deltaTime
-			rotation_angle += rotationSpeed * deltaTime;
-
-			// Cap the rotation angle between 0 and 360 degrees
-			if (rotation_angle >= 360.0f)
-				rotation_angle -= 360.0f;
+			//// Cap the rotation angle between 0 and 360 degrees
+			//if (rotation_angle >= 360.0f)
+			//	rotation_angle -= 360.0f;
 
 			// Apply rotation to the model matrix
-			model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 
 		shaderProgram->setMat4("model", model);
 
-		if (textures_enabled[i])
+		// Bind the texture to object
+		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end())
 		{
-			textures[i]->Bind();
+			textureCache.find(spriteRenderer.texturePath)->second->Bind();
 			shaderProgram->setBool("useTexture", true);
 		}
 		else
 			shaderProgram->setBool("useTexture", false);
 
-		// Draw the filled square
 		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
-		glDrawElements(GL_TRIANGLE_FAN, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[entity_count]), GL_UNSIGNED_INT, 0);
+		vaos[entity_count]->Unbind();
 
-		vaos[i]->Unbind();
+		++entity_count;
 	}
+
+	// Background
+	// drawBox(800.f, 450.f, screen_width, screen_height, "../Assets/Textures/terrain.png");
+
+	// Draw Call
+	//for (size_t i = 0; i < vaos.size(); ++i) {
+	//	vaos[i]->Bind();
+
+	//	shaderProgram->Activate();
+
+	//	glm::mat4 model = glm::mat4(1.0f);
+	//	if (scale_enabled)
+	//		model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
+	//	// Apply rotation if enabled
+	//	if (rotation_enabled)
+	//	{
+	//		// Update the rotation angle based on deltaTime
+	//		rotation_angle += rotationSpeed * deltaTime;
+
+	//		// Cap the rotation angle between 0 and 360 degrees
+	//		if (rotation_angle >= 360.0f)
+	//			rotation_angle -= 360.0f;
+
+	//		// Apply rotation to the model matrix
+	//		model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
+	//	}
+
+	//	shaderProgram->setMat4("model", model);
+
+	//	// Bind the texture for the object
+
+	//	if (textures_enabled[i])
+	//	{
+	//		textures[i]->Bind();
+	//		shaderProgram->setBool("useTexture", true);
+	//	}
+	//	else
+	//		shaderProgram->setBool("useTexture", false);
+
+	//	// Draw the filled square
+	//	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
+	//	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
+
+	//	vaos[i]->Unbind();
+	//}
 
 	cleanUpBuffers();
 }
@@ -285,33 +335,38 @@ void Renderer::cleanUp()
 	vbos.clear();
 	ebos.clear();
 
-	size_t numOfTexture = textureCache.size();
-	bool* check = new bool[numOfTexture];
-	for (size_t i = 0; i < numOfTexture; i++)
+	for (auto& texture : textureCache)
 	{
-		check[i] = false;
+		texture.second->Delete();
+		delete texture.second;
 	}
 
-	// Delete all textures
-	for (size_t i = 0; i < textures.size(); ++i)
-	{
-		if (textures[i])
-		{
-			textures[i]->Delete();  // Delete the OpenGL texture
-			for (size_t j = 0; j < numOfTexture; j++)
-			{
-				if (textures[i]->ID == j && check[j] == false)
-				{
-					delete textures[i];  // Deallocate memory for the texture object
-					textures[i] = nullptr;
-					check[j] = true;
-					break;
-				}
-			}
-		}
-	}
-	delete[] check;
+	//size_t numOfTexture = textureCache.size();
+	//bool* check = new bool[numOfTexture];
+	//for (size_t i = 0; i < numOfTexture; i++)
+	//{
+	//	check[i] = false;
+	//}
 
+	//// Delete all textures
+	//for (size_t i = 0; i < textures.size(); ++i)
+	//{
+	//	if (textures[i])
+	//	{
+	//		textures[i]->Delete();  // Delete the OpenGL texture
+	//		for (size_t j = 0; j < numOfTexture; j++)
+	//		{
+	//			if (textures[i]->ID == j && check[j] == false)
+	//			{
+	//				delete textures[i];  // Deallocate memory for the texture object
+	//				textures[i] = nullptr;
+	//				check[j] = true;
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+	//delete[] check;
 
 	// Clear the textures vector
 	textures.clear();
@@ -377,7 +432,7 @@ void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, cons
 	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
 
 	// Set up the texture for the box
-	setUpTextures(texturePath);
+	// setUpTextures(texturePath);
 }
 
 /*!
@@ -445,7 +500,7 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::strin
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
 
 	// Set up the texture for the circle
-	setUpTextures(texturePath);
+	//setUpTextures(texturePath);
 }
 
 void Renderer::ToggleInputsForScale()
@@ -561,7 +616,7 @@ void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint seg
 	glLineWidth(1.0f);
 }
 
-void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath,int frameWidth)
+void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int frameWidth)
 {
 	// Convert screen coordinates to normalized device coordinates (NDC)
 	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
@@ -609,7 +664,5 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
 
 	// Set up the texture for the box
-	setUpTextures(texturePath);
+	//setUpTextures(texturePath);
 }
-
-
