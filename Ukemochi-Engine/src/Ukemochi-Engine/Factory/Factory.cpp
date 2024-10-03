@@ -153,7 +153,7 @@ namespace Ukemochi
 
 	GameObject GameObjectFactory::CloneObject(GameObject& targetObject)
 	{
-		auto newEntity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
-		return GameObject(newEntity);
+		auto new_entity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
+		return GameObject(new_entity);
 	}
 }

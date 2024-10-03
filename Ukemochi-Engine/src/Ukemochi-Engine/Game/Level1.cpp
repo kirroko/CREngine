@@ -3,7 +3,7 @@
 \file    Level1.cpp
 \author  Tan Si Han, t.sihan, 2301264
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\co-authors Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\co-authors Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (5%)
 \par     t.sihan@digipen.edu
 \date    20/09/2024
 \brief   This files contains the definction of functions in Level1.
