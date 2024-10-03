@@ -87,6 +87,8 @@ namespace Ukemochi
 				0,
 				Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f}
 			});
+		background.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		background.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
 		background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
 
 		// WORM OBJECT 1 - DYNAMIC
@@ -102,7 +104,6 @@ namespace Ukemochi
 		worm_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Worm.png",
 				SPRITE_SHAPE::BOX,
-				true
 			});
 
 		// WORM OBJECT 2 - DYNAMIC - CLONED
