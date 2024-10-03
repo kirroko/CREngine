@@ -96,8 +96,8 @@
     </Link>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
-xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets
-IF EXIST ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -126,8 +126,8 @@ IF EXIST ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll\ 
     </Link>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
-xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets
-IF EXIST ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -156,8 +156,8 @@ IF EXIST ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll\ 
     </Link>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
-xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets
-IF EXIST ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\bin\Debug-windows-x86_64\Fmod\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
