@@ -1,9 +1,32 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       Audio.cpp
+\author     Tan Si Han, t.sihan, 2301264
+\par        email: t.sihan\@digipen.edu
+\date       Oct 4, 2024
+\brief      This file contains the definition of the Audio system.
 
+This Audio system handles loading, playing, and managing sound effects
+and background music using FMOD. It includes sound groups for
+controlling multiple audio sources together.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "PreCompile.h"
 #include "Audio.h"
 
 namespace Ukemochi
 {
+    /*!***********************************************************************
+    \brief
+     Constructor for the Audio class.
+     This is where system initialization and resource allocation happen.
+    *************************************************************************/
     Audio::Audio()
         : pSystem(nullptr), numOfAudios(0)
     {
@@ -17,7 +40,7 @@ namespace Ukemochi
             return;
         }
 
-        // Initialize the system
+        // Initialize the FMOD system with 32 channels
         result = pSystem->init(32, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
@@ -27,7 +50,11 @@ namespace Ukemochi
         CreateGroup();
     }
 
-
+    /*!***********************************************************************
+    \brief
+     Destructor for the Audio class.
+     This is where system cleanup and resource deallocation happen.
+    *************************************************************************/
     Audio::~Audio()
     {
         // Release all sounds
@@ -70,14 +97,22 @@ namespace Ukemochi
         numOfAudios = 0;
     }
 
+    /*!***********************************************************************
+    \brief
+        Create a new ChannelGroup for managing sound channels.
+        ChannelGroups help manage a group of channels as one unit.
+    *************************************************************************/
     void Audio::CreateGroup()
     {
         FMOD::ChannelGroup* group = nullptr;
-        FMOD_RESULT result = FMOD_RESULT_FORCEINT;
+        FMOD_RESULT result;
 
+        // Loop through all predefined channel groups
         for (int i = 0; i < LAST; i++)
         {
             ChannelGroups channel = static_cast<ChannelGroups>(i);
+
+            // Create different groups based on their enum value
             switch (channel)
             {
             case Ukemochi::ENGINEAUDIO:
@@ -100,10 +135,18 @@ namespace Ukemochi
                 std::cerr << "Failed to create music channel group: " << result << std::endl;
                 return;
             }
+
+            // Add the group to the vector
             pChannelGroups.push_back(group);
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Load a sound from a file.
+        \param filePath: The file path to the sound file to be loaded.
+        \return True if the sound was successfully loaded, false otherwise.
+    *************************************************************************/
     bool Audio::LoadSound(const char* filePath)
     {
         FMOD::Sound* sound = nullptr;
@@ -125,6 +168,12 @@ namespace Ukemochi
         return true;
     }
 
+    /*!***********************************************************************
+    \brief
+    Play a sound in a specified group.
+    \param soundIndex: Index of the sound to play.
+    \param groupIndex: Index of the group in which the sound should be played.
+    *************************************************************************/
     void Audio::PlaySoundInGroup(int soundIndex, int groupIndex)
     {
         if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
@@ -152,6 +201,11 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+    Stop playing a specific sound.
+    \param soundIndex: Index of the sound to stop.
+    *************************************************************************/
     void Audio::StopSound(int soundIndex)
     {
         if (soundIndex < numOfAudios && pChannels[soundIndex] != nullptr)
@@ -165,12 +219,18 @@ namespace Ukemochi
             }
         }
     }
-
+    /*!***********************************************************************
+    \brief
+    Toggle a sound in a group (play or pause).
+    \param soundIndex: Index of the sound to toggle.
+    \param groupIndex: Index of the group where the sound resides.
+    *************************************************************************/
     void Audio::ToggleSoundInGroup(int soundIndex, int groupIndex)
     {
         if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
         {
             bool isPlaying = false;
+
             if (pChannels[soundIndex] != nullptr)
             {
                 pChannels[soundIndex]->isPlaying(&isPlaying);
@@ -191,6 +251,12 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+    Set the volume for a specific sound.
+    \param soundIndex: Index of the sound whose volume is being set.
+    \param volume: The volume level (0.0 to 1.0).
+    *************************************************************************/
     void Audio::SetAudioVolume(int soundIndex, float volume)
     {
         if (soundIndex < pChannels.size() && pChannels[soundIndex] != nullptr)
@@ -199,6 +265,12 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+    Set the volume for an entire group of sounds.
+    \param groupIndex: Index of the group whose volume is being set.
+    \param volume: The volume level (0.0 to 1.0).
+    *************************************************************************/
     void Audio::SetGroupVolume(int groupIndex, float volume)
     {
         if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
@@ -207,14 +279,25 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+    Stop all sounds within a specific group.
+    \param groupIndex: Index of the group whose sounds are being stopped.
+    *************************************************************************/
     void Audio::StopAllSoundsInGroup(int groupIndex)
     {
         if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
         {
             pChannelGroups[groupIndex]->setVolume(0.0f);  // Stop all sounds in the specified group
+            //pChannelGroups[groupIndex]->stop();
         }
     }
 
+    /*!***********************************************************************
+    \brief
+    Play all sounds within a specific group.
+    \param groupIndex: Index of the group whose sounds should start playing.
+    *************************************************************************/
     void Audio::PlayAllSoundsInGroup(int groupIndex)
     {
         if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
@@ -223,11 +306,23 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+    Regular update function for the FMOD system.
+    Must be called every frame to ensure smooth audio playback.
+    *************************************************************************/
     void Audio::Update()
     {
         // Update the FMOD system regularly
         pSystem->update();
     }
+
+    /*!***********************************************************************
+    \brief
+    Check if a specific sound is currently playing.
+    \param soundIndex: Index of the sound to check.
+    \return True if the sound is playing, false otherwise.
+    *************************************************************************/
     bool Audio::IsPlaying(int soundIndex)
     {
         bool isPlaying = false;
