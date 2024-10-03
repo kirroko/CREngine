@@ -9,6 +9,7 @@ workspace "Ukemochi"
 	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+fmod_dll = "../Ukemochi-Engine/vendor/Fmod/bin/Debug-windows-x86_64/Fmod/fmod.dll"
 
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
@@ -83,7 +84,8 @@ project "Ukemochi-Engine"
 		postbuildcommands
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
-			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")
+			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
+			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game")
 		}
 
 	filter "configurations:Debug"
