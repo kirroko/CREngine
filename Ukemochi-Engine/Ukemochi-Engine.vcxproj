@@ -95,7 +95,8 @@
       <ImportLibrary>..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,7 +124,8 @@
       <ImportLibrary>..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -151,7 +153,8 @@
       <ImportLibrary>..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -249,12 +252,6 @@
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

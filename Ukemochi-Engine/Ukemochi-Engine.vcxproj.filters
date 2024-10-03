@@ -22,6 +22,9 @@
     <Filter Include="Ukemochi-Engine\Events">
       <UniqueIdentifier>{E155E845-CD4F-1198-B6BC-A7A8A2557704}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Factory">
+      <UniqueIdentifier>{E4FDCF1E-5035-18B6-593F-7CD9C5F53EAF}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Game">
       <UniqueIdentifier>{662051F0-52AF-DAB9-FBCD-EEB4E73BEB5F}</UniqueIdentifier>
     </Filter>
@@ -42,6 +45,9 @@
     </Filter>
     <Filter Include="Ukemochi-Engine\Physics">
       <UniqueIdentifier>{0FED7732-7B24-C0C9-842E-24EDF0E4E6C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Serialization">
+      <UniqueIdentifier>{EA434876-565C-2FA0-1F09-BF398BE0C339}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h">
       <Filter>Ukemochi-Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h">
+      <Filter>Ukemochi-Engine\Factory</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h">
       <Filter>Ukemochi-Engine</Filter>
@@ -173,9 +185,9 @@
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
+      <Filter>Ukemochi-Engine\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -205,6 +217,12 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp">
       <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp">
+      <Filter>Ukemochi-Engine\Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
       <Filter>Ukemochi-Engine</Filter>
@@ -269,14 +287,8 @@
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
+      <Filter>Ukemochi-Engine\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

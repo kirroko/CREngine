@@ -82,7 +82,8 @@ project "Ukemochi-Engine"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game")
+			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
+			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")
 		}
 
 	filter "configurations:Debug"
