@@ -320,7 +320,10 @@ namespace Ukemochi
 			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
 		}
-		
+		if (UME::Input::IsKeyPressed(GLFW_KEY_M))
+		{
+			Audio::GetInstance().StopAllSoundsInGroup(LEVEL1);
+		}
 
 		//test cloning
 		if (UME::Input::IsKeyTriggered(GLFW_KEY_L))
