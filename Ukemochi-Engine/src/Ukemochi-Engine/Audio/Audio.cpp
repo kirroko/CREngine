@@ -211,7 +211,15 @@ namespace Ukemochi
     {
         if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
         {
-            pChannelGroups[groupIndex]->stop();  // Stop all sounds in the specified group
+            pChannelGroups[groupIndex]->setVolume(0.0f);  // Stop all sounds in the specified group
+        }
+    }
+
+    void Audio::PlayAllSoundsInGroup(int groupIndex)
+    {
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
+        {
+            pChannelGroups[groupIndex]->setVolume(1.0f);  // play all sounds in the specified group
         }
     }
 
@@ -223,9 +231,23 @@ namespace Ukemochi
     bool Audio::IsPlaying(int soundIndex)
     {
         bool isPlaying = false;
-        if (soundIndex < numOfAudios && pChannels[soundIndex] != nullptr)
+        FMOD::ChannelGroup* group;
+        pChannels[soundIndex]->getChannelGroup(&group);
+        bool groupPlay = false;
+        group->isPlaying(&groupPlay);
+        if (!groupPlay)
+        {
+            groupPlay = true; //means level audio is stop
+        }
+        else
+        {
+            groupPlay = false;
+        }
+
+        if (soundIndex < numOfAudios && pChannels[soundIndex] != nullptr && !groupPlay)
         {
             pChannels[soundIndex]->isPlaying(&isPlaying);
+
         }
         return isPlaying;
     }

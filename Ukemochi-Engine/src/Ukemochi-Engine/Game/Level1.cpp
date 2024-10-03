@@ -35,7 +35,7 @@ namespace Ukemochi
 	EntityID player_entity;
 	const float SPRITE_SCALE = 100.f;
 	const float ENTITY_ACCEL = 250.f;
-	float audioVolume = 1;
+	float audioVolume = 0.04f;
 	std::string player_data{ "../Assets/Player.json" };
 	GameObject player_obj;
 
@@ -53,7 +53,7 @@ namespace Ukemochi
 	void Level1_Initialize()//Initialize the game at the start of Level1
 	{
 		Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-		Audio::GetInstance().SetAudioVolume(BGM, 0.05f);
+		Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		//some code here
 		//std::cout << "Level1:Initialize" << '\n';
 
@@ -201,23 +201,25 @@ namespace Ukemochi
 		// Check collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
 
-		if (UME::Input::IsKeyPressed(GLFW_KEY_P))
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
 		{
-			audioVolume -= 0.01f;
-			audioVolume = audioVolume < 0 ? 0 : audioVolume;
-			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
+			audioVolume -= 0.02f;
+			audioVolume = audioVolume < 0.f ? 0.f : audioVolume;
 			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
-		if (UME::Input::IsKeyPressed(GLFW_KEY_O))
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_O))
 		{
-			audioVolume += 0.01f;
-			audioVolume = audioVolume < 0 ? 0 : audioVolume;
+			audioVolume += 0.02f;
+			audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
 			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
-			//Audio::GetInstance().SetGroupVolume(ChannelGroups::MENUAUDIO, audioVolume);
 		}
 		if (UME::Input::IsKeyPressed(GLFW_KEY_M))
 		{
 			Audio::GetInstance().StopAllSoundsInGroup(LEVEL1);
+		}
+		if (UME::Input::IsKeyPressed(GLFW_KEY_N))
+		{
+			Audio::GetInstance().PlayAllSoundsInGroup(LEVEL1);
 		}
 
 		//test cloning

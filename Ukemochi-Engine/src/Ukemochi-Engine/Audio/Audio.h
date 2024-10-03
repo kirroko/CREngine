@@ -26,6 +26,7 @@ namespace Ukemochi
         void SetAudioVolume(int soundIndex, float volume);
         void SetGroupVolume(int groupIndex, float volume);
         void StopAllSoundsInGroup(int groupIndex);
+        void PlayAllSoundsInGroup(int groupIndex);
         void Update();
         bool IsPlaying(int soundIndex);
 
