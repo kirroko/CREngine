@@ -41,11 +41,6 @@ namespace Ukemochi
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
-		//some code here
-		//std::cout << "Level1:Load" << '\n';
-		//audio.CreateGroup("test");
-		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
-
 		Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
 		Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
 	}
@@ -162,7 +157,6 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
 		};
 
-		//audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
 	}
 
 	void Level1_Update()//Level1 game runtime
