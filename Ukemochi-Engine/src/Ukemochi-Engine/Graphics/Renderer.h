@@ -61,6 +61,13 @@ public:
 	 */
 	void cleanUp();
 
+	/*!
+	 * @brief Loads and sets up the texture for an object based on the provided file path.
+	 * @param texturePath The file path to the texture to be loaded.
+	 * @return The texture ID for the loaded texture.
+	 */
+	void setUpTextures(const std::string& texturePath);
+
 	static int const screen_width = 1600;
 	static int const screen_height = 900;
 
@@ -72,7 +79,7 @@ public:
 	 * @param height The height of the box (in screen space).
 	 * @param texturePath Optional file path to the texture for the box. Default is an empty string, indicating no texture.
 	 */
-	void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath = "");
+	void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 
 	/*!
 	 * @brief Draws a 2D circle at the specified position with the given radius and optional texture.
@@ -82,18 +89,18 @@ public:
 	 * @param texturePath Optional file path to the texture for the circle. Default is an empty string, indicating no texture.
 	 * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles). Default is 1000.
 	 */
-	void drawCircle(GLfloat x, GLfloat y, GLfloat radius, const std::string& texturePath = "", GLint segments = 1000);
+	void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
 
 	/*!
 	 * @brief Toggles scale transformation for objects based on input.
 	 */
-    void ToggleInputsForScale();
-    
+	void ToggleInputsForScale();
+
 	/*!
 	 * @brief Toggles rotation transformation for objects based on input.
 	 */
-    void ToggleInputsForRotation(); 
-   
+	void ToggleInputsForRotation();
+
 	/*!
 	* @brief Draws the outline of a 2D box at the specified position with the given dimensions.
 	* @param x The x-coordinate of the center of the box (in screen space).
@@ -101,7 +108,7 @@ public:
 	* @param width The width of the box (in screen space).
 	* @param height The height of the box (in screen space).
 	*/
-    void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 	/*!
 	 * @brief Draws the outline of a 2D circle at the specified position with the given radius.
 	 * @param x The x-coordinate of the center of the circle (in screen space).
@@ -109,10 +116,10 @@ public:
 	 * @param radius The radius of the circle (in screen space).
 	 * @param segments The number of segments to use for rendering the circle. Default is 1000.
 	 */
-    void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
-    
-	/*! 
-	 * @brief Debug mode flag to enable drawing of object outlines. 
+	void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
+
+	/*!
+	 * @brief Debug mode flag to enable drawing of object outlines.
 	 */
 	GLboolean debug_mode_enabled = false;
 
@@ -177,41 +184,35 @@ private:
 	void cleanUpBuffers();
 
 	/*!
-	 * @brief Loads and sets up the texture for an object based on the provided file path.
-	 * @param texturePath The file path to the texture to be loaded.
-	 */
-	void setUpTextures(const std::string& texturePath);
-
-	/*! 
-	 * @brief Scale factor applied to objects when scaling is enabled. 
+	 * @brief Scale factor applied to objects when scaling is enabled.
 	 */
 	GLfloat scale_factor{};
 
-	/*! 
-	 * @brief Flag to enable or disable scaling of objects. 
+	/*!
+	 * @brief Flag to enable or disable scaling of objects.
 	 */
 	GLboolean scale_enabled = false;
 
 	/*! @brief Flag to enable or disable rotation of objects. */
 	GLboolean rotation_enabled = false;
 
-	/*! 
-	 * @brief Angle for rotating objects (in degrees). 
+	/*!
+	 * @brief Angle for rotating objects (in degrees).
 	 */
 	GLfloat rotation_angle{};
 
-	/*! 
-	 * @brief Speed at which objects rotate (degrees per second). 
+	/*!
+	 * @brief Speed at which objects rotate (degrees per second).
 	 */
 	GLfloat rotationSpeed = 1.0f;
 
-	/*! 
-	 * @brief Time elapsed between the current and previous frame. 
+	/*!
+	 * @brief Time elapsed between the current and previous frame.
 	 */
 	GLfloat deltaTime = 0.0f;
 
-	/*! 
-	 * @brief Time recorded for the previous frame, used for calculating deltaTime. 
+	/*!
+	 * @brief Time recorded for the previous frame, used for calculating deltaTime.
 	 */
 	GLfloat lastFrame = 0.0f;
 
@@ -222,6 +223,6 @@ private:
 	int totalFrames = 8;   // Total number of frames in the sprite sheet
 	/*int frameHeight = 64;
 	int frameWidth = 64;*/
-	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, const std::string& texturePath, int frameWidth);
+	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth);
 };
 #endif

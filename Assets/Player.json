@@ -7,7 +7,7 @@
             {
                 "Name": "Transform",
                 "Position": [800, 675],
-                "Rotation": [0, 0],
+                "Rotation": 0,
                 "Scale": [100, 100]
             },
             {
@@ -26,10 +26,8 @@
             },
             {
                 "Name": "SpriteRender",
-                "Sprite": "Ukemochi.png",
-                "Shape": 0,
-                "Visible": true,
-                "Opacity": 1
+              "Sprite": "Ukemochi.png",
+              "Shape" : 0
             }
         ]
     }

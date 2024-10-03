@@ -18,16 +18,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #pragma once
 
+#include <glad/glad.h>			// for GLuint
 #include "PreCompile.h"
-#include "../Math/Vector2D.h" // for Vec2 struct
-#include "../Audio/Audio.h"
+#include "../Math/Vector2D.h"	// for Vec2 struct
+#include "../Audio/Audio.h"		// for Audio class
+#include "../Graphics/Sprite.h" // for Sprite class
 
 namespace Ukemochi
 {
 	struct Transform
 	{
 		Vec2 position;
-		Vec2 rotation;
+		float rotation; // TODO: Change to Quaternion?
 		Vec2 scale;
 	};
 
@@ -73,15 +75,17 @@ namespace Ukemochi
 		float m_radius{};
 	};
 
-	typedef enum { BOX, CIRCLE } SPRITE_SHAPE;
+	typedef enum { BOX = 0, CIRCLE } SPRITE_SHAPE; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
 	struct SpriteRender
 	{
 		std::string texturePath{};				// Path to the texture file (sprite)
-		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;						// Draw as BOX | Circle
+		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;	// Draw as BOX | Circle
+		unsigned int textureID = 0;
+		bool animated = false;							// Is the object animated?
 
-		bool visible = true;							// Is the object visible?
-		float opacity = 1.0f;							// Opacity of the object
+		//bool visible = true;							// Is the object visible?
+		//float opacity = 1.0f;							// Opacity of the object
 	};
 
 	struct AudioSource
