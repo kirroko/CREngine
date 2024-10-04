@@ -84,7 +84,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -114,7 +114,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -145,7 +145,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>

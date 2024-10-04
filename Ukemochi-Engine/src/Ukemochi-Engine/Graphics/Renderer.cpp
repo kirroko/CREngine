@@ -243,7 +243,6 @@ void Renderer::render()
 			if (transform.rotation >= 360.f)
 				transform.rotation -= 360.f;
 
-			if(spriteRenderer.texturePath != "../Assets/Textures/terrain.png" || spriteRenderer.texturePath != "../Assets/Textures/Moon Floor.png")
 			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}

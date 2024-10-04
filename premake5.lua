@@ -83,7 +83,7 @@ project "Ukemochi-Engine"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		buildoptions { "/wd6285", "/wd26451","/wd26498","/wd26800" }  -- Disable specific warnings globally
+		buildoptions { "/wd6285", "/wd26451","/wd26498","/wd26800", "/wd4996", "/wd6031", "/wd4603" }  -- Disable specific warnings globally
 
 		postbuildcommands
 		{
