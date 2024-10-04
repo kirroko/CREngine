@@ -38,6 +38,7 @@ namespace Ukemochi
 	float audioVolume = 0.04f;
 	std::string player_data{ "../Assets/Player.json" };
 	GameObject player_obj;
+	GameObject worm_0;
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
@@ -88,7 +89,7 @@ namespace Ukemochi
 		background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
 
 		// WORM OBJECT 1 - DYNAMIC
-		GameObject worm_0 = GameObjectFactory::CreateObject();
+		worm_0 = GameObjectFactory::CreateObject();
 		worm_0.AddComponent(Transform{
 				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
 				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
@@ -168,6 +169,8 @@ namespace Ukemochi
 				0,
 				true
 			});
+
+		
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -227,11 +230,12 @@ namespace Ukemochi
 			Audio::GetInstance().PlayAllSoundsInGroup(LEVEL1);
 		}
 
-		//test cloning
+		//test run_time cloning
 		if (UME::Input::IsKeyTriggered(GLFW_KEY_L))
 		{
-			std::cout << "Cloning Player Object\n";
-			GameObject Clone = GameObjectFactory::CloneObject(player_obj);
+			std::cout << "Cloning Mob Object\n";
+			GameObject clone = GameObjectFactory::CloneObject(worm_0);
+			clone.GetComponent<Transform>().position = Vec2{ clone.GetComponent<Transform>().position.x + 5.f, clone.GetComponent<Transform>().position.y + 1.f };
 		}
 	}
 
