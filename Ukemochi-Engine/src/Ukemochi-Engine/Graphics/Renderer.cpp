@@ -232,13 +232,18 @@ void Renderer::render()
 		// Apply rotation if enabled
 		if (rotation_enabled)
 		{
-			//// Update the rotation angle based on deltaTime
+			// Update the rotation angle based on deltaTime
 			//rotation_angle += rotationSpeed * deltaTime;
 
-			//// Cap the rotation angle between 0 and 360 degrees
-			//if (rotation_angle >= 360.0f)
-			//	rotation_angle -= 360.0f;
+			// Cap the rotation angle between 0 and 360 degrees
+			/*if (rotation_angle >= 360.0f)
+				rotation_angle -= 360.0f;*/
 
+			transform.rotation += rotationSpeed * deltaTime;
+			if (transform.rotation >= 360.f)
+				transform.rotation -= 360.f;
+
+			if(spriteRenderer.texturePath != "../Assets/Textures/terrain.png" || spriteRenderer.texturePath != "../Assets/Textures/Moon Floor.png")
 			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
