@@ -133,6 +133,7 @@ namespace Ukemochi
 
 	void SceneManager::Update(double deltaTime)
 	{
+		(void)deltaTime;
 		//Update
 		gsm_fpUpdate();
 		//update ECS
