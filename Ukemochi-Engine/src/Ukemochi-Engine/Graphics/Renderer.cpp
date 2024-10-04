@@ -193,7 +193,7 @@ void Renderer::render()
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 	// Draw the animated sprite
 	// drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", 64);
@@ -243,7 +243,6 @@ void Renderer::render()
 			if (transform.rotation >= 360.f)
 				transform.rotation -= 360.f;
 
-			if(spriteRenderer.texturePath != "../Assets/Textures/terrain.png" || spriteRenderer.texturePath != "../Assets/Textures/Moon Floor.png")
 			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}

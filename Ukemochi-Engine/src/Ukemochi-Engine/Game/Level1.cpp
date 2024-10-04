@@ -60,27 +60,20 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png"); // load texture
 
-
+		// BACKGROUND 
+		GameObject level_background = GameObjectFactory::CreateObject();
+		level_background.AddComponent(Transform{
+				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+				0,
+				Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
+			});
+		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
 
 		// PLAYER OBJECT
 		player_obj = GameObjectFactory::CreateObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath); // load texture
-
-		// ANIMATION OBJECT
-		GameObject animation = GameObjectFactory::CreateObject();
-		animation.AddComponent(Transform{
-			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-			0,
-			Vec2{SPRITE_SCALE, SPRITE_SCALE}
-			});
-		animation.AddComponent(SpriteRender{
-				"../Assets/Textures/Bunny_Right_Sprite.png",
-				SPRITE_SHAPE::BOX,
-				0,
-				true
-			});
 
 		// BACKGROUND OBJECT
 		GameObject background = GameObjectFactory::CreateObject();
@@ -161,15 +154,20 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
 		};
 
-		// BACKGROUND 
-		GameObject level_background = GameObjectFactory::CreateObject();
-		level_background.AddComponent(Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-				0,
-				Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
+		// ANIMATION OBJECT
+		GameObject animation = GameObjectFactory::CreateObject();
+		animation.AddComponent(Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE, SPRITE_SCALE}
 			});
-		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
+		animation.AddComponent(SpriteRender{
+				"../Assets/Textures/Bunny_Right_Sprite.png",
+				SPRITE_SHAPE::BOX,
+				0,
+				true
+			});
 	}
 
 	void Level1_Update()//Level1 game runtime

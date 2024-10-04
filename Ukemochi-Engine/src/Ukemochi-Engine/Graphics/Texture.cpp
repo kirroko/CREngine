@@ -22,7 +22,7 @@
   * @param format The format of the image data (e.g., GL_RGBA or GL_RGB).
   * @param pixelType The data type of the image's pixel data (e.g., GL_UNSIGNED_BYTE).
   */
-Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
+Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) : ID(0)
 {
 	// Assigns the type of the texture ot the texture object
 	type = texType;

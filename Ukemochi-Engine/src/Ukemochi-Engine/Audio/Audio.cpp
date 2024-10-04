@@ -105,7 +105,7 @@ namespace Ukemochi
     void Audio::CreateGroup()
     {
         FMOD::ChannelGroup* group = nullptr;
-        FMOD_RESULT result;
+        FMOD_RESULT result{};
 
         // Loop through all predefined channel groups
         for (int i = 0; i < LAST; i++)
