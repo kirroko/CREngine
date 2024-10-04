@@ -129,6 +129,13 @@ project "Ukemochi-Game"
 		"Ukemochi-Engine"
 	}
 
+	prebuildcommands 
+    { 
+        -- Copy the Ukemochi-Engine DLL before the build 
+		"{COPY} ../bin/" .. outputdir .. "/Ukemochi-Engine/ukemochi-engine.dll ../bin/" .. outputdir .. "/Ukemochi-Game", 
+		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" 
+    }
+	
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
