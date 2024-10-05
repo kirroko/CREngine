@@ -44,6 +44,25 @@ void Renderer::init()
 	setUpShaders();
 }
 
+
+void Renderer::initBoxBuffers()
+{
+	// Define vertices for a box (centered around origin)
+	GLfloat vertices_box[] = {
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f    // Top-right
+	};
+	GLuint indices_box[] = { 
+		0, 1, 2, 
+		0, 2, 3 
+	};
+
+	// Set up the buffers once, and bind the VAO/VBO/EBO
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+}
+
 /*!
  * @brief Loads and sets up a texture based on the given file path.
  * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
@@ -87,12 +106,6 @@ void Renderer::setUpTextures(const std::string& texturePath)
 
 		textureCache[texturePath] = texture;
 	}
-	//else
-	//{
-	//	// No texture provided
-	//	textures.push_back(nullptr);  // No texture for this object
-	//	textures_enabled.push_back(false);
-	//}
 }
 
 /*!
@@ -193,10 +206,6 @@ void Renderer::render()
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glEnable(GL_DEPTH_TEST);
-
-	// Draw the animated sprite
-	// drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", 64);
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
@@ -233,12 +242,6 @@ void Renderer::render()
 		if (rotation_enabled)
 		{
 			// Update the rotation angle based on deltaTime
-			//rotation_angle += rotationSpeed * deltaTime;
-
-			// Cap the rotation angle between 0 and 360 degrees
-			/*if (rotation_angle >= 360.0f)
-				rotation_angle -= 360.0f;*/
-
 			transform.rotation += rotationSpeed * deltaTime;
 			if (transform.rotation >= 360.f)
 				transform.rotation -= 360.f;
@@ -264,51 +267,6 @@ void Renderer::render()
 
 		++entity_count;
 	}
-
-	// Background
-	// drawBox(800.f, 450.f, screen_width, screen_height, "../Assets/Textures/terrain.png");
-
-	// Draw Call
-	//for (size_t i = 0; i < vaos.size(); ++i) {
-	//	vaos[i]->Bind();
-
-	//	shaderProgram->Activate();
-
-	//	glm::mat4 model = glm::mat4(1.0f);
-	//	if (scale_enabled)
-	//		model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
-	//	// Apply rotation if enabled
-	//	if (rotation_enabled)
-	//	{
-	//		// Update the rotation angle based on deltaTime
-	//		rotation_angle += rotationSpeed * deltaTime;
-
-	//		// Cap the rotation angle between 0 and 360 degrees
-	//		if (rotation_angle >= 360.0f)
-	//			rotation_angle -= 360.0f;
-
-	//		// Apply rotation to the model matrix
-	//		model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
-	//	}
-
-	//	shaderProgram->setMat4("model", model);
-
-	//	// Bind the texture for the object
-
-	//	if (textures_enabled[i])
-	//	{
-	//		textures[i]->Bind();
-	//		shaderProgram->setBool("useTexture", true);
-	//	}
-	//	else
-	//		shaderProgram->setBool("useTexture", false);
-
-	//	// Draw the filled square
-	//	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
-	//	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
-
-	//	vaos[i]->Unbind();
-	//}
 
 	cleanUpBuffers();
 }
@@ -346,33 +304,6 @@ void Renderer::cleanUp()
 		delete texture.second;
 	}
 
-	//size_t numOfTexture = textureCache.size();
-	//bool* check = new bool[numOfTexture];
-	//for (size_t i = 0; i < numOfTexture; i++)
-	//{
-	//	check[i] = false;
-	//}
-
-	//// Delete all textures
-	//for (size_t i = 0; i < textures.size(); ++i)
-	//{
-	//	if (textures[i])
-	//	{
-	//		textures[i]->Delete();  // Delete the OpenGL texture
-	//		for (size_t j = 0; j < numOfTexture; j++)
-	//		{
-	//			if (textures[i]->ID == j && check[j] == false)
-	//			{
-	//				delete textures[i];  // Deallocate memory for the texture object
-	//				textures[i] = nullptr;
-	//				check[j] = true;
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
-	//delete[] check;
-
 	// Clear the textures vector
 	textures.clear();
 
@@ -403,41 +334,17 @@ void Renderer::cleanUp()
  */
 void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	// Convert width and height from screen space to NDC scaling
-	GLfloat new_width = (2.0f * width) / screen_width;
-	GLfloat new_height = (2.0f * height) / screen_height;
+	// Bind the VAO[0] for the box
+	vaos[0]->Bind();
 
-	// Adjust vertices so that the position (x, y) represents the center of the box
-	GLfloat half_width = new_width / 2.0f;
-	GLfloat half_height = new_height / 2.0f;
+	// Set the object color (if necessary)
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
 
-	// Define the vertices for the box, centered around (new_x, new_y)
-	GLfloat vertices_box[] = {
-		new_x - half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f, 1.0f,   // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f, 0.0f,   // Bottom-left
-		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 1.0f    // Top-right
-	};
-	// Define indices to form two triangles
-	GLuint indices_box[] = {
-	0, 1, 2, // First triangle
-	0, 2, 3  // Second triangle
-	};
+	// Issue the draw call using the pre-setup buffers
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	// ** Set the object color for the filled box (e.g., white) **
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set uniform to white
-
-	// Set up buffers
-	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
-
-	// Store the number of indices for this box (6 indices: two triangles)
-	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
-
-	// Set up the texture for the box
-	// setUpTextures(texturePath);
+	// Unbind the VAO[0] after drawing
+	vaos[0]->Unbind();
 }
 
 /*!
@@ -671,3 +578,25 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 	// Set up the texture for the box
 	//setUpTextures(texturePath);
 }
+
+void Renderer::RenderEntity(EntityID entity, const Transform& transform, const SpriteRender& sprite) 
+{
+	// Bind the texture
+	glBindTexture(GL_TEXTURE_2D, sprite.textureID);
+
+	// Set up the model matrix using the transform's position, scale, and rotation
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position, 0.f, 0.0f));
+	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(transform.scale, 1.f, 1.0f));
+
+	// Pass the model matrix to the shader and render the entity
+	shaderProgram->setMat4("model", model);
+
+	if (sprite.shape == SPRITE_SHAPE::BOX) {
+		drawBox();
+	}
+	else if (sprite.shape == SPRITE_SHAPE::CIRCLE) {
+		DrawCircle();  // Your existing circle drawing function
+	}
+}
+

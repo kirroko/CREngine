@@ -224,5 +224,8 @@ private:
 	/*int frameHeight = 64;
 	int frameWidth = 64;*/
 	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth);
+	void RenderEntity(EntityID entity, const Transform& transform, const SpriteRender& sprite);
+
+	void initBoxBuffers();
 };
 #endif
