@@ -42,6 +42,8 @@ void Renderer::init()
 {
 	// Load shaders
 	setUpShaders();
+
+	initBoxBuffers();
 }
 
 
@@ -61,6 +63,8 @@ void Renderer::initBoxBuffers()
 
 	// Set up the buffers once, and bind the VAO/VBO/EBO
 	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	indices_count.push_back(6);
 }
 
 /*!
@@ -182,6 +186,97 @@ void Renderer::cleanUpBuffers()
 /*!
  * @brief Renders all the objects (boxes and circles) using the set up VAOs, VBOs, EBOs, and textures.
  */
+//void Renderer::render()
+//{
+//	glEnable(GL_BLEND);
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//
+//	// Get the current time
+//	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());  // This will return time in seconds
+//	deltaTime = currentFrameTime - lastFrame;
+//	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
+//
+//	// Update the animation frame based on elapsed time
+//	elapsedTime += deltaTime;
+//
+//	if (elapsedTime >= frameDuration) {
+//		currentFrame++;  // Move to the next frame
+//		if (currentFrame >= totalFrames) {
+//			currentFrame = 0;  // Loop back to the first frame
+//		}
+//		elapsedTime = 0.0f;  // Reset elapsed time
+//	}
+//
+//	// Specify the color of the background
+//	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//	GLuint entity_count = 0;
+//	for (auto& entity : m_Entities)
+//	{
+//		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+//		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+//
+//		// 0x4B45414E | functions here sets up a new vertices and indices for the object
+//		if (spriteRenderer.animated)
+//			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, 64);
+//		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+//		{
+//			RenderEntity(transform, spriteRenderer);
+//		}
+//		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+//			drawCircle(transform.position.x, transform.position.y, 100.f);
+//
+//		//drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
+//
+//		// If debug mode is enabled, draw the outline
+//		if (debug_mode_enabled) {
+//			if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+//				drawBoxOutline(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
+//			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+//				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
+//		}
+//
+//		// 0x4B45414E | We do a draw call here
+//		//vaos[entity_count]->Bind();
+//		shaderProgram->Activate();
+//
+//		glm::mat4 model = glm::mat4(1.0f);
+//		if (scale_enabled)
+//			model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
+//		// Apply rotation if enabled
+//		if (rotation_enabled)
+//		{
+//			// Update the rotation angle based on deltaTime
+//			transform.rotation += rotationSpeed * deltaTime;
+//			if (transform.rotation >= 360.f)
+//				transform.rotation -= 360.f;
+//
+//			// Apply rotation to the model matrix
+//			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+//		}
+//
+//		shaderProgram->setMat4("model", model);
+//
+//		// Bind the texture to object
+//		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end())
+//		{
+//			textureCache.find(spriteRenderer.texturePath)->second->Bind();
+//			shaderProgram->setBool("useTexture", true);
+//		}
+//		else
+//			shaderProgram->setBool("useTexture", false);
+//
+//		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
+//		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[entity_count]), GL_UNSIGNED_INT, 0);
+//		vaos[entity_count]->Unbind();
+//
+//		++entity_count;
+//	}
+//
+//	cleanUpBuffers();
+//}
+
 void Renderer::render()
 {
 	glEnable(GL_BLEND);
@@ -212,63 +307,29 @@ void Renderer::render()
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+		
+		// Set vec2 to glm::vec3 for matrix transformations
+		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+		glm::vec3 scale(transform.position.x, transform.position.y, 0.f);
+		// Set up the model matrix using the transform's position, scale, and rotation
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, scale);
 
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
 		if (spriteRenderer.animated)
 			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, 64);
 		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-			drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
+		{
+			vaos[0]->Bind();
+			shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set color to white
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  // Draw box (6 indices, 2 triangles)
+			vaos[0]->Unbind();
+		}
 		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
 			drawCircle(transform.position.x, transform.position.y, 100.f);
-
-		//drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
-
-		// If debug mode is enabled, draw the outline
-		if (debug_mode_enabled) {
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-				drawBoxOutline(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
-			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
-		}
-
-		// 0x4B45414E | We do a draw call here
-		vaos[entity_count]->Bind();
-		shaderProgram->Activate();
-
-		glm::mat4 model = glm::mat4(1.0f);
-		if (scale_enabled)
-			model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
-		// Apply rotation if enabled
-		if (rotation_enabled)
-		{
-			// Update the rotation angle based on deltaTime
-			transform.rotation += rotationSpeed * deltaTime;
-			if (transform.rotation >= 360.f)
-				transform.rotation -= 360.f;
-
-			// Apply rotation to the model matrix
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		}
-
-		shaderProgram->setMat4("model", model);
-
-		// Bind the texture to object
-		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end())
-		{
-			textureCache.find(spriteRenderer.texturePath)->second->Bind();
-			shaderProgram->setBool("useTexture", true);
-		}
-		else
-			shaderProgram->setBool("useTexture", false);
-
-		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[entity_count]), GL_UNSIGNED_INT, 0);
-		vaos[entity_count]->Unbind();
-
-		++entity_count;
+		entity_count++;
 	}
-
-	cleanUpBuffers();
 }
 
 /*!
@@ -332,7 +393,7 @@ void Renderer::cleanUp()
  * @param height The height of the box (in screen space).
  * @param texturePath The file path to the texture for the box.
  */
-void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+void Renderer::drawBox()
 {
 	// Bind the VAO[0] for the box
 	vaos[0]->Bind();
@@ -579,24 +640,30 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 	//setUpTextures(texturePath);
 }
 
-void Renderer::RenderEntity(EntityID entity, const Transform& transform, const SpriteRender& sprite) 
+void Renderer::RenderEntity(const Transform& transform, const SpriteRender& sprite) 
 {
+	// Convert custom Vec2 to glm::vec3
+	glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+	glm::vec3 scale(transform.position.x, transform.position.y, 0.f);
+
 	// Bind the texture
 	glBindTexture(GL_TEXTURE_2D, sprite.textureID);
 
 	// Set up the model matrix using the transform's position, scale, and rotation
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position, 0.f, 0.0f));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	model = glm::scale(model, glm::vec3(transform.scale, 1.f, 1.0f));
+	model = glm::scale(model, scale);
 
 	// Pass the model matrix to the shader and render the entity
 	shaderProgram->setMat4("model", model);
 
-	if (sprite.shape == SPRITE_SHAPE::BOX) {
+	if (sprite.shape == SPRITE_SHAPE::BOX) 
+	{
 		drawBox();
 	}
-	else if (sprite.shape == SPRITE_SHAPE::CIRCLE) {
-		DrawCircle();  // Your existing circle drawing function
+	else if (sprite.shape == SPRITE_SHAPE::CIRCLE) 
+	{
+		//drawCircle();  // Your existing circle drawing function
 	}
 }
 

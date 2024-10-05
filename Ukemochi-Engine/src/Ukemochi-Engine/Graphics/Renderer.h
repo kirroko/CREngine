@@ -24,7 +24,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
-#include "../ECS/ECS.h"
+#include "Ukemochi-Engine/ECS/ECS.h"
 
  /*!
   * @class Renderer
@@ -79,7 +79,7 @@ public:
 	 * @param height The height of the box (in screen space).
 	 * @param texturePath Optional file path to the texture for the box. Default is an empty string, indicating no texture.
 	 */
-	void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBox();
 
 	/*!
 	 * @brief Draws a 2D circle at the specified position with the given radius and optional texture.
@@ -224,7 +224,7 @@ private:
 	/*int frameHeight = 64;
 	int frameWidth = 64;*/
 	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth);
-	void RenderEntity(EntityID entity, const Transform& transform, const SpriteRender& sprite);
+	void RenderEntity(const Ukemochi::Transform& transform, const Ukemochi::SpriteRender& sprite);
 
 	void initBoxBuffers();
 };
