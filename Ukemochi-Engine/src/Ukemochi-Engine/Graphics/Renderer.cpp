@@ -301,6 +301,17 @@ void Renderer::render()
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// Set Orthographic projection
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height), -1.0f, 1.0f);
+
+	// Optionally set up a view matrix (identity if no camera movement)
+	glm::mat4 view = glm::mat4(1.0f);
+
+	// Send the projection and view matrices to the shader
+	shaderProgram->Activate();
+	shaderProgram->setMat4("projection", projection);
+	shaderProgram->setMat4("view", view);
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
@@ -315,6 +326,22 @@ void Renderer::render()
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, scale);
+
+		shaderProgram->setMat4("model", model);
+
+		// Inside your render or update loop, before using the transform values:
+		std::cout << "Entity Position: (" << transform.position.x << ", " << transform.position.y << ")\n";
+		std::cout << "Entity Scale: (" << transform.scale.x << ", " << transform.scale.y << ")\n";
+		std::cout << "Entity Rotation: " << transform.rotation << " degrees\n";
+
+		// Bind the texture if available
+		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
+			textureCache.find(spriteRenderer.texturePath)->second->Bind();  // Make sure this binds to the correct texture ID
+			shaderProgram->setBool("useTexture", true);
+		}
+		else {
+			shaderProgram->setBool("useTexture", false);
+		}
 
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
 		if (spriteRenderer.animated)
