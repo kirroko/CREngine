@@ -17,7 +17,13 @@ namespace Ukemochi
 
 	bool AssetManager::LoadAssetsFromFolder(std::string folder_path)
 	{
-
+		for (const auto& entries : std::filesystem::directory_iterator(folder_path))
+		{
+			if (!entries.is_directory())
+			{
+				AddAsset(entries.path().generic_string());
+			}
+		}
 	}
 	
 }
