@@ -15,6 +15,9 @@ namespace Ukemochi
 		return true;
 	}
 
-	bool AssetManager::LoadAssetsFromFolder
+	bool AssetManager::LoadAssetsFromFolder(std::string folder_path)
+	{
+
+	}
 	
 }
