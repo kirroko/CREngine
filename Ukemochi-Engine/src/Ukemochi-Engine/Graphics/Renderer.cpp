@@ -51,6 +51,9 @@ void Renderer::init()
 
 	// Load Buffers for circle drawing
 	initCircleBuffers();
+
+	// Load Buffers for debug/wireframe circle drawing
+	initCircleOutlineBuffers();
 }
 
 
@@ -100,9 +103,6 @@ void Renderer::initDebugBoxBuffers()
 
 void Renderer::initCircleBuffers(GLuint segments)
 {
-	// Convert radius from screen space to NDC scaling for a unit circle
-	GLfloat new_radius_x = 2.0f / screen_width;
-	GLfloat new_radius_y = 2.0f / screen_height;
 
 	// Arrays for vertices and indices
 	std::vector<GLfloat> vertices;
@@ -122,8 +122,10 @@ void Renderer::initCircleBuffers(GLuint segments)
 	for (int i = 0; i <= segments; ++i)
 	{
 		GLfloat angle = i * 2.0f * 3.1415926f / segments;
-		GLfloat dx = cosf(angle) * new_radius_x;
-		GLfloat dy = sinf(angle) * new_radius_y;
+		GLfloat dx = cosf(angle);
+		GLfloat dy = sinf(angle);
+
+		// Add vertex position (unit circle in NDC)
 		vertices.push_back(dx);
 		vertices.push_back(dy);
 		vertices.push_back(0.0f);  // Z coordinate
@@ -141,12 +143,35 @@ void Renderer::initCircleBuffers(GLuint segments)
 		indices.push_back(i + 1);
 	}
 
-	// Store the number of indices for this object
-	indices_count.push_back(static_cast<GLuint>(indices.size()));
+	// Add index 0 (center vertex) at the start of the indices array
+	indices.insert(indices.begin(), 0);
+	indices.push_back(1); // Close the loop
 
 	// Set up buffers once
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
 }
+
+void Renderer::initCircleOutlineBuffers(GLuint segments)
+{
+	std::vector<GLfloat> vertices;
+
+	// Define the center position (0, 0)
+	GLfloat z = 0.0f;
+
+	// Generate vertices for the circle's outline
+	for (int i = 0; i < segments; ++i) {
+		GLfloat angle = i * 2.0f * 3.1415926f / segments;
+		GLfloat dx = cosf(angle);
+		GLfloat dy = sinf(angle);
+		vertices.push_back(dx);
+		vertices.push_back(dy);
+		vertices.push_back(z);  // Z (depth)
+	}
+
+	// Set up a VAO/VBO for the circle outline
+	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
+}
+
 /*!
  * @brief Loads and sets up a texture based on the given file path.
  * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
@@ -443,10 +468,10 @@ void Renderer::render()
 		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
 			drawCircle(transform.position.x, transform.position.y, 100.f);
 
-		if (debug_mode_enabled) {
+		if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::BOX)
 			drawBoxOutline(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
-		}
-
+		else if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+			drawCircleOutline(transform.position.x, transform.position.y, transform.scale.x);
 		entity_count++;
 	}
 }
@@ -540,16 +565,11 @@ void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius)
 	// Bind the VAO for the circle
 	vaos[CIRCLE_VAO]->Bind();
 
-	// Set up the model matrix for the circle's position and scaling
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
-	model = glm::scale(model, glm::vec3(radius, radius, 1.0f));
-	shaderProgram->setMat4("model", model);
-
 	// Set the object color (if necessary)
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
 
 	// Draw the circle using GL_TRIANGLE_FAN
-	glDrawElements(GL_TRIANGLE_FAN, static_cast<GLsizei>(indices_count[CIRCLE_VAO]), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLE_FAN, 1002, GL_UNSIGNED_INT, 0);
 
 	// Unbind the VAO after drawing
 	vaos[CIRCLE_VAO]->Unbind();
@@ -601,54 +621,28 @@ void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat heigh
 	vaos[BOX_OUTLINE]->Unbind();
 }
 
+void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius) 
+{
+	// Bind the VAO
+	vaos[CIRCLE_OUTLINE]->Bind();
 
-void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments) {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	GLfloat z = 0.0f;
+	// Adjust the model matrix for positioning and scaling
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+	model = glm::scale(model, glm::vec3(radius, radius, 1.0f));
+	shaderProgram->setMat4("model", model);
 
-	// Convert radius from screen space to NDC scaling
-	GLfloat new_radius_x = (2.0f * radius) / screen_width;
-	GLfloat new_radius_y = (2.0f * radius) / screen_height;
-
-	// Define vertices for the circle's outline
-	std::vector<GLfloat> vertices;
-
-	// Generate outer vertices for the circle's circumference
-	for (int i = 0; i < segments; ++i)  // Only generate 'segments' outer points, skip center vertex
-	{
-		GLfloat angle = i * 2.0f * 3.1415926f / segments;
-		GLfloat dx = cosf(angle) * new_radius_x;
-		GLfloat dy = sinf(angle) * new_radius_y;
-		vertices.push_back(new_x + dx);  // X
-		vertices.push_back(new_y + dy);  // Y
-		vertices.push_back(z);           // Z (depth)
-	}
-
-	// Activate the shader program
-	shaderProgram->Activate();
-
+	// Set the shader uniform to enable wireframe mode
+	shaderProgram->setBool("useTexture", false);
 	// Set the wireframe color to red
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
-	// Set to wireframe mode and increase line width for visibility
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(2.0f);  // Make the wireframe lines thicker
-
-	// Enable the vertex attribute for position
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices.data());
-
 	// Draw the outline of the circle using GL_LINE_LOOP
-	glDrawArrays(GL_LINE_LOOP, 0, segments);
+	glDrawArrays(GL_LINES, 0, 1000);
 
-	// Disable the vertex array and reset to fill mode
-	glDisableVertexAttribArray(0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	// Reset line width to default
-	glLineWidth(1.0f);
+	// Set the shader uniform to disable wireframe mode
+	shaderProgram->setBool("useTexture", true);
+	// Unbind the VAO
+	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
 void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth)

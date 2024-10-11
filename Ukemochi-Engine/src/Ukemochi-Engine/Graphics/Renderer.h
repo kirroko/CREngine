@@ -94,6 +94,7 @@ public:
 	 */
 	void ToggleInputsForRotation();
 
+
 	/*!
 	* @brief Draws the outline of a 2D box at the specified position with the given dimensions.
 	* @param x The x-coordinate of the center of the box (in screen space).
@@ -109,7 +110,7 @@ public:
 	 * @param radius The radius of the circle (in screen space).
 	 * @param segments The number of segments to use for rendering the circle. Default is 1000.
 	 */
-	void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
+	void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius);
 
 	/*!
 	 * @brief Debug mode flag to enable drawing of object outlines.
@@ -224,10 +225,13 @@ private:
 
 	void initCircleBuffers(GLuint segments = 1000);
 
+	void initCircleOutlineBuffers(GLuint segments = 1000);
+
 	enum objectIDs {
 		BOX_VAO = 0,
 		BOX_OUTLINE = 1,
-		CIRCLE_VAO = 2
+		CIRCLE_VAO = 2,
+		CIRCLE_OUTLINE = 3
 	};
 };
 #endif

@@ -175,9 +175,9 @@ namespace Ukemochi
 			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
 			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
 			0,
-			Vec2{SPRITE_SCALE, SPRITE_SCALE}
+			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
-		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE, 0, true });
+		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });
 	}
 
 	void Level1_Update()//Level1 game runtime
