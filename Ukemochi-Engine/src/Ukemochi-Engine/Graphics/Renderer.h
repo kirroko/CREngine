@@ -82,7 +82,7 @@ public:
 	 * @param y The y-coordinate of the center of the circle (in screen space).
 	 * @param radius The radius of the circle (in screen space).
 	 */
-	void drawCircle(GLfloat x, GLfloat y, GLfloat radius);
+	void drawCircle();
 
 	/*!
 	 * @brief Toggles scale transformation for objects based on input.
@@ -96,21 +96,17 @@ public:
 
 
 	/*!
-	* @brief Draws the outline of a 2D box at the specified position with the given dimensions.
-	* @param x The x-coordinate of the center of the box (in screen space).
-	* @param y The y-coordinate of the center of the box (in screen space).
-	* @param width The width of the box (in screen space).
-	* @param height The height of the box (in screen space).
+	* @brief Draws the outline of a 2D box at the specified position.
 	*/
-	void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBoxOutline();
 	/*!
-	 * @brief Draws the outline of a 2D circle at the specified position with the given radius.
-	 * @param x The x-coordinate of the center of the circle (in screen space).
-	 * @param y The y-coordinate of the center of the circle (in screen space).
-	 * @param radius The radius of the circle (in screen space).
-	 * @param segments The number of segments to use for rendering the circle. Default is 1000.
+	 * @brief Draws the outline of a 2D circle at the specified position.
 	 */
-	void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius);
+	void drawCircleOutline();
+
+	void updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth);
+
+	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 
 	/*!
 	 * @brief Debug mode flag to enable drawing of object outlines.
@@ -227,11 +223,14 @@ private:
 
 	void initCircleOutlineBuffers(GLuint segments = 1000);
 
+	void initAnimationBuffers(GLfloat width, GLfloat height);
+
 	enum objectIDs {
 		BOX_VAO = 0,
 		BOX_OUTLINE = 1,
 		CIRCLE_VAO = 2,
-		CIRCLE_OUTLINE = 3
+		CIRCLE_OUTLINE = 3,
+		ANIMATION_VAO = 4
 	};
 };
 #endif
