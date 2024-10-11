@@ -405,13 +405,12 @@ void Renderer::render()
 		// Set up the model matrix using the transform's position, scale, and rotation
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, scale);
 
-		//// Apply scaling if enabled
-		//if (scale_enabled)
-		//	model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		//else
-		//	model = glm::scale(model, scale); // Use entity's original scale
+		// Apply scaling if enabled
+		if (scale_enabled)
+			model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
+		else
+			model = glm::scale(model, scale); // Use entity's original scale
 
 		// Apply rotation if enabled
 		if (rotation_enabled)
@@ -535,9 +534,6 @@ void Renderer::drawBox()
  * @param x The x-coordinate of the center of the circle (in screen space).
  * @param y The y-coordinate of the center of the circle (in screen space).
  * @param radius The radius of the circle (in screen space).
- * @param texturePath The file path to the texture for the circle.
- * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles),
-		  by default it is set to 1000.
  */
 void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius)
 {

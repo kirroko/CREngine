@@ -170,7 +170,14 @@ namespace Ukemochi
 				true
 			});
 
-		
+		GameObject circle = GameObjectFactory::CreateObject();
+		circle.AddComponent(Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE, SPRITE_SCALE}
+			});
+		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE, 0, true });
 	}
 
 	void Level1_Update()//Level1 game runtime
