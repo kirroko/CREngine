@@ -56,7 +56,7 @@ void Renderer::init()
 	initCircleOutlineBuffers();
 
 	// Load Buffers for animation
-	initAnimationBuffers(250.f, 350.f);
+	initAnimationBuffers();
 }
 
 
@@ -184,7 +184,7 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
 }
 
-void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
+void Renderer::initAnimationBuffers()
 {
 	// Define the vertices with placeholder texture coordinates.
 	GLfloat vertices[] = {
@@ -201,7 +201,7 @@ void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
 	};
 
 	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
-	indices_count.push_back(6);
+	//indices_count.push_back(6);
 }
 
 
@@ -501,9 +501,6 @@ void Renderer::drawBox()
  * @brief Draws a 2D circle with the given position, radius, and texture,
 		  starting position is the top left of screen. It starts from the
 		  center of the box.
- * @param x The x-coordinate of the center of the circle (in screen space).
- * @param y The y-coordinate of the center of the circle (in screen space).
- * @param radius The radius of the circle (in screen space).
  */
 void Renderer::drawCircle()
 {
