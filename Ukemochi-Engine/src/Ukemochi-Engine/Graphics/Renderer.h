@@ -24,7 +24,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
-#include "../ECS/ECS.h"
+#include "Ukemochi-Engine/ECS/ECS.h"
 
  /*!
   * @class Renderer
@@ -72,24 +72,17 @@ public:
 	static int const screen_height = 900;
 
 	/*!
-	 * @brief Draws a 2D box at the specified position with the given dimensions and optional texture.
-	 * @param x The x-coordinate of the center of the box (in screen space).
-	 * @param y The y-coordinate of the center of the box (in screen space).
-	 * @param width The width of the box (in screen space).
-	 * @param height The height of the box (in screen space).
-	 * @param texturePath Optional file path to the texture for the box. Default is an empty string, indicating no texture.
+
 	 */
-	void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBox();
 
 	/*!
 	 * @brief Draws a 2D circle at the specified position with the given radius and optional texture.
 	 * @param x The x-coordinate of the center of the circle (in screen space).
 	 * @param y The y-coordinate of the center of the circle (in screen space).
 	 * @param radius The radius of the circle (in screen space).
-	 * @param texturePath Optional file path to the texture for the circle. Default is an empty string, indicating no texture.
-	 * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles). Default is 1000.
 	 */
-	void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
+	void drawCircle();
 
 	/*!
 	 * @brief Toggles scale transformation for objects based on input.
@@ -101,22 +94,19 @@ public:
 	 */
 	void ToggleInputsForRotation();
 
+
 	/*!
-	* @brief Draws the outline of a 2D box at the specified position with the given dimensions.
-	* @param x The x-coordinate of the center of the box (in screen space).
-	* @param y The y-coordinate of the center of the box (in screen space).
-	* @param width The width of the box (in screen space).
-	* @param height The height of the box (in screen space).
+	* @brief Draws the outline of a 2D box at the specified position.
 	*/
-	void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBoxOutline();
 	/*!
-	 * @brief Draws the outline of a 2D circle at the specified position with the given radius.
-	 * @param x The x-coordinate of the center of the circle (in screen space).
-	 * @param y The y-coordinate of the center of the circle (in screen space).
-	 * @param radius The radius of the circle (in screen space).
-	 * @param segments The number of segments to use for rendering the circle. Default is 1000.
+	 * @brief Draws the outline of a 2D circle at the specified position.
 	 */
-	void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
+	void drawCircleOutline();
+
+	void updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth);
+
+	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 
 	/*!
 	 * @brief Debug mode flag to enable drawing of object outlines.
@@ -224,5 +214,23 @@ private:
 	/*int frameHeight = 64;
 	int frameWidth = 64;*/
 	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth);
+
+	void initBoxBuffers();
+
+	void initDebugBoxBuffers();
+
+	void initCircleBuffers(GLuint segments = 1000);
+
+	void initCircleOutlineBuffers(GLuint segments = 1000);
+
+	void initAnimationBuffers(GLfloat width, GLfloat height);
+
+	enum objectIDs {
+		BOX_VAO = 0,
+		BOX_OUTLINE = 1,
+		CIRCLE_VAO = 2,
+		CIRCLE_OUTLINE = 3,
+		ANIMATION_VAO = 4
+	};
 };
 #endif

@@ -39,7 +39,7 @@ namespace Ukemochi
 	std::string player_data{ "../Assets/Player.json" };
 	GameObject player_obj;
 	GameObject worm_0;
-
+	Renderer time;
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
@@ -170,7 +170,15 @@ namespace Ukemochi
 				true
 			});
 
-		
+		// Circle Creation for Testing
+		/*GameObject circle = GameObjectFactory::CreateObject();
+		circle.AddComponent(Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
+			});
+		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -179,10 +187,10 @@ namespace Ukemochi
 		// Press 'W' or up key to move the player up
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
-			player_rb.velocity.y = -player_rb.acceleration.y;
+			player_rb.velocity.y = player_rb.acceleration.y;
 		// Press 'S' or down key to move the player down
 		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
-			player_rb.velocity.y = player_rb.acceleration.y;
+			player_rb.velocity.y = -player_rb.acceleration.y;
 		else
 			player_rb.velocity.y = 0.0f; // Stop moving the player in the y axis
 
@@ -237,6 +245,7 @@ namespace Ukemochi
 			GameObject clone = GameObjectFactory::CloneObject(worm_0);
 			clone.GetComponent<Transform>().position = Vec2{ clone.GetComponent<Transform>().position.x + 5.f, clone.GetComponent<Transform>().position.y + 1.f };
 		}
+
 	}
 
 	void Level1_Draw()//rendering of the game for Level1
