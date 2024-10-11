@@ -42,8 +42,15 @@ void Renderer::init()
 {
 	// Load shaders
 	setUpShaders();
-
+	
+	// Load Buffers for box drawing
 	initBoxBuffers();
+
+	// Load Buffers for debug/wireframe box drawing
+	initDebugBoxBuffers();
+
+	// Load Buffers for circle drawing
+	initCircleBuffers();
 }
 
 
@@ -64,9 +71,82 @@ void Renderer::initBoxBuffers()
 	// Set up the buffers once, and bind the VAO/VBO/EBO
 	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
 
+	// Store the number of indices to be drawn
 	indices_count.push_back(6);
 }
 
+void Renderer::initDebugBoxBuffers()
+{
+	// Define vertices for a box (centered around origin)
+	GLfloat vertices_box[] = {
+		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Top-left
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-left
+		 0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f    // Top-right
+	};
+
+	// Define indices for drawing the outline of the box using GL_LINES
+	GLuint indices_box[] = {
+		0, 1, // Top-left to Bottom-left
+		2, 3 // Top-right to Top-left
+	};
+
+	// Set up the buffers once, and bind the VAO/VBO/EBO
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
+	indices_count.push_back(4); // 4 lines with 2 vertices each
+}
+
+void Renderer::initCircleBuffers(GLuint segments)
+{
+	// Convert radius from screen space to NDC scaling for a unit circle
+	GLfloat new_radius_x = 2.0f / screen_width;
+	GLfloat new_radius_y = 2.0f / screen_height;
+
+	// Arrays for vertices and indices
+	std::vector<GLfloat> vertices;
+	std::vector<GLuint> indices;
+
+	// Add center vertex (0, 0 in NDC space)
+	vertices.push_back(0.0f);  // X
+	vertices.push_back(0.0f);  // Y
+	vertices.push_back(0.0f);  // Z
+	vertices.push_back(1.0f);  // Color (r)
+	vertices.push_back(1.0f);  // Color (g)
+	vertices.push_back(1.0f);  // Color (b)
+	vertices.push_back(0.5f);  // Texture coordinate (s) - center of the texture
+	vertices.push_back(0.5f);  // Texture coordinate (t)
+
+	// Generate vertices around the circle
+	for (int i = 0; i <= segments; ++i)
+	{
+		GLfloat angle = i * 2.0f * 3.1415926f / segments;
+		GLfloat dx = cosf(angle) * new_radius_x;
+		GLfloat dy = sinf(angle) * new_radius_y;
+		vertices.push_back(dx);
+		vertices.push_back(dy);
+		vertices.push_back(0.0f);  // Z coordinate
+
+		// Color (white)
+		vertices.push_back(1.0f);  // Color r
+		vertices.push_back(1.0f);  // Color g
+		vertices.push_back(1.0f);  // Color b
+
+		// Texture coordinates
+		vertices.push_back(0.5f + cosf(angle) * 0.5f);  // s (normalized)
+		vertices.push_back(0.5f + sinf(angle) * 0.5f);  // t (normalized)
+
+		// Index the vertices for triangle fan
+		indices.push_back(i + 1);
+	}
+
+	// Store the number of indices for this object
+	indices_count.push_back(static_cast<GLuint>(indices.size()));
+
+	// Set up buffers once
+	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
+}
 /*!
  * @brief Loads and sets up a texture based on the given file path.
  * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
@@ -321,18 +401,31 @@ void Renderer::render()
 		
 		// Set vec2 to glm::vec3 for matrix transformations
 		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-		glm::vec3 scale(transform.position.x, transform.position.y, 0.f);
+		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
 		// Set up the model matrix using the transform's position, scale, and rotation
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, scale);
 
-		shaderProgram->setMat4("model", model);
+		//// Apply scaling if enabled
+		//if (scale_enabled)
+		//	model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
+		//else
+		//	model = glm::scale(model, scale); // Use entity's original scale
 
-		// Inside your render or update loop, before using the transform values:
-		std::cout << "Entity Position: (" << transform.position.x << ", " << transform.position.y << ")\n";
-		std::cout << "Entity Scale: (" << transform.scale.x << ", " << transform.scale.y << ")\n";
-		std::cout << "Entity Rotation: " << transform.rotation << " degrees\n";
+		// Apply rotation if enabled
+		if (rotation_enabled)
+		{
+			// Update the rotation angle based on deltaTime
+			transform.rotation += rotationSpeed * deltaTime;
+			if (transform.rotation >= 360.f)
+				transform.rotation -= 360.f;
+
+			// Apply rotation to the model matrix
+			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		}
+
+		shaderProgram->setMat4("model", model);
 
 		// Bind the texture if available
 		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
@@ -342,19 +435,19 @@ void Renderer::render()
 		else {
 			shaderProgram->setBool("useTexture", false);
 		}
-
+		
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
 		if (spriteRenderer.animated)
 			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, 64);
 		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-		{
-			vaos[0]->Bind();
-			shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set color to white
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  // Draw box (6 indices, 2 triangles)
-			vaos[0]->Unbind();
-		}
+			drawBox();
 		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
 			drawCircle(transform.position.x, transform.position.y, 100.f);
+
+		if (debug_mode_enabled) {
+			drawBoxOutline(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
+		}
+
 		entity_count++;
 	}
 }
@@ -446,61 +539,24 @@ void Renderer::drawBox()
  * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles),
 		  by default it is set to 1000.
  */
-void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLint segments)
+void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius)
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	GLfloat z = 0.0f;
-	// Convert radius from screen space to NDC scaling
-	GLfloat new_radius_x = (2.0f * radius) / screen_width;
-	GLfloat new_radius_y = (2.0f * radius) / screen_height;
+	// Bind the VAO for the circle
+	vaos[CIRCLE_VAO]->Bind();
 
-	// Arrays for vertices and indices
-	std::vector<GLfloat> vertices;
-	std::vector<GLuint> indices;
+	// Set up the model matrix for the circle's position and scaling
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+	model = glm::scale(model, glm::vec3(radius, radius, 1.0f));
+	shaderProgram->setMat4("model", model);
 
-	// Add center vertex
-	vertices.push_back(new_x);
-	vertices.push_back(new_y);
-	vertices.push_back(z);
-	vertices.push_back(1.0f);   // Color (r)
-	vertices.push_back(1.0f);   // Color (g)
-	vertices.push_back(1.0f);   // Color (b)
-	vertices.push_back(0.5f);   // Texture coordinate (s) - center of the texture
-	vertices.push_back(0.5f);   // Texture coordinate (t)
+	// Set the object color (if necessary)
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
 
-	// Generate vertices around the circle
-	for (int i = 0; i <= segments; ++i)
-	{
-		GLfloat angle = i * 2.0f * 3.1415926f / segments;
-		GLfloat dx = cosf(angle) * new_radius_x;
-		GLfloat dy = sinf(angle) * new_radius_y;
-		vertices.push_back(new_x + dx);
-		vertices.push_back(new_y + dy);
-		vertices.push_back(z);
+	// Draw the circle using GL_TRIANGLE_FAN
+	glDrawElements(GL_TRIANGLE_FAN, static_cast<GLsizei>(indices_count[CIRCLE_VAO]), GL_UNSIGNED_INT, 0);
 
-		// Color
-		vertices.push_back(1.0f);  // Color r
-		vertices.push_back(1.0f);  // Color g
-		vertices.push_back(1.0f);  // Color b
-
-		// Texture coordinates
-		vertices.push_back(0.5f + cosf(angle) * 0.5f);  // s (normalized)
-		vertices.push_back(0.5f + sinf(angle) * 0.5f);  // t (normalized)
-
-		// Index the vertices for triangle fan
-		indices.push_back(i + 1);
-	}
-
-	// Store the number of indices for this object
-	indices_count.push_back(indices.size());
-
-	// Set up buffers
-	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
-
-	// Set up the texture for the circle
-	//setUpTextures(texturePath);
+	// Unbind the VAO after drawing
+	vaos[CIRCLE_VAO]->Unbind();
 }
 
 void Renderer::ToggleInputsForScale()
@@ -524,48 +580,31 @@ void Renderer::ToggleInputsForRotation()
 
 void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	GLfloat new_width = (2.0f * width) / screen_width;
-	GLfloat new_height = (2.0f * height) / screen_height;
+	// Bind the VAO specifically for drawing outlines
+	vaos[BOX_OUTLINE]->Bind();
 
-	GLfloat half_width = new_width / 2.0f;
-	GLfloat half_height = new_height / 2.0f;
+	// Set the line width for better visibility (optional)
+	glLineWidth(2.0f);
 
-	// Define the vertices for the box outline (positions only)
-	GLfloat vertices_box[] = {
-		new_x - half_width, new_y + half_height, 0.0f,  // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  // Bottom-left
-		new_x + half_width, new_y - half_height, 0.0f,  // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f   // Top-right
-	};
-
-	// Activate the shader program
-	shaderProgram->Activate();
-
-	// Disable the texture for the wireframe rendering
-	shaderProgram->setBool("useTexture", false);  // Ensure no texture is bound
-
+	// Set the shader uniform to enable wireframe mode
+	shaderProgram->setBool("useTexture", false);
 	// Set the wireframe color to red
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
-	// Set to wireframe mode and increase line width for visibility
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(2.0f);  // Make the wireframe lines thicker
+	// Adjust the model matrix for positioning and scaling the outline
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+	model = glm::scale(model, glm::vec3(width, height, 1.0f));
+	shaderProgram->setMat4("model", model);
 
-	// Draw the outline using GL_LINE_LOOP
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices_box);
-	glDrawArrays(GL_LINE_LOOP, 0, 4);  // This will only draw the outline of the square
+	// Draw the outline using GL_LINE_LOOP to draw only the edges
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
 
-	// Reset polygon mode back to fill for future drawings
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisableVertexAttribArray(0);
+	// Reset the uniform to disable wireframe mode for other objects
+	shaderProgram->setBool("useTexture", true);
 
-	// Reset line width to default
-	glLineWidth(1.0f);
+	vaos[BOX_OUTLINE]->Unbind();
 }
+
 
 void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments) {
 	// Convert screen coordinates to normalized device coordinates (NDC)
@@ -663,34 +702,7 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 	// Store the number of indices for this box (6 indices: two triangles)
 	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
 
-	// Set up the texture for the box
-	//setUpTextures(texturePath);
 }
 
-void Renderer::RenderEntity(const Transform& transform, const SpriteRender& sprite) 
-{
-	// Convert custom Vec2 to glm::vec3
-	glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-	glm::vec3 scale(transform.position.x, transform.position.y, 0.f);
 
-	// Bind the texture
-	glBindTexture(GL_TEXTURE_2D, sprite.textureID);
-
-	// Set up the model matrix using the transform's position, scale, and rotation
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	model = glm::scale(model, scale);
-
-	// Pass the model matrix to the shader and render the entity
-	shaderProgram->setMat4("model", model);
-
-	if (sprite.shape == SPRITE_SHAPE::BOX) 
-	{
-		drawBox();
-	}
-	else if (sprite.shape == SPRITE_SHAPE::CIRCLE) 
-	{
-		//drawCircle();  // Your existing circle drawing function
-	}
-}
 

@@ -76,99 +76,99 @@ namespace Ukemochi
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath); // load texture
 
-		//// BACKGROUND OBJECT
-		//GameObject background = GameObjectFactory::CreateObject();
-		//background.AddComponent(Transform{
-		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-		//		0,
-		//		Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f}
-		//	});
-		//background.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
-		//background.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
-		//background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
+		// BACKGROUND OBJECT
+		GameObject background = GameObjectFactory::CreateObject();
+		background.AddComponent(Transform{
+				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+				0,
+				Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f}
+			});
+		background.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		background.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
 
-		//// WORM OBJECT 1 - DYNAMIC
-		//worm_0 = GameObjectFactory::CreateObject();
-		//worm_0.AddComponent(Transform{
-		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
-		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
-		//		0,
-		//		Vec2{SPRITE_SCALE, SPRITE_SCALE}
-		//	});
-		//worm_0.AddComponent(Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
-		//worm_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
-		//worm_0.AddComponent(SpriteRender{
-		//		"../Assets/Textures/Worm.png",
-		//		SPRITE_SHAPE::BOX,
-		//	});
+		// WORM OBJECT 1 - DYNAMIC
+		worm_0 = GameObjectFactory::CreateObject();
+		worm_0.AddComponent(Transform{
+				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+				0,
+				Vec2{SPRITE_SCALE, SPRITE_SCALE}
+			});
+		worm_0.AddComponent(Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
+		worm_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		worm_0.AddComponent(SpriteRender{
+				"../Assets/Textures/Worm.png",
+				SPRITE_SHAPE::BOX,
+			});
 
-		//// WORM OBJECT 2 - DYNAMIC - CLONED
-		//GameObject worm_1 = GameObjectFactory::CloneObject(worm_0);
-		//worm_1.GetComponent<Transform>().position = Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.25f,
-		//	ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f };
+		// WORM OBJECT 2 - DYNAMIC - CLONED
+		GameObject worm_1 = GameObjectFactory::CloneObject(worm_0);
+		worm_1.GetComponent<Transform>().position = Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.25f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f };
 
-		//// WORM OBJECT 3 - DYNAMIC - CLONED
-		//GameObject worm_2 = GameObjectFactory::CloneObject(worm_0);
-		//worm_2.GetComponent<Transform>().position = Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
-		//	ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f };
+		// WORM OBJECT 3 - DYNAMIC - CLONED
+		GameObject worm_2 = GameObjectFactory::CloneObject(worm_0);
+		worm_2.GetComponent<Transform>().position = Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.25f };
 
-		//// Create left door entity
-		//GameObject door_0 = GameObjectFactory::CreateObject();
-		//door_0.AddComponent(Transform{
-		//		Vec2{0,
-		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-		//		0,
-		//		Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
-		//	});
-		//door_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
-		//door_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
-		//door_0.AddComponent(SpriteRender{
-		//		"../Assets/Textures/Moon Floor.png",
-		//		SPRITE_SHAPE::BOX
-		//	});
+		// Create left door entity
+		GameObject door_0 = GameObjectFactory::CreateObject();
+		door_0.AddComponent(Transform{
+				Vec2{0,
+				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+				0,
+				Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
+			});
+		door_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
+		door_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		door_0.AddComponent(SpriteRender{
+				"../Assets/Textures/Moon Floor.png",
+				SPRITE_SHAPE::BOX
+			});
 
-		//// Create right door entity
-		//GameObject door_1 = GameObjectFactory::CloneObject(door_0);
-		//door_1.GetComponent<Transform>() = Transform{
-		//	Vec2{(float)ECS::GetInstance().GetSystem<Renderer>()->screen_width,
-		//	ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-		//	0,
-		//	Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
-		//};
+		// Create right door entity
+		GameObject door_1 = GameObjectFactory::CloneObject(door_0);
+		door_1.GetComponent<Transform>() = Transform{
+			Vec2{(float)ECS::GetInstance().GetSystem<Renderer>()->screen_width,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
+		};
 
-		//// Create top door entity
-		//GameObject door_2 = GameObjectFactory::CloneObject(door_0);
-		//door_2.GetComponent<Transform>() = Transform{
-		//	Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-		//	0},
-		//	0,
-		//	Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
-		//};
+		// Create top door entity
+		GameObject door_2 = GameObjectFactory::CloneObject(door_0);
+		door_2.GetComponent<Transform>() = Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+			0},
+			0,
+			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
+		};
 
-		//// Create bottom door entity
-		//GameObject door_3 = GameObjectFactory::CloneObject(door_0);
-		//door_3.GetComponent<Transform>() = Transform{
-		//	Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-		//	(float)ECS::GetInstance().GetSystem<Renderer>()->screen_height},
-		//	0,
-		//	Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
-		//};
+		// Create bottom door entity
+		GameObject door_3 = GameObjectFactory::CloneObject(door_0);
+		door_3.GetComponent<Transform>() = Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+			(float)ECS::GetInstance().GetSystem<Renderer>()->screen_height},
+			0,
+			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
+		};
 
-		//// ANIMATION OBJECT
-		//GameObject animation = GameObjectFactory::CreateObject();
-		//animation.AddComponent(Transform{
-		//	Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-		//	ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-		//	0,
-		//	Vec2{SPRITE_SCALE, SPRITE_SCALE}
-		//	});
-		//animation.AddComponent(SpriteRender{
-		//		"../Assets/Textures/Bunny_Right_Sprite.png",
-		//		SPRITE_SHAPE::BOX,
-		//		0,
-		//		true
-		//	});
+		// ANIMATION OBJECT
+		GameObject animation = GameObjectFactory::CreateObject();
+		animation.AddComponent(Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE, SPRITE_SCALE}
+			});
+		animation.AddComponent(SpriteRender{
+				"../Assets/Textures/Bunny_Right_Sprite.png",
+				SPRITE_SHAPE::BOX,
+				0,
+				true
+			});
 
 		
 	}
@@ -179,10 +179,10 @@ namespace Ukemochi
 		// Press 'W' or up key to move the player up
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
-			player_rb.velocity.y = -player_rb.acceleration.y;
+			player_rb.velocity.y = player_rb.acceleration.y;
 		// Press 'S' or down key to move the player down
 		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
-			player_rb.velocity.y = player_rb.acceleration.y;
+			player_rb.velocity.y = -player_rb.acceleration.y;
 		else
 			player_rb.velocity.y = 0.0f; // Stop moving the player in the y axis
 
