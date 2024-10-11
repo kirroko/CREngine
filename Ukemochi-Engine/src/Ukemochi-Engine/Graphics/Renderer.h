@@ -106,6 +106,7 @@ public:
 
 	void updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth);
 
+
 	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 
 	/*!

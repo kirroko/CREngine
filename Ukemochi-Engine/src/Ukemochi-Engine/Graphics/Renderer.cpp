@@ -42,7 +42,7 @@ void Renderer::init()
 {
 	// Load shaders
 	setUpShaders();
-	
+
 	// Load Buffers for box drawing
 	initBoxBuffers();
 
@@ -69,9 +69,9 @@ void Renderer::initBoxBuffers()
 		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,   // Bottom-right
 		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f    // Top-right
 	};
-	GLuint indices_box[] = { 
-		0, 1, 2, 
-		0, 2, 3 
+	GLuint indices_box[] = {
+		0, 1, 2,
+		0, 2, 3
 	};
 
 	// Set up the buffers once, and bind the VAO/VBO/EBO
@@ -191,8 +191,8 @@ void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
 		// Positions         // Colors        // UVs (to be updated dynamically)
 		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
 		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f    // Top-right
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 1.0f    // Top-right
 	};
 
 	GLuint indices[] = {
@@ -201,6 +201,7 @@ void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
 	};
 
 	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
+	indices_count.push_back(6);
 }
 
 
@@ -350,7 +351,7 @@ void Renderer::render()
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	// Set Orthographic projection
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height), -1.0f, 1.0f);
 
@@ -367,7 +368,7 @@ void Renderer::render()
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-		
+
 		// Set vec2 to glm::vec3 for matrix transformations
 		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
 		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
@@ -403,7 +404,7 @@ void Renderer::render()
 		else {
 			shaderProgram->setBool("useTexture", false);
 		}
-		
+
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
 		if (spriteRenderer.animated)
 			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
@@ -560,14 +561,14 @@ void Renderer::drawBoxOutline()
 	vaos[BOX_OUTLINE]->Unbind();
 }
 
-void Renderer::drawCircleOutline() 
+void Renderer::drawCircleOutline()
 {
 	// Bind the VAO
 	vaos[CIRCLE_OUTLINE]->Bind();
 
 	// Set the shader uniform to enable wireframe mode
 	shaderProgram->setBool("useTexture", false);
-	
+
 	// Set the wireframe color to red
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
@@ -588,17 +589,13 @@ void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int totalW
 
 	// Update the UV coordinates in the VBO.
 	GLfloat updatedUVs[] = {
-		// New UVs for the current frame
-		uvX, 1.0f,                     // Top-left
-		uvX, 0.0f,                     // Bottom-left
-		uvX + uvWidth, 0.0f,           // Bottom-right
-		uvX + uvWidth, 1.0f            // Top-right
+		 -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, 1.0f,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, 0.0f,   // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, 1.0f    // Top-right
 	};
 
-	// Bind the VBO and update only the UV part.
-	glBindBuffer(GL_ARRAY_BUFFER, vbos[ANIMATION_VAO]->ID); // Use your VBO ID
-	glBufferSubData(GL_ARRAY_BUFFER, 6 * sizeof(GLfloat), sizeof(updatedUVs), updatedUVs);
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind the VBO
+	vbos[ANIMATION_VAO]->UpdateData(updatedUVs, sizeof(updatedUVs));
 }
 
 void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
