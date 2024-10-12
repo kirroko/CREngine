@@ -243,7 +243,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />

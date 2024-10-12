@@ -39,16 +39,63 @@ namespace Ukemochi
 	*************************************************************************/
 	struct Rigidbody2D
 	{
-		Vec2 velocity{};
-		Vec2 acceleration{};
+		// Linear Properties
+		Vec2 position;
+		Vec2 velocity;
+		Vec2 acceleration;
+		Vec2 force;
+		float mass;
+		float inverse_mass; // inverse mass = 1/mass
+		float linear_drag; // Adjust to control the friction from [0, 1]
 
-		bool is_kinematic{};
+		// Rotational Properties
+		/*float angle;
+		float angular_velocity;
+		float angular_acceleration;
+		float torque;
+		float inertia_mass;
+		float angular_drag*/
 
-		// bool use_gravity{};
-		/*float direction{};
-		float angle{};
-		float angular_velocity{};
-		float angular_acceleration{};*/
+		bool use_gravity; // If true, apply gravity
+		bool is_kinematic; // If true, don't apply physics
+
+		/*!***********************************************************************
+		\brief
+		 Rigidbody2D default constructor.
+		*************************************************************************/
+		Rigidbody2D() : position{}, velocity{}, acceleration{},
+			force{}, mass{ 1.f }, inverse_mass{ 1 / mass }, linear_drag{ 0.9f },
+			use_gravity{ false }, is_kinematic{ false } {}
+
+		/*!***********************************************************************
+		\brief
+		 Rigidbody2D constructor with kinematic argument. For static objects.
+		\param[in] kinematic
+		 The kinematic to set, if true, don't apply physics.
+		*************************************************************************/
+		Rigidbody2D(const bool kinematic) : position{}, velocity{}, acceleration{},
+			force{}, mass{ 1.f }, inverse_mass{ 1 / mass }, linear_drag{ 0.9f },
+			use_gravity{ false }, is_kinematic{ kinematic } {}
+
+		/*!***********************************************************************
+		\brief
+		 Rigidbody2D constructor with force argument. For dynamic objects.
+		\param[in] force
+		 The force to set.
+		*************************************************************************/
+		Rigidbody2D(const Vec2 force) : position{}, velocity{}, acceleration{},
+			force{ force }, mass{ 1.f }, inverse_mass{ 1 / mass }, linear_drag{ 0.9f },
+			use_gravity{ false }, is_kinematic{ false } {}
+
+		/*!***********************************************************************
+		\brief
+		 Rigidbody2D constructor with all member arguments. For serialization.
+		*************************************************************************/
+		Rigidbody2D(const Vec2 pos, const Vec2 vel, const Vec2 accel, const Vec2 force, const float mass,
+			const float inv_mass, const float drag, const bool gravity, const bool kinematic)
+			: position{ pos }, velocity{ vel }, acceleration{ accel },
+			force{ force }, mass{ mass }, inverse_mass{ inv_mass }, linear_drag{ drag },
+			use_gravity{ gravity }, is_kinematic{ kinematic } {}
 	};
 
 	/*!***********************************************************************
@@ -57,12 +104,42 @@ namespace Ukemochi
 	*************************************************************************/
 	struct BoxCollider2D
 	{
-		Vec2 min{};
-		Vec2 max{};
+		// Min,max for AABB
+		Vec2 min;
+		Vec2 max;
 
-		int collision_flag{};
-		bool is_player{};
-		bool is_trigger{};
+		int collision_flag; // Track the collision flags
+		bool is_trigger; // If true, act as a trigger
+		bool is_player; // temp
+
+		/*!***********************************************************************
+		\brief
+		 BoxCollider2D default constructor.
+		*************************************************************************/
+		BoxCollider2D() : min{}, max{}, collision_flag{}, is_trigger{ false }, is_player{ false } {}
+
+		/*!***********************************************************************
+		\brief
+		 BoxCollider2D constructor with trigger argument. For trigger objects.
+		\param[in] trigger
+		 Set true, if entity is a trigger.
+		*************************************************************************/
+		BoxCollider2D(const bool trigger) : min{}, max{}, collision_flag{}, is_trigger{ trigger }, is_player{ false } {}
+
+		/*!***********************************************************************
+		\brief
+		 BoxCollider2D constructor with trigger and player arguments. TEMP
+		\param[in] player
+		 Set true, if entity is a player.
+		*************************************************************************/
+		BoxCollider2D(const bool trigger, const bool player) : min{}, max{}, collision_flag{}, is_trigger{ trigger }, is_player{ player } {}
+
+		/*!***********************************************************************
+		\brief
+		 BoxCollider2D constructor with all member arguments. For serialization.
+		*************************************************************************/
+		BoxCollider2D(const Vec2 min, const Vec2 max, const int flag, const bool trigger, const bool player)
+			: min{ min }, max{ max }, collision_flag{ flag }, is_trigger{ trigger }, is_player{ player } {}
 	};
 
 	/*!***********************************************************************
@@ -71,8 +148,20 @@ namespace Ukemochi
 	*************************************************************************/
 	struct CircleCollider2D
 	{
-		Vec2 m_center{};
-		float m_radius{};
+		Vec2 m_center;
+		float m_radius;
+
+		/*!***********************************************************************
+		\brief
+		 CircleCollider2D default constructor.
+		*************************************************************************/
+		CircleCollider2D() : m_center{}, m_radius{} {}
+
+		/*!***********************************************************************
+		\brief
+		 CircleCollider2D constructor with all member arguments. For serialization.
+		*************************************************************************/
+		CircleCollider2D(const Vec2 center, const float radius) : m_center{ center }, m_radius{ radius } {}
 	};
 
 	typedef enum { BOX = 0, CIRCLE } SPRITE_SHAPE; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER

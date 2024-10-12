@@ -61,9 +61,12 @@ namespace Ukemochi
 				else if (component.compare("Rigidbody2D") == 0)
 				{
 					ECS::GetInstance().AddComponent(entity, Rigidbody2D{
+						Vec2(comps["Position"][0].GetFloat(), comps["Position"][1].GetFloat()),
 						Vec2(comps["Velocity"][0].GetFloat(), comps["Velocity"][1].GetFloat()),
 						Vec2(comps["Acceleration"][0].GetFloat(), comps["Acceleration"][1].GetFloat()),
-						comps["is_kinematic"].GetBool()
+						Vec2(comps["Force"][0].GetFloat(), comps["Force"][1].GetFloat()),
+						comps["Mass"].GetFloat(), comps["Inverse Mass"].GetFloat(), comps["Linear Drag"].GetFloat(),
+						comps["use_gravity"].GetBool(), comps["is_kinematic"].GetBool()
 						}); // Default Component
 				}
 				else if (component.compare("BoxCollider2D") == 0)
@@ -71,9 +74,9 @@ namespace Ukemochi
 					ECS::GetInstance().AddComponent(entity, BoxCollider2D{
 						Vec2(comps["Min"][0].GetFloat(), comps["Min"][1].GetFloat()),
 						Vec2(comps["Max"][0].GetFloat(), comps["Max"][1].GetFloat()),
-						comps["Collision_flag"].GetInt(),
-						comps["is_player"].GetBool(),
-						comps["is_trigger"].GetBool()
+						comps["Collision Flag"].GetInt(),
+						comps["is_trigger"].GetBool(),
+						comps["is_player"].GetBool()
 						}); // Default Component
 				}
 				else if (component.compare("CircleCollider2D") == 0)
