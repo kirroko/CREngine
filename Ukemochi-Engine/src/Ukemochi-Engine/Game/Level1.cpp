@@ -27,7 +27,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../Physics/Physics.h"	    // for physics system
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
-#include "../Audio/Audio.h"			//for audio
+#include "../Audio/Audio.h"			// for audio system
 
 namespace Ukemochi
 {
@@ -39,7 +39,7 @@ namespace Ukemochi
 	std::string player_data{ "../Assets/Player.json" };
 	GameObject player_obj;
 	GameObject worm_0;
-
+	Renderer time;
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
@@ -170,7 +170,15 @@ namespace Ukemochi
 				true
 			});
 
-		
+		// Circle Creation for Testing
+		/*GameObject circle = GameObjectFactory::CreateObject();
+		circle.AddComponent(Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
+			});
+		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
 	}
 
 	void Level1_Update()//Level1 game runtime
