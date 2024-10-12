@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glad", "Ukemochi-Engine\ven
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Ukemochi-Engine\vendor\imgui\ImGui.vcxproj", "{C0FF640D-2C14-8DBE-F595-301E616989EF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mono", "Ukemochi-Engine\vendor\Mono\Mono.vcxproj", "{7E2F897C-6A66-8A0D-1353-7010FF68060F}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ukemochi-Engine", "Ukemochi-Engine\Ukemochi-Engine.vcxproj", "{9D9C9A89-0928-084E-1239-8B427E43644E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ukemochi-Game", "Ukemochi-Game\Ukemochi-Game.vcxproj", "{C165ACB0-2D26-28E7-F660-716462E06CC3}"
@@ -44,6 +46,12 @@ Global
 		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Dist|x64.Build.0 = Dist|x64
 		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|x64.ActiveCfg = Release|x64
 		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|x64.Build.0 = Release|x64
+		{7E2F897C-6A66-8A0D-1353-7010FF68060F}.Debug|x64.ActiveCfg = Debug|x64
+		{7E2F897C-6A66-8A0D-1353-7010FF68060F}.Debug|x64.Build.0 = Debug|x64
+		{7E2F897C-6A66-8A0D-1353-7010FF68060F}.Dist|x64.ActiveCfg = Dist|x64
+		{7E2F897C-6A66-8A0D-1353-7010FF68060F}.Dist|x64.Build.0 = Dist|x64
+		{7E2F897C-6A66-8A0D-1353-7010FF68060F}.Release|x64.ActiveCfg = Release|x64
+		{7E2F897C-6A66-8A0D-1353-7010FF68060F}.Release|x64.Build.0 = Release|x64
 		{9D9C9A89-0928-084E-1239-8B427E43644E}.Debug|x64.ActiveCfg = Debug|x64
 		{9D9C9A89-0928-084E-1239-8B427E43644E}.Debug|x64.Build.0 = Debug|x64
 		{9D9C9A89-0928-084E-1239-8B427E43644E}.Dist|x64.ActiveCfg = Dist|x64

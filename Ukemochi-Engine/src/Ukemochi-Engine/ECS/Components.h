@@ -75,7 +75,7 @@ namespace Ukemochi
 		float m_radius{};
 	};
 
-	typedef enum { BOX = 0, CIRCLE } SPRITE_SHAPE; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
+	enum class SPRITE_SHAPE { BOX = 0, CIRCLE = 1 }; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
 	struct SpriteRender
 	{

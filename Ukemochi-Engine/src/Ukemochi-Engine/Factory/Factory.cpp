@@ -89,7 +89,7 @@ namespace Ukemochi
 
 					ECS::GetInstance().AddComponent(entity, SpriteRender{
 						TexturePath,
-						comps["Shape"].GetInt() == 0 ? BOX : CIRCLE
+						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
 						}); // Default Component
 				}
 			}

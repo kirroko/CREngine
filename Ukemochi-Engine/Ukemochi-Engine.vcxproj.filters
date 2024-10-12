@@ -191,6 +191,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Scripting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -291,6 +292,9 @@
       <Filter>Ukemochi-Engine\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">

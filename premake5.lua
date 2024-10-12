@@ -10,18 +10,21 @@ workspace "Ukemochi"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 fmod_dll = "../Ukemochi-Engine/vendor/Fmod/lib/fmod.dll"
+Mono_dll = "../Ukemochi-Engine/vendor/Mono/lib/mono-2.0-sgen.dll"
 
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
 IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
 IncludeDir ["Fmod"] = "Ukemochi-Engine/vendor/Fmod/inc"
+IncludeDir ["Mono"] = "Ukemochi-Engine/vendor/Mono/include"
 IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
 
 
 LibraryDir = {}
 LibraryDir["Fmod"] = "Ukemochi-Engine/vendor/Fmod/lib"
+LibraryDir["Mono"] = "Ukemochi-Engine/vendor/Mono/lib"
 
-
+include "Ukemochi-Engine/vendor/Mono"
 include "Ukemochi-Engine/vendor/Fmod"
 include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
@@ -52,13 +55,15 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.Fmod}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.Mono}"
 
 	}
 	
 	libdirs
     {
-        "%{LibraryDir.Fmod}" -- Add FMOD library directory
+        "%{LibraryDir.Fmod}", -- Add FMOD library directory
+		"%{LibraryDir.Mono}"
     }
 
 	links
@@ -68,6 +73,7 @@ project "Ukemochi-Engine"
 		"fmod_vc",
 		"ImGui",
 		"opengl32.lib",
+		"mono-2.0-sgen.lib"
 	}
 	filter "system:windows"
 		cppdialect "C++17"
@@ -89,6 +95,7 @@ project "Ukemochi-Engine"
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
+			("{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")
 		}
 
@@ -133,7 +140,7 @@ project "Ukemochi-Game"
     { 
         -- Copy the Ukemochi-Engine DLL before the build 
 		"{COPY} ../bin/" .. outputdir .. "/Ukemochi-Engine/ukemochi-engine.dll ../bin/" .. outputdir .. "/Ukemochi-Game", 
-		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" 
+		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game"
     }
 	
 	filter "system:windows"
