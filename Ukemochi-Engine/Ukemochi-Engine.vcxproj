@@ -98,7 +98,8 @@
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
-IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\EmbedRuntime &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\EmbedRuntime &gt; nul)
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
 xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -130,7 +131,8 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
-IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\EmbedRuntime &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\EmbedRuntime &gt; nul)
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
 xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -162,7 +164,8 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
-IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\EmbedRuntime &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\EmbedRuntime &gt; nul)
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
 xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -246,6 +249,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\MathUtils.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
@@ -254,7 +258,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>

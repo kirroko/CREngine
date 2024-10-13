@@ -35,6 +35,8 @@ DigiPen Institute of Technology is prohibited.
 #include "Audio/Audio.h"
 #include "ImGui/ImGuiCore.h"
 #include "SceneManager.h"
+#include "Logic/Scripting.h"
+
 #include <crtdbg.h>				// To check for memory leaks
 
 using namespace Ukemochi;
@@ -70,6 +72,8 @@ namespace UME {
 
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
 		imguiInstance.ImGuiInit(glfwWindow);
+
+		ScriptingEngine::GetInstance().InitMono();
 	}
 
 	Application::~Application()

@@ -1,7 +1,7 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file	Scripting.h
+\file	ScriptingEngine.h
 \par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
 \par	junyukean.wong\@digipen.edu
@@ -23,11 +23,57 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-	class Scripting
+	class ScriptingEngine
 	{
-		MonoDomain* m_pRootDomain;
-		MonoDomain* m_pAppDomain;
+		MonoDomain* m_pRootDomain = nullptr;
+		MonoDomain* m_pAppDomain = nullptr;
+
+		MonoAssembly* CoreAssembly = nullptr;
+
+		ScriptingEngine() = default;
+		~ScriptingEngine() = default;
+		ScriptingEngine(const ScriptingEngine&) = delete;
+		ScriptingEngine& operator=(const ScriptingEngine&) = delete;
+
+		/**
+		 * @brief load a file into an array of bytes
+		 *
+		 * @param filePath The absolute path or relative pathing
+		 * @param outSize The output data size
+		 * @return char* pointer to the char buffer with data
+		 */
+		char* ReadBytes(const std::string& filePath, uint32_t* outSize);
+
+		/**
+		 * @brief Load Csharp Assembly
+		 *
+		 * @param assemblyPath Path to the assembly
+		 * @return MonoAssembly* Pointer to the assembly
+		 */
+		MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath);
+
+		/**
+		 * @brief Proper testing by iterating over all the class types define in our assembly (i.e., classes, structs and enums)
+		 *
+		 * @param assembly Our MonoAssembly
+		 */
+		void PrintAssemblyTypes(MonoAssembly* assembly);
+
 	public:
+		static ScriptingEngine& GetInstance()
+		{
+			static ScriptingEngine instance;
+			return instance;
+		}
+
+		/**
+		 * @brief Initialize Mono by creating an app domain
+		 */
 		void InitMono();
+
+		/**
+		 * @brief Clean up mono
+		 */
+		void ShutDown();
 	};
 }

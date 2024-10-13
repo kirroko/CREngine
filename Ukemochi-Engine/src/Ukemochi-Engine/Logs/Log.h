@@ -5,11 +5,10 @@
 \author     Hurng Kai Rui, h.kairui, 2301278
 \par        email: h.kairui\@digipen.edu
 \date       Sept 14, 2024
-\brief      This file defines the logging interface for the Ukemochi 
-            Engine, providing static methods for logging messages 
-            from both the engine and client(game) perspectives using 
-            the spdlog library.
-
+\brief      This file defines the logging interface for the Ukemochi
+			Engine, providing static methods for logging messages
+			from both the engine and client(game) perspectives using
+			the spdlog library.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -26,7 +25,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)  // Disable warning C4251
 
 namespace UME {
-
 	class UME_API Log
 	{
 	public:
@@ -50,7 +48,6 @@ namespace UME {
 		static std::shared_ptr<spdlog::logger> s_EngineLogger; ///< Logger for engine messages
 		static std::shared_ptr<spdlog::logger> s_ClientLogger; ///< Logger for client/game messages
 	};
-
 }
 
 #pragma warning(pop)  // Re-enable the warning
@@ -60,15 +57,14 @@ namespace UME {
 #define UME_ENGINE_INFO(...)  ::UME::Log::GetEngineLogger() -> info(__VA_ARGS__)
 #define UME_ENGINE_WARN(...)  ::UME::Log::GetEngineLogger() -> warn(__VA_ARGS__)
 #define UME_ENGINE_ERROR(...) ::UME::Log::GetEngineLogger() -> error(__VA_ARGS__)
-#define UME_ENGINE_FATAL(...) ::UME::Log::GetEngineLogger() -> fatal(__VA_ARGS__)
+#define UME_ENGINE_FATAL(...) ::UME::Log::GetEngineLogger() -> critical(__VA_ARGS__)
 
 // Client log marcros
 #define UME_TRACE(...)        ::UME::Log::GetClientLogger() -> trace(__VA_ARGS__)
 #define UME_INFO(...)         ::UME::Log::GetClientLogger() -> info(__VA_ARGS__)
 #define UME_WARN(...)         ::UME::Log::GetClientLogger() -> warn(__VA_ARGS__)
 #define UME_ERROR(...)        ::UME::Log::GetClientLogger() -> error(__VA_ARGS__)
-#define UME_FATAL(...)        ::UME::Log::GetClientLogger() -> fatal(__VA_ARGS__)
+#define UME_FATAL(...)        ::UME::Log::GetClientLogger() -> critical(__VA_ARGS__)
 
 // if dist build
 //#define CR_ENGINE_INFO
-

@@ -10,7 +10,8 @@ workspace "Ukemochi"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 fmod_dll = "../Ukemochi-Engine/vendor/Fmod/lib/fmod.dll"
-Mono_dll = "../Ukemochi-Engine/vendor/Mono/lib/mono-2.0-sgen.dll"
+Mono_dll = "../Ukemochi-Engine/vendor/Mono/lib/mono-2.0-sgen.dll" 
+scripting_dll = "../Ukemochi-Scripting/"
 
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
@@ -95,8 +96,9 @@ project "Ukemochi-Engine"
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
-			("{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
-			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")
+			("{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game/Mono/EmbedRuntime"),
+			{"{COPY} ./vendor/Mono/lib/4.5 ../bin/" .. outputdir .. "/Ukemochi-Game/Mono/lib/4.5"}, -- Copy the mono library
+			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")								-- Copy the assets(Editor's assets) 
 		}
 
 	filter "configurations:Debug"
@@ -110,6 +112,33 @@ project "Ukemochi-Engine"
 	filter "configurations:Dist"
 		defines "UME_Dist"
 		optimize "On"
+
+
+project "Ukemochi-Scripting"
+	location "Ukemochi-Scripting"
+	kind "SharedLib"
+	language "C#"
+	dotnetframework "4.7.2"
+
+	targetdir ("Ukemochi-Game/Resources/Scripts")
+	objdir ("Ukemochi-Game/Resources/Scripts/Intermediates")
+
+	files
+	{
+		"%{prj.name}/src/**.cs"
+	}
+
+	filter "configurations:Debug"
+	defines "UME_DEBUG"
+	symbols "On"
+
+	filter "configurations:Release"
+	defines "UME_Release"
+	optimize "On"
+	
+	filter "configurations:Dist"
+	defines "UME_Dist"
+	optimize "On"
 
 project "Ukemochi-Game"
 	location "Ukemochi-Game"
@@ -140,8 +169,9 @@ project "Ukemochi-Game"
     { 
         -- Copy the Ukemochi-Engine DLL before the build 
 		"{COPY} ../bin/" .. outputdir .. "/Ukemochi-Engine/ukemochi-engine.dll ../bin/" .. outputdir .. "/Ukemochi-Game", 
-		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game"
-    }
+		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game",
+		"{COPY} ./Resources/Scripts ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
+	}
 	
 	filter "system:windows"
 		cppdialect "C++17"
