@@ -152,6 +152,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\textRenderer.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h">
       <Filter>Ukemochi-Engine\ImGui</Filter>
     </ClInclude>
@@ -261,6 +264,9 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp">
