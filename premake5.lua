@@ -10,18 +10,20 @@ workspace "Ukemochi"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 fmod_dll = "../Ukemochi-Engine/vendor/Fmod/lib/fmod.dll"
+freetype_dll = "../Ukemochi-Engine/vendor/freetype/lib/freetype.dll"
 
 IncludeDir = {}
 IncludeDir ["GLFW"] = "Ukemochi-Engine/vendor/GLFW/include"
 IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
 IncludeDir ["Fmod"] = "Ukemochi-Engine/vendor/Fmod/inc"
 IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
-
+IncludeDir ["Freetype"] = "Ukemochi-Engine/vendor/freetype/include" 
 
 LibraryDir = {}
 LibraryDir["Fmod"] = "Ukemochi-Engine/vendor/Fmod/lib"
+LibraryDir["Freetype"] = "Ukemochi-Engine/vendor/freetype/lib"
 
-
+include "Ukemochi-Engine/vendor/freetype"
 include "Ukemochi-Engine/vendor/Fmod"
 include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
@@ -52,13 +54,15 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.Fmod}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.Freetype}"
 
 	}
 	
 	libdirs
     {
-        "%{LibraryDir.Fmod}" -- Add FMOD library directory
+        "%{LibraryDir.Fmod}", -- Add FMOD library directory
+		"%{LibraryDir.Freetype}"
     }
 
 	links
@@ -68,6 +72,7 @@ project "Ukemochi-Engine"
 		"fmod_vc",
 		"ImGui",
 		"opengl32.lib",
+		"freetype"
 	}
 	filter "system:windows"
 		cppdialect "C++17"
@@ -89,6 +94,7 @@ project "Ukemochi-Engine"
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
+			("{COPY} " .. freetype_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")
 		}
 
@@ -133,7 +139,8 @@ project "Ukemochi-Game"
     { 
         -- Copy the Ukemochi-Engine DLL before the build 
 		"{COPY} ../bin/" .. outputdir .. "/Ukemochi-Engine/ukemochi-engine.dll ../bin/" .. outputdir .. "/Ukemochi-Game", 
-		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" 
+		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" ,
+		"{COPY} " .. freetype_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game"
     }
 	
 	filter "system:windows"

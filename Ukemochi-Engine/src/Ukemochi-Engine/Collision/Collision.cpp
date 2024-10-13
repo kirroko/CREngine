@@ -15,12 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Collision.h"			// for forward declaration
-#include "../Math/MathUtils.h"  // for min, max, abs
-#include "../FrameController.h" // for GetDeltaTime
-#include "../ECS/ECS.h"
-#include "../Graphics/Renderer.h"
-#include "../Audio/Audio.h"
+#include "Collision.h"			  // for forward declaration
+#include "../Math/MathUtils.h"    // for min, max, abs
+#include "../FrameController.h"   // for GetDeltaTime
+#include "../ECS/ECS.h"			  // for entity components
+#include "../Graphics/Renderer.h" // for Renderer declaration
+#include "../Audio/Audio.h"		  // for Audio sound effects
 
 namespace Ukemochi
 {
