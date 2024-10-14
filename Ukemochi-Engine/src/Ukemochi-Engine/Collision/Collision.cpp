@@ -42,6 +42,12 @@ namespace Ukemochi
 			auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 			auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
 
+			// Get the bounding box size
+			box.min = { -Ukemochi::BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						-Ukemochi::BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			box.max = { Ukemochi::BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						Ukemochi::BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+
 			for (auto& entity2 : m_Entities)
 			{
 				if (entity == entity2)
@@ -205,6 +211,38 @@ namespace Ukemochi
 		}
 		else
 		{
+			// Calculate overlaps on each axis
+			float left_overlap = box2.max.x - box1.min.x;  // Distance from box1's left to box2's right
+			float right_overlap = box1.max.x - box2.min.x; // Distance from box1's right to box2's left
+			float top_overlap = box1.max.y - box2.min.y;   // Distance from box1's top to box2's bottom
+			float btm_overlap = box2.max.y - box1.min.y;   // Distance from box1's bottom to box2's top
+
+			// Determine which side has the least overlap (smallest distance)
+			if (left_overlap < right_overlap && left_overlap < top_overlap && left_overlap < btm_overlap)
+			{
+				box1_flag |= COLLISION_LEFT;
+				box2_flag |= COLLISION_RIGHT;
+			}
+			else if (right_overlap < left_overlap && right_overlap < top_overlap && right_overlap < btm_overlap)
+			{
+				box1_flag |= COLLISION_RIGHT;
+				box2_flag |= COLLISION_LEFT;
+			}
+			else if (top_overlap < left_overlap && top_overlap < right_overlap && top_overlap < btm_overlap)
+			{
+				box1_flag |= COLLISION_BOTTOM;
+				box2_flag |= COLLISION_TOP;
+			}
+			else
+			{
+				box1_flag |= COLLISION_TOP;
+				box2_flag |= COLLISION_BOTTOM;
+			}
+
+			// Set the collision flags to the boxes
+			box1.collision_flag = box1_flag;
+			box2.collision_flag = box2_flag;
+
 			// Overlapping boxes
 			return 1;
 		}

@@ -21,6 +21,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /*!***********************************************************************
+    \brief
+     Normalized bounding box (width and height) sizes - BoxCollider2D collision data.
+    *************************************************************************/
+    const float BOUNDING_BOX_SIZE = 0.5f;
+
     class Collision : public System
     {
     private:

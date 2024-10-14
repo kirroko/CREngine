@@ -90,14 +90,7 @@ namespace Ukemochi
         {
             // Get references of entity components
             auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-            auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
             auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
-
-            // Get the bounding box size
-            box.min = { -Ukemochi::BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-                        -Ukemochi::BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-            box.max = { Ukemochi::BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-                        Ukemochi::BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 
             // Skip if entity is kinematic (static objects)
             if (rb.is_kinematic)

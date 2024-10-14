@@ -29,12 +29,6 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
-     Normalized bounding box (width and height) sizes - BoxCollider2D collision data.
-    *************************************************************************/
-    const float BOUNDING_BOX_SIZE = 0.5f;
-
-    /*!***********************************************************************
-    \brief
      Maximum velocity constant for all entities.
     *************************************************************************/
     const float MAX_VELOCITY = 400.0f; // Adjust this value for your desired max velocity
