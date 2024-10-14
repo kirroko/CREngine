@@ -57,6 +57,10 @@ void Renderer::init()
 
 	// Load Buffers for animation
 	initAnimationBuffers();
+
+	// Text Rendering (Test)
+	initTextBuffers();
+	loadTextFont("../Assets/Fonts/Ukemochi_font-Regular");
 }
 
 
@@ -294,6 +298,17 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	ebos.push_back(ebo);
 }
 
+//void Renderer::setUpTextBuffers(GLfloat* vertices, size_t vertSize)
+//{
+//	textVAO.Bind();
+//
+//	textVBO = VBO(vertices, vertSize);
+//	textVBO.Bind();
+//
+//	textVAO.LinkAttrib(textVBO, GL_FLOAT, )
+//
+//}
+
 /*!
 * @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
 */
@@ -421,6 +436,9 @@ void Renderer::render()
 			drawCircleOutline();
 		entity_count++;
 	}
+
+	// Render text after rendering all other objects
+	renderText("Hello, World!", 0.0f, 0.0f, 1000.0f, glm::vec3(1.0f, 1.0f, 1.0f));  // White text at (50, 50)
 }
 
 /*!
@@ -473,8 +491,6 @@ void Renderer::cleanUp()
 		shaderProgram = nullptr;
 	}
 
-	FT_Done_Face(face);
-	FT_Done_FreeType(ft);
 }
 
 /*!
@@ -612,19 +628,30 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 }
 
 
-
 void Renderer::initTextBuffers()
 {
+	// Generate and bind the VAO
 	glGenVertexArrays(1, &textVAO);
 	glGenBuffers(1, &textVBO);
 	glBindVertexArray(textVAO);
+
+	// Create the VBO and set it to dynamic since we'll be updating the text dynamically
 	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW);  // 6 vertices, 5 floats per vertex (x, y, z, texX, texY)
+
+	// Position attribute (vec3)
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+
+	// Texture coordinates attribute (vec2)
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+	// Unbind the buffer and VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
+
 
 void Renderer::loadTextFont(const char* fontPath)
 {
@@ -634,7 +661,7 @@ void Renderer::loadTextFont(const char* fontPath)
 		return;
 	}
 
-	if (FT_New_Face(ft, "fonts/arial.ttf", 0, &face))
+	if (FT_New_Face(ft, "../Assets/Fonts/Ukemochi_font-Regular.ttf", 0, &face))
 	{
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 		return;
@@ -681,12 +708,19 @@ void Renderer::loadTextFont(const char* fontPath)
 	}
 
 
+	FT_Done_Face(face);
+	FT_Done_FreeType(ft);
 }
 
 void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	textShaderProgram->Activate();
 	textShaderProgram->setVec3("textColor", color.x, color.y, color.z);
+
+	// Set the projection matrix for text rendering
+	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
+	textShaderProgram->setMat4("projection", projection);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
 	
@@ -701,14 +735,14 @@ void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale,
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 
-		GLfloat vertices[6][4] = {
-			{xpos, ypos + h, 0.0f, 0.0f},
-			{xpos, ypos, 0.0f, 1.0f},
-			{xpos + w, ypos, 1.0f, 1.0f},
+		GLfloat vertices[6][5] = {
+			{xpos, ypos + h, 0.f, 0.0f, 0.0f},
+			{xpos, ypos, 0.f, 0.0f, 1.0f},
+			{xpos + w, ypos, 0.f, 1.0f, 1.0f},
 
-			{xpos, ypos + h, 0.0f, 0.0f},
-			{xpos + w, ypos, 1.0f, 1.0f},
-			{xpos + w, ypos + h, 1.0f, 0.0f}
+			{xpos, ypos + h, 0.f, 0.0f, 0.0f},
+			{xpos + w, ypos, 0.f, 1.0f, 1.0f},
+			{xpos + w, ypos + h, 0.f, 1.0f, 0.0f}
 		};
 		
 		glBindTexture(GL_TEXTURE_2D, ch.TextureId);

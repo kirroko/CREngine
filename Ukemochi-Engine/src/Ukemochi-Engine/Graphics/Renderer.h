@@ -245,9 +245,13 @@ private:
 	FT_Library ft;
 	FT_Face face;
 	std::unordered_map<char, Character> Characters;
+	/*VAO textVAO; 
+	VBO textVBO;*/
 	GLuint textVAO, textVBO;
 	Shader* textShaderProgram;
 	void initTextBuffers();
+	void setUpTextBuffers(GLfloat* vertices, size_t vertSize);
+	public:
 	void loadTextFont(const char* font);
 	void renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 };

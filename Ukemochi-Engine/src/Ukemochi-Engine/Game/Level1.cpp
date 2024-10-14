@@ -260,6 +260,7 @@ namespace Ukemochi
 	{
 		// Render the entities
 		ECS::GetInstance().GetSystem<Renderer>()->render();
+		
 	}
 
 	void Level1_Free()//release unused assets/variable memories
