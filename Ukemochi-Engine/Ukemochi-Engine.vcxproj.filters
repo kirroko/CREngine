@@ -51,9 +51,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.h">
-      <Filter>Platform\ImGuiOpenGl</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -193,9 +190,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
-      <Filter>Platform\ImGuiOpenGl</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
@@ -293,5 +287,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp" />
   </ItemGroup>
 </Project>

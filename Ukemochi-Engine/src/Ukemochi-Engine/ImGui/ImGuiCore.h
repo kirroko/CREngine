@@ -37,6 +37,8 @@ namespace UME
 		\brief Prepares a new ImGui frame.
 		*/
 		static void NewFrame();
+
+		static void Begin();
 		/*!
 		\brief Renders the current ImGui frame.
 		*/
@@ -46,21 +48,17 @@ namespace UME
 		\brief Cleans up ImGui resources.
 		*/
 		static void ImGuiClean();
-		/*!
-		\brief Dispatches input events to ImGui for handling.
-		\param event Reference to the event to be dispatched.
-		*/
-		void OnEvent(Event& event);
+
 	private:
 		// Mouse and keyboard event handlers
-		bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);
+		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);
 		bool IsMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
 		bool IsMouseMovedEvent(MouseMovedEvent& e);
 		bool IsMouseScrolledEvent(MouseScrolledEvent& e);
 		bool IsKeyPressedEvent(KeyPressedEvent& e);
 		bool IsKeyReleasedEvent(KeyReleasedEvent& e);
 		bool IsKeyTypeEvent(KeyTypedEvent& e);
-		bool IsWindowResizeEvent(WindowResizeEvent& e);
+		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 	};

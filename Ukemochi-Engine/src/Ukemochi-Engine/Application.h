@@ -32,6 +32,8 @@ namespace UME {
 		static Application* s_Instance;
 
 		UseImGui imguiInstance;
+
+		bool m_docking_enabled = true;
 	};
 
 	// To be defined in CLIENT (GAME)

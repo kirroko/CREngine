@@ -79,7 +79,7 @@ namespace UME {
 
 	void Application::EventIsOn(Event& e)
 	{
-		imguiInstance.OnEvent(e);
+		//imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
 		UME_ENGINE_TRACE("{0}", e.ToString());
@@ -160,6 +160,7 @@ namespace UME {
 
 				//************ Render IMGUI ************
 				imguiInstance.NewFrame();
+				imguiInstance.Begin();
 				imguiInstance.ImGuiUpdate(); // Render ImGui elements
 				//************ Render IMGUI ************
 
@@ -214,6 +215,7 @@ namespace UME {
 
 					//************ Render IMGUI ************
 					imguiInstance.NewFrame();
+					imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					//************ Render IMGUI ************
 
