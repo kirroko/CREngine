@@ -4,7 +4,7 @@
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 29, 2024
+\date       Oct 17, 2024
 \brief      This file contains the declaration of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -41,6 +41,12 @@ namespace Ukemochi
         int screen_width{}, screen_height{};
 
     public:
+        /*!***********************************************************************
+        \brief
+         Initialize the collision system.
+        *************************************************************************/
+        void Init();
+
         /*!***********************************************************************
         \brief
          Check the collisions of all the entities.

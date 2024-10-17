@@ -4,7 +4,7 @@
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 29, 2024
+\date       Oct 17, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -19,8 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/MathUtils.h"    // for min, max, abs
 #include "../FrameController.h"   // for GetDeltaTime
 #include "../ECS/ECS.h"			  // for entity components
-#include "../Graphics/Renderer.h" // for Renderer declaration
 #include "../Audio/Audio.h"		  // for Audio sound effects
+#include "../Application.h"		  // for screen size
 
 namespace Ukemochi
 {
@@ -28,13 +28,20 @@ namespace Ukemochi
 	\brief
 	 Check the collisions of all the entities.
 	*************************************************************************/
-	void Collision::CheckCollisions()
+	void Collision::Init()
 	{
 		// Get the screen width and height
-		auto renderer_system = ECS::GetInstance().GetSystem<Renderer>();
-		screen_width = renderer_system->screen_width;
-		screen_height = renderer_system->screen_height;
+		UME::Application& app = UME::Application::Get();
+		screen_width = app.GetWindow().GetWidth();
+		screen_height = app.GetWindow().GetHeight();
 
+		/*auto renderer_system = ECS::GetInstance().GetSystem<Renderer>();
+		screen_width = renderer_system->screen_width;
+		screen_height = renderer_system->screen_height;*/
+	}
+
+	void Collision::CheckCollisions()
+	{
 		for (auto& entity : m_Entities)
 		{
 			// Get references of the first entity components

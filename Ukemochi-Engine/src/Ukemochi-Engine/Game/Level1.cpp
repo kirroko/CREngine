@@ -53,8 +53,10 @@ namespace Ukemochi
 		Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		//std::cout << "Level1:Initialize" << '\n';
 
-		// Initialize the graphics system
+		// Initialize the graphics and collision system
 		ECS::GetInstance().GetSystem<Renderer>()->init();
+		ECS::GetInstance().GetSystem<Collision>()->Init();
+
 		// load textures
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
