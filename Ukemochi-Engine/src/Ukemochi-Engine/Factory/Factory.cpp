@@ -66,6 +66,8 @@ namespace Ukemochi
 						Vec2(comps["Acceleration"][0].GetFloat(), comps["Acceleration"][1].GetFloat()),
 						Vec2(comps["Force"][0].GetFloat(), comps["Force"][1].GetFloat()),
 						comps["Mass"].GetFloat(), comps["Inverse Mass"].GetFloat(), comps["Linear Drag"].GetFloat(),
+						comps["Angle"].GetFloat(), comps["Angular Velocity"].GetFloat(), comps["Angular Acceleration"].GetFloat(),
+						comps["Torque"].GetFloat(), comps["Inertia Mass"].GetFloat(), comps["Inverse Inertia Mass"].GetFloat(), comps["Angular Drag"].GetFloat(),
 						comps["use_gravity"].GetBool(), comps["is_kinematic"].GetBool()
 						}); // Default Component
 				}

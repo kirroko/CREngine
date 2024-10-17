@@ -82,60 +82,112 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
+     Add torque to the entity's rigidbody.
+    \param[out] rb
+     The rigidbody of the entity.
+    \param[in] torque
+     The amount of torque to add.
+    *************************************************************************/
+    void Physics::AddTorque(Rigidbody2D& rb, const float torque)
+    {
+        rb.torque = torque;
+    }
+
+    /*!***********************************************************************
+    \brief
+     Remove torque from the entity's rigidbody.
+    \param[in/out] rb
+     The rigidbody of the entity.
+    *************************************************************************/
+    void Physics::RemoveTorque(Rigidbody2D& rb)
+    {
+        rb.torque = 0.f;
+        rb.angular_velocity *= rb.angular_drag;
+
+        if (abs(rb.angular_velocity) < 0.01f)
+            rb.angular_velocity = 0.f;
+    }
+
+    /*!***********************************************************************
+    \brief
      Update the physics of all the entities.
     *************************************************************************/
     void Physics::UpdatePhysics()
     {
-        for (auto& entity : m_Entities)
+        // TEMP
+        const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
+        int current_num_of_steps = 1;
+
+        // Update the physics based on the number of steps
+        for (int step = 0; step < current_num_of_steps; ++step)
         {
-            // Get references of entity components
-            auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-            auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
-
-            // Skip if entity is kinematic (static objects)
-            if (rb.is_kinematic)
-                continue;
-
-            // Update physics position with the transform position
-            rb.position = trans.position;
-
-            // Normalize force for diagonal movement
-            if (rb.force.x != 0 && rb.force.y != 0) {
-                rb.force.x *= NORMALIZATION_FACTOR;
-                rb.force.y *= NORMALIZATION_FACTOR;
-            }
-
-            // Apply force, mass and gravity to the acceleration (a = F / m)
-            rb.acceleration = rb.force * rb.inverse_mass;
-            /*if (rb.use_gravity)
-                rb.acceleration = rb.force * rb.inverse_mass + GRAVITY;
-            else*/
-
-            // Apply acceleration to the velocity (dv = a * dt)
-            rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
-
-            // Clamp the velocity to prevent exceeding max velocity
-            float current_vel = Vec2Length(rb.velocity);
-
-            // If the current velocity exceeds the max velocity, scale the velocity down
-            if (current_vel > MAX_VELOCITY)
+            for (auto& entity : m_Entities)
             {
-                // Normalize the velocity and scale it to the max velocity
-                float scale = MAX_VELOCITY / current_vel;
-                rb.velocity.x *= scale;
-                rb.velocity.y *= scale;
+                // Get references of entity components
+                auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+                auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+
+                // Skip if entity is kinematic (static objects)
+                if (rb.is_kinematic)
+                    continue;
+
+                // --- LINEAR PHYSICS ---
+                // Update physics position with the transform position
+                rb.position = trans.position;
+
+                // Normalize force for diagonal movement
+                if (rb.force.x != 0 && rb.force.y != 0)
+                {
+                    rb.force.x *= NORMALIZATION_FACTOR;
+                    rb.force.y *= NORMALIZATION_FACTOR;
+                }
+
+                // Apply force, mass and gravity to the acceleration (a = F / m)
+                rb.acceleration = rb.force * rb.inverse_mass;
+                /*if (rb.use_gravity)
+                    rb.acceleration = rb.force * rb.inverse_mass + GRAVITY;
+                else*/
+
+                // Apply acceleration to the velocity (dv = a * dt)
+                //rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+                rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(fixedTimeStep); // Update based on fixed delta time
+
+                // Clamp the velocity to prevent exceeding max velocity
+                float current_vel = Vec2Length(rb.velocity);
+                if (current_vel > MAX_VELOCITY)
+                {
+                    // Normalize the velocity and scale it to the max velocity
+                    float scale = MAX_VELOCITY / current_vel;
+                    rb.velocity.x *= scale;
+                    rb.velocity.y *= scale;
+                }
+
+                // Apply velocity to the position (dx = v * dt)
+                //rb.position = rb.position + rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+                rb.position = rb.position + rb.velocity * static_cast<float>(fixedTimeStep); // Update based on fixed delta time
+
+                // Update transform position with the physics position
+                trans.position = rb.position;
+
+                // --- ROTATIONAL PHYSICS ---
+                // Update physics angle with the transform rotation
+                rb.angle = trans.rotation;
+
+                // Apply torque and inertia mass to the angular acceleration
+                rb.angular_acceleration = rb.torque * rb.inv_inertia_mass;
+
+                // Apply angular acceleration to the angular velocity
+                rb.angular_velocity = rb.angular_velocity + rb.angular_acceleration * static_cast<float>(fixedTimeStep);
+
+                // Clamp the angular velocity to prevent exceeding max angular velocity
+                rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
+
+                // Apply angular velocity to the angle
+                rb.angle = rb.angle + rb.angular_velocity * static_cast<float>(fixedTimeStep);
+
+                // Update transform rotation with the physics angle
+                trans.rotation = rb.angle;
             }
-
-            // Apply velocity to the position (dx = v * dt)
-            rb.position = rb.position + rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
-
-            // Update transform position with the physics position
-            trans.position = rb.position;
-
-            // Apply torque and inertia mass to the angular acceleration
-            // Apply angular acceleration to the angular velocity
-            // Apply angular velocity to the angle
-            // Update transform rotation with the physics angle
         }
     }
 }

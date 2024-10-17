@@ -34,10 +34,6 @@ namespace Ukemochi
 		UME::Application& app = UME::Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
-
-		/*auto renderer_system = ECS::GetInstance().GetSystem<Renderer>();
-		screen_width = renderer_system->screen_width;
-		screen_height = renderer_system->screen_height;*/
 	}
 
 	void Collision::CheckCollisions()

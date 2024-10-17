@@ -31,7 +31,7 @@ namespace Ukemochi
     \brief
      Maximum velocity constant for all entities.
     *************************************************************************/
-    const float MAX_VELOCITY = 400.0f; // Adjust this value for your desired max velocity
+    const float MAX_VELOCITY = 300.0f; // Adjust this value for your desired max velocity
 
     /*!***********************************************************************
     \brief
@@ -77,6 +77,24 @@ namespace Ukemochi
          The rigidbody of the entity.
         *************************************************************************/
         void RemoveForceY(Rigidbody2D& rb);
+
+        /*!***********************************************************************
+        \brief
+         Add torque to the entity's rigidbody.
+        \param[out] rb
+         The rigidbody of the entity.
+        \param[in] torque
+         The amount of torque to add.
+        *************************************************************************/
+        void AddTorque(Rigidbody2D& rb, const float torque);
+
+        /*!***********************************************************************
+        \brief
+         Remove torque from the entity's rigidbody.
+        \param[in/out] rb
+         The rigidbody of the entity.
+        *************************************************************************/
+        void RemoveTorque(Rigidbody2D& rb);
 
         /*!***********************************************************************
         \brief
