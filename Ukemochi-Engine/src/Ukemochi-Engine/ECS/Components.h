@@ -164,7 +164,7 @@ namespace Ukemochi
 		CircleCollider2D(const Vec2 center, const float radius) : m_center{ center }, m_radius{ radius } {}
 	};
 
-	typedef enum { BOX = 0, CIRCLE } SPRITE_SHAPE; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
+	enum class SPRITE_SHAPE { BOX = 0, CIRCLE = 1 }; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
 	struct SpriteRender
 	{
