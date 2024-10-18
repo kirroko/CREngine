@@ -1,3 +1,0 @@
-PROJECT SETTINGS
-Make sure the start-up project is targeted at Ukemochi-Game project solution.
-

@@ -7,7 +7,7 @@ Pek Jun Kai Gerald (Tech Lead)
 Tan Si Han (Design Lead)
 Lim Jia Ying Lera (Art Lead)
 Lum Ko Sand (Physics/Collision Champion)
-Hurng Kai Rai (Engine Champion)
+Hurng Kai Rui (Engine Champion)
 Tan Shun Zhi Tomy (Graphics Champion)
 Chia Naomi Maidison Yu Ning (Animation Champion)
 
