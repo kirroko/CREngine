@@ -78,7 +78,7 @@ namespace Ukemochi
 						Vec2(comps["Max"][0].GetFloat(), comps["Max"][1].GetFloat()),
 						comps["Collision Flag"].GetInt(),
 						comps["is_trigger"].GetBool(),
-						comps["is_player"].GetBool()
+						comps["Tag"].GetString()
 						}); // Default Component
 				}
 				else if (component.compare("CircleCollider2D") == 0)

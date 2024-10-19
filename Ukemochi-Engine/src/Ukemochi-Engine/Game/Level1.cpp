@@ -33,8 +33,8 @@ namespace Ukemochi
 {
 	// --- TEMP player variables ---
 	const float SPRITE_SCALE = 100.f;
-	const float ENTITY_ACCEL = 2000.f;
-	const float PLAYER_FORCE = 1000.f;
+	const float ENTITY_ACCEL = 750.f;
+	const float PLAYER_FORCE = 750.f;
 	float audioVolume = 0.04f;
 	std::string player_data{ "../Assets/Player.json" };
 	GameObject player_obj;
@@ -99,8 +99,9 @@ namespace Ukemochi
 				0,
 				Vec2{SPRITE_SCALE, SPRITE_SCALE}
 			});
-		worm_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, Vec2{}, Vec2{ ENTITY_ACCEL, ENTITY_ACCEL },1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
+		worm_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
 		worm_0.AddComponent(BoxCollider2D());
+		worm_0.GetComponent<BoxCollider2D>().tag = "Enemy";
 		worm_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Worm.png",
 				SPRITE_SHAPE::BOX,
@@ -128,6 +129,7 @@ namespace Ukemochi
 		door_0.GetComponent<Rigidbody2D>().is_kinematic = true;
 		door_0.AddComponent(BoxCollider2D());
 		door_0.GetComponent<BoxCollider2D>().is_trigger = true;
+		door_0.GetComponent<BoxCollider2D>().tag = "Left Door";
 		door_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX
@@ -141,6 +143,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
 		};
+		door_1.GetComponent<BoxCollider2D>().tag = "Right Door";
 
 		// Create top door entity
 		GameObject door_2 = GameObjectFactory::CloneObject(door_0);
@@ -150,6 +153,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
 		};
+		door_2.GetComponent<BoxCollider2D>().tag = "Top Door";
 
 		// Create bottom door entity
 		GameObject door_3 = GameObjectFactory::CloneObject(door_0);
@@ -159,6 +163,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
 		};
+		door_3.GetComponent<BoxCollider2D>().tag = "Btm Door";
 
 		// ANIMATION OBJECT
 		GameObject animation = GameObjectFactory::CreateObject();

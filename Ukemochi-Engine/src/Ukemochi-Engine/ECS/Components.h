@@ -44,7 +44,7 @@ namespace Ukemochi
 		Vec2 velocity{};
 		Vec2 acceleration{};
 		Vec2 force{};
-		float mass{1.f};
+		float mass{1.f}; // Minimum mass of 1
 		float inverse_mass{ 1.f / mass }; // inverse mass = 1/mass
 		float linear_drag{ 0.9f }; // Adjust to control the friction from [0, 1]
 
@@ -53,9 +53,9 @@ namespace Ukemochi
 		float angular_velocity{};
 		float angular_acceleration{};
 		float torque{};
-		float inertia_mass{ 1.f };
+		float inertia_mass{ 1.f }; // Minimum inertia mass of 1
 		float inv_inertia_mass{ 1.f / inv_inertia_mass }; // inverse inertia mass = 1/inertia mass
-		float angular_drag{ 0.9f };
+		float angular_drag{ 0.9f }; // Adjust to control the friction from [0, 1]
 
 		bool use_gravity{ false }; // If true, apply gravity
 		bool is_kinematic{ false }; // If true, don't apply physics
@@ -73,7 +73,7 @@ namespace Ukemochi
 
 		int collision_flag{}; // Track the collision flags
 		bool is_trigger{ false }; // If true, act as a trigger
-		bool is_player{ false }; // temp
+		std::string tag{ "Untagged" }; // temp
 	};
 
 	/*!***********************************************************************
