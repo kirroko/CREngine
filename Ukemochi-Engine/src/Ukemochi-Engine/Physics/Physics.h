@@ -4,7 +4,7 @@
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 12, 2024
+\date       Oct 19, 2024
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -101,5 +101,26 @@ namespace Ukemochi
          Update the physics of all the entities.
         *************************************************************************/
         void UpdatePhysics();
+
+    private:
+        /*!***********************************************************************
+        \brief
+         Update the linear physics of all the entities.
+        \param[in/out] rb
+         The rigidbody of the entity.
+        \param[in/out] trans
+         The transform of the entity.
+        *************************************************************************/
+        void UpdateLinearPhysics(Rigidbody2D& rb, Transform& trans);
+
+        /*!***********************************************************************
+        \brief
+         Update the rotational physics of all the entities.
+        \param[in/out] rb
+         The rigidbody of the entity.
+        \param[in/out] trans
+         The transform of the entity.
+        *************************************************************************/
+        void UpdateRotationalPhysics(Rigidbody2D& rb, Transform& trans);
     };
 }
