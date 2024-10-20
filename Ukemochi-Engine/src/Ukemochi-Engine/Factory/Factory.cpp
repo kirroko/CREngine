@@ -159,4 +159,9 @@ namespace Ukemochi
 		auto new_entity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
 		return GameObject(new_entity);
 	}
+
+	void GameObjectFactory::DestroyObject(GameObject& targetobject)
+	{
+		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
+	}
 }
