@@ -27,19 +27,19 @@ DigiPen Institute of Technology is prohibited.
 #include "../Physics/Physics.h"	    // for physics system
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
-#include "../Audio/Audio.h"			//for audio
+#include "../Audio/Audio.h"			// for audio system
 
 namespace Ukemochi
 {
 	// --- TEMP player variables ---
-	EntityID player_entity;
 	const float SPRITE_SCALE = 100.f;
-	const float ENTITY_ACCEL = 250.f;
+	const float ENTITY_ACCEL = 750.f;
+	const float PLAYER_FORCE = 750.f;
 	float audioVolume = 0.04f;
 	std::string player_data{ "../Assets/Player.json" };
 	GameObject player_obj;
 	GameObject worm_0;
-
+	Renderer time;
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
@@ -53,8 +53,10 @@ namespace Ukemochi
 		Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		//std::cout << "Level1:Initialize" << '\n';
 
-		// Initialize the graphics system
+		// Initialize the graphics and collision system
 		ECS::GetInstance().GetSystem<Renderer>()->init();
+		ECS::GetInstance().GetSystem<Collision>()->Init();
+
 		// load textures
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
@@ -84,8 +86,9 @@ namespace Ukemochi
 				0,
 				Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f}
 			});
-		background.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
-		background.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		background.AddComponent(Rigidbody2D());
+		background.GetComponent<Rigidbody2D>().is_kinematic = true;
+		background.AddComponent(BoxCollider2D());
 		background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
 
 		// WORM OBJECT 1 - DYNAMIC
@@ -96,8 +99,9 @@ namespace Ukemochi
 				0,
 				Vec2{SPRITE_SCALE, SPRITE_SCALE}
 			});
-		worm_0.AddComponent(Rigidbody2D{ Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL} });
-		worm_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{} });
+		worm_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
+		worm_0.AddComponent(BoxCollider2D());
+		worm_0.GetComponent<BoxCollider2D>().tag = "Enemy";
 		worm_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Worm.png",
 				SPRITE_SHAPE::BOX,
@@ -121,8 +125,11 @@ namespace Ukemochi
 				0,
 				Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
 			});
-		door_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{}, true });
-		door_0.AddComponent(BoxCollider2D{ Vec2{}, Vec2{}, 0, false, true });
+		door_0.AddComponent(Rigidbody2D());
+		door_0.GetComponent<Rigidbody2D>().is_kinematic = true;
+		door_0.AddComponent(BoxCollider2D());
+		door_0.GetComponent<BoxCollider2D>().is_trigger = true;
+		door_0.GetComponent<BoxCollider2D>().tag = "Left Door";
 		door_0.AddComponent(SpriteRender{
 				"../Assets/Textures/Moon Floor.png",
 				SPRITE_SHAPE::BOX
@@ -136,6 +143,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
 		};
+		door_1.GetComponent<BoxCollider2D>().tag = "Right Door";
 
 		// Create top door entity
 		GameObject door_2 = GameObjectFactory::CloneObject(door_0);
@@ -145,6 +153,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
 		};
+		door_2.GetComponent<BoxCollider2D>().tag = "Top Door";
 
 		// Create bottom door entity
 		GameObject door_3 = GameObjectFactory::CloneObject(door_0);
@@ -154,6 +163,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 1.75f, SPRITE_SCALE * 0.25f}
 		};
+		door_3.GetComponent<BoxCollider2D>().tag = "Btm Door";
 
 		// ANIMATION OBJECT
 		GameObject animation = GameObjectFactory::CreateObject();
@@ -170,45 +180,56 @@ namespace Ukemochi
 				true
 			});
 
-		
+		// Circle Creation for Testing
+		/*GameObject circle = GameObjectFactory::CreateObject();
+		circle.AddComponent(Transform{
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
+			});
+		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
 	}
 
 	void Level1_Update()//Level1 game runtime
 	{
-		// --- Handle User Input for Player controls ---
-		// Press 'W' or up key to move the player up
+		// --- HANDLE USER INPUTS ---
+
+		// Player Inputs for movement
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
+		// Press 'W' or up key to move the player up
 		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
-			player_rb.velocity.y = -player_rb.acceleration.y;
+			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
 		// Press 'S' or down key to move the player down
 		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
-			player_rb.velocity.y = player_rb.acceleration.y;
+			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
 		else
-			player_rb.velocity.y = 0.0f; // Stop moving the player in the y axis
+			ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
 
 		// Press 'A' or left key to move the player left
 		if (UME::Input::IsKeyPressed(UME_KEY_A) || UME::Input::IsKeyPressed(UME_KEY_LEFT))
-			player_rb.velocity.x = -player_rb.acceleration.x;
+			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
 		// Press 'D' or right key to move the player to the right
 		else if (UME::Input::IsKeyPressed(UME_KEY_D) || UME::Input::IsKeyPressed(UME_KEY_RIGHT))
-			player_rb.velocity.x = player_rb.acceleration.x;
+			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
 		else
-			player_rb.velocity.x = 0.0f; // Stop moving the player in the x axis
+			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
 
+		// Player Input for rotation, to test rotate physics
+		if (UME::Input::IsKeyPressed(UME_KEY_R))
+			ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
+		else
+			ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
+
+		// Renderer Inputs
 		if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
 		else if (UME::Input::IsKeyTriggered(GLFW_KEY_Y))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
 		else if (UME::Input::IsKeyTriggered(GLFW_KEY_U))
 			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled);
-		// --- End User Input ---
-
-		// Update the entities physics
-		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
-
-		// Check collisions between the entities
-		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
-
+		
+		// Audio Inputs
 		if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
 		{
 			audioVolume -= 0.02f;
@@ -230,13 +251,25 @@ namespace Ukemochi
 			Audio::GetInstance().PlayAllSoundsInGroup(LEVEL1);
 		}
 
-		//test run_time cloning
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_L))
+		// Game Object Inputs
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_L)) //test run_time cloning
 		{
 			std::cout << "Cloning Mob Object\n";
 			GameObject clone = GameObjectFactory::CloneObject(worm_0);
 			clone.GetComponent<Transform>().position = Vec2{ clone.GetComponent<Transform>().position.x + 5.f, clone.GetComponent<Transform>().position.y + 1.f };
 		}
+		// --- END USER INPUTS ---
+
+		// --- GAME LOGIC UPDATE ---
+
+
+		// --- PHYSICS UPDATE ---
+		// Update the entities physics
+		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+
+		// --- COLLISION UPDATE ---
+		// Check the collisions between the entities
+		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
 	}
 
 	void Level1_Draw()//rendering of the game for Level1

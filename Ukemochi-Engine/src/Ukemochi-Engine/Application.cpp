@@ -104,8 +104,7 @@ namespace UME {
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 		double accumulator = 0.0;
-		const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
-
+		int currentNumberOfSteps = 0;
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
@@ -132,16 +131,19 @@ namespace UME {
 				g_FrameRateController.Update();
 
 				//************ FPS ************
+				currentNumberOfSteps = 0;
 				// Use deltaTime from the FrameRateController
 				double deltaTime = g_FrameRateController.GetDeltaTime();
 				accumulator += deltaTime;
 
 				// Run game logic at a fixed time step (e.g., 60 times per second)
-				while (accumulator >= fixedTimeStep)
+				while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
 				{
 					// Update game logic with a fixed delta time
-					accumulator -= fixedTimeStep;
+					accumulator -= g_FrameRateController.GetFixedDeltaTime();
+					currentNumberOfSteps++;
 				}
+				g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
 				//************ FPS ************
 
 				//************ Display FPS ************
@@ -194,16 +196,19 @@ namespace UME {
 					//************ FPS ************
 					g_FrameRateController.Update();
 
+					currentNumberOfSteps = 0;
 					// Use deltaTime from the FrameRateController
 					double deltaTime = g_FrameRateController.GetDeltaTime();
 					accumulator += deltaTime;
 
 					// Run game logic at a fixed time step (e.g., 60 times per second)
-					while (accumulator >= fixedTimeStep)
+					while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
 					{
 						// Update game logic with a fixed delta time
-						accumulator -= fixedTimeStep;
+						accumulator -= g_FrameRateController.GetFixedDeltaTime();
+						currentNumberOfSteps++;
 					}
+					g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
 					//************ FPS ************
 
 					if (Input::IsKeyPressed(GLFW_KEY_2))

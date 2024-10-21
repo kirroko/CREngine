@@ -39,16 +39,26 @@ namespace Ukemochi
 	*************************************************************************/
 	struct Rigidbody2D
 	{
+		// Linear Properties
+		Vec2 position{};
 		Vec2 velocity{};
 		Vec2 acceleration{};
+		Vec2 force{};
+		float mass{1.f}; // Minimum mass of 1
+		float inverse_mass{ 1.f / mass }; // inverse mass = 1/mass
+		float linear_drag{ 0.9f }; // Adjust to control the friction from [0, 1]
 
-		bool is_kinematic{};
-
-		// bool use_gravity{};
-		/*float direction{};
+		// Rotational Properties
 		float angle{};
 		float angular_velocity{};
-		float angular_acceleration{};*/
+		float angular_acceleration{};
+		float torque{};
+		float inertia_mass{ 1.f }; // Minimum inertia mass of 1
+		float inv_inertia_mass{ 1.f / inv_inertia_mass }; // inverse inertia mass = 1/inertia mass
+		float angular_drag{ 0.9f }; // Adjust to control the friction from [0, 1]
+
+		bool use_gravity{ false }; // If true, apply gravity
+		bool is_kinematic{ false }; // If true, don't apply physics
 	};
 
 	/*!***********************************************************************
@@ -57,12 +67,13 @@ namespace Ukemochi
 	*************************************************************************/
 	struct BoxCollider2D
 	{
+		// Min,max for AABB
 		Vec2 min{};
 		Vec2 max{};
 
-		int collision_flag{};
-		bool is_player{};
-		bool is_trigger{};
+		int collision_flag{}; // Track the collision flags
+		bool is_trigger{ false }; // If true, act as a trigger
+		std::string tag{ "Untagged" }; // temp
 	};
 
 	/*!***********************************************************************
