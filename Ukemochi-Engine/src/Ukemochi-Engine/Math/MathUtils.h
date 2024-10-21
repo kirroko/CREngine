@@ -18,9 +18,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /*!***********************************************************************
+    \brief
+     PI mathematical constant.
+    *************************************************************************/
     template <typename T>
     static constexpr T PI = static_cast<T>(3.14159265358979323846);
 
+    /*!***********************************************************************
+    \brief
+     PI / 180 constant.
+    *************************************************************************/
     template <typename T>
     static constexpr T PIOVER180 = static_cast<T>(0.0174532925199432);
 
