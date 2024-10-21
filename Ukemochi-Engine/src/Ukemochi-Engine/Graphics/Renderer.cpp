@@ -40,6 +40,8 @@ Renderer::~Renderer()
  */
 void Renderer::init()
 {
+	projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
+
 	// Load shaders
 	setUpShaders();
 
@@ -262,7 +264,7 @@ void Renderer::setUpShaders()
 {
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
-	textShaderProgram = new Shader("../Assets/Shaders/text_rendering.vert", "../Assets/Shaders/text_rendering.frag");
+	textShaderProgram = new Shader("../Assets/Shaders/text_rendering.vert", "../Assets/Shaders/text_rendering.frag"); 
 }
 
 /*!
@@ -369,8 +371,6 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Set Orthographic projection
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height), -1.0f, 1.0f);
 
 	// Optionally set up a view matrix (identity if no camera movement)
 	glm::mat4 view = glm::mat4(1.0f);
@@ -437,8 +437,7 @@ void Renderer::render()
 		entity_count++;
 	}
 
-	// Render text after rendering all other objects
-	renderText("Hello, World!", 0.0f, 0.0f, 1000.0f, glm::vec3(1.0f, 1.0f, 1.0f));  // White text at (50, 50)
+	renderText("Ukemochi!", 725.0f, 525.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 /*!
@@ -637,15 +636,9 @@ void Renderer::initTextBuffers()
 
 	// Create the VBO and set it to dynamic since we'll be updating the text dynamically
 	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW);  // 6 vertices, 5 floats per vertex (x, y, z, texX, texY)
-
-	// Position attribute (vec3)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
-
-	// Texture coordinates attribute (vec2)
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 
 	// Unbind the buffer and VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -701,12 +694,12 @@ void Renderer::loadTextFont(const char* fontPath)
 			texture,
 			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x
+			static_cast<GLuint>(face->glyph->advance.x)
 		};
 
 		Characters.insert(std::pair<char, Character>(c, character));
 	}
-
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
@@ -715,14 +708,15 @@ void Renderer::loadTextFont(const char* fontPath)
 void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	textShaderProgram->Activate();
+	textShaderProgram->setMat4("projection", projection);
 	textShaderProgram->setVec3("textColor", color.x, color.y, color.z);
+	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(textVAO);
 
 	// Set the projection matrix for text rendering
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
 	textShaderProgram->setMat4("projection", projection);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(textVAO);
 	
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
@@ -730,19 +724,19 @@ void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale,
 		Character ch = Characters[*c];
 
 		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y + (ch.Size.y - ch.Bearing.y) * scale;
+		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
 		GLfloat w = ch.Size.x * scale;
 		GLfloat h = ch.Size.y * scale;
 
-		GLfloat vertices[6][5] = {
-			{xpos, ypos + h, 0.f, 0.0f, 0.0f},
-			{xpos, ypos, 0.f, 0.0f, 1.0f},
-			{xpos + w, ypos, 0.f, 1.0f, 1.0f},
+		GLfloat vertices[6][4] = {
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos,     ypos,       0.0f, 1.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
 
-			{xpos, ypos + h, 0.f, 0.0f, 0.0f},
-			{xpos + w, ypos, 0.f, 1.0f, 1.0f},
-			{xpos + w, ypos + h, 0.f, 1.0f, 0.0f}
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+			{ xpos + w, ypos + h,   1.0f, 0.0f }
 		};
 		
 		glBindTexture(GL_TEXTURE_2D, ch.TextureId);
