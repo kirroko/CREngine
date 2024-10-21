@@ -58,7 +58,7 @@ namespace Ukemochi
 		{
 			if (originalSignature.test(i))
 			{
-				// TODO: Keep Updating components as the list grows
+				// TODO: Keep updating components as the list grows
 				if (i == transform)
 				{
 					Transform originalComponent = m_ComponentManager->GetComponent<Transform>(entity);

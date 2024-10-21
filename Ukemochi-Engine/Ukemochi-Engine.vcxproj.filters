@@ -306,4 +306,10 @@
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+  </ItemGroup>
 </Project>
