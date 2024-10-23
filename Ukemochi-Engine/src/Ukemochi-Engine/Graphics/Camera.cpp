@@ -21,4 +21,9 @@ glm::mat4 Camera::getCameraProjectionMatrix()
 	return glm::ortho(left, right, bottom, top);
 }
 
+void Camera::setViewportSize(const glm::vec2& new_size)
+{
+	viewport_size = new_size;
+}
+
 

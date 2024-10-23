@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 
 class Camera {
+public:
 	glm::vec2 position;
 	GLfloat zoom;
 	glm::vec2 viewport_size;
@@ -16,7 +17,7 @@ class Camera {
 
 	glm::mat4 getCameraViewMatrix();
 	glm::mat4 getCameraProjectionMatrix();
-
+	void setViewportSize(const glm::vec2& new_size);
 
 };
 #endif // !CAMERA_CLASS_H

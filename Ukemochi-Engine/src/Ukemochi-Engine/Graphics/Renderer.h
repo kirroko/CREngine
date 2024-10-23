@@ -28,6 +28,7 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
+#include "Camera.h"
 
 struct Character {
 	GLuint TextureId;
@@ -255,6 +256,9 @@ private:
 	void loadTextFont(const char* font);
 	void renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
-	glm::mat4 projection;
+	//glm::mat4 projection;
+
+	// Camera
+	Camera camera;
 };
 #endif

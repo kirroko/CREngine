@@ -15,7 +15,7 @@ using namespace Ukemochi;
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
  */
-Renderer::Renderer()
+Renderer::Renderer() : camera(glm::vec2(1600.f, 900.f))
 {
 	// Pointers to OpenGL objects are set to nullptr initially
 	shaderProgram = nullptr;
@@ -372,8 +372,9 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	// Optionally set up a view matrix (identity if no camera movement)
-	glm::mat4 view = glm::mat4(1.0f);
+	// Set up a view and projection matrix
+	glm::mat4 view = camera.getCameraViewMatrix();
+	glm::mat4 projection = camera.getCameraProjectionMatrix();
 
 	// Send the projection and view matrices to the shader
 	shaderProgram->Activate();
@@ -708,7 +709,11 @@ void Renderer::loadTextFont(const char* fontPath)
 void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	textShaderProgram->Activate();
+
+	// Get the camera's projection matrix
+	glm::mat4 projection = camera.getCameraProjectionMatrix();
 	textShaderProgram->setMat4("projection", projection);
+
 	textShaderProgram->setVec3("textColor", color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
