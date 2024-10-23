@@ -5,7 +5,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>	
 #include <../vendor/glm/glm/glm.hpp>
-
 #include <map>
 #include "shaderClass.h"
 
@@ -20,8 +19,20 @@ class TextRenderer {
 public:
 	TextRenderer();
 	TextRenderer(GLint height);
+	~TextRenderer();
+
+	void loadTextFont(const char* font_path);
+	void renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+
+private:
+	FT_Library ft;
+	FT_Face face;
+	std::unordered_map<char, Character> Characters;
+	GLuint textVAO, textVBO;
+	Shader* textShaderProgram;
+	void initBuffers();
+
 	
-	bool 
 
 };
 #endif // !TEXTRENDERER_CLASS_H
