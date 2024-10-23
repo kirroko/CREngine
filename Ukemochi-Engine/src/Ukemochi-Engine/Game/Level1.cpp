@@ -193,19 +193,19 @@ namespace Ukemochi
 		// Player Inputs for movement
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 		// Press 'W' or up key to move the player up
-		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
+		if (UME::Input::IsKeyPressed(UME_KEY_W))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
 		// Press 'S' or down key to move the player down
-		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
+		else if (UME::Input::IsKeyPressed(UME_KEY_S))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
 
 		// Press 'A' or left key to move the player left
-		if (UME::Input::IsKeyPressed(UME_KEY_A) || UME::Input::IsKeyPressed(UME_KEY_LEFT))
+		if (UME::Input::IsKeyPressed(UME_KEY_A))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
 		// Press 'D' or right key to move the player to the right
-		else if (UME::Input::IsKeyPressed(UME_KEY_D) || UME::Input::IsKeyPressed(UME_KEY_RIGHT))
+		else if (UME::Input::IsKeyPressed(UME_KEY_D))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis

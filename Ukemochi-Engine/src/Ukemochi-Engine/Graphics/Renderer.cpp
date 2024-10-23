@@ -378,8 +378,8 @@ void Renderer::render()
 
 	// Send the projection and view matrices to the shader
 	shaderProgram->Activate();
-	shaderProgram->setMat4("projection", projection);
 	shaderProgram->setMat4("view", view);
+	shaderProgram->setMat4("projection", projection);
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)

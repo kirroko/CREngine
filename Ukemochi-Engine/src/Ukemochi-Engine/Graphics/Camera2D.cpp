@@ -21,7 +21,7 @@ glm::mat4 Camera::getCameraProjectionMatrix()
 	GLfloat bottom = 0.0f;
 	GLfloat top = viewport_size.y;
 
-	return glm::ortho(left, right, bottom, top);
+	return glm::ortho(left / zoom, right / zoom, bottom / zoom, top / zoom);
 }
 
 void Camera::setViewportSize(const glm::vec2& new_size)
@@ -41,4 +41,43 @@ void Camera::processCameraInput(GLfloat delta_time)
 		position.x -= speed;
 	if (UME::Input::IsKeyPressed(GLFW_KEY_RIGHT))
 		position.x += speed;
+
+	// Handle zooming in and out with keyboard keys Q and E
+	if (UME::Input::IsKeyPressed(GLFW_KEY_Q))  // Zoom in
+		zoom += zoom * delta_time;
+	if (UME::Input::IsKeyPressed(GLFW_KEY_E))  // Zoom out
+		zoom -= zoom * delta_time;
+
+	// Restrict zoom level to avoid flipping or extreme values
+	zoom = glm::clamp(zoom, 0.1f, 3.0f); // Adjust as necessary
+
+}
+
+void Camera::ZoomTowardsCursor(float zoomFactor)
+{
+	// Get current mouse position in screen coordinates
+	auto [mouseX, mouseY] = UME::Input::GetMousePosition();
+
+	// Normalize mouse position in screen space to range [-1, 1]
+	glm::vec2 normalizedMousePos = {
+		(mouseX / viewport_size.x) * 2.0f - 1.0f,
+		1.0f - (mouseY / viewport_size.y) * 2.0f // Flip Y coordinate
+	};
+
+	// Calculate the current world position of the cursor
+	glm::vec4 mouseWorldPos = glm::inverse(getCameraProjectionMatrix() * getCameraViewMatrix()) * glm::vec4(normalizedMousePos, 0.0f, 1.0f);
+
+	// Update zoom level
+	zoom *= zoomFactor;
+
+	// Calculate new world position of the cursor after zoom change
+	glm::vec4 newMouseWorldPos = glm::inverse(getCameraProjectionMatrix() * getCameraViewMatrix()) * glm::vec4(normalizedMousePos, 0.0f, 1.0f);
+
+	// Calculate the difference and adjust camera position
+	glm::vec4 delta = newMouseWorldPos - mouseWorldPos;
+	position.x -= delta.x;
+	position.y -= delta.y;
+
+	// Restrict zoom level to avoid flipping or extreme values
+	zoom = glm::clamp(zoom, 0.1f, 3.0f);
 }
