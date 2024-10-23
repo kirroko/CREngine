@@ -28,6 +28,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
 #include "../Audio/Audio.h"			// for audio system
+#include "../Graphics/Camera2D.h"
 
 namespace Ukemochi
 {
@@ -40,6 +41,10 @@ namespace Ukemochi
 	GameObject player_obj;
 	GameObject worm_0;
 	Renderer time;
+
+	GLfloat lastFrameTime = 0.0f;
+	GLfloat deltaTime = 0.0f;
+
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
@@ -242,6 +247,14 @@ namespace Ukemochi
 			GameObject clone = GameObjectFactory::CloneObject(worm_0);
 			clone.GetComponent<Transform>().position = Vec2{ clone.GetComponent<Transform>().position.x + 5.f, clone.GetComponent<Transform>().position.y + 1.f };
 		}
+
+		// Camera
+		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+		deltaTime = currentFrameTime - lastFrameTime;
+		lastFrameTime = currentFrameTime;
+		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
+
+
 		// --- END USER INPUTS ---
 
 		// --- GAME LOGIC UPDATE ---

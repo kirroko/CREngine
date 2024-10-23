@@ -1,23 +1,22 @@
 #ifndef CAMERA_CLASS_H
 #define CAMERA_CLASS_H
-#include "PreCompile.h"
-#include "../vendor/glm/glm/glm.hpp"
-#include <../vendor/glm/glm/gtc/matrix_transform.hpp>
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include "Renderer.h"
+#include "../Input/Input.h"
 
-class Camera {
+
+class Camera : public Ukemochi::System
+{
 public:
 	glm::vec2 position;
-	GLfloat zoom;
+	GLfloat zoom{};
 	glm::vec2 viewport_size;
-	GLfloat camera_speed;
+	GLfloat camera_speed{};
 
 	Camera(glm::vec2 viewport);
 
 	glm::mat4 getCameraViewMatrix();
 	glm::mat4 getCameraProjectionMatrix();
 	void setViewportSize(const glm::vec2& new_size);
-
+	void processCameraInput(GLfloat delta_time);
 };
 #endif // !CAMERA_CLASS_H

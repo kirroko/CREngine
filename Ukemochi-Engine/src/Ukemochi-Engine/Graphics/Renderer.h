@@ -28,7 +28,7 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
-#include "Camera.h"
+#include "Camera2D.h"
 
 struct Character {
 	GLuint TextureId;
@@ -259,6 +259,6 @@ private:
 	//glm::mat4 projection;
 
 	// Camera
-	Camera camera;
+	//Camera camera;
 };
 #endif

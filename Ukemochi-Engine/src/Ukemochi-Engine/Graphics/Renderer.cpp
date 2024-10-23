@@ -15,7 +15,7 @@ using namespace Ukemochi;
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
  */
-Renderer::Renderer() : camera(glm::vec2(1600.f, 900.f))
+Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
 	shaderProgram = nullptr;
@@ -40,8 +40,6 @@ Renderer::~Renderer()
  */
 void Renderer::init()
 {
-	projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
-
 	// Load shaders
 	setUpShaders();
 
@@ -371,10 +369,12 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Get the camera system instance
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
 
 	// Set up a view and projection matrix
-	glm::mat4 view = camera.getCameraViewMatrix();
-	glm::mat4 projection = camera.getCameraProjectionMatrix();
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
 	// Send the projection and view matrices to the shader
 	shaderProgram->Activate();
@@ -711,16 +711,13 @@ void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale,
 	textShaderProgram->Activate();
 
 	// Get the camera's projection matrix
-	glm::mat4 projection = camera.getCameraProjectionMatrix();
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
 	textShaderProgram->setMat4("projection", projection);
 
 	textShaderProgram->setVec3("textColor", color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
-
-	// Set the projection matrix for text rendering
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
-	textShaderProgram->setMat4("projection", projection);
 
 	
 	std::string::const_iterator c;
