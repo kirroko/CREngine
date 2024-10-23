@@ -713,11 +713,6 @@ void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale,
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
 
-	// Set the projection matrix for text rendering
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
-	textShaderProgram->setMat4("projection", projection);
-
-	
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
 	{
