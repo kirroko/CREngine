@@ -2,7 +2,7 @@
 #define CAMERA_CLASS_H
 #include "Renderer.h"
 #include "../Input/Input.h"
-
+#include "../ECS/Systems.h"
 
 class Camera : public Ukemochi::System
 {
@@ -12,6 +12,7 @@ public:
 	glm::vec2 viewport_size;
 	GLfloat camera_speed{};
 
+	Camera();
 	Camera(glm::vec2 viewport);
 
 	glm::mat4 getCameraViewMatrix();

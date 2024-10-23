@@ -4,6 +4,7 @@
 #include "Physics/Physics.h"
 #include "Collision/Collision.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/Camera2D.h"
 
 namespace Ukemochi
 {

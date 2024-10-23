@@ -1,5 +1,7 @@
-#include "Camera2D.h"
 #include "PreCompile.h"
+#include "Camera2D.h"
+
+Camera::Camera() : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) {}
 
 Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) {}
 
