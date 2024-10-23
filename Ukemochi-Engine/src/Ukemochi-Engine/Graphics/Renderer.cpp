@@ -40,8 +40,6 @@ Renderer::~Renderer()
  */
 void Renderer::init()
 {
-	projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height));
-
 	// Load shaders
 	setUpShaders();
 
@@ -371,14 +369,17 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Get the camera system instance
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
 
-	// Optionally set up a view matrix (identity if no camera movement)
-	glm::mat4 view = glm::mat4(1.0f);
+	// Set up a view and projection matrix
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
 	// Send the projection and view matrices to the shader
 	shaderProgram->Activate();
-	shaderProgram->setMat4("projection", projection);
 	shaderProgram->setMat4("view", view);
+	shaderProgram->setMat4("projection", projection);
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
@@ -708,11 +709,17 @@ void Renderer::loadTextFont(const char* fontPath)
 void Renderer::renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
 	textShaderProgram->Activate();
+
+	// Get the camera's projection matrix
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
 	textShaderProgram->setMat4("projection", projection);
+
 	textShaderProgram->setVec3("textColor", color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
 
+	
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
 	{

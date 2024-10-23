@@ -28,6 +28,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
 #include "../Audio/Audio.h"			// for audio system
+#include "../Graphics/Camera2D.h"
 
 namespace Ukemochi
 {
@@ -40,6 +41,10 @@ namespace Ukemochi
 	GameObject player_obj;
 	GameObject worm_0;
 	Renderer time;
+
+	GLfloat lastFrameTime = 0.0f;
+	GLfloat deltaTime = 0.0f;
+
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
@@ -188,19 +193,19 @@ namespace Ukemochi
 		// Player Inputs for movement
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 		// Press 'W' or up key to move the player up
-		if (UME::Input::IsKeyPressed(UME_KEY_W) || UME::Input::IsKeyPressed(UME_KEY_UP))
+		if (UME::Input::IsKeyPressed(UME_KEY_W))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
 		// Press 'S' or down key to move the player down
-		else if (UME::Input::IsKeyPressed(UME_KEY_S) || UME::Input::IsKeyPressed(UME_KEY_DOWN))
+		else if (UME::Input::IsKeyPressed(UME_KEY_S))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
 
 		// Press 'A' or left key to move the player left
-		if (UME::Input::IsKeyPressed(UME_KEY_A) || UME::Input::IsKeyPressed(UME_KEY_LEFT))
+		if (UME::Input::IsKeyPressed(UME_KEY_A))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
 		// Press 'D' or right key to move the player to the right
-		else if (UME::Input::IsKeyPressed(UME_KEY_D) || UME::Input::IsKeyPressed(UME_KEY_RIGHT))
+		else if (UME::Input::IsKeyPressed(UME_KEY_D))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
@@ -242,6 +247,14 @@ namespace Ukemochi
 			GameObject clone = GameObjectFactory::CloneObject(worm_0);
 			clone.GetComponent<Transform>().position = Vec2{ clone.GetComponent<Transform>().position.x + 5.f, clone.GetComponent<Transform>().position.y + 1.f };
 		}
+
+		// Camera
+		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+		deltaTime = currentFrameTime - lastFrameTime;
+		lastFrameTime = currentFrameTime;
+		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
+
+
 		// --- END USER INPUTS ---
 
 		// --- GAME LOGIC UPDATE ---
