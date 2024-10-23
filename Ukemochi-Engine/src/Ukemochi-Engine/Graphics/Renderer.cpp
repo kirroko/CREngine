@@ -60,7 +60,7 @@ void Renderer::init()
 
 	// Text Rendering (Test)
 	initTextBuffers();
-	loadTextFont("../Assets/Fonts/Ukemochi_font-Regular");
+	loadTextFont("../Assets/Fonts/Ukemochi_font-Regular.ttf");
 }
 
 
@@ -655,7 +655,7 @@ void Renderer::loadTextFont(const char* fontPath)
 		return;
 	}
 
-	if (FT_New_Face(ft, "../Assets/Fonts/Ukemochi_font-Regular.ttf", 0, &face))
+	if (FT_New_Face(ft, fontPath, 0, &face))
 	{
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 		return;

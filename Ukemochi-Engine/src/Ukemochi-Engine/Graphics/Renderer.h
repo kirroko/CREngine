@@ -256,9 +256,5 @@ private:
 	void loadTextFont(const char* font);
 	void renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
-	//glm::mat4 projection;
-
-	// Camera
-	//Camera camera;
 };
 #endif
