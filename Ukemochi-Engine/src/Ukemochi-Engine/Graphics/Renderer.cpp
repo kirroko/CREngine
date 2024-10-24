@@ -302,38 +302,6 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
 
-	delete textRenderer;
-}
-
-/*!
-* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-*/
-void Renderer::cleanUpBuffers()
-{
-	for (auto& vao : vaos)
-	{
-		vao->Delete();
-		delete vao;
-	}
-
-	for (auto& vbo : vbos)
-	{
-		vbo->Delete();
-		delete vbo;
-	}
-
-	for (auto& ebo : ebos)
-	{
-		ebo->Delete();
-		delete ebo;
-	}
-
-	vaos.clear();
-	vbos.clear();
-	ebos.clear();
-	indices_count.clear();
-
-	delete textRenderer;
 }
 
 /*!
@@ -491,6 +459,11 @@ void Renderer::cleanUp()
 		shaderProgram = nullptr;
 	}
 
+	if (textRenderer)
+	{
+		delete textRenderer;
+		textRenderer = nullptr;
+	}
 }
 
 /*!

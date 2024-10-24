@@ -115,7 +115,9 @@ void TextRenderer::releaseFaces()
 {
 	// Release each font face stored in the map
 	for (auto& pair : fontFaces) {
-		FT_Done_Face(pair.second);
+		if (pair.second) {
+			FT_Done_Face(pair.second);
+		}
 	}
 	fontFaces.clear();
 }
