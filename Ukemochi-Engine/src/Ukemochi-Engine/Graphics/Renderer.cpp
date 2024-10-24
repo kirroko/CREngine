@@ -62,7 +62,12 @@ void Renderer::init()
 	initAnimationBuffers();
 
 	// Text Rendering (Test)
-	textRenderer = new TextRenderer("../Assets/Fonts/Ukemochi_font-Regular.ttf", screen_width, screen_height);
+	// Initialize text renderer with screen dimensions
+	textRenderer = new TextRenderer(screen_width, screen_height);
+
+	// Load multiple fonts into the text renderer
+	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 }
 
 
@@ -297,18 +302,8 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
 
+	delete textRenderer;
 }
-
-//void Renderer::setUpTextBuffers(GLfloat* vertices, size_t vertSize)
-//{
-//	textVAO.Bind();
-//
-//	textVBO = VBO(vertices, vertSize);
-//	textVBO.Bind();
-//
-//	textVAO.LinkAttrib(textVBO, GL_FLOAT, )
-//
-//}
 
 /*!
 * @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
@@ -441,7 +436,9 @@ void Renderer::render()
 		entity_count++;
 	}
 
-	textRenderer->renderText("Ukemochi!", 725.0f, 525.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	// Render text using the TextRenderer instance with different fonts
+	textRenderer->renderText("Ukemochi", "Ukemochi!", 50.0f, 200.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	textRenderer->renderText("Exo2", "Exo2!", 50.0f, 150.0f, 1.0f, glm::vec3(0.5f, 0.8f, 0.2f));
 }
 
 /*!
