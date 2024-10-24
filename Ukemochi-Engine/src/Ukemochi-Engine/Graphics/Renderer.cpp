@@ -297,6 +297,7 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
 
+	delete textRenderer;
 }
 
 //void Renderer::setUpTextBuffers(GLfloat* vertices, size_t vertSize)
