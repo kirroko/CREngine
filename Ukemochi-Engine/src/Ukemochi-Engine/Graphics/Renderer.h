@@ -9,17 +9,14 @@
 #ifndef RENDERER_CLASS_H
 #define RENDERER_CLASS_H
 #include<iostream>
-#include <ft2build.h>
-#include FT_FREETYPE_H // Include FreeType
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "../vendor/stb/stb_image.h"
 #include "../vendor/glm/glm/glm.hpp"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
-#include <cmath> // Might need to remove later on
-#include <vector> // Might need to remove later on
+#include <cmath>
+#include <vector>
 #include <algorithm>
 
 #include "shaderClass.h"
@@ -30,12 +27,9 @@
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Camera2D.h"
 
-struct Character {
-	GLuint TextureId;
-	glm::ivec2 Size;
-	glm::ivec2 Bearing; 
-	GLuint Advance; 
-};
+// Froward
+class TextRenderer;
+
 
  /*!
   * @class Renderer
@@ -241,24 +235,7 @@ private:
 		CIRCLE_OUTLINE = 3,
 		ANIMATION_VAO = 4
 	};
-
-
-	FT_Library ft;
-	FT_Face face;
-	std::unordered_map<char, Character> Characters;
-	/*VAO textVAO; 
-	VBO textVBO;*/
-	GLuint textVAO, textVBO;
-	Shader* textShaderProgram;
-	void initTextBuffers();
-	void setUpTextBuffers(GLfloat* vertices, size_t vertSize);
-	public:
-	void loadTextFont(const char* font);
-	void renderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
-
-	//glm::mat4 projection;
-
-	// Camera
-	//Camera camera;
+	
+	TextRenderer* textRenderer;
 };
 #endif
