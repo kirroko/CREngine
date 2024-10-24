@@ -16,6 +16,19 @@ struct Character {
 	GLuint Advance;
 };
 
+class TextObject {
+public:
+	std::string text;
+	glm::vec2 position;
+	glm::vec3 color;
+	float scale;
+	std::string fontName;
+
+	TextObject() = default;
+	TextObject(const std::string& text, glm::vec2 pos, float scale, glm::vec3 color, const std::string& fontName)
+		: text(text), position(pos), color(color), scale(scale), fontName(fontName) {}
+};
+
 class TextRenderer {
 public:
 	TextRenderer(GLuint screenWidth, GLuint screenHeight);
@@ -23,7 +36,10 @@ public:
 
 	void loadTextFont(const std::string& fontName, const char* font_path);
 	void setActiveFont(const std::string& font_name);
-	void TextRenderer::renderText(const std::string& fontName, const std::string& text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+	void addTextObject(const std::string& id, const TextObject& textObj);
+	void updateTextObject(const std::string& id, const std::string& newText);
+	void updateTextPosition(const std::string& id, glm::vec2 newPosition);
+	void renderAllText();
 
 
 private:
@@ -32,6 +48,8 @@ private:
 	std::string activeFontName;
 	std::map<std::string, FT_Face> fontFaces;
 	std::map<std::string, std::map<GLchar, Character>> fontCharacters;
+
+	std::map<std::string, TextObject> textObjects;
 
 	GLuint textVAO, textVBO;
 	Shader* textShaderProgram;

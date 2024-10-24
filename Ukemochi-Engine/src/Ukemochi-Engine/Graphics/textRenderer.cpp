@@ -44,6 +44,7 @@ void TextRenderer::initBuffers()
 
 void TextRenderer::loadTextFont(const std::string& fontName, const char* font_path)
 {
+	std::cout << "Loading font: " << fontName << " from path: " << font_path << std::endl;
 	FT_Face face;
 
 	// Loads Font Face from the font_path variable provided
@@ -122,54 +123,73 @@ void TextRenderer::releaseFaces()
 	fontFaces.clear();
 }
 
-void TextRenderer::renderText(const std::string& fontName, const std::string& text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color) 
+void TextRenderer::addTextObject(const std::string& id, const TextObject& textObj) 
 {
-	// Set the font based on the given font name
-	setActiveFont(fontName);
+	textObjects[id] = textObj;
+}
 
-	if (activeFontName.empty() || fontCharacters.find(activeFontName) == fontCharacters.end()) {
-		std::cerr << "ERROR::TextRenderer: No active font set or font not loaded." << std::endl;
-		return;
+void TextRenderer::updateTextObject(const std::string& id, const std::string& newText) 
+{
+	if (textObjects.find(id) != textObjects.end())
+		textObjects[id].text = newText;
+}
+
+void TextRenderer::updateTextPosition(const std::string& id, glm::vec2 newPosition) 
+{
+	if (textObjects.find(id) != textObjects.end()) {
+		textObjects[id].position = newPosition;
 	}
+}
 
-	// Get the active font's character map
-	const std::map<GLchar, Character>& Characters = fontCharacters[activeFontName];
-
+void TextRenderer::renderAllText() 
+{
 	textShaderProgram->Activate();
-	glUniform3f(glGetUniformLocation(textShaderProgram->ID, "textColor"), color.x, color.y, color.z);
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screenWidth), 0.0f, static_cast<GLfloat>(screenHeight));
-	glUniformMatrix4fv(glGetUniformLocation(textShaderProgram->ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+	textShaderProgram->setMat4("projection", projection);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
 
-	for (const auto& c : text) {
-		const Character& ch = Characters.at(c);
+	for (const auto& textPair : textObjects) 
+	{
+		const TextObject& textObj = textPair.second;
+		setActiveFont(textObj.fontName);
 
-		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+		const auto& Characters = fontCharacters[activeFontName];
+		textShaderProgram->setVec3("textColor", textObj.color);
 
-		GLfloat w = ch.Size.x * scale;
-		GLfloat h = ch.Size.y * scale;
+		float x = textObj.position.x;
+		float y = textObj.position.y;
+		float scale = textObj.scale;
 
-		GLfloat vertices[6][4] = {
-			{ xpos,     ypos + h, 0.0f, 0.0f },
-			{ xpos,     ypos,     0.0f, 1.0f },
-			{ xpos + w, ypos,     1.0f, 1.0f },
-			{ xpos,     ypos + h, 0.0f, 0.0f },
-			{ xpos + w, ypos,     1.0f, 1.0f },
-			{ xpos + w, ypos + h, 1.0f, 0.0f }
-		};
+		for (const auto& c : textObj.text) 
+		{
+			const Character& ch = Characters.at(c);
 
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		x += (ch.Advance >> 6) * scale;
+			GLfloat xpos = x + ch.Bearing.x * scale;
+			GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+			GLfloat w = ch.Size.x * scale;
+			GLfloat h = ch.Size.y * scale;
+
+			GLfloat vertices[6][4] = {
+				{ xpos,     ypos + h, 0.0f, 0.0f },
+				{ xpos,     ypos,     0.0f, 1.0f },
+				{ xpos + w, ypos,     1.0f, 1.0f },
+				{ xpos,     ypos + h, 0.0f, 0.0f },
+				{ xpos + w, ypos,     1.0f, 1.0f },
+				{ xpos + w, ypos + h, 1.0f, 0.0f }
+			};
+
+			glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+			glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			x += (ch.Advance >> 6) * scale;
+		}
 	}
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-

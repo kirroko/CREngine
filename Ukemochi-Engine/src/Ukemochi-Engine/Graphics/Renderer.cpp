@@ -66,8 +66,13 @@ void Renderer::init()
 	textRenderer = new TextRenderer(screen_width, screen_height);
 
 	// Load multiple fonts into the text renderer
-	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
+	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+
+	// Add text objects
+	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+
 }
 
 
@@ -404,9 +409,8 @@ void Renderer::render()
 		entity_count++;
 	}
 
-	// Render text using the TextRenderer instance with different fonts
-	textRenderer->renderText("Ukemochi", "Ukemochi!", 50.0f, 200.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	textRenderer->renderText("Exo2", "Exo2!", 50.0f, 150.0f, 1.0f, glm::vec3(0.5f, 0.8f, 0.2f));
+	// Render all text objects
+	textRenderer->renderAllText();
 }
 
 /*!

@@ -22,6 +22,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"				// for ECS
 #include "../ECS/Components.h"		// for Rigidbody2D, BoxCollider2D component
 
+#include "../Graphics/textRenderer.h"
 // System Includes
 #include "../Input/Input.h"			// for input system
 #include "../Physics/Physics.h"	    // for physics system
@@ -41,6 +42,7 @@ namespace Ukemochi
 	GameObject player_obj;
 	GameObject worm_0;
 	Renderer time;
+
 
 	GLfloat lastFrameTime = 0.0f;
 	GLfloat deltaTime = 0.0f;
@@ -184,6 +186,7 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
 		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
+	
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -255,6 +258,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
 
 
+
 		// --- END USER INPUTS ---
 
 		// --- GAME LOGIC UPDATE ---
@@ -273,7 +277,7 @@ namespace Ukemochi
 	{
 		// Render the entities
 		ECS::GetInstance().GetSystem<Renderer>()->render();
-		
+
 	}
 
 	void Level1_Free()//release unused assets/variable memories
