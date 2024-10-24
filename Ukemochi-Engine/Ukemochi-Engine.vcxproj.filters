@@ -195,6 +195,7 @@
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\TextRenderer.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
