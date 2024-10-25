@@ -147,7 +147,6 @@ namespace Ukemochi
 
 		// Input field to specify which entity to remove
 		ImGui::InputInt("Entity ID to Remove", &entityToRemove);
-		test
 
 		// Button to remove an entity
 		if (ImGui::Button("Remove Entity"))
