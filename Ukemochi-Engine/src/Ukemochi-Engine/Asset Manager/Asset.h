@@ -9,19 +9,19 @@ namespace Ukemochi
 {
 	class Asset
 	{
-		size_t m_asset_id;
-		std::string m_path;
-		ASSET_TYPE m_type;
+		std::string asset_key;
+		std::string asset_path;
+		ASSET_TYPE asset_type;
 
 	public:
 		Asset() = default;
-		Asset(std::string file_path, size_t id);
+		Asset(std::string file_path, std::string key);
 		~Asset() = default;
 
 		ASSET_TYPE GetType() const;
 	};
 
-	Asset::Asset(std::string file_path, size_t id) : m_asset_id(id), m_path(file_path), m_type(Invalid)
+	Asset::Asset(std::string file_path, std::string key) : asset_key(key), asset_path(file_path), asset_type(Invalid)
 	{
 		using namespace std;
 		filesystem::path current = file_path;
@@ -29,28 +29,28 @@ namespace Ukemochi
 		string temp = extention.generic_string();
 		if (temp.compare(".txt") == 0)
 		{
-			m_type = Text;
+			asset_type = Text;
 		}
 		else if (temp.compare(".json") == 0)
 		{
-			m_type = JSON;
+			asset_type = JSON;
 		}
 		else if (temp.compare(".png") == 0 || temp.compare(".jpg") == 0)
 		{
-			m_type = Sprite;
+			asset_type = Sprite;
 		}
 		else if (temp.compare(".wav") == 0)
 		{
-			m_type = Audio;
+			asset_type = Audio;
 		}
 		else
 		{
-			m_type = Invalid;
+			asset_type = Invalid;
 		}
 	}
 
 	ASSET_TYPE Asset::GetType() const
 	{
-		return m_type;
+		return asset_type;
 	}
 }

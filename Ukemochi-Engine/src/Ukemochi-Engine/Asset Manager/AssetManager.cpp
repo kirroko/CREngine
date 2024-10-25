@@ -5,13 +5,16 @@ namespace Ukemochi
 
 	void AssetManager::AddAsset(std::string file_path)
 	{
-		size_t index = asset_list.size();
-		Asset created(file_path, index);
+		size_t start = file_path.find_last_of('\\');
+		size_t end = file_path.find_first_of('.');
+		size_t len = end - start;
+		std::string key = file_path.substr(start, len);
+		Asset created(file_path, key);
 		if (created.GetType() == Invalid)
 		{
 			return;
 		}
-		asset_list.push_back(created);
+		asset_list.emplace(key, created);
 		return;
 	}
 
