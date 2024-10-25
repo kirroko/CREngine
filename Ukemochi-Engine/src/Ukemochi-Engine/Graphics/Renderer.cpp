@@ -24,6 +24,7 @@ Renderer::Renderer()
 	vbos.clear();
 	ebos.clear();
 	textRenderer = nullptr;
+	playerObject = nullptr;
 };
 
 /*!
@@ -73,6 +74,7 @@ void Renderer::init()
 	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
 	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
+	
 }
 
 
@@ -365,11 +367,21 @@ void Renderer::render()
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Apply scaling if enabled
-		if (scale_enabled)
+		//// Apply scaling if enabled
+		//if (scale_enabled)
+		//	model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
+		//else
+		//	model = glm::scale(model, scale); // Use entity's original scale
+
+		// Check if this object is the player object
+		if (entity == playerObject->GetInstanceID() && scale_enabled) {
+			// Apply scaling only to the player entity
 			model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		else
-			model = glm::scale(model, scale); // Use entity's original scale
+		}
+		else {
+			// Apply default scale for other entities
+			model = glm::scale(model, scale);
+		}
 
 		// Apply rotation if enabled
 		if (rotation_enabled)
@@ -468,6 +480,7 @@ void Renderer::cleanUp()
 		delete textRenderer;
 		textRenderer = nullptr;
 	}
+
 }
 
 /*!

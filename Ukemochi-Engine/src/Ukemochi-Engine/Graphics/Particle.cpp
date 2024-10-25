@@ -2,8 +2,9 @@
 #include "Particle.h"
 #include "Texture.h"
 #include "shaderClass.h"
-#include "Ukemochi-Engine/Factory/GameObject.h"
-
+#include "../Factory/GameObject.h"
+#include "../ECS/Components.h"
+#include "../Factory/Factory.h"
 
 ParticleSystem::ParticleSystem(Shader* shader, Texture* texture, GLuint amount) :
     particle_shader(std::make_unique<Shader>(*shader)),
@@ -110,8 +111,8 @@ void ParticleSystem::respawnParticle(Particle& particle, GameObject& object, glm
     /*GLfloat random = ((rand() % 100) - 50) / 10.f;
     GLfloat rColor = 0.5f + ((rand() % 100) / 100.f);
 
-    auto& transform = object.GetComponent<Transform>();
-
+    auto& transform = object.
+    
     particle.Position = transform.position + random + offset;
     particle.Color = glm::vec4(rColor, rColor, rColor, 1.0f);
     particle.Life = 1.0f;

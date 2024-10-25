@@ -26,11 +26,12 @@
 #include "Texture.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Camera2D.h"
+#include <Ukemochi-Engine/Factory/GameObject.h>
 
 // Froward
 class TextRenderer;
 
-
+using namespace Ukemochi;
  /*!
   * @class Renderer
   * @brief A class that manages OpenGL rendering, shader setup, texture handling, and rendering 2D objects like boxes and circles.
@@ -237,5 +238,16 @@ private:
 	};
 	
 	TextRenderer* textRenderer;
+
+	GameObject* playerObject = nullptr;
+
+	public:
+		// Setter method to set the player object
+		void SetPlayerObject(GameObject& player) {
+
+			playerObject = &player;
+			std::cout << "Before render, playerObject: " << playerObject << std::endl;
+		}
+
 };
 #endif

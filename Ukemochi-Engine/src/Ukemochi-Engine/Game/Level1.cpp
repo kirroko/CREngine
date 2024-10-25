@@ -196,7 +196,8 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
 		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
-	
+		// Set the player object in the Renderer
+		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -272,8 +273,6 @@ namespace Ukemochi
 		deltaTime = currentFrameTime - lastFrameTime;
 		lastFrameTime = currentFrameTime;
 		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
-
-
 
 		// --- END USER INPUTS ---
 
