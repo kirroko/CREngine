@@ -11,7 +11,8 @@ namespace Ukemochi
 
 		static void InitAssetsFromFolder(std::string folder_path);
 
+		static Asset GetAsset();
 	};
 
-	std::vector<Asset> asset_list;
+	std::map<std::string, Asset> asset_list;
 }
