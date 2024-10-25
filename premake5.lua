@@ -61,7 +61,7 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.Fmod}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.Freetype}"
+		"%{IncludeDir.Freetype}",
 		"%{IncludeDir.Mono}"
 
 	}
@@ -69,7 +69,7 @@ project "Ukemochi-Engine"
 	libdirs
     {
         "%{LibraryDir.Fmod}", -- Add FMOD library directory
-		"%{LibraryDir.Freetype}"
+		"%{LibraryDir.Freetype}",
 		"%{LibraryDir.Mono}"
     }
 
@@ -80,7 +80,7 @@ project "Ukemochi-Engine"
 		"fmod_vc",
 		"ImGui",
 		"opengl32.lib",
-		"freetype"
+		"freetype",
 		"mono-2.0-sgen.lib"
 	}
 	filter "system:windows"
@@ -104,7 +104,7 @@ project "Ukemochi-Engine"
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. freetype_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
-			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")
+			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
 			{"{COPY} ./vendor/Mono/lib/4.5 ../bin/" .. outputdir .. "/Ukemochi-Game/Mono/lib/4.5"}, -- Copy the mono library
 			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")								-- Copy the assets(Editor's assets) 
 		}

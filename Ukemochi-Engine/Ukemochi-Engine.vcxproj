@@ -99,6 +99,7 @@
       <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets
 IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
 xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     </PostBuildEvent>
@@ -132,6 +133,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
       <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets
 IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
 xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
     </PostBuildEvent>
@@ -165,6 +167,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
       <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets
 IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
 xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     </PostBuildEvent>
@@ -203,11 +206,11 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Sprite.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\TextRenderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\textRenderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
@@ -248,11 +251,11 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Sprite.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\TextRenderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
