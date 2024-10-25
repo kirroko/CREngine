@@ -175,7 +175,7 @@ namespace Ukemochi
     *************************************************************************/
     void Mtx33RotDeg(Matrix3x3& pResult, float angle)
     {
-        Mtx33RotRad(pResult, angle * PIOVER180);
+        Mtx33RotRad(pResult, angle * PIOVER180<float>);
     }
 
     /*!***********************************************************************

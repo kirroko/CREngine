@@ -8,6 +8,7 @@
  */
 #include "PreCompile.h"
 #include "Renderer.h"
+#include "TextRenderer.h"
 
 using namespace Ukemochi;
 
@@ -29,6 +30,7 @@ Renderer::Renderer()
 	screenQuadVAO = nullptr;
 	screenQuadVBO = nullptr;
 	framebufferShader = nullptr;
+	textRenderer = nullptr;
 };
 
 /*!
@@ -39,6 +41,7 @@ Renderer::~Renderer()
 {
 	cleanUp();
 	glfwTerminate();
+
 }
 
 /*!
@@ -62,11 +65,23 @@ void Renderer::init()
 	// Load Buffers for debug/wireframe circle drawing
 	initCircleOutlineBuffers();
 
-	// Load Buffers for animation
-	initAnimationBuffers(250.f, 350.f);
 
 	setupFramebuffer();
 	initScreenQuad();
+	initAnimationBuffers();
+
+	// Text Rendering (Test)
+	// Initialize text renderer with screen dimensions
+	textRenderer = new TextRenderer(screen_width, screen_height);
+
+	// Load multiple fonts into the text renderer
+	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
+	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+
+	// Add text objects
+	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+
 }
 
 void Renderer::setupFramebuffer()
@@ -311,7 +326,7 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
 }
 
-void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
+void Renderer::initAnimationBuffers()
 {
 	// Define the vertices with placeholder texture coordinates.
 	GLfloat vertices[] = {
@@ -328,7 +343,7 @@ void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
 	};
 
 	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
-	indices_count.push_back(6);
+	//indices_count.push_back(6);
 }
 
 
@@ -417,35 +432,7 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vaos.push_back(vao);
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
-}
 
-/*!
-* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-*/
-void Renderer::cleanUpBuffers()
-{
-	for (auto& vao : vaos)
-	{
-		vao->Delete();
-		delete vao;
-	}
-
-	for (auto& vbo : vbos)
-	{
-		vbo->Delete();
-		delete vbo;
-	}
-
-	for (auto& ebo : ebos)
-	{
-		ebo->Delete();
-		delete ebo;
-	}
-
-	vaos.clear();
-	vbos.clear();
-	ebos.clear();
-	indices_count.clear();
 }
 
 /*!
@@ -479,16 +466,17 @@ void Renderer::render()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Set Orthographic projection
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height), -1.0f, 1.0f);
+	// Get the camera system instance
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
 
-	// Optionally set up a view matrix (identity if no camera movement)
-	glm::mat4 view = glm::mat4(1.0f);
+	// Set up a view and projection matrix
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
 	// Send the projection and view matrices to the shader
 	shaderProgram->Activate();
-	shaderProgram->setMat4("projection", projection);
 	shaderProgram->setMat4("view", view);
+	shaderProgram->setMat4("projection", projection);
 
 
 	std::cout << "Begin render" << std::endl;
@@ -551,7 +539,9 @@ void Renderer::render()
 			drawCircleOutline();
 		entity_count++;
 	}
-	std::cout << "End render" << std::endl;
+
+	// Render all text objects
+	textRenderer->renderAllText();
 }
 
 /*!
@@ -615,6 +605,11 @@ void Renderer::cleanUp()
 	if (rbo)
 		glDeleteRenderbuffers(1, &rbo);
 	rbo = 0;
+	if (textRenderer)
+	{
+		delete textRenderer;
+		textRenderer = nullptr;
+	}
 }
 
 /*!
@@ -646,9 +641,6 @@ void Renderer::drawBox()
  * @brief Draws a 2D circle with the given position, radius, and texture,
 		  starting position is the top left of screen. It starts from the
 		  center of the box.
- * @param x The x-coordinate of the center of the circle (in screen space).
- * @param y The y-coordinate of the center of the circle (in screen space).
- * @param radius The radius of the circle (in screen space).
  */
 void Renderer::drawCircle()
 {
