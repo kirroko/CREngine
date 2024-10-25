@@ -25,7 +25,7 @@ namespace Ukemochi
 			}
 			else //entries is a folder
 			{
-				InitAssetsFromFolder(entries.path().generic_string()); //recur function
+				InitAssetsFromFolder(entries.path().generic_string()); //recur function with the subfolder;
 				continue;
 			}
 		}
