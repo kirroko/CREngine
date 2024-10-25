@@ -37,6 +37,9 @@
     <Filter Include="Ukemochi-Engine\Input">
       <UniqueIdentifier>{5C8EA0FA-C8FA-5BF5-91EE-F352FD197E5D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Logic">
+      <UniqueIdentifier>{5A3CD7FA-C6A8-92F5-8F9C-2A53FBC7B45D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Logs">
       <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
     </Filter>
@@ -167,6 +170,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
       <Filter>Ukemochi-Engine\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Scripting.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h">
       <Filter>Ukemochi-Engine\Logs</Filter>
     </ClInclude>
@@ -276,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp">
       <Filter>Ukemochi-Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
       <Filter>Ukemochi-Engine\Logs</Filter>

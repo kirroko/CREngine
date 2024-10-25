@@ -35,6 +35,8 @@ DigiPen Institute of Technology is prohibited.
 #include "Audio/Audio.h"
 #include "ImGui/ImGuiCore.h"
 #include "SceneManager.h"
+#include "Logic/Scripting.h"
+
 #include <crtdbg.h>				// To check for memory leaks
 
 using namespace Ukemochi;
@@ -70,6 +72,8 @@ namespace UME {
 
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
 		imguiInstance.ImGuiInit(glfwWindow);
+
+		ScriptingEngine::GetInstance().InitMono();
 	}
 
 	Application::~Application()
@@ -82,7 +86,8 @@ namespace UME {
 		imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-		UME_ENGINE_TRACE("{0}", e.ToString());
+		if (e.GetName() != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
+			UME_ENGINE_TRACE("{0}", e.ToString());
 	}
 
 	bool Application::IsWindowClose(WindowCloseEvent& e)
@@ -98,8 +103,7 @@ namespace UME {
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 		double accumulator = 0.0;
-		const double fixedTimeStep = 1.0 / 60.0; // Fixed timestep for game logic
-
+		int currentNumberOfSteps = 0;
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
@@ -126,16 +130,19 @@ namespace UME {
 				g_FrameRateController.Update();
 
 				//************ FPS ************
+				currentNumberOfSteps = 0;
 				// Use deltaTime from the FrameRateController
 				double deltaTime = g_FrameRateController.GetDeltaTime();
 				accumulator += deltaTime;
 
 				// Run game logic at a fixed time step (e.g., 60 times per second)
-				while (accumulator >= fixedTimeStep)
+				while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
 				{
 					// Update game logic with a fixed delta time
-					accumulator -= fixedTimeStep;
+					accumulator -= g_FrameRateController.GetFixedDeltaTime();
+					currentNumberOfSteps++;
 				}
+				g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
 				//************ FPS ************
 
 				//************ Display FPS ************
@@ -188,16 +195,19 @@ namespace UME {
 					//************ FPS ************
 					g_FrameRateController.Update();
 
+					currentNumberOfSteps = 0;
 					// Use deltaTime from the FrameRateController
 					double deltaTime = g_FrameRateController.GetDeltaTime();
 					accumulator += deltaTime;
 
 					// Run game logic at a fixed time step (e.g., 60 times per second)
-					while (accumulator >= fixedTimeStep)
+					while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
 					{
 						// Update game logic with a fixed delta time
-						accumulator -= fixedTimeStep;
+						accumulator -= g_FrameRateController.GetFixedDeltaTime();
+						currentNumberOfSteps++;
 					}
+					g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
 					//************ FPS ************
 
 					if (Input::IsKeyPressed(GLFW_KEY_2))
@@ -251,132 +261,5 @@ namespace UME {
 				gsm_previous = gsm_current = gsm_next;
 			}
 		}
-
-		//render.drawBox(800.f, 450.f, 1600.f, 900.f, "../Assets/Textures/Moon Floor.png");
-		//render.drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
-
-		//Audio audio;
-		//audio.CreateGroup("test");
-		//audio.LoadSound(R"(C:\Users\tansi\OneDrive\Desktop\BGM_game.mp3)");
-		//audio.PlaySoundInGroup(AudioList::BGM, ChannelGroups::MENUAUDIO);
-
-		//while (m_running)
-		//{
-		//	g_FrameRateController.Update();
-		//	//Init GameStateManager
-		//	GSM_Initialize(GS_STATES::GS_LEVEL1);
-
-		//	while (gsm_current != GS_STATES::GS_QUIT && m_running)
-		//	{
-		//		//current state != restart
-		//		if (gsm_current != GS_STATES::GS_RESTART)
-		//		{
-		//			GSM_Update();
-		//			gsm_fpLoad();
-		//		}
-		//		else
-		//		{
-		//			gsm_next = gsm_current = gsm_previous;
-		//		}
-
-		//		//Init Scene
-		//		gsm_fpInitialize();
-
-		//		//glClearColor(1, 0, 1, 1);
-		//		//glClear(GL_COLOR_BUFFER_BIT);
-		//		//m_Window->OnUpdate();
-
-		//		if (Input::IsKeyPressed(GLFW_KEY_W))
-		//		{
-		//			// If 'W' key is pressed, move forward
-		//			UME_ENGINE_INFO("W key is pressed");
-		//		}
-
-		//		//Current Scene
-		//		while (gsm_current == gsm_next && m_running)
-		//		{
-		//			//************ FPS ************
-		//			g_FrameRateController.Update();
-
-		//			// Use deltaTime from the FrameRateController
-		//			double deltaTime = g_FrameRateController.GetDeltaTime();
-		//			accumulator += deltaTime;
-
-		//			// Run game logic at a fixed time step (e.g., 60 times per second)
-		//			while (accumulator >= fixedTimeStep)
-		//			{
-		//				// Update game logic with a fixed delta time
-		//				accumulator -= fixedTimeStep;
-		//			}
-		//			//************ FPS ************
-
-		//			/*glClearColor(1, 0, 1, 1);
-		//			glClear(GL_COLOR_BUFFER_BIT);
-		//			m_Window->OnUpdate();*/
-
-		//			//// Add a box and a circle
-		//			//render.addObjects(GameObject(100.0f, 200.0f, 50.0f, 50.0f, true));  // Box
-		//			//render.addObjects(GameObject(0.0f, 0.0f, 1600.0f, 900.0f, true));  // Box
-		//			//render.addObjects(GameObject(300.0f, 400.0f, 75.0f, false));        // Circle
-
-		//	//render.drawBox(0, 0, 100, 100, true);
-		//	//render.render();
-
-		//	if (Input::IsKeyPressed(GLFW_KEY_W))
-		//	{
-		//		// If 'W' key is pressed, move forward
-		//		UME_ENGINE_INFO("W key is pressed");
-		//	}
-		//			//render.drawBox(0, 0, 100, 100, true);
-		//			//render->drawCircle(800.f, 450.f, 500.f, "../Assets/Textures/container.jpg");
-		//			//render->render();
-		//
-		//			imguiInstance.NewFrame();
-
-		//			imguiInstance.ImGuiUpdate(); // Render ImGui elements
-		//			m_Window->OnUpdate();
-		//			if (Input::IsKeyPressed(GLFW_KEY_W))
-		//			{
-		//				// If 'W' key is pressed, move forward
-		//				UME_ENGINE_INFO("W key is pressed");
-		//			}
-
-		//			//Update and Draw current scene
-		//			gsm_fpUpdate();
-		//			gsm_fpDraw();
-
-		//			//************ FPS ************
-		//			double currentTime = glfwGetTime();
-		//			// Only log/display the FPS every second (or defined interval)
-		//			if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
-		//			{
-		//				double fps = g_FrameRateController.GetFPS();
-
-		//				// Use std::ostringstream to format the FPS with 2 decimal places
-		//				std::ostringstream oss;
-		//				oss << std::fixed << std::setprecision(2) << fps;
-		//				std::string fpsString = oss.str();
-
-		//				// Log or display the FPS
-		//				UME_ENGINE_INFO("FPS: {0}", fpsString);
-
-		//				// Update the last time we displayed the FPS
-		//				lastFPSDisplayTime = currentTime;
-		//			}
-		//			//************ FPS ************
-		//		}
-
-		//		//Free scene
-		//		gsm_fpFree();
-
-		//		//If game not restart unload Scene
-		//		if (gsm_next != GS_STATES::GS_RESTART)
-		//		{
-		//			gsm_fpUnload();
-		//		}
-
-		//		gsm_previous = gsm_current = gsm_next;
-		//	}
-		//}
 	}
 }

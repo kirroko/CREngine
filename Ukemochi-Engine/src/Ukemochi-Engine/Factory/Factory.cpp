@@ -66,6 +66,8 @@ namespace Ukemochi
 						Vec2(comps["Acceleration"][0].GetFloat(), comps["Acceleration"][1].GetFloat()),
 						Vec2(comps["Force"][0].GetFloat(), comps["Force"][1].GetFloat()),
 						comps["Mass"].GetFloat(), comps["Inverse Mass"].GetFloat(), comps["Linear Drag"].GetFloat(),
+						comps["Angle"].GetFloat(), comps["Angular Velocity"].GetFloat(), comps["Angular Acceleration"].GetFloat(),
+						comps["Torque"].GetFloat(), comps["Inertia Mass"].GetFloat(), comps["Inverse Inertia Mass"].GetFloat(), comps["Angular Drag"].GetFloat(),
 						comps["use_gravity"].GetBool(), comps["is_kinematic"].GetBool()
 						}); // Default Component
 				}
@@ -76,7 +78,7 @@ namespace Ukemochi
 						Vec2(comps["Max"][0].GetFloat(), comps["Max"][1].GetFloat()),
 						comps["Collision Flag"].GetInt(),
 						comps["is_trigger"].GetBool(),
-						comps["is_player"].GetBool()
+						comps["Tag"].GetString()
 						}); // Default Component
 				}
 				else if (component.compare("CircleCollider2D") == 0)
@@ -92,7 +94,7 @@ namespace Ukemochi
 
 					ECS::GetInstance().AddComponent(entity, SpriteRender{
 						TexturePath,
-						comps["Shape"].GetInt() == 0 ? BOX : CIRCLE
+						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
 						}); // Default Component
 				}
 			}
@@ -156,5 +158,10 @@ namespace Ukemochi
 	{
 		auto new_entity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
 		return GameObject(new_entity);
+	}
+
+	void GameObjectFactory::DestroyObject(GameObject& targetobject)
+	{
+		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
 	}
 }
