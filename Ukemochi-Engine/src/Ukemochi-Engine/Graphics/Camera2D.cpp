@@ -33,19 +33,19 @@ void Camera::processCameraInput(GLfloat delta_time)
 {
 	GLfloat speed = camera_speed * delta_time;
 
-	if (UME::Input::IsKeyPressed(GLFW_KEY_UP))
+	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_UP))
 		position.y += speed;
-	if (UME::Input::IsKeyPressed(GLFW_KEY_DOWN))
+	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_DOWN))
 		position.y -= speed;
-	if (UME::Input::IsKeyPressed(GLFW_KEY_LEFT))
+	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_LEFT))
 		position.x -= speed;
-	if (UME::Input::IsKeyPressed(GLFW_KEY_RIGHT))
+	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_RIGHT))
 		position.x += speed;
 
 	// Handle zooming in and out with keyboard keys Q and E
-	if (UME::Input::IsKeyPressed(GLFW_KEY_Q))  // Zoom in
+	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_Q))  // Zoom in
 		zoom += zoom * delta_time;
-	if (UME::Input::IsKeyPressed(GLFW_KEY_E))  // Zoom out
+	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_E))  // Zoom out
 		zoom -= zoom * delta_time;
 
 	// Restrict zoom level to avoid flipping or extreme values
@@ -56,7 +56,7 @@ void Camera::processCameraInput(GLfloat delta_time)
 void Camera::ZoomTowardsCursor(float zoomFactor)
 {
 	// Get current mouse position in screen coordinates
-	auto [mouseX, mouseY] = UME::Input::GetMousePosition();
+	auto [mouseX, mouseY] = Ukemochi::Input::GetMousePosition();
 
 	// Normalize mouse position in screen space to range [-1, 1]
 	glm::vec2 normalizedMousePos = {

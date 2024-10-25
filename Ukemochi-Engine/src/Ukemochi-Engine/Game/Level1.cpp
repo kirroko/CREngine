@@ -230,25 +230,25 @@ namespace Ukemochi
 		// Player Inputs for movement
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 		// Press 'W' or up key to move the player up
-		if (UME::Input::IsKeyPressed(UME_KEY_W))
+		if (Input::IsKeyPressed(UME_KEY_W))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
 		// Press 'S' or down key to move the player down
-		else if (UME::Input::IsKeyPressed(UME_KEY_S))
+		else if (Input::IsKeyPressed(UME_KEY_S))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
 
 		// Press 'A' or left key to move the player left
-		if (UME::Input::IsKeyPressed(UME_KEY_A))
+		if (Input::IsKeyPressed(UME_KEY_A))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
 		// Press 'D' or right key to move the player to the right
-		else if (UME::Input::IsKeyPressed(UME_KEY_D))
+		else if (Input::IsKeyPressed(UME_KEY_D))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
 
 		// Player Input for rotation, to test rotate physics
-		if (UME::Input::IsKeyPressed(UME_KEY_R))
+		if (Input::IsKeyPressed(UME_KEY_R))
 			ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);

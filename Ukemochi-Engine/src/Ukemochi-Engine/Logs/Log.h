@@ -53,31 +53,31 @@ namespace Ukemochi {
 
 #pragma warning(pop)  // Re-enable the warning
 
-// // Engine log macros
-// #define UME_ENGINE_TRACE(...) ::Ukemochi::Log::GetEngineLogger() -> trace(__VA_ARGS__)
-// #define UME_ENGINE_INFO(...)  ::Ukemochi::Log::GetEngineLogger() -> info(__VA_ARGS__)
-// #define UME_ENGINE_WARN(...)  ::Ukemochi::Log::GetEngineLogger() -> warn(__VA_ARGS__)
-// #define UME_ENGINE_ERROR(...) ::Ukemochi::Log::GetEngineLogger() -> error(__VA_ARGS__)
-// #define UME_ENGINE_FATAL(...) ::Ukemochi::Log::GetEngineLogger() -> fatal(__VA_ARGS__)
+ // Engine log macros
+ #define UME_ENGINE_TRACE(...) ::Ukemochi::Log::GetEngineLogger() -> trace(__VA_ARGS__)
+ #define UME_ENGINE_INFO(...)  ::Ukemochi::Log::GetEngineLogger() -> info(__VA_ARGS__)
+ #define UME_ENGINE_WARN(...)  ::Ukemochi::Log::GetEngineLogger() -> warn(__VA_ARGS__)
+ #define UME_ENGINE_ERROR(...) ::Ukemochi::Log::GetEngineLogger() -> error(__VA_ARGS__)
+ #define UME_ENGINE_FATAL(...) ::Ukemochi::Log::GetEngineLogger() -> critical(__VA_ARGS__)
 
-// // Client log marcros
-// #define UME_TRACE(...)        ::Ukemochi::Log::GetClientLogger() -> trace(__VA_ARGS__)
-// #define UME_INFO(...)         ::Ukemochi::Log::GetClientLogger() -> info(__VA_ARGS__)
-// #define UME_WARN(...)         ::Ukemochi::Log::GetClientLogger() -> warn(__VA_ARGS__)
-// #define UME_ERROR(...)        ::Ukemochi::Log::GetClientLogger() -> error(__VA_ARGS__)
-// #define UME_FATAL(...)        ::Ukemochi::Log::GetClientLogger() -> fatal(__VA_ARGS__)
-#define UME_ENGINE_TRACE(...) ::UME::Log::GetEngineLogger() -> trace(__VA_ARGS__)
-#define UME_ENGINE_INFO(...)  ::UME::Log::GetEngineLogger() -> info(__VA_ARGS__)
-#define UME_ENGINE_WARN(...)  ::UME::Log::GetEngineLogger() -> warn(__VA_ARGS__)
-#define UME_ENGINE_ERROR(...) ::UME::Log::GetEngineLogger() -> error(__VA_ARGS__)
-#define UME_ENGINE_FATAL(...) ::UME::Log::GetEngineLogger() -> critical(__VA_ARGS__)
-
-// Client log marcros
-#define UME_TRACE(...)        ::UME::Log::GetClientLogger() -> trace(__VA_ARGS__)
-#define UME_INFO(...)         ::UME::Log::GetClientLogger() -> info(__VA_ARGS__)
-#define UME_WARN(...)         ::UME::Log::GetClientLogger() -> warn(__VA_ARGS__)
-#define UME_ERROR(...)        ::UME::Log::GetClientLogger() -> error(__VA_ARGS__)
-#define UME_FATAL(...)        ::UME::Log::GetClientLogger() -> critical(__VA_ARGS__)
+ // Client log marcros
+ #define UME_TRACE(...)        ::Ukemochi::Log::GetClientLogger() -> trace(__VA_ARGS__)
+ #define UME_INFO(...)         ::Ukemochi::Log::GetClientLogger() -> info(__VA_ARGS__)
+ #define UME_WARN(...)         ::Ukemochi::Log::GetClientLogger() -> warn(__VA_ARGS__)
+ #define UME_ERROR(...)        ::Ukemochi::Log::GetClientLogger() -> error(__VA_ARGS__)
+ #define UME_FATAL(...)        ::Ukemochi::Log::GetClientLogger() -> critical(__VA_ARGS__)
+//#define UME_ENGINE_TRACE(...) ::UME::Log::GetEngineLogger() -> trace(__VA_ARGS__)
+//#define UME_ENGINE_INFO(...)  ::UME::Log::GetEngineLogger() -> info(__VA_ARGS__)
+//#define UME_ENGINE_WARN(...)  ::UME::Log::GetEngineLogger() -> warn(__VA_ARGS__)
+//#define UME_ENGINE_ERROR(...) ::UME::Log::GetEngineLogger() -> error(__VA_ARGS__)
+//#define UME_ENGINE_FATAL(...) ::UME::Log::GetEngineLogger() -> critical(__VA_ARGS__)
+//
+//// Client log marcros
+//#define UME_TRACE(...)        ::UME::Log::GetClientLogger() -> trace(__VA_ARGS__)
+//#define UME_INFO(...)         ::UME::Log::GetClientLogger() -> info(__VA_ARGS__)
+//#define UME_WARN(...)         ::UME::Log::GetClientLogger() -> warn(__VA_ARGS__)
+//#define UME_ERROR(...)        ::UME::Log::GetClientLogger() -> error(__VA_ARGS__)
+//#define UME_FATAL(...)        ::UME::Log::GetClientLogger() -> critical(__VA_ARGS__)
 
 // if dist build
 //#define CR_ENGINE_INFO

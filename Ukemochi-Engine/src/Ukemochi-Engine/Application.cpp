@@ -119,6 +119,9 @@ namespace Ukemochi {
 				gsm_next = GS_LEVEL1;
 				gsm_previous = gsm_current = gsm_next;
 				// If 'W' key is pressed, move forward
+				
+				
+				
 				UME_ENGINE_INFO("1 key is pressed");
 			}
 

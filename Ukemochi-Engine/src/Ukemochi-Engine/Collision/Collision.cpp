@@ -31,7 +31,7 @@ namespace Ukemochi
 	void Collision::Init()
 	{
 		// Get the screen width and height
-		UME::Application& app = UME::Application::Get();
+		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 	}
