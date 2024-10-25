@@ -367,12 +367,6 @@ void Renderer::render()
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		//// Apply scaling if enabled
-		//if (scale_enabled)
-		//	model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		//else
-		//	model = glm::scale(model, scale); // Use entity's original scale
-
 		// Check if this object is the player object
 		if (entity == playerObject->GetInstanceID() && scale_enabled) {
 			// Apply scaling only to the player entity

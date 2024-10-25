@@ -214,10 +214,20 @@ private:
 	GLfloat lastFrame = 0.0f;
 
 	// Animation control
-	float elapsedTime = 0.0f;  // Time since last frame
-	float frameDuration = 0.1f;  // Time per frame (0.1 seconds per frame)
-	int currentFrame = 0;  // Start at the first frame
-	int totalFrames = 8;   // Total number of frames in the sprite sheet
+	struct Animation {
+		int totalFrames;
+		int currentFrame;
+		float frameDuration;
+		float elapsedTime;
+		int frameWidth;
+		int frameHeight;
+		int totalWidth;
+		int totalHeight;
+		std::string texturePath;
+	};
+
+	Animation idleAnimation;
+	Animation runningAnimation;
 
 	void initBoxBuffers();
 
@@ -249,5 +259,6 @@ private:
 			std::cout << "Before render, playerObject: " << playerObject << std::endl;
 		}
 
+	
 };
 #endif
