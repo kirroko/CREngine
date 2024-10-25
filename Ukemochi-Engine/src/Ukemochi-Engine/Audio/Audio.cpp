@@ -293,6 +293,14 @@ namespace Ukemochi
         }
     }
 
+    void Audio::StopAudioGroup(int groupIndex)
+    {
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
+        {
+            pChannelGroups[groupIndex]->stop();
+        }
+    }
+
     /*!***********************************************************************
     \brief
     Play all sounds within a specific group.

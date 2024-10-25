@@ -19,6 +19,8 @@ namespace Ukemochi
 
 	extern int gsm_current, gsm_previous, gsm_next;
 
+	extern int es_current;
+
 	extern FP gsm_fpLoad, gsm_fpInitialize, gsm_fpUpdate, gsm_fpDraw, gsm_fpFree, gsm_fpUnload;
 
 	void GSM_Initialize(int startingState);//initialize the state manager

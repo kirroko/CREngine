@@ -21,8 +21,14 @@ namespace Ukemochi
 		GS_LEVEL1,
 		GS_LEVEL2,
 
+		GS_PLAY,
 		GS_PAUSED,
-		GS_QUIT,
 		GS_RESTART
+	};
+	enum ENGINE_STATES
+	{
+		ES_ENGINE = 0,
+		ES_PLAY,
+		ES_QUIT
 	};
 }

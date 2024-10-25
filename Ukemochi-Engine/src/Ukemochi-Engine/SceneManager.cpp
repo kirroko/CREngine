@@ -9,6 +9,7 @@ namespace Ukemochi
 {
 	SceneManager::SceneManager()
 	{
+		es_current = ES_ENGINE;
 		//Audio audio;
 		// Set up ECS
 		ECS::GetInstance().Init();
@@ -49,12 +50,28 @@ namespace Ukemochi
 		ECS::GetInstance().SetSystemSignature<Collision>(sig);
 	
 		//init GSM
-		GSM_Initialize(GS_ENGINE);
+		GSM_Initialize(GS_LEVEL1);
 	}
 
 	SceneManager::~SceneManager()
 	{
-	
+
+	}
+
+	void SceneManager::LoadAndInitScene()
+	{
+		//current state != restart
+		if (gsm_current != GS_STATES::GS_RESTART)
+		{
+			LoadScene();
+		}
+		else
+		{
+			gsm_next = gsm_current = gsm_previous;
+		}
+
+		//Init Scene
+		InitScene();
 	}
 
 	void SceneManager::LoadScene()
@@ -70,13 +87,16 @@ namespace Ukemochi
 		//if exist
 		
 		//LoadSaveFile(sceneFile);
-
-		// Initialize the scene (add entities, etc.)
-		//InitScene();
 	}
 
 	void SceneManager::LoadSaveFile(const std::string& sceneFile)
 	{
+
+
+
+
+
+
 		// Load scene from file
 		std::ifstream file(sceneFile);
 		if (!file.is_open())
@@ -134,6 +154,12 @@ namespace Ukemochi
 	void SceneManager::Update(double deltaTime)
 	{
 		(void)deltaTime;
+		//Draw
+		gsm_fpDraw();
+	}
+
+	void SceneManager::UpdateScenes()
+	{
 		//Update
 		gsm_fpUpdate();
 		//update ECS

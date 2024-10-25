@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"
 #include "../Graphics/Renderer.h"
 #include "../Audio/Audio.h"
+#include "../Game/GSM.h"
 
 namespace Ukemochi
 {
@@ -59,8 +60,11 @@ namespace Ukemochi
 					CollisionResponse_BoxBox(box, box2, trans, trans2, rb, rb2);
 
 					// Play a sound effect on collision
-					if (!Audio::GetInstance().IsPlaying(HIT))
-						Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+					if (es_current == ES_PLAY)
+					{
+						if (!Audio::GetInstance().IsPlaying(HIT))
+							Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+					}
 				}
 			}
 
