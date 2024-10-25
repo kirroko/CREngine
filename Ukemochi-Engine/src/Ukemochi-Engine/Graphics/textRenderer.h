@@ -7,7 +7,7 @@
 #include <../vendor/glm/glm/glm.hpp>
 #include <map>
 #include "shaderClass.h"
-#include "Camera2D.h"
+
 
 struct Character {
 	GLuint TextureID;

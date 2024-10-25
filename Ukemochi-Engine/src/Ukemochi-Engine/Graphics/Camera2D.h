@@ -1,6 +1,9 @@
 #ifndef CAMERA_CLASS_H
 #define CAMERA_CLASS_H
-#include "Renderer.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include "../vendor/glm/glm/glm.hpp"
+#include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include "../Input/Input.h"
 #include "../ECS/Systems.h"
 

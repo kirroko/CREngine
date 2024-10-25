@@ -1,6 +1,6 @@
 #include "PreCompile.h"
 #include "TextRenderer.h"
-
+#include "Camera2D.h"
 TextRenderer::TextRenderer(GLuint screenWidth, GLuint screenHeight)
 	: screenWidth(screenWidth), screenHeight(screenHeight)
 {
