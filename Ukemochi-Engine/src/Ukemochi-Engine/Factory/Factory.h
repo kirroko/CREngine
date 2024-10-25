@@ -47,12 +47,5 @@ namespace Ukemochi
 		 * @return GameObject& a reference to the cloned GameObject
 		 */
 		static GameObject CloneObject(GameObject& targetObject);
-
-		/**
-		 * @brief Destroy object
-		 * 
-		 * @param targetObject the gameObject to destroy
-		 */
-		static void DestroyObject(GameObject& targetobject);
 	};
 };

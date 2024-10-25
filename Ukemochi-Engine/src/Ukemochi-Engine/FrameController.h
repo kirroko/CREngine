@@ -41,9 +41,6 @@ namespace Ukemochi {
         void Update(); // Call this method every frame
         double GetFPS() const; // Get the current FPS
         double GetDeltaTime() const; // Gets the delta time between frames
-        double GetFixedDeltaTime() const; // Gets the fixed delta time
-        int GetCurrentNumberOfSteps() const; // Gets the current number of steps processed.
-        void SetCurrentNumberOfSteps(int steps); // Sets the current number of steps processed.
 
     private:
         double m_FPS;
@@ -52,8 +49,6 @@ namespace Ukemochi {
         double m_DeltaTime; // Delta time between frames
         double m_FPSInterval; // Interval to update FPS (in seconds)
         double m_LastFPSUpdateTime; // Time of last FPS update
-        int m_CurrentNumberOfSteps; // Holds the current number of steps processed
-        const double m_FixedDeltaTime = 1.0 / 60.0; // Targeted fixed delta time
     };
 
     extern UME_API FrameRateController g_FrameRateController; // Declare the global instance

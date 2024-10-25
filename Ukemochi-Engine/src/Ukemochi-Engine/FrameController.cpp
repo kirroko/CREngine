@@ -30,8 +30,7 @@ namespace Ukemochi {
         m_FrameCount(0), // Initialize frame count to 0
         m_FPSInterval(1.0), // FPS update interval (1 second)
         m_LastFPSUpdateTime(glfwGetTime()), // Track last FPS update time
-        m_DeltaTime(0.0), // Initialize delta time to 0.0
-        m_CurrentNumberOfSteps(0) // Holds the current number of steps processed
+        m_DeltaTime(0.0) // Initialize delta time to 0.0
     {
     }
 
@@ -73,24 +72,6 @@ namespace Ukemochi {
     \return The time (in seconds) since the last frame was rendered.
     */
     double FrameRateController::GetDeltaTime() const { return m_DeltaTime; }
-    // Gets the fixed delta time.
-    /*!
-    \brief Retrieves the time step value that is used for fixed time-step updates in the system.
-    \return The fixed delta time value.
-    */
-    double FrameRateController::GetFixedDeltaTime() const { return m_FixedDeltaTime; }
-    // Gets the current number of steps processed.
-    /*!
-    \brief the number of steps that have been processed in the current frame.
-    \return The current number of steps.
-    */
-    int FrameRateController::GetCurrentNumberOfSteps() const { return m_CurrentNumberOfSteps; }
-    // Sets the current number of steps processed.
-    /*!
-    \brief Update the current number of steps processed for the current frame.
-    \return The new number of steps to set.
-    */
-    void FrameRateController::SetCurrentNumberOfSteps(int steps) { m_CurrentNumberOfSteps = steps; }
 
     // Define the global instance
     FrameRateController g_FrameRateController;

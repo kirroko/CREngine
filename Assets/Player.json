@@ -19,13 +19,6 @@
                 "Mass": 1,
                 "Inverse Mass": 1,
                 "Linear Drag": 0.9,
-                "Angle": 0,
-                "Angular Velocity": 0,
-                "Angular Acceleration": 0,
-                "Torque": 0,
-                "Inertia Mass": 1,
-                "Inverse Inertia Mass": 1,
-                "Angular Drag": 0.9,
                 "use_gravity": false,
                 "is_kinematic": false
             },
@@ -35,7 +28,7 @@
                 "Max": [1, 1],
                 "Collision Flag" : 0,
                 "is_trigger" : false,
-                "Tag" : "Player"
+                "is_player" : true
             },
             {
                 "Name": "SpriteRender",

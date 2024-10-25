@@ -4,7 +4,7 @@
 \file       MathUtils.tpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 12, 2024
 \brief      This file contains the definition of the math utility functions.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -91,37 +91,5 @@ namespace Ukemochi
             return max;
         else
             return value;
-    }
-
-    /*!***********************************************************************
-    \brief
-     Convert a value from radian to degree.
-    \tparam[in] T
-     The type of input value.
-    \param[in] radian
-     The value to be converted.
-    \return
-     The value in degree.
-    *************************************************************************/
-    template<typename T>
-    T degree(const T& radian)
-    {
-        return radian * (static_cast<T>(180.0) / PI<T>);
-    }
-
-    /*!***********************************************************************
-    \brief
-     Convert a value from degree to radian.
-    \tparam[in] T
-     The type of input value.
-    \param[in] degree
-     The value to be converted.
-    \return
-     The value in radian.
-    *************************************************************************/
-    template<typename T>
-    T radian(const T& degree)
-    {
-        return degree * PIOVER180<T>;
     }
 }

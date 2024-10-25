@@ -4,7 +4,7 @@
 \file       MathUtils.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 12, 2024
 \brief      This file contains the declaration of the math utility functions.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -18,19 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    /*!***********************************************************************
-    \brief
-     PI mathematical constant.
-    *************************************************************************/
-    template <typename T>
-    static constexpr T PI = static_cast<T>(3.14159265358979323846);
-
-    /*!***********************************************************************
-    \brief
-     PI / 180 constant.
-    *************************************************************************/
-    template <typename T>
-    static constexpr T PIOVER180 = static_cast<T>(0.0174532925199432);
+    const float PI = 3.14159265358979323846f;
+    const float PIOVER180 = 0.0174532925199432f;
 
     /*!***********************************************************************
     \brief
@@ -91,32 +80,6 @@ namespace Ukemochi
     *************************************************************************/
     template<typename T>
     T clamp(const T& value, const T& min, const T& max);
-
-    /*!***********************************************************************
-    \brief
-     Convert a value from radian to degree.
-    \tparam[in] T
-     The type of input value.
-    \param[in] radian
-     The value to be converted.
-    \return
-     The value in degree.
-    *************************************************************************/
-    template<typename T>
-    T degree(const T& radian);
-
-    /*!***********************************************************************
-    \brief
-     Convert a value from degree to radian.
-    \tparam[in] T
-     The type of input value.
-    \param[in] degree
-     The value to be converted.
-    \return
-     The value in radian.
-    *************************************************************************/
-    template<typename T>
-    T radian(const T& degree);
 }
 
 #include "MathUtils.tpp"

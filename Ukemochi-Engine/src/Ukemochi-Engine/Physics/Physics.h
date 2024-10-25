@@ -4,7 +4,7 @@
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 12, 2024
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -29,9 +29,15 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
+     Normalized bounding box (width and height) sizes - BoxCollider2D collision data.
+    *************************************************************************/
+    const float BOUNDING_BOX_SIZE = 0.5f;
+
+    /*!***********************************************************************
+    \brief
      Maximum velocity constant for all entities.
     *************************************************************************/
-    const float MAX_VELOCITY = 300.0f; // Adjust this value for your desired max velocity
+    const float MAX_VELOCITY = 400.0f; // Adjust this value for your desired max velocity
 
     /*!***********************************************************************
     \brief
@@ -80,47 +86,8 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Add torque to the entity's rigidbody.
-        \param[out] rb
-         The rigidbody of the entity.
-        \param[in] torque
-         The amount of torque to add.
-        *************************************************************************/
-        void AddTorque(Rigidbody2D& rb, const float torque);
-
-        /*!***********************************************************************
-        \brief
-         Remove torque from the entity's rigidbody.
-        \param[in/out] rb
-         The rigidbody of the entity.
-        *************************************************************************/
-        void RemoveTorque(Rigidbody2D& rb);
-
-        /*!***********************************************************************
-        \brief
          Update the physics of all the entities.
         *************************************************************************/
         void UpdatePhysics();
-
-    private:
-        /*!***********************************************************************
-        \brief
-         Update the linear physics of all the entities.
-        \param[in/out] rb
-         The rigidbody of the entity.
-        \param[in/out] trans
-         The transform of the entity.
-        *************************************************************************/
-        void UpdateLinearPhysics(Rigidbody2D& rb, Transform& trans);
-
-        /*!***********************************************************************
-        \brief
-         Update the rotational physics of all the entities.
-        \param[in/out] rb
-         The rigidbody of the entity.
-        \param[in/out] trans
-         The transform of the entity.
-        *************************************************************************/
-        void UpdateRotationalPhysics(Rigidbody2D& rb, Transform& trans);
     };
 }

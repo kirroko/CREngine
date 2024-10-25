@@ -15,8 +15,8 @@
 #include "../vendor/glm/glm/glm.hpp"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
-#include <cmath>
-#include <vector>
+#include <cmath> // Might need to remove later on
+#include <vector> // Might need to remove later on
 #include <algorithm>
 
 #include "shaderClass.h"
@@ -25,11 +25,6 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
-#include "Camera2D.h"
-
-// Froward
-class TextRenderer;
-
 
  /*!
   * @class Renderer
@@ -229,6 +224,9 @@ private:
 	float frameDuration = 0.1f;  // Time per frame (0.1 seconds per frame)
 	int currentFrame = 0;  // Start at the first frame
 	int totalFrames = 8;   // Total number of frames in the sprite sheet
+	/*int frameHeight = 64;
+	int frameWidth = 64;*/
+	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth);
 
 	void initBoxBuffers();
 
@@ -238,7 +236,7 @@ private:
 
 	void initCircleOutlineBuffers(GLuint segments = 1000);
 
-	void initAnimationBuffers();
+	void initAnimationBuffers(GLfloat width, GLfloat height);
 
 	enum objectIDs {
 		BOX_VAO = 0,
@@ -260,7 +258,5 @@ private:
 	void renderScreenQuad();
 
 
-	
-	TextRenderer* textRenderer;
 };
 #endif
