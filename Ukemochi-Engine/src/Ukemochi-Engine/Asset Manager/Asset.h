@@ -3,7 +3,7 @@
 #include "PreCompile.h"
 #include <filesystem>
 
-enum ASSET_TYPE{ Text, JSON, Sprite ,Audio, Invalid };
+enum ASSET_TYPE { Text, JSON, Sprite, Audio, Invalid };
 
 namespace Ukemochi
 {
@@ -18,7 +18,7 @@ namespace Ukemochi
 		Asset(std::string file_path, size_t id);
 		~Asset() = default;
 
-		ASSET_TYPE GetType();
+		ASSET_TYPE GetType() const;
 	};
 
 	Asset::Asset(std::string file_path, size_t id) : m_asset_id(id), m_path(file_path), m_type(Invalid)
@@ -49,7 +49,7 @@ namespace Ukemochi
 		}
 	}
 
-	ASSET_TYPE Asset::GetType()
+	ASSET_TYPE Asset::GetType() const
 	{
 		return m_type;
 	}
