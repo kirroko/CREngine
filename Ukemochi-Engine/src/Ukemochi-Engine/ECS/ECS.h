@@ -30,11 +30,15 @@ namespace Ukemochi
 		std::unique_ptr<EntityManager> m_EntityManager;
 		std::unique_ptr<SystemManager> m_SystemManager;
 
+		ECS() = default;
+		~ECS() = default;
+		ECS(const ECS&) = delete;
+		ECS& operator=(const ECS&) = delete;
 	public:
 		static ECS& GetInstance()
 		{
-			static std::unique_ptr<ECS> instance(new ECS());
-			return *instance;
+			static ECS instance;
+			return instance;
 		}
 
 		// Create pointers to each manager

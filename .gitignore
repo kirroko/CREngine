@@ -17,5 +17,6 @@
 *.recipe
 *.html
 bin
+bin-int
 Debug
 Release

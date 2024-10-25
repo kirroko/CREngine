@@ -5,11 +5,10 @@
 \author     Hurng Kai Rui, h.kairui, 2301278
 \par        email: h.kairui\@digipen.edu
 \date       Sept 14, 2024
-\brief      This file defines the logging interface for the Ukemochi 
-            Engine, providing static methods for logging messages 
-            from both the engine and client(game) perspectives using 
-            the spdlog library.
-
+\brief      This file defines the logging interface for the Ukemochi
+			Engine, providing static methods for logging messages
+			from both the engine and client(game) perspectives using
+			the spdlog library.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -50,7 +49,6 @@ namespace Ukemochi {
 		static std::shared_ptr<spdlog::logger> s_EngineLogger; ///< Logger for engine messages
 		static std::shared_ptr<spdlog::logger> s_ClientLogger; ///< Logger for client/game messages
 	};
-
 }
 
 #pragma warning(pop)  // Re-enable the warning
@@ -71,4 +69,3 @@ namespace Ukemochi {
 
 // if dist build
 //#define CR_ENGINE_INFO
-
