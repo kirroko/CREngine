@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Event.h"
 
 
-namespace UME {
+namespace Ukemochi {
 	/*!
 	\brief Base class for all keyboard events.
 

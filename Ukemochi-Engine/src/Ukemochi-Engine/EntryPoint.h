@@ -19,18 +19,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #ifdef UME_PLATFORM_WINDOWS
 
-extern UME::Application* UME::CreateApplication();
+extern Ukemochi::Application* Ukemochi::CreateApplication();
 
 int main(int argc, char** argv)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	// Initialize logging
-	UME::Log::Init();
+	Ukemochi::Log::Init();
 	UME_ENGINE_WARN("Inititalized Log");
 
 	// Create and run the application
-	auto app = UME::CreateApplication();
+	auto app = Ukemochi::CreateApplication();
 	app->GameLoop();
 	// Cleanup
 	delete app;

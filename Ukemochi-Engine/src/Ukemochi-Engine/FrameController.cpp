@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "FrameController.h"
 #include <GLFW/glfw3.h> // For glfwGetTime()
 
-namespace UME {
+namespace Ukemochi {
 
     // Constructor initializes the FrameRateController
     FrameRateController::FrameRateController()

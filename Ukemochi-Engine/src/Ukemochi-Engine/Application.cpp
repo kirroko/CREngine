@@ -39,7 +39,7 @@ DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
-namespace UME {
+namespace Ukemochi {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 	Application* Application::s_Instance = nullptr;
 
@@ -68,8 +68,7 @@ namespace UME {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
-		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-		imguiInstance.ImGuiInit(glfwWindow);
+
 	}
 
 	Application::~Application()
@@ -105,6 +104,8 @@ namespace UME {
 
 		//Set up SceneManager
 		SceneManager sceneManger;
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 		//while engine running
 		while (gsm_current != GS_STATES::GS_QUIT && m_running)
 		{
@@ -215,6 +216,7 @@ namespace UME {
 
 					//************ Render IMGUI ************
 					imguiInstance.NewFrame();
+					imguiInstance.ShowEntityManagementUI();
 					imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					//************ Render IMGUI ************

@@ -22,7 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 
-namespace UME
+
+namespace Ukemochi
 {
 	class UME_API UseImGui
 	{
@@ -49,6 +50,7 @@ namespace UME
 		*/
 		static void ImGuiClean();
 
+		static void ShowEntityManagementUI();
 	private:
 		// Mouse and keyboard event handlers
 		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);
@@ -60,6 +62,7 @@ namespace UME
 		bool IsKeyTypeEvent(KeyTypedEvent& e);
 		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
+		void LoadPlayer(const std::string& player_data);
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 	};
 }

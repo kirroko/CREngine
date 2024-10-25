@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(push)
 #pragma warning(disable : 4251)  // Disable warning C4251
 
-namespace UME {
+namespace Ukemochi {
 
 	class UME_API Log
 	{
@@ -56,18 +56,18 @@ namespace UME {
 #pragma warning(pop)  // Re-enable the warning
 
 // Engine log macros
-#define UME_ENGINE_TRACE(...) ::UME::Log::GetEngineLogger() -> trace(__VA_ARGS__)
-#define UME_ENGINE_INFO(...)  ::UME::Log::GetEngineLogger() -> info(__VA_ARGS__)
-#define UME_ENGINE_WARN(...)  ::UME::Log::GetEngineLogger() -> warn(__VA_ARGS__)
-#define UME_ENGINE_ERROR(...) ::UME::Log::GetEngineLogger() -> error(__VA_ARGS__)
-#define UME_ENGINE_FATAL(...) ::UME::Log::GetEngineLogger() -> fatal(__VA_ARGS__)
+#define UME_ENGINE_TRACE(...) ::Ukemochi::Log::GetEngineLogger() -> trace(__VA_ARGS__)
+#define UME_ENGINE_INFO(...)  ::Ukemochi::Log::GetEngineLogger() -> info(__VA_ARGS__)
+#define UME_ENGINE_WARN(...)  ::Ukemochi::Log::GetEngineLogger() -> warn(__VA_ARGS__)
+#define UME_ENGINE_ERROR(...) ::Ukemochi::Log::GetEngineLogger() -> error(__VA_ARGS__)
+#define UME_ENGINE_FATAL(...) ::Ukemochi::Log::GetEngineLogger() -> fatal(__VA_ARGS__)
 
 // Client log marcros
-#define UME_TRACE(...)        ::UME::Log::GetClientLogger() -> trace(__VA_ARGS__)
-#define UME_INFO(...)         ::UME::Log::GetClientLogger() -> info(__VA_ARGS__)
-#define UME_WARN(...)         ::UME::Log::GetClientLogger() -> warn(__VA_ARGS__)
-#define UME_ERROR(...)        ::UME::Log::GetClientLogger() -> error(__VA_ARGS__)
-#define UME_FATAL(...)        ::UME::Log::GetClientLogger() -> fatal(__VA_ARGS__)
+#define UME_TRACE(...)        ::Ukemochi::Log::GetClientLogger() -> trace(__VA_ARGS__)
+#define UME_INFO(...)         ::Ukemochi::Log::GetClientLogger() -> info(__VA_ARGS__)
+#define UME_WARN(...)         ::Ukemochi::Log::GetClientLogger() -> warn(__VA_ARGS__)
+#define UME_ERROR(...)        ::Ukemochi::Log::GetClientLogger() -> error(__VA_ARGS__)
+#define UME_FATAL(...)        ::Ukemochi::Log::GetClientLogger() -> fatal(__VA_ARGS__)
 
 // if dist build
 //#define CR_ENGINE_INFO

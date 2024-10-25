@@ -114,6 +114,18 @@ public:
 	 */
 	GLboolean debug_mode_enabled = false;
 
+	void setupFramebuffer();
+
+	void beginFramebufferRender();
+
+	void endFramebufferRender();
+
+	void renderToFramebuffer();
+
+	GLuint getTextureColorBuffer() const;
+
+	void resizeFramebuffer(int width, int height);
+
 private:
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
@@ -233,5 +245,18 @@ private:
 		CIRCLE_OUTLINE = 3,
 		ANIMATION_VAO = 4
 	};
+
+	GLuint framebuffer;
+
+	GLuint textureColorbuffer;
+
+	GLuint rbo;
+	std::unique_ptr<VAO> screenQuadVAO;
+	std::unique_ptr<VBO> screenQuadVBO;
+	std::unique_ptr<Shader> framebufferShader;
+	void initScreenQuad();
+	void renderScreenQuad();
+
+
 };
 #endif

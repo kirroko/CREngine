@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "KeyCode.h"
 #include <PreCompile.h>
 
-namespace UME {
+namespace Ukemochi {
 	/*!
 	\class Input
 	\brief A utility class for handling input operations such as key presses and mouse actions.

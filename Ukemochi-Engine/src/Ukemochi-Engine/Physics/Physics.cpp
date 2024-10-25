@@ -119,7 +119,7 @@ namespace Ukemochi
             else*/
 
             // Apply acceleration to the velocity (dv = a * dt)
-            rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+            rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(Ukemochi::g_FrameRateController.GetDeltaTime());
 
             // Clamp the velocity to prevent exceeding max velocity
             float current_vel = Vec2Length(rb.velocity);
@@ -134,7 +134,7 @@ namespace Ukemochi
             }
 
             // Apply velocity to the position (dx = v * dt)
-            rb.position = rb.position + rb.velocity * static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+            rb.position = rb.position + rb.velocity * static_cast<float>(Ukemochi::g_FrameRateController.GetDeltaTime());
 
             // Update transform position with the physics position
             trans.position = rb.position;

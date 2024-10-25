@@ -4,10 +4,12 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "ImGui/ImGuiCore.h"
+
+
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-namespace UME {
+namespace Ukemochi {
 
 
 	class UME_API Application

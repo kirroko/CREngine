@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/Event.h"
 #include <../vendor/GLFW/include/GLFW/glfw3.h>
 
-namespace UME {
+namespace Ukemochi {
 
 	/*!
 	\brief Structure for window properties including title, width, and height.

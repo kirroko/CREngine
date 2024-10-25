@@ -101,7 +101,7 @@ namespace Ukemochi
 
 			// Step 2: Initialize and calculate the new velocity of Vb
 			firstTimeOfCollision = 0.0f;
-			float tLast = static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+			float tLast = static_cast<float>(Ukemochi::g_FrameRateController.GetDeltaTime());
 			Vec2 vRel = { vel2.x - vel1.x, vel2.y - vel1.y };
 
 			// Step 3: Working with one dimension (x-axis)
