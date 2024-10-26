@@ -301,7 +301,7 @@ namespace Ukemochi
 
 		// Animation
 		// Check for slow motion toggle key (M key in this case)
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_Z)) 
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_Z)) 
 		{
 			ECS::GetInstance().GetSystem<Renderer>()->toggleSlowMotion();
 		}
