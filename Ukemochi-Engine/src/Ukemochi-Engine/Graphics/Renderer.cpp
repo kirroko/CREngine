@@ -23,6 +23,13 @@ Renderer::Renderer()
 	vaos.clear();
 	vbos.clear();
 	ebos.clear();
+
+	framebuffer = 0;
+	textureColorbuffer = 0;
+	rbo = 0;
+	screenQuadVAO = nullptr;
+	screenQuadVBO = nullptr;
+	framebufferShader = nullptr;
 	textRenderer = nullptr;
 	playerObject = nullptr;
 };
@@ -59,7 +66,9 @@ void Renderer::init()
 	// Load Buffers for debug/wireframe circle drawing
 	initCircleOutlineBuffers();
 
-	// Load Buffers for animation
+
+	setupFramebuffer();
+	initScreenQuad();
 	initAnimationBuffers();
 
 	// Text Rendering (Test)
@@ -79,6 +88,123 @@ void Renderer::init()
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 }
 
+void Renderer::setupFramebuffer()
+{
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+
+	// Create a color attachment texture
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen_width, screen_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Framebuffer setup complete" << std::endl;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::resizeFramebuffer(int width, int height) {
+	// Resize color texture
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+	// Resize renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+	//screen_width = width;
+	//screen_height = height;
+}
+
+void Renderer::initScreenQuad()
+{
+	float quadVertices[] = {
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	screenQuadVAO = std::make_unique<VAO>();
+	screenQuadVBO = std::make_unique<VBO>(quadVertices, sizeof(quadVertices));
+
+	screenQuadVAO->Bind();
+	screenQuadVBO->Bind();
+	screenQuadVAO->LinkAttrib(*screenQuadVBO, 0, 2, GL_FLOAT, 4 * sizeof(float), (void*)0);
+	screenQuadVAO->LinkAttrib(*screenQuadVBO, 1, 2, GL_FLOAT, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	// Create a shader for rendering the framebuffer texture
+	framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+}
+
+void Renderer::beginFramebufferRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::endFramebufferRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::renderScreenQuad()
+{
+	framebufferShader->Activate();
+	screenQuadVAO->Bind();
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Renderer::renderToFramebuffer()
+{
+	beginFramebufferRender();
+
+	// Add debug information
+	std::cout << "Begin framebuffer render" << std::endl;
+	std::cout << "Number of entities: " << m_Entities.size() << std::endl;
+
+	// Perform your regular rendering here
+	render();
+
+	std::cout << "End framebuffer render" << std::endl;
+
+	endFramebufferRender();
+
+	// Now render the framebuffer texture to the screen
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//renderScreenQuad();
+	//glEnable(GL_DEPTH_TEST);
+}
+
+GLuint Renderer::getTextureColorBuffer() const
+{
+	return textureColorbuffer;  // Assuming this is your framebuffer's color texture
+}
 
 void Renderer::initBoxBuffers()
 {
@@ -345,9 +471,14 @@ void Renderer::render()
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
 
+
+	std::cout << "Begin render" << std::endl;
+	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
+
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
+		std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
@@ -473,6 +604,17 @@ void Renderer::cleanUp()
 		shaderProgram = nullptr;
 	}
 
+	if (framebuffer)
+		glDeleteFramebuffers(1, &framebuffer);
+	framebuffer = 0;
+
+	if (textureColorbuffer)
+		glDeleteTextures(1, &textureColorbuffer);
+	textureColorbuffer = 0;
+
+	if (rbo)
+		glDeleteRenderbuffers(1, &rbo);
+	rbo = 0;
 	if (textRenderer)
 	{
 		delete textRenderer;

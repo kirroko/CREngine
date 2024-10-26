@@ -81,6 +81,21 @@ namespace Ukemochi
 			});
 		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
 
+		//// ANIMATION OBJECT
+		//GameObject animation = GameObjectFactory::CreateObject();
+		//animation.AddComponent(Transform{
+		//	Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		//	ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+		//	0,
+		//	Vec2{SPRITE_SCALE, SPRITE_SCALE}
+		//	});
+		//animation.AddComponent(SpriteRender{
+		//		"../Assets/Textures/Bunny_Right_Sprite.png",
+		//		SPRITE_SHAPE::BOX,
+		//		0,
+		//		true
+		//	});
+
 		// PLAYER OBJECT
 		player_obj = GameObjectFactory::CreateObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
@@ -188,6 +203,15 @@ namespace Ukemochi
 				true
 			});
 
+		//// BACKGROUND 
+		//GameObject level_background = GameObjectFactory::CreateObject();
+		//level_background.AddComponent(Transform{
+		//		Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+		//		ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+		//		0,
+		//		Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
+		//	});
+		//level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
 		// Circle Creation for Testing
 		/*GameObject circle = GameObjectFactory::CreateObject();
 		circle.AddComponent(Transform{
@@ -208,61 +232,61 @@ namespace Ukemochi
 		// Player Inputs for movement
 		auto& player_rb = player_obj.GetComponent<Rigidbody2D>();
 		// Press 'W' or up key to move the player up
-		if (UME::Input::IsKeyPressed(UME_KEY_W))
+		if (Input::IsKeyPressed(UME_KEY_W))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
 		// Press 'S' or down key to move the player down
-		else if (UME::Input::IsKeyPressed(UME_KEY_S))
+		else if (Input::IsKeyPressed(UME_KEY_S))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
 
 		// Press 'A' or left key to move the player left
-		if (UME::Input::IsKeyPressed(UME_KEY_A))
+		if (Input::IsKeyPressed(UME_KEY_A))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
 		// Press 'D' or right key to move the player to the right
-		else if (UME::Input::IsKeyPressed(UME_KEY_D))
+		else if (Input::IsKeyPressed(UME_KEY_D))
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
 
 		// Player Input for rotation, to test rotate physics
-		if (UME::Input::IsKeyPressed(UME_KEY_R))
+		if (Input::IsKeyPressed(UME_KEY_R))
 			ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
 
 		// Renderer Inputs
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_T))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
-		else if (UME::Input::IsKeyTriggered(GLFW_KEY_Y))
+		else if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_Y))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
-		else if (UME::Input::IsKeyTriggered(GLFW_KEY_U))
+		else if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_U))
 			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled);
 		
 		// Audio Inputs
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
 		{
 			audioVolume -= 0.02f;
 			audioVolume = audioVolume < 0.f ? 0.f : audioVolume;
 			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_O))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_O))
 		{
 			audioVolume += 0.02f;
 			audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
 			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
-		if (UME::Input::IsKeyPressed(GLFW_KEY_M))
+		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
 		{
 			Audio::GetInstance().StopAllSoundsInGroup(LEVEL1);
 		}
-		if (UME::Input::IsKeyPressed(GLFW_KEY_N))
+		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_N))
 		{
 			Audio::GetInstance().PlayAllSoundsInGroup(LEVEL1);
 		}
 
 		// Game Object Inputs
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_L)) //test run_time cloning
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_L)) //test run_time cloning
 		{
 			std::cout << "Cloning Mob Object\n";
 			GameObject clone = GameObjectFactory::CloneObject(worm_0);
@@ -300,8 +324,7 @@ namespace Ukemochi
 	void Level1_Draw()//rendering of the game for Level1
 	{
 		// Render the entities
-		ECS::GetInstance().GetSystem<Renderer>()->render();
-
+		ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
 	}
 
 	void Level1_Free()//release unused assets/variable memories
