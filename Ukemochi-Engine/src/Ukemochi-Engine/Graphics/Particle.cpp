@@ -2,7 +2,6 @@
 #include "Particle.h"
 #include "Texture.h"
 #include "shaderClass.h"
-#include "../Factory/GameObject.h"
 #include "../ECS/Components.h"
 #include "../Factory/Factory.h"
 
@@ -41,14 +40,16 @@ void ParticleSystem::init()
     }
 }
 
-void ParticleSystem::update(GLfloat dt, GameObject& object, GLuint newParticles, glm::vec2 offset)
+void ParticleSystem::update(GLfloat dt, glm::vec2 position, glm::vec2 velocity, GLuint newParticles, glm::vec2 offset)
 {
+    // Add new particles based on newParticles count
     for (GLuint i = 0; i < newParticles; i++)
     {
         GLuint unusedParticle = this->firstUnusedParticle();
-        this->respawnParticle(this->particles[unusedParticle], object, offset);
+        this->respawnParticle(this->particles[unusedParticle], position, velocity, offset);
     }
 
+    // Update all particles
     for (GLuint i = 0; i < this->amount; i++)
     {
         Particle& p = this->particles[i];
@@ -106,15 +107,14 @@ GLuint ParticleSystem::firstUnusedParticle()
     return 0;
 }
 
-void ParticleSystem::respawnParticle(Particle& particle, GameObject& object, glm::vec2 offset)
+void ParticleSystem::respawnParticle(Particle& particle, glm::vec2 position, glm::vec2 velocity, glm::vec2 offset)
 {
-    /*GLfloat random = ((rand() % 100) - 50) / 10.f;
-    GLfloat rColor = 0.5f + ((rand() % 100) / 100.f);
+    float random = ((rand() % 100) - 50) / 10.0f;
+    float rColor = 0.5f + ((rand() % 100) / 100.0f);
 
-    auto& transform = object.
-    
-    particle.Position = transform.position + random + offset;
+    // Set the position and other properties of the particle
+    particle.Position = position + random + offset;
     particle.Color = glm::vec4(rColor, rColor, rColor, 1.0f);
     particle.Life = 1.0f;
-    particle.Velocity = transform.velocity * 0.1f;*/
+    particle.Velocity = velocity * 0.1f;
 }

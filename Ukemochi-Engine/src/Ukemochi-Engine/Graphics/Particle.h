@@ -8,7 +8,6 @@
 
 class Texture;
 class Shader;
-class GameObject;
 class VAO;
 class VBO;
 
@@ -23,7 +22,7 @@ class ParticleSystem {
 public:
 	ParticleSystem(Shader* Shader, Texture* Texture, GLuint amount);
 
-	void update(GLfloat dt, GameObject& object, GLuint newParticles, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
+	void update(GLfloat dt, glm::vec2 position, glm::vec2 velocity, GLuint newParticles, glm::vec2 offset);
 	void draw();
 
 private:
@@ -36,7 +35,7 @@ private:
 
 	void init();
 	GLuint firstUnusedParticle();
-	void respawnParticle(Particle& particle, GameObject& object, glm::vec2 offset);
+	void respawnParticle(Particle& particle, glm::vec2 position, glm::vec2 velocity, glm::vec2 offset);
 
 };
 #endif // !PARTICLE_CLASS_H

@@ -24,13 +24,16 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include "Particle.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Camera2D.h"
-#include <Ukemochi-Engine/Factory/GameObject.h>
+#include "Ukemochi-Engine/Factory/GameObject.h"
 #include "Ukemochi-Engine/ECS/Entity.h"
+
 
 // Froward
 class TextRenderer;
+class ParticleSystem;
 
 using namespace Ukemochi;
  /*!
@@ -197,7 +200,7 @@ private:
 	/*!
 	 * @brief Speed at which objects rotate (degrees per second).
 	 */
-	GLfloat rotationSpeed = 1.0f;
+	GLfloat rotationSpeed = 45.0f;
 
 	/*!
 	 * @brief Time elapsed between the current and previous frame.
@@ -211,38 +214,49 @@ private:
 
 	// Animation control
 	struct Animation {
-		int totalFrames;          // Total number of frames in the animation
-		int currentFrame;         // Current frame index (0 to totalFrames-1)
-		float frameDuration;      // Duration for each frame (in seconds)
-		float elapsedTime;        // Time accumulated since the last frame change
-		int frameWidth;           // Width of each frame in pixels
-		int frameHeight;          // Height of each frame in pixels
-		int totalWidth;           // Total width of the sprite sheet in pixels
-		int totalHeight;          // Total height of the sprite sheet in pixels
-		bool loop;                // Whether the animation should loop
+		int totalFrames;
+		int currentFrame;
+		float frameDuration;
+		float originalFrameDuration; // Store the original duration
+		float elapsedTime;
+		int frameWidth, frameHeight, totalWidth, totalHeight;
+		bool loop;
 
-		// Constructor to initialize an animation
 		Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
-			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), elapsedTime(0.0f),
-			frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
+			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
+			elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
 
-		// Update function to progress the animation frame based on delta time
-		void update(float deltaTime) 
+		void update(float deltaTime)
 		{
 			elapsedTime += deltaTime;
-			if (elapsedTime >= frameDuration)  // Move to the next frame after duration
-			{
+			if (elapsedTime >= frameDuration) {
+
 				currentFrame++;
-				if (currentFrame >= totalFrames)
+				if (currentFrame >= totalFrames) 
 				{
-					currentFrame = 0;  // Loop back to the first frame
+					currentFrame = 0; // Loop back to the first frame
 				}
-				elapsedTime = 0.0f;  // Reset elapsed time
+				elapsedTime = 0.0f; // Reset elapsed time
 			}
+		}
+
+		void setFrameDuration(float newDuration) 
+		{
+			frameDuration = newDuration;
+		}
+
+		void resetFrameDuration() 
+		{
+			frameDuration = originalFrameDuration;
 		}
 	};
 	std::unordered_map<int, std::vector<Animation>> entity_animations;
 	void initAnimationEntities();
+	bool isSlowMotion = false;
+	float slowMotionFactor = 2.0f;
+public:
+	void toggleSlowMotion();
+private:
 
 
 	void initBoxBuffers();
@@ -267,14 +281,15 @@ private:
 
 	GameObject* playerObject = nullptr;
 
-	public:
-		// Setter method to set the player object
-		void SetPlayerObject(GameObject& player) {
-
+public:
+	// Setter method to set the player object
+	void SetPlayerObject(GameObject& player) 
+	{
 			playerObject = &player;
-			std::cout << "Before render, playerObject: " << playerObject << std::endl;
-		}
+	}
 
-	
+	std::unique_ptr<ParticleSystem> particleSystem;
+	Shader* particleShader;
+
 };
 #endif

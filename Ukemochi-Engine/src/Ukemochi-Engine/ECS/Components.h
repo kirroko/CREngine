@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "../Math/Vector2D.h"	// for Vec2 struct
 #include "../Audio/Audio.h"		// for Audio class
-#include "../Graphics/Sprite.h" // for Sprite class
+//#include "../Graphics/Sprite.h" // for Sprite class
 
 namespace Ukemochi
 {

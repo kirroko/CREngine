@@ -75,6 +75,8 @@ void Renderer::init()
 	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
 	initAnimationEntities();
+	
+	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 }
 
 
@@ -275,6 +277,8 @@ void Renderer::setUpTextures(const std::string& texturePath)
 void Renderer::setUpShaders()
 {
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+
+	particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
 }
 
 /*!
@@ -365,7 +369,7 @@ void Renderer::render()
 		}
 
 		// Apply rotation if enabled
-		if (rotation_enabled)
+		if (entity == playerObject->GetInstanceID() &&  rotation_enabled)
 		{
 			// Update the rotation angle based on deltaTime
 			transform.rotation += rotationSpeed * deltaTime;
@@ -630,5 +634,34 @@ void Renderer::initAnimationEntities()
 	// Add multiple animations for the player entity (idle and running animations)
 	entity_animations[playerEntityID] = { idleAnimation, runAnimation };
 
+}
+
+void Renderer::toggleSlowMotion()
+{
+	// Toggle slow-motion state
+	isSlowMotion = !isSlowMotion;
+
+	// Loop through all entities and adjust the frame duration for their animations
+	for (auto& entity : m_Entities)
+	{
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+		if (spriteRenderer.animated)
+		{
+			// Get the animations associated with this entity
+			auto& animations = entity_animations[entity];
+			for (auto& animation : animations)
+			{
+				// Adjust the frame duration based on slow-motion state
+				if (isSlowMotion)
+				{
+					animation.setFrameDuration(animation.originalFrameDuration * slowMotionFactor);
+				}
+				else
+				{
+					animation.resetFrameDuration(); // Reset to original duration
+				}
+			}
+		}
+	}
 }
 

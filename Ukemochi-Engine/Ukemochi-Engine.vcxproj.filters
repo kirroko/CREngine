@@ -146,9 +146,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Sprite.h">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -267,9 +264,6 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Sprite.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
