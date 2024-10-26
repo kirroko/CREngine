@@ -278,7 +278,7 @@ void Renderer::setUpShaders()
 {
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
-	particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
+	//particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
 }
 
 /*!
