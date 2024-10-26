@@ -13,3 +13,4 @@ void Animation::update(float deltaTime)
         elapsedTime = 0.0f;
     }
 }
+

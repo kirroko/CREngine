@@ -182,7 +182,7 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE, SPRITE_SCALE}
 			});
 		animation.AddComponent(SpriteRender{
-				"../Assets/Textures/Bunny_Right_Sprite.png",
+				"../Assets/Textures/running_player_sprite_sheet.png",
 				SPRITE_SHAPE::BOX,
 				0,
 				true

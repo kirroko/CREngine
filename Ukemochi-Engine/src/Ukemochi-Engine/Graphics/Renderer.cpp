@@ -74,7 +74,7 @@ void Renderer::init()
 	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
 	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
-	
+	initAnimationEntities();
 }
 
 
@@ -324,19 +324,6 @@ void Renderer::render()
 	deltaTime = currentFrameTime - lastFrame;
 	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
 
-	// Update the animation frame based on elapsed time
-	elapsedTime += deltaTime;
-
-	if (elapsedTime >= frameDuration) {
-		currentFrame++;  // Move to the next frame
-		if (currentFrame >= totalFrames) {
-			currentFrame = 0;  // Loop back to the first frame
-		}
-		elapsedTime = 0.0f;  // Reset elapsed time
-
-		// Update UV coordinates for the current animation frame
-		updateAnimationFrame(currentFrame, 250, 2000);
-	}
 
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
@@ -401,8 +388,21 @@ void Renderer::render()
 		}
 
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
-		if (spriteRenderer.animated)
-			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
+		if (spriteRenderer.animated) 
+		{
+			// Choose an animation based on the entity state (0 = idle, 1 = running)
+			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
+
+			// Update and draw the current animation
+			currentAnimation.update(deltaTime);
+			updateAnimationFrame(currentAnimation.currentFrame,
+				currentAnimation.frameWidth,
+				currentAnimation.frameHeight,
+				currentAnimation.totalWidth,
+				currentAnimation.totalHeight);
+
+			drawBoxAnimation();
+		}
 		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
 			drawBox();
 		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
@@ -583,24 +583,32 @@ void Renderer::drawCircleOutline()
 	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
-void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth)
+void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight)
 {
-	// Calculate the UV coordinates for the current frame.
-	float uvX = (currentFrame * frameWidth) / (float)totalWidth;
-	float uvWidth = frameWidth / (float)totalWidth;
+	// Calculate the column and row of the current frame in the sprite sheet
+	int column = currentFrame % (totalWidth / frameWidth);
+	int row = currentFrame / (totalWidth / frameWidth);
 
-	// Update the UV coordinates in the VBO.
+	// Calculate UV coordinates based on the current column and row
+	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
+	float uvY = 1.0f - (row * frameHeight) / static_cast<float>(totalHeight) - (frameHeight / static_cast<float>(totalHeight)); // Flip vertically if needed
+	float uvWidth = frameWidth / static_cast<float>(totalWidth);
+	float uvHeight = frameHeight / static_cast<float>(totalHeight);
+
+	// Update the UV coordinates in the VBO
 	GLfloat updatedUVs[] = {
-		 -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, 1.0f,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, 1.0f    // Top-right
+		// Positions         // Colors        // UVs
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY + uvHeight,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY,             // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY + uvHeight    // Top-right
 	};
 
+	// Update VBO data
 	vbos[ANIMATION_VAO]->UpdateData(updatedUVs, sizeof(updatedUVs));
 }
 
-void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+void Renderer::drawBoxAnimation()
 {
 	// Activate the shader program and bind the texture.
 	shaderProgram->Activate();
@@ -609,5 +617,18 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 	vaos[ANIMATION_VAO]->Bind();
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	vaos[ANIMATION_VAO]->Unbind();
+}
+
+void Renderer::initAnimationEntities()
+{
+	int playerEntityID = 10; // Replace with actual entity IDs from your ECS or game logic
+
+	// Create animations for the player
+	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.1f, true); 
+	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
+
+	// Add multiple animations for the player entity (idle and running animations)
+	entity_animations[playerEntityID] = { idleAnimation, runAnimation };
+
 }
 

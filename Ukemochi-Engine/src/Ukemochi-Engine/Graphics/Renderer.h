@@ -27,6 +27,7 @@
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Camera2D.h"
 #include <Ukemochi-Engine/Factory/GameObject.h>
+#include "Ukemochi-Engine/ECS/Entity.h"
 
 // Froward
 class TextRenderer;
@@ -110,10 +111,10 @@ public:
 	 */
 	void drawCircleOutline();
 
-	void updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth);
+	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight);
 
 
-	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBoxAnimation();
 
 	/*!
 	 * @brief Debug mode flag to enable drawing of object outlines.
@@ -176,11 +177,6 @@ private:
 	void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
 
 	/*!
-	* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-	*/
-	void cleanUpBuffers();
-
-	/*!
 	 * @brief Scale factor applied to objects when scaling is enabled.
 	 */
 	GLfloat scale_factor{};
@@ -215,19 +211,39 @@ private:
 
 	// Animation control
 	struct Animation {
-		int totalFrames;
-		int currentFrame;
-		float frameDuration;
-		float elapsedTime;
-		int frameWidth;
-		int frameHeight;
-		int totalWidth;
-		int totalHeight;
-		std::string texturePath;
-	};
+		int totalFrames;          // Total number of frames in the animation
+		int currentFrame;         // Current frame index (0 to totalFrames-1)
+		float frameDuration;      // Duration for each frame (in seconds)
+		float elapsedTime;        // Time accumulated since the last frame change
+		int frameWidth;           // Width of each frame in pixels
+		int frameHeight;          // Height of each frame in pixels
+		int totalWidth;           // Total width of the sprite sheet in pixels
+		int totalHeight;          // Total height of the sprite sheet in pixels
+		bool loop;                // Whether the animation should loop
 
-	Animation idleAnimation;
-	Animation runningAnimation;
+		// Constructor to initialize an animation
+		Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
+			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), elapsedTime(0.0f),
+			frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
+
+		// Update function to progress the animation frame based on delta time
+		void update(float deltaTime) 
+		{
+			elapsedTime += deltaTime;
+			if (elapsedTime >= frameDuration)  // Move to the next frame after duration
+			{
+				currentFrame++;
+				if (currentFrame >= totalFrames)
+				{
+					currentFrame = 0;  // Loop back to the first frame
+				}
+				elapsedTime = 0.0f;  // Reset elapsed time
+			}
+		}
+	};
+	std::unordered_map<int, std::vector<Animation>> entity_animations;
+	void initAnimationEntities();
+
 
 	void initBoxBuffers();
 
