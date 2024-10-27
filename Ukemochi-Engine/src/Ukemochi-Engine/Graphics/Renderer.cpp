@@ -358,18 +358,8 @@ void Renderer::render()
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Check if this object is the player object
-		if (entity == playerObject->GetInstanceID() && scale_enabled) {
-			// Apply scaling only to the player entity
-			model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		}
-		else {
-			// Apply default scale for other entities
-			model = glm::scale(model, scale);
-		}
-
 		// Apply rotation if enabled
-		if (entity == playerObject->GetInstanceID() &&  rotation_enabled)
+		if (entity == playerObject->GetInstanceID() && rotation_enabled)
 		{
 			// Update the rotation angle based on deltaTime
 			transform.rotation += rotationSpeed * deltaTime;
@@ -379,6 +369,27 @@ void Renderer::render()
 			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
+
+		// Determine the scale factors based on facing direction and scaling
+		GLfloat scaleX = transform.scale.x;
+		GLfloat scaleY = transform.scale.y;
+
+		// If the entity is the player, adjust based on the direction and scaling factor
+		if (entity == playerObject->GetInstanceID())
+		{
+			// Adjust X-axis scale to flip direction if not facing right
+			scaleX = isFacingRight ? -scaleX : scaleX;
+
+			// If scaling is enabled, apply the scale factor
+			if (scale_enabled)
+			{
+				scaleX *= scale_factor;
+				scaleY *= scale_factor;
+			}
+		}
+
+		// Apply the calculated scale to the model matrix
+		model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
 
 		shaderProgram->setMat4("model", model);
 
@@ -672,6 +683,13 @@ void Renderer::animationKeyInput()
 	// File paths for the textures
 	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
 	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+	if (UME::Input::IsKeyPressed(GLFW_KEY_A)) {
+		isFacingRight = false; // Moving left
+	}
+	else if (UME::Input::IsKeyPressed(GLFW_KEY_D)) {
+		isFacingRight = true; // Moving right
+	}
 
 	// Check if any movement keys are pressed
 	if (UME::Input::IsKeyPressed(GLFW_KEY_W) ||
