@@ -283,6 +283,7 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Renderer>()->toggleSlowMotion();
 		}
 		
+		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 		
 		// --- END USER INPUTS ---
 

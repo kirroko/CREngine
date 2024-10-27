@@ -668,26 +668,37 @@ void Renderer::toggleSlowMotion()
 void Renderer::animationKeyInput()
 {
 	auto& playerSprite = playerObject->GetComponent<SpriteRender>();
+
+	// File paths for the textures
+	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+	// Check if any movement keys are pressed
 	if (UME::Input::IsKeyPressed(GLFW_KEY_W) ||
 		UME::Input::IsKeyPressed(GLFW_KEY_A) ||
 		UME::Input::IsKeyPressed(GLFW_KEY_S) ||
 		UME::Input::IsKeyPressed(GLFW_KEY_D))
 	{
-		// Access the player's SpriteRender component and set the animation index to '1' (running animation)
-		
-		std::cout << "Player reference: " << &playerSprite << std::endl;
-		// Set to the running animation index (assuming index '1' corresponds to running)
-		playerSprite.animationIndex = 1;
-		playerSprite.texturePath = "../Assets/Textures/running_player_sprite_sheet";
-		setUpTextures(playerSprite.texturePath);
+		// If we are not already in the running state, switch to the running texture
+		if (playerSprite.animationIndex != 1)
+		{
+			playerSprite.animationIndex = 1;
+			playerSprite.texturePath = runningTexturePath;
+
+			// Set the animation index and texture path to indicate running state
+			std::cout << "Switching to running animation.\n";
+		}
 	}
 	else
 	{
-		// If no movement keys are pressed, set the animation index back to '0' (idle animation)
-		std::cout << "Player reference: " << &playerSprite << std::endl;
-		playerSprite.animationIndex = 0;
-		playerSprite.texturePath = "../Assets/Textures/idle_player_sprite_sheet";
-		setUpTextures(playerSprite.texturePath);
+		// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+		if (playerSprite.animationIndex != 0)
+		{
+			playerSprite.animationIndex = 0;
+			playerSprite.texturePath = idleTexturePath;
 
+			// Set the animation index and texture path to indicate idle state
+			std::cout << "Switching to idle animation.\n";
+		}
 	}
 }
