@@ -625,10 +625,10 @@ void Renderer::drawBoxAnimation()
 
 void Renderer::initAnimationEntities()
 {
-	int playerEntityID = 10; // Replace with actual entity IDs from your ECS or game logic
+	int playerEntityID = 1; // Replace with actual entity IDs from your ECS or game logic
 
 	// Create animations for the player
-	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.1f, true); 
+	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
 	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
 
 	// Add multiple animations for the player entity (idle and running animations)
@@ -665,3 +665,29 @@ void Renderer::toggleSlowMotion()
 	}
 }
 
+void Renderer::animationKeyInput()
+{
+	auto& playerSprite = playerObject->GetComponent<SpriteRender>();
+	if (UME::Input::IsKeyPressed(GLFW_KEY_W) ||
+		UME::Input::IsKeyPressed(GLFW_KEY_A) ||
+		UME::Input::IsKeyPressed(GLFW_KEY_S) ||
+		UME::Input::IsKeyPressed(GLFW_KEY_D))
+	{
+		// Access the player's SpriteRender component and set the animation index to '1' (running animation)
+		
+		std::cout << "Player reference: " << &playerSprite << std::endl;
+		// Set to the running animation index (assuming index '1' corresponds to running)
+		playerSprite.animationIndex = 1;
+		playerSprite.texturePath = "../Assets/Textures/running_player_sprite_sheet";
+		setUpTextures(playerSprite.texturePath);
+	}
+	else
+	{
+		// If no movement keys are pressed, set the animation index back to '0' (idle animation)
+		std::cout << "Player reference: " << &playerSprite << std::endl;
+		playerSprite.animationIndex = 0;
+		playerSprite.texturePath = "../Assets/Textures/idle_player_sprite_sheet";
+		setUpTextures(playerSprite.texturePath);
+
+	}
+}

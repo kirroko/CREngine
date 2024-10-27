@@ -256,6 +256,8 @@ private:
 	float slowMotionFactor = 2.0f;
 public:
 	void toggleSlowMotion();
+	void animationKeyInput();
+
 private:
 
 
