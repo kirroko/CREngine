@@ -56,7 +56,12 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Dist|x64' ">
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\CSharpTest.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Component.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Components.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\GameObject.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Object.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Vector2.cs" />
+    <Compile Include="UkemochiEngine\CSharpTest.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

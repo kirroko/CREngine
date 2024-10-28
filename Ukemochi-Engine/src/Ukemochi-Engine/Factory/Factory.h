@@ -3,9 +3,8 @@
 /*!
 \file		Factory.h
 \par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334
-\co-authors
-\par		p.junkaigerald\@digipen.edu
+\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		29/09/24
 \brief		This file contains the declaration of the GameObjectFactory class. This class is responsible for creating and cloning game objects.

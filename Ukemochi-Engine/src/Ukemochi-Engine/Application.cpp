@@ -73,7 +73,8 @@ namespace Ukemochi {
 		//GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
 		//imguiInstance.ImGuiInit(glfwWindow);
 
-		ScriptingEngine::GetInstance().InitMono();
+		// ScriptingEngine::GetInstance().Init();
+		
 	}
 
 	Application::~Application()
