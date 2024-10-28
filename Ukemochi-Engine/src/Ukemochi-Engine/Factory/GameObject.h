@@ -3,9 +3,8 @@
 /*!
 \file		GameObject.h
 \par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334
-\co-authors
-\par		p.junkaigerald\@digipen.edu
+\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		29/09/24
 \brief		This file contains the declaration of the GameObject class. This class is responsible for
@@ -38,13 +37,13 @@ namespace Ukemochi
 		~GameObject() = default;
 
 		template<typename T>
-		void AddComponent(T component) { ECS::GetInstance().AddComponent(m_InstanceID, component); }
+		inline void AddComponent(T component) { ECS::GetInstance().AddComponent(m_InstanceID, component); }
 
 		template <typename T>
-		T& GetComponent() { return ECS::GetInstance().GetComponent<T>(m_InstanceID); }
+		inline T& GetComponent() { return ECS::GetInstance().GetComponent<T>(m_InstanceID); }
 
 		template<typename T>
-		void RemoveCoponent() { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
+		inline void RemoveCoponent() { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
 
 		EntityID GetInstanceID();
 	};
