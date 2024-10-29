@@ -266,8 +266,12 @@ private:
 	void initAnimationEntities();
 	bool isSlowMotion = false;
 	float slowMotionFactor = 2.0f;
+	bool isFacingRight = false;
+
 public:
 	void toggleSlowMotion();
+	void animationKeyInput();
+
 private:
 
 

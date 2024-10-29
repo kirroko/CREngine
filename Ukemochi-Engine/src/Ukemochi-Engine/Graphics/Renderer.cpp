@@ -489,18 +489,8 @@ void Renderer::render()
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Check if this object is the player object
-		if (entity == playerObject->GetInstanceID() && scale_enabled) {
-			// Apply scaling only to the player entity
-			model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		}
-		else {
-			// Apply default scale for other entities
-			model = glm::scale(model, scale);
-		}
-
 		// Apply rotation if enabled
-		if (entity == playerObject->GetInstanceID() &&  rotation_enabled)
+		if (entity == playerObject->GetInstanceID() && rotation_enabled)
 		{
 			// Update the rotation angle based on deltaTime
 			transform.rotation += rotationSpeed * deltaTime;
@@ -510,6 +500,27 @@ void Renderer::render()
 			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
+
+		// Determine the scale factors based on facing direction and scaling
+		GLfloat scaleX = transform.scale.x;
+		GLfloat scaleY = transform.scale.y;
+
+		// If the entity is the player, adjust based on the direction and scaling factor
+		if (entity == playerObject->GetInstanceID())
+		{
+			// Adjust X-axis scale to flip direction if not facing right
+			scaleX = isFacingRight ? -scaleX : scaleX;
+
+			// If scaling is enabled, apply the scale factor
+			if (scale_enabled)
+			{
+				scaleX *= scale_factor;
+				scaleY *= scale_factor;
+			}
+		}
+
+		// Apply the calculated scale to the model matrix
+		model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
 
 		shaderProgram->setMat4("model", model);
 
@@ -767,10 +778,10 @@ void Renderer::drawBoxAnimation()
 
 void Renderer::initAnimationEntities()
 {
-	int playerEntityID = 10; // Replace with actual entity IDs from your ECS or game logic
+	int playerEntityID = 1; // Replace with actual entity IDs from your ECS or game logic
 
 	// Create animations for the player
-	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.1f, true); 
+	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
 	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
 
 	// Add multiple animations for the player entity (idle and running animations)
@@ -807,3 +818,47 @@ void Renderer::toggleSlowMotion()
 	}
 }
 
+void Renderer::animationKeyInput()
+{
+	auto& playerSprite = playerObject->GetComponent<SpriteRender>();
+
+	// File paths for the textures
+	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+	if (UME::Input::IsKeyPressed(GLFW_KEY_A)) {
+		isFacingRight = false; // Moving left
+	}
+	else if (UME::Input::IsKeyPressed(GLFW_KEY_D)) {
+		isFacingRight = true; // Moving right
+	}
+
+	// Check if any movement keys are pressed
+	if (UME::Input::IsKeyPressed(GLFW_KEY_W) ||
+		UME::Input::IsKeyPressed(GLFW_KEY_A) ||
+		UME::Input::IsKeyPressed(GLFW_KEY_S) ||
+		UME::Input::IsKeyPressed(GLFW_KEY_D))
+	{
+		// If we are not already in the running state, switch to the running texture
+		if (playerSprite.animationIndex != 1)
+		{
+			playerSprite.animationIndex = 1;
+			playerSprite.texturePath = runningTexturePath;
+
+			// Set the animation index and texture path to indicate running state
+			std::cout << "Switching to running animation.\n";
+		}
+	}
+	else
+	{
+		// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+		if (playerSprite.animationIndex != 0)
+		{
+			playerSprite.animationIndex = 0;
+			playerSprite.texturePath = idleTexturePath;
+
+			// Set the animation index and texture path to indicate idle state
+			std::cout << "Switching to idle animation.\n";
+		}
+	}
+}

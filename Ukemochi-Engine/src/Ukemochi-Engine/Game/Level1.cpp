@@ -42,8 +42,7 @@ namespace Ukemochi
 	GameObject player_obj;
 	GameObject worm_0;
 	Renderer time;
-
-
+	
 	GLfloat lastFrameTime = 0.0f;
 	GLfloat deltaTime = 0.0f;
 
@@ -100,6 +99,7 @@ namespace Ukemochi
 		player_obj = GameObjectFactory::CreateObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath); // load texture
+		p_spriteRender.animated = true;
 
 		// BACKGROUND OBJECT
 		GameObject background = GameObjectFactory::CreateObject();
@@ -189,7 +189,7 @@ namespace Ukemochi
 		door_3.GetComponent<BoxCollider2D>().tag = "Btm Door";
 
 		// ANIMATION OBJECT
-		GameObject animation = GameObjectFactory::CreateObject();
+		/*GameObject animation = GameObjectFactory::CreateObject();
 		animation.AddComponent(Transform{
 			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
@@ -201,7 +201,7 @@ namespace Ukemochi
 				SPRITE_SHAPE::BOX,
 				0,
 				true
-			});
+			});*/
 
 		//// BACKGROUND 
 		//GameObject level_background = GameObjectFactory::CreateObject();
@@ -223,6 +223,7 @@ namespace Ukemochi
 		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
 		// Set the player object in the Renderer
 		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
+		
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -305,8 +306,9 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Renderer>()->toggleSlowMotion();
 		}
-
-
+		
+		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+		
 		// --- END USER INPUTS ---
 
 		// --- GAME LOGIC UPDATE ---
