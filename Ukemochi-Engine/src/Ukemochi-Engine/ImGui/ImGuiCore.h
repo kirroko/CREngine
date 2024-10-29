@@ -51,6 +51,7 @@ namespace Ukemochi
 		static void ImGuiClean();
 
 		static void ShowEntityManagementUI();
+
 	private:
 		// Mouse and keyboard event handlers
 		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);

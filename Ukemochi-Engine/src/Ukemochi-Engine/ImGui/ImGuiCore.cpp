@@ -65,17 +65,6 @@ namespace Ukemochi
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
-
-
-		/*IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGui::StyleColorsClassic();
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-
-		ImGui_ImplOpenGL3_Init("#version 410");*/
 	}
 	/*!
 	\brief Prepares a new ImGui frame and handles window dimensions and timing.
@@ -91,35 +80,8 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
-		//ImGuiIO& io = ImGui::GetIO();
-		//Application& app = Application::Get();
-		//io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
-
-		//float time = (float)glfwGetTime();
-		//io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
-		//m_Time = time;
-
-		//ImGui_ImplOpenGL3_NewFrame();
-		//ImGui::NewFrame();
-		//static bool show = true;
-		//ImGui::ShowDemoWindow(&show);
-
-		//static bool showAnotherWindow = true;
-		//if (showAnotherWindow)
-		//{
-		//	ImGui::Begin("Another Window", &showAnotherWindow);   // Create a window called "Another Window"
-		//	ImGui::Text("This is another window!");               // Display some text
-		//	if (ImGui::Button("Close Me"))                        // Close button logic
-		//	{
-		//		WindowCloseEvent event;
-		//		app.EventIsOn(event);
-		//	}
-		//	ImGui::End();
-		//}
-		///*ImGui::Begin("Sample Window");
-		//ImGui::Text("Hello, world!");
-		//ImGui::End();*/
 	}
+
 
 	void UseImGui::ShowEntityManagementUI()
 	{
@@ -153,7 +115,8 @@ namespace Ukemochi
 		{
 			if (entityToRemove >= 0)
 			{
-				ECS::GetInstance().DestroyEntity(entityToRemove);
+				GameObject entityToDelete(entityToRemove);
+				GameObjectFactory::DestroyObject(entityToDelete);
 				entityToRemove = -1; // Reset the input after removal
 				ImGui::Text("Entity %d removed.", entityToRemove);
 			}
