@@ -59,6 +59,20 @@ namespace Ukemochi
 		 */
 		void PrintAssemblyTypes(MonoAssembly* assembly);
 
+		/**
+		 * @brief Bind C++ function with Mono so they can be invoked from C#
+		 */
+		void RegisterMonoFunctions();
+
+		/**
+		 * @brief Get a reference to a C# class
+		 * @param MonoAssembly Our C# Assembly
+		 * @param namespaceName The C# namespaceName
+		 * @param classNmae The C# class name
+		 * @return Reference to the class
+		 */
+		MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className);
+
 	public:
 		static ScriptingEngine& GetInstance()
 		{
@@ -69,7 +83,12 @@ namespace Ukemochi
 		/**
 		 * @brief Initialize Mono by creating an app domain
 		 */
-		void InitMono();
+		void Init();
+
+		/**
+		 * @brief Update all script
+		 */
+		void Update();
 
 		/**
 		 * @brief Clean up mono
@@ -77,3 +96,4 @@ namespace Ukemochi
 		void ShutDown();
 	};
 }
+// 0x4E41454B

@@ -28,7 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #ifdef UME_ENABLE_ASSERTS
 		#define UME_ASSERT(x, ...) { if(!(x)) { UME_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-		#define UME_ENGINE_ASSERT(x, ...) { if(!(x)) { UME_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+		#define UME_ENGINE_ASSERT(x, ...) { if(!(x)) { UME_ENGINE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 		#define UME_ASSERT(x, ...)
 		#define UME_ENGINE_ASSERT(x, ...)
