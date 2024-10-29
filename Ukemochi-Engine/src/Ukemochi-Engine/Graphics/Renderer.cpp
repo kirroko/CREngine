@@ -826,18 +826,18 @@ void Renderer::animationKeyInput()
 	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
 	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
 
-	if (UME::Input::IsKeyPressed(GLFW_KEY_A)) {
+	if (Input::IsKeyPressed(GLFW_KEY_A)) {
 		isFacingRight = false; // Moving left
 	}
-	else if (UME::Input::IsKeyPressed(GLFW_KEY_D)) {
+	else if (Input::IsKeyPressed(GLFW_KEY_D)) {
 		isFacingRight = true; // Moving right
 	}
 
 	// Check if any movement keys are pressed
-	if (UME::Input::IsKeyPressed(GLFW_KEY_W) ||
-		UME::Input::IsKeyPressed(GLFW_KEY_A) ||
-		UME::Input::IsKeyPressed(GLFW_KEY_S) ||
-		UME::Input::IsKeyPressed(GLFW_KEY_D))
+	if (Input::IsKeyPressed(GLFW_KEY_W) ||
+		Input::IsKeyPressed(GLFW_KEY_A) ||
+		Input::IsKeyPressed(GLFW_KEY_S) ||
+		Input::IsKeyPressed(GLFW_KEY_D))
 	{
 		// If we are not already in the running state, switch to the running texture
 		if (playerSprite.animationIndex != 1)
