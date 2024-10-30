@@ -15,7 +15,7 @@
  * @param indices Pointer to the array of indices that define the order in which vertices are rendered.
  * @param size The size of the indices array in bytes.
  */
-EBO::EBO(GLuint* indices, GLsizeiptr size)
+EBO::EBO(const GLuint* indices, GLsizeiptr size)
 {
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);

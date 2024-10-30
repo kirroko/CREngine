@@ -212,15 +212,17 @@ namespace Ukemochi
 		//		Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
 		//	});
 		//level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
+		
 		// Circle Creation for Testing
-		/*GameObject circle = GameObjectFactory::CreateObject();
+		GameObject circle = GameObjectFactory::CreateObject();
 		circle.AddComponent(Transform{
 			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
 			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
 			0,
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
-		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
+		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });
+
 		// Set the player object in the Renderer
 		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
 		

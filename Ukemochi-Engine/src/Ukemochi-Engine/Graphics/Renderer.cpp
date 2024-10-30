@@ -86,6 +86,9 @@ void Renderer::init()
 	initAnimationEntities();
 	
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
+
+	batchRenderer = std::make_unique<BatchRenderer2D>();
+	batchRenderer->init();
 }
 
 void Renderer::setupFramebuffer()
@@ -450,30 +453,29 @@ void Renderer::render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Get the current time
-	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());  // This will return time in seconds
+	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
 	deltaTime = currentFrameTime - lastFrame;
-	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
+	lastFrame = currentFrameTime;
 
-
-	// Specify the color of the background
+	// Clear the screen with a background color
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Get the camera system instance
+	// Get the camera view and projection matrix
 	auto& camera = ECS::GetInstance().GetSystem<Camera>();
-
-	// Set up a view and projection matrix
 	glm::mat4 view = camera->getCameraViewMatrix();
 	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
-	// Send the projection and view matrices to the shader
+	// Set the projection and view matrices
 	shaderProgram->Activate();
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
 
-
 	std::cout << "Begin render" << std::endl;
 	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
+
+	// Start batch rendering
+	batchRenderer->beginBatch();
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
@@ -485,33 +487,26 @@ void Renderer::render()
 		// Set vec2 to glm::vec3 for matrix transformations
 		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
 		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
-		// Set up the model matrix using the transform's position, scale, and rotation
+
+		// Handle scaling and rotation as before
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Apply rotation if enabled
+		// Apply transformations and texture logic as you already do
 		if (entity == playerObject->GetInstanceID() && rotation_enabled)
 		{
-			// Update the rotation angle based on deltaTime
 			transform.rotation += rotationSpeed * deltaTime;
 			if (transform.rotation >= 360.f)
 				transform.rotation -= 360.f;
-
-			// Apply rotation to the model matrix
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 
-		// Determine the scale factors based on facing direction and scaling
 		GLfloat scaleX = transform.scale.x;
 		GLfloat scaleY = transform.scale.y;
 
-		// If the entity is the player, adjust based on the direction and scaling factor
 		if (entity == playerObject->GetInstanceID())
 		{
-			// Adjust X-axis scale to flip direction if not facing right
 			scaleX = isFacingRight ? -scaleX : scaleX;
-
-			// If scaling is enabled, apply the scale factor
 			if (scale_enabled)
 			{
 				scaleX *= scale_factor;
@@ -519,51 +514,37 @@ void Renderer::render()
 			}
 		}
 
-		// Apply the calculated scale to the model matrix
 		model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
 
+		// Set the model matrix in the shader
 		shaderProgram->setMat4("model", model);
 
 		// Bind the texture if available
+		int textureID = -1; // Default to no texture
 		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
-			textureCache.find(spriteRenderer.texturePath)->second->Bind();  // Make sure this binds to the correct texture ID
-			shaderProgram->setBool("useTexture", true);
-		}
-		else {
-			shaderProgram->setBool("useTexture", false);
+			textureID = textureCache.find(spriteRenderer.texturePath)->second->ID; // Assuming getID() returns OpenGL texture ID
 		}
 
-		// 0x4B45414E | functions here sets up a new vertices and indices for the object
-		if (spriteRenderer.animated) 
-		{
-			// Choose an animation based on the entity state (0 = idle, 1 = running)
-			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
+		// Submit this sprite to the batch renderer
+		batchRenderer->drawSprite(
+			glm::vec2(transform.position.x, transform.position.y),
+			glm::vec2(transform.scale.x, transform.scale.y),
+			transform.rotation,
+			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),  // Assuming spriteRenderer.color is glm::vec4
+			textureID
+		);
 
-			// Update and draw the current animation
-			currentAnimation.update(deltaTime);
-			updateAnimationFrame(currentAnimation.currentFrame,
-				currentAnimation.frameWidth,
-				currentAnimation.frameHeight,
-				currentAnimation.totalWidth,
-				currentAnimation.totalHeight);
-
-			drawBoxAnimation();
-		}
-		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-			drawBox();
-		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-			drawCircle();
-
-		if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::BOX)
-			drawBoxOutline();
-		else if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-			drawCircleOutline();
 		entity_count++;
 	}
 
-	// Render all text objects
+	// End and flush the batch
+	batchRenderer->endBatch();
+	batchRenderer->flush();
+
+	// Render all text objects (outside batch rendering)
 	textRenderer->renderAllText();
 }
+
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).

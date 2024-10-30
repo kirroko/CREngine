@@ -29,11 +29,19 @@
 #include "Camera2D.h"
 #include "Ukemochi-Engine/Factory/GameObject.h"
 #include "Ukemochi-Engine/ECS/Entity.h"
+#include "BatchRenderer.h"
 
-
-// Froward
+// Forward
 class TextRenderer;
 class ParticleSystem;
+
+struct SpriteData {
+	glm::vec3 position;
+	glm::vec2 size;
+	float rotation;
+	glm::vec4 color;
+	int textureID;
+};
 
 using namespace Ukemochi;
  /*!
@@ -274,7 +282,6 @@ public:
 
 private:
 
-
 	void initBoxBuffers();
 
 	void initDebugBoxBuffers();
@@ -309,6 +316,8 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
+
+	std::unique_ptr<BatchRenderer2D> batchRenderer;
 
 public:
 	// Setter method to set the player object
