@@ -5,6 +5,7 @@
 *.exe
 *.ilk
 .vs
+.idea
 .tmp
 *.tlog
 *.obj
@@ -20,3 +21,5 @@ bin
 bin-int
 Debug
 Release
+Ukemochi.sln.DotSettings.user
+Ukemochi-Game/Resources/Scripts/Ukemochi-Scripting.dll
