@@ -16,7 +16,7 @@ BatchRenderer2D::~BatchRenderer2D() {
     ebo->Delete();
 }
 
-void BatchRenderer2D::init() {
+void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader) {
     // Reserve memory and create VAO, VBO, EBO
     vertices.reserve(maxSprites * 4);
     indices.reserve(maxSprites * 6);
@@ -29,7 +29,7 @@ void BatchRenderer2D::init() {
     createVertexBuffer();
     createIndexBuffer();
 
-    shader = std::make_unique<Shader>("../Assets/Shaders/batch_rendering.vert", "../Assets/Shaders/batch_rendering.frag");
+    shader = sharedShader;
 }
 
 void BatchRenderer2D::beginBatch()

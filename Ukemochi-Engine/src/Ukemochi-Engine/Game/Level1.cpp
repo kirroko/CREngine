@@ -221,7 +221,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
-		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });
+		circle.AddComponent(SpriteRender{ "", SPRITE_SHAPE::CIRCLE });
 
 		// Set the player object in the Renderer
 		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);

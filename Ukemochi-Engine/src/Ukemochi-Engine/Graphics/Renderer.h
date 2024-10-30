@@ -148,7 +148,7 @@ private:
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/
-	Shader* shaderProgram;
+	std::shared_ptr<Shader> shaderProgram;
 
 	/*!
 	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.

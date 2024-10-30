@@ -52,7 +52,7 @@ Renderer::~Renderer()
 void Renderer::init()
 {
 	// Load shaders
-	setUpShaders();
+	//setUpShaders();
 
 	// Load Buffers for box drawing
 	initBoxBuffers();
@@ -88,7 +88,10 @@ void Renderer::init()
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 
 	batchRenderer = std::make_unique<BatchRenderer2D>();
-	batchRenderer->init();
+	// Load shaders and create shared pointer
+	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+
+	batchRenderer->init(shaderProgram);
 }
 
 void Renderer::setupFramebuffer()
@@ -405,7 +408,7 @@ void Renderer::setUpTextures(const std::string& texturePath)
  */
 void Renderer::setUpShaders()
 {
-	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	//shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
 	//particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
 }
@@ -521,9 +524,13 @@ void Renderer::render()
 
 		// Bind the texture if available
 		int textureID = -1; // Default to no texture
+		bool useTexture = false;
 		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
 			textureID = textureCache.find(spriteRenderer.texturePath)->second->ID; // Assuming getID() returns OpenGL texture ID
+			shaderProgram->setMat4("useTexture", true);
 		}
+		else
+			shaderProgram->setMat4("useTexture", false);
 
 		// Submit this sprite to the batch renderer
 		batchRenderer->drawSprite(
@@ -589,12 +596,12 @@ void Renderer::cleanUp()
 	textureCache.clear();
 
 	// Delete the shader program
-	if (shaderProgram)
-	{
-		shaderProgram->Delete();
-		delete shaderProgram;  // Deallocate memory
-		shaderProgram = nullptr;
-	}
+	//if (shaderProgram)
+	//{
+	//	shaderProgram->Delete();
+	//	delete shaderProgram;  // Deallocate memory
+	//	shaderProgram = nullptr;
+	//}
 
 	if (framebuffer)
 		glDeleteFramebuffers(1, &framebuffer);

@@ -22,7 +22,7 @@ public:
 	BatchRenderer2D();
 	~BatchRenderer2D();
 
-	void init();
+	void init(std::shared_ptr<Shader> sharedShader); 
 	void beginBatch();
 	void endBatch();
 	void flush();
@@ -36,7 +36,7 @@ private:
 	std::unique_ptr<VAO> vao;
 	std::unique_ptr<VBO> vbo;
 	std::unique_ptr<EBO> ebo;
-	std::unique_ptr<Shader> shader;
+	std::shared_ptr<Shader> shader;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 
