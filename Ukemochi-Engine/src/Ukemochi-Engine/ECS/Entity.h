@@ -48,6 +48,7 @@ namespace Ukemochi
 		void DestroyEntity(EntityID entity);
 		void SetSignature(EntityID entity, SignatureID signature);
 		SignatureID GetSignature(EntityID entity);
+		unsigned long int GetLivingEntityCount() const;
 	};
 }
 // 0x4B45414E

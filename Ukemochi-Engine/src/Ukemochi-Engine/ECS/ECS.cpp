@@ -89,5 +89,10 @@ namespace Ukemochi
 
 		return newEntity;
 	}
+
+	unsigned long int ECS::GetLivingEntityCount() const
+	{
+		return m_EntityManager->GetLivingEntityCount();
+	}
 }
 // 0x4B45414E

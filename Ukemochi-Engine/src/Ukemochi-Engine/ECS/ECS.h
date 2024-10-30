@@ -50,6 +50,8 @@ namespace Ukemochi
 
 		EntityID CloneEntity(EntityID entity);
 
+		unsigned long int GetLivingEntityCount() const;
+
 		/**
 		 * @brief Register a component type with the ECS
 		 * @tparam T The component type to register

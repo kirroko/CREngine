@@ -46,4 +46,9 @@ namespace Ukemochi
 	{
 		return m_Signatures[entity];
 	}
+
+	unsigned long int EntityManager::GetLivingEntityCount() const
+	{
+		return m_ulLivingEntityCount;
+	}
 }
