@@ -127,7 +127,7 @@ namespace Ukemochi {
 			}
 
 			//ENGINE STATES
-			if (es_current == ES_ENGINE)
+			if (es_current == ES_ENGINE && gsm_current == gsm_next)
 			{
 				sceneManger.LoadAndInitScene();
 
@@ -185,8 +185,9 @@ namespace Ukemochi {
 					}
 					//************ Display FPS ************
 
-					//************ Render IMGUI ************
+				//************ Render IMGUI ************
 					imguiInstance.NewFrame();
+					imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					//************ Render IMGUI ************
 
@@ -206,13 +207,7 @@ namespace Ukemochi {
 				}
 
 				gsm_previous = gsm_current = gsm_next;
-				//************ Render IMGUI ************
-				imguiInstance.NewFrame();
-				imguiInstance.Begin();
-				imguiInstance.ImGuiUpdate(); // Render ImGui elements
-				//************ Render IMGUI ************
 
-				m_Window->OnUpdate();
 			}
 			else if (es_current == ES_PLAY && gsm_current == gsm_next)//in game state
 			{

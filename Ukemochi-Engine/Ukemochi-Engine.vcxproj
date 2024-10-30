@@ -195,6 +195,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
@@ -241,6 +242,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
@@ -255,8 +257,8 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
