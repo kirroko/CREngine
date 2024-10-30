@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Input.h"
 #include <GLFW/glfw3.h>
 
-namespace UME {
+namespace Ukemochi {
 
 	static std::unordered_map<int, bool> keyPressedMap; ///< Map to track key press states
 	/*!
@@ -102,4 +102,5 @@ namespace UME {
 		auto [x, y] = GetMousePosition();
 		return y;
 	}
+
 }

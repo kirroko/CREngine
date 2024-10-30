@@ -15,8 +15,8 @@
 #include "../vendor/glm/glm/glm.hpp"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
-#include <cmath> // Might need to remove later on
-#include <vector> // Might need to remove later on
+#include <cmath>
+#include <vector>
 #include <algorithm>
 
 #include "shaderClass.h"
@@ -24,8 +24,18 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
-#include "../ECS/ECS.h"
+#include "Particle.h"
+#include "Ukemochi-Engine/ECS/ECS.h"
+#include "Camera2D.h"
+#include "Ukemochi-Engine/Factory/GameObject.h"
+#include "Ukemochi-Engine/ECS/Entity.h"
 
+
+// Froward
+class TextRenderer;
+class ParticleSystem;
+
+using namespace Ukemochi;
  /*!
   * @class Renderer
   * @brief A class that manages OpenGL rendering, shader setup, texture handling, and rendering 2D objects like boxes and circles.
@@ -72,24 +82,17 @@ public:
 	static int const screen_height = 900;
 
 	/*!
-	 * @brief Draws a 2D box at the specified position with the given dimensions and optional texture.
-	 * @param x The x-coordinate of the center of the box (in screen space).
-	 * @param y The y-coordinate of the center of the box (in screen space).
-	 * @param width The width of the box (in screen space).
-	 * @param height The height of the box (in screen space).
-	 * @param texturePath Optional file path to the texture for the box. Default is an empty string, indicating no texture.
+
 	 */
-	void drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBox();
 
 	/*!
 	 * @brief Draws a 2D circle at the specified position with the given radius and optional texture.
 	 * @param x The x-coordinate of the center of the circle (in screen space).
 	 * @param y The y-coordinate of the center of the circle (in screen space).
 	 * @param radius The radius of the circle (in screen space).
-	 * @param texturePath Optional file path to the texture for the circle. Default is an empty string, indicating no texture.
-	 * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles). Default is 1000.
 	 */
-	void drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
+	void drawCircle();
 
 	/*!
 	 * @brief Toggles scale transformation for objects based on input.
@@ -101,27 +104,37 @@ public:
 	 */
 	void ToggleInputsForRotation();
 
+
 	/*!
-	* @brief Draws the outline of a 2D box at the specified position with the given dimensions.
-	* @param x The x-coordinate of the center of the box (in screen space).
-	* @param y The y-coordinate of the center of the box (in screen space).
-	* @param width The width of the box (in screen space).
-	* @param height The height of the box (in screen space).
+	* @brief Draws the outline of a 2D box at the specified position.
 	*/
-	void drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBoxOutline();
 	/*!
-	 * @brief Draws the outline of a 2D circle at the specified position with the given radius.
-	 * @param x The x-coordinate of the center of the circle (in screen space).
-	 * @param y The y-coordinate of the center of the circle (in screen space).
-	 * @param radius The radius of the circle (in screen space).
-	 * @param segments The number of segments to use for rendering the circle. Default is 1000.
+	 * @brief Draws the outline of a 2D circle at the specified position.
 	 */
-	void drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments = 1000);
+	void drawCircleOutline();
+
+	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight);
+
+
+	void drawBoxAnimation();
 
 	/*!
 	 * @brief Debug mode flag to enable drawing of object outlines.
 	 */
 	GLboolean debug_mode_enabled = false;
+
+	void setupFramebuffer();
+
+	void beginFramebufferRender();
+
+	void endFramebufferRender();
+
+	void renderToFramebuffer();
+
+	GLuint getTextureColorBuffer() const;
+
+	void resizeFramebuffer(int width, int height);
 
 private:
 	/*!
@@ -179,11 +192,6 @@ private:
 	void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
 
 	/*!
-	* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-	*/
-	void cleanUpBuffers();
-
-	/*!
 	 * @brief Scale factor applied to objects when scaling is enabled.
 	 */
 	GLfloat scale_factor{};
@@ -204,7 +212,7 @@ private:
 	/*!
 	 * @brief Speed at which objects rotate (degrees per second).
 	 */
-	GLfloat rotationSpeed = 1.0f;
+	GLfloat rotationSpeed = 45.0f;
 
 	/*!
 	 * @brief Time elapsed between the current and previous frame.
@@ -217,12 +225,100 @@ private:
 	GLfloat lastFrame = 0.0f;
 
 	// Animation control
-	float elapsedTime = 0.0f;  // Time since last frame
-	float frameDuration = 0.1f;  // Time per frame (0.1 seconds per frame)
-	int currentFrame = 0;  // Start at the first frame
-	int totalFrames = 8;   // Total number of frames in the sprite sheet
-	/*int frameHeight = 64;
-	int frameWidth = 64;*/
-	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth);
+	struct Animation {
+		int totalFrames;
+		int currentFrame;
+		float frameDuration;
+		float originalFrameDuration; // Store the original duration
+		float elapsedTime;
+		int frameWidth, frameHeight, totalWidth, totalHeight;
+		bool loop;
+
+		Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
+			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
+			elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
+
+		void update(float deltaTime)
+		{
+			elapsedTime += deltaTime;
+			if (elapsedTime >= frameDuration) {
+
+				currentFrame++;
+				if (currentFrame >= totalFrames) 
+				{
+					currentFrame = 0; // Loop back to the first frame
+				}
+				elapsedTime = 0.0f; // Reset elapsed time
+			}
+		}
+
+		void setFrameDuration(float newDuration) 
+		{
+			frameDuration = newDuration;
+		}
+
+		void resetFrameDuration() 
+		{
+			frameDuration = originalFrameDuration;
+		}
+	};
+	std::unordered_map<int, std::vector<Animation>> entity_animations;
+	void initAnimationEntities();
+	bool isSlowMotion = false;
+	float slowMotionFactor = 2.0f;
+	bool isFacingRight = false;
+
+public:
+	void toggleSlowMotion();
+	void animationKeyInput();
+
+private:
+
+
+	void initBoxBuffers();
+
+	void initDebugBoxBuffers();
+
+	void initCircleBuffers(GLuint segments = 1000);
+
+	void initCircleOutlineBuffers(GLuint segments = 1000);
+
+	void initAnimationBuffers();
+
+	enum objectIDs {
+		BOX_VAO = 0,
+		BOX_OUTLINE = 1,
+		CIRCLE_VAO = 2,
+		CIRCLE_OUTLINE = 3,
+		ANIMATION_VAO = 4
+	};
+
+	GLuint framebuffer;
+
+	GLuint textureColorbuffer;
+
+	GLuint rbo;
+	std::unique_ptr<VAO> screenQuadVAO;
+	std::unique_ptr<VBO> screenQuadVBO;
+	std::unique_ptr<Shader> framebufferShader;
+	void initScreenQuad();
+	void renderScreenQuad();
+
+
+	
+	TextRenderer* textRenderer;
+
+	GameObject* playerObject = nullptr;
+
+public:
+	// Setter method to set the player object
+	void SetPlayerObject(GameObject& player) 
+	{
+			playerObject = &player;
+	}
+
+	std::unique_ptr<ParticleSystem> particleSystem;
+	Shader* particleShader;
+
 };
 #endif

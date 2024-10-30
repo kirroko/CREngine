@@ -8,6 +8,7 @@
  */
 #include "PreCompile.h"
 #include "Renderer.h"
+#include "TextRenderer.h"
 
 using namespace Ukemochi;
 
@@ -22,6 +23,15 @@ Renderer::Renderer()
 	vaos.clear();
 	vbos.clear();
 	ebos.clear();
+
+	framebuffer = 0;
+	textureColorbuffer = 0;
+	rbo = 0;
+	screenQuadVAO = nullptr;
+	screenQuadVBO = nullptr;
+	framebufferShader = nullptr;
+	textRenderer = nullptr;
+	playerObject = nullptr;
 };
 
 /*!
@@ -32,6 +42,7 @@ Renderer::~Renderer()
 {
 	cleanUp();
 	glfwTerminate();
+
 }
 
 /*!
@@ -42,7 +53,303 @@ void Renderer::init()
 {
 	// Load shaders
 	setUpShaders();
+
+	// Load Buffers for box drawing
+	initBoxBuffers();
+
+	// Load Buffers for debug/wireframe box drawing
+	initDebugBoxBuffers();
+
+	// Load Buffers for circle drawing
+	initCircleBuffers();
+
+	// Load Buffers for debug/wireframe circle drawing
+	initCircleOutlineBuffers();
+
+
+	setupFramebuffer();
+	initScreenQuad();
+	initAnimationBuffers();
+
+	// Text Rendering (Test)
+	// Initialize text renderer with screen dimensions
+	textRenderer = new TextRenderer(screen_width, screen_height);
+
+	// Load multiple fonts into the text renderer
+	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
+	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+
+	// Add text objects
+	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+
+	initAnimationEntities();
+	
+	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 }
+
+void Renderer::setupFramebuffer()
+{
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+
+	// Create a color attachment texture
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen_width, screen_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Framebuffer setup complete" << std::endl;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::resizeFramebuffer(int width, int height) {
+	// Resize color texture
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+	// Resize renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+	//screen_width = width;
+	//screen_height = height;
+}
+
+void Renderer::initScreenQuad()
+{
+	float quadVertices[] = {
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	screenQuadVAO = std::make_unique<VAO>();
+	screenQuadVBO = std::make_unique<VBO>(quadVertices, sizeof(quadVertices));
+
+	screenQuadVAO->Bind();
+	screenQuadVBO->Bind();
+	screenQuadVAO->LinkAttrib(*screenQuadVBO, 0, 2, GL_FLOAT, 4 * sizeof(float), (void*)0);
+	screenQuadVAO->LinkAttrib(*screenQuadVBO, 1, 2, GL_FLOAT, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	// Create a shader for rendering the framebuffer texture
+	framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+}
+
+void Renderer::beginFramebufferRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::endFramebufferRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::renderScreenQuad()
+{
+	framebufferShader->Activate();
+	screenQuadVAO->Bind();
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Renderer::renderToFramebuffer()
+{
+	beginFramebufferRender();
+
+	// Add debug information
+	std::cout << "Begin framebuffer render" << std::endl;
+	std::cout << "Number of entities: " << m_Entities.size() << std::endl;
+
+	// Perform your regular rendering here
+	render();
+
+	std::cout << "End framebuffer render" << std::endl;
+
+	endFramebufferRender();
+
+	// Now render the framebuffer texture to the screen
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//renderScreenQuad();
+	//glEnable(GL_DEPTH_TEST);
+}
+
+GLuint Renderer::getTextureColorBuffer() const
+{
+	return textureColorbuffer;  // Assuming this is your framebuffer's color texture
+}
+
+void Renderer::initBoxBuffers()
+{
+	// Define vertices for a box (centered around origin)
+	GLfloat vertices_box[] = {
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f    // Top-right
+	};
+	GLuint indices_box[] = {
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	// Set up the buffers once, and bind the VAO/VBO/EBO
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	// Store the number of indices to be drawn
+	indices_count.push_back(6);
+}
+
+void Renderer::initDebugBoxBuffers()
+{
+	// Define vertices for a box (centered around origin)
+	GLfloat vertices_box[] = {
+		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Top-left
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-left
+		 0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f    // Top-right
+	};
+
+	// Define indices for drawing the outline of the box using GL_LINES
+	GLuint indices_box[] = {
+		0, 1, // Top-left to Bottom-left
+		2, 3 // Top-right to Top-left
+	};
+
+	// Set up the buffers once, and bind the VAO/VBO/EBO
+	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
+	indices_count.push_back(4); // 4 lines with 2 vertices each
+}
+
+void Renderer::initCircleBuffers(GLuint segments)
+{
+
+	// Arrays for vertices and indices
+	std::vector<GLfloat> vertices;
+	std::vector<GLuint> indices;
+
+	// Add center vertex (0, 0 in NDC space)
+	vertices.push_back(0.0f);  // X
+	vertices.push_back(0.0f);  // Y
+	vertices.push_back(0.0f);  // Z
+	vertices.push_back(1.0f);  // Color (r)
+	vertices.push_back(1.0f);  // Color (g)
+	vertices.push_back(1.0f);  // Color (b)
+	vertices.push_back(0.5f);  // Texture coordinate (s) - center of the texture
+	vertices.push_back(0.5f);  // Texture coordinate (t)
+
+	// Generate vertices around the circle
+	for (int i = 0; i <= segments; ++i)
+	{
+		GLfloat angle = i * 2.0f * 3.1415926f / segments;
+		GLfloat dx = cosf(angle);
+		GLfloat dy = sinf(angle);
+
+		// Add vertex position (unit circle in NDC)
+		vertices.push_back(dx);
+		vertices.push_back(dy);
+		vertices.push_back(0.0f);  // Z coordinate
+
+		// Color (white)
+		vertices.push_back(1.0f);  // Color r
+		vertices.push_back(1.0f);  // Color g
+		vertices.push_back(1.0f);  // Color b
+
+		// Texture coordinates
+		vertices.push_back(0.5f + cosf(angle) * 0.5f);  // s (normalized)
+		vertices.push_back(0.5f + sinf(angle) * 0.5f);  // t (normalized)
+
+		// Index the vertices for triangle fan
+		indices.push_back(i + 1);
+	}
+
+	// Add index 0 (center vertex) at the start of the indices array
+	indices.insert(indices.begin(), 0);
+	indices.push_back(1); // Close the loop
+
+	// Set up buffers once
+	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
+}
+
+void Renderer::initCircleOutlineBuffers(GLuint segments)
+{
+	std::vector<GLfloat> vertices;
+
+	// Define the center position (0, 0)
+	GLfloat z = 0.0f;
+
+	// Generate vertices for the circle's outline
+	for (int i = 0; i <= segments; ++i) {
+		GLfloat angle = i * 2.0f * 3.1415926f / segments;
+		GLfloat dx = cosf(angle);
+		GLfloat dy = sinf(angle);
+		vertices.push_back(dx);
+		vertices.push_back(dy);
+		vertices.push_back(z);  // Z (depth)
+
+		// Color (white)
+		vertices.push_back(1.0f);  // Color r
+		vertices.push_back(1.0f);  // Color g
+		vertices.push_back(1.0f);  // Color b
+
+		// Texture coordinates
+		vertices.push_back(0.f);  // s (normalized)
+		vertices.push_back(0.f);  // t (normalized)
+	}
+
+	// Set up a VAO/VBO for the circle outline
+	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
+}
+
+void Renderer::initAnimationBuffers()
+{
+	// Define the vertices with placeholder texture coordinates.
+	GLfloat vertices[] = {
+		// Positions         // Colors        // UVs (to be updated dynamically)
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 0.0f,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 1.0f    // Top-right
+	};
+
+	GLuint indices[] = {
+		0, 1, 2,  // First triangle
+		0, 2, 3   // Second triangle
+	};
+
+	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
+	//indices_count.push_back(6);
+}
+
 
 /*!
  * @brief Loads and sets up a texture based on the given file path.
@@ -87,12 +394,6 @@ void Renderer::setUpTextures(const std::string& texturePath)
 
 		textureCache[texturePath] = texture;
 	}
-	//else
-	//{
-	//	// No texture provided
-	//	textures.push_back(nullptr);  // No texture for this object
-	//	textures_enabled.push_back(false);
-	//}
 }
 
 /*!
@@ -102,6 +403,8 @@ void Renderer::setUpTextures(const std::string& texturePath)
 void Renderer::setUpShaders()
 {
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+
+	//particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
 }
 
 /*!
@@ -135,35 +438,7 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vaos.push_back(vao);
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
-}
 
-/*!
-* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-*/
-void Renderer::cleanUpBuffers()
-{
-	for (auto& vao : vaos)
-	{
-		vao->Delete();
-		delete vao;
-	}
-
-	for (auto& vbo : vbos)
-	{
-		vbo->Delete();
-		delete vbo;
-	}
-
-	for (auto& ebo : ebos)
-	{
-		ebo->Delete();
-		delete ebo;
-	}
-
-	vaos.clear();
-	vbos.clear();
-	ebos.clear();
-	indices_count.clear();
 }
 
 /*!
@@ -179,66 +454,45 @@ void Renderer::render()
 	deltaTime = currentFrameTime - lastFrame;
 	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
 
-	// Update the animation frame based on elapsed time
-	elapsedTime += deltaTime;
-
-	if (elapsedTime >= frameDuration) {
-		currentFrame++;  // Move to the next frame
-		if (currentFrame >= totalFrames) {
-			currentFrame = 0;  // Loop back to the first frame
-		}
-		elapsedTime = 0.0f;  // Reset elapsed time
-	}
 
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glEnable(GL_DEPTH_TEST);
 
-	// Draw the animated sprite
-	// drawBoxAnimation(800.0f, 450.0f, 100.0f, 100.0f, "../Assets/Textures/Bunny_Right_Sprite.png", 64);
+	// Get the camera system instance
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
+
+	// Set up a view and projection matrix
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
+
+	// Send the projection and view matrices to the shader
+	shaderProgram->Activate();
+	shaderProgram->setMat4("view", view);
+	shaderProgram->setMat4("projection", projection);
+
+
+	std::cout << "Begin render" << std::endl;
+	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
+		std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// 0x4B45414E | functions here sets up a new vertices and indices for the object
-		if (spriteRenderer.animated)
-			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, 64);
-		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-			drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
-		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-			drawCircle(transform.position.x, transform.position.y, 100.f);
+		// Set vec2 to glm::vec3 for matrix transformations
+		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
+		// Set up the model matrix using the transform's position, scale, and rotation
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		//drawBox(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y, spriteRenderer.texturePath);
-
-		// If debug mode is enabled, draw the outline
-		if (debug_mode_enabled) {
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-				drawBoxOutline(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
-			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-				drawCircleOutline(transform.position.x, transform.position.y, 100.f);
-		}
-
-		// 0x4B45414E | We do a draw call here
-		vaos[entity_count]->Bind();
-		shaderProgram->Activate();
-
-		glm::mat4 model = glm::mat4(1.0f);
-		if (scale_enabled)
-			model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
 		// Apply rotation if enabled
-		if (rotation_enabled)
+		if (entity == playerObject->GetInstanceID() && rotation_enabled)
 		{
 			// Update the rotation angle based on deltaTime
-			//rotation_angle += rotationSpeed * deltaTime;
-
-			// Cap the rotation angle between 0 and 360 degrees
-			/*if (rotation_angle >= 360.0f)
-				rotation_angle -= 360.0f;*/
-
 			transform.rotation += rotationSpeed * deltaTime;
 			if (transform.rotation >= 360.f)
 				transform.rotation -= 360.f;
@@ -247,70 +501,68 @@ void Renderer::render()
 			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 
+		// Determine the scale factors based on facing direction and scaling
+		GLfloat scaleX = transform.scale.x;
+		GLfloat scaleY = transform.scale.y;
+
+		// If the entity is the player, adjust based on the direction and scaling factor
+		if (entity == playerObject->GetInstanceID())
+		{
+			// Adjust X-axis scale to flip direction if not facing right
+			scaleX = isFacingRight ? -scaleX : scaleX;
+
+			// If scaling is enabled, apply the scale factor
+			if (scale_enabled)
+			{
+				scaleX *= scale_factor;
+				scaleY *= scale_factor;
+			}
+		}
+
+		// Apply the calculated scale to the model matrix
+		model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
+
 		shaderProgram->setMat4("model", model);
 
-		// Bind the texture to object
-		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end())
-		{
-			textureCache.find(spriteRenderer.texturePath)->second->Bind();
+		// Bind the texture if available
+		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
+			textureCache.find(spriteRenderer.texturePath)->second->Bind();  // Make sure this binds to the correct texture ID
 			shaderProgram->setBool("useTexture", true);
 		}
-		else
+		else {
 			shaderProgram->setBool("useTexture", false);
+		}
 
-		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[entity_count]), GL_UNSIGNED_INT, 0);
-		vaos[entity_count]->Unbind();
+		// 0x4B45414E | functions here sets up a new vertices and indices for the object
+		if (spriteRenderer.animated) 
+		{
+			// Choose an animation based on the entity state (0 = idle, 1 = running)
+			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
 
-		++entity_count;
+			// Update and draw the current animation
+			currentAnimation.update(deltaTime);
+			updateAnimationFrame(currentAnimation.currentFrame,
+				currentAnimation.frameWidth,
+				currentAnimation.frameHeight,
+				currentAnimation.totalWidth,
+				currentAnimation.totalHeight);
+
+			drawBoxAnimation();
+		}
+		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+			drawBox();
+		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+			drawCircle();
+
+		if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::BOX)
+			drawBoxOutline();
+		else if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+			drawCircleOutline();
+		entity_count++;
 	}
 
-	// Background
-	// drawBox(800.f, 450.f, screen_width, screen_height, "../Assets/Textures/terrain.png");
-
-	// Draw Call
-	//for (size_t i = 0; i < vaos.size(); ++i) {
-	//	vaos[i]->Bind();
-
-	//	shaderProgram->Activate();
-
-	//	glm::mat4 model = glm::mat4(1.0f);
-	//	if (scale_enabled)
-	//		model = glm::scale(model, glm::vec3(scale_factor, scale_factor, 1.0f));
-	//	// Apply rotation if enabled
-	//	if (rotation_enabled)
-	//	{
-	//		// Update the rotation angle based on deltaTime
-	//		rotation_angle += rotationSpeed * deltaTime;
-
-	//		// Cap the rotation angle between 0 and 360 degrees
-	//		if (rotation_angle >= 360.0f)
-	//			rotation_angle -= 360.0f;
-
-	//		// Apply rotation to the model matrix
-	//		model = glm::rotate(model, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
-	//	}
-
-	//	shaderProgram->setMat4("model", model);
-
-	//	// Bind the texture for the object
-
-	//	if (textures_enabled[i])
-	//	{
-	//		textures[i]->Bind();
-	//		shaderProgram->setBool("useTexture", true);
-	//	}
-	//	else
-	//		shaderProgram->setBool("useTexture", false);
-
-	//	// Draw the filled square
-	//	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color for filled box
-	//	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices_count[i]), GL_UNSIGNED_INT, 0);
-
-	//	vaos[i]->Unbind();
-	//}
-
-	cleanUpBuffers();
+	// Render all text objects
+	textRenderer->renderAllText();
 }
 
 /*!
@@ -346,33 +598,6 @@ void Renderer::cleanUp()
 		delete texture.second;
 	}
 
-	//size_t numOfTexture = textureCache.size();
-	//bool* check = new bool[numOfTexture];
-	//for (size_t i = 0; i < numOfTexture; i++)
-	//{
-	//	check[i] = false;
-	//}
-
-	//// Delete all textures
-	//for (size_t i = 0; i < textures.size(); ++i)
-	//{
-	//	if (textures[i])
-	//	{
-	//		textures[i]->Delete();  // Delete the OpenGL texture
-	//		for (size_t j = 0; j < numOfTexture; j++)
-	//		{
-	//			if (textures[i]->ID == j && check[j] == false)
-	//			{
-	//				delete textures[i];  // Deallocate memory for the texture object
-	//				textures[i] = nullptr;
-	//				check[j] = true;
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
-	//delete[] check;
-
 	// Clear the textures vector
 	textures.clear();
 
@@ -389,6 +614,24 @@ void Renderer::cleanUp()
 		delete shaderProgram;  // Deallocate memory
 		shaderProgram = nullptr;
 	}
+
+	if (framebuffer)
+		glDeleteFramebuffers(1, &framebuffer);
+	framebuffer = 0;
+
+	if (textureColorbuffer)
+		glDeleteTextures(1, &textureColorbuffer);
+	textureColorbuffer = 0;
+
+	if (rbo)
+		glDeleteRenderbuffers(1, &rbo);
+	rbo = 0;
+	if (textRenderer)
+	{
+		delete textRenderer;
+		textRenderer = nullptr;
+	}
+
 }
 
 /*!
@@ -401,111 +644,39 @@ void Renderer::cleanUp()
  * @param height The height of the box (in screen space).
  * @param texturePath The file path to the texture for the box.
  */
-void Renderer::drawBox(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+void Renderer::drawBox()
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	// Convert width and height from screen space to NDC scaling
-	GLfloat new_width = (2.0f * width) / screen_width;
-	GLfloat new_height = (2.0f * height) / screen_height;
+	// Bind the VAO[0] for the box
+	vaos[0]->Bind();
 
-	// Adjust vertices so that the position (x, y) represents the center of the box
-	GLfloat half_width = new_width / 2.0f;
-	GLfloat half_height = new_height / 2.0f;
+	// Set the object color (if necessary)
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
 
-	// Define the vertices for the box, centered around (new_x, new_y)
-	GLfloat vertices_box[] = {
-		new_x - half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f, 1.0f,   // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   0.0f, 0.0f,   // Bottom-left
-		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 0.0f,   // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   1.0f, 1.0f    // Top-right
-	};
-	// Define indices to form two triangles
-	GLuint indices_box[] = {
-	0, 1, 2, // First triangle
-	0, 2, 3  // Second triangle
-	};
+	// Issue the draw call using the pre-setup buffers
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	// ** Set the object color for the filled box (e.g., white) **
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set uniform to white
-
-	// Set up buffers
-	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
-
-	// Store the number of indices for this box (6 indices: two triangles)
-	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
-
-	// Set up the texture for the box
-	// setUpTextures(texturePath);
+	// Unbind the VAO[0] after drawing
+	vaos[0]->Unbind();
 }
 
 /*!
  * @brief Draws a 2D circle with the given position, radius, and texture,
 		  starting position is the top left of screen. It starts from the
 		  center of the box.
- * @param x The x-coordinate of the center of the circle (in screen space).
- * @param y The y-coordinate of the center of the circle (in screen space).
- * @param radius The radius of the circle (in screen space).
- * @param texturePath The file path to the texture for the circle.
- * @param segments The number of segments to use for rendering the circle (higher numbers create smoother circles),
-		  by default it is set to 1000.
  */
-void Renderer::drawCircle(GLfloat x, GLfloat y, GLfloat radius, GLint segments)
+void Renderer::drawCircle()
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	GLfloat z = 0.0f;
-	// Convert radius from screen space to NDC scaling
-	GLfloat new_radius_x = (2.0f * radius) / screen_width;
-	GLfloat new_radius_y = (2.0f * radius) / screen_height;
+	// Bind the VAO for the circle
+	vaos[CIRCLE_VAO]->Bind();
 
-	// Arrays for vertices and indices
-	std::vector<GLfloat> vertices;
-	std::vector<GLuint> indices;
+	// Set the object color (if necessary)
+	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
 
-	// Add center vertex
-	vertices.push_back(new_x);
-	vertices.push_back(new_y);
-	vertices.push_back(z);
-	vertices.push_back(1.0f);   // Color (r)
-	vertices.push_back(1.0f);   // Color (g)
-	vertices.push_back(1.0f);   // Color (b)
-	vertices.push_back(0.5f);   // Texture coordinate (s) - center of the texture
-	vertices.push_back(0.5f);   // Texture coordinate (t)
+	// Draw the circle using GL_TRIANGLE_FAN
+	glDrawElements(GL_TRIANGLE_FAN, 1002, GL_UNSIGNED_INT, 0);
 
-	// Generate vertices around the circle
-	for (int i = 0; i <= segments; ++i)
-	{
-		GLfloat angle = i * 2.0f * 3.1415926f / segments;
-		GLfloat dx = cosf(angle) * new_radius_x;
-		GLfloat dy = sinf(angle) * new_radius_y;
-		vertices.push_back(new_x + dx);
-		vertices.push_back(new_y + dy);
-		vertices.push_back(z);
-
-		// Color
-		vertices.push_back(1.0f);  // Color r
-		vertices.push_back(1.0f);  // Color g
-		vertices.push_back(1.0f);  // Color b
-
-		// Texture coordinates
-		vertices.push_back(0.5f + cosf(angle) * 0.5f);  // s (normalized)
-		vertices.push_back(0.5f + sinf(angle) * 0.5f);  // t (normalized)
-
-		// Index the vertices for triangle fan
-		indices.push_back(i + 1);
-	}
-
-	// Store the number of indices for this object
-	indices_count.push_back(indices.size());
-
-	// Set up buffers
-	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
-
-	// Set up the texture for the circle
-	//setUpTextures(texturePath);
+	// Unbind the VAO after drawing
+	vaos[CIRCLE_VAO]->Unbind();
 }
 
 void Renderer::ToggleInputsForScale()
@@ -527,147 +698,167 @@ void Renderer::ToggleInputsForRotation()
 	}
 }
 
-void Renderer::drawBoxOutline(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+void Renderer::drawBoxOutline()
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	GLfloat new_width = (2.0f * width) / screen_width;
-	GLfloat new_height = (2.0f * height) / screen_height;
+	// Bind the VAO specifically for drawing outlines
+	vaos[BOX_OUTLINE]->Bind();
 
-	GLfloat half_width = new_width / 2.0f;
-	GLfloat half_height = new_height / 2.0f;
+	// Set the line width for better visibility (optional)
+	glLineWidth(2.0f);
 
-	// Define the vertices for the box outline (positions only)
-	GLfloat vertices_box[] = {
-		new_x - half_width, new_y + half_height, 0.0f,  // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  // Bottom-left
-		new_x + half_width, new_y - half_height, 0.0f,  // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f   // Top-right
-	};
-
-	// Activate the shader program
-	shaderProgram->Activate();
-
-	// Disable the texture for the wireframe rendering
-	shaderProgram->setBool("useTexture", false);  // Ensure no texture is bound
-
+	// Set the shader uniform to enable wireframe mode
+	shaderProgram->setBool("useTexture", false);
 	// Set the wireframe color to red
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
-	// Set to wireframe mode and increase line width for visibility
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(2.0f);  // Make the wireframe lines thicker
+	// Draw the outline using GL_LINE_LOOP to draw only the edges
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
 
-	// Draw the outline using GL_LINE_LOOP
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices_box);
-	glDrawArrays(GL_LINE_LOOP, 0, 4);  // This will only draw the outline of the square
+	// Reset the uniform to disable wireframe mode for other objects
+	shaderProgram->setBool("useTexture", true);
 
-	// Reset polygon mode back to fill for future drawings
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisableVertexAttribArray(0);
-
-	// Reset line width to default
-	glLineWidth(1.0f);
+	vaos[BOX_OUTLINE]->Unbind();
 }
 
-void Renderer::drawCircleOutline(GLfloat x, GLfloat y, GLfloat radius, GLint segments) {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	GLfloat z = 0.0f;
+void Renderer::drawCircleOutline()
+{
+	// Bind the VAO
+	vaos[CIRCLE_OUTLINE]->Bind();
 
-	// Convert radius from screen space to NDC scaling
-	GLfloat new_radius_x = (2.0f * radius) / screen_width;
-	GLfloat new_radius_y = (2.0f * radius) / screen_height;
-
-	// Define vertices for the circle's outline
-	std::vector<GLfloat> vertices;
-
-	// Generate outer vertices for the circle's circumference
-	for (int i = 0; i < segments; ++i)  // Only generate 'segments' outer points, skip center vertex
-	{
-		GLfloat angle = i * 2.0f * 3.1415926f / segments;
-		GLfloat dx = cosf(angle) * new_radius_x;
-		GLfloat dy = sinf(angle) * new_radius_y;
-		vertices.push_back(new_x + dx);  // X
-		vertices.push_back(new_y + dy);  // Y
-		vertices.push_back(z);           // Z (depth)
-	}
-
-	// Activate the shader program
-	shaderProgram->Activate();
+	// Set the shader uniform to enable wireframe mode
+	shaderProgram->setBool("useTexture", false);
 
 	// Set the wireframe color to red
 	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
-
-	// Set to wireframe mode and increase line width for visibility
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(2.0f);  // Make the wireframe lines thicker
-
-	// Enable the vertex attribute for position
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vertices.data());
 
 	// Draw the outline of the circle using GL_LINE_LOOP
-	glDrawArrays(GL_LINE_LOOP, 0, segments);
+	glDrawArrays(GL_LINE_LOOP, 0, 1000);
 
-	// Disable the vertex array and reset to fill mode
-	glDisableVertexAttribArray(0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	// Reset line width to default
-	glLineWidth(1.0f);
+	// Set the shader uniform to disable wireframe mode
+	shaderProgram->setBool("useTexture", true);
+	// Unbind the VAO
+	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
-void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height, int frameWidth)
+void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight)
 {
-	// Convert screen coordinates to normalized device coordinates (NDC)
-	GLfloat new_x = (2.0f * x) / screen_width - 1.0f;
-	GLfloat new_y = 1.0f - (2.0f * y) / screen_height;
-	// Convert width and height from screen space to NDC scaling
-	GLfloat new_width = (2.0f * width) / screen_width;
-	GLfloat new_height = (2.0f * height) / screen_height;
+	// Calculate the column and row of the current frame in the sprite sheet
+	int column = currentFrame % (totalWidth / frameWidth);
+	int row = currentFrame / (totalWidth / frameWidth);
 
-	// Adjust vertices so that the position (x, y) represents the center of the box
-	GLfloat half_width = new_width / 2.0f;
-	GLfloat half_height = new_height / 2.0f;
+	// Calculate UV coordinates based on the current column and row
+	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
+	float uvY = 1.0f - (row * frameHeight) / static_cast<float>(totalHeight) - (frameHeight / static_cast<float>(totalHeight)); // Flip vertically if needed
+	float uvWidth = frameWidth / static_cast<float>(totalWidth);
+	float uvHeight = frameHeight / static_cast<float>(totalHeight);
 
-	// Calculate the UV coordinates based on the current frame and total number of frames (single row)
-	float uvX = (currentFrame * frameWidth) / (float)(totalFrames * frameWidth);  // X position of the frame in the texture
-	float uvY = 0.0f;  // Since it's a single row, Y is always 0
-	float uvWidth = frameWidth / (float)(totalFrames * frameWidth);  // Width of one frame in texture UV space
-	float uvHeight = 1.0f;  // Height in UV space
-
-	// Flip the UVs to correct the upside-down texture
-	float uvTop = uvY + uvHeight;  // Flipped UV top (invert Y)
-	float uvBottom = uvY;          // Flipped UV bottom
-
-	// Define the vertices for the box, with texture coordinates for the current frame
-	GLfloat vertices_box[] = {
-		// Position               // Color         // Texture coords (UVs)
-		new_x - half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX, uvTop,                     // Top-left
-		new_x - half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX, uvBottom,                  // Bottom-left
-		new_x + half_width, new_y - half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX + uvWidth, uvBottom,        // Bottom-right
-		new_x + half_width, new_y + half_height, 0.0f,  1.0f, 1.0f, 1.0f,   uvX + uvWidth, uvTop            // Top-right
+	// Update the UV coordinates in the VBO
+	GLfloat updatedUVs[] = {
+		// Positions         // Colors        // UVs
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY + uvHeight,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY,             // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY + uvHeight    // Top-right
 	};
 
-	// Define indices to form two triangles
-	GLuint indices_box[] = {
-		0, 1, 2, // First triangle
-		0, 2, 3  // Second triangle
-	};
+	// Update VBO data
+	vbos[ANIMATION_VAO]->UpdateData(updatedUVs, sizeof(updatedUVs));
+}
 
-	// ** Set the object color for the filled box (e.g., white) **
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // Set uniform to white
+void Renderer::drawBoxAnimation()
+{
+	// Activate the shader program and bind the texture.
+	shaderProgram->Activate();
 
-	// Set up buffers (same as in your drawBox function)
-	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+	// Draw the box using the pre-initialized VAO.
+	vaos[ANIMATION_VAO]->Bind();
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	vaos[ANIMATION_VAO]->Unbind();
+}
 
-	// Store the number of indices for this box (6 indices: two triangles)
-	indices_count.push_back(6);  // We have 6 indices for a box (two triangles)
+void Renderer::initAnimationEntities()
+{
+	int playerEntityID = 1; // Replace with actual entity IDs from your ECS or game logic
 
-	// Set up the texture for the box
-	//setUpTextures(texturePath);
+	// Create animations for the player
+	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
+	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
+
+	// Add multiple animations for the player entity (idle and running animations)
+	entity_animations[playerEntityID] = { idleAnimation, runAnimation };
+
+}
+
+void Renderer::toggleSlowMotion()
+{
+	// Toggle slow-motion state
+	isSlowMotion = !isSlowMotion;
+
+	// Loop through all entities and adjust the frame duration for their animations
+	for (auto& entity : m_Entities)
+	{
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+		if (spriteRenderer.animated)
+		{
+			// Get the animations associated with this entity
+			auto& animations = entity_animations[entity];
+			for (auto& animation : animations)
+			{
+				// Adjust the frame duration based on slow-motion state
+				if (isSlowMotion)
+				{
+					animation.setFrameDuration(animation.originalFrameDuration * slowMotionFactor);
+				}
+				else
+				{
+					animation.resetFrameDuration(); // Reset to original duration
+				}
+			}
+		}
+	}
+}
+
+void Renderer::animationKeyInput()
+{
+	auto& playerSprite = playerObject->GetComponent<SpriteRender>();
+
+	// File paths for the textures
+	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+	if (Input::IsKeyPressed(GLFW_KEY_A)) {
+		isFacingRight = false; // Moving left
+	}
+	else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+		isFacingRight = true; // Moving right
+	}
+
+	// Check if any movement keys are pressed
+	if (Input::IsKeyPressed(GLFW_KEY_W) ||
+		Input::IsKeyPressed(GLFW_KEY_A) ||
+		Input::IsKeyPressed(GLFW_KEY_S) ||
+		Input::IsKeyPressed(GLFW_KEY_D))
+	{
+		// If we are not already in the running state, switch to the running texture
+		if (playerSprite.animationIndex != 1)
+		{
+			playerSprite.animationIndex = 1;
+			playerSprite.texturePath = runningTexturePath;
+
+			// Set the animation index and texture path to indicate running state
+			std::cout << "Switching to running animation.\n";
+		}
+	}
+	else
+	{
+		// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+		if (playerSprite.animationIndex != 0)
+		{
+			playerSprite.animationIndex = 0;
+			playerSprite.texturePath = idleTexturePath;
+
+			// Set the animation index and texture path to indicate idle state
+			std::cout << "Switching to idle animation.\n";
+		}
+	}
 }

@@ -4,6 +4,7 @@
 #include "Physics/Physics.h"
 #include "Collision/Collision.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/Camera2D.h"
 
 namespace Ukemochi
 {
@@ -27,6 +28,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterSystem<Collision>();
 		ECS::GetInstance().RegisterSystem<Renderer>();
 		//ECS::GetInstance().RegisterSystem<Audio>();
+		ECS::GetInstance().RegisterSystem<Camera>();
 
 		// Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
