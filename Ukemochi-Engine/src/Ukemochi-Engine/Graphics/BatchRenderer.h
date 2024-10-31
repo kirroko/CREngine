@@ -3,6 +3,7 @@
 
 #include "PreCompile.h" 
 #include "../vendor/glm/glm/glm.hpp"
+#include "GLAD/glad.h"
 
 // Forward declaration
 class VAO;
@@ -12,8 +13,8 @@ class Shader;
 
 struct Vertex {
 	glm::vec3 position;
+	glm::vec3 color;
 	glm::vec2 texCoord;
-	glm::vec4 color;
 };
 
 
@@ -38,7 +39,7 @@ private:
 	std::unique_ptr<EBO> ebo;
 	std::shared_ptr<Shader> shader;
 	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	std::vector<GLuint> indices;
 
 	int maxSprites = 1000; // Maximum number of sprites per batch
 };

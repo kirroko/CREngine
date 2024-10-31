@@ -396,7 +396,7 @@ void Renderer::setUpTextures(const std::string& texturePath)
 		Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, format, GL_UNSIGNED_BYTE);
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		texture->texUnit(*shaderProgram, "tex0", 0);
+		texture->texUnit(shaderProgram.get(), "tex0", 0);
 
 		textureCache[texturePath] = texture;
 	}
@@ -473,13 +473,14 @@ void Renderer::render()
 	shaderProgram->Activate();
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
+	std::cout << "Set view and projection matrices in shader." << std::endl;
 
 	std::cout << "Begin render" << std::endl;
 	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	// Start batch rendering
 	batchRenderer->beginBatch();
-
+	std::cout << "Begin batch rendering." << std::endl;
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
@@ -521,17 +522,21 @@ void Renderer::render()
 
 		// Set the model matrix in the shader
 		shaderProgram->setMat4("model", model);
-
+		std::cout << "Set model matrix in shader for entity " << entity_count << std::endl;
 		// Bind the texture if available
 		int textureID = -1; // Default to no texture
 		bool useTexture = false;
 		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
 			textureID = textureCache.find(spriteRenderer.texturePath)->second->ID; // Assuming getID() returns OpenGL texture ID
 			shaderProgram->setBool("useTexture", true);
+			std::cout << "Binding texture ID: " << textureID << std::endl;
 		}
 		else
+		{
 			shaderProgram->setBool("useTexture", false);
-
+			std::cout << "No texture bound for entity " << entity_count << std::endl;
+		}
+		std::cout << "Texture ID: " << textureID << std::endl;
 		// Submit this sprite to the batch renderer
 		batchRenderer->drawSprite(
 			glm::vec2(transform.position.x, transform.position.y),
@@ -555,9 +560,11 @@ void Renderer::render()
 	// End and flush the batch
 	batchRenderer->endBatch();
 	batchRenderer->flush();
+	std::cout << "End batch rendering." << std::endl;
 
 	// Render all text objects (outside batch rendering)
 	textRenderer->renderAllText();
+	std::cout << "Rendered all text objects." << std::endl;
 }
 
 

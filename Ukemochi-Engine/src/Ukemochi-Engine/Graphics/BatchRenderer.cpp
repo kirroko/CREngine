@@ -30,6 +30,7 @@ void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader) {
     createIndexBuffer();
 
     shader = sharedShader;
+    std::cout << "BatchRenderer initialized with maxSprites: " << maxSprites << std::endl;
 }
 
 void BatchRenderer2D::beginBatch()
@@ -52,8 +53,8 @@ void BatchRenderer2D::createVertexBuffer()
 {
     vbo = std::make_unique<VBO>(nullptr, sizeof(Vertex) * maxSprites * 4);
     vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
-    vao->LinkAttrib(*vbo, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-    vao->LinkAttrib(*vbo, 2, 4, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 }
 
 void BatchRenderer2D::createIndexBuffer() {
@@ -69,12 +70,19 @@ void BatchRenderer2D::createIndexBuffer() {
         indices[i * 6 + 5] = offset + 0;
         offset += 4;
     }
-    ebo = std::make_unique<EBO>(&indices[0], indices.size() * sizeof(unsigned int));
+    ebo = std::make_unique<EBO>(&indices[0], indices.size() * sizeof(GLuint));
+    std::cout << "Generated indices:" << std::endl;
+    for (size_t i = 0; i < indices.size(); i += 6) {
+        std::cout << "Quad " << (i / 6) << ": "
+            << indices[i] << ", " << indices[i + 1] << ", " << indices[i + 2] << ", "
+            << indices[i + 3] << ", " << indices[i + 4] << ", " << indices[i + 5] << std::endl;
+    }
 }
 
 void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, int textureID) {
     // Push vertices to the buffer
     if (vertices.size() >= maxSprites * 4) {
+        std::cout << "Reached maxSprites in batch, flushing..." << std::endl;
         flush();
         beginBatch();
     }
@@ -84,22 +92,35 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     glm::vec3 pos3 = glm::vec3(position.x + size.x, position.y + size.y, 0.0f);
     glm::vec3 pos4 = glm::vec3(position.x, position.y + size.y, 0.0f);
 
-    vertices.push_back({ pos1, glm::vec2(0.0f, 0.0f), color });
-    vertices.push_back({ pos2, glm::vec2(1.0f, 0.0f), color });
-    vertices.push_back({ pos3, glm::vec2(1.0f, 1.0f), color });
-    vertices.push_back({ pos4, glm::vec2(0.0f, 1.0f), color });
+    // Extract RGB from the input color (ignoring the alpha channel)
+    glm::vec3 rgbColor = glm::vec3(color.r, color.g, color.b);
+
+    // Push vertices with the adjusted color
+    vertices.push_back({ pos1, rgbColor, glm::vec2(0.0f, 0.0f) });
+    vertices.push_back({ pos2, rgbColor, glm::vec2(1.0f, 0.0f) });
+    vertices.push_back({ pos3, rgbColor, glm::vec2(1.0f, 1.0f) });
+    vertices.push_back({ pos4, rgbColor, glm::vec2(0.0f, 1.0f) });
+    std::cout << "Added sprite vertices for position: (" << position.x << ", " << position.y << ") and size: (" << size.x << ", " << size.y << ")" << std::endl;
 }
 
 void BatchRenderer2D::flush() 
 {
-    if (vertices.empty()) return;
+    if (vertices.empty()) 
+    {
+        std::cout << "No vertices to flush." << std::endl;
+        return;
+    }
 
     vao->Bind();
     shader->Activate();
 
     vbo->UpdateData(vertices.data(), vertices.size() * sizeof(Vertex));
+    
+    ebo->Bind();
 
+    std::cout << "Flushing batch with " << vertices.size() << " vertices and " << (indices.size()) << " indices." << std::endl;
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-
+    std::cout << "Draw call issued with " << indices.size() << " indices." << std::endl;
     vertices.clear();
+    std::cout << "Batch cleared after flush." << std::endl;
 }
