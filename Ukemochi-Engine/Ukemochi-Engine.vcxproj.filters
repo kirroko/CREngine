@@ -206,6 +206,10 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h" />
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\Button.h" />
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\GUIElement.h" />
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\TextBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -320,5 +324,9 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\Button.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\GUIElement.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\TextBox.cpp" />
   </ItemGroup>
 </Project>

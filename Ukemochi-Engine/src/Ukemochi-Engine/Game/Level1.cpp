@@ -30,6 +30,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Renderer.h"   // for renderer system
 #include "../Audio/Audio.h"			// for audio system
 #include "../Graphics/Camera2D.h"
+#include "../InGameGUI/InGameGUI.h" // for in game GUI system
 
 namespace Ukemochi
 {
@@ -46,6 +47,8 @@ namespace Ukemochi
 
 	GLfloat lastFrameTime = 0.0f;
 	GLfloat deltaTime = 0.0f;
+
+	InGameGUI GUI_System;
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
@@ -196,7 +199,12 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
 		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
-	
+		
+		// Create some test GUI elements
+		GUI_System.CreateButton(Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f },
+			Vec2{ 100,50 }, "Test Btn", []() { std::cout << "Test Btn Clicked!"; });
+		GUI_System.CreateTextBox(Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f },
+			Vec2{ 100,50 }, "Test Text Box");
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -273,8 +281,6 @@ namespace Ukemochi
 		lastFrameTime = currentFrameTime;
 		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
 
-
-
 		// --- END USER INPUTS ---
 
 		// --- GAME LOGIC UPDATE ---
@@ -287,6 +293,9 @@ namespace Ukemochi
 		// --- COLLISION UPDATE ---
 		// Check the collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+
+		// Update the in game GUI system
+		GUI_System.Update();
 	}
 
 	void Level1_Draw()//rendering of the game for Level1
@@ -294,6 +303,8 @@ namespace Ukemochi
 		// Render the entities
 		ECS::GetInstance().GetSystem<Renderer>()->render();
 
+		// Render the GUI elements
+		GUI_System.Render();
 	}
 
 	void Level1_Free()//release unused assets/variable memories
