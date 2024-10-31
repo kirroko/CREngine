@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Ukemochi
 {
 	GUIElement::GUIElement(const Vec2& pos, const Vec2& scale, const std::string& text)
-		: transform{ pos, 0.0f, scale }, text(text), enabled(true) {}
+		: transform{ Mtx44{}, pos, 0.0f, scale }, text(text), enabled(true) {}
 
 	bool GUIElement::IsInside()
 	{

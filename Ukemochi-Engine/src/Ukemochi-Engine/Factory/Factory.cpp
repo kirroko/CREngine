@@ -53,6 +53,7 @@ namespace Ukemochi
 				if (component.compare("Transform") == 0)
 				{
 					ECS::GetInstance().AddComponent(entity, Transform{
+						Mtx44{},
 						Vec2(comps["Position"][0].GetFloat(),comps["Position"][1].GetFloat()),
 						comps["Rotation"].GetFloat(),
 						Vec2(comps["Scale"][0].GetFloat(),comps["Scale"][1].GetFloat())

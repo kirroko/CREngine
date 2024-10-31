@@ -210,6 +210,7 @@
     <ClInclude Include="src\Ukemochi-Engine\InGameGUI\Button.h" />
     <ClInclude Include="src\Ukemochi-Engine\InGameGUI\GUIElement.h" />
     <ClInclude Include="src\Ukemochi-Engine\InGameGUI\TextBox.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
@@ -328,5 +329,6 @@
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\Button.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\GUIElement.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\TextBox.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp" />
   </ItemGroup>
 </Project>

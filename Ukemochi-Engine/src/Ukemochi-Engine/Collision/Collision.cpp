@@ -4,7 +4,7 @@
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 31, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -15,12 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Collision.h"			  // for forward declaration
-#include "../Math/MathUtils.h"    // for min, max, abs
-#include "../FrameController.h"   // for GetDeltaTime
-#include "../ECS/ECS.h"			  // for entity components
-#include "../Audio/Audio.h"		  // for Audio sound effects
-#include "../Application.h"		  // for screen size
+#include "Collision.h"			// for forward declaration
+#include "../Math/MathUtils.h"	// for min, max, abs
+#include "../FrameController.h"	// for GetDeltaTime
+#include "../Audio/Audio.h"		// for Audio sound effects
+#include "../Application.h"		// for screen size
 
 namespace Ukemochi
 {

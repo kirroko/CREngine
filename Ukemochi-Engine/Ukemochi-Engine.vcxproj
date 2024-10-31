@@ -224,6 +224,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
@@ -270,6 +271,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />

@@ -358,30 +358,37 @@ void Renderer::render()
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// Set vec2 to glm::vec3 for matrix transformations
-		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
-		// Set up the model matrix using the transform's position, scale, and rotation
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		//// Set vec2 to glm::vec3 for matrix transformations
+		//glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+		//glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
+		//// Set up the model matrix using the transform's position, scale, and rotation
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+		//model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Apply scaling if enabled
-		if (scale_enabled)
-			model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		else
-			model = glm::scale(model, scale); // Use entity's original scale
+		//// Apply scaling if enabled
+		//if (scale_enabled)
+		//	model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
+		//else
+		//	model = glm::scale(model, scale); // Use entity's original scale
 
-		// Apply rotation if enabled
-		if (rotation_enabled)
-		{
-			// Update the rotation angle based on deltaTime
-			transform.rotation += rotationSpeed * deltaTime;
-			if (transform.rotation >= 360.f)
-				transform.rotation -= 360.f;
+		//// Apply rotation if enabled
+		//if (rotation_enabled)
+		//{
+		//	// Update the rotation angle based on deltaTime
+		//	transform.rotation += rotationSpeed * deltaTime;
+		//	if (transform.rotation >= 360.f)
+		//		transform.rotation -= 360.f;
 
-			// Apply rotation to the model matrix
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		}
+		//	// Apply rotation to the model matrix
+		//	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		//}
+
+		// Copy elements from custom matrix4x4 to glm::mat4
+		glm::mat4 model;
+
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				model[i][j] = transform.transform_matrix.m2[j][i];
 
 		shaderProgram->setMat4("model", model);
 

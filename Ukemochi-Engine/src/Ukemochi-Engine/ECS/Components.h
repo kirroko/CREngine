@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <glad/glad.h>			// for GLuint
 #include "PreCompile.h"
+#include "../Math/Matrix4x4.h"  // for Mat44 struct
 #include "../Math/Vector2D.h"	// for Vec2 struct
 #include "../Audio/Audio.h"		// for Audio class
 #include "../Graphics/Sprite.h" // for Sprite class
@@ -28,6 +29,7 @@ namespace Ukemochi
 {
 	struct Transform
 	{
+		Mtx44 transform_matrix;
 		Vec2 position;
 		float rotation; // TODO: Change to Quaternion?
 		Vec2 scale;

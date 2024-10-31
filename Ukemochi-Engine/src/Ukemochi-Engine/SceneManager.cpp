@@ -3,6 +3,7 @@
 #include "Audio/Audio.h"
 #include "Physics/Physics.h"
 #include "Collision/Collision.h"
+#include "Math/Transformation.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Camera2D.h"
 
@@ -25,6 +26,7 @@ namespace Ukemochi
 		// Register your systems
 		ECS::GetInstance().RegisterSystem<Physics>();
 		ECS::GetInstance().RegisterSystem<Collision>();
+		ECS::GetInstance().RegisterSystem<Transformation>();
 		ECS::GetInstance().RegisterSystem<Renderer>();
 		//ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<Camera>();

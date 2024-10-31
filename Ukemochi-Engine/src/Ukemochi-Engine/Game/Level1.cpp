@@ -27,6 +27,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../Input/Input.h"			// for input system
 #include "../Physics/Physics.h"	    // for physics system
 #include "../Collision/Collision.h" // for collision system
+#include "../Math/Transformation.h" // for transformation system
 #include "../Graphics/Renderer.h"   // for renderer system
 #include "../Audio/Audio.h"			// for audio system
 #include "../Graphics/Camera2D.h"
@@ -76,11 +77,12 @@ namespace Ukemochi
 		// BACKGROUND 
 		GameObject level_background = GameObjectFactory::CreateObject();
 		level_background.AddComponent(Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-				0,
-				Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
-			});
+			Mtx44{},
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
+		});
 		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
 
 		// PLAYER OBJECT
@@ -91,11 +93,12 @@ namespace Ukemochi
 		// BACKGROUND OBJECT
 		GameObject background = GameObjectFactory::CreateObject();
 		background.AddComponent(Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-				0,
-				Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f}
-			});
+			Mtx44{},
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 1.5f, SPRITE_SCALE * 1.5f}
+		});
 		background.AddComponent(Rigidbody2D());
 		background.GetComponent<Rigidbody2D>().is_kinematic = true;
 		background.AddComponent(BoxCollider2D());
@@ -104,11 +107,12 @@ namespace Ukemochi
 		// WORM OBJECT 1 - DYNAMIC
 		worm_0 = GameObjectFactory::CreateObject();
 		worm_0.AddComponent(Transform{
-				Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
-				0,
-				Vec2{SPRITE_SCALE, SPRITE_SCALE}
-			});
+			Mtx44{},
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+			0,
+			Vec2{SPRITE_SCALE, SPRITE_SCALE}
+		});
 		worm_0.AddComponent(Rigidbody2D{ Vec2{}, Vec2{ENTITY_ACCEL, ENTITY_ACCEL}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
 		worm_0.AddComponent(BoxCollider2D());
 		worm_0.GetComponent<BoxCollider2D>().tag = "Enemy";
@@ -130,11 +134,12 @@ namespace Ukemochi
 		// Create left door entity
 		GameObject door_0 = GameObjectFactory::CreateObject();
 		door_0.AddComponent(Transform{
-				Vec2{0,
-				ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
-				0,
-				Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
-			});
+			Mtx44{},
+			Vec2{0,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			0,
+			Vec2{SPRITE_SCALE * 0.25f, SPRITE_SCALE * 1.75f}
+		});
 		door_0.AddComponent(Rigidbody2D());
 		door_0.GetComponent<Rigidbody2D>().is_kinematic = true;
 		door_0.AddComponent(BoxCollider2D());
@@ -148,6 +153,7 @@ namespace Ukemochi
 		// Create right door entity
 		GameObject door_1 = GameObjectFactory::CloneObject(door_0);
 		door_1.GetComponent<Transform>() = Transform{
+			Mtx44{},
 			Vec2{(float)ECS::GetInstance().GetSystem<Renderer>()->screen_width,
 			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
 			0,
@@ -158,6 +164,7 @@ namespace Ukemochi
 		// Create top door entity
 		GameObject door_2 = GameObjectFactory::CloneObject(door_0);
 		door_2.GetComponent<Transform>() = Transform{
+			Mtx44{},
 			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 			0},
 			0,
@@ -168,6 +175,7 @@ namespace Ukemochi
 		// Create bottom door entity
 		GameObject door_3 = GameObjectFactory::CloneObject(door_0);
 		door_3.GetComponent<Transform>() = Transform{
+			Mtx44{},
 			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 			(float)ECS::GetInstance().GetSystem<Renderer>()->screen_height},
 			0,
@@ -178,6 +186,7 @@ namespace Ukemochi
 		// ANIMATION OBJECT
 		GameObject animation = GameObjectFactory::CreateObject();
 		animation.AddComponent(Transform{
+			Mtx44{},
 			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,
 			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
 			0,
@@ -231,20 +240,30 @@ namespace Ukemochi
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
 
-		// Player Input for rotation, to test rotate physics
+		// Input for rotation, to test rotate physics
 		if (UME::Input::IsKeyPressed(UME_KEY_R))
+			ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
+		else if (UME::Input::IsKeyPressed(UME_KEY_T))
 			ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
 
+		// Input for scaling, to test scaling of the player
+		auto& player_trans = player_obj.GetComponent<Transform>();
+		if (UME::Input::IsKeyPressed(UME_KEY_F))
+			ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
+		else if (UME::Input::IsKeyPressed(UME_KEY_G))
+			ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
+
 		// Renderer Inputs
-		if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
+		/*if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
 		else if (UME::Input::IsKeyTriggered(GLFW_KEY_Y))
 			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
-		else if (UME::Input::IsKeyTriggered(GLFW_KEY_U))
+		else*/
+		if (UME::Input::IsKeyTriggered(GLFW_KEY_U))
 			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled);
-		
+
 		// Audio Inputs
 		if (UME::Input::IsKeyTriggered(GLFW_KEY_P))
 		{
@@ -283,6 +302,9 @@ namespace Ukemochi
 
 		// --- END USER INPUTS ---
 
+		// Update the in game GUI system
+		GUI_System.Update();
+
 		// --- GAME LOGIC UPDATE ---
 
 
@@ -294,8 +316,9 @@ namespace Ukemochi
 		// Check the collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
 
-		// Update the in game GUI system
-		GUI_System.Update();
+		// --- TRANSFORMATION UPDATE ---
+		// Compute the entities transformations
+		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 	}
 
 	void Level1_Draw()//rendering of the game for Level1
