@@ -527,10 +527,10 @@ void Renderer::render()
 		bool useTexture = false;
 		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
 			textureID = textureCache.find(spriteRenderer.texturePath)->second->ID; // Assuming getID() returns OpenGL texture ID
-			shaderProgram->setMat4("useTexture", true);
+			shaderProgram->setBool("useTexture", true);
 		}
 		else
-			shaderProgram->setMat4("useTexture", false);
+			shaderProgram->setBool("useTexture", false);
 
 		// Submit this sprite to the batch renderer
 		batchRenderer->drawSprite(
@@ -540,6 +540,14 @@ void Renderer::render()
 			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),  // Assuming spriteRenderer.color is glm::vec4
 			textureID
 		);
+
+		if (debug_mode_enabled)
+		{
+			if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+				drawBoxOutline();
+			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
+				drawCircleOutline();
+		}
 
 		entity_count++;
 	}
