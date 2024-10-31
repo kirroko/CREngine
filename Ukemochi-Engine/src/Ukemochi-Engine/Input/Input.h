@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #pragma once
 #include "KeyCode.h"
+#include "MouseButtonCode.h"
 #include <PreCompile.h>
 
 namespace UME {
