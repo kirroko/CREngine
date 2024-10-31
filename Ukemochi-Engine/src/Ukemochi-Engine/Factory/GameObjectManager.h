@@ -23,7 +23,7 @@ namespace Ukemochi
 {
     class GameObjectManager
     {
-        GameObjectManager() = default;
+        GameObjectManager();
         std::unordered_map<EntityID,std::unique_ptr<GameObject>> m_GOs;
     public:
         static GameObjectManager& GetInstance()
@@ -31,7 +31,11 @@ namespace Ukemochi
             static GameObjectManager instance;
             return instance;
         }
-
+        // Type Registry
+        static std::unordered_map<std::string,std::function<void(GameObject&)>> componentRegistry;
+        
+        void RegisterComponents();
+        
         GameObject& CreateObject();
 
         void DestroyObject(EntityID id);

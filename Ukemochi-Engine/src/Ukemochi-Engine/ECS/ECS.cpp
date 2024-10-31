@@ -52,6 +52,7 @@ namespace Ukemochi
 		auto cirlceCollider = m_ComponentManager->GetComponentType<CircleCollider2D>();
 		auto boxCollider = m_ComponentManager->GetComponentType<BoxCollider2D>();
 		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
+		auto script = m_ComponentManager->GetComponentType<Script>();
 
 		// Iterate through all possible components
 		for (ComponentTypeID i = 0; i < MAX_COMPONENTS; ++i)
@@ -83,6 +84,11 @@ namespace Ukemochi
 				{
 					SpriteRender originalComponent = m_ComponentManager->GetComponent<SpriteRender>(entity);
 					AddComponent<SpriteRender>(newEntity, originalComponent);
+				}
+				else if (i == script)
+				{
+					Script originalComponent = m_ComponentManager->GetComponent<Script>(entity);
+					AddComponent<Script>(newEntity, originalComponent);
 				}
 			}
 		}

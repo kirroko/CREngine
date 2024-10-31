@@ -18,13 +18,34 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "GameObjectManager.h"
 #include "Factory.h"
+#include "Ukemochi-Engine/Logic/Logic.h"
 
 using namespace Ukemochi;
+
+std::unordered_map<std::string,std::function<void(GameObject&)>> GameObjectManager::componentRegistry;
+
+GameObjectManager::GameObjectManager()
+{
+    RegisterComponents();
+}
+
+void GameObjectManager::RegisterComponents()
+{// TODO: This is a hacky way to register components for C#, might have to change this.. 3am things
+    componentRegistry["Transform"] = [](GameObject& go)
+    {
+        go.AddComponent(Transform{Vec2(),0.0f,Vec2(1.0f,1.0f)});
+        go.SetManagedInstance(LogicSystem::GetMonoManager().InstantiateClass("Transform"));
+    };
+}
 
 GameObject& GameObjectManager::CreateObject()
 {
     auto go = std::make_unique<GameObject>(GameObjectFactory::CreateObject());
     auto id = go->GetInstanceID();
+    go->SetManagedInstance(LogicSystem::GetMonoManager().InstantiateClass("GameObject")); // Logic system needs to be constructed first
+    void* params[] = { &id }; // TODO: This is a hacky way to pass the entity ID to the script, Might have to check if the data is passed in...
+    LogicSystem::GetMonoManager().InvokeMethod(go->GetManagedInstance(), "InvokeSetID", params,1); // Set the entity ID so that scripting knows who to add components too
+    go->AddComponent(Transform{Vec2(),0.0f,Vec2(1.0f,1.0f)});
     m_GOs.emplace(id, std::move(go));
     return *m_GOs[id];
 }

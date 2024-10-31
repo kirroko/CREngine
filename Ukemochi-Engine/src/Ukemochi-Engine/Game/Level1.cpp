@@ -28,6 +28,7 @@ DigiPen Institute of Technology is prohibited.
 #include "../Collision/Collision.h" // for collision system
 #include "../Graphics/Renderer.h"   // for renderer system
 #include "../Audio/Audio.h"			// for audio system
+#include "Ukemochi-Engine/Logic/Logic.h"
 
 namespace Ukemochi
 {

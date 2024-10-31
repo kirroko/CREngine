@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	// TODO: Implement windows.h ReadDirectoryChangesW for windows method
 	// ================== PUBLIC FUNCTIONS ==================
 	FileWatcher::FileWatcher(const std::string& path_to_watch, std::chrono::duration<int, std::milli> delay) : m_path_to_watch(path_to_watch), m_delay(delay)
 	{

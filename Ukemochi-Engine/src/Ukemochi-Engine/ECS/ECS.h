@@ -87,12 +87,12 @@ namespace Ukemochi
 		template<typename T>
 		void SetSystemSignature(SignatureID signature);
 
-		template<typename T>
-		static inline T* GetComponentForMono(EntityID entity)
-		{
-			// NOTE: What if we run a point where we haven't "Added" any thing yet but function gets called?
-			return &GetInstance().GetComponent<T>(entity); // I feel I know it works yet I don't know if this works
-		}
+		// template<typename T>
+		// static inline T* GetComponentForMono(EntityID entity)
+		// {
+		// 	// NOTE: What if we run a point where we haven't "Added" any thing yet but function gets called?
+		// 	return &GetInstance().GetComponent<T>(entity); // I feel I know it works yet I don't know if this works
+		// }
 	};
 }
 #include "ECS.tpp"

@@ -1,4 +1,4 @@
-/* Start Header
+	/* Start Header
 *****************************************************************/
 /*!
 \file		GameObject.cpp
@@ -28,7 +28,7 @@ GameObject& GameObject::operator=(const GameObject& other)
 	return *this;
 }
 
-Ukemochi::EntityID Ukemochi::GameObject::GetInstanceID()
+EntityID GameObject::GetInstanceID()
 {
 	return m_InstanceID;
 }

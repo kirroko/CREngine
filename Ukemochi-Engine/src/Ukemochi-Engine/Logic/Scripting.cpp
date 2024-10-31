@@ -1,7 +1,7 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file	ScriptingEngine.cpp
+\file	Scripting.cpp
 \par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
 \par	junyukean.wong\@digipen.edu
@@ -18,25 +18,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Scripting.h"
 #include "../ECS/ECS.h"
+#include "InternalCalls.h"
 
 namespace Ukemochi
 {
-	void ScriptingEngine::Init()
+	// ================== PUBLIC FUNCTIONS ==================
+	ScriptingEngine::ScriptingEngine()
 	{
 		// ================== Initialize Mono Runtime ==================
 		//mono_set_assemblies_path("../Ukemochi-Engine/vendor/mono/lib/4.5"); // current working dir is Ukemochi-Game
 		mono_set_assemblies_path("Mono/lib/4.5");
-
-		// TODO: REMOVE ME FROM THE FINAL SUBMSSION, IF YOU'RE READING THIS, sorry
-		try {
-			std::filesystem::path cwd = std::filesystem::current_path();
-			std::cout << "Current Working Directory: " << cwd << std::endl;
-		}
-		catch (const std::filesystem::filesystem_error& e)
-		{
-			UME_ENGINE_ERROR("Error: {0}", std::string(e.what()));
-		}
-
+		
 		MonoDomain* rootDomain = mono_jit_init("MonoRuntime");
 		if (rootDomain == nullptr)
 		{
@@ -49,26 +41,36 @@ namespace Ukemochi
 		// Create an App Domain
 		m_pAppDomain = mono_domain_create_appdomain("UkemochiDomain", nullptr);
 		mono_domain_set(m_pAppDomain, true);
+	}
 
-		// Load compiled assemblies into engine
+	ScriptingEngine::~ScriptingEngine()
+	{
+		ShutDown(); // If we haven't already unload them
+	}
+
+	void ScriptingEngine::Init()
+	{
+		// Load compiled assemblies into engine (This is our C# code wrapper library for the engine) 
 		CoreAssembly = LoadCSharpAssembly("Resources/Scripts/Ukemochi-Scripting.dll");
 		UME_ENGINE_ASSERT(CoreAssembly != nullptr, "C# Assembly Null!");
-		PrintAssemblyTypes(CoreAssembly);
+		PrintAssemblyTypes(CoreAssembly); // Print out the types in the assembly for tracing
+
+		RegisterMonoFunctions();
 
 		// TODO - FOR TESTING ONLY, PLEASE REMEMBER TO REMOVE ME 
 		// Get a reference to the class we want to instantiate 
-		MonoClass* testingClass = GetClassInAssembly(CoreAssembly, "", "CsharpTest"); 
-
-		// Allocate an instance of class
-		MonoObject* classInstance = mono_object_new(m_pAppDomain, testingClass);
-
-		if (classInstance == nullptr)
-		{
-			assert(false && "Scripting has an issue, no such class found"); // Engine, Ratatatata ratatatata, pop pop pop, poof Kaput
-		}
-
-		// Call the parameterless (default) constructor
-		mono_runtime_object_init(classInstance); // without calling this constructor, the instance is oseless
+		// MonoClass* testingClass = GetClassInAssembly(CoreAssembly, "", "CsharpTest"); 
+		//
+		// // Allocate an instance of class
+		// MonoObject* classInstance = mono_object_new(m_pAppDomain, testingClass);
+		//
+		// if (classInstance == nullptr)
+		// {
+		// 	assert(false && "Scripting has an issue, no such class found"); // Engine, Ratatatata ratatatata, pop pop pop, poof Kaput
+		// }
+		//
+		// // Call the parameterless (default) constructor
+		// mono_runtime_object_init(classInstance); // without calling this constructor, the instance is oseless
 	}
 
 	void ScriptingEngine::Update()
@@ -78,11 +80,80 @@ namespace Ukemochi
 	void ScriptingEngine::ShutDown()
 	{
 		mono_domain_set(mono_get_root_domain(), false);
-
-		mono_domain_unload(m_pAppDomain);
-		mono_jit_cleanup(m_pRootDomain);
+		
+		mono_jit_cleanup(m_pRootDomain); // Unload the root domain and all the assemblies
 	}
 
+	void ScriptingEngine::ReloadScripts()
+	{
+	}
+
+	MonoObject* ScriptingEngine::InstantiateClass(const std::string& className)
+	{
+		UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
+		MonoClass* klass = GetClassInAssembly(ClientAssembly, "UkemochiEngine.CoreModule", className.c_str()); // TODO: Client declared Namespace?
+		
+		MonoObject* instance = mono_object_new(m_pAppDomain, klass);
+
+		if (instance == nullptr)
+		{
+			UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className);
+			return nullptr;
+		}
+
+		mono_runtime_object_init(instance);
+
+		return instance;
+	}
+
+	MonoObject* ScriptingEngine::InstantiateClass(const std::string& className, const std::string& namespaceName)
+	{
+		UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
+		MonoClass* klass = GetClassInAssembly(ClientAssembly, namespaceName.c_str(), className.c_str()); // TODO: Client declared Namespace?
+		
+		MonoObject* instance = mono_object_new(m_pAppDomain, klass);
+
+		if (instance == nullptr)
+		{
+			UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className);
+			return nullptr;
+		}
+
+		mono_runtime_object_init(instance);
+
+		return instance;
+	}
+
+	MonoMethod* ScriptingEngine::InstatiateMethod(const std::string& methodName, MonoObject* instance)
+	{
+		MonoClass* klass = mono_object_get_class(instance);
+		MonoMethod* method = mono_class_get_method_from_name(klass, methodName.c_str(),0);
+		if (!method)
+		{
+			UME_ENGINE_ERROR("Failed to find method: {0} in class.", methodName);
+			return nullptr;
+		}
+
+		return method;
+	}
+
+
+	void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[], int numArgs)
+	{
+		MonoClass* klass = mono_object_get_class(instance);
+		UME_ENGINE_ASSERT(numArgs >= 0, "InvokeMethod has negative number of arguments"); // If you actually give me a negative number, I WILL find you and I will smack you.
+		MonoMethod* method = mono_class_get_method_from_name(klass, methodName.c_str(), numArgs); // TODO: We would want to save this method for cache purposes
+		if (!method)
+		{
+			UME_ENGINE_ERROR("Failed to find method: {0} in class.", methodName);
+			return;
+		}
+
+		MonoObject* exception = nullptr; // TODO: Do something with the exception?
+		mono_runtime_invoke(method, instance, args, &exception); // TODO: Possible issues would occur here
+	}
+
+	// ================== PRIVATE FUNCTIONS ==================
 	char* ScriptingEngine::ReadBytes(const std::string& filepath, uint32_t* outSize)
 	{
 		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
@@ -142,6 +213,7 @@ namespace Ukemochi
 		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
+		UME_ENGINE_TRACE("Table of Assembly Types");
 		for (int32_t i = 0; i < numTypes; ++i)
 		{
 			uint32_t cols[MONO_TYPEDEF_SIZE];
@@ -149,18 +221,27 @@ namespace Ukemochi
 
 			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-			UME_ENGINE_TRACE("Assembly things"); // Yes, I only understand that it's a table of type definitions :)
 			UME_ENGINE_TRACE("{0}.{1}", nameSpace, name);
 		}
 	}
 
+	// Use this to bind C++ functions with Mono so they can be invoked from C#
+	// Calls from C++ to C# are done through the mono_runtime_invoke function of the MonoObject instance of the class
 	void ScriptingEngine::RegisterMonoFunctions() // TODO: Type-Safe Component Registration and Access? Meta-Programming with Reflection??
 	{
-		// Register GetComponent for TransformComponent with Mono
-		mono_add_internal_call("UkemochiEngine.CoreModule::GetTransform",
-			(void*)ECS::GetInstance().GetComponentForMono<Transform>);
+		// mono_add_internal_call("Ukemochi.CSharpTest::LogMessage",
+		// 	(void*)LogMessage);
 
-		
+		//EXTERN_C UME_API void LogMessage(MonoString* message) Example of C# to C++ call
+		// {
+		// 	UME_ENGINE_INFO("Ukemochi log: {0}", std::string(mono_string_to_utf8(message)));
+		// }
+
+		// mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetComponentType",
+		// 	(void*)GetComponentType);
+
+		mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::AddComponent",
+			(void*)InternalCalls::AddComponent);
 	}
 
 	MonoClass* ScriptingEngine::GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className)
@@ -176,5 +257,7 @@ namespace Ukemochi
 
 		return klass;
 	}
+
+
 }
 // 0x4B45414E

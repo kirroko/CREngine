@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Ukemochi-Engine\vendor\spdlog\include;..\Ukemochi-Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Ukemochi-Engine\vendor\spdlog\include;..\Ukemochi-Engine\src;..\Ukemochi-Engine\vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -97,13 +97,16 @@ IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukem
 IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST Resources\Scripts\ (xcopy /Q /E /Y /I Resources\Scripts ..\bin\Debug-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul) ELSE (xcopy /Q /Y /I Resources\Scripts ..\bin\Debug-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul)</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>IF EXIST Resources\Scripts\Ukemochi-Scripting.dll\ (xcopy /Q /E /Y /I Resources\Scripts\Ukemochi-Scripting.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul) ELSE (xcopy /Q /Y /I Resources\Scripts\Ukemochi-Scripting.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Ukemochi-Engine\vendor\spdlog\include;..\Ukemochi-Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Ukemochi-Engine\vendor\spdlog\include;..\Ukemochi-Engine\src;..\Ukemochi-Engine\vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -125,13 +128,16 @@ IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukem
 IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST Resources\Scripts\ (xcopy /Q /E /Y /I Resources\Scripts ..\bin\Release-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul) ELSE (xcopy /Q /Y /I Resources\Scripts ..\bin\Release-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul)</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>IF EXIST Resources\Scripts\Ukemochi-Scripting.dll\ (xcopy /Q /E /Y /I Resources\Scripts\Ukemochi-Scripting.dll ..\bin\Release-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul) ELSE (xcopy /Q /Y /I Resources\Scripts\Ukemochi-Scripting.dll ..\bin\Release-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Ukemochi-Engine\vendor\spdlog\include;..\Ukemochi-Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Ukemochi-Engine\vendor\spdlog\include;..\Ukemochi-Engine\src;..\Ukemochi-Engine\vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -153,6 +159,9 @@ IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukem
 IF EXIST ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Mono\lib\mono-2.0-sgen.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
 IF EXIST Resources\Scripts\ (xcopy /Q /E /Y /I Resources\Scripts ..\bin\Dist-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul) ELSE (xcopy /Q /Y /I Resources\Scripts ..\bin\Dist-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul)</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>IF EXIST Resources\Scripts\Ukemochi-Scripting.dll\ (xcopy /Q /E /Y /I Resources\Scripts\Ukemochi-Scripting.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul) ELSE (xcopy /Q /Y /I Resources\Scripts\Ukemochi-Scripting.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game\Resources\Scripts &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />

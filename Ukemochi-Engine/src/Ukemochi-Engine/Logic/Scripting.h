@@ -1,7 +1,7 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file	ScriptingEngine.h
+\file	Scripting.h
 \par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
 \par	junyukean.wong\@digipen.edu
@@ -29,9 +29,8 @@ namespace Ukemochi
 		MonoDomain* m_pAppDomain = nullptr;
 
 		MonoAssembly* CoreAssembly = nullptr;
-
-		ScriptingEngine() = default;
-		~ScriptingEngine() = default;
+		MonoAssembly* ClientAssembly = nullptr;
+		
 		ScriptingEngine(const ScriptingEngine&) = delete;
 		ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
@@ -74,12 +73,9 @@ namespace Ukemochi
 		MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className);
 
 	public:
-		static ScriptingEngine& GetInstance()
-		{
-			static ScriptingEngine instance;
-			return instance;
-		}
-
+		ScriptingEngine();
+		~ScriptingEngine();
+		
 		/**
 		 * @brief Initialize Mono by creating an app domain
 		 */
@@ -94,6 +90,43 @@ namespace Ukemochi
 		 * @brief Clean up mono
 		 */
 		void ShutDown();
+
+		/**
+		 * @brief Reload client script assembly when script has change
+		 */
+		void ReloadScripts();
+
+		/**
+		 * @brief Instantiate C# class object that is internal
+		 * @param className the class name of the internal class
+		 * @return an instance of the class
+		 */
+		MonoObject* InstantiateClass(const std::string& className);
+
+		/**
+		 * @brief Instantiate C# class object with namespace option
+		 * @param className the class name should be the same as the script file name
+		 * @param namespaceName the namespace of the class
+		 * @return an instance of the script class
+		 */
+		MonoObject* InstantiateClass(const std::string& className, const std::string& namespaceName);
+
+		/**
+		 * @brief Instantiate a method from a class. This is for caching the method for future use
+		 * @param methodName the method name to be instantiated
+		 * @param instance the instance of the class
+		 * @return an instance of the method
+		 */
+		MonoMethod* InstatiateMethod(const std::string& methodName, MonoObject* instance);
+
+		/**
+		 * @brief Invoke script Methods (Start, Update, etc)
+		 * @param instance C# script instance
+		 * @param methodName the method name to be invoked
+		 * @param args the arguments to be passed to the method, default is nullptr
+		 * @param numArgs the number of arguments, default is 0
+		 */
+		void InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[] = nullptr, int numArgs = 0);
 	};
 }
 // 0x4E41454B

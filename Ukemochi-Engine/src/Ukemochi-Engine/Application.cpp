@@ -74,6 +74,13 @@ namespace UME
         auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets",std::chrono::milliseconds(3000));
         fileWatcher->Start([fileWatcher](const std::string& path_to_watch, FileStatus status)
         {
+            // Logging levels:
+            // TRACE (Capture execution of code)
+            // DEBUG (Capture relevant detail of event)
+            // INFO (Capture an event that occurred)
+            // WARN (Indicate unexpected event, disrupt or delay)
+            // ERROR (Capture a system interfering with functionalities)
+            // FATAL (Capture a system crash)
              switch(status)
              {
              case Ukemochi::FileStatus::created:
