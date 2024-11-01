@@ -93,9 +93,9 @@ namespace Ukemochi
 		void Update();
 
 		/**
-		 * @brief Clean up mono
+		 * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
 		 */
-		void ShutDown();
+		void ShutDown(); // TODO: Did you remember to call this function when application is closed?
 
 		/**
 		 * @brief Reload client script assembly when script has change

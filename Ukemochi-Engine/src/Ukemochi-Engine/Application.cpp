@@ -35,6 +35,8 @@ DigiPen Institute of Technology is prohibited.
 #include <iomanip>
 #include <crtdbg.h>				// To check for memory leaks
 
+#include "Logic/Scripting.h"
+
 
 using namespace Ukemochi;
 
@@ -105,6 +107,8 @@ namespace UME
         // Ensure the thread is joined before exiting to prevent memory leaks
         if(fwInstance)
             fwInstance->Stop();
+
+        ScriptingEngine::GetInstance().ShutDown();
     }
 
     void Application::EventIsOn(Event& e)
