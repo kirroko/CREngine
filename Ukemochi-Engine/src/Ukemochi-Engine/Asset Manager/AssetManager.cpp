@@ -18,17 +18,17 @@ namespace Ukemochi
 		return;
 	}
 
-	void AssetManager::InitAssetsFromFolder(std::string folder_path)
+	void AssetManager::loadAssetsFromFolder(std::string folder_path)
 	{
 		for (const auto& entries : std::filesystem::directory_iterator(folder_path))
 		{
 			if (!entries.is_directory()) //entries is a file
 			{
-				AddAsset(entries.path().generic_string());
+				//check extention and add asset accordingly
 			}
 			else //entries is a folder
 			{
-				InitAssetsFromFolder(entries.path().generic_string()); //recur function with the subfolder;
+				loadAssetsFromFolder(entries.path().generic_string()); //recur function with the subfolder;
 				continue;
 			}
 		}

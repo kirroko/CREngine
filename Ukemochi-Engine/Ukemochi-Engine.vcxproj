@@ -169,7 +169,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\Asset.h" />
     <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Audio\Audio.h" />
     <ClInclude Include="src\Ukemochi-Engine\Audio\AudioList.h" />

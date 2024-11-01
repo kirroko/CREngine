@@ -191,7 +191,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\Asset.h" />
     <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
