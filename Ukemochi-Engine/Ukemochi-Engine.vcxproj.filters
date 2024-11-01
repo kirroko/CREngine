@@ -173,6 +173,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
       <Filter>Ukemochi-Engine\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logic\Logic.h">
       <Filter>Ukemochi-Engine\Logic</Filter>
     </ClInclude>

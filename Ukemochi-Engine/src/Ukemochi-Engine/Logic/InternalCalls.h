@@ -22,7 +22,8 @@ namespace Ukemochi
 {
     namespace InternalCalls
     {
-        EXTERN_C void AddComponent(uint64_t id, MonoString* typeName);
+        EXTERN_C MonoObject* GetObject(uint64_t id, MonoString* objectName);
+        EXTERN_C UME_API void AddComponent(uint64_t id, MonoObject* component, MonoString* typeName);
         EXTERN_C void LogMessage(MonoString* message);
     }
 }

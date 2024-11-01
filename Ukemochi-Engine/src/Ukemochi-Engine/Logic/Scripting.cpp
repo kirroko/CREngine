@@ -56,21 +56,6 @@ namespace Ukemochi
 		PrintAssemblyTypes(CoreAssembly); // Print out the types in the assembly for tracing
 
 		RegisterMonoFunctions();
-
-		// TODO - FOR TESTING ONLY, PLEASE REMEMBER TO REMOVE ME 
-		// Get a reference to the class we want to instantiate 
-		// MonoClass* testingClass = GetClassInAssembly(CoreAssembly, "", "CsharpTest"); 
-		//
-		// // Allocate an instance of class
-		// MonoObject* classInstance = mono_object_new(m_pAppDomain, testingClass);
-		//
-		// if (classInstance == nullptr)
-		// {
-		// 	assert(false && "Scripting has an issue, no such class found"); // Engine, Ratatatata ratatatata, pop pop pop, poof Kaput
-		// }
-		//
-		// // Call the parameterless (default) constructor
-		// mono_runtime_object_init(classInstance); // without calling this constructor, the instance is oseless
 	}
 
 	void ScriptingEngine::Update()
@@ -90,35 +75,37 @@ namespace Ukemochi
 
 	MonoObject* ScriptingEngine::InstantiateClass(const std::string& className)
 	{
-		UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
-		MonoClass* klass = GetClassInAssembly(ClientAssembly, "UkemochiEngine.CoreModule", className.c_str()); // TODO: Client declared Namespace?
+		UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
+		MonoClass* klass = GetClassInAssembly(CoreAssembly, "UkemochiEngine.CoreModule", className.c_str()); // TODO: Client declared Namespace?
+		if(klass == nullptr)
+			UME_ENGINE_ASSERT(false,"Failed to instantiate class: {1}", className)
 		
 		MonoObject* instance = mono_object_new(m_pAppDomain, klass);
 
 		if (instance == nullptr)
-		{
-			UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className);
-			return nullptr;
-		}
+			UME_ENGINE_ASSERT(false, "Failed to instantiate object: {1}", className)
 
 		mono_runtime_object_init(instance);
 
 		return instance;
 	}
 
-	MonoObject* ScriptingEngine::InstantiateClass(const std::string& className, const std::string& namespaceName)
+	MonoObject* ScriptingEngine::InstantiateClientClass(const std::string& className)
 	{
 		UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
-		MonoClass* klass = GetClassInAssembly(ClientAssembly, namespaceName.c_str(), className.c_str()); // TODO: Client declared Namespace?
+		MonoClass* klass = GetClassInAssembly(ClientAssembly, "",className.c_str());
+		if(klass == nullptr)
+			UME_ENGINE_ASSERT(false,"Failed to instantiate class: {1}", className)
 		
-		MonoObject* instance = mono_object_new(m_pAppDomain, klass);
+		MonoObject* instance = mono_object_new(m_pAppDomain,klass);
 
-		if (instance == nullptr)
+		if(instance == nullptr)
 		{
-			UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className);
+			UME_ENGINE_ASSERT(false,"Failed to instantiate class: {1}", className)
 			return nullptr;
 		}
-
+		UME_ENGINE_TRACE("ScriptingEngine: Instantiated class {0}", className);
+		
 		mono_runtime_object_init(instance);
 
 		return instance;
@@ -133,7 +120,6 @@ namespace Ukemochi
 			UME_ENGINE_ERROR("Failed to find method: {0} in class.", methodName);
 			return nullptr;
 		}
-
 		return method;
 	}
 
@@ -141,14 +127,15 @@ namespace Ukemochi
 	void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[], int numArgs)
 	{
 		MonoClass* klass = mono_object_get_class(instance);
-		UME_ENGINE_ASSERT(numArgs >= 0, "InvokeMethod has negative number of arguments"); // If you actually give me a negative number, I WILL find you and I will smack you.
+		UME_ENGINE_ASSERT(numArgs >= 0, "InvokeMethod has negative number of arguments") // Don't do this, be better please
 		MonoMethod* method = mono_class_get_method_from_name(klass, methodName.c_str(), numArgs); // TODO: We would want to save this method for cache purposes
 		if (!method)
 		{
+			// If the method is not found, check if the coreAssembly or ClientAssembly been rebuilt and reloaded
 			UME_ENGINE_ERROR("Failed to find method: {0} in class.", methodName);
 			return;
 		}
-
+		UME_ENGINE_TRACE("ScriptingEngine: Invoking method {0} in class {1}", methodName, mono_class_get_name(klass));
 		MonoObject* exception = nullptr; // TODO: Do something with the exception?
 		mono_runtime_invoke(method, instance, args, &exception); // TODO: Possible issues would occur here
 	}
@@ -167,7 +154,7 @@ namespace Ukemochi
 
 		std::streampos end = stream.tellg();
 		stream.seekg(0, std::ios::beg);
-		uint32_t size = end - stream.tellg();
+		uint32_t size = static_cast<uint32_t>(end - stream.tellg());
 
 		if (size == 0)
 		{

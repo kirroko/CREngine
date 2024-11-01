@@ -20,7 +20,7 @@ using System;
 
 namespace UkemochiEngine.CoreModule
 {
-    public abstract class BaseScript : Component
+    public class BaseScript : Component
     {
         // ==================== PROPERTIES ====================
         

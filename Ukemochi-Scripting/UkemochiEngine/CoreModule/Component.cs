@@ -25,7 +25,14 @@ namespace UkemochiEngine.CoreModule
     public abstract class Component : Object
     {
         // ==================== PROPERTIES ====================
+        public GameObject gameObject { get; private set; }
         
         // ==================== METHODS =======================
+        
+        // ==================== INTERNAL METHODS =======================
+        internal void SetGameOjbect(GameObject obj)
+        {
+            gameObject = obj;
+        }
     }
 }

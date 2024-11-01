@@ -23,7 +23,6 @@ namespace Ukemochi
 {
 	class LogicSystem : public System
 	{
-		static ScriptingEngine m_MonoManager;
 	public:
 		LogicSystem();
 		~LogicSystem() = default;
@@ -46,8 +45,5 @@ namespace Ukemochi
 		 * @brief Remove all script instance
 		 */
 		void End();
-
-		// Hacky way to get the MonoManager
-		static ScriptingEngine& GetMonoManager() { return m_MonoManager; }
 	};
 }

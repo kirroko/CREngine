@@ -31,14 +31,14 @@ namespace Ukemochi
 		 *
 		 * @return GameObject&  newly created GameObject
 		 */
-		static GameObject CreateObject();
+		static GameObject CreateObject(const std::string& name = "GameObject", const std::string& tag = "Default");;
 		/**
 		 * @brief Create a new GameObject with components from a JSON file
 		 *
 		 * @param filePath the path to the JSON file
 		 * @return GameObject& a reference to the newly created GameObject
 		 */
-		static GameObject CreateObject(const std::string& filePath);
+		static GameObject CreatePrefebObject(const std::string& filePath);
 		/**
 		 * @brief Clone a GameObject
 		 *

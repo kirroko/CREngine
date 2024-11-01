@@ -22,14 +22,14 @@ namespace Ukemochi
 {
 	using namespace rapidjson;
 
-	GameObject GameObjectFactory::CreateObject()
+	GameObject GameObjectFactory::CreateObject(const std::string& name, const std::string& tag)
 	{
 		EntityID entity = ECS::GetInstance().CreateEntity();
 
-		return {entity};
+		return {entity, name, tag};
 	}
 
-	GameObject GameObjectFactory::CreateObject(const std::string& filePath)
+	GameObject GameObjectFactory::CreatePrefebObject(const std::string& filePath)
 	{
 		EntityID entity = ECS::GetInstance().CreateEntity();
 

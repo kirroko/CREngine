@@ -73,6 +73,12 @@ namespace Ukemochi
 		MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className);
 
 	public:
+		static ScriptingEngine& GetInstance()
+		{
+			static ScriptingEngine instance;
+			
+			return instance;
+		}
 		ScriptingEngine();
 		~ScriptingEngine();
 		
@@ -102,15 +108,14 @@ namespace Ukemochi
 		 * @return an instance of the class
 		 */
 		MonoObject* InstantiateClass(const std::string& className);
-
+		
 		/**
-		 * @brief Instantiate C# class object with namespace option
-		 * @param className the class name should be the same as the script file name
-		 * @param namespaceName the namespace of the class
+		 * @brief Instatiate C# class object from client assembly
+		 * @param className the script's class name
 		 * @return an instance of the script class
 		 */
-		MonoObject* InstantiateClass(const std::string& className, const std::string& namespaceName);
-
+		MonoObject* InstantiateClientClass(const std::string& className);
+		
 		/**
 		 * @brief Instantiate a method from a class. This is for caching the method for future use
 		 * @param methodName the method name to be instantiated

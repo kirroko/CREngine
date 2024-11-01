@@ -18,14 +18,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Logic.h"
 #include "../ECS/ECS.h"
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
 {
-	ScriptingEngine LogicSystem::m_MonoManager; // What the hack
-	
 	LogicSystem::LogicSystem()
 	{
-		m_MonoManager.Init();
+		ScriptingEngine::GetInstance().Init();
+		// ScriptingEngine LogicSystem::m_MonoManager; // What the hack
 	}
 
 	void LogicSystem::Init()
@@ -38,16 +38,16 @@ namespace Ukemochi
 			{
 				std::filesystem::path filePath(scriptObj.scriptPath);
 				std::string fileName = filePath.stem().string();
-				scriptObj.instance = m_MonoManager.InstantiateClass(scriptObj.scriptName, "");
-
+				// We instantiate the client's script here
+				// TODO: DID WE FORGET TO INSTANTIATE THE CLIENT'S ASSEMBLY?? 1/11/24 3:16pm
+				scriptObj.instance =  ScriptingEngine::GetInstance().InstantiateClientClass(scriptObj.scriptName); 
 				if(scriptObj.instance)
 				{
 					UME_ENGINE_ASSERT(false,"No Instance created! Check filename {1}", fileName)
 				}
 			}
-
-			m_MonoManager.InvokeMethod(static_cast<MonoObject*>(scriptObj.instance), "Start");				 // called on frame 1 before update
-			
+			// called on frame 1 before update
+			 ScriptingEngine::GetInstance().InvokeMethod(static_cast<MonoObject*>(scriptObj.instance), "Start");
 		}
 	}
 
@@ -60,7 +60,7 @@ namespace Ukemochi
 		{
 			auto& logic = ECS::GetInstance().GetComponent<Script>(entity);
 		
-			m_MonoManager.InvokeMethod(static_cast<MonoObject*>(logic.instance), "Update");
+			 ScriptingEngine::GetInstance().InvokeMethod(static_cast<MonoObject*>(logic.instance), "Update");
 		}
 	}
 

@@ -7,7 +7,7 @@
 \par	junyukean.wong\@digipen.edu
 \par	Course: CSD2400/CSD2401
 \date	31/10/24
-\brief	This files is
+\brief	This files is responsible for handling all the gameobject's components, and the first component is always the transform
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -37,14 +37,16 @@ namespace UkemochiEngine.CoreModule
         // ==================== METHODS =======================
         public GameObject()
         {
-            AddComponent<Transform>();
+            // var compo = AddComponent<Transform>();
+            // compo.SetGameOjbect(this);
         }
         
         public T AddComponent<T>() where T : Component, new()
         {
             T component = new T();
-            EngineInterop.AddComponent(GetInstanceID(), typeof(T).Name);
+            component.SetGameOjbect(this);
             _components.Add(component);
+            EngineInterop.AddComponent(GetInstanceID(), component, typeof(T).Name);
             return component;
         }
 
@@ -55,9 +57,33 @@ namespace UkemochiEngine.CoreModule
         
         // ==================== INTERNAL INVOKES ====================
         // TODO: Remember to add new components for C++ to instantiate C# side
-        internal void AddTransformComponent()
+        internal void AddTransformComponent(object transform)
         {
-            _components.Add(new Transform());
+            var obj = (transform as Component);
+            // TODO: Error handling here
+            obj.SetGameOjbect(this);
+            _components.Add(obj);
+        }
+
+        internal void AddScriptComponent(object script)
+        {
+            // Script is a bit different, as the class is defined by the client
+            // Client's script all derive from BaseScript, so do we instantiate BaseScript?
+            var obj = (script as Component);
+            // TODO: Error handling here
+            _components.Add(obj);
+        }
+
+        internal void AddSpriteRenderComponent(object spriteRender)
+        {
+            var obj = (spriteRender as Component);
+            // TODO: Error handling here
+            _components.Add(obj);
+        }
+
+        internal void SetID(ulong id)
+        {
+            InvokeSetID(id);
         }
     }
 }
