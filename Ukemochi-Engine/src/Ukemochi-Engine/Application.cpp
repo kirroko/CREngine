@@ -70,11 +70,10 @@ namespace Ukemochi {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
-		//GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-		//imguiInstance.ImGuiInit(glfwWindow);
+		SceneManager::GetInstance();
 
-		// ScriptingEngine::GetInstance().Init();
-		
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 	}
 
 	Application::~Application()
@@ -108,28 +107,26 @@ namespace Ukemochi {
 		double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
 		double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
 
-		//Set up SceneManager
-		SceneManager sceneManger;
-		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-		imguiInstance.ImGuiInit(glfwWindow);
+		SceneManager sceneManager = SceneManager::GetInstance();
+
 		//while engine running
 		while (es_current != ENGINE_STATES::ES_QUIT && m_running)
 		{
-			if (Input::IsKeyPressed(GLFW_KEY_1))
-			{
-				gsm_next = GS_LEVEL1;
-				gsm_previous = gsm_current = gsm_next;
-				// If 'W' key is pressed, move forward
-				
-				
-				
-				UME_ENGINE_INFO("1 key is pressed");
-			}
+			//if (Input::IsKeyPressed(GLFW_KEY_1))
+			//{
+			//	gsm_next = GS_LEVEL1;
+			//	gsm_previous = gsm_current = gsm_next;
+			//	// If 'W' key is pressed, move forward
+			//	
+			//	
+			//	
+			//	UME_ENGINE_INFO("1 key is pressed");
+			//}
 
 			//ENGINE STATES
 			if (es_current == ES_ENGINE && gsm_current == gsm_next)
 			{
-				sceneManger.LoadAndInitScene();
+				sceneManager.LoadAndInitScene();
 
 				while (gsm_current == gsm_next && es_current == ES_ENGINE)
 				{
@@ -162,7 +159,7 @@ namespace Ukemochi {
 					}
 
 					//************ Update & Draw ************
-					sceneManger.Update(deltaTime);
+					sceneManager.Update(deltaTime);
 					//************ Update & Draw ************
 					
 					//************ Display FPS ************
@@ -198,7 +195,7 @@ namespace Ukemochi {
 				//If game not restart unload Scene
 				if (gsm_next != GS_STATES::GS_RESTART)
 				{
-					sceneManger.ClearScene();
+					sceneManager.ClearScene();
 				}
 				if (gsm_next == GS_PLAY)
 				{
@@ -211,7 +208,7 @@ namespace Ukemochi {
 			}
 			else if (es_current == ES_PLAY && gsm_current == gsm_next)//in game state
 			{
-				sceneManger.LoadAndInitScene();
+				sceneManager.LoadAndInitScene();
 
 				while (gsm_current == gsm_next && m_running)
 				{
@@ -245,7 +242,7 @@ namespace Ukemochi {
 					}
 
 					//************ Update & Draw ************
-					sceneManger.UpdateScenes();
+					sceneManager.UpdateScenes();
 					//************ Update & Draw ************
 
 					//************ Render IMGUI ************
@@ -283,7 +280,7 @@ namespace Ukemochi {
 				//If game not restart unload Scene
 				if (gsm_next != GS_STATES::GS_RESTART)
 				{
-					sceneManger.ClearScene();
+					sceneManager.ClearScene();
 				}
 				if (gsm_next == GS_ENGINE)
 				{

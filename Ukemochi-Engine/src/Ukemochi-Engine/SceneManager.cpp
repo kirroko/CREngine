@@ -4,10 +4,14 @@
 #include "Physics/Physics.h"
 #include "Collision/Collision.h"
 #include "Graphics/Renderer.h"
+#include "Serialization/Serialization.h"
 #include "Graphics/Camera2D.h"
+#include "Factory/GameObjectManager.h"
+
 
 namespace Ukemochi
 {
+	using namespace rapidjson;
 	SceneManager::SceneManager()
 	{
 		es_current = ES_ENGINE;
@@ -93,12 +97,6 @@ namespace Ukemochi
 
 	void SceneManager::LoadSaveFile(const std::string& sceneFile)
 	{
-
-
-
-
-
-
 		// Load scene from file
 		std::ifstream file(sceneFile);
 		if (!file.is_open())
@@ -178,35 +176,19 @@ namespace Ukemochi
 
 	void SceneManager::SaveScene()
 	{	
-		const std::string saveFile = "save.txt";
-		// Open file for writing
-		std::ofstream file(saveFile);
-		if (file.is_open())
+		//get file name to save
+		Document document;
+		document.SetObject();
+		Document::AllocatorType& allocator = document.GetAllocator();
+
+		// Create a JSON array to hold game object data
+		rapidjson::Value gameObjectsArray(rapidjson::kArrayType);
+		
+		//for (auto& gameobject : GameObjectManager::GetInstance())
 		{
-			// Save the name of the current scene
-			file << "Scene Name: " << static_cast<GS_STATES>(gsm_current) << std::endl;
 
-			// Iterate through each entity in the scene
-			//for (auto& entity : //ECS)
-			//{
-			//	file << "Entity ID: " << entity.GetID() << std::endl;
-
-			//	// Save each component of the entity
-			//	for (auto& component : entity.GetComponents())
-			//	{
-			//		file << "Component: " << component.GetType() << std::endl;
-			//		// Serialize component-specific data
-			//		component.Serialize(file);
-			//	}
-			//}
-
-			// Close the file
-			file.close();
 		}
-		else
-		{
-			std::cerr << "Failed to open file: " << saveFile << std::endl;
-		}
+		Serialization::PushJSON("test", document);
 	}
 
 	void SceneManager::TransitionToScene()

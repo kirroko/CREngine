@@ -5,11 +5,20 @@
 
 namespace Ukemochi
 {
-	class Scene;
-
 	class SceneManager
 	{
 	public:
+
+		/*!***********************************************************************
+		\brief
+		 Making SceneManger class object as a Singleton object
+		*************************************************************************/
+		static SceneManager& GetInstance()
+		{
+			static std::unique_ptr<SceneManager> instance(new SceneManager());
+			return *instance;
+		}
+
 		SceneManager();
 		~SceneManager();
 
