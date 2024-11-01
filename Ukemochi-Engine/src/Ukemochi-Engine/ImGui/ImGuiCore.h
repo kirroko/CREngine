@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	class GameObject;
 	class UME_API UseImGui
 	{
 	public:
@@ -50,7 +51,18 @@ namespace Ukemochi
 		*/
 		static void ImGuiClean();
 
+		static void LoadScene();
+
+		static void DisplayEntityDetails(GameObject& obj);
+
+		static void DisplayEntitySelectionCombo(int& selectedEntityIndex);
+
+		static void RemoveSelectedEntity(int& selectedEntityIndex);
+
+		static void EditEntityProperties(GameObject& selectedObject);
+
 		static void ShowEntityManagementUI();
+
 	private:
 		// Mouse and keyboard event handlers
 		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);

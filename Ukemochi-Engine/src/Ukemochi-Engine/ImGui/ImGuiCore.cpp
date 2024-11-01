@@ -65,17 +65,6 @@ namespace Ukemochi
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
-
-
-		/*IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGui::StyleColorsClassic();
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-
-		ImGui_ImplOpenGL3_Init("#version 410");*/
 	}
 	/*!
 	\brief Prepares a new ImGui frame and handles window dimensions and timing.
@@ -91,75 +80,119 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
-		//ImGuiIO& io = ImGui::GetIO();
-		//Application& app = Application::Get();
-		//io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
+	}
 
-		//float time = (float)glfwGetTime();
-		//io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
-		//m_Time = time;
+	void UseImGui::LoadScene()
+	{
+		static char filePath[256] = "../Assets/.json";
 
-		//ImGui_ImplOpenGL3_NewFrame();
-		//ImGui::NewFrame();
-		//static bool show = true;
-		//ImGui::ShowDemoWindow(&show);
+	}
 
-		//static bool showAnotherWindow = true;
-		//if (showAnotherWindow)
-		//{
-		//	ImGui::Begin("Another Window", &showAnotherWindow);   // Create a window called "Another Window"
-		//	ImGui::Text("This is another window!");               // Display some text
-		//	if (ImGui::Button("Close Me"))                        // Close button logic
-		//	{
-		//		WindowCloseEvent event;
-		//		app.EventIsOn(event);
-		//	}
-		//	ImGui::End();
-		//}
-		///*ImGui::Begin("Sample Window");
-		//ImGui::Text("Hello, world!");
-		//ImGui::End();*/
+	void UseImGui::DisplayEntityDetails(GameObject& obj) {
+		ImGui::Text("ID: %d", obj.GetInstanceID());
+		ImGui::Text("Name: %s", obj.GetName().c_str());
+		ImGui::Text("Tag: %s", obj.GetTag().c_str());
+
+		if (obj.HasComponent<Transform>()) {
+			Transform& transform = obj.GetComponent<Transform>();
+			ImGui::Text("Transform Component");
+			ImGui::Text("Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
+			ImGui::Text("Rotation: %.2f", transform.rotation);
+			ImGui::Text("Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+		}
+
+		if (obj.HasComponent<Rigidbody2D>()) {
+			Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
+			ImGui::Text("Rigidbody2D Component");
+			ImGui::Text("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
+			ImGui::Text("Mass: %.2f", rb.mass);
+		}
+	}
+
+	void UseImGui::DisplayEntitySelectionCombo(int& selectedEntityIndex) {
+		auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+
+		// Store the names of entities in a vector of strings to keep them in memory
+		std::vector<std::string> entityNames;
+		for (const auto& obj : gameObjects) {
+			entityNames.push_back(std::to_string(obj.GetInstanceID()) + ": " + obj.GetName());
+		}
+
+		// Create a vector of const char* pointers to each name in entityNames
+		std::vector<const char*> entityNamePointers;
+		for (const auto& name : entityNames) {
+			entityNamePointers.push_back(name.c_str());
+		}
+
+		// Display the ImGui Combo with the populated entityNamePointers
+		ImGui::Combo("Select Entity to Remove", &selectedEntityIndex, entityNamePointers.data(), entityNamePointers.size());
+	}
+
+	void UseImGui::RemoveSelectedEntity(int& selectedEntityIndex) {
+		auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+		if (selectedEntityIndex >= 0 && selectedEntityIndex < gameObjects.size()) {
+			GameObject entityToDelete = gameObjects[selectedEntityIndex];
+			GameObjectFactory::DestroyObject(entityToDelete);
+			selectedEntityIndex = -1;
+		}
+	}
+
+	void UseImGui::EditEntityProperties(GameObject& selectedObject) {
+		ImGui::Text("Editing properties of: %s", selectedObject.GetName().c_str());
+
+		if (selectedObject.HasComponent<Transform>()) {
+			Transform& transform = selectedObject.GetComponent<Transform>();
+			ImGui::InputFloat2("Position", &transform.position.x);
+			ImGui::InputFloat("Rotation", &transform.rotation);
+			ImGui::InputFloat2("Scale", &transform.scale.x);
+		}
+
+		if (selectedObject.HasComponent<Rigidbody2D>()) {
+			Rigidbody2D& rb = selectedObject.GetComponent<Rigidbody2D>();
+			ImGui::InputFloat2("Velocity", &rb.velocity.x);
+			ImGui::InputFloat("Mass", &rb.mass);
+		}
 	}
 
 	void UseImGui::ShowEntityManagementUI()
 	{
 		static char filePath[256] = "../Assets/Player.json";
-		//static std::string player_data; // Path for creating player entity
-		static int entityToRemove = -1; // Variable to hold the ID of the entity to remove
+		static int selectedEntityIndex = -1;
+
+		if (ImGui::TreeNode("Current GameObjects")) {
+			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+
+			for (size_t i = 0; i < gameObjects.size(); ++i) {
+				auto& obj = gameObjects[i];
+				if (ImGui::TreeNode((std::to_string(obj.GetInstanceID()) + ": " + obj.GetName()).c_str())) {
+					DisplayEntityDetails(obj);
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
 
 		ImGui::Text("Entity Management");
-
 		ImGui::InputText("Player Data File", filePath, IM_ARRAYSIZE(filePath));
 
-		if (ImGui::Button("Create Player Entity"))
-		{
-			if (filePath[0] != '\0') // Ensure a file path is provided
-			{
-				GameObject playerObject = GameObjectFactory::CreateObject(filePath);
-				// Optional: Store playerObject instance ID if needed
-				ImGui::Text("Player entity created from: %s", filePath);
-			}
-			else
-			{
-				ImGui::Text("Please enter a valid file path!");
+		if (ImGui::Button("Create Player Entity")) {
+			if (filePath[0] != '\0') {
+				GameObjectFactory::CreateObject(filePath);
 			}
 		}
 
-		// Input field to specify which entity to remove
-		ImGui::InputInt("Entity ID to Remove", &entityToRemove);
+		// Pass selectedEntityIndex by reference so it can be updated in the combo function
+		DisplayEntitySelectionCombo(selectedEntityIndex);
 
-		// Button to remove an entity
-		if (ImGui::Button("Remove Entity"))
-		{
-			if (entityToRemove >= 0)
-			{
-				ECS::GetInstance().DestroyEntity(entityToRemove);
-				entityToRemove = -1; // Reset the input after removal
-				ImGui::Text("Entity %d removed.", entityToRemove);
-			}
-			else
-			{
-				ImGui::Text("Invalid Entity ID!");
+		if (ImGui::Button("Remove Entity")) {
+			RemoveSelectedEntity(selectedEntityIndex);
+		}
+
+		if (selectedEntityIndex >= 0) {
+			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+			if (selectedEntityIndex < gameObjects.size()) {
+				GameObject& selectedObject = gameObjects[selectedEntityIndex];
+				EditEntityProperties(selectedObject);
 			}
 		}
 	}
@@ -168,16 +201,23 @@ namespace Ukemochi
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
-		static bool showAnotherWindow = true;
+		static bool showGameView = true;
 		Application& app = Application::Get();
 		//GLuint texture = renderer.getTextureColorBuffer();
 		GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
-		if (showAnotherWindow)
+		if (showGameView)
 		{
-			ImGui::Begin("Player Loader", &showAnotherWindow);   // Create a window called "Another Window"
+			ImGui::Begin("Player Loader", &showGameView);   // Create a window called "Another Window"
 			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 },{1,0});
 			ImGui::End();
 		}
+
+		/*static bool showHierarchy = true;
+		if (showHierarchy)
+		{
+			ImGui::Begin("Scene Hierarchy", &showHierarchy);
+			ImGui::End();
+		}*/
 	}
 	/*!
 	\brief Renders the current ImGui frame and draws the UI.

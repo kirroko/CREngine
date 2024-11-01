@@ -28,7 +28,7 @@ GameObject& GameObject::operator=(const GameObject& other)
 	return *this;
 }
 
-Ukemochi::EntityID Ukemochi::GameObject::GetInstanceID()
+Ukemochi::EntityID Ukemochi::GameObject::GetInstanceID() const
 {
 	return m_InstanceID;
 }
