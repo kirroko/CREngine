@@ -173,6 +173,8 @@ namespace Ukemochi {
 
 				//************ Render IMGUI ************
 				imguiInstance.NewFrame();
+				//imguiInstance.ShowEntityManagementUI();
+				imguiInstance.LoadScene();
 				imguiInstance.Begin();
 				imguiInstance.ImGuiUpdate(); // Render ImGui elements
 				//************ Render IMGUI ************

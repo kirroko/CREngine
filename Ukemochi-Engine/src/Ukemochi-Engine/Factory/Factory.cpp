@@ -112,4 +112,16 @@ namespace Ukemochi
 	{
 		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
 	}
+
+	// retrieves all active game objects in the current level.
+	std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
+		std::vector<GameObject> gameObjects;
+		auto entities = ECS::GetInstance().GetAllEntities();
+
+		for (const auto& entity : entities) {
+			gameObjects.emplace_back(GameObject(entity));
+		}
+		return gameObjects;
+	}
+
 }

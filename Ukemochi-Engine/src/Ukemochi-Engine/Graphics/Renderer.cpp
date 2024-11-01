@@ -183,13 +183,13 @@ void Renderer::renderToFramebuffer()
 	beginFramebufferRender();
 
 	// Add debug information
-	std::cout << "Begin framebuffer render" << std::endl;
-	std::cout << "Number of entities: " << m_Entities.size() << std::endl;
+	//std::cout << "Begin framebuffer render" << std::endl;
+	//std::cout << "Number of entities: " << m_Entities.size() << std::endl;
 
 	// Perform your regular rendering here
 	render();
 
-	std::cout << "End framebuffer render" << std::endl;
+	//std::cout << "End framebuffer render" << std::endl;
 
 	endFramebufferRender();
 
@@ -203,7 +203,7 @@ void Renderer::renderToFramebuffer()
 
 GLuint Renderer::getTextureColorBuffer() const
 {
-	return textureColorbuffer;  // Assuming this is your framebuffer's color texture
+	return textureColorbuffer;  // this is framebuffer's color texture
 }
 
 void Renderer::initBoxBuffers()
@@ -472,13 +472,13 @@ void Renderer::render()
 	shaderProgram->setMat4("projection", projection);
 
 
-	std::cout << "Begin render" << std::endl;
-	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
+	//std::cout << "Begin render" << std::endl;
+	//std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
-		std::cout << "Rendering entity " << entity_count << std::endl;
+		//std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
