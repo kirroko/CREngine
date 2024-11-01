@@ -45,6 +45,18 @@ namespace Ukemochi
 		template<typename T>
 		inline void RemoveCoponent() { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
 
-		EntityID GetInstanceID();
+		EntityID GetInstanceID() const;
+
+		// This function returns the name of the object as a constant reference to a std::string.
+		const std::string& GetName() const { return m_Name; }
+
+		// This function returns the tag of the object, also as a constant reference.
+		const std::string& GetTag() const { return m_Tag; }
+
+		// This templated function checks if the object has a specific component of type T.
+		template<typename T>
+		bool HasComponent() const {
+			return ECS::GetInstance().HasComponent<T>(m_InstanceID);
+		}
 	};
 }

@@ -58,6 +58,15 @@ namespace Ukemochi
 
 		// Notify all component arrays that an entity has been destroyed
 		void EntityDestroyed(EntityID entity);
+
+		// Verify whether an entity has a particular componenet 
+		template<typename T>
+		bool HasComponent(EntityID entity) {
+			// Retrieve the component array for type T
+			auto componentArray = GetComponentArray<T>();
+			// Return true if the entity is present in the component array
+			return componentArray->HasEntity(entity);
+		}
 	};
 }
 #include "Component.tpp"

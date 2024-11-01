@@ -48,6 +48,8 @@ namespace Ukemochi
 		void DestroyEntity(EntityID entity);
 		void SetSignature(EntityID entity, SignatureID signature);
 		SignatureID GetSignature(EntityID entity);
+
+		std::vector<EntityID> GetAllEntities();
 	};
 }
 // 0x4B45414E
