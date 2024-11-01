@@ -16,8 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-//#include "../ECS/Systems.h"    // for System inheritance
-#include "../ECS/ECS.h"
+#include "../ECS/ECS.h" // for ECS system and components
 
 namespace Ukemochi
 {

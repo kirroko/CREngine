@@ -74,6 +74,17 @@ namespace Ukemochi
 		}
 	}
 
+	// Rotate a point by the angle
+	Vec2 RotatePoint(const Vec2& point, float angle)
+	{
+		// x' = x * cos(theta) - y * sin(theta)
+		// y' = x * sin(theta) - y * cos(theta)
+		return {
+			point.x * std::cos(angle) - point.y * std::sin(angle),
+			point.x * std::sin(angle) + point.y * std::cos(angle)
+		};
+	}
+
 	/*!***********************************************************************
 	\brief
 	 Update the bounding box of the entity.
@@ -84,6 +95,29 @@ namespace Ukemochi
 					-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 					BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+
+		//// Define the corners of the box
+		//Vec2 corners[4] = {
+		//	{-BOUNDING_BOX_SIZE * trans.scale.x, -BOUNDING_BOX_SIZE * trans.scale.y}, // bottom-left
+		//	{ BOUNDING_BOX_SIZE * trans.scale.x, -BOUNDING_BOX_SIZE * trans.scale.y}, // bottom-right
+		//	{ BOUNDING_BOX_SIZE * trans.scale.x,  BOUNDING_BOX_SIZE * trans.scale.y}, // top-right
+		//	{-BOUNDING_BOX_SIZE * trans.scale.x,  BOUNDING_BOX_SIZE * trans.scale.y}  // top-left
+		//};
+
+		//// Rotate all corners and translate by position
+		//for (int i = 0; i < 4; ++i)
+		//{
+		//	Vec2 rotated = RotatePoint(corners[i], trans.rotation);
+		//	corners[i].x = rotated.x + trans.position.x;
+		//	corners[i].y = rotated.y + trans.position.y;
+		//}
+
+		//// Find min and max points
+		//box.min.x = std::min({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
+		//box.min.y = std::min({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
+
+		//box.max.x = std::max({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
+		//box.max.y = std::max({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
 	}
 
 	/*!***********************************************************************
