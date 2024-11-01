@@ -3,7 +3,7 @@
 namespace Ukemochi
 {
 
-	void AssetManager::AddAsset(std::string file_path)
+	/*void AssetManager::AddAsset(std::string file_path)
 	{
 		size_t start = file_path.find_last_of('\\');
 		size_t end = file_path.find_first_of('.');
@@ -16,7 +16,7 @@ namespace Ukemochi
 		}
 		asset_list.emplace(key, created);
 		return;
-	}
+	}*/
 
 	void AssetManager::loadAssetsFromFolder(std::string folder_path)
 	{
