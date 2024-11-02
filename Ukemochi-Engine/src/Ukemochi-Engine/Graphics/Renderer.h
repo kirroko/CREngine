@@ -170,7 +170,7 @@ private:
 	/*!
 	 * @brief Vector storing pointers to Texture objects used by the renderer.
 	 */
-	std::vector<Texture*> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	/*!
 	* @brief Texture cache to manage loaded textures
