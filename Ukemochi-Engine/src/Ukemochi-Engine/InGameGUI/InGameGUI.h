@@ -4,7 +4,7 @@
 \file       InGameGUI.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 2, 2024
 \brief      This file contains the declaration of the in game GUI system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -16,30 +16,63 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include <vector> // for std::vector
-#include "GUIElement.h" // for GUI element
+#include "../ECS/ECS.h" // for ECS system and components
 
 namespace Ukemochi
 {
-	class InGameGUI
+	class InGameGUI : public System
 	{
 	private:
-		std::vector<GUIElement*> elements;
+		Vec2 viewport_size;
 
 	public:
-		void CreateButton(const Vec2& pos, const Vec2& scale, const std::string& text, std::function<void()> on_click);
-		void CreateTextBox(const Vec2& pos, const Vec2& scale, const std::string& text);
+		/*!***********************************************************************
+		\brief
+		 Initialize the in game GUI system.
+		*************************************************************************/
+		void Init();
 
+		/*!***********************************************************************
+		\brief
+		 Update the inputs of the in game GUI system.
+		*************************************************************************/
 		void Update();
 
-		void HandleMouseClick();
-		void HandleTextInput(char input);
+		/*!***********************************************************************
+		\brief
+		 Create a GUI text object.
+		*************************************************************************/
+		void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
 
-		void Render();
+		/*!***********************************************************************
+		\brief
+		 Update a GUI text object label value.
+		*************************************************************************/
+		void UpdateText(const std::string& id, const std::string& new_label);
 
-		~InGameGUI();
+		/*!***********************************************************************
+		\brief
+		 Create a GUI image object.
+		*************************************************************************/
+		void CreateImage(const Vec2& pos, const Vec2& scale, const std::string& texture_path);
+
+		/*!***********************************************************************
+		\brief
+		 Create a GUI button object.
+		*************************************************************************/
+		void CreateButton(const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click);
 
 	private:
-		void AddElement(GUIElement* element);
+		/*!***********************************************************************
+		\brief
+		 Handle the GUI button inputs.
+		*************************************************************************/
+		void HandleButtonInput();
+
+		/*!***********************************************************************
+		\brief
+		 Check if the mouse is within the GUI object boundaries.
+		*************************************************************************/
+		bool IsInside(const Transform& trans);
 	};
 }

@@ -212,10 +212,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\textRenderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h" />
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\Button.h" />
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\GUIElement.h" />
     <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h" />
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\TextBox.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
@@ -262,10 +259,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\Button.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\GUIElement.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\TextBox.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />

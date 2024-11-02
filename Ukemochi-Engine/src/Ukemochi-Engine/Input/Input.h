@@ -50,6 +50,13 @@ namespace UME {
         static bool IsMouseButtonPressed(int Mousecode);
 
         /*!
+        \brief Checks if a mouse button is triggered (pressed for the first time).
+        \param Mousecode The mouse button code to check.
+        \return True if the mouse button is triggered, false otherwise.
+        */
+        static bool IsMouseButtonTriggered(int Keycode);
+
+        /*!
         \brief Gets the current mouse position.
         \return A pair containing the x and y coordinates of the mouse.
         */

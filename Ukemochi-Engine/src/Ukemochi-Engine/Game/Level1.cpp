@@ -49,8 +49,6 @@ namespace Ukemochi
 	GLfloat lastFrameTime = 0.0f;
 	GLfloat deltaTime = 0.0f;
 
-	InGameGUI GUI_System;
-
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
@@ -64,7 +62,7 @@ namespace Ukemochi
 		Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		//std::cout << "Level1:Initialize" << '\n';
 
-		// Initialize the graphics and collision system
+		// Initialize the renderer and collision systems
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
 
@@ -73,8 +71,11 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png"); // load texture
 
-		// BACKGROUND 
+		// BACKGROUND
 		GameObject level_background = GameObjectFactory::CreateObject();
 		level_background.AddComponent(Transform{
 			Mtx44{},
@@ -208,12 +209,9 @@ namespace Ukemochi
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
 		circle.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::CIRCLE });*/
-		
-		// Create some test GUI elements
-		GUI_System.CreateButton(Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f },
-			Vec2{ 100,50 }, "Test Btn", []() { std::cout << "Test Btn Clicked!"; });
-		GUI_System.CreateTextBox(Vec2{ ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.5f,ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f },
-			Vec2{ 100,50 }, "Test Text Box");
+
+		// Initialize the in game GUI system
+		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void Level1_Update()//Level1 game runtime
@@ -294,16 +292,15 @@ namespace Ukemochi
 			clone.GetComponent<Transform>().position = Vec2{ clone.GetComponent<Transform>().position.x + 5.f, clone.GetComponent<Transform>().position.y + 1.f };
 		}
 
+		// Update the in game GUI inputs
+		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
+
 		// Camera
 		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
 		deltaTime = currentFrameTime - lastFrameTime;
 		lastFrameTime = currentFrameTime;
 		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
-
 		// --- END USER INPUTS ---
-
-		// Update the in game GUI system
-		GUI_System.Update();
 
 		// --- GAME LOGIC UPDATE ---
 
@@ -325,9 +322,6 @@ namespace Ukemochi
 	{
 		// Render the entities
 		ECS::GetInstance().GetSystem<Renderer>()->render();
-
-		// Render the GUI elements
-		GUI_System.Render();
 	}
 
 	void Level1_Free()//release unused assets/variable memories

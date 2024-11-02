@@ -4,7 +4,7 @@
 \file       InGameGUI.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 2, 2024
 \brief      This file contains the definition of the in game GUI system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -15,59 +15,164 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "InGameGUI.h"		// for forward declaration
-#include "Button.h"			// for Button class
-#include "TextBox.h"		// for TextBox class
-#include "../Input/Input.h" // for mouse and key inputs
+#include "InGameGUI.h"				// for forward declaration
+#include "../Input/Input.h"			// for mouse and key inputs
+#include "../Application.h"			// for screen size
+#include "../Factory/Factory.h"		// for game objects
+#include "../Graphics/Camera2D.h"	// for camera viewport
+#include "../Graphics/Renderer.h"	// for text objects
 
 namespace Ukemochi
 {
-	void InGameGUI::CreateButton(const Vec2& pos, const Vec2& scale, const std::string& text, std::function<void()> on_click)
+	/*!***********************************************************************
+	\brief
+	 Initialize the in game GUI system.
+	*************************************************************************/
+	void InGameGUI::Init()
 	{
-		Button* button = new Button(pos, scale, text, on_click);
-		AddElement(button);
-		std::cout << "New button created.\n";
+		// Get the screen width and height
+		UME::Application& app = UME::Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
+
+		// Create some test GUI elements
+		CreateText("text1", "pls click a button", Vec2{ screen_width * 0.7f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+
+		CreateImage(Vec2{ screen_width * 0.875f, screen_height * 0.8f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
+
+		CreateButton("pause_btn", "", Vec2{ screen_width * 0.95f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+			Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { UpdateText("text1", "pause button clicked!"); });
+
+		CreateButton("spawn_btn", "Spawn", Vec2{ screen_width * 0.95f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 0.f, 0.f }, "Ukemochi",
+			Vec2{ 150.f, 75.f }, "../Assets/Textures/UI/base.png", [this]()
+			{
+				UpdateText("text1", "spawn button clicked!");
+
+				// Spawn a enemy
+				GameObject enemy = GameObjectFactory::CreateObject();
+				enemy.AddComponent(Transform{
+					Mtx44{},
+					Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+					ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+					0,
+					Vec2{100.f, 100.f}
+					});
+				enemy.AddComponent(Rigidbody2D{ Vec2{}, Vec2{750.f, 750.f}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
+				enemy.AddComponent(BoxCollider2D());
+				enemy.GetComponent<BoxCollider2D>().tag = "Enemy";
+				enemy.AddComponent(SpriteRender{ "../Assets/Textures/Worm.png", SPRITE_SHAPE::BOX, });
+			});
 	}
 
-	void InGameGUI::CreateTextBox(const Vec2& pos, const Vec2& scale, const std::string& text)
-	{
-		TextBox* text_box = new TextBox(pos, scale, text);
-		AddElement(text_box);
-		std::cout << "New textbox created.\n";
-	}
-
+	/*!***********************************************************************
+	\brief
+	 Update the inputs of the in game GUI system.
+	*************************************************************************/
 	void InGameGUI::Update()
 	{
-		if (UME::Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-			HandleMouseClick();
+		// Handle button inputs
+		HandleButtonInput();
 
-		//if(UME::Input::IsKeyTriggered() // Check for key presses and pass into text box
-			HandleTextInput('T');
+		/*for (auto const& entity : m_Entities)
+		{
+			auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+			auto& button = ECS::GetInstance().GetComponent<Button>(entity);
+			auto& camera = ECS::GetInstance().GetSystem<Camera>();
+
+			trans.position = Vec2{ button.initial_pos.x + camera->position.x, button.initial_pos.y + camera->position.y };
+		}*/
 	}
 
-	void InGameGUI::HandleMouseClick()
+	/*!***********************************************************************
+	\brief
+	 Create a GUI text object.
+	*************************************************************************/
+	void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
 	{
-		for (auto element : elements)
-			element->HandleClick();
+		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
 	}
 
-	void InGameGUI::HandleTextInput(char input)
+	/*!***********************************************************************
+	\brief
+	 Update a GUI text object label value.
+	*************************************************************************/
+	void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
 	{
-		for (auto element : elements)
-			element->HandleTextInput(input);
+		ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
 	}
 
-	void InGameGUI::Render()
+	/*!***********************************************************************
+	\brief
+	 Create a GUI image object.
+	*************************************************************************/
+	void InGameGUI::CreateImage(const Vec2& pos, const Vec2& scale, const std::string& texture_path)
 	{
-		for (auto element : elements)
-			element->Render();
+		GameObject image = GameObjectFactory::CreateObject();
+		image.AddComponent(Transform{ Mtx44{}, pos, 0, scale });
+		image.AddComponent(SpriteRender{ texture_path });
 	}
 
-	InGameGUI::~InGameGUI()
+	/*!***********************************************************************
+	\brief
+	 Create a GUI button object.
+	*************************************************************************/
+	void InGameGUI::CreateButton(const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
 	{
-		for (auto element : elements)
-			delete element;
+		GameObject button = GameObjectFactory::CreateObject();
+		button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
+		button.AddComponent(SpriteRender{ texture_path });
+		button.AddComponent(Button{ on_click });
+
+		// Offset the text position to make it left and middle aligned
+		Vec2 text_pos = Vec2{ pos.x - button_scale.x * 0.4f, pos.y - button_scale.y * 0.25f };
+		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
 	}
 
-	void InGameGUI::AddElement(GUIElement* element) { elements.push_back(element); }
+	/*!***********************************************************************
+	\brief
+	 Handle the GUI button inputs.
+	*************************************************************************/
+	void InGameGUI::HandleButtonInput()
+	{
+		// Check for mouse left click
+		if (UME::Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
+		{
+			for (auto const& entity : m_Entities)
+			{
+				auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+				auto& button = ECS::GetInstance().GetComponent<Button>(entity);
+
+				// Skip if the button is not interactable
+				if (!button.interactable)
+					continue;
+
+				// Check if the mouse is within the button boundaries
+				if (IsInside(trans))
+					button.on_click();
+			}
+		}
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Check if the mouse is within the GUI object boundaries.
+	*************************************************************************/
+	bool InGameGUI::IsInside(const Transform& trans)
+	{
+		// Get current mouse position in screen coordinates
+		auto [mouse_x, mouse_y] = UME::Input::GetMousePosition();
+
+		// Flip the mouse position in the y-axis
+		auto& camera = ECS::GetInstance().GetSystem<Camera>();
+		mouse_y = camera->viewport_size.y - mouse_y;
+
+		// Offset mouse position
+		mouse_x += trans.scale.x * 0.5f;
+		mouse_y += trans.scale.y * 0.5f;
+
+		return mouse_x >= trans.position.x
+			&& mouse_y >= trans.position.y
+			&& mouse_x <= trans.position.x + trans.scale.x
+			&& mouse_y <= trans.position.y + trans.scale.y;
+	}
 }

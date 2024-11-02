@@ -207,9 +207,6 @@
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h" />
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\Button.h" />
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\GUIElement.h" />
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\TextBox.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h" />
   </ItemGroup>
   <ItemGroup>
@@ -326,9 +323,6 @@
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\Button.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\GUIElement.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\TextBox.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp" />
   </ItemGroup>
 </Project>

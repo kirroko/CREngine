@@ -6,12 +6,12 @@
 #include "Math/Transformation.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Camera2D.h"
+#include "InGameGUI/InGameGUI.h"
 
 namespace Ukemochi
 {
 	SceneManager::SceneManager()
 	{
-		//Audio audio;
 		// Set up ECS
 		ECS::GetInstance().Init();
 
@@ -21,7 +21,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
 		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<SpriteRender>();
-
+		ECS::GetInstance().RegisterComponent<Button>();
 
 		// Register your systems
 		ECS::GetInstance().RegisterSystem<Physics>();
@@ -30,6 +30,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterSystem<Renderer>();
 		//ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<Camera>();
+		ECS::GetInstance().RegisterSystem<InGameGUI>();
 
 		// Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
@@ -51,7 +52,13 @@ namespace Ukemochi
 		sig.set(ECS::GetInstance().GetComponentType<Transform>());
 		sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
 		ECS::GetInstance().SetSystemSignature<Collision>(sig);
-	
+
+		// For in game GUI system
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		sig.set(ECS::GetInstance().GetComponentType<Button>());
+		ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
+
 		//init GSM
 		GSM_Initialize(GS_ENGINE);
 	}
