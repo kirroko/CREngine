@@ -78,56 +78,34 @@ namespace Ukemochi
     }
 
     // ================== PUBLIC FUNCTIONS ==================
-    void ProjectHandler::GenerateSolutionAndProject(const std::string& solutionPath,
-                                                    const std::string& projectPath,
-                                                    const std::vector<std::string>& scriptFiles)
+    void ProjectHandler::GenerateSolutionAndProject(
+        const std::string& projectPath)
     {
-        // Template can be found in template folder
-        std::string slnString = R"(Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{GUID}"
-EndProject
-Global
-    GlobalSection(SolutionConfigurationPlatforms) = preSolution
-        Debug|Any CPU = Debug|Any CPU
-        Release|Any CPU = Release|Any CPU
-    EndGlobalSection
-    GlobalSection(ProjectConfigurationPlatforms) = postSolution
-        {GUID}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {GUID}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {GUID}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {GUID}.Release|Any CPU.Build.0 = Release|Any CPU
-    EndGlobalSection
-EndGlobal)";
-
-        // Generate a new GUID
-        const std::string guid = GenerateGUID();
-
-        // Replace the {GUID} placeholder with the actual GUID
-        replaceGUIDPlaceholder(slnString, guid);
-
-        // Write solution
-        std::ofstream slnFile(solutionPath);
-        if (slnFile.is_open())
-        {
-            slnFile << slnString;
-            slnFile.close();
-        }
-
-        // Template can be found in template folder
+        UME_ENGINE_TRACE("Generating Project");
         std::string csprojString = R"(<Project Sdk="Microsoft.NET.Sdk">
-                                        <PropertyGroup>
-                                            <OutputType>Library</OutputType>
-                                            <TargetFramework>4.7.2</TargetFramework>
-                                        </PropertyGroup>
-                                        <ItemGroup>
-                                    )";
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutputPath>Temp\bin\Debug\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutputPath>Temp\bin\Release\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>)";
 
         // Add each script file
-        for (const auto& script : scriptFiles)
-        {
-            std::string relativePath = GetRelativepath(projectPath, script);
-            csprojString += "       <Compile Include=\"" + relativePath + "\" />\n";
-        }
+        // for (const auto& script : scriptFiles)
+        // {
+        //     // std::string copyString(script);
+        //     // size_t pos = copyString.find_first_of('.');
+        //     // copyString = copyString.substr(0, pos);
+        //     csprojString += "\n <Compile Include=\"" + script + "\" />\n";
+        // }
 
         csprojString += R"(</ItemGroup>
     <ItemGroup>
@@ -139,7 +117,7 @@ EndGlobal)";
 )";
 
         // Write csproject
-        std::ofstream csprojFile(projectPath + "/Assembly-CSharp.csproj");
+        std::ofstream csprojFile(projectPath + "\\Assembly-CSharp.csproj");
         if(csprojFile.is_open())
         {
             csprojFile << csprojString;

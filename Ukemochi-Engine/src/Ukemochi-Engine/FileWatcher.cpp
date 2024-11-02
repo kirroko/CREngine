@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "FileWatcher.h"
 
+#include "Logic/ProjectHandler.h"
+
 namespace Ukemochi
 {
 	// TODO: Implement windows.h ReadDirectoryChangesW for windows method
@@ -26,10 +28,22 @@ namespace Ukemochi
 	{
 		for (auto& file : std::filesystem::recursive_directory_iterator(path_to_watch))
 		{
+			if(file.path().string().find("\\obj\\")) continue;
+			
 			// keep a record of files from the base directory and their last modification time
 			m_Paths.insert(std::pair(file.path().string(),std::filesystem::last_write_time(file.path())));
-			// m_Paths[file.path().string()] = std::filesystem::last_write_time(file);
+
+			// Keep a record of scripts only, for scripting hot reloading
+			if (file.path().extension() == ".cs")
+			{
+				std::string copyString = file.path().string();
+				size_t pos = copyString.find("Scripts"); // TODO: Hard Path here
+				copyString = copyString.substr(pos);
+				m_ScriptPaths.push_back(copyString);
+				UME_ENGINE_TRACE("File Watcher: Found Script: {0}",copyString);
+			}
 		}
+		ProjectHandler::GenerateSolutionAndProject("..\\Assets");
 	}
 
 	void FileWatcher::Start(const std::function<void(std::string, FileStatus)>& action)
@@ -51,8 +65,10 @@ namespace Ukemochi
 				{
 					if (!std::filesystem::exists(it->first))
 					{
+						m_ScriptPaths.erase(std::remove(m_ScriptPaths.begin(), m_ScriptPaths.end(), it->first), m_ScriptPaths.end());
 						action(it->first, FileStatus::erased);
 						it = m_Paths.erase(it);
+						// and erase any script paths that are deleted
 					}
 					else
 						++it;
@@ -61,6 +77,8 @@ namespace Ukemochi
 				// check if a file was created or modified
 				for (auto& file : std::filesystem::recursive_directory_iterator(m_path_to_watch))
 				{
+					if(file.path().string().find("\\obj\\")) continue;
+					
 					auto current_file_last_write_time = std::filesystem::last_write_time(file);
 
 					// File creation

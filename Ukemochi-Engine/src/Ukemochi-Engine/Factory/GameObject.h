@@ -56,6 +56,8 @@ namespace Ukemochi
             size_t pos = type.find_first_of("::");
             if (pos != std::string::npos)
                 type = type.substr(pos + 2);
+            
+            UME_ENGINE_TRACE("GO ({0}) Adding Component: {1}",m_InstanceID, type);
             ECS::GetInstance().AddComponent(m_InstanceID, component);
             // std::filesystem::path filePath(scriptObj.scriptPath);
             // std::string fileName = filePath.stem().string();

@@ -33,8 +33,10 @@ namespace Ukemochi
 	class FileWatcher 
 	{
 		std::unordered_map<std::string, std::filesystem::file_time_type> m_Paths{};
+		std::vector<std::string> m_ScriptPaths{};
+		
 		std::string m_path_to_watch;
-
+		
 		std::atomic_bool m_running = true;
 		
 		std::chrono::duration<int,std::milli> m_delay;
@@ -52,6 +54,12 @@ namespace Ukemochi
 		 */
 		void Start(const std::function<void(std::string, FileStatus)>& action);
 
+		/**
+		 * @brief Get the Script Paths
+		 * @return std::vector<std::string>&  
+		 */
+		std::vector<std::string>& GetScriptPaths() { return m_ScriptPaths; }
+		
 		/**
 		 * @brief Stop the thread
 		 */

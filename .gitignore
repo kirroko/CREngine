@@ -21,5 +21,7 @@ bin
 bin-int
 Debug
 Release
+Assets/obj
 Ukemochi.sln.DotSettings.user
 Ukemochi-Game/Resources/Scripts/Ukemochi-Scripting.dll
+Ukemochi-Engine/vendor/Mono/MonoLib.zip

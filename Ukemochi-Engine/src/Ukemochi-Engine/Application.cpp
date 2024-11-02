@@ -35,6 +35,7 @@ DigiPen Institute of Technology is prohibited.
 #include <iomanip>
 #include <crtdbg.h>				// To check for memory leaks
 
+#include "Logic/ProjectHandler.h"
 #include "Logic/Scripting.h"
 
 
@@ -83,10 +84,20 @@ namespace UME
             // WARN (Indicate unexpected event, disrupt or delay)
             // ERROR (Capture a system interfering with functionalities)
             // FATAL (Capture a system crash)
+            
+            // std::filesystem::path path(path_to_watch);
+            // path.filename();
              switch(status)
              {
              case Ukemochi::FileStatus::created:
                  UME_ENGINE_INFO("File created: {0}", path_to_watch);
+                 // std::filesystem::path filePath(path_to_watch);
+                 // if(filePath.extension() == ".cs")
+                 // {
+                 //     // recompile clinet assembly
+                 //     ScriptingEngine::GetInstance().CompileScriptAssembly();
+                 //     ScriptingEngine::GetInstance().Reload();
+                 // }
                  break;
              case Ukemochi::FileStatus::modified:
                  UME_ENGINE_INFO("File modified: {0}", path_to_watch);
@@ -95,6 +106,7 @@ namespace UME
                  UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
                  break;
              }
+            ProjectHandler::GenerateSolutionAndProject("..\\Assets");
         });
         fwInstance = fileWatcher; // Keep a reference to the file watch instance
     }

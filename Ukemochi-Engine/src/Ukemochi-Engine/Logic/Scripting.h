@@ -30,6 +30,8 @@ namespace Ukemochi
 
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoAssembly* ClientAssembly = nullptr;
+
+		std::string m_CProject;
 		
 		ScriptingEngine(const ScriptingEngine&) = delete;
 		ScriptingEngine& operator=(const ScriptingEngine&) = delete;
@@ -88,19 +90,19 @@ namespace Ukemochi
 		void Init();
 
 		/**
-		 * @brief Update all script
-		 */
-		void Update();
-
-		/**
 		 * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
 		 */
 		void ShutDown(); // TODO: Did you remember to call this function when application is closed?
 
 		/**
-		 * @brief Reload client script assembly when script has change
+		 * @brief Compile client's script aseembly during runtime
 		 */
-		void ReloadScripts();
+		void CompileScriptAssembly();
+
+		/**
+		 * @brief Reload the script assembly
+		 */
+		void Reload();
 
 		/**
 		 * @brief Instantiate C# class object that is internal

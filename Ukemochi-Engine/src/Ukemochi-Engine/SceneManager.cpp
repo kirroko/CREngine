@@ -30,6 +30,8 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterSystem<LogicSystem>();
 		//ECS::GetInstance().RegisterSystem<Audio>();
 
+		// ScriptingEngine::GetInstance().CompileScriptAssembly();
+
 		// TODO: Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
 

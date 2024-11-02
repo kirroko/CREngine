@@ -46,10 +46,8 @@ namespace Ukemochi
     public:
         /**
          * @brief Helps dynamically generate a sln and csproj file
-         * @param solutionPath a solutions path location
          * @param projectPath a projects path location
-         * @param scriptFiles a container of scripts location
          */
-        static void GenerateSolutionAndProject(const std::string& solutionPath, const std::string& projectPath, const std::vector<std::string>& scriptFiles);
+        static void GenerateSolutionAndProject(const std::string& projectPath);
     };
 }
