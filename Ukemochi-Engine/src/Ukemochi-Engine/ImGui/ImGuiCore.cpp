@@ -35,6 +35,7 @@ namespace Ukemochi
 {
 	float UseImGui::m_Time = 0.0f; //!< Time since last frame for calculating DeltaTime.
 	float UseImGui::m_LastAssetUpdateTime = 0.0f;
+	float UseImGui::m_LastSceneUpdateTime = 0.0f;
 	std::vector<std::string> UseImGui::assetFiles;
 	std::vector<std::string> UseImGui::sceneFiles;
 
@@ -186,21 +187,21 @@ namespace Ukemochi
 		float currentTime = ImGui::GetTime();
 
 		// Check if 1 second has passed since the last update
-		if (currentTime - m_LastAssetUpdateTime >= 1.0f) {
+		if (currentTime - m_LastSceneUpdateTime >= 1.0f) {
 			// Update the asset list
 			LoadScene();
-			m_LastAssetUpdateTime = currentTime; // Reset the timer
+			m_LastSceneUpdateTime = currentTime; // Reset the timer
 		}
 
 		ImGui::Begin("Scene Browser");
 
 		// Display the list of scenes
-		static int selectedAssetIndex = -1;
+		static int selectedSceneIndex = -1;
 		for (size_t i = 0; i < sceneFiles.size(); ++i) {
-			bool isSelected = (selectedAssetIndex == static_cast<int>(i));
+			bool isSelected = (selectedSceneIndex == static_cast<int>(i));
 			if (ImGui::Selectable(sceneFiles[i].c_str(), isSelected)) {
-				selectedAssetIndex = static_cast<int>(i);
-				std::cout << "Selected scene: " << sceneFiles[selectedAssetIndex] << std::endl;
+				selectedSceneIndex = static_cast<int>(i);
+				std::cout << "Selected scene: " << sceneFiles[selectedSceneIndex] << std::endl;
 			}
 		}
 

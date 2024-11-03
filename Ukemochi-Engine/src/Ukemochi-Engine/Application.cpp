@@ -236,8 +236,8 @@ namespace Ukemochi {
 					//************ Render IMGUI ************
 					imguiInstance.NewFrame();
 					imguiInstance.SceneBrowser();
-					imguiInstance.SceneRender();
 					imguiInstance.AssetBrowser();
+					imguiInstance.SceneRender();
 					imguiInstance.ShowEntityManagementUI();
 					imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements

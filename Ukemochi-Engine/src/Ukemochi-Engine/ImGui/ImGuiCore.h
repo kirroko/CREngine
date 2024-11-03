@@ -72,6 +72,8 @@ namespace Ukemochi
 
 		static float m_LastAssetUpdateTime;
 
+		static float m_LastSceneUpdateTime;
+
 	private:
 		// Mouse and keyboard event handlers
 		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);
@@ -84,9 +86,9 @@ namespace Ukemochi
 		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
 		static std::vector<std::string> assetFiles;
+
 		static std::vector<std::string> sceneFiles;
 		static void LoadAssets(); // Function to load assets
-		void LoadPlayer(const std::string& player_data);
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 	};
 }
