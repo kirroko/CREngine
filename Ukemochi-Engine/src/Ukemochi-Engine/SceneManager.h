@@ -28,7 +28,7 @@ namespace Ukemochi
 		void LoadScene();
 
 		// Load save file to Scene
-		void LoadSaveFile(const std::string& sceneFile);
+		void LoadSaveFile(const std::string& file_name);
 
 		// Initialize the scene entities and systems
 		void InitScene();
@@ -42,7 +42,7 @@ namespace Ukemochi
 		void ClearScene();
 
 		// Save the current scene to a file
-		void SaveScene();
+		void SaveScene(const std::string& file_name);
 
 		// Optional: Transition to a different scene
 		void TransitionToScene();

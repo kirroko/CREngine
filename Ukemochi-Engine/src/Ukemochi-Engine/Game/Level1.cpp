@@ -107,7 +107,7 @@ namespace Ukemochi
 		player_obj = GameObjectFactory::CreateObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath); // load texture
-		p_spriteRender.animated = true;
+		//p_spriteRender.animated = true;
 
 		// BACKGROUND OBJECT
 		GameObject background = GameObjectFactory::CreateObject();

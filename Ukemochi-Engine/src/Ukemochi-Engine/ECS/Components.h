@@ -54,7 +54,7 @@ namespace Ukemochi
 		float angular_acceleration{};
 		float torque{};
 		float inertia_mass{ 1.f }; // Minimum inertia mass of 1
-		float inv_inertia_mass{ 1.f / inv_inertia_mass }; // inverse inertia mass = 1/inertia mass
+		float inv_inertia_mass{ 1.f / inertia_mass }; // inverse inertia mass = 1/inertia mass
 		float angular_drag{ 0.9f }; // Adjust to control the friction from [0, 1]
 
 		bool use_gravity{ false }; // If true, apply gravity

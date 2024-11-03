@@ -88,8 +88,10 @@ bool Serialization::PushJSON(const std::string& file_name, rapidjson::Document& 
 		return false;
 	}
 	OStreamWrapper osw(output);
-
-	Writer<OStreamWrapper> writer(osw);
+	PrettyWriter<OStreamWrapper> writer(osw);
+	writer.SetIndent(' ', 4);
+	writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
+	//Writer<OStreamWrapper> writer(osw);
 	storage.Accept(writer);
 
 	output.close();

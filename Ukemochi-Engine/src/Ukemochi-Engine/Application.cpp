@@ -153,9 +153,17 @@ namespace Ukemochi {
 					
 					if (Input::IsKeyPressed(GLFW_KEY_1))
 					{
-						gsm_next = GS_PLAY;
+						//gsm_next = GS_PLAY;
+						sceneManager.SaveScene("test");
 						// If 'W' key is pressed, move forward
 						UME_ENGINE_INFO("1 key is pressed");
+					}
+					if (Input::IsKeyPressed(GLFW_KEY_2))
+					{
+						//gsm_next = GS_PLAY;
+						sceneManager.LoadSaveFile("test");
+						// If 'W' key is pressed, move forward
+						UME_ENGINE_INFO("2 key is pressed");
 					}
 
 					//************ Update & Draw ************
@@ -184,8 +192,9 @@ namespace Ukemochi {
 
 				//************ Render IMGUI ************
 					imguiInstance.NewFrame();
+					imguiInstance.ShowEntityManagementUI();
 					imguiInstance.Begin();
-					imguiInstance.ImGuiUpdate(); // Render ImGui elements
+					imguiInstance.ImGuiUpdate();
 					//************ Render IMGUI ************
 
 					m_Window->OnUpdate();
