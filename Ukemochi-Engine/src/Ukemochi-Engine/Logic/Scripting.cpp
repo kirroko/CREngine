@@ -17,16 +17,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #include "PreCompile.h"
 #include "Scripting.h"
+#include "../ECS/ECS.h"
 
 namespace Ukemochi
 {
-	void ScriptingEngine::InitMono()
+	void ScriptingEngine::Init()
 	{
 		// ================== Initialize Mono Runtime ==================
 		//mono_set_assemblies_path("../Ukemochi-Engine/vendor/mono/lib/4.5"); // current working dir is Ukemochi-Game
 		mono_set_assemblies_path("Mono/lib/4.5");
 
-		// where the fuck i am
+		// TODO: REMOVE ME FROM THE FINAL SUBMSSION, IF YOU'RE READING THIS, sorry
 		try {
 			std::filesystem::path cwd = std::filesystem::current_path();
 			std::cout << "Current Working Directory: " << cwd << std::endl;
@@ -49,9 +50,29 @@ namespace Ukemochi
 		m_pAppDomain = mono_domain_create_appdomain("UkemochiDomain", nullptr);
 		mono_domain_set(m_pAppDomain, true);
 
+		// Load compiled assemblies into engine
 		CoreAssembly = LoadCSharpAssembly("Resources/Scripts/Ukemochi-Scripting.dll");
-		assert(CoreAssembly != nullptr && "Assembly Null!");
+		UME_ENGINE_ASSERT(CoreAssembly != nullptr, "C# Assembly Null!");
 		PrintAssemblyTypes(CoreAssembly);
+
+		// TODO - FOR TESTING ONLY, PLEASE REMEMBER TO REMOVE ME 
+		// Get a reference to the class we want to instantiate 
+		MonoClass* testingClass = GetClassInAssembly(CoreAssembly, "", "CsharpTest"); 
+
+		// Allocate an instance of class
+		MonoObject* classInstance = mono_object_new(m_pAppDomain, testingClass);
+
+		if (classInstance == nullptr)
+		{
+			assert(false && "Scripting has an issue, no such class found"); // Engine, Ratatatata ratatatata, pop pop pop, poof Kaput
+		}
+
+		// Call the parameterless (default) constructor
+		mono_runtime_object_init(classInstance); // without calling this constructor, the instance is oseless
+	}
+
+	void ScriptingEngine::Update()
+	{
 	}
 
 	void ScriptingEngine::ShutDown()
@@ -104,7 +125,6 @@ namespace Ukemochi
 		{
 			const char* errorMessage = mono_image_strerror(status);
 			UME_ENGINE_FATAL(errorMessage);
-			// Log some error message using the errorMessage data
 			return nullptr;
 		}
 
@@ -129,8 +149,32 @@ namespace Ukemochi
 
 			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-
-			UME_ENGINE_INFO("{0}.{1}\n", nameSpace, name);
+			UME_ENGINE_TRACE("Assembly things"); // Yes, I only understand that it's a table of type definitions :)
+			UME_ENGINE_TRACE("{0}.{1}", nameSpace, name);
 		}
 	}
+
+	void ScriptingEngine::RegisterMonoFunctions() // TODO: Type-Safe Component Registration and Access? Meta-Programming with Reflection??
+	{
+		// Register GetComponent for TransformComponent with Mono
+		mono_add_internal_call("UkemochiEngine.CoreModule::GetTransform",
+			(void*)ECS::GetInstance().GetComponentForMono<Transform>);
+
+		
+	}
+
+	MonoClass* ScriptingEngine::GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className)
+	{
+		MonoImage* image = mono_assembly_get_image(assembly);
+		MonoClass* klass = mono_class_from_name(image, namespaceName, className); // klass... Classic name conversion
+
+		if (klass == nullptr) 
+		{
+			UME_ENGINE_ERROR("No such class name ({0}) in namespace ({1}) inside assembly. Check the class name and namespace, please?",className,namespaceName);
+			return nullptr;
+		}
+
+		return klass;
+	}
 }
+// 0x4B45414E

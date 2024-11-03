@@ -30,7 +30,7 @@ namespace Ukemochi
 	void Collision::Init()
 	{
 		// Get the screen width and height
-		UME::Application& app = UME::Application::Get();
+		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 	}
@@ -139,7 +139,7 @@ namespace Ukemochi
 
 			// Initialize and calculate the new velocity of vRel
 			firstTimeOfCollision = 0.0f;
-			float tLast = static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+			float tLast = static_cast<float>(Ukemochi::g_FrameRateController.GetDeltaTime());
 			Vec2 vRel = { vel2.x - vel1.x, vel2.y - vel1.y };
 
 			// Check for collision in the x-axis

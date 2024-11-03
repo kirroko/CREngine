@@ -41,7 +41,7 @@ DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
-namespace UME {
+namespace Ukemochi {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 	Application* Application::s_Instance = nullptr;
 
@@ -70,10 +70,11 @@ namespace UME {
 		m_Window = std::make_unique<WindowsWindow>(props);
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
-		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-		imguiInstance.ImGuiInit(glfwWindow);
+		//GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		//imguiInstance.ImGuiInit(glfwWindow);
 
-		ScriptingEngine::GetInstance().InitMono();
+		// ScriptingEngine::GetInstance().Init();
+		
 	}
 
 	Application::~Application()
@@ -83,7 +84,7 @@ namespace UME {
 
 	void Application::EventIsOn(Event& e)
 	{
-		imguiInstance.OnEvent(e);
+		//imguiInstance.OnEvent(e);
 		EventDispatcher dispatch(e);
 		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
 		if (e.GetName() != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
@@ -109,6 +110,8 @@ namespace UME {
 
 		//Set up SceneManager
 		SceneManager sceneManger;
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
 		//while engine running
 		while (gsm_current != GS_STATES::GS_QUIT && m_running)
 		{
@@ -117,6 +120,9 @@ namespace UME {
 				gsm_next = GS_LEVEL1;
 				gsm_previous = gsm_current = gsm_next;
 				// If 'W' key is pressed, move forward
+				
+				
+				
 				UME_ENGINE_INFO("1 key is pressed");
 			}
 
@@ -167,6 +173,9 @@ namespace UME {
 
 				//************ Render IMGUI ************
 				imguiInstance.NewFrame();
+				//imguiInstance.ShowEntityManagementUI();
+				imguiInstance.LoadScene();
+				imguiInstance.Begin();
 				imguiInstance.ImGuiUpdate(); // Render ImGui elements
 				//************ Render IMGUI ************
 
@@ -224,6 +233,8 @@ namespace UME {
 
 					//************ Render IMGUI ************
 					imguiInstance.NewFrame();
+					imguiInstance.ShowEntityManagementUI();
+					imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					//************ Render IMGUI ************
 

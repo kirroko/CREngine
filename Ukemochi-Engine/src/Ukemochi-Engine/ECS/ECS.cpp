@@ -58,7 +58,7 @@ namespace Ukemochi
 		{
 			if (originalSignature.test(i))
 			{
-				// TODO: Keep Updating components as the list grows
+				// TODO: Keep updating components as the list grows
 				if (i == transform)
 				{
 					Transform originalComponent = m_ComponentManager->GetComponent<Transform>(entity);
@@ -89,5 +89,11 @@ namespace Ukemochi
 
 		return newEntity;
 	}
+
+	// Provides a straightforward way to retrieve a list of all active entities by delegating this task to the EntityManager
+	std::vector<EntityID> ECS::GetAllEntities() {
+		return m_EntityManager->GetAllEntities();
+	}
+
 }
 // 0x4B45414E

@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Matrix4x4.h"  // for Mtx44 struct
 #include "../Math/Vector2D.h"	// for Vec2 struct
 #include "../Audio/Audio.h"		// for Audio class
-#include "../Graphics/Sprite.h" // for Sprite class
+//#include "../Graphics/Sprite.h" // for Sprite class
 
 namespace Ukemochi
 {
@@ -131,6 +131,7 @@ namespace Ukemochi
 		unsigned int textureID = 0;
 		bool animated = false;							// Is the object animated?
 
+		int animationIndex = 0;
 		//bool visible = true;							// Is the object visible?
 		//float opacity = 1.0f;							// Opacity of the object
 	};

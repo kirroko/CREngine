@@ -54,9 +54,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.h">
-      <Filter>Platform\ImGuiOpenGl</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -146,9 +143,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Sprite.h">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -208,11 +202,10 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Framebuffer.h" />
+    <ClInclude Include="src\Platform\OpenGLFramebuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
-      <Filter>Platform\ImGuiOpenGl</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
@@ -271,9 +264,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Sprite.cpp">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
@@ -324,5 +314,14 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Framebuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
   </ItemGroup>
 </Project>

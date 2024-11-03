@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 #include "Event.h"
 
-namespace UME {
+namespace Ukemochi {
 	/*!
 	\brief Event for when a window is resized.
 

@@ -24,13 +24,18 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include "Particle.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Camera2D.h"
+#include "Ukemochi-Engine/Factory/GameObject.h"
+#include "Ukemochi-Engine/ECS/Entity.h"
+
 
 // Froward
 class TextRenderer;
+class ParticleSystem;
 
-
+using namespace Ukemochi;
  /*!
   * @class Renderer
   * @brief A class that manages OpenGL rendering, shader setup, texture handling, and rendering 2D objects like boxes and circles.
@@ -109,10 +114,10 @@ public:
 	 */
 	void drawCircleOutline();
 
-	void updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth);
+	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight);
 
 
-	void drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+	void drawBoxAnimation();
 
 	/*!
 	 * @brief Debug mode flag to enable drawing of object outlines.
@@ -128,6 +133,18 @@ public:
 	* @brief Update a text object in the text renderer.
 	*/
 	void UpdateTextObject(const std::string& id, const std::string& newText);
+	
+	void setupFramebuffer();
+
+	void beginFramebufferRender();
+
+	void endFramebufferRender();
+
+	void renderToFramebuffer();
+
+	GLuint getTextureColorBuffer() const;
+
+	void resizeFramebuffer(int width, int height);
 
 private:
 	/*!
@@ -185,11 +202,6 @@ private:
 	void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
 
 	/*!
-	* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-	*/
-	void cleanUpBuffers();
-
-	/*!
 	 * @brief Scale factor applied to objects when scaling is enabled.
 	 */
 	GLfloat scale_factor{};
@@ -210,7 +222,7 @@ private:
 	/*!
 	 * @brief Speed at which objects rotate (degrees per second).
 	 */
-	GLfloat rotationSpeed = 1.0f;
+	GLfloat rotationSpeed = 45.0f;
 
 	/*!
 	 * @brief Time elapsed between the current and previous frame.
@@ -223,10 +235,55 @@ private:
 	GLfloat lastFrame = 0.0f;
 
 	// Animation control
-	float elapsedTime = 0.0f;  // Time since last frame
-	float frameDuration = 0.1f;  // Time per frame (0.1 seconds per frame)
-	int currentFrame = 0;  // Start at the first frame
-	int totalFrames = 8;   // Total number of frames in the sprite sheet
+	struct Animation {
+		int totalFrames;
+		int currentFrame;
+		float frameDuration;
+		float originalFrameDuration; // Store the original duration
+		float elapsedTime;
+		int frameWidth, frameHeight, totalWidth, totalHeight;
+		bool loop;
+
+		Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
+			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
+			elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
+
+		void update(float deltaTime)
+		{
+			elapsedTime += deltaTime;
+			if (elapsedTime >= frameDuration) {
+
+				currentFrame++;
+				if (currentFrame >= totalFrames) 
+				{
+					currentFrame = 0; // Loop back to the first frame
+				}
+				elapsedTime = 0.0f; // Reset elapsed time
+			}
+		}
+
+		void setFrameDuration(float newDuration) 
+		{
+			frameDuration = newDuration;
+		}
+
+		void resetFrameDuration() 
+		{
+			frameDuration = originalFrameDuration;
+		}
+	};
+	std::unordered_map<int, std::vector<Animation>> entity_animations;
+	void initAnimationEntities();
+	bool isSlowMotion = false;
+	float slowMotionFactor = 2.0f;
+	bool isFacingRight = false;
+
+public:
+	void toggleSlowMotion();
+	void animationKeyInput();
+
+private:
+
 
 	void initBoxBuffers();
 
@@ -245,7 +302,33 @@ private:
 		CIRCLE_OUTLINE = 3,
 		ANIMATION_VAO = 4
 	};
+
+	GLuint framebuffer;
+
+	GLuint textureColorbuffer;
+
+	GLuint rbo;
+	std::unique_ptr<VAO> screenQuadVAO;
+	std::unique_ptr<VBO> screenQuadVBO;
+	std::unique_ptr<Shader> framebufferShader;
+	void initScreenQuad();
+	void renderScreenQuad();
+
+
 	
 	TextRenderer* textRenderer;
+
+	GameObject* playerObject = nullptr;
+
+public:
+	// Setter method to set the player object
+	void SetPlayerObject(GameObject& player) 
+	{
+			playerObject = &player;
+	}
+
+	std::unique_ptr<ParticleSystem> particleSystem;
+	Shader* particleShader;
+
 };
 #endif

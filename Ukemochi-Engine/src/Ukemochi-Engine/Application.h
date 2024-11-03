@@ -4,10 +4,12 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "ImGui/ImGuiCore.h"
+
+
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-namespace UME {
+namespace Ukemochi {
 
 
 	class UME_API Application
@@ -32,6 +34,8 @@ namespace UME {
 		static Application* s_Instance;
 
 		UseImGui imguiInstance;
+
+		bool m_docking_enabled = true;
 	};
 
 	// To be defined in CLIENT (GAME)

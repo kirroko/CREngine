@@ -3,9 +3,8 @@
 /*!
 \file		GameObject.h
 \par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334
-\co-authors
-\par		p.junkaigerald\@digipen.edu
+\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
 \par		Course: CSD2400/CSD2401
 \date		29/09/24
 \brief		This file contains the declaration of the GameObject class. This class is responsible for
@@ -38,14 +37,26 @@ namespace Ukemochi
 		~GameObject() = default;
 
 		template<typename T>
-		void AddComponent(T component) { ECS::GetInstance().AddComponent(m_InstanceID, component); }
+		inline void AddComponent(T component) { ECS::GetInstance().AddComponent(m_InstanceID, component); }
 
 		template <typename T>
-		T& GetComponent() { return ECS::GetInstance().GetComponent<T>(m_InstanceID); }
+		inline T& GetComponent() { return ECS::GetInstance().GetComponent<T>(m_InstanceID); }
 
 		template<typename T>
-		void RemoveCoponent() { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
+		inline void RemoveCoponent() { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
 
-		EntityID GetInstanceID();
+		EntityID GetInstanceID() const;
+
+		// This function returns the name of the object as a constant reference to a std::string.
+		const std::string& GetName() const { return m_Name; }
+
+		// This function returns the tag of the object, also as a constant reference.
+		const std::string& GetTag() const { return m_Tag; }
+
+		// This templated function checks if the object has a specific component of type T.
+		template<typename T>
+		bool HasComponent() const {
+			return ECS::GetInstance().HasComponent<T>(m_InstanceID);
+		}
 	};
 }
