@@ -163,8 +163,7 @@ namespace Ukemochi
 		auto [mouse_x, mouse_y] = Input::GetMousePosition();
 
 		// Flip the mouse position in the y-axis
-		auto& camera = ECS::GetInstance().GetSystem<Camera>();
-		mouse_y = camera->viewport_size.y - mouse_y;
+		mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
 		// Offset mouse position
 		mouse_x += trans.scale.x * 0.5f;
