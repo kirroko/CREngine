@@ -274,4 +274,24 @@ namespace Ukemochi
     {
         return lhs.x * rhs.y - lhs.y * rhs.x;
     }
+
+    /*!***********************************************************************
+    \brief
+     Rotate a vector by the given angle.
+    \param[in] vec
+     The vector to rotate.
+    \param[in] angle
+     The given angle to rotate by.
+    \return
+     The rotated vector.
+    *************************************************************************/
+    Vector2D Vec2Rotate(const Vector2D& vec, const float angle)
+    {
+        // x' = x * cos(theta) - y * sin(theta)
+        // y' = x * sin(theta) - y * cos(theta)
+        return {
+            vec.x * std::cos(angle) - vec.y * std::sin(angle),
+            vec.x * std::sin(angle) + vec.y * std::cos(angle)
+        };
+    }
 }
