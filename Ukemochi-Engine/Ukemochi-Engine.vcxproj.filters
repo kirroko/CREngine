@@ -314,10 +314,4 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Framebuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
-    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
-  </ItemGroup>
 </Project>

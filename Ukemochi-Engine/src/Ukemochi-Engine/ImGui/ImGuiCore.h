@@ -55,6 +55,7 @@ namespace Ukemochi
 
 		static void DisplayEntityDetails(GameObject& obj);
 
+
 		static void DisplayEntitySelectionCombo(int& selectedEntityIndex);
 
 		static void RemoveSelectedEntity(int& selectedEntityIndex);
@@ -62,6 +63,14 @@ namespace Ukemochi
 		static void EditEntityProperties(GameObject& selectedObject);
 
 		static void ShowEntityManagementUI();
+
+		static void AssetBrowser();
+
+		static void SceneBrowser();
+
+		static void SceneRender();
+
+		static float m_LastAssetUpdateTime;
 
 	private:
 		// Mouse and keyboard event handlers
@@ -74,6 +83,9 @@ namespace Ukemochi
 		bool IsKeyTypeEvent(KeyTypedEvent& e);
 		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
+		static std::vector<std::string> assetFiles;
+		static std::vector<std::string> sceneFiles;
+		static void LoadAssets(); // Function to load assets
 		void LoadPlayer(const std::string& player_data);
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 	};

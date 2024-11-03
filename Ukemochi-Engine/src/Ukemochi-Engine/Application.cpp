@@ -173,9 +173,11 @@ namespace Ukemochi {
 
 				//************ Render IMGUI ************
 				imguiInstance.NewFrame();
+				imguiInstance.SceneBrowser();
+				//imguiInstance.AssetBrowser();
 				//imguiInstance.ShowEntityManagementUI();
-				imguiInstance.LoadScene();
-				imguiInstance.Begin();
+				//imguiInstance.LoadScene();
+				//imguiInstance.Begin();
 				imguiInstance.ImGuiUpdate(); // Render ImGui elements
 				//************ Render IMGUI ************
 
@@ -233,6 +235,9 @@ namespace Ukemochi {
 
 					//************ Render IMGUI ************
 					imguiInstance.NewFrame();
+					imguiInstance.SceneBrowser();
+					imguiInstance.SceneRender();
+					imguiInstance.AssetBrowser();
 					imguiInstance.ShowEntityManagementUI();
 					imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
