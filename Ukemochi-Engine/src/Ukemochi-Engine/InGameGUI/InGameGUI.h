@@ -22,9 +22,6 @@ namespace Ukemochi
 {
 	class InGameGUI : public System
 	{
-	private:
-		Vec2 viewport_size;
-
 	public:
 		/*!***********************************************************************
 		\brief

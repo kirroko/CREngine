@@ -237,6 +237,9 @@ namespace Ukemochi
 
 		// Set the player object in the Renderer
 		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
+
+		// Set the player object in the Transformation
+		ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
 		
 		// Initialize the in game GUI system
 		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
@@ -259,10 +262,16 @@ namespace Ukemochi
 
 		// Press 'A' or left key to move the player left
 		if (Input::IsKeyPressed(UME_KEY_A))
+		{
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
+			ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
+		}
 		// Press 'D' or right key to move the player to the right
 		else if (Input::IsKeyPressed(UME_KEY_D))
+		{
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
+			ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
+		}
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
 

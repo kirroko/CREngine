@@ -530,17 +530,6 @@ void Renderer::render()
 			for (int j = 0; j < 4; ++j)
 				model[i][j] = transform.transform_matrix.m2[j][i];
 
-		// Determine the scale factors based on facing direction and scaling
-		GLfloat scaleX = transform.scale.x;
-
-		// If the entity is the player, adjust based on the direction and scaling factor
-		if (entity == playerObject->GetInstanceID())
-		{
-			// Adjust X-axis scale to flip direction if not facing right
-			scaleX = isFacingRight ? -scaleX : scaleX;
-			model[0][0] = scaleX;
-		}
-
 		shaderProgram->setMat4("model", model);
 
 		// Bind the texture if available

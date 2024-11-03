@@ -4,7 +4,7 @@
 \file       Transformation.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
 \co-author  TAN Shun Zhi Tomy, t.shunzhitomy, , t.shunzhitomy@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 3, 2024
 \brief      This file contains the declaration of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../ECS/ECS.h" // for ECS system and components
+#include "../Factory/GameObject.h" // for GameObject class
 
 namespace Ukemochi
 {
@@ -30,6 +31,9 @@ namespace Ukemochi
     class Transformation : public System
 	{
 	public:
+        GameObject* playerObject = nullptr;
+        bool isFacingRight{ false };
+
         /*!***********************************************************************
         \brief
          Compute the transformations of all the entities.

@@ -4,7 +4,7 @@
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
 \co-author  TAN Shun Zhi Tomy, t.shunzhitomy, , t.shunzhitomy@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 3, 2024
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -37,6 +37,10 @@ namespace Ukemochi
 			Mtx44RotZRad(rot, radian(transform.rotation));
 			Mtx44Scale(scale, transform.scale.x, transform.scale.y, 0);
 
+			// If the entity is the player, adjust based on the direction and scaling factor
+			if (entity == playerObject->GetInstanceID())
+				scale.m2[0][0] = isFacingRight ? -scale.m2[0][0] : scale.m2[0][0]; // Adjust X-axis scale to flip direction if not facing right
+
 			transform.transform_matrix = trans * rot * scale;
 		}
 	}
@@ -50,7 +54,7 @@ namespace Ukemochi
 
 	void Transformation::DecreaseScale(Transform& trans)
 	{
-		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } *static_cast<float>(g_FrameRateController.GetDeltaTime());
+		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}
