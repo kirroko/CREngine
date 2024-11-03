@@ -31,19 +31,19 @@ namespace Ukemochi
 	void InGameGUI::Init()
 	{
 		// Get the screen width and height
-		UME::Application& app = UME::Application::Get();
+		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
 
 		// Create some test GUI elements
-		CreateText("text1", "pls click a button", Vec2{ screen_width * 0.7f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+		CreateImage(Vec2{ screen_width * 0.05f, screen_height * 0.9f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
 
-		CreateImage(Vec2{ screen_width * 0.875f, screen_height * 0.8f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
+		CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
 
-		CreateButton("pause_btn", "", Vec2{ screen_width * 0.95f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+		CreateButton("pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
 			Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { UpdateText("text1", "pause button clicked!"); });
 
-		CreateButton("spawn_btn", "Spawn", Vec2{ screen_width * 0.95f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 0.f, 0.f }, "Ukemochi",
+		CreateButton("spawn_btn", "Spawn", Vec2{ screen_width * 0.15f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 0.f, 0.f }, "Ukemochi",
 			Vec2{ 150.f, 75.f }, "../Assets/Textures/UI/base.png", [this]()
 			{
 				UpdateText("text1", "spawn button clicked!");
@@ -135,7 +135,7 @@ namespace Ukemochi
 	void InGameGUI::HandleButtonInput()
 	{
 		// Check for mouse left click
-		if (UME::Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
+		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
 		{
 			for (auto const& entity : m_Entities)
 			{
@@ -160,7 +160,7 @@ namespace Ukemochi
 	bool InGameGUI::IsInside(const Transform& trans)
 	{
 		// Get current mouse position in screen coordinates
-		auto [mouse_x, mouse_y] = UME::Input::GetMousePosition();
+		auto [mouse_x, mouse_y] = Input::GetMousePosition();
 
 		// Flip the mouse position in the y-axis
 		auto& camera = ECS::GetInstance().GetSystem<Camera>();
