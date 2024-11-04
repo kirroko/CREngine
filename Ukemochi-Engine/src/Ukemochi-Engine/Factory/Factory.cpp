@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #include "PreCompile.h"
 #include "Factory.h"
+#include "GameObjectManager.h"
 
 namespace Ukemochi
 {
@@ -41,6 +42,7 @@ namespace Ukemochi
 
 			std::string name = object["Name"].GetString();
 			std::string tag = object["Tag"].GetString();
+
 			for (auto& comps : object["Components"].GetArray()) // TODO: Update whenever new components are added
 			{
 				std::string component = comps["Name"].GetString();

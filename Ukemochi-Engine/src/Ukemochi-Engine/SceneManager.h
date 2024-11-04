@@ -22,6 +22,22 @@ namespace Ukemochi
 		SceneManager();
 		~SceneManager();
 
+		void SceneMangerLoad();
+
+		void SceneMangerInit();
+
+		void SceneMangerUpdate();
+
+		void SceneMangerRunSystems();
+
+		void SceneMangerUpdateCamera(double deltaTime);
+
+		void SceneManagerDraw();
+
+		void SceneManagerFree();
+
+		void SceneManagerUnload();
+
 		void LoadAndInitScene();
 
 		// Load the scene from a file or data source
@@ -36,7 +52,7 @@ namespace Ukemochi
 		// Update the scene and its entities
 		void Update(double deltaTime);
 
-		void UpdateScenes();
+		void UpdateScenes(double deltaTime);
 
 		// Clear current scene (entities and resources)
 		void ClearScene();

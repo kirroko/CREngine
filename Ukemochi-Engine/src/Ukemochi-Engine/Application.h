@@ -19,6 +19,9 @@ namespace Ukemochi {
 		Application();
 		virtual ~Application();
 		void GameLoop();
+		void UpdateFPS();
+		void DrawFPS();
+		void UpdateIMGUI();
 
 		void EventIsOn(Event& e);
 

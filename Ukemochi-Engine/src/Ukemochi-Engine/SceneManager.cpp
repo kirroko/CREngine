@@ -16,6 +16,7 @@ namespace Ukemochi
 	{
 		es_current = ES_ENGINE;
 		//Audio audio;
+		Audio::GetInstance();
 		// Set up ECS
 		ECS::GetInstance().Init();
 
@@ -55,11 +56,72 @@ namespace Ukemochi
 		sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
 		ECS::GetInstance().SetSystemSignature<Collision>(sig);
 	
-		//init GSM
-		GSM_Initialize(GS_LEVEL1);
+		////init GSM
+		//GSM_Initialize(GS_LEVEL1);
+		std::cout << "System Up and Running" << std::endl;
 	}
 
 	SceneManager::~SceneManager()
+	{
+
+	}
+
+	void SceneManager::SceneMangerLoad()
+	{
+		//load all assest
+		// load textures
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png"); // load texture
+	}
+
+	void SceneManager::SceneMangerInit()
+	{
+		// Initialize the graphics and collision system
+		ECS::GetInstance().GetSystem<Renderer>()->init();
+		ECS::GetInstance().GetSystem<Collision>()->Init();
+	}
+
+	void SceneManager::SceneMangerUpdate()
+	{
+		SceneManagerDraw();
+	}
+
+	void SceneManager::SceneMangerRunSystems()
+	{
+		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+
+		// --- PHYSICS UPDATE ---
+		// Update the entities physics
+		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+
+		// --- COLLISION UPDATE ---
+		// Check the collisions between the entities
+		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+		SceneManagerDraw();
+	}
+
+	void SceneManager::SceneMangerUpdateCamera(double deltaTime)
+	{
+		// Camera
+		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
+	}
+
+	void SceneManager::SceneManagerDraw()
+	{
+		//Draw
+		ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+	}
+
+	void SceneManager::SceneManagerFree()
+	{
+
+	}
+
+	void SceneManager::SceneManagerUnload()
 	{
 
 	}
@@ -97,7 +159,7 @@ namespace Ukemochi
 
 	void SceneManager::LoadSaveFile(const std::string& file_name)
 	{
-		std::string file_path = file_name + ".json";
+		std::string file_path = "../Assets/Scenes/" + file_name;
 		Document document;
 
 		if (!Serialization::LoadJSON(file_path, document))
@@ -215,6 +277,7 @@ namespace Ukemochi
 					SPRITE_SHAPE shape = componentData["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE;
 
 					newObject.AddComponent<SpriteRender>({ texturePath, shape });
+					//set up the renderer
 					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath);
 				}
 				else
@@ -235,28 +298,23 @@ namespace Ukemochi
 	{
 		//gsm_fpInitialize();
 		//init ECS here e.g. player
-		ECS::GetInstance().GetSystem<Renderer>()->init();
 	}
 
 	void SceneManager::Update(double deltaTime)
 	{
 		(void)deltaTime;
-		//Draw
-		if (GameObjectFactory::GetAllObjectsInCurrentLevel().size()>0)
-		{
-			ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
-		}
 		//gsm_fpDraw();
 	}
 
-	void SceneManager::UpdateScenes()
+	void SceneManager::UpdateScenes(double deltaTime)
 	{
+		(void)deltaTime;
 		//Update
-		gsm_fpUpdate();
+		//gsm_fpUpdate();
 		//update ECS
 
 		//Draw
-		gsm_fpDraw();
+		//gsm_fpDraw();
 	}
 
 	void SceneManager::ClearScene()
@@ -407,7 +465,7 @@ namespace Ukemochi
 		// Add the array to the document
 		document.AddMember("GameObjects", gameObjectsArray, allocator);
 
-		std::string file = file_name + ".json";
+		std::string file = "../Assets/Scenes/" + file_name + ".json";
 		if (!Serialization::PushJSON(file, document))
 		{
 			std::cerr << "Failed to save scene to file: " << file<< std::endl;

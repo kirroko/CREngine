@@ -197,6 +197,7 @@ namespace Ukemochi
 			bool isSelected = (selectedSceneIndex == static_cast<int>(i));
 			if (ImGui::Selectable(sceneFiles[i].c_str(), isSelected)) {
 				selectedSceneIndex = static_cast<int>(i);
+				SceneManager::GetInstance().LoadSaveFile(sceneFiles[selectedSceneIndex]);
 				std::cout << "Selected scene: " << sceneFiles[selectedSceneIndex] << std::endl;
 			}
 		}
@@ -208,6 +209,7 @@ namespace Ukemochi
 		// Add a button to save the scene
 		if (ImGui::Button("Save Scene")) {
 			showInputField = true; // Show the input field when the button is clicked
+			SceneManager::GetInstance().SaveScene(sceneFiles[selectedSceneIndex]);
 		}
 
 		// Display the input field if showInputField is true
@@ -338,7 +340,13 @@ namespace Ukemochi
 
 		if (ImGui::Button("Create Player Entity")) {
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
-				GameObjectFactory::CreateObject(filePath);
+				auto& go = GameObjectFactory::CreateObject(filePath);
+				if (go.GetComponent<BoxCollider2D>().tag == "Player")
+				{
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
+					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath);
+
+				}
 				showError = false; // Reset error
 			}
 			else {
