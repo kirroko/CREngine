@@ -64,7 +64,7 @@ namespace Ukemochi
 
 		static void ShowEntityManagementUI();
 
-		static void AssetBrowser();
+		static void AssetBrowser(char* filePath);
 
 		static void SceneBrowser();
 

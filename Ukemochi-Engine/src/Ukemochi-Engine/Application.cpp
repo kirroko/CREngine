@@ -236,10 +236,10 @@ namespace Ukemochi {
 					//************ Render IMGUI ************
 					imguiInstance.NewFrame();
 					imguiInstance.SceneBrowser();
-					imguiInstance.AssetBrowser();
+					//imguiInstance.AssetBrowser();
 					imguiInstance.SceneRender();
 					imguiInstance.ShowEntityManagementUI();
-					imguiInstance.Begin();
+					//imguiInstance.Begin();
 					imguiInstance.ImGuiUpdate(); // Render ImGui elements
 					//************ Render IMGUI ************
 

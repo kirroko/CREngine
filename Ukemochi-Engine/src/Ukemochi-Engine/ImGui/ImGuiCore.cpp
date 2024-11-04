@@ -142,25 +142,21 @@ namespace Ukemochi
 		}
 	}
 
-	void UseImGui::AssetBrowser()
+	void UseImGui::AssetBrowser(char* filePath)
 	{
-		// Get the current time
-		float currentTime = ImGui::GetTime();
-
-		// Check if 1 second has passed since the last update
-		if (currentTime - m_LastAssetUpdateTime >= 1.0f) {
-			// Update the asset list
-			LoadAssets();
-			m_LastAssetUpdateTime = currentTime; // Reset the timer
-		}
-
 		ImGui::Begin("Asset Browser");
+		//LoadAssets();
+		if (ImGui::Button("Refresh Assets")) {
+			LoadAssets(); // Manually trigger loading assets
+		}
 
 		static int selectedAssetIndex = -1;
 		for (size_t i = 0; i < assetFiles.size(); ++i) {
 			bool isSelected = (selectedAssetIndex == static_cast<int>(i));
 			if (ImGui::Selectable(assetFiles[i].c_str(), isSelected)) {
 				selectedAssetIndex = static_cast<int>(i);
+				std::string fullPath = "../Assets/" + assetFiles[i];
+				std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
 			}
 		}
 
@@ -264,6 +260,11 @@ namespace Ukemochi
 			entityNames.push_back(std::to_string(obj.GetInstanceID()) + ": " + obj.GetName());
 		}
 
+		// Check if there are any entities and set the selected index
+		if (!entityNames.empty() && selectedEntityIndex == -1) {
+			selectedEntityIndex = 0; // Default to the first item if nothing is selected
+		}
+
 		// Create a vector of const char* pointers to each name in entityNames
 		std::vector<const char*> entityNamePointers;
 		for (const auto& name : entityNames) {
@@ -300,6 +301,11 @@ namespace Ukemochi
 		}
 	}
 
+	bool IsJsonFile(const std::string& filePath)
+	{
+		return filePath.size() >= 5 && filePath.substr(filePath.size() - 5) == ".json";
+	}
+
 	void UseImGui::ShowEntityManagementUI()
 	{
 		// Begin a dockable window
@@ -307,6 +313,12 @@ namespace Ukemochi
 
 		static char filePath[256] = "../Assets/Player.json";
 		static int selectedEntityIndex = -1;
+
+		static bool showError = false;
+		static float errorDisplayTime = 0.0f;
+
+		// Display the Asset Browser
+		AssetBrowser(filePath);
 
 		if (ImGui::TreeNode("Current GameObjects")) {
 			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
@@ -325,9 +337,18 @@ namespace Ukemochi
 		ImGui::InputText("Player Data File", filePath, IM_ARRAYSIZE(filePath));
 
 		if (ImGui::Button("Create Player Entity")) {
-			if (filePath[0] != '\0') {
+			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				GameObjectFactory::CreateObject(filePath);
+				showError = false; // Reset error
 			}
+			else {
+				showError = true; // Show error message
+				errorDisplayTime = ImGui::GetTime();
+			}
+		}
+
+		if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f) {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid file type. Only .json files can be used to create an object.");
 		}
 
 		DisplayEntitySelectionCombo(selectedEntityIndex);
