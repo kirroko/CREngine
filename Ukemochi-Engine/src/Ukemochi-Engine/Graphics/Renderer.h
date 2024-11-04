@@ -8,6 +8,7 @@
  */
 #ifndef RENDERER_CLASS_H
 #define RENDERER_CLASS_H
+#define GLM_ENABLE_EXPERIMENTAL
 #include<iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,6 +16,7 @@
 #include "../vendor/glm/glm/glm.hpp"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
+#include <../vendor/glm/glm/gtx/string_cast.hpp>
 #include <cmath>
 #include <vector>
 #include <algorithm>
@@ -84,8 +86,8 @@ public:
 	 * @param texturePath The file path to the texture to be loaded.
 	 * @return The texture ID for the loaded texture.
 	 */
-	void setUpTextures(const std::string& texturePath);
-
+	void setUpTextures(const std::string& texturePath, int& textureIndex);
+	int current_texture_index = 0;
 	static int const screen_width = 1600;
 	static int const screen_height = 900;
 
@@ -184,12 +186,15 @@ private:
 	* @brief Texture cache to manage loaded textures
 	*/
 	std::unordered_map<std::string, Texture*> textureCache;
+	std::vector<std::string> texturePathsOrder;
+	std::unordered_map<GLuint, int> textureIDMap;
 
+public:
 	/*!
 	 * @brief Sets up and compiles the shaders used by the renderer.
 	 */
 	void setUpShaders();
-
+private:
 	/*!
 	 * @brief Sets up the VAO, VBO, and EBO for an object.
 	 * @param vertices Pointer to the vertex data.
@@ -198,6 +203,8 @@ private:
 	 * @param indexSize The size of the index data in bytes.
 	 */
 	void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
+
+	void bindTexturesToUnits(std::shared_ptr<Shader> shader);
 
 	/*!
 	 * @brief Scale factor applied to objects when scaling is enabled.
@@ -329,5 +336,6 @@ public:
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
+	std::unique_ptr<Shader> debug_shader_program;
 };
 #endif

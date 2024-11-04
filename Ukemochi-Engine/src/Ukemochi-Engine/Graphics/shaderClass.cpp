@@ -97,6 +97,14 @@ void Shader::Activate()
 }
 
 /*!
+ * @brief Deactivates the shader program, making it the current shader in use by OpenGL.
+ */
+void Shader::Deactivate()
+{
+	glUseProgram(ID);
+}
+
+/*!
  * @brief Deletes the shader program, freeing its allocated resources in OpenGL.
  */
 void Shader::Delete()
@@ -123,6 +131,12 @@ void Shader::setInt(const std::string& name, GLint value) const
 {
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
+
+void Shader::setIntArray(const std::string& name, const GLint* values, GLint count) const 
+{
+	glUniform1iv(glGetUniformLocation(ID, name.c_str()), count, values);
+}
+
 
 /*!
  * @brief Sets a floating-point uniform in the shader program.

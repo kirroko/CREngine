@@ -59,16 +59,19 @@ namespace Ukemochi
 		Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		//std::cout << "Level1:Initialize" << '\n';
 
+		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
+		// load textures
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+
 		// Initialize the graphics and collision system
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
 
-		// load textures
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png"); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png"); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png"); // load texture
+		
 
 		// BACKGROUND 
 		GameObject level_background = GameObjectFactory::CreateObject();
@@ -78,7 +81,8 @@ namespace Ukemochi
 				0,
 				Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
 			});
-		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
+		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png", SPRITE_SHAPE::BOX, 0, false});
+		
 
 		//// ANIMATION OBJECT
 		//GameObject animation = GameObjectFactory::CreateObject();
@@ -98,7 +102,9 @@ namespace Ukemochi
 		// PLAYER OBJECT
 		player_obj = GameObjectFactory::CreateObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath); // load texture
+		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		std::cout << ECS::GetInstance().GetSystem<Renderer>()->current_texture_index << std::endl;
 		p_spriteRender.animated = true;
 
 		// BACKGROUND OBJECT
@@ -216,8 +222,8 @@ namespace Ukemochi
 		// Circle Creation for Testing
 		/*GameObject circle = GameObjectFactory::CreateObject();
 		circle.AddComponent(Transform{
-			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.8f,
-			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.0f},
 			0,
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});
@@ -309,7 +315,7 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Renderer>()->toggleSlowMotion();
 		}
 		
-		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+		//ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 		
 		// --- END USER INPUTS ---
 
@@ -328,7 +334,9 @@ namespace Ukemochi
 	void Level1_Draw()//rendering of the game for Level1
 	{
 		// Render the entities
-		ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+		//ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+		ECS::GetInstance().GetSystem<Renderer>()->render();
+
 	}
 
 	void Level1_Free()//release unused assets/variable memories

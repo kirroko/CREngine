@@ -20,6 +20,7 @@ EBO::EBO(const GLuint* indices, GLsizeiptr size)
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+	std::cout << "EBO initialized with " << (size / sizeof(GLuint)) << " indices (" << size << " bytes)" << std::endl;
 }
 
 /*!

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #include "PreCompile.h"
 #include "Factory.h"
-
+#include "Ukemochi-Engine/Graphics/Renderer.h"
 namespace Ukemochi
 {
 	using namespace rapidjson;
@@ -85,7 +85,7 @@ namespace Ukemochi
 				else if (component.compare("SpriteRender") == 0)
 				{
 					std::string TexturePath = "../Assets/Textures/" + std::string(comps["Sprite"].GetString());
-
+					
 					ECS::GetInstance().AddComponent(entity, SpriteRender{
 						TexturePath,
 						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
