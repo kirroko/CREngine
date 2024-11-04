@@ -88,6 +88,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png"); // load texture
 
 		if (UseImGui::GetSceneSize() == 0)
@@ -101,15 +104,31 @@ namespace Ukemochi
 		// Initialize the graphics and collision system
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
+
+		// Set the player object in the Renderer
+		//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
+
+		//// Set the player object in the Transformation
+		//ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
+
+		// Initialize the in game GUI system
+		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void SceneManager::SceneMangerUpdate()
 	{
+		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
+
+		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+
+		//ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+
 		SceneManagerDraw();
 	}
 
 	void SceneManager::SceneMangerRunSystems()
 	{
+		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
 		// --- PHYSICS UPDATE ---
@@ -119,6 +138,10 @@ namespace Ukemochi
 		// --- COLLISION UPDATE ---
 		// Check the collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+
+		// --- TRANSFORMATION UPDATE ---
+		// Compute the entities transformations
+		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 		
 		SceneManagerDraw();
 	}
