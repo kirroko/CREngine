@@ -4,7 +4,7 @@
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 31, 2024
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -16,8 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 
-#include "../ECS/Components.h" // for Transform, Rigidbody2D, BoxCollider2D components
-#include "../ECS/Systems.h"    // for System inheritance
+#include "../ECS/ECS.h" // for ECS system and components
 
 namespace Ukemochi
 {

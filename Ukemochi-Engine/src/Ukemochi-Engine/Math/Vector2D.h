@@ -23,10 +23,10 @@ namespace Ukemochi
 #pragma warning( disable : 4201 )
 #endif
 
-/*!***********************************************************************
-\brief
- Represents a 2D vector with x and y components, or as an array.
-*************************************************************************/
+    /*!***********************************************************************
+    \brief
+     Represents a 2D vector with x and y components, or as an array.
+    *************************************************************************/
     typedef union Vector2D
     {
         struct
@@ -262,4 +262,16 @@ namespace Ukemochi
      The magnitude of the cross product of the two vectors.
     *************************************************************************/
     float Vec2CrossProductMagnitude(const Vector2D& lhs, const Vector2D& rhs);
+
+    /*!***********************************************************************
+    \brief
+     Rotate a vector by the given angle.
+    \param[in] vec
+     The vector to rotate.
+    \param[in] angle
+     The given angle to rotate by.
+    \return
+     The rotated vector.
+    *************************************************************************/
+    Vector2D Vec2Rotate(const Vector2D& vec, const float angle);
 }

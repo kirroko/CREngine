@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #pragma once
 #include "KeyCode.h"
+#include "MouseButtonCode.h"
 #include <PreCompile.h>
 
 namespace Ukemochi {
@@ -47,6 +48,13 @@ namespace Ukemochi {
         \return True if the mouse button is pressed, false otherwise.
         */
         static bool IsMouseButtonPressed(int Mousecode);
+
+        /*!
+        \brief Checks if a mouse button is triggered (pressed for the first time).
+        \param Mousecode The mouse button code to check.
+        \return True if the mouse button is triggered, false otherwise.
+        */
+        static bool IsMouseButtonTriggered(int Keycode);
 
         /*!
         \brief Gets the current mouse position.

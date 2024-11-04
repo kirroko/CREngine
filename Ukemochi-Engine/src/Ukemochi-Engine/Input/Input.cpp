@@ -61,7 +61,7 @@ namespace Ukemochi {
 
 	/*!
 	\brief Checks if a mouse button is currently pressed.
-	\param Keycode The mouse button to check.
+	\param Mousecode The mouse button to check.
 	\return True if the mouse button is pressed, false otherwise.
 	*/
 	bool Input::IsMouseButtonPressed(int Keycode)
@@ -69,6 +69,29 @@ namespace Ukemochi {
 		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		int state = glfwGetMouseButton(window, Keycode);
 		return state == GLFW_PRESS;
+	}
+
+	/*!
+	\brief Checks if a mouse button is triggered (pressed for the first time).
+	\param Mousecode The mouse button code to check.
+	\return True if the mouse button is triggered, false otherwise.
+	*/
+	bool Input::IsMouseButtonTriggered(int Keycode)
+	{
+		auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		int state = glfwGetMouseButton(window, Keycode);
+
+		if (state == GLFW_PRESS && !keyPressedMap[Keycode])
+		{
+			keyPressedMap[Keycode] = true;
+			return true;  // Mouse button triggered for the first time
+		}
+		else if (state == GLFW_RELEASE)
+		{
+			keyPressedMap[Keycode] = false;
+		}
+
+		return false;  // Mouse button not triggered, or it's still held down
 	}
 
 	/*!

@@ -482,45 +482,53 @@ void Renderer::render()
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// Set vec2 to glm::vec3 for matrix transformations
-		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
-		// Set up the model matrix using the transform's position, scale, and rotation
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		//// Set vec2 to glm::vec3 for matrix transformations
+		//glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+		//glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
+		//// Set up the model matrix using the transform's position, scale, and rotation
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+		//model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Apply rotation if enabled
-		if (entity == playerObject->GetInstanceID() && rotation_enabled)
-		{
-			// Update the rotation angle based on deltaTime
-			transform.rotation += rotationSpeed * deltaTime;
-			if (transform.rotation >= 360.f)
-				transform.rotation -= 360.f;
+		//// Apply rotation if enabled
+		//if (entity == playerObject->GetInstanceID() && rotation_enabled)
+		//{
+		//	// Update the rotation angle based on deltaTime
+		//	transform.rotation += rotationSpeed * deltaTime;
+		//	if (transform.rotation >= 360.f)
+		//		transform.rotation -= 360.f;
 
-			// Apply rotation to the model matrix
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		}
+		//	// Apply rotation to the model matrix
+		//	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		//}
 
-		// Determine the scale factors based on facing direction and scaling
-		GLfloat scaleX = transform.scale.x;
-		GLfloat scaleY = transform.scale.y;
+		//// Determine the scale factors based on facing direction and scaling
+		//GLfloat scaleX = transform.scale.x;
+		//GLfloat scaleY = transform.scale.y;
 
-		// If the entity is the player, adjust based on the direction and scaling factor
-		if (entity == playerObject->GetInstanceID())
-		{
-			// Adjust X-axis scale to flip direction if not facing right
-			scaleX = isFacingRight ? -scaleX : scaleX;
+		//// If the entity is the player, adjust based on the direction and scaling factor
+		//if (entity == playerObject->GetInstanceID())
+		//{
+		//	// Adjust X-axis scale to flip direction if not facing right
+		//	scaleX = isFacingRight ? -scaleX : scaleX;
 
-			// If scaling is enabled, apply the scale factor
-			if (scale_enabled)
-			{
-				scaleX *= scale_factor;
-				scaleY *= scale_factor;
-			}
-		}
+		//	// If scaling is enabled, apply the scale factor
+		//	if (scale_enabled)
+		//	{
+		//		scaleX *= scale_factor;
+		//		scaleY *= scale_factor;
+		//	}
+		//}
 
-		// Apply the calculated scale to the model matrix
-		model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
+		//// Apply the calculated scale to the model matrix
+		//model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
+
+		// Set up the model matrix
+		glm::mat4 model{};
+
+		// Copy elements from custom matrix4x4 to glm::mat4
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				model[i][j] = transform.transform_matrix.m2[j][i];
 
 		shaderProgram->setMat4("model", model);
 
@@ -775,6 +783,19 @@ void Renderer::drawBoxAnimation()
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	vaos[ANIMATION_VAO]->Unbind();
 }
+
+/*!
+* @brief Create a text object in the text renderer.
+*/
+void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+{
+	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+}
+
+/*!
+* @brief Update a text object in the text renderer.
+*/
+void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
 void Renderer::initAnimationEntities()
 {
