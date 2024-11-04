@@ -43,9 +43,11 @@ namespace Ukemochi
 		 * @brief Clone a GameObject
 		 *
 		 * @param targetObject the GameObject to clone
+		 * @param name
+		 * @param tag
 		 * @return GameObject& a reference to the cloned GameObject
 		 */
-		static GameObject CloneObject(GameObject& targetObject);
+		static GameObject CloneObject(const GameObject& targetObject, const std::string& name, const std::string& tag);
 
 		/**
 		 * @brief Destroy object

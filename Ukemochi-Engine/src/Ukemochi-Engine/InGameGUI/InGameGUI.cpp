@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/Factory.h"		// for game objects
 #include "../Graphics/Camera2D.h"	// for camera viewport
 #include "../Graphics/Renderer.h"	// for text objects
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
 {
@@ -49,7 +50,7 @@ namespace Ukemochi
 				UpdateText("text1", "spawn button clicked!");
 
 				// Spawn a enemy
-				GameObject enemy = GameObjectFactory::CreateObject();
+				GameObject enemy = GameObjectManager::GetInstance().CreateObject();
 				enemy.AddComponent(Transform{
 					Mtx44{},
 					Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
@@ -108,6 +109,7 @@ namespace Ukemochi
 	void InGameGUI::CreateImage(const Vec2& pos, const Vec2& scale, const std::string& texture_path)
 	{
 		GameObject image = GameObjectFactory::CreateObject();
+		// GameObject image = GameObjectManager::GetInstance().CreateObject("Image");
 		image.AddComponent(Transform{ Mtx44{}, pos, 0, scale });
 		image.AddComponent(SpriteRender{ texture_path });
 	}

@@ -49,9 +49,12 @@ namespace Ukemochi
          */
         GameObject& CreateObject(const std::string& name = "GameObject", const std::string& tag = "Default");
 
+        GameObject& CloneObject(const GameObject& targetGO, const std::string& name = "GameObject", const std::string& tag = "Default");
 
         void DestroyObject(EntityID id);
 
         GameObject& GetGO(EntityID id);
+
+        std::vector<GameObject*> GetAllGOs() const;
     };
 }

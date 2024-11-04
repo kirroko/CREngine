@@ -30,6 +30,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"
 
 #include "../Graphics/Renderer.h"
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
+
 namespace Ukemochi
 {
 	float UseImGui::m_Time = 0.0f; //!< Time since last frame for calculating DeltaTime.
@@ -110,12 +112,13 @@ namespace Ukemochi
 	}
 
 	void UseImGui::DisplayEntitySelectionCombo(int& selectedEntityIndex) {
-		auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
-
+		// auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+		auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
+		
 		// Store the names of entities in a vector of strings to keep them in memory
 		std::vector<std::string> entityNames;
 		for (const auto& obj : gameObjects) {
-			entityNames.push_back(std::to_string(obj.GetInstanceID()) + ": " + obj.GetName());
+			entityNames.push_back(std::to_string(obj->GetInstanceID()) + ": " + obj->GetName());
 		}
 
 		// Create a vector of const char* pointers to each name in entityNames
@@ -129,10 +132,11 @@ namespace Ukemochi
 	}
 
 	void UseImGui::RemoveSelectedEntity(int& selectedEntityIndex) {
-		auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
-		if (selectedEntityIndex >= 0 && selectedEntityIndex < gameObjects.size()) {
-			GameObject entityToDelete = gameObjects[selectedEntityIndex];
-			GameObjectFactory::DestroyObject(entityToDelete);
+		// auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+		auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
+		if (static_cast<size_t>(selectedEntityIndex >= 0 && selectedEntityIndex) < gameObjects.size()) {
+			auto& entityToDelete = gameObjects[selectedEntityIndex];
+			GameObjectManager::GetInstance().DestroyObject(entityToDelete->GetInstanceID());
 			selectedEntityIndex = -1;
 		}
 	}
@@ -160,12 +164,13 @@ namespace Ukemochi
 		static int selectedEntityIndex = -1;
 
 		if (ImGui::TreeNode("Current GameObjects")) {
-			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
-
+			// auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+			auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
+			
 			for (size_t i = 0; i < gameObjects.size(); ++i) {
 				auto& obj = gameObjects[i];
-				if (ImGui::TreeNode((std::to_string(obj.GetInstanceID()) + ": " + obj.GetName()).c_str())) {
-					DisplayEntityDetails(obj);
+				if (ImGui::TreeNode((std::to_string(obj->GetInstanceID()) + ": " + obj->GetName()).c_str())) {
+					DisplayEntityDetails(*obj);
 					ImGui::TreePop();
 				}
 			}
@@ -177,7 +182,8 @@ namespace Ukemochi
 
 		if (ImGui::Button("Create Player Entity")) {
 			if (filePath[0] != '\0') {
-				GameObjectFactory::CreateObject(filePath);
+				GameObjectManager::GetInstance().CreatePrefabObject(filePath);
+				// GameObjectFactory::CreateObject(filePath);
 			}
 		}
 
@@ -189,10 +195,11 @@ namespace Ukemochi
 		}
 
 		if (selectedEntityIndex >= 0) {
-			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+			// auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
+			auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
 			if (selectedEntityIndex < gameObjects.size()) {
-				GameObject& selectedObject = gameObjects[selectedEntityIndex];
-				EditEntityProperties(selectedObject);
+				GameObject* selectedObject = gameObjects[selectedEntityIndex];
+				EditEntityProperties(*selectedObject);
 			}
 		}
 	}

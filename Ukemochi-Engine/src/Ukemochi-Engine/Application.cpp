@@ -48,6 +48,14 @@ namespace Ukemochi
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
     Application* Application::s_Instance = nullptr;
 
+    void EnableMemoryLeakChecking(int breakAlloc = -1)
+    {
+        int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+        tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
+        _CrtSetDbgFlag(tmpDbgFlag);
+        if (breakAlloc != -1) _CrtSetBreakAlloc(breakAlloc);
+    }
+    
     Application::Application()
     {
         s_Instance = this;
@@ -144,8 +152,9 @@ namespace Ukemochi
 
     void Application::GameLoop()
     {
-        _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+        // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+        EnableMemoryLeakChecking();
+        
         double accumulator = 0.0;
         int currentNumberOfSteps = 0;
         double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS

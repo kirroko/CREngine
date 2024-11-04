@@ -112,10 +112,10 @@ namespace Ukemochi
 		return {entity}; // Default GameObject
 	}
 
-	GameObject GameObjectFactory::CloneObject(GameObject& targetObject)
+	GameObject GameObjectFactory::CloneObject(const GameObject& targetObject, const std::string& name, const std::string& tag)
 	{
 		auto new_entity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
-		return {new_entity};
+		return {new_entity, name, tag};
 	}
 
 	void GameObjectFactory::DestroyObject(GameObject& targetobject)
@@ -124,14 +124,15 @@ namespace Ukemochi
 	}
 
 	// retrieves all active game objects in the current level.
-	std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
-		std::vector<GameObject> gameObjects;
-		auto entities = ECS::GetInstance().GetAllEntities();
-
-		for (const auto& entity : entities) {
-			gameObjects.emplace_back(GameObject(entity));
-		}
-		return gameObjects;
-	}
+	// 0x4B45414E - No no no, This is not the jedi way
+	// std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
+	// 	std::vector<GameObject> gameObjects;
+	// 	auto entities = ECS::GetInstance().GetAllEntities();
+	//
+	// 	for (const auto& entity : entities) {
+	// 		gameObjects.emplace_back(GameObject(entity));
+	// 	}
+	// 	return gameObjects;
+	// }
 
 }

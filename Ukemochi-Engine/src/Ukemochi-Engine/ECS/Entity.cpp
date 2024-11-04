@@ -54,14 +54,15 @@ namespace Ukemochi
 
 	// Used to retrive a list of all active entities within the ECS
 	// active is defined by having a non-empty signature
-	std::vector<EntityID> EntityManager::GetAllEntities() {
-		std::vector<EntityID> activeEntities;
-		for (EntityID entity = 0; entity < MAX_ENTITIES; ++entity) {
-			// Check if the entity has an active signature
-			if (m_Signatures[entity].any()) { // Adjust this condition as needed for "active" state
-				activeEntities.push_back(entity);
-			}
-		}
-		return activeEntities;
-	}
+	// 0x4B45414E - No no no, This is not the jedi way
+	// std::vector<EntityID> EntityManager::GetAllEntities() {
+	// 	std::vector<EntityID> activeEntities;
+	// 	for (EntityID entity = 0; entity < MAX_ENTITIES; ++entity) {
+	// 		// Check if the entity has an active signature
+	// 		if (m_Signatures[entity].any()) { // Adjust this condition as needed for "active" state
+	// 			activeEntities.push_back(entity);
+	// 		}
+	// 	}
+	// 	return activeEntities;
+	// }
 }
