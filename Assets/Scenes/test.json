@@ -14,7 +14,7 @@
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Player",
+            "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 675.0],
@@ -40,14 +40,14 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
+                    "Min": [750.0, 625.0],
+                    "Max": [850.0, 725.0],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Player"
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Ukemochi.png",
+                    "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
                     "Shape": 0
                 }]
         }, {
@@ -78,8 +78,8 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
+                    "Min": [725.0, 375.0],
+                    "Max": [875.0, 525.0],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Untagged"
@@ -116,8 +116,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
+                    "Min": [1150.0, 625.0],
+                    "Max": [1250.0, 725.0],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Enemy"
@@ -154,8 +154,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
+                    "Min": [350.0, 175.0],
+                    "Max": [450.0, 275.0],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Enemy"
@@ -192,8 +192,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
+                    "Min": [1150.0, 175.0],
+                    "Max": [1250.0, 275.0],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Enemy"
@@ -207,7 +207,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [0.0, 450.0],
+                    "Position": [12.5, 450.0],
                     "rotation": 0.0,
                     "Scale": [25.0, 175.0]
                 }, {
@@ -230,9 +230,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
-                    "Collision Flag": 0,
+                    "Min": [-12.5, 362.5],
+                    "Max": [12.5, 537.5],
+                    "Collision Flag": 1,
                     "is_trigger": true,
                     "Tag": "Left Door"
                 }, {
@@ -245,7 +245,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1600.0, 450.0],
+                    "Position": [1587.5, 450.0],
                     "rotation": 0.0,
                     "Scale": [25.0, 175.0]
                 }, {
@@ -268,9 +268,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
-                    "Collision Flag": 0,
+                    "Min": [1587.5, 362.5],
+                    "Max": [1612.5, 537.5],
+                    "Collision Flag": 2,
                     "is_trigger": true,
                     "Tag": "Right Door"
                 }, {
@@ -283,7 +283,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [800.0, 0.0],
+                    "Position": [800.0, 12.5],
                     "rotation": 0.0,
                     "Scale": [175.0, 25.0]
                 }, {
@@ -306,9 +306,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
-                    "Collision Flag": 0,
+                    "Min": [712.5, -12.5],
+                    "Max": [887.5, 12.5],
+                    "Collision Flag": 4,
                     "is_trigger": true,
                     "Tag": "Top Door"
                 }, {
@@ -321,7 +321,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [800.0, 900.0],
+                    "Position": [800.0, 887.5],
                     "rotation": 0.0,
                     "Scale": [175.0, 25.0]
                 }, {
@@ -344,9 +344,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
-                    "Collision Flag": 0,
+                    "Min": [712.5, 887.5],
+                    "Max": [887.5, 912.5],
+                    "Collision Flag": 8,
                     "is_trigger": true,
                     "Tag": "Btm Door"
                 }, {

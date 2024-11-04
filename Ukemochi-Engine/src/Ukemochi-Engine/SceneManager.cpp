@@ -16,6 +16,7 @@ namespace Ukemochi
 {
 	using namespace rapidjson;
 	SceneManager::SceneManager()
+		:sceneName("NewScene")
 	{
 		es_current = ES_ENGINE;
 		//Audio audio;
@@ -72,7 +73,7 @@ namespace Ukemochi
 		ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
 
 		//init GSM
-		GSM_Initialize(GS_ENGINE);
+		//GSM_Initialize(GS_ENGINE);
 	}
 
 	SceneManager::~SceneManager()
@@ -169,18 +170,23 @@ namespace Ukemochi
 			GameObjectFactory::DestroyObject(gameobject);
 		}
 		ECS::GetInstance().ReloadEntityManager();
+		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 	}
 
 	void SceneManager::SceneManagerUnload()
 	{
 		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
-		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 	}
 
 	bool& SceneManager::GetOnIMGUI()
 	{
 		static bool isOnIMGUI = false;
 		return isOnIMGUI;
+	}
+
+	std::string& SceneManager::GetCurrScene()
+	{
+		return GetInstance().sceneName;
 	}
 
 	//void SceneManager::LoadAndInitScene()
@@ -216,6 +222,11 @@ namespace Ukemochi
 
 	void SceneManager::LoadSaveFile(const std::string& file_name)
 	{
+		GetInstance().sceneName = file_name;
+		size_t extensionPos = file_name.find(".json");
+		if (extensionPos != std::string::npos) {
+			GetInstance().sceneName = file_name.substr(0, extensionPos);
+		}
 		//unload curr scene
 		SceneManagerFree();
 

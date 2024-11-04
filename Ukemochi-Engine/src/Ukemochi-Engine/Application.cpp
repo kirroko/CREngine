@@ -127,6 +127,8 @@ namespace Ukemochi {
 			{
 				if (Input::IsKeyTriggered(GLFW_KEY_1))
 				{
+					//save
+					sceneManager.SaveScene(sceneManager.GetCurrScene());
 					//gsm_next = GS_PLAY;
 					es_current = ENGINE_STATES::ES_PLAY;
 					//sceneManager.SaveScene();
@@ -141,6 +143,8 @@ namespace Ukemochi {
 			{
 				if (Input::IsKeyTriggered(GLFW_KEY_2))
 				{
+					//free
+					sceneManager.LoadSaveFile(sceneManager.GetCurrScene()+".json");
 					//gsm_next = GS_PLAY;
 					es_current = ENGINE_STATES::ES_ENGINE;
 					//sceneManager.LoadSaveFile();

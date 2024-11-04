@@ -195,6 +195,10 @@ namespace Ukemochi
 
 		// Display the list of scenes
 		static int selectedSceneIndex = 0;
+		// State variable to manage the visibility of the input field for saving a scene
+		static bool showSaveInputField = false;
+		static char sceneName[128] = "Level"; // Default name for the scene
+
 		for (size_t i = 0; i < sceneFiles.size(); ++i) {
 			bool isSelected = (selectedSceneIndex == static_cast<int>(i));
 			if (ImGui::Selectable(sceneFiles[i].c_str(), isSelected)) {
@@ -204,14 +208,22 @@ namespace Ukemochi
 			}
 		}
 
-		// State variable to manage the visibility of the input field for saving a scene
-		static bool showSaveInputField = false;
-		static char sceneName[128] = "Level"; // Default name for the scene
-
+		
 		// Add a button to save the scene
 		if (ImGui::Button("Save Scene")) {
 			showSaveInputField = !showSaveInputField; // Toggle the input field visibility
 			SceneManager::GetInstance().GetOnIMGUI() = showSaveInputField;
+
+			// Get the selected scene's name and remove the ".json" extension if it exists
+			std::string selectedScene = sceneFiles[selectedSceneIndex];
+			size_t extensionPos = selectedScene.find(".json");
+			if (extensionPos != std::string::npos) {
+				selectedScene = selectedScene.substr(0, extensionPos);
+			}
+
+			// Copy the modified name into sceneName
+			std::strncpy(sceneName, selectedScene.c_str(), sizeof(sceneName) - 1);
+			sceneName[sizeof(sceneName) - 1] = '\0'; // Ensure null-termination
 		}
 
 		// Display the input field if showSaveInputField is true
@@ -235,11 +247,29 @@ namespace Ukemochi
 		// State variable to manage the visibility of the input field for creating a scene
 		static bool showCreateInputField = false;
 		static char newSceneName[128] = "NewScene"; // Default name for the new scene
+		int maxIndex = 0;
+		std::string newName = "";
+
+		//find the next sceneName
+		for (const auto& scene : sceneFiles)
+		{
+			if (scene.rfind("NewScene", 0) == 0)
+			{ // Checks if scene starts with "NewScene"
+				int index = std::atoi(scene.substr(8).c_str()); // Extract the number after "NewScene"
+				if (index > maxIndex)
+				{
+					maxIndex = index;
+				}
+			}
+		}
+		newName = "NewScene" + std::to_string(maxIndex + 1);
 
 		// Add a button to create a new scene
 		if (ImGui::Button("Create Scene")) {
 			showCreateInputField = !showCreateInputField; // Toggle the input field visibility
 			SceneManager::GetInstance().GetOnIMGUI() = showCreateInputField;
+			std::strncpy(newSceneName, newName.c_str(), sizeof(newSceneName) - 1);
+			newSceneName[sizeof(newSceneName) - 1] = '\0'; // Ensure null-termination
 		}
 
 		// Display the input field if showCreateInputField is true
@@ -255,7 +285,7 @@ namespace Ukemochi
 				// Hide the input field after creating
 				showCreateInputField = false;
 				// Optionally, reset the new scene name for the next creation
-				newSceneName[0] = '\0'; // Clear the input field
+				//newSceneName[0] = '\0'; // Clear the input field
 				SceneManager::GetInstance().GetOnIMGUI() = showCreateInputField;
 			}
 		}

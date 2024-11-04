@@ -40,6 +40,8 @@ namespace Ukemochi
 
 		bool& GetOnIMGUI();
 
+		std::string& GetCurrScene();
+
 		//void LoadAndInitScene();
 
 		//// Load the scene from a file or data source
@@ -63,5 +65,6 @@ namespace Ukemochi
 		void SaveScene(const std::string& file_name);
 
 	private:
+		std::string sceneName;
 	};
 }
