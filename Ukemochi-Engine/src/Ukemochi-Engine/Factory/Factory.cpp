@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Factory.h"
 #include "GameObjectManager.h"
+#include "../Graphics/Renderer.h"
 
 namespace Ukemochi
 {
@@ -93,6 +94,7 @@ namespace Ukemochi
 						TexturePath,
 						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
 						}); // Default Component
+					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(TexturePath);
 				}
 				else
 				{

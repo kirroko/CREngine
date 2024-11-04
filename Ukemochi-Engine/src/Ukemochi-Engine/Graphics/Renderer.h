@@ -273,7 +273,7 @@ private:
 		}
 	};
 	std::unordered_map<int, std::vector<Animation>> entity_animations;
-	void initAnimationEntities();
+
 	bool isSlowMotion = false;
 	float slowMotionFactor = 2.0f;
 	bool isFacingRight = false;
@@ -281,6 +281,7 @@ private:
 public:
 	void toggleSlowMotion();
 	void animationKeyInput();
+	void initAnimationEntities();
 
 private:
 
@@ -319,12 +320,22 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
+	EntityID Player = -1;
 
 public:
 	// Setter method to set the player object
 	void SetPlayerObject(GameObject& player) 
 	{
 			playerObject = &player;
+	}
+
+	EntityID GetPlayer()
+	{
+		return Player;
+	}
+	void SetPlayer(EntityID id)
+	{
+		Player = id;
 	}
 
 	std::unique_ptr<ParticleSystem> particleSystem;

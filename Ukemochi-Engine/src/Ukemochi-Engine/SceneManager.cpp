@@ -91,6 +91,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/idle_player_sprite_sheet.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png"); // load texture
 
 		if (UseImGui::GetSceneSize() == 0)
@@ -121,7 +122,7 @@ namespace Ukemochi
 
 		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
-		//ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
 		SceneManagerDraw();
 	}
@@ -313,8 +314,7 @@ namespace Ukemochi
 					newObject.AddComponent<BoxCollider2D>({ min, max, collisionFlag, isTrigger, tag });
 					if (newObject.GetComponent<BoxCollider2D>().tag == "Player")
 					{
-						ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
-						ECS::GetInstance().GetSystem<Transformation>()->player = newObject.GetInstanceID();
+						
 					}
 				}
 				else if (componentName == "CircleCollider2D")
@@ -335,15 +335,25 @@ namespace Ukemochi
 					newObject.AddComponent<SpriteRender>({ texturePath, shape });
 					//set up the renderer
 					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath);
+					if (tag == "Player")
+					{
+						newObject.GetComponent<SpriteRender>().animated = true;
+					}
 				}
 				else
 				{
 					std::cerr << "Unknown component type: " << componentName << std::endl;
 				}
-			}
 
-			// Add the GameObject to the current level in the GameObjectFactory or Scene
-			//GameObjectFactory::AddObjectToCurrentLevel(newObject);
+				if (tag == "Player")
+				{
+					ECS::GetInstance().GetSystem<Transformation>()->player = newObject.GetInstanceID();
+
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(newObject.GetInstanceID());
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
+					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+				}
+			}
 		}
 
 		std::cout << "Scene loaded successfully from file: " << file_path << std::endl;

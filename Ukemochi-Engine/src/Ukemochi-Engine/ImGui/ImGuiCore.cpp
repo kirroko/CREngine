@@ -377,14 +377,13 @@ namespace Ukemochi
 		if (ImGui::Button("Create Player Entity")) {
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				auto& go = GameObjectFactory::CreateObject(filePath);
+
 				ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
 
-				if (go.GetComponent<BoxCollider2D>().tag == "Player")
-				{
-					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
-					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath);
-
-				}
+				ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
+				ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
+				ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+				go.GetComponent<SpriteRender>().animated = true;
 				showError = false; // Reset error
 			}
 			else {
