@@ -235,8 +235,8 @@ namespace Ukemochi
 						componentData["Scale"][0].GetFloat(),
 						componentData["Scale"][1].GetFloat()
 					);
-
-					newObject.AddComponent<Transform>({ position, rotation, scale });
+					
+					newObject.AddComponent<Transform>({ Mtx44(), position, rotation, scale });
 				}
 				else if (componentName == "Rigidbody2D")
 				{
