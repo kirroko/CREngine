@@ -84,6 +84,9 @@ namespace Ukemochi
 	{
 		//load all assest
 		// load textures
+		Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+		Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
@@ -171,6 +174,7 @@ namespace Ukemochi
 	void SceneManager::SceneManagerUnload()
 	{
 		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
+		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 	}
 
 	bool& SceneManager::GetOnIMGUI()
