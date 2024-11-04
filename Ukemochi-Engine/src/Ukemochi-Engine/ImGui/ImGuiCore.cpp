@@ -31,6 +31,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../Graphics/Renderer.h"
 #include "../SceneManager.h"
+#include "../Math/Transformation.h"
+
 namespace Ukemochi
 {
 	float UseImGui::m_Time = 0.0f; //!< Time since last frame for calculating DeltaTime.
@@ -375,6 +377,8 @@ namespace Ukemochi
 		if (ImGui::Button("Create Player Entity")) {
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				auto& go = GameObjectFactory::CreateObject(filePath);
+				ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
+
 				if (go.GetComponent<BoxCollider2D>().tag == "Player")
 				{
 					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);

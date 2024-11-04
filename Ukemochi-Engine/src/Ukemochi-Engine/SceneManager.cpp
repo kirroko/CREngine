@@ -314,6 +314,7 @@ namespace Ukemochi
 					if (newObject.GetComponent<BoxCollider2D>().tag == "Player")
 					{
 						ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
+						ECS::GetInstance().GetSystem<Transformation>()->player = newObject.GetInstanceID();
 					}
 				}
 				else if (componentName == "CircleCollider2D")
