@@ -201,29 +201,55 @@ namespace Ukemochi
 			}
 		}
 
-		// State variable to manage the visibility of the input field
-		static bool showInputField = false;
+		// State variable to manage the visibility of the input field for saving a scene
+		static bool showSaveInputField = false;
 		static char sceneName[128] = "Level"; // Default name for the scene
 
 		// Add a button to save the scene
 		if (ImGui::Button("Save Scene")) {
-			showInputField = true; // Show the input field when the button is clicked
+			showSaveInputField = !showSaveInputField; // Toggle the input field visibility
 		}
 
-		// Display the input field if showInputField is true
-		if (showInputField) {
+		// Display the input field if showSaveInputField is true
+		if (showSaveInputField) {
 			ImGui::InputText("Scene Name", sceneName, IM_ARRAYSIZE(sceneName));
 
 			if (ImGui::Button("Confirm Save")) {
 				// Call your SaveScene function
 				std::cout << "Scene saved as: " << sceneName << std::endl;
 
-				//SceneManager::GetInstance().SaveScene(sceneName);
+				// SceneManager::GetInstance().SaveScene(sceneName);
 				std::cout << "Scene saved successfully: " << sceneName << std::endl;
 				// Hide the input field after saving
-				showInputField = false;
+				showSaveInputField = false;
 				// Optionally, reset the scene name for the next save
 				sceneName[0] = '\0'; // Clear the input field
+			}
+		}
+
+		// State variable to manage the visibility of the input field for creating a scene
+		static bool showCreateInputField = false;
+		static char newSceneName[128] = "NewScene"; // Default name for the new scene
+
+		// Add a button to create a new scene
+		if (ImGui::Button("Create Scene")) {
+			showCreateInputField = !showCreateInputField; // Toggle the input field visibility
+		}
+
+		// Display the input field if showCreateInputField is true
+		if (showCreateInputField) {
+			ImGui::InputText("New Scene Name", newSceneName, IM_ARRAYSIZE(newSceneName));
+
+			if (ImGui::Button("Confirm Create")) {
+				// Call your CreateScene function
+				std::cout << "Creating scene: " << newSceneName << std::endl;
+
+				// SceneManager::GetInstance().CreateScene(newSceneName);
+				std::cout << "Scene created successfully: " << newSceneName << std::endl;
+				// Hide the input field after creating
+				showCreateInputField = false;
+				// Optionally, reset the new scene name for the next creation
+				newSceneName[0] = '\0'; // Clear the input field
 			}
 		}
 
