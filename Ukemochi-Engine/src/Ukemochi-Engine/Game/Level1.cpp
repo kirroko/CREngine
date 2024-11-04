@@ -59,6 +59,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
 
+
 		// load textures
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png"); // load texture
@@ -77,9 +78,11 @@ namespace Ukemochi
 		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
 		
 		// PLAYER OBJECT
-		player_obj = GameObjectFactory::CreatePrefebObject(player_data);
+		player_obj = GameObjectManager::GetInstance().CreatePrefabObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath); // load texture
+
+		ECS::GetInstance().GetSystem<LogicSystem>()->Init();
 		
 		// // BACKGROUND OBJECT
 		// GameObject background = GameObjectFactory::CreateObject();
@@ -264,7 +267,7 @@ namespace Ukemochi
 		// --- END USER INPUTS ---
 
 		// --- GAME LOGIC UPDATE ---
-		ECS::GetInstance().GetSystem<LogicSystem>();
+		ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 
 		// --- PHYSICS UPDATE ---
 		// Update the entities physics

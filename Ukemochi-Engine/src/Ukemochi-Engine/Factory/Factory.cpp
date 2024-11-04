@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Factory.h"
 
+#include "GameObjectManager.h"
+
 namespace Ukemochi
 {
 	using namespace rapidjson;
@@ -32,7 +34,6 @@ namespace Ukemochi
 	GameObject GameObjectFactory::CreatePrefebObject(const std::string& filePath)
 	{
 		EntityID entity = ECS::GetInstance().CreateEntity();
-
 		Document storage;
 		if (Serialization::LoadJSON(filePath, storage))
 		{
@@ -40,20 +41,21 @@ namespace Ukemochi
 
 			std::string name = object["Name"].GetString();
 			std::string tag = object["Tag"].GetString();
+			GameObject go = {entity, name, tag};
 			for (auto& comps : object["Components"].GetArray()) // TODO: Update whenever new components are added
 			{
 				std::string component = comps["Name"].GetString();
 				if (component == "Transform")
 				{
-					ECS::GetInstance().AddComponent(entity, Transform{
+					go.AddComponent(Transform{
 						Vec2(comps["Position"][0].GetFloat(),comps["Position"][1].GetFloat()),
 						comps["Rotation"].GetFloat(),
 						Vec2(comps["Scale"][0].GetFloat(),comps["Scale"][1].GetFloat())
-						}); // Default Component
+						});
 				}
 				else if (component == "Rigidbody2D")
 				{
-					ECS::GetInstance().AddComponent(entity, Rigidbody2D{
+					go.AddComponent(Rigidbody2D{
 						Vec2(comps["Position"][0].GetFloat(), comps["Position"][1].GetFloat()),
 						Vec2(comps["Velocity"][0].GetFloat(), comps["Velocity"][1].GetFloat()),
 						Vec2(comps["Acceleration"][0].GetFloat(), comps["Acceleration"][1].GetFloat()),
@@ -62,41 +64,49 @@ namespace Ukemochi
 						comps["Angle"].GetFloat(), comps["Angular Velocity"].GetFloat(), comps["Angular Acceleration"].GetFloat(),
 						comps["Torque"].GetFloat(), comps["Inertia Mass"].GetFloat(), comps["Inverse Inertia Mass"].GetFloat(), comps["Angular Drag"].GetFloat(),
 						comps["use_gravity"].GetBool(), comps["is_kinematic"].GetBool()
-						}); // Default Component
+						});
 				}
 				else if (component == "BoxCollider2D")
 				{
-					ECS::GetInstance().AddComponent(entity, BoxCollider2D{
+					go.AddComponent(BoxCollider2D{
 						Vec2(comps["Min"][0].GetFloat(), comps["Min"][1].GetFloat()),
 						Vec2(comps["Max"][0].GetFloat(), comps["Max"][1].GetFloat()),
 						comps["Collision Flag"].GetInt(),
 						comps["is_trigger"].GetBool(),
 						comps["Tag"].GetString()
-						}); // Default Component
+						});
 				}
 				else if (component == "CircleCollider2D")
 				{
-					ECS::GetInstance().AddComponent(entity, CircleCollider2D{
+					go.AddComponent(CircleCollider2D{
 						Vec2(comps["Center"][0].GetFloat(), comps["Center"][1].GetFloat()),
 						comps["Radius"].GetFloat()
-						}); // Default Component
+						});
 				}
 				else if (component == "SpriteRender")
 				{
 					std::string TexturePath = "../Assets/Textures/" + std::string(comps["Sprite"].GetString());
 
-					ECS::GetInstance().AddComponent(entity, SpriteRender{
+					go.AddComponent(SpriteRender{
 						TexturePath,
 						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
 						}); // Default Component
 				}
+				else if(component == "Script")
+				{
+					go.AddComponent(Script{
+					comps["Path"].GetString(),
+					comps["ClassName"].GetString(),
+						ScriptingEngine::GetInstance().InstantiateClientClass(comps["ClassName"].GetString())
+					});
+				}
 				else
 				{
-					UME_ENGINE_ASSERT(false, "Uknown Component in json file: {1}",component)
+					UME_ENGINE_ASSERT(false, "Unknown Component in json file: {1}",component)
 				}
 			}
 
-			return {entity, name, tag};
+			return go;
 		}
 		return {entity}; // Default GameObject
 	}

@@ -106,8 +106,9 @@ namespace UME
                  UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
                  break;
              }
-            ProjectHandler::GenerateSolutionAndProject("..\\Assets");
+            
         });
+        // ProjectHandler::GenerateSolutionAndProject("..\\Assets");
         fwInstance = fileWatcher; // Keep a reference to the file watch instance
     }
 

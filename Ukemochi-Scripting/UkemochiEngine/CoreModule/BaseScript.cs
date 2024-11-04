@@ -35,5 +35,10 @@ namespace UkemochiEngine.CoreModule
         {
             
         }
+
+        public virtual void FixedUpdate()
+        {
+            
+        }
     }
 }

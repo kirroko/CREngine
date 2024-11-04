@@ -24,7 +24,6 @@ using System.Linq;
 // This object holds a list of components, and the first component is always the transform
 // Follow the same principle as above, when a user call add component from the editor, the engine will instantiate the class of that component
 
-// 0342 1/11/24 - Mr Wong, Please sleep, We last stop off completing the C++ C# 1:1 relationship, and now we have to finish the C# library for scripting
 namespace UkemochiEngine.CoreModule
 {
     public class GameObject : Object
@@ -32,7 +31,7 @@ namespace UkemochiEngine.CoreModule
         // ==================== PROPERTIES ====================
         public Transform transform { get; private set; } // Read-only
         
-        private List<Component> _components = new List<Component>();
+        private Dictionary<string,Component> _dictionaryComponents = new Dictionary<string, Component>();
         
         // ==================== METHODS =======================
         public GameObject()
@@ -44,46 +43,82 @@ namespace UkemochiEngine.CoreModule
         public T AddComponent<T>() where T : Component, new()
         {
             T component = new T();
-            component.SetGameOjbect(this);
-            _components.Add(component);
+            component.SetGameObject(this);
+            _dictionaryComponents.Add(typeof(T).Name, component);
             EngineInterop.AddComponent(GetInstanceID(), component, typeof(T).Name);
             return component;
         }
 
         public T GetComponent<T>() where T : Component
         {
-            return _components.OfType<T>().FirstOrDefault();
+            EngineInterop.LogMessage("Gameobject getting component");
+            var component = _dictionaryComponents[typeof(T).Name];
+            return (T)component;
+            // return _components.OfType<T>().FirstOrDefault();
         }
         
         // ==================== INTERNAL INVOKES ====================
         // TODO: Remember to add new components for C++ to instantiate C# side
-        internal void AddTransformComponent(object transform)
+        internal void AddTransformComponent(object objTransform)
         {
-            var obj = (transform as Component);
-            // TODO: Error handling here
-            obj.SetGameOjbect(this);
-            _components.Add(obj);
+            if (!(objTransform is Transform obj))
+            {
+                EngineInterop.LogMessage("Transform is null");
+                return;
+            }
+            obj.SetGameObject(this);
+            _dictionaryComponents.Add(nameof(Transform), obj);
+            // _components.Add(obj);
+        }
+
+        internal void AddRigidbody2DComponent(object rigidbody2D)
+        {
+            if (!(rigidbody2D is Rigidbody2D obj))
+            {
+                EngineInterop.LogMessage("Rigidbody2D is null");
+                return;
+            }
+            obj.SetGameObject(this);
+            _dictionaryComponents.Add(nameof(Rigidbody2D), obj);
+            // _components.Add(obj);
         }
 
         internal void AddScriptComponent(object script)
         {
             // Script is a bit different, as the class is defined by the client
             // Client's script all derive from BaseScript, so do we instantiate BaseScript?
-            var obj = (script as Component);
-            // TODO: Error handling here
-            _components.Add(obj);
+            if (!(script is BaseScript obj))
+            {
+                EngineInterop.LogMessage("Script is null");
+                return;
+            }
+            obj.SetGameObject(this);
+            _dictionaryComponents.Add(nameof(BaseScript), obj);
+            // _components.Add(obj);
         }
 
         internal void AddSpriteRenderComponent(object spriteRender)
         {
-            var obj = (spriteRender as Component);
-            // TODO: Error handling here
-            _components.Add(obj);
+            if (!(spriteRender is SpriteRender obj))
+            {
+                EngineInterop.LogMessage("SpriteRender is null");
+                return;
+            }
+            obj.SetGameObject(this);
+            _dictionaryComponents.Add(nameof(spriteRender), obj);
+            // _components.Add(obj);
         }
 
-        internal void SetID(ulong id)
+        internal void AddBoxCollider2DComponent(object boxCollider2D)
         {
-            InvokeSetID(id);
+            if (!(boxCollider2D is BoxCollider2D obj))
+            {
+                EngineInterop.LogMessage("BoxCollider2D is null");
+                return;
+            }
+            obj.SetGameObject(this);
+            _dictionaryComponents.Add(nameof(BoxCollider2D), obj);
+            // _components.Add(obj);
         }
     }
 }

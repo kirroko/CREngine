@@ -1,14 +1,13 @@
 /* Start Header
  *****************************************************************/
 /*!
-\file	Vector2.cs
+\file	Input.cs
 \par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
 \par	junyukean.wong\@digipen.edu
 \par	Course: CSD2400/CSD2401
-\date	31/09/24
-\brief	This files is responsible for the Vector2 struct that stores 2D coordinates
-        for the engine
+\date	29/10/24
+\brief	This files is responsible for handling the input from the user
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -18,23 +17,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
  *******************************************************************/
 namespace UkemochiEngine.CoreModule
 {
-    public struct Vector2
+    public static class Input
     {
-        // ==================== FIELDS ====================
-        public float x;
-        public float y;
-        
-        // ==================== METHODS ====================
-        
-        public Vector2(float value)
+        public static bool GetKey(KeyCode key)
         {
-            x = value;
-            y = value;
+            return EngineInterop.GetKey((int)key);
         }
-        public Vector2(float x, float y)
+
+        public static bool GetKeyDown(KeyCode key)
         {
-            this.x = x;
-            this.y = y;
+            return EngineInterop.GetKeyDown((int)key);
         }
     }
 }

@@ -4,6 +4,7 @@
 #include "Physics/Physics.h"
 #include "Collision/Collision.h"
 #include "Graphics/Renderer.h"
+#include "Logic/DataSyncSystem.h"
 #include "Logic/Logic.h"
 
 namespace Ukemochi
@@ -28,6 +29,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterSystem<Collision>();
 		ECS::GetInstance().RegisterSystem<Renderer>();
 		ECS::GetInstance().RegisterSystem<LogicSystem>();
+		ECS::GetInstance().RegisterSystem<DataSyncSystem>();
 		//ECS::GetInstance().RegisterSystem<Audio>();
 
 		// ScriptingEngine::GetInstance().CompileScriptAssembly();
@@ -57,6 +59,11 @@ namespace Ukemochi
 		sig.reset();
 		sig.set(ECS::GetInstance().GetComponentType<Script>());
 		ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
+
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+		ECS::GetInstance().SetSystemSignature<DataSyncSystem>(sig);
 	
 		//init GSM
 		GSM_Initialize(GS_ENGINE);

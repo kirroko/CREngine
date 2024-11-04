@@ -208,6 +208,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logic\Logic.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logic\ProjectHandler.h" />
@@ -253,7 +254,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Logic\InternalCalls.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\ProjectHandler.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />

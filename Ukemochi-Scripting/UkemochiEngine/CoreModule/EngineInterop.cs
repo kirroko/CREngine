@@ -23,15 +23,19 @@ namespace UkemochiEngine.CoreModule
 {
     public static class EngineInterop
     {
-        // [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        // public static extern void AddComponent(ulong id, string typeName);
-        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern void AddComponent(ulong id, object component, string typeName);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern object GetObject(ulong id);
-        // [MethodImplAttribute(MethodImplOptions.InternalCall)] Example of how to call a C++ function from C#
-        // public static extern void LogMessage(string message);
+        public static extern object GetMonoObject(ulong id);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        public static extern bool GetKey(int key);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        public static extern bool GetKeyDown(int key);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)] 
+        public static extern void LogMessage(string message);
     }
 }

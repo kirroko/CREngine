@@ -20,18 +20,14 @@ namespace UkemochiEngine.CoreModule
     public abstract class Object
     {
         // ==================== PROPERTIES ====================
-        private ulong _id { get; set; }
+        private ulong _id = 0;
         
         // ==================== METHODS =======================
-        public ulong GetInstanceID()
+        protected ulong GetInstanceID()
         {
             return _id;
         }
         
         // ==================== INTERNAL METHODS =======================
-        protected void InvokeSetID(ulong id)
-        {
-            _id = id;
-        }
     }
 }

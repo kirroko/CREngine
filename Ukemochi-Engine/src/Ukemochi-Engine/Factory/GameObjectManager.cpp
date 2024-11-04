@@ -46,7 +46,7 @@ GameObject& GameObjectManager::CreateObject(const std::string& name, const std::
     return *m_GOs[id];
 }
 
-GameObject& GameObjectManager::CreateObject(const std::string& prefabPath)
+GameObject& GameObjectManager::CreatePrefabObject(const std::string& prefabPath)
 {
     auto go = std::make_unique<GameObject>(GameObjectFactory::CreatePrefebObject(prefabPath));
     auto id = go->GetInstanceID();

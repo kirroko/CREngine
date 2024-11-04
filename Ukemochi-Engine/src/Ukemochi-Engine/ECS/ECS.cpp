@@ -32,6 +32,11 @@ namespace Ukemochi
 		return m_EntityManager->CreateEntity();
 	}
 
+	void ECS::ReloadEntityManager()
+	{
+		m_EntityManager.reset(new EntityManager());
+	}
+
 	void ECS::DestroyEntity(EntityID entity)
 	{
 		m_EntityManager->DestroyEntity(entity);

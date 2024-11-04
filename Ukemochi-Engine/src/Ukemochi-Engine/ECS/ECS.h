@@ -46,6 +46,8 @@ namespace Ukemochi
 
 		EntityID CreateEntity();
 
+		void ReloadEntityManager();
+
 		void DestroyEntity(EntityID entity);
 
 		EntityID CloneEntity(EntityID entity);

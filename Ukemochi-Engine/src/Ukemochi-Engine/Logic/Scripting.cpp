@@ -76,13 +76,13 @@ namespace Ukemochi
 
     void ScriptingEngine::CompileScriptAssembly()
     {
-        // Do hot reload
         // Search for the csproj file
         std::string csprojPath = "../Assets/Assembly-CSharp.csproj"; // TODO: Hardcoded path here
         UME_ENGINE_ASSERT(std::filesystem::exists(csprojPath), "csproj file does not exist!")
 
         // Set to build in Release configuration, default is also debug
-        std::wstring buildCmd = L"dotnet build -c Release " + std::wstring(csprojPath.begin(), csprojPath.end());
+        // TODO: Remember to change the configuration to Release
+        std::wstring buildCmd = L"dotnet build -c Debug " + std::wstring(csprojPath.begin(), csprojPath.end());
         UME_ENGINE_INFO("Executing Dotnet build!");
         int result = _wsystem(buildCmd.c_str()); // Execute the build command
         if (result == 0) // Successful
@@ -90,7 +90,7 @@ namespace Ukemochi
             UME_ENGINE_INFO("Successfully compiled the script assembly!");
             try
             {
-                std::filesystem::path sourcePath = "../Assets/bin/Release/net472/Assembly-CSharp.dll";
+                std::filesystem::path sourcePath = "../Assets/bin/Debug/net472/Assembly-CSharp.dll";
                 std::filesystem::path destinationPath = "Resources/Scripts/Assembly-CSharp.dll";
 
                 if (std::filesystem::exists(sourcePath))
@@ -102,7 +102,8 @@ namespace Ukemochi
                 }
                 else
                 {
-                    UME_ENGINE_ERROR("Source file does not exist: {0} | Current Path {1}", sourcePath.string(), std::filesystem::current_path().string());
+                    UME_ENGINE_ERROR("Source file does not exist: {0} | Current Path {1}", sourcePath.string(),
+                                     std::filesystem::current_path().string());
                 }
             }
             catch (const std::filesystem::filesystem_error& e)
@@ -127,6 +128,18 @@ namespace Ukemochi
         PrintAssemblyTypes(ClientAssembly); // Print out the types in the assembly for tracing
 
         // TODO: Our MonoObject instance are still pointing to the old assembly, we need to update them
+    }
+
+    MonoObject* ScriptingEngine::InstantiateStruct(const std::string& structName)
+    {
+        UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
+        MonoClass* klass = GetClassInAssembly(CoreAssembly, "UkemochiEngine.CoreModule", structName.c_str());
+        if (klass == nullptr)
+            UME_ENGINE_ASSERT(false, "Failed to instantiate struct: {1}", structName)
+
+        MonoObject* instance = mono_value_box(m_pAppDomain, klass, nullptr);
+
+        return instance;
     }
 
     MonoObject* ScriptingEngine::InstantiateClass(const std::string& className)
@@ -194,9 +207,64 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Failed to find method: {0} in class.", methodName);
             return;
         }
-        UME_ENGINE_TRACE("ScriptingEngine: Invoking method {0} in class {1}", methodName, mono_class_get_name(klass));
+        // UME_ENGINE_TRACE("ScriptingEngine: Invoking method {0} in class {1}", methodName, mono_class_get_name(klass));
         MonoObject* exception = nullptr; // TODO: Do something with the exception?
         mono_runtime_invoke(method, instance, args, &exception); // TODO: Possible issues would occur here
+    }
+
+    void ScriptingEngine::SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value)
+    {
+        MonoClass* klass = mono_object_get_class(instance);
+        MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
+        mono_field_set_value(instance, field, value);
+        // mono_field_set_value(
+        //     instance, mono_class_get_field_from_name(mono_object_get_class(instance), fieldName.c_str()), value);
+    }
+
+    void ScriptingEngine::SetMonoPropertyValue(MonoObject* instance, const std::string& propertyName, void* value)
+    {
+        MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance),
+                                                                   propertyName.c_str());
+        void* args[] = {value};
+        mono_property_set_value(property, instance, args, nullptr);
+    }
+
+    MonoProperty* ScriptingEngine::GetMonoProperty(MonoObject* instance, const std::string& propertyName)
+    {
+        MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance), propertyName.c_str());
+        if(property == nullptr)
+            UME_ENGINE_ERROR("Failed to get property: {0}", propertyName);
+    }
+
+    void ScriptingEngine::SetVector2Property(MonoObject* instance, const std::string& propertyName, float x, float y)
+    {
+        // Create a new Vector2 Obj
+        UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
+        MonoClass* klass = GetClassInAssembly(CoreAssembly, "UkemochiEngine.CoreModule", "Vector2");
+        if (klass == nullptr)
+            UME_ENGINE_ASSERT(false, "Failed to instantiate struct: {1}", "Vector2")
+
+        struct
+        {
+            float x;
+            float y;
+        } vector2Instance = {x ,y};
+
+        MonoObject* vector2Obj = mono_value_box(m_pAppDomain, klass, &vector2Instance);
+        if(!vector2Obj)
+            UME_ENGINE_ASSERT(false, "Failed to instantiate Vector2 struct");
+
+        // Set the x and y fields on the Vector2 Object
+        SetMonoFieldValue(vector2Obj, "x", &x);
+        SetMonoFieldValue(vector2Obj, "y", &y);
+
+        // Get the property on the Object
+        MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance),
+                                                                   propertyName.c_str());
+
+        // Set the Vector2 property on the object
+        void* agrs[] = {vector2Obj};
+        mono_property_set_value(property, instance, agrs, nullptr);
     }
 
     // ================== PRIVATE FUNCTIONS ==================
@@ -276,19 +344,46 @@ namespace Ukemochi
     void ScriptingEngine::RegisterMonoFunctions()
     // TODO: Type-Safe Component Registration and Access? Meta-Programming with Reflection??
     {
-        // mono_add_internal_call("Ukemochi.CSharpTest::LogMessage",
-        // 	(void*)LogMessage);
-
-        //EXTERN_C UME_API void LogMessage(MonoString* message) Example of C# to C++ call
-        // {
-        // 	UME_ENGINE_INFO("Ukemochi log: {0}", std::string(mono_string_to_utf8(message)));
-        // }
-
-        // mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetComponentType",
-        // 	(void*)GetComponentType);
-
         mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::AddComponent",
                                (void*)InternalCalls::AddComponent);
+
+        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetKey",
+                               (void*)InternalCalls::GetKey);
+
+        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetKeyDown",
+                               (void*)InternalCalls::GetKeyDown);
+
+        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::LogMessage",
+                               (void*)InternalCalls::LogMessage);
+    }
+
+    bool ScriptingEngine::CheckMonoError(MonoError& error)
+    {
+        bool hasError = !mono_error_ok(&error);
+        if (hasError)
+        {
+            unsigned short errorCode = mono_error_get_error_code(&error);
+            const char* errorMessage = mono_error_get_message(&error);
+            UME_ENGINE_ERROR("Mono Error!");
+            UME_ENGINE_ERROR("\tError Code: {0}", errorCode);
+            UME_ENGINE_ERROR("\tError Message: {0}", errorMessage);
+            mono_error_cleanup(&error);
+        }
+        return hasError;
+    }
+
+    std::string ScriptingEngine::MonoStringToUTF8(MonoString* monoString)
+    {
+        if (monoString == nullptr || mono_string_length(monoString) == 0)
+            return "";
+
+        MonoError error;
+        char* utf8 = mono_string_to_utf8_checked(monoString, &error);
+        if (CheckMonoError(error))
+            return "";
+        std::string result(utf8);
+        mono_free(utf8);
+        return result;
     }
 
     MonoClass* ScriptingEngine::GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName,

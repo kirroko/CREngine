@@ -109,8 +109,8 @@ namespace Ukemochi
 	struct Script
 	{
 		std::string scriptPath;
-		void* instance = nullptr; // MonoObject
-		void* methodInstance = nullptr; // MonoMethod
 		std::string scriptName;
+		void* instance = nullptr; // MonoObject from client script
+		void* methodInstance = nullptr; // MonoMethod from client script
 	};
 }

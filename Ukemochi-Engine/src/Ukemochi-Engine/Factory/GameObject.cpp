@@ -24,8 +24,11 @@ GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(n
                                                                         m_Tag(tag), m_InstanceID(id)
 {
     m_ManagedInstance = ScriptingEngine::GetInstance().InstantiateClass("GameObject");
-    void* params[] = {&m_InstanceID};
-    ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance, "SetID", params, 1);
+
+    m_ManagedInstanceHandle = mono_gchandle_new_v2(m_ManagedInstance,true);
+    ScriptingEngine::GetInstance().SetMonoFieldValue(m_ManagedInstance, "_id", &m_InstanceID);
+    // void* params[] = {&m_InstanceID};
+    // ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance, "SetID", params, 1);
     // AddComponent(Transform{Vec2(),0.0f,Vec2(1.0f,1.0f)}); // We don't set a default transform here, Other programmer will have to remember to add  instaed...
 }
 
@@ -37,17 +40,26 @@ GameObject& GameObject::operator=(const GameObject& other)
     return *this;
 }
 
+GameObject::~GameObject()
+{
+    mono_gchandle_free_v2(m_ManagedInstanceHandle);
+    for (auto& component : m_ManagedComponentsHandle)
+    {
+        mono_gchandle_free_v2(component.second);
+    }
+}
+
 MonoObject* GameObject::GetManagedInstance(const std::string& objectName) const
 {
     if (strcmp(objectName.c_str(), "GameObject") != 0) // Well... Just in case yeah
         return m_ManagedInstance;
+    
     return m_ManagedComponents.at(objectName);
 }
 
-
-
 void GameObject::SetManagedComponentInstance(MonoObject* instance, const std::string& typeName)
 {
+    m_ManagedComponentsHandle[typeName] = mono_gchandle_new_v2(instance,true);
     m_ManagedComponents[typeName] = instance;
 }
 
