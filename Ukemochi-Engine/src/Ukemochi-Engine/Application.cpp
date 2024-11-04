@@ -190,12 +190,12 @@ namespace Ukemochi {
 					}
 					//************ Display FPS ************
 
-				//************ Render IMGUI ************
-					imguiInstance.NewFrame();
-					imguiInstance.ShowEntityManagementUI();
-					imguiInstance.Begin();
-					imguiInstance.ImGuiUpdate();
-				//************ Render IMGUI ************
+				////************ Render IMGUI ************
+				//	imguiInstance.NewFrame();
+				//	imguiInstance.ShowEntityManagementUI();
+				//	imguiInstance.Begin();
+				//	imguiInstance.ImGuiUpdate();
+				////************ Render IMGUI ************
 				//************ Render IMGUI ************
 				imguiInstance.NewFrame();
 				imguiInstance.SceneBrowser();
