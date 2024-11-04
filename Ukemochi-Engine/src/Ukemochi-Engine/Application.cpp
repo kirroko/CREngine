@@ -118,10 +118,20 @@ namespace Ukemochi {
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			UpdateFPS();
-			sceneManager.SceneMangerUpdateCamera(deltaTime);
+			if (sceneManager.GetOnIMGUI() == false)
+			{
+				sceneManager.SceneMangerUpdateCamera(deltaTime);
+			}
 			//engine
 			if (es_current == ENGINE_STATES::ES_ENGINE)
 			{
+				if (Input::IsKeyTriggered(GLFW_KEY_1))
+				{
+					//gsm_next = GS_PLAY;
+					es_current = ENGINE_STATES::ES_PLAY;
+					//sceneManager.SaveScene();
+					UME_ENGINE_INFO("1 key is pressed");
+				}
 				//************ Update & Draw ************
 				sceneManager.SceneMangerUpdate();
 				//************ Update & Draw ************
@@ -129,6 +139,13 @@ namespace Ukemochi {
 			//play
 			else if(es_current == ENGINE_STATES::ES_PLAY)
 			{
+				if (Input::IsKeyTriggered(GLFW_KEY_2))
+				{
+					//gsm_next = GS_PLAY;
+					es_current = ENGINE_STATES::ES_ENGINE;
+					//sceneManager.LoadSaveFile();
+					UME_ENGINE_INFO("2 key is pressed");
+				}
 				sceneManager.SceneMangerRunSystems();
 			}
 			UpdateIMGUI();

@@ -48,6 +48,8 @@ namespace Ukemochi
 
 		void DestroyEntity(EntityID entity);
 
+		void ReloadEntityManager();
+
 		EntityID CloneEntity(EntityID entity);
 
 		std::vector<EntityID> GetAllEntities();

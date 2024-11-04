@@ -68,6 +68,8 @@ namespace Ukemochi
 
 		static void SceneBrowser();
 
+		static int GetSceneSize();
+
 		static void SceneRender();
 
 		static float m_LastAssetUpdateTime;

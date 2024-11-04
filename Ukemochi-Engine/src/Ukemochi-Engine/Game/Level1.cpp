@@ -43,8 +43,8 @@ namespace Ukemochi
 	GameObject worm_0;
 	Renderer time;
 	
-	GLfloat lastFrameTime = 0.0f;
-	GLfloat deltaTime = 0.0f;
+	//GLfloat lastFrameTime = 0.0f;
+	//GLfloat deltaTime = 0.0f;
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
@@ -303,10 +303,10 @@ namespace Ukemochi
 		}
 
 		// Camera
-		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
-		deltaTime = currentFrameTime - lastFrameTime;
-		lastFrameTime = currentFrameTime;
-		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
+		//GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+		//deltaTime = currentFrameTime - lastFrameTime;
+		//lastFrameTime = currentFrameTime;
+		//ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
 
 		// Animation
 		// Check for slow motion toggle key (M key in this case)

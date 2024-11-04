@@ -39,6 +39,11 @@ namespace Ukemochi
 		m_SystemManager->EntityDestroyed(entity);
 	}
 
+	void ECS::ReloadEntityManager()
+	{
+		m_EntityManager.reset(new EntityManager());
+	}
+
 	EntityID ECS::CloneEntity(EntityID entity)
 	{
 		EntityID newEntity = m_EntityManager->CreateEntity();
@@ -94,6 +99,5 @@ namespace Ukemochi
 	std::vector<EntityID> ECS::GetAllEntities() {
 		return m_EntityManager->GetAllEntities();
 	}
-
 }
 // 0x4B45414E

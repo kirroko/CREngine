@@ -8,6 +8,7 @@
 #include "Graphics/Camera2D.h"
 #include "Factory/Factory.h"
 #include "Factory/GameObjectManager.h"
+#include "ImGui/ImGuiCore.h"
 
 namespace Ukemochi
 {
@@ -75,6 +76,11 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png"); // load texture
+
+		if (UseImGui::GetSceneSize() == 0)
+		{
+			SaveScene("NewScene");
+		}
 	}
 
 	void SceneManager::SceneMangerInit()
@@ -100,13 +106,13 @@ namespace Ukemochi
 		// --- COLLISION UPDATE ---
 		// Check the collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+		
 		SceneManagerDraw();
 	}
 
 	void SceneManager::SceneMangerUpdateCamera(double deltaTime)
 	{
 		// Camera
-		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
 		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
 	}
 
@@ -118,47 +124,60 @@ namespace Ukemochi
 
 	void SceneManager::SceneManagerFree()
 	{
-
+		for (auto& gameobject : GameObjectFactory::GetAllObjectsInCurrentLevel())
+		{
+			GameObjectFactory::DestroyObject(gameobject);
+		}
+		ECS::GetInstance().ReloadEntityManager();
 	}
 
 	void SceneManager::SceneManagerUnload()
 	{
-
+		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
 	}
 
-	void SceneManager::LoadAndInitScene()
+	bool& SceneManager::GetOnIMGUI()
 	{
-		//current state != restart
-		if (gsm_current != GS_STATES::GS_RESTART)
-		{
-			//LoadScene();
-		}
-		else
-		{
-			gsm_next = gsm_current = gsm_previous;
-		}
-
-		//Init Scene
-		InitScene();
+		static bool isOnIMGUI = false;
+		return isOnIMGUI;
 	}
 
-	void SceneManager::LoadScene()
-	{
-		//update GSM
-		GSM_Update();
+	//void SceneManager::LoadAndInitScene()
+	//{
+	//	//current state != restart
+	//	if (gsm_current != GS_STATES::GS_RESTART)
+	//	{
+	//		//LoadScene();
+	//	}
+	//	else
+	//	{
+	//		gsm_next = gsm_current = gsm_previous;
+	//	}
 
-		// Load resources associated with the scene
-		gsm_fpLoad();
+	//	//Init Scene
+	//	InitScene();
+	//}
 
-		//if save file exist
-		//look for save file
-		//if exist
-		
-		//LoadSaveFile(sceneFile);
-	}
+	//void SceneManager::LoadScene()
+	//{
+	//	//update GSM
+	//	GSM_Update();
+
+	//	// Load resources associated with the scene
+	//	gsm_fpLoad();
+
+	//	//if save file exist
+	//	//look for save file
+	//	//if exist
+	//	
+	//	//LoadSaveFile(sceneFile);
+	//}
 
 	void SceneManager::LoadSaveFile(const std::string& file_name)
 	{
+		//unload curr scene
+		SceneManagerFree();
+
 		std::string file_path = "../Assets/Scenes/" + file_name;
 		Document document;
 
@@ -294,34 +313,34 @@ namespace Ukemochi
 	
 	}
 
-	void SceneManager::InitScene()
-	{
-		//gsm_fpInitialize();
-		//init ECS here e.g. player
-	}
+	//void SceneManager::InitScene()
+	//{
+	//	//gsm_fpInitialize();
+	//	//init ECS here e.g. player
+	//}
 
-	void SceneManager::Update(double deltaTime)
-	{
-		(void)deltaTime;
-		//gsm_fpDraw();
-	}
+	//void SceneManager::Update(double deltaTime)
+	//{
+	//	(void)deltaTime;
+	//	//gsm_fpDraw();
+	//}
 
-	void SceneManager::UpdateScenes(double deltaTime)
-	{
-		(void)deltaTime;
-		//Update
-		//gsm_fpUpdate();
-		//update ECS
+	//void SceneManager::UpdateScenes(double deltaTime)
+	//{
+	//	(void)deltaTime;
+	//	//Update
+	//	//gsm_fpUpdate();
+	//	//update ECS
 
-		//Draw
-		//gsm_fpDraw();
-	}
+	//	//Draw
+	//	//gsm_fpDraw();
+	//}
 
-	void SceneManager::ClearScene()
-	{
-		gsm_fpUnload();
-		// Clear the ECS entities and components
-	}
+	//void SceneManager::ClearScene()
+	//{
+	//	gsm_fpUnload();
+	//	// Clear the ECS entities and components
+	//}
 
 	void SceneManager::SaveScene(const std::string& file_name)
 	{	
@@ -470,11 +489,5 @@ namespace Ukemochi
 		{
 			std::cerr << "Failed to save scene to file: " << file<< std::endl;
 		}
-	}
-
-	void SceneManager::TransitionToScene()
-	{
-		// Clear the current scene and load the new one
-		LoadScene();
 	}
 }
