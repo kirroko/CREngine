@@ -51,6 +51,8 @@ namespace Ukemochi
 		*/
 		static void ImGuiClean();
 
+		static void ControlPanel();
+
 		static void LoadScene();
 
 		static void DisplayEntityDetails(GameObject& obj);
@@ -64,7 +66,7 @@ namespace Ukemochi
 
 		static void ShowEntityManagementUI();
 
-		static void AssetBrowser(char* filePath);
+		static void ContentBrowser(char* filePath);
 
 		static void SceneBrowser();
 
@@ -88,7 +90,7 @@ namespace Ukemochi
 		static std::vector<std::string> assetFiles;
 
 		static std::vector<std::string> sceneFiles;
-		static void LoadAssets(); // Function to load assets
+		static void LoadContents(); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 	};
 }

@@ -54,13 +54,20 @@ namespace Ukemochi
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
+		//ImGui::LoadIniSettingsFromDisk("imgui_layout.ini");
+
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
-
 		ImGuiStyle& style = ImGui::GetStyle();
+		style.Alpha = 1.0f; // Set the overall alpha of the UI
+		style.WindowRounding = 5.0f; // Round corners of windows
+		style.FrameRounding = 3.0f; // Round corners of frames
+		style.ItemSpacing = ImVec2(10, 10); // Spacing between items
+
+		//ImGuiStyle& style = ImGui::GetStyle();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			style.WindowRounding = 0.0f;
+			style.WindowRounding = 5.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
@@ -69,6 +76,7 @@ namespace Ukemochi
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
+		//ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
 	}
 	/*!
 	\brief Prepares a new ImGui frame and handles window dimensions and timing.
@@ -124,11 +132,36 @@ namespace Ukemochi
 			ImGui::DockSpace(dockspace_id, ImVec2(0, 0), dockspace_flags);
 		}
 
+		ControlPanel();
+
 		ImGui::End(); // End the dockspace window
 
+		//ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
 	}
 
-	void UseImGui::LoadAssets()
+	void UseImGui::ControlPanel()
+	{
+		ImGui::Begin("Control Panel");  // Create a new window titled "Control Panel"
+
+		// Add controls such as buttons, sliders, or entity selectors here
+		ImGui::Text("Control Panel Contents");
+		// Example: Add a button
+		if (ImGui::Button("Play"))
+		{
+			std::cout << "Game is Playing" << std::endl;
+			// Perform some action when button is clicked
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop"))
+		{
+			std::cout << "Game stopped" << std::endl;
+			// Implement functionality to stop the game (e.g., switch to editor mode)
+		}
+
+		ImGui::End(); // End the control panel window
+	}
+
+	void UseImGui::LoadContents()
 	{
 		// Clear the previous asset list
 		assetFiles.clear();
@@ -142,12 +175,12 @@ namespace Ukemochi
 		}
 	}
 
-	void UseImGui::AssetBrowser(char* filePath)
+	void UseImGui::ContentBrowser(char* filePath)
 	{
-		ImGui::Begin("Asset Browser");
+		ImGui::Begin("Content Browser");
 		//LoadAssets();
 		if (ImGui::Button("Refresh Assets")) {
-			LoadAssets(); // Manually trigger loading assets
+			LoadContents(); // Manually trigger loading assets
 		}
 
 		static int selectedAssetIndex = -1;
@@ -344,7 +377,7 @@ namespace Ukemochi
 		static float errorDisplayTime = 0.0f;
 
 		// Display the Asset Browser
-		AssetBrowser(filePath);
+		ContentBrowser(filePath);
 
 		if (ImGui::TreeNode("Current GameObjects")) {
 			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
