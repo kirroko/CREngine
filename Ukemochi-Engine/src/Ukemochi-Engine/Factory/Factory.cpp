@@ -48,6 +48,7 @@ namespace Ukemochi
 				if (component == "Transform")
 				{
 					go.AddComponent(Transform{
+						Mtx44{},
 						Vec2(comps["Position"][0].GetFloat(),comps["Position"][1].GetFloat()),
 						comps["Rotation"].GetFloat(),
 						Vec2(comps["Scale"][0].GetFloat(),comps["Scale"][1].GetFloat())
@@ -121,4 +122,16 @@ namespace Ukemochi
 	{
 		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
 	}
+
+	// retrieves all active game objects in the current level.
+	std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
+		std::vector<GameObject> gameObjects;
+		auto entities = ECS::GetInstance().GetAllEntities();
+
+		for (const auto& entity : entities) {
+			gameObjects.emplace_back(GameObject(entity));
+		}
+		return gameObjects;
+	}
+
 }

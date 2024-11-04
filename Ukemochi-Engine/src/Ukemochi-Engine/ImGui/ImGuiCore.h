@@ -22,8 +22,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 
-namespace UME
+
+namespace Ukemochi
 {
+	class GameObject;
 	class UME_API UseImGui
 	{
 	public:
@@ -37,6 +39,8 @@ namespace UME
 		\brief Prepares a new ImGui frame.
 		*/
 		static void NewFrame();
+
+		static void Begin();
 		/*!
 		\brief Renders the current ImGui frame.
 		*/
@@ -46,22 +50,31 @@ namespace UME
 		\brief Cleans up ImGui resources.
 		*/
 		static void ImGuiClean();
-		/*!
-		\brief Dispatches input events to ImGui for handling.
-		\param event Reference to the event to be dispatched.
-		*/
-		void OnEvent(Event& event);
+
+		static void LoadScene();
+
+		static void DisplayEntityDetails(GameObject& obj);
+
+		static void DisplayEntitySelectionCombo(int& selectedEntityIndex);
+
+		static void RemoveSelectedEntity(int& selectedEntityIndex);
+
+		static void EditEntityProperties(GameObject& selectedObject);
+
+		static void ShowEntityManagementUI();
+
 	private:
 		// Mouse and keyboard event handlers
-		bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);
+		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);
 		bool IsMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
 		bool IsMouseMovedEvent(MouseMovedEvent& e);
 		bool IsMouseScrolledEvent(MouseScrolledEvent& e);
 		bool IsKeyPressedEvent(KeyPressedEvent& e);
 		bool IsKeyReleasedEvent(KeyReleasedEvent& e);
 		bool IsKeyTypeEvent(KeyTypedEvent& e);
-		bool IsWindowResizeEvent(WindowResizeEvent& e);
+		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
+		void LoadPlayer(const std::string& player_data);
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 	};
 }

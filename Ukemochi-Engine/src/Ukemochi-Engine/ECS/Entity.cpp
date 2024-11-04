@@ -51,4 +51,17 @@ namespace Ukemochi
 	{
 		return m_ulLivingEntityCount;
 	}
+
+	// Used to retrive a list of all active entities within the ECS
+	// active is defined by having a non-empty signature
+	std::vector<EntityID> EntityManager::GetAllEntities() {
+		std::vector<EntityID> activeEntities;
+		for (EntityID entity = 0; entity < MAX_ENTITIES; ++entity) {
+			// Check if the entity has an active signature
+			if (m_Signatures[entity].any()) { // Adjust this condition as needed for "active" state
+				activeEntities.push_back(entity);
+			}
+		}
+		return activeEntities;
+	}
 }

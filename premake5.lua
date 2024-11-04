@@ -10,6 +10,7 @@ workspace "Ukemochi"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 fmod_dll = "../Ukemochi-Engine/vendor/Fmod/lib/fmod.dll"
+freetype_dll = "../Ukemochi-Engine/vendor/freetype/lib/freetype.dll"
 Mono_dll = "../Ukemochi-Engine/vendor/Mono/lib/mono-2.0-sgen.dll" 
 scripting_dll = "../Ukemochi-Scripting/"
 
@@ -19,10 +20,13 @@ IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
 IncludeDir ["Fmod"] = "Ukemochi-Engine/vendor/Fmod/inc"
 IncludeDir ["Mono"] = "Ukemochi-Engine/vendor/Mono/include"
 IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
-
+IncludeDir ["Freetype"] = "Ukemochi-Engine/vendor/freetype/include" 
 
 LibraryDir = {}
 LibraryDir["Fmod"] = "Ukemochi-Engine/vendor/Fmod/lib"
+LibraryDir["Freetype"] = "Ukemochi-Engine/vendor/freetype/lib"
+
+include "Ukemochi-Engine/vendor/freetype"
 LibraryDir["Mono"] = "Ukemochi-Engine/vendor/Mono/lib"
 
 include "Ukemochi-Engine/vendor/Mono"
@@ -58,6 +62,7 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.Fmod}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.Freetype}",
 		"%{IncludeDir.Mono}"
 
 	}
@@ -65,6 +70,7 @@ project "Ukemochi-Engine"
 	libdirs
     {
         "%{LibraryDir.Fmod}", -- Add FMOD library directory
+		"%{LibraryDir.Freetype}",
 		"%{LibraryDir.Mono}"
     }
 
@@ -75,6 +81,7 @@ project "Ukemochi-Engine"
 		"fmod_vc",
 		"ImGui",
 		"opengl32.lib",
+		"freetype",
 		"mono-2.0-sgen.lib"
 	}
 	filter "system:windows"
@@ -98,6 +105,8 @@ project "Ukemochi-Engine"
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
+			("{COPY} " .. freetype_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
+			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
 			{"{COPY} ./vendor/Mono/lib/4.5 ../bin/" .. outputdir .. "/Ukemochi-Game/Mono/lib/4.5"}, -- Copy the mono library
 			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")								-- Copy the assets(Editor's assets) 
 		}
@@ -171,7 +180,8 @@ project "Ukemochi-Game"
     { 
         -- Copy the Ukemochi-Engine DLL before the build 
 		"{COPY} ../bin/" .. outputdir .. "/Ukemochi-Engine/ukemochi-engine.dll ../bin/" .. outputdir .. "/Ukemochi-Game", 
-		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game",
+		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" ,
+		"{COPY} " .. freetype_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game",
 		"{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game",
 		"{COPY} ./Resources/Scripts/ ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
 	}

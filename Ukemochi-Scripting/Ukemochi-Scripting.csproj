@@ -57,18 +57,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UkemochiEngine\CoreModule\BoxCollider2D.cs" />
-    <Compile Include="UkemochiEngine\CoreModule\Debug.cs" />
-    <Compile Include="UkemochiEngine\CoreModule\Input.cs" />
-    <Compile Include="UkemochiEngine\CoreModule\KeyCode.cs" />
-    <Compile Include="UkemochiEngine\CoreModule\Rigidbody2D.cs" />
-    <Compile Include="UkemochiEngine\CoreModule\SpriteRender.cs" />
     <Compile Include="UkemochiEngine\CSharpTest.cs" />
     <Compile Include="UkemochiEngine\CoreModule\BaseScript.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\BoxCollider2D.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Component.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Debug.cs" />
     <Compile Include="UkemochiEngine\CoreModule\EngineInterop.cs" />
     <Compile Include="UkemochiEngine\CoreModule\GameObject.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Input.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\KeyCode.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Object.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Rigidbody2D.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\SpriteRender.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Transform.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Vector2.cs" />
     <Compile Include="UkemochiEngine\Wrapper.cs" />

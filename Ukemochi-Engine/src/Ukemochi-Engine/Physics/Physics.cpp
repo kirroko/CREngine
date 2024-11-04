@@ -4,7 +4,7 @@
 \file       Physics.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 31, 2024
 \brief      This file contains the definition of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Physics.h"            // for forward declaration
 #include "../FrameController.h" // for GetCurrentNumberOfSteps, GetFixedDeltaTime
-#include "../ECS/ECS.h"         // for entity components
 #include "../Math/MathUtils.h"  // for abs, clamp
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
@@ -117,7 +116,7 @@ namespace Ukemochi
     void Physics::UpdatePhysics()
     {
         // Update the physics based on the number of steps
-        for (int step = 0; step < UME::g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+        for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
             for (auto& entity : m_Entities)
             {
@@ -165,7 +164,7 @@ namespace Ukemochi
             rb.acceleration = rb.force * rb.inverse_mass;
 
         // Apply acceleration to the velocity (dv = a * dt)
-        rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(UME::g_FrameRateController.GetFixedDeltaTime());
+        rb.velocity = rb.velocity + rb.acceleration * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
         // Clamp the velocity to prevent exceeding max velocity
         float current_vel = Vec2Length(rb.velocity);
@@ -178,7 +177,7 @@ namespace Ukemochi
         }
 
         // Apply velocity to the position (dx = v * dt)
-        rb.position = rb.position + rb.velocity * static_cast<float>(UME::g_FrameRateController.GetFixedDeltaTime());
+        rb.position = rb.position + rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
         // Update transform position with the physics position
         trans.position = rb.position;
@@ -201,13 +200,13 @@ namespace Ukemochi
         rb.angular_acceleration = rb.torque * rb.inv_inertia_mass;
 
         // Apply angular acceleration to the angular velocity
-        rb.angular_velocity = rb.angular_velocity + rb.angular_acceleration * static_cast<float>(UME::g_FrameRateController.GetFixedDeltaTime());
+        rb.angular_velocity = rb.angular_velocity + rb.angular_acceleration * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
         // Clamp the angular velocity to prevent exceeding max angular velocity
         rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
 
         // Apply angular velocity to the angle
-        rb.angle = rb.angle + rb.angular_velocity * static_cast<float>(UME::g_FrameRateController.GetFixedDeltaTime());
+        rb.angle = rb.angle + rb.angular_velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
         // Update transform rotation with the physics angle
         trans.rotation = rb.angle;

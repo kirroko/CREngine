@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 #include "Core.h"
 
-namespace UME {
+namespace Ukemochi {
 
     // FrameRateController class
     /*!

@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    class DataSyncSystem : System
+    class DataSyncSystem : public System
     {
     public:
         /**

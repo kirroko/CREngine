@@ -3,15 +3,17 @@
 #include "Audio/Audio.h"
 #include "Physics/Physics.h"
 #include "Collision/Collision.h"
+#include "Math/Transformation.h"
 #include "Graphics/Renderer.h"
 #include "Logic/DataSyncSystem.h"
 #include "Logic/Logic.h"
+#include "Graphics/Camera2D.h"
+#include "InGameGUI/InGameGUI.h"
 
 namespace Ukemochi
 {
 	SceneManager::SceneManager()
 	{
-		//Audio audio;
 		// Set up ECS
 		ECS::GetInstance().Init();
 
@@ -22,17 +24,18 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
 		ECS::GetInstance().RegisterComponent<SpriteRender>();
 		ECS::GetInstance().RegisterComponent<Script>();
-
+		ECS::GetInstance().RegisterComponent<Button>();
 
 		// TODO: Register your systems
 		ECS::GetInstance().RegisterSystem<Physics>();
 		ECS::GetInstance().RegisterSystem<Collision>();
+		ECS::GetInstance().RegisterSystem<Transformation>();
 		ECS::GetInstance().RegisterSystem<Renderer>();
 		ECS::GetInstance().RegisterSystem<LogicSystem>();
 		ECS::GetInstance().RegisterSystem<DataSyncSystem>();
+		ECS::GetInstance().RegisterSystem<Camera>();
+		ECS::GetInstance().RegisterSystem<InGameGUI>();
 		//ECS::GetInstance().RegisterSystem<Audio>();
-
-		// ScriptingEngine::GetInstance().CompileScriptAssembly();
 
 		// TODO: Set a signature to your system
 		// Each system will have a signature to determine which entities it will process
@@ -65,6 +68,13 @@ namespace Ukemochi
 		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
 		ECS::GetInstance().SetSystemSignature<DataSyncSystem>(sig);
 	
+
+		// For in game GUI system
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<Transform>());
+		sig.set(ECS::GetInstance().GetComponentType<Button>());
+		ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
+
 		//init GSM
 		GSM_Initialize(GS_ENGINE);
 	}

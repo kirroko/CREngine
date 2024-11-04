@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <glad/glad.h>
 
-namespace UME {
+namespace Ukemochi {
 
 	// Static variable to track the GLFW initialization status.
 	bool WindowsWindow::s_GLFWInitialized = false;

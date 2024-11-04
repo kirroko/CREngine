@@ -234,6 +234,8 @@ namespace Ukemochi
         MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance), propertyName.c_str());
         if(property == nullptr)
             UME_ENGINE_ERROR("Failed to get property: {0}", propertyName);
+
+        return property;
     }
 
     void ScriptingEngine::SetVector2Property(MonoObject* instance, const std::string& propertyName, float x, float y)
@@ -252,7 +254,7 @@ namespace Ukemochi
 
         MonoObject* vector2Obj = mono_value_box(m_pAppDomain, klass, &vector2Instance);
         if(!vector2Obj)
-            UME_ENGINE_ASSERT(false, "Failed to instantiate Vector2 struct");
+            UME_ENGINE_ASSERT(false, "Failed to instantiate Vector2 struct")
 
         // Set the x and y fields on the Vector2 Object
         SetMonoFieldValue(vector2Obj, "x", &x);

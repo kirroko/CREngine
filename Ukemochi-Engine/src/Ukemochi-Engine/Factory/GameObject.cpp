@@ -68,7 +68,7 @@ MonoObject* GameObject::GetManagedInstance() const
     return m_ManagedInstance;
 }
 
-EntityID GameObject::GetInstanceID()
+EntityID GameObject::GetInstanceID() const
 {
     return m_InstanceID;
 }

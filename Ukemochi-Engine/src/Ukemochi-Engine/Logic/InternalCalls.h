@@ -60,12 +60,12 @@ namespace Ukemochi
 
         EXTERN_C UME_API inline bool GetKey(int32_t key)
         {
-            return UME::Input::IsKeyPressed(key);
+            return Input::IsKeyPressed(key);
         }
 
         EXTERN_C UME_API inline bool GetKeyDown(int32_t key)
         {
-            return UME::Input::IsKeyTriggered(key);
+            return Input::IsKeyTriggered(key);
         }
 
         EXTERN_C UME_API inline void LogMessage(MonoString* message)

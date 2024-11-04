@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ukemochi-Game", "Ukemochi-G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ukemochi-Scripting", "Ukemochi-Scripting\Ukemochi-Scripting.csproj", "{1A102438-06F4-E48D-6F54-DFE05B57CF0F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "Ukemochi-Engine\vendor\freetype\freetype.vcxproj", "{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -72,6 +74,12 @@ Global
 		{1A102438-06F4-E48D-6F54-DFE05B57CF0F}.Dist|x64.Build.0 = Dist|x64
 		{1A102438-06F4-E48D-6F54-DFE05B57CF0F}.Release|x64.ActiveCfg = Release|x64
 		{1A102438-06F4-E48D-6F54-DFE05B57CF0F}.Release|x64.Build.0 = Release|x64
+		{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}.Debug|x64.ActiveCfg = Debug|x64
+		{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}.Debug|x64.Build.0 = Debug|x64
+		{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}.Dist|x64.ActiveCfg = Dist|x64
+		{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}.Dist|x64.Build.0 = Dist|x64
+		{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}.Release|x64.ActiveCfg = Release|x64
+		{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

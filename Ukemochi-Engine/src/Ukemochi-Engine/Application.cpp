@@ -25,28 +25,30 @@ DigiPen Institute of Technology is prohibited.
 // System Includes
 #include "Input/Input.h" // for input system
 #include "Physics/Physics.h"	   // for physics system
+#include "Collision/Collision.h"   // for collision system
 #include "Graphics/Renderer.h"     // for graphics system
 #include "Serialization/Serialization.h" //load json
+#include "ECS/ECS.h"
+#include <iomanip>
 
+//#include <glad/glad.h>
+#include "Audio/Audio.h"
 #include "ImGui/ImGuiCore.h"
 #include "SceneManager.h"
+#include "Logic/Scripting.h"
 #include "FileWatcher.h"
 
-#include <iomanip>
 #include <crtdbg.h>				// To check for memory leaks
 
-#include "Logic/ProjectHandler.h"
-#include "Logic/Scripting.h"
 
+#include <crtdbg.h>				// To check for memory leaks
 
-using namespace Ukemochi;
-
-namespace UME
+namespace Ukemochi
 {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
     Application* Application::s_Instance = nullptr;
 
-    Application::Application() 
+    Application::Application()
     {
         s_Instance = this;
 
@@ -71,10 +73,10 @@ namespace UME
         m_Window = std::make_unique<WindowsWindow>(props);
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
-        GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-        imguiInstance.ImGuiInit(glfwWindow);
+        //GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+        //imguiInstance.ImGuiInit(glfwWindow);
 
-        auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets",std::chrono::milliseconds(3000));
+        auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
         fileWatcher->Start([fileWatcher](const std::string& path_to_watch, FileStatus status)
         {
             // Logging levels:
@@ -84,29 +86,28 @@ namespace UME
             // WARN (Indicate unexpected event, disrupt or delay)
             // ERROR (Capture a system interfering with functionalities)
             // FATAL (Capture a system crash)
-            
+
             // std::filesystem::path path(path_to_watch);
             // path.filename();
-             switch(status)
-             {
-             case Ukemochi::FileStatus::created:
-                 UME_ENGINE_INFO("File created: {0}", path_to_watch);
-                 // std::filesystem::path filePath(path_to_watch);
-                 // if(filePath.extension() == ".cs")
-                 // {
-                 //     // recompile clinet assembly
-                 //     ScriptingEngine::GetInstance().CompileScriptAssembly();
-                 //     ScriptingEngine::GetInstance().Reload();
-                 // }
-                 break;
-             case Ukemochi::FileStatus::modified:
-                 UME_ENGINE_INFO("File modified: {0}", path_to_watch);
-                 break;
-             case Ukemochi::FileStatus::erased:
-                 UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
-                 break;
-             }
-            
+            switch (status)
+            {
+            case Ukemochi::FileStatus::created:
+                UME_ENGINE_INFO("File created: {0}", path_to_watch);
+            // std::filesystem::path filePath(path_to_watch);
+            // if(filePath.extension() == ".cs")
+            // {
+            //     // recompile clinet assembly
+            //     ScriptingEngine::GetInstance().CompileScriptAssembly();
+            //     ScriptingEngine::GetInstance().Reload();
+            // }
+                break;
+            case Ukemochi::FileStatus::modified:
+                UME_ENGINE_INFO("File modified: {0}", path_to_watch);
+                break;
+            case Ukemochi::FileStatus::erased:
+                UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
+                break;
+            }
         });
         // ProjectHandler::GenerateSolutionAndProject("..\\Assets");
         fwInstance = fileWatcher; // Keep a reference to the file watch instance
@@ -118,7 +119,7 @@ namespace UME
         m_running = false;
 
         // Ensure the thread is joined before exiting to prevent memory leaks
-        if(fwInstance)
+        if (fwInstance)
             fwInstance->Stop();
 
         ScriptingEngine::GetInstance().ShutDown();
@@ -126,7 +127,7 @@ namespace UME
 
     void Application::EventIsOn(Event& e)
     {
-        imguiInstance.OnEvent(e);
+        //imguiInstance.OnEvent(e);
         EventDispatcher dispatch(e);
         dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
         if (std::string(e.GetName()) != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
@@ -152,22 +153,18 @@ namespace UME
 
         //Set up SceneManager
         SceneManager sceneManger;
+        GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+        imguiInstance.ImGuiInit(glfwWindow);
         //while engine running
         while (gsm_current != GS_STATES::GS_QUIT && m_running)
         {
-            // Check if the application has regained focus and if a script file has changed
-            // if(m_Window->IsFocused() && m_scriptChanged)
-            // {
-            //     m_scriptChanged = false;
-            //     // monoInstance.ReloadScripts(); // TODO: Implement this function
-            //     UME_ENGINE_INFO("Scripts recompiled.");
-            // }
-            
             if (Input::IsKeyPressed(GLFW_KEY_1))
             {
                 gsm_next = GS_LEVEL1;
                 gsm_previous = gsm_current = gsm_next;
                 // If 'W' key is pressed, move forward
+
+
                 UME_ENGINE_INFO("1 key is pressed");
             }
 
@@ -218,6 +215,9 @@ namespace UME
 
                 //************ Render IMGUI ************
                 imguiInstance.NewFrame();
+                //imguiInstance.ShowEntityManagementUI();
+                imguiInstance.LoadScene();
+                imguiInstance.Begin();
                 imguiInstance.ImGuiUpdate(); // Render ImGui elements
                 //************ Render IMGUI ************
 
@@ -275,6 +275,8 @@ namespace UME
 
                     //************ Render IMGUI ************
                     imguiInstance.NewFrame();
+                    imguiInstance.ShowEntityManagementUI();
+                    imguiInstance.Begin();
                     imguiInstance.ImGuiUpdate(); // Render ImGui elements
                     //************ Render IMGUI ************
 

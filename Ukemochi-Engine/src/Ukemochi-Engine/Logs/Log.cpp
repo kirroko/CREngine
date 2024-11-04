@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Logs/Log.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace UME {
+namespace Ukemochi {
 	// Static member initialization for engine and client loggers
 	std::shared_ptr<spdlog::logger> Log::s_EngineLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;

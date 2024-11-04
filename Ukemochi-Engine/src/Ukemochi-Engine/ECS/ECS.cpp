@@ -101,6 +101,12 @@ namespace Ukemochi
 		return newEntity;
 	}
 
+	// Provides a straightforward way to retrieve a list of all active entities by delegating this task to the EntityManager
+	std::vector<EntityID> ECS::GetAllEntities() {
+		return m_EntityManager->GetAllEntities();
+	}
+
+
 	unsigned long int ECS::GetLivingEntityCount() const
 	{
 		return m_EntityManager->GetLivingEntityCount();

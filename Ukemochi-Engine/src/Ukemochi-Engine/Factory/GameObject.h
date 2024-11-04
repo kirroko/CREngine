@@ -73,7 +73,7 @@ namespace Ukemochi
                 auto& script = ECS::GetInstance().GetComponent<Script>(m_InstanceID);
                 MonoObject* scriptInstance = static_cast<MonoObject*>(script.instance);
                 if (!scriptInstance)
-                    UME_ENGINE_ASSERT(false, "Failed to cast Script component");
+                    UME_ENGINE_ASSERT(false, "Failed to cast Script component")
 
                 ScriptingEngine::GetInstance().SetMonoPropertyValue(static_cast<MonoObject*>(script.instance),
                                                                     "gameObject", m_ManagedInstance);
@@ -100,7 +100,7 @@ namespace Ukemochi
                 m_ManagedComponents[type] = transform;
                 m_ManagedComponentsHandle[type] = mono_gchandle_new_v2(transform, true);
 
-                void* param[] = { m_ManagedComponents.at(type)};
+                void* param[] = {m_ManagedComponents.at(type)};
                 ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance,
                                                             "Add" + type + "Component", param, 1);
             }
@@ -174,6 +174,19 @@ namespace Ukemochi
          * @brief returns the instance ID of the GameObject
          * @return The instance ID of the GameObject 
          */
-        EntityID GetInstanceID();
+        EntityID GetInstanceID() const;
+
+        // This function returns the name of the object as a constant reference to a std::string.
+        const std::string& GetName() const { return m_Name; }
+
+        // This function returns the tag of the object, also as a constant reference.
+        const std::string& GetTag() const { return m_Tag; }
+
+        // This templated function checks if the object has a specific component of type T.
+        template <typename T>
+        bool HasComponent() const
+        {
+            return ECS::GetInstance().HasComponent<T>(m_InstanceID);
+        }
     };
-}
+};

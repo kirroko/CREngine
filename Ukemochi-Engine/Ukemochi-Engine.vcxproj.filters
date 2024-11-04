@@ -4,9 +4,6 @@
     <Filter Include="Platform">
       <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform\ImGuiOpenGl">
-      <UniqueIdentifier>{B984C8FE-A513-52C8-4E32-66C33AA0626E}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Ukemochi-Engine">
       <UniqueIdentifier>{9D9C9A89-0928-084E-1239-8B427E43644E}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,9 @@
     <Filter Include="Ukemochi-Engine\ImGui">
       <UniqueIdentifier>{87539FFA-F3BF-5AF5-BCB3-F25228DF7C5D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\InGameGUI">
+      <UniqueIdentifier>{E264B7D7-4E27-EB61-97D7-79EE03D9C33F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Input">
       <UniqueIdentifier>{5C8EA0FA-C8FA-5BF5-91EE-F352FD197E5D}</UniqueIdentifier>
     </Filter>
@@ -54,8 +54,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.h">
-      <Filter>Platform\ImGuiOpenGl</Filter>
+    <ClInclude Include="src\Platform\OpenGLFramebuffer.h">
+      <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
@@ -140,13 +140,19 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Framebuffer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Sprite.h">
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h">
@@ -161,8 +167,14 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\textRenderer.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h">
       <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h">
+      <Filter>Ukemochi-Engine\InGameGUI</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h">
       <Filter>Ukemochi-Engine\Input</Filter>
@@ -172,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
       <Filter>Ukemochi-Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h">
       <Filter>Ukemochi-Engine\Logic</Filter>
@@ -197,6 +212,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h">
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h">
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClInclude>
@@ -214,8 +232,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\ImGuiOpenGl\ImGuiOpenGl.cpp">
-      <Filter>Platform\ImGuiOpenGl</Filter>
+    <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp">
+      <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
@@ -269,13 +287,19 @@
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp">
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Framebuffer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Sprite.cpp">
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
@@ -290,13 +314,22 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp">
+      <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp">
       <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp">
+      <Filter>Ukemochi-Engine\InGameGUI</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp">
       <Filter>Ukemochi-Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Logic\InternalCalls.cpp">
+    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp">
       <Filter>Ukemochi-Engine\Logic</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp">
@@ -315,6 +348,9 @@
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp">
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp">

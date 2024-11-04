@@ -4,7 +4,7 @@
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 31, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -15,12 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 
 #include "PreCompile.h"
-#include "Collision.h"			  // for forward declaration
-#include "../Math/MathUtils.h"    // for min, max, abs
-#include "../FrameController.h"   // for GetDeltaTime
-#include "../ECS/ECS.h"			  // for entity components
-#include "../Audio/Audio.h"		  // for Audio sound effects
-#include "../Application.h"		  // for screen size
+#include "Collision.h"			// for forward declaration
+#include "../Math/MathUtils.h"	// for min, max, abs
+#include "../FrameController.h"	// for GetDeltaTime
+#include "../Audio/Audio.h"		// for Audio sound effects
+#include "../Application.h"		// for screen size
 
 namespace Ukemochi
 {
@@ -31,7 +30,7 @@ namespace Ukemochi
 	void Collision::Init()
 	{
 		// Get the screen width and height
-		UME::Application& app = UME::Application::Get();
+		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 	}
@@ -75,6 +74,17 @@ namespace Ukemochi
 		}
 	}
 
+	// Rotate a point by the angle
+	Vec2 RotatePoint(const Vec2& point, float angle)
+	{
+		// x' = x * cos(theta) - y * sin(theta)
+		// y' = x * sin(theta) - y * cos(theta)
+		return {
+			point.x * std::cos(angle) - point.y * std::sin(angle),
+			point.x * std::sin(angle) + point.y * std::cos(angle)
+		};
+	}
+
 	/*!***********************************************************************
 	\brief
 	 Update the bounding box of the entity.
@@ -85,6 +95,29 @@ namespace Ukemochi
 					-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 					BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+
+		//// Define the corners of the box
+		//Vec2 corners[4] = {
+		//	{-BOUNDING_BOX_SIZE * trans.scale.x, -BOUNDING_BOX_SIZE * trans.scale.y}, // bottom-left
+		//	{ BOUNDING_BOX_SIZE * trans.scale.x, -BOUNDING_BOX_SIZE * trans.scale.y}, // bottom-right
+		//	{ BOUNDING_BOX_SIZE * trans.scale.x,  BOUNDING_BOX_SIZE * trans.scale.y}, // top-right
+		//	{-BOUNDING_BOX_SIZE * trans.scale.x,  BOUNDING_BOX_SIZE * trans.scale.y}  // top-left
+		//};
+
+		//// Rotate all corners and translate by position
+		//for (int i = 0; i < 4; ++i)
+		//{
+		//	Vec2 rotated = RotatePoint(corners[i], trans.rotation);
+		//	corners[i].x = rotated.x + trans.position.x;
+		//	corners[i].y = rotated.y + trans.position.y;
+		//}
+
+		//// Find min and max points
+		//box.min.x = std::min({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
+		//box.min.y = std::min({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
+
+		//box.max.x = std::max({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
+		//box.max.y = std::max({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
 	}
 
 	/*!***********************************************************************
@@ -106,7 +139,7 @@ namespace Ukemochi
 
 			// Initialize and calculate the new velocity of vRel
 			firstTimeOfCollision = 0.0f;
-			float tLast = static_cast<float>(UME::g_FrameRateController.GetDeltaTime());
+			float tLast = static_cast<float>(Ukemochi::g_FrameRateController.GetDeltaTime());
 			Vec2 vRel = { vel2.x - vel1.x, vel2.y - vel1.y };
 
 			// Check for collision in the x-axis

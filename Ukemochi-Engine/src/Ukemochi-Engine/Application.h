@@ -23,10 +23,12 @@ DigiPen Institute of Technology is prohibited.
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "ImGui/ImGuiCore.h"
+
+
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
-namespace UME {
+namespace Ukemochi {
 
 
 	class UME_API Application
@@ -54,6 +56,8 @@ namespace UME {
 		UseImGui imguiInstance;
 
 		std::shared_ptr<Ukemochi::FileWatcher> fwInstance;
+
+		bool m_docking_enabled = true;
 	};
 
 	// To be defined in CLIENT (GAME)

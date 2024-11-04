@@ -8,6 +8,7 @@
  */
 #include "PreCompile.h"
 #include "Renderer.h"
+#include "TextRenderer.h"
 
 using namespace Ukemochi;
 
@@ -22,6 +23,15 @@ Renderer::Renderer()
 	vaos.clear();
 	vbos.clear();
 	ebos.clear();
+
+	framebuffer = 0;
+	textureColorbuffer = 0;
+	rbo = 0;
+	screenQuadVAO = nullptr;
+	screenQuadVBO = nullptr;
+	framebufferShader = nullptr;
+	textRenderer = nullptr;
+	playerObject = nullptr;
 };
 
 /*!
@@ -32,6 +42,7 @@ Renderer::~Renderer()
 {
 	cleanUp();
 	glfwTerminate();
+
 }
 
 /*!
@@ -55,10 +66,145 @@ void Renderer::init()
 	// Load Buffers for debug/wireframe circle drawing
 	initCircleOutlineBuffers();
 
-	// Load Buffers for animation
-	initAnimationBuffers(250.f, 350.f);
+
+	setupFramebuffer();
+	initScreenQuad();
+	initAnimationBuffers();
+
+	// Text Rendering (Test)
+	// Initialize text renderer with screen dimensions
+	textRenderer = new TextRenderer(screen_width, screen_height);
+
+	// Load multiple fonts into the text renderer
+	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
+	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+
+	// Add text objects
+	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+
+	initAnimationEntities();
+	
+	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 }
 
+void Renderer::setupFramebuffer()
+{
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+
+	// Create a color attachment texture
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen_width, screen_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Framebuffer setup complete" << std::endl;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::resizeFramebuffer(int width, int height) {
+	// Resize color texture
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+	// Resize renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+	//screen_width = width;
+	//screen_height = height;
+}
+
+void Renderer::initScreenQuad()
+{
+	float quadVertices[] = {
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	screenQuadVAO = std::make_unique<VAO>();
+	screenQuadVBO = std::make_unique<VBO>(quadVertices, sizeof(quadVertices));
+
+	screenQuadVAO->Bind();
+	screenQuadVBO->Bind();
+	screenQuadVAO->LinkAttrib(*screenQuadVBO, 0, 2, GL_FLOAT, 4 * sizeof(float), (void*)0);
+	screenQuadVAO->LinkAttrib(*screenQuadVBO, 1, 2, GL_FLOAT, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	// Create a shader for rendering the framebuffer texture
+	framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+}
+
+void Renderer::beginFramebufferRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::endFramebufferRender()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::renderScreenQuad()
+{
+	framebufferShader->Activate();
+	screenQuadVAO->Bind();
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Renderer::renderToFramebuffer()
+{
+	beginFramebufferRender();
+
+	// Add debug information
+	//std::cout << "Begin framebuffer render" << std::endl;
+	//std::cout << "Number of entities: " << m_Entities.size() << std::endl;
+
+	// Perform your regular rendering here
+	render();
+
+	//std::cout << "End framebuffer render" << std::endl;
+
+	endFramebufferRender();
+
+	// Now render the framebuffer texture to the screen
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//renderScreenQuad();
+	//glEnable(GL_DEPTH_TEST);
+}
+
+GLuint Renderer::getTextureColorBuffer() const
+{
+	return textureColorbuffer;  // this is framebuffer's color texture
+}
 
 void Renderer::initBoxBuffers()
 {
@@ -184,7 +330,7 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
 }
 
-void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
+void Renderer::initAnimationBuffers()
 {
 	// Define the vertices with placeholder texture coordinates.
 	GLfloat vertices[] = {
@@ -201,7 +347,7 @@ void Renderer::initAnimationBuffers(GLfloat width, GLfloat height)
 	};
 
 	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
-	indices_count.push_back(6);
+	//indices_count.push_back(6);
 }
 
 
@@ -257,6 +403,8 @@ void Renderer::setUpTextures(const std::string& texturePath)
 void Renderer::setUpShaders()
 {
 	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+
+	//particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
 }
 
 /*!
@@ -290,35 +438,7 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
 	vaos.push_back(vao);
 	vbos.push_back(vbo);
 	ebos.push_back(ebo);
-}
 
-/*!
-* @brief Clear VAOs, VBOs, EBOs for new buffer after drawing
-*/
-void Renderer::cleanUpBuffers()
-{
-	for (auto& vao : vaos)
-	{
-		vao->Delete();
-		delete vao;
-	}
-
-	for (auto& vbo : vbos)
-	{
-		vbo->Delete();
-		delete vbo;
-	}
-
-	for (auto& ebo : ebos)
-	{
-		ebo->Delete();
-		delete ebo;
-	}
-
-	vaos.clear();
-	vbos.clear();
-	ebos.clear();
-	indices_count.clear();
 }
 
 /*!
@@ -334,65 +454,81 @@ void Renderer::render()
 	deltaTime = currentFrameTime - lastFrame;
 	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
 
-	// Update the animation frame based on elapsed time
-	elapsedTime += deltaTime;
-
-	if (elapsedTime >= frameDuration) {
-		currentFrame++;  // Move to the next frame
-		if (currentFrame >= totalFrames) {
-			currentFrame = 0;  // Loop back to the first frame
-		}
-		elapsedTime = 0.0f;  // Reset elapsed time
-
-		// Update UV coordinates for the current animation frame
-		updateAnimationFrame(currentFrame, 250, 2000);
-	}
 
 	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Set Orthographic projection
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screen_width), 0.0f, static_cast<GLfloat>(screen_height), -1.0f, 1.0f);
+	// Get the camera system instance
+	auto& camera = ECS::GetInstance().GetSystem<Camera>();
 
-	// Optionally set up a view matrix (identity if no camera movement)
-	glm::mat4 view = glm::mat4(1.0f);
+	// Set up a view and projection matrix
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
 	// Send the projection and view matrices to the shader
 	shaderProgram->Activate();
-	shaderProgram->setMat4("projection", projection);
 	shaderProgram->setMat4("view", view);
+	shaderProgram->setMat4("projection", projection);
+
+
+	//std::cout << "Begin render" << std::endl;
+	//std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
+		//std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// Set vec2 to glm::vec3 for matrix transformations
-		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
-		// Set up the model matrix using the transform's position, scale, and rotation
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		//// Set vec2 to glm::vec3 for matrix transformations
+		//glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+		//glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
+		//// Set up the model matrix using the transform's position, scale, and rotation
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+		//model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// Apply scaling if enabled
-		if (scale_enabled)
-			model = glm::scale(model, glm::vec3(transform.scale.x * scale_factor, transform.scale.y * scale_factor, 1.0f));
-		else
-			model = glm::scale(model, scale); // Use entity's original scale
+		//// Apply rotation if enabled
+		//if (entity == playerObject->GetInstanceID() && rotation_enabled)
+		//{
+		//	// Update the rotation angle based on deltaTime
+		//	transform.rotation += rotationSpeed * deltaTime;
+		//	if (transform.rotation >= 360.f)
+		//		transform.rotation -= 360.f;
 
-		// Apply rotation if enabled
-		if (rotation_enabled)
-		{
-			// Update the rotation angle based on deltaTime
-			transform.rotation += rotationSpeed * deltaTime;
-			if (transform.rotation >= 360.f)
-				transform.rotation -= 360.f;
+		//	// Apply rotation to the model matrix
+		//	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		//}
 
-			// Apply rotation to the model matrix
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		}
+		//// Determine the scale factors based on facing direction and scaling
+		//GLfloat scaleX = transform.scale.x;
+		//GLfloat scaleY = transform.scale.y;
+
+		//// If the entity is the player, adjust based on the direction and scaling factor
+		//if (entity == playerObject->GetInstanceID())
+		//{
+		//	// Adjust X-axis scale to flip direction if not facing right
+		//	scaleX = isFacingRight ? -scaleX : scaleX;
+
+		//	// If scaling is enabled, apply the scale factor
+		//	if (scale_enabled)
+		//	{
+		//		scaleX *= scale_factor;
+		//		scaleY *= scale_factor;
+		//	}
+		//}
+
+		//// Apply the calculated scale to the model matrix
+		//model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
+
+		// Set up the model matrix
+		glm::mat4 model{};
+
+		// Copy elements from custom matrix4x4 to glm::mat4
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				model[i][j] = transform.transform_matrix.m2[j][i];
 
 		shaderProgram->setMat4("model", model);
 
@@ -406,8 +542,21 @@ void Renderer::render()
 		}
 
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
-		if (spriteRenderer.animated)
-			drawBoxAnimation(transform.position.x, transform.position.y, transform.scale.x, transform.scale.y);
+		if (spriteRenderer.animated) 
+		{
+			// Choose an animation based on the entity state (0 = idle, 1 = running)
+			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
+
+			// Update and draw the current animation
+			currentAnimation.update(deltaTime);
+			updateAnimationFrame(currentAnimation.currentFrame,
+				currentAnimation.frameWidth,
+				currentAnimation.frameHeight,
+				currentAnimation.totalWidth,
+				currentAnimation.totalHeight);
+
+			drawBoxAnimation();
+		}
 		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
 			drawBox();
 		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
@@ -419,6 +568,9 @@ void Renderer::render()
 			drawCircleOutline();
 		entity_count++;
 	}
+
+	// Render all text objects
+	textRenderer->renderAllText();
 }
 
 /*!
@@ -470,6 +622,24 @@ void Renderer::cleanUp()
 		delete shaderProgram;  // Deallocate memory
 		shaderProgram = nullptr;
 	}
+
+	if (framebuffer)
+		glDeleteFramebuffers(1, &framebuffer);
+	framebuffer = 0;
+
+	if (textureColorbuffer)
+		glDeleteTextures(1, &textureColorbuffer);
+	textureColorbuffer = 0;
+
+	if (rbo)
+		glDeleteRenderbuffers(1, &rbo);
+	rbo = 0;
+	if (textRenderer)
+	{
+		delete textRenderer;
+		textRenderer = nullptr;
+	}
+
 }
 
 /*!
@@ -501,9 +671,6 @@ void Renderer::drawBox()
  * @brief Draws a 2D circle with the given position, radius, and texture,
 		  starting position is the top left of screen. It starts from the
 		  center of the box.
- * @param x The x-coordinate of the center of the circle (in screen space).
- * @param y The y-coordinate of the center of the circle (in screen space).
- * @param radius The radius of the circle (in screen space).
  */
 void Renderer::drawCircle()
 {
@@ -581,24 +748,32 @@ void Renderer::drawCircleOutline()
 	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
-void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int totalWidth)
+void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight)
 {
-	// Calculate the UV coordinates for the current frame.
-	float uvX = (currentFrame * frameWidth) / (float)totalWidth;
-	float uvWidth = frameWidth / (float)totalWidth;
+	// Calculate the column and row of the current frame in the sprite sheet
+	int column = currentFrame % (totalWidth / frameWidth);
+	int row = currentFrame / (totalWidth / frameWidth);
 
-	// Update the UV coordinates in the VBO.
+	// Calculate UV coordinates based on the current column and row
+	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
+	float uvY = 1.0f - (row * frameHeight) / static_cast<float>(totalHeight) - (frameHeight / static_cast<float>(totalHeight)); // Flip vertically if needed
+	float uvWidth = frameWidth / static_cast<float>(totalWidth);
+	float uvHeight = frameHeight / static_cast<float>(totalHeight);
+
+	// Update the UV coordinates in the VBO
 	GLfloat updatedUVs[] = {
-		 -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, 1.0f,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, 1.0f    // Top-right
+		// Positions         // Colors        // UVs
+		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY + uvHeight,   // Top-left
+		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY,             // Bottom-left
+		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY,   // Bottom-right
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY + uvHeight    // Top-right
 	};
 
+	// Update VBO data
 	vbos[ANIMATION_VAO]->UpdateData(updatedUVs, sizeof(updatedUVs));
 }
 
-void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+void Renderer::drawBoxAnimation()
 {
 	// Activate the shader program and bind the texture.
 	shaderProgram->Activate();
@@ -609,3 +784,102 @@ void Renderer::drawBoxAnimation(GLfloat x, GLfloat y, GLfloat width, GLfloat hei
 	vaos[ANIMATION_VAO]->Unbind();
 }
 
+/*!
+* @brief Create a text object in the text renderer.
+*/
+void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+{
+	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+}
+
+/*!
+* @brief Update a text object in the text renderer.
+*/
+void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+
+void Renderer::initAnimationEntities()
+{
+	int playerEntityID = 1; // Replace with actual entity IDs from your ECS or game logic
+
+	// Create animations for the player
+	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
+	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
+
+	// Add multiple animations for the player entity (idle and running animations)
+	entity_animations[playerEntityID] = { idleAnimation, runAnimation };
+
+}
+
+void Renderer::toggleSlowMotion()
+{
+	// Toggle slow-motion state
+	isSlowMotion = !isSlowMotion;
+
+	// Loop through all entities and adjust the frame duration for their animations
+	for (auto& entity : m_Entities)
+	{
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+		if (spriteRenderer.animated)
+		{
+			// Get the animations associated with this entity
+			auto& animations = entity_animations[entity];
+			for (auto& animation : animations)
+			{
+				// Adjust the frame duration based on slow-motion state
+				if (isSlowMotion)
+				{
+					animation.setFrameDuration(animation.originalFrameDuration * slowMotionFactor);
+				}
+				else
+				{
+					animation.resetFrameDuration(); // Reset to original duration
+				}
+			}
+		}
+	}
+}
+
+void Renderer::animationKeyInput()
+{
+	auto& playerSprite = playerObject->GetComponent<SpriteRender>();
+
+	// File paths for the textures
+	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+	if (Input::IsKeyPressed(GLFW_KEY_A)) {
+		isFacingRight = false; // Moving left
+	}
+	else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+		isFacingRight = true; // Moving right
+	}
+
+	// Check if any movement keys are pressed
+	if (Input::IsKeyPressed(GLFW_KEY_W) ||
+		Input::IsKeyPressed(GLFW_KEY_A) ||
+		Input::IsKeyPressed(GLFW_KEY_S) ||
+		Input::IsKeyPressed(GLFW_KEY_D))
+	{
+		// If we are not already in the running state, switch to the running texture
+		if (playerSprite.animationIndex != 1)
+		{
+			playerSprite.animationIndex = 1;
+			playerSprite.texturePath = runningTexturePath;
+
+			// Set the animation index and texture path to indicate running state
+			std::cout << "Switching to running animation.\n";
+		}
+	}
+	else
+	{
+		// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+		if (playerSprite.animationIndex != 0)
+		{
+			playerSprite.animationIndex = 0;
+			playerSprite.texturePath = idleTexturePath;
+
+			// Set the animation index and texture path to indicate idle state
+			std::cout << "Switching to idle animation.\n";
+		}
+	}
+}
