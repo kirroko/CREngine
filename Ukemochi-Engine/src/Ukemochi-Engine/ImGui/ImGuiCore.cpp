@@ -30,10 +30,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"
 
 #include "../Graphics/Renderer.h"
+#include "../SceneManager.h"
 namespace Ukemochi
 {
 	float UseImGui::m_Time = 0.0f; //!< Time since last frame for calculating DeltaTime.
-
+	float UseImGui::m_LastAssetUpdateTime = 0.0f;
+	float UseImGui::m_LastSceneUpdateTime = 0.0f;
+	std::vector<std::string> UseImGui::assetFiles;
+	std::vector<std::string> UseImGui::sceneFiles;
 
 	/*!
 	\brief Initializes the ImGui context and sets up OpenGL.
@@ -72,6 +76,7 @@ namespace Ukemochi
 	void UseImGui::NewFrame()
 	{
 
+		// ImGui frame setup
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -80,12 +85,149 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+		// Toggle to enable or disable docking
+		static bool enableDocking = true;
+
+		// Create a main menu bar with an option to toggle docking
+		ImGui::BeginMainMenuBar();
+		if (ImGui::BeginMenu("Options"))
+		{
+			ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+
+		// Set up the window to cover the entire viewport
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		// Configure window flags for a fullscreen dockspace
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+			ImGuiWindowFlags_NoNavFocus;
+
+		// Optionally make the background transparent
+		window_flags |= ImGuiWindowFlags_NoBackground;
+
+		// Begin the main dockspace window
+		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+
+		// Set up the dockspace only if docking is enabled
+		if (enableDocking)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+			ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+			ImGui::DockSpace(dockspace_id, ImVec2(0, 0), dockspace_flags);
+		}
+
+		ImGui::End(); // End the dockspace window
+
+	}
+
+	void UseImGui::LoadAssets()
+	{
+		// Clear the previous asset list
+		assetFiles.clear();
+
+		// Load assets from the Assets directory
+		std::string assetsDir = "../Assets";
+		for (const auto& entry : std::filesystem::directory_iterator(assetsDir)) {
+			if (entry.is_regular_file()) {
+				assetFiles.push_back(entry.path().filename().string());
+			}
+		}
+	}
+
+	void UseImGui::AssetBrowser(char* filePath)
+	{
+		ImGui::Begin("Asset Browser");
+		//LoadAssets();
+		if (ImGui::Button("Refresh Assets")) {
+			LoadAssets(); // Manually trigger loading assets
+		}
+
+		static int selectedAssetIndex = -1;
+		for (size_t i = 0; i < assetFiles.size(); ++i) {
+			bool isSelected = (selectedAssetIndex == static_cast<int>(i));
+			if (ImGui::Selectable(assetFiles[i].c_str(), isSelected)) {
+				selectedAssetIndex = static_cast<int>(i);
+				std::string fullPath = "../Assets/" + assetFiles[i];
+				std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void UseImGui::LoadScene()
 	{
-		static char filePath[256] = "../Assets/.json";
+		// Clear the previous asset list
+		sceneFiles.clear();
 
+		// Load assets from the Assets directory
+		std::string scenesDir = "../Assets/Scenes";
+		for (const auto& entry : std::filesystem::directory_iterator(scenesDir)) {
+			if (entry.is_regular_file()) {
+				sceneFiles.push_back(entry.path().filename().string());
+			}
+		}
+	}
+
+	void UseImGui::SceneBrowser()
+	{
+		// Get the current time
+		float currentTime = ImGui::GetTime();
+
+		// Check if 1 second has passed since the last update
+		if (currentTime - m_LastSceneUpdateTime >= 1.0f) {
+			// Update the asset list
+			LoadScene();
+			m_LastSceneUpdateTime = currentTime; // Reset the timer
+		}
+
+		ImGui::Begin("Scene Browser");
+
+		// Display the list of scenes
+		static int selectedSceneIndex = -1;
+		for (size_t i = 0; i < sceneFiles.size(); ++i) {
+			bool isSelected = (selectedSceneIndex == static_cast<int>(i));
+			if (ImGui::Selectable(sceneFiles[i].c_str(), isSelected)) {
+				selectedSceneIndex = static_cast<int>(i);
+				std::cout << "Selected scene: " << sceneFiles[selectedSceneIndex] << std::endl;
+			}
+		}
+
+		// State variable to manage the visibility of the input field
+		static bool showInputField = false;
+		static char sceneName[128] = "Level"; // Default name for the scene
+
+		// Add a button to save the scene
+		if (ImGui::Button("Save Scene")) {
+			showInputField = true; // Show the input field when the button is clicked
+		}
+
+		// Display the input field if showInputField is true
+		if (showInputField) {
+			ImGui::InputText("Scene Name", sceneName, IM_ARRAYSIZE(sceneName));
+
+			if (ImGui::Button("Confirm Save")) {
+				// Call your SaveScene function
+				std::cout << "Scene saved as: " << sceneName << std::endl;
+
+				//SceneManager::GetInstance().SaveScene(sceneName);
+				std::cout << "Scene saved successfully: " << sceneName << std::endl;
+				// Hide the input field after saving
+				showInputField = false;
+				// Optionally, reset the scene name for the next save
+				sceneName[0] = '\0'; // Clear the input field
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void UseImGui::DisplayEntityDetails(GameObject& obj) {
@@ -116,6 +258,11 @@ namespace Ukemochi
 		std::vector<std::string> entityNames;
 		for (const auto& obj : gameObjects) {
 			entityNames.push_back(std::to_string(obj.GetInstanceID()) + ": " + obj.GetName());
+		}
+
+		// Check if there are any entities and set the selected index
+		if (!entityNames.empty() && selectedEntityIndex == -1) {
+			selectedEntityIndex = 0; // Default to the first item if nothing is selected
 		}
 
 		// Create a vector of const char* pointers to each name in entityNames
@@ -154,10 +301,24 @@ namespace Ukemochi
 		}
 	}
 
+	bool IsJsonFile(const std::string& filePath)
+	{
+		return filePath.size() >= 5 && filePath.substr(filePath.size() - 5) == ".json";
+	}
+
 	void UseImGui::ShowEntityManagementUI()
 	{
+		// Begin a dockable window
+		ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
+
 		static char filePath[256] = "../Assets/Player.json";
 		static int selectedEntityIndex = -1;
+
+		static bool showError = false;
+		static float errorDisplayTime = 0.0f;
+
+		// Display the Asset Browser
+		AssetBrowser(filePath);
 
 		if (ImGui::TreeNode("Current GameObjects")) {
 			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
@@ -176,12 +337,20 @@ namespace Ukemochi
 		ImGui::InputText("Player Data File", filePath, IM_ARRAYSIZE(filePath));
 
 		if (ImGui::Button("Create Player Entity")) {
-			if (filePath[0] != '\0') {
+			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				GameObjectFactory::CreateObject(filePath);
+				showError = false; // Reset error
+			}
+			else {
+				showError = true; // Show error message
+				errorDisplayTime = ImGui::GetTime();
 			}
 		}
 
-		// Pass selectedEntityIndex by reference so it can be updated in the combo function
+		if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f) {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid file type. Only .json files can be used to create an object.");
+		}
+
 		DisplayEntitySelectionCombo(selectedEntityIndex);
 
 		if (ImGui::Button("Remove Entity")) {
@@ -195,12 +364,13 @@ namespace Ukemochi
 				EditEntityProperties(selectedObject);
 			}
 		}
+
+		// End the dockable window
+		ImGui::End();
 	}
 
-	void UseImGui::Begin()
+	void UseImGui::SceneRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 		static bool showGameView = true;
 		Application& app = Application::Get();
 		//GLuint texture = renderer.getTextureColorBuffer();
@@ -208,16 +378,15 @@ namespace Ukemochi
 		if (showGameView)
 		{
 			ImGui::Begin("Player Loader", &showGameView);   // Create a window called "Another Window"
-			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 },{1,0});
+			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 }, { 1,0 });
 			ImGui::End();
 		}
+	}
 
-		/*static bool showHierarchy = true;
-		if (showHierarchy)
-		{
-			ImGui::Begin("Scene Hierarchy", &showHierarchy);
-			ImGui::End();
-		}*/
+	void UseImGui::Begin()
+	{
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
 	}
 	/*!
 	\brief Renders the current ImGui frame and draws the UI.
@@ -227,6 +396,7 @@ namespace Ukemochi
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
