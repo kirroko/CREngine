@@ -29,7 +29,7 @@ public:
 	void beginBatch();
 	void endBatch();
 	void flush();
-	void drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID);
+	void drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates);
 	void drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color);
 
 private:

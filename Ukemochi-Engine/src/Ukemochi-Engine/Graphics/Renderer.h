@@ -124,7 +124,8 @@ public:
 	 */
 	void drawCircleOutline();
 
-	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight);
+	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates);
+
 
 
 	void drawBoxAnimation();
@@ -188,6 +189,7 @@ private:
 	std::unordered_map<std::string, Texture*> textureCache;
 	std::vector<std::string> texturePathsOrder;
 	std::unordered_map<GLuint, int> textureIDMap;
+	int nextAvailableTextureUnit = 0;
 
 public:
 	/*!

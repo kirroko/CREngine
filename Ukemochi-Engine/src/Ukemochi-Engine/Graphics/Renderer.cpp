@@ -399,12 +399,13 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
-	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size())); // limit to max texture units (32)
-	std::vector<int> textureUnits(textureCount);  // This will hold [0, 1, 2, ..., textureCount-1]
+	// Set textureCount based on the number of unique textures, limited to 32
+	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
+	std::vector<int> textureUnits(textureCount);
 
 	std::cout << "Binding textures to shader units..." << std::endl;
 
-	for (int i = 0; i < textureCount; ++i) {
+	for (int i = 0; i < texturePathsOrder.size() && nextAvailableTextureUnit < 32; ++i) {
 		const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];
 
@@ -413,16 +414,43 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			continue;
 		}
 
-		glActiveTexture(GL_TEXTURE0 + i);       // Activate texture unit i
-		glBindTexture(GL_TEXTURE_2D, texture->ID); // Bind texture to active unit
+		// Check if this texture is already mapped to a unit
+		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
+			// New texture, assign to the next available texture unit
+			textureIDMap[texture->ID] = nextAvailableTextureUnit;
 
-		std::cout << "Bound texture ID " << texture->ID << " to texture unit " << i << std::endl;
-		textureUnits[i] = i;  // Assign texture unit index to array
+			// Bind the texture to the OpenGL texture unit
+			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
+			glBindTexture(GL_TEXTURE_2D, texture->ID);
+
+			std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
+			textureUnits[i] = nextAvailableTextureUnit;
+
+			// Increment to the next available texture unit
+			nextAvailableTextureUnit++;
+		}
+		else {
+			// Texture already mapped, retrieve existing texture unit
+			textureUnits[i] = textureIDMap[texture->ID];
+		}
 	}
+	for (int i = 0; i < textureCount; ++i) {
+		const auto& path = texturePathsOrder[i];
+		Texture* texture = textureCache[path];
 
-	// Pass the array of texture unit indices to the shader uniform array textures
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, texture->ID);
+
+		// Verify that the texture is bound to the expected unit
+		GLint boundTexture;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+		std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
+			<< ", actual bound ID: " << boundTexture << std::endl;
+	}
+	// Pass the array of texture unit indices to the shader uniform array "textures"
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
 }
+
 
 
 /*!
@@ -479,6 +507,11 @@ void Renderer::render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// Get the current time
+	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());  // This will return time in seconds
+	deltaTime = currentFrameTime - lastFrame;
+	lastFrame = currentFrameTime;
+
 	// Clear the screen
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -511,7 +544,52 @@ void Renderer::render()
 		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
 
 		// Combine matrices into the final MVP matrix
-		glm::mat4 mvp = projection * view * model;
+		//glm::mat4 mvp = projection * view * model;
+
+		// Initialize UV coordinates
+		GLfloat uvCoordinates[8];
+
+		// Check for animation
+		if (spriteRenderer.animated)
+		{
+			// Fetch the current animation and frame data
+			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
+			currentAnimation.update(deltaTime);  // Advance frame if needed
+
+			// Update UV coordinates for the current animation frame
+			updateAnimationFrame(currentAnimation.currentFrame,
+				currentAnimation.frameWidth,
+				currentAnimation.frameHeight,
+				currentAnimation.totalWidth,
+				currentAnimation.totalHeight,
+				uvCoordinates);
+			// Flip UVs horizontally if the player is facing left
+			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+				// Swap left and right UV coordinates
+				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
+				std::swap(uvCoordinates[1], uvCoordinates[3]);
+				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
+				std::swap(uvCoordinates[5], uvCoordinates[7]);
+			}
+		}
+		else
+		{
+			// Use default full texture UVs for static sprites
+			uvCoordinates[0] = 0.0f; uvCoordinates[1] = 0.0f;  // Bottom-left
+			uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
+			uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
+			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
+
+			// Flip UVs for static sprites if the player is facing left
+			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+				// Swap left and right UV coordinates
+				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
+				std::swap(uvCoordinates[1], uvCoordinates[3]);
+				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
+				std::swap(uvCoordinates[5], uvCoordinates[7]);
+			}
+		}
+
 
 		GLint textureID = -1;
 		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
@@ -523,10 +601,16 @@ void Renderer::render()
 		}
 		std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
 
-		int normalizedTexID = textureID - 2;
-
+		//int normalizedTexID = textureID - 2;
+		int mappedTextureUnit = textureIDMap[textureID];
 		// Render using batch renderer, passing the position and size directly
-		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), normalizedTexID);
+		//batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), normalizedTexID);
+		// Draw the sprite using the batch renderer, passing the updated UV coordinates
+		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y),
+			glm::vec2(transform.scale.x, transform.scale.y),
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			mappedTextureUnit,
+			uvCoordinates);
 
 		entity_count++;
 	}
@@ -736,30 +820,29 @@ void Renderer::drawCircleOutline()
 	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
-void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight)
+void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
 {
-	// Calculate the column and row of the current frame in the sprite sheet
+	// Calculate column and row of the current frame
 	int column = currentFrame % (totalWidth / frameWidth);
 	int row = currentFrame / (totalWidth / frameWidth);
 
-	// Calculate UV coordinates based on the current column and row
+	// Calculate normalized UV coordinates
 	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
-	float uvY = 1.0f - (row * frameHeight) / static_cast<float>(totalHeight) - (frameHeight / static_cast<float>(totalHeight)); // Flip vertically if needed
+	float uvY = 1.0f - ((row + 1) * frameHeight) / static_cast<float>(totalHeight); // Adjusted to flip vertically
 	float uvWidth = frameWidth / static_cast<float>(totalWidth);
 	float uvHeight = frameHeight / static_cast<float>(totalHeight);
 
-	// Update the UV coordinates in the VBO
-	GLfloat updatedUVs[] = {
-		// Positions         // Colors        // UVs
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY + uvHeight,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY,             // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY + uvHeight    // Top-right
-	};
-
-	// Update VBO data
-	vbos[ANIMATION_VAO]->UpdateData(updatedUVs, sizeof(updatedUVs));
+	// Set UV coordinates with OpenGL bottom-left orientation
+	uvCoordinates[0] = uvX;                 // Bottom-left
+	uvCoordinates[1] = uvY;
+	uvCoordinates[2] = uvX + uvWidth;       // Bottom-right
+	uvCoordinates[3] = uvY;
+	uvCoordinates[4] = uvX + uvWidth;       // Top-right
+	uvCoordinates[5] = uvY + uvHeight;
+	uvCoordinates[6] = uvX;                 // Top-left
+	uvCoordinates[7] = uvY + uvHeight;
 }
+
 
 void Renderer::drawBoxAnimation()
 {

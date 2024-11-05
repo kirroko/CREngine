@@ -87,7 +87,7 @@ void BatchRenderer2D::createVertexBuffer()
     vao->LinkAttribInteger(*vbo, 3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, textureID));
 }
 
-void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID) 
+void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates)
 {
     // Push vertices to the buffer
     if (vertices.size() >= maxSprites * 4) 
@@ -110,11 +110,11 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     glm::vec2 uv3(1.0f, 1.0f); // Top-right UV
     glm::vec2 uv4(0.0f, 1.0f); // Top-left UV
 
-    // Push vertices into the batch's vertex buffer
-    vertices.push_back({ pos1, color, uv1, textureID });
-    vertices.push_back({ pos2, color, uv2, textureID });
-    vertices.push_back({ pos3, color, uv3, textureID });
-    vertices.push_back({ pos4, color, uv4, textureID });
+    // Push vertices with updated UV coordinates
+    vertices.push_back({ pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID });
+    vertices.push_back({ pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID });
+    vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
+    vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID }); 
     std::cout << "Vertex texture ID: " << textureID << std::endl;
 
 }
