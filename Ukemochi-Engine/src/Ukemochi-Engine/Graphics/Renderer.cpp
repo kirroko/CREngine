@@ -393,7 +393,7 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 		textureCache[texturePath] = texture;
 		texturePathsOrder.push_back(texturePath);
 		// Log successful loading and texture ID
-		std::cout << "Loaded texture " << texturePath << " with ID: " << texture->ID << " at index " << textureIndex << std::endl;
+		//std::cout << "Loaded texture " << texturePath << " with ID: " << texture->ID << " at index " << textureIndex << std::endl;
 
 		textureIndex++;
 	}
@@ -406,7 +406,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
 	std::vector<int> textureUnits(textureCount);
 
-	std::cout << "Binding textures to shader units..." << std::endl;
+	//std::cout << "Binding textures to shader units..." << std::endl;
 
 	for (int i = 0; i < texturePathsOrder.size() && nextAvailableTextureUnit < 32; ++i) {
 		const auto& path = texturePathsOrder[i];
@@ -426,7 +426,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
 			glBindTexture(GL_TEXTURE_2D, texture->ID);
 
-			std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
+			//std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
 			textureUnits[i] = nextAvailableTextureUnit;
 
 			// Increment to the next available texture unit
@@ -447,8 +447,8 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Verify that the texture is bound to the expected unit
 		GLint boundTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
-		std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
-			<< ", actual bound ID: " << boundTexture << std::endl;
+		//std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
+		//	<< ", actual bound ID: " << boundTexture << std::endl;
 	}
 	// Pass the array of texture unit indices to the shader uniform array "textures"
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
@@ -534,7 +534,7 @@ void Renderer::render()
 	// Render entities
 	batchRenderer->beginBatch();
 	int entity_count = 0;
-	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
+	//std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	for (auto& entity : m_Entities)
 	{
@@ -613,7 +613,7 @@ void Renderer::render()
 			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
 			continue;
 		}
-		std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
+		//std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
 
 		//int normalizedTexID = textureID - 2;
 		int mappedTextureUnit = textureIDMap[textureID];

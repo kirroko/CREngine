@@ -455,7 +455,7 @@ namespace Ukemochi
 		if (ImGui::Button("Create Entity")) {
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
-				ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath);
+				ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
 				if (go.GetTag()=="Player")
 				{
 					ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
