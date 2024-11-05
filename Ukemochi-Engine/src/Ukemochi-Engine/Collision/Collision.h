@@ -156,18 +156,14 @@ namespace Ukemochi
          Collision response between two dynamic objects.
         \param[out] trans1
          The Transform component attached to the first collided object.
-        \param[in] box1
-         The BoxCollider2D component attached to the first collided object.
         \param[out] rb1
          The Rigidbody2D component attached to the first collided object.
         \param[out] trans2
          The Transform component attached to the second collided object.
-        \param[in] box2
-         The BoxCollider2D component attached to the second collided object.
         \param[out] rb2
          The Rigidbody2D component attached to the second collided object.
         *************************************************************************/
-        void Dynamic_Response(Transform& trans1, const BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, Rigidbody2D& rb2);
+        void Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2);
 
         /*!***********************************************************************
         \brief

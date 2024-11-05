@@ -336,7 +336,7 @@ namespace Ukemochi
 		if (box1.tag == "Player" && box2.is_trigger)
 			Trigger_Response(trans1, trans2, box2); // PLAYER AND TRIGGERS
 		else
-			Dynamic_Response(trans1, box1, rb1, trans2, box2, rb2); // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Dynamic_Response(trans1, rb1, trans2, rb2); // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 
 		// Play a sound effect on collision
 		if (!Audio::GetInstance().IsPlaying(HIT))
@@ -395,7 +395,7 @@ namespace Ukemochi
 	\brief
 	 Collision response between two dynamic objects.
 	*************************************************************************/
-	void Collision::Dynamic_Response(Transform& trans1, const BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, Rigidbody2D& rb2)
+	void Collision::Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2)
 	{
 		// DYNAMIC AND DYNAMIC
 		// Calculate the difference in positions
