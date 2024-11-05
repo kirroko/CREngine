@@ -400,7 +400,7 @@ namespace Ukemochi
 		// DYNAMIC AND DYNAMIC
 		// Calculate the difference in positions
 		Vector2D difference = trans2.position - trans1.position;
-		Vector2D combine_half_scale = { trans1.scale.x * 0.5f + trans2.scale.x * 0.5f, trans1.scale.y * 0.5f + trans2.scale.y * 0.5f };
+		Vector2D combine_half_scale = (trans1.scale + trans2.scale) * 0.5f;
 
 		// Calculate the overlap on the x and y axis
 		float overlap_x = combine_half_scale.x - std::abs(difference.x);
@@ -422,14 +422,14 @@ namespace Ukemochi
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.x -= penetration * 0.5f;
-						rb1.velocity.x = -response_x * 0.5f;
+						rb1.velocity.x = -response_x;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.x += penetration * 0.5f;
-						rb2.velocity.x = response_x * 0.5f;
+						rb2.velocity.x = response_x;
 					}
 				}
 				else
@@ -438,14 +438,14 @@ namespace Ukemochi
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.x += penetration * 0.5f;
-						rb1.velocity.x = response_x * 0.5f;
+						rb1.velocity.x = response_x;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.x -= penetration * 0.5f;
-						rb2.velocity.x = -response_x * 0.5f;
+						rb2.velocity.x = -response_x;
 					}
 				}
 			}
@@ -453,7 +453,7 @@ namespace Ukemochi
 			{
 				// Resolve along the y-axis
 				float penetration = overlap_y;
-				float collisionResponseY = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+				float response_y = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
 				if (difference.y > 0)
 				{
@@ -461,14 +461,14 @@ namespace Ukemochi
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.y -= penetration * 0.5f;
-						rb1.velocity.y = -collisionResponseY * 0.5f;
+						rb1.velocity.y = -response_y;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.y += penetration * 0.5f;
-						rb2.velocity.y = collisionResponseY * 0.5f;
+						rb2.velocity.y = response_y;
 					}
 				}
 				else
@@ -477,14 +477,14 @@ namespace Ukemochi
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.y += penetration * 0.5f;
-						rb1.velocity.y = collisionResponseY * 0.5f;
+						rb1.velocity.y = response_y;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.y -= penetration * 0.5f;
-						rb2.velocity.y = -collisionResponseY * 0.5f;
+						rb2.velocity.y = -response_y;
 					}
 				}
 			}
