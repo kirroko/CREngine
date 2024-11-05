@@ -146,4 +146,12 @@ namespace Ukemochi
 		//FMOD::Channel pChannels;
 		//FMOD::ChannelGroup pChannelGroups;
 	};
+
+	struct Script
+	{
+		std::string scriptPath;
+		std::string scriptName;
+		void* instance = nullptr; // MonoObject from client script
+		void* methodInstance = nullptr; // MonoMethod from client script
+	};
 }

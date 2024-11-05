@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <memory>
+#include <thread>
+#include <atomic>
 #include <utility>
 #include <algorithm>
 #include <functional>

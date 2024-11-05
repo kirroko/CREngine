@@ -39,8 +39,15 @@
             },
             {
                 "Name": "SpriteRender",
-              "Sprite": "Ukemochi.png",
-              "Shape" : 0
+                "Sprite": "idle_player_sprite_sheet.png",
+                "Shape" : 0,
+                "animated" : true,
+                "animationIndex" : true
+            },
+            {
+                "Name": "Script",
+                "Path": "../Assets/Scripts/Player.cs",
+                "ClassName": "Player"
             }
         ]
     }

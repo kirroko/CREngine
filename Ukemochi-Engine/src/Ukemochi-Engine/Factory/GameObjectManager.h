@@ -23,7 +23,7 @@ namespace Ukemochi
 {
     class GameObjectManager
     {
-        GameObjectManager() = default;
+        GameObjectManager();
         std::unordered_map<EntityID,std::unique_ptr<GameObject>> m_GOs;
     public:
         static GameObjectManager& GetInstance()
@@ -31,11 +31,30 @@ namespace Ukemochi
             static GameObjectManager instance;
             return instance;
         }
+        // Type Registry
+        static std::unordered_map<std::string,std::function<void(GameObject&,MonoObject*)>> componentRegistry;
+        
+        void RegisterComponents();
+        
+        /**
+         * @brief Create a new gameobject from a prefab
+         * @param prefabPath The path to the prefab
+         * @return reference to the new created game object
+         */
+        GameObject& CreatePrefabObject(const std::string& prefabPath);
 
-        GameObject& CreateObject();
+        /**
+         * @brief Create a new game object (that is empty)
+         * @return reference to the new created game object
+         */
+        GameObject& CreateObject(const std::string& name = "GameObject", const std::string& tag = "Default");
+
+        GameObject& CloneObject(const GameObject& targetGO, const std::string& name = "GameObject", const std::string& tag = "Default");
 
         void DestroyObject(EntityID id);
 
         GameObject& GetGO(EntityID id);
+
+        std::vector<GameObject*> GetAllGOs() const;
     };
 }

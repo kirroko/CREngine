@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -79,7 +79,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -109,7 +109,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -143,7 +143,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -196,6 +196,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h" />
+    <ClInclude Include="src\Ukemochi-Engine\FileWatcher.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
@@ -217,6 +218,10 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Logic.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\ProjectHandler.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logic\Scripting.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
     <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
@@ -245,6 +250,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\FileWatcher.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
@@ -264,6 +270,9 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\ProjectHandler.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
@@ -274,6 +283,13 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

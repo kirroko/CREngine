@@ -31,6 +31,9 @@
     <Filter Include="Ukemochi-Engine\ImGui">
       <UniqueIdentifier>{87539FFA-F3BF-5AF5-BCB3-F25228DF7C5D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\InGameGUI">
+      <UniqueIdentifier>{E264B7D7-4E27-EB61-97D7-79EE03D9C33F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Input">
       <UniqueIdentifier>{5C8EA0FA-C8FA-5BF5-91EE-F352FD197E5D}</UniqueIdentifier>
     </Filter>
@@ -116,6 +119,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h">
       <Filter>Ukemochi-Engine\Factory</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\FileWatcher.h">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
@@ -167,6 +173,9 @@
     <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h">
       <Filter>Ukemochi-Engine\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h">
+      <Filter>Ukemochi-Engine\InGameGUI</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Input\Input.h">
       <Filter>Ukemochi-Engine\Input</Filter>
     </ClInclude>
@@ -175,6 +184,18 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
       <Filter>Ukemochi-Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Logic.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\ProjectHandler.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logic\Scripting.h">
       <Filter>Ukemochi-Engine\Logic</Filter>
@@ -189,6 +210,9 @@
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h">
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h">
@@ -206,8 +230,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp">
@@ -246,6 +268,9 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp">
       <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\FileWatcher.cpp">
+      <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
       <Filter>Ukemochi-Engine</Filter>
@@ -298,8 +323,20 @@
     <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp">
       <Filter>Ukemochi-Engine\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp">
+      <Filter>Ukemochi-Engine\InGameGUI</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp">
       <Filter>Ukemochi-Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\ProjectHandler.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp">
       <Filter>Ukemochi-Engine\Logic</Filter>
@@ -311,6 +348,9 @@
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp">
       <Filter>Ukemochi-Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp">
@@ -328,7 +368,22 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </None>
   </ItemGroup>
 </Project>

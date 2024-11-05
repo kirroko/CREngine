@@ -1,7 +1,7 @@
 /* Start Header
 *****************************************************************/
 /*!
-\file	ScriptingEngine.h
+\file	Scripting.h
 \par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
 \par	junyukean.wong\@digipen.edu
@@ -29,9 +29,10 @@ namespace Ukemochi
 		MonoDomain* m_pAppDomain = nullptr;
 
 		MonoAssembly* CoreAssembly = nullptr;
+		MonoAssembly* ClientAssembly = nullptr;
 
-		ScriptingEngine() = default;
-		~ScriptingEngine() = default;
+		std::string m_CProject;
+		
 		ScriptingEngine(const ScriptingEngine&) = delete;
 		ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
@@ -65,6 +66,20 @@ namespace Ukemochi
 		void RegisterMonoFunctions();
 
 		/**
+		 * @brief Extracts an error code and message from the given MonoError
+		 * @param error The MonoError to extract the error from
+		 * @return true if there is an error, false otherwise
+		 */
+		bool CheckMonoError(MonoError& error);
+
+		/**
+		 * @brief Convert a MonoString to UTF8(std::string)
+		 * @param monoString The MonoString to convert
+		 * @return std::string The converted string
+		 */
+		std::string MonoStringToUTF8(MonoString* monoString);
+
+		/**
 		 * @brief Get a reference to a C# class
 		 * @param MonoAssembly Our C# Assembly
 		 * @param namespaceName The C# namespaceName
@@ -77,23 +92,102 @@ namespace Ukemochi
 		static ScriptingEngine& GetInstance()
 		{
 			static ScriptingEngine instance;
+			
 			return instance;
 		}
-
+		ScriptingEngine();
+		~ScriptingEngine();
+		
 		/**
 		 * @brief Initialize Mono by creating an app domain
 		 */
 		void Init();
 
 		/**
-		 * @brief Update all script
+		 * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
 		 */
-		void Update();
+		void ShutDown(); // TODO: Did you remember to call this function when application is closed?
 
 		/**
-		 * @brief Clean up mono
+		 * @brief Compile client's script aseembly during runtime
 		 */
-		void ShutDown();
+		void CompileScriptAssembly();
+
+		/**
+		 * @brief Reload the script assembly
+		 */
+		void Reload();
+
+		/**
+		 * @brief Instantiate C# struct object
+		 * @param structName the struct name
+		 * @return an instance of the struct
+		 */
+		MonoObject* InstantiateStruct(const std::string& structName);
+
+		/**
+		 * @brief Instantiate C# class object that is internal
+		 * @param className the class name of the internal class
+		 * @return an instance of the class
+		 */
+		MonoObject* InstantiateClass(const std::string& className);
+		
+		/**
+		 * @brief Instatiate C# class object from client assembly
+		 * @param className the script's class name
+		 * @return an instance of the script class
+		 */
+		MonoObject* InstantiateClientClass(const std::string& className);
+		
+		/**
+		 * @brief Instantiate a method from a class. This is for caching the method for future use
+		 * @param methodName the method name to be instantiated
+		 * @param instance the instance of the class
+		 * @return an instance of the method
+		 */
+		MonoMethod* InstatiateMethod(const std::string& methodName, MonoObject* instance);
+
+		/**
+		 * @brief Invoke script Methods (Start, Update, etc)
+		 * @param instance C# script instance
+		 * @param methodName the method name to be invoked
+		 * @param args the arguments to be passed to the method, default is nullptr
+		 * @param numArgs the number of arguments, default is 0
+		 */
+		void InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[] = nullptr, int numArgs = 0);
+
+		/**
+		 * @brief Set the value of a field in a C# class
+		 * @param instance the instance of the class
+		 * @param fieldName the field name
+		 * @param value the value to be set
+		 */
+		void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
+
+		/**
+		 * @brief Set the value of a property in a C# class
+		 * @param instance the instance of the class
+		 * @param propertyName the property name
+		 * @param value the value to be set
+		 */
+		void SetMonoPropertyValue(MonoObject* instance, const std::string& propertyName, void* value);
+
+		/**
+		 * @brief Get the property of a C# class
+		 * @param instance the instance of the class
+		 * @param propertyName the property name
+		 * @return the property
+		 */
+		MonoProperty* GetMonoProperty(MonoObject* instance, const std::string& propertyName);
+
+		/**
+		 * @brief Set the value of a Vector2 field in a C# class
+		 * @param instance the instance of the class
+		 * @param propertyName the field name
+		 * @param x 
+		 * @param y 
+		 */
+		void SetVector2Property(MonoObject* instance, const std::string& propertyName, float x, float y);
 	};
 }
 // 0x4E41454B

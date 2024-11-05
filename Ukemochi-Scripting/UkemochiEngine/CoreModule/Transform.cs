@@ -1,14 +1,13 @@
 /* Start Header
  *****************************************************************/
 /*!
-\file	Vector2.cs
+\file	Transform.cs
 \par	Ukemochi
 \author WONG JUN YU, Kean, junyukean.wong, 2301234
 \par	junyukean.wong\@digipen.edu
 \par	Course: CSD2400/CSD2401
-\date	31/09/24
-\brief	This files is responsible for the Vector2 struct that stores 2D coordinates
-        for the engine
+\date	31/10/24
+\brief	This files is responsible for the transform component of the engine
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -18,23 +17,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
  *******************************************************************/
 namespace UkemochiEngine.CoreModule
 {
-    public struct Vector2
+    public class Transform : Component
     {
-        // ==================== FIELDS ====================
-        public float x;
-        public float y;
+        // ==================== PROPERTIES ====================
+        public Vector2 Position { get; set; } = new Vector2();
+        public Vector2 Rotation { get; set; } = new Vector2(); // Unity is Quaternion, but for simplicity, we will use Vector2
+        public Vector2 Scale { get; set; } = new Vector2(1, 1);
+
+        // ==================== METHODS =======================
         
-        // ==================== METHODS ====================
-        
-        public Vector2(float value)
-        {
-            x = value;
-            y = value;
-        }
-        public Vector2(float x, float y)
-        {
-            this.x = x;
-            this.y = y;
-        }
     }
 }

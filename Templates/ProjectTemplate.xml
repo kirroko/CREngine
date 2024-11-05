@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>4.7.2</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- Script files will be added here -->
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="UkemochiEngine">
+            <HintPath>..\Ukemochi-Game\Resources\Scripts\Ukemochi-Scripting.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+</Project>
