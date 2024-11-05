@@ -222,10 +222,11 @@ namespace Ukemochi
 
 	void SceneManager::LoadSaveFile(const std::string& file_name)
 	{
+		std::string sceneCpy = file_name;
 		GetInstance().sceneName = file_name;
-		size_t extensionPos = file_name.find(".json");
+		size_t extensionPos = sceneCpy.find(".json");
 		if (extensionPos != std::string::npos) {
-			GetInstance().sceneName = file_name.substr(0, extensionPos);
+			GetInstance().sceneName = sceneCpy.substr(0, extensionPos);
 		}
 		//unload curr scene
 		SceneManagerFree();

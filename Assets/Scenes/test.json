@@ -230,9 +230,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [-12.5, 362.5],
-                    "Max": [12.5, 537.5],
-                    "Collision Flag": 1,
+                    "Min": [0.0, 362.5],
+                    "Max": [25.0, 537.5],
+                    "Collision Flag": 0,
                     "is_trigger": true,
                     "Tag": "Left Door"
                 }, {
@@ -268,9 +268,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1587.5, 362.5],
-                    "Max": [1612.5, 537.5],
-                    "Collision Flag": 2,
+                    "Min": [1575.0, 362.5],
+                    "Max": [1600.0, 537.5],
+                    "Collision Flag": 0,
                     "is_trigger": true,
                     "Tag": "Right Door"
                 }, {
@@ -306,9 +306,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [712.5, -12.5],
-                    "Max": [887.5, 12.5],
-                    "Collision Flag": 4,
+                    "Min": [712.5, 0.0],
+                    "Max": [887.5, 25.0],
+                    "Collision Flag": 0,
                     "is_trigger": true,
                     "Tag": "Top Door"
                 }, {
@@ -344,9 +344,9 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [712.5, 887.5],
-                    "Max": [887.5, 912.5],
-                    "Collision Flag": 8,
+                    "Min": [712.5, 875.0],
+                    "Max": [887.5, 900.0],
+                    "Collision Flag": 0,
                     "is_trigger": true,
                     "Tag": "Btm Door"
                 }, {
