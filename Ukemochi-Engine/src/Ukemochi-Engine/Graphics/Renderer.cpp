@@ -526,6 +526,7 @@ void Renderer::render()
 	bindTexturesToUnits(shaderProgram);
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
+	
 
 	// Render entities
 	batchRenderer->beginBatch();
@@ -542,6 +543,16 @@ void Renderer::render()
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
+		
+
+		//// Set up the model matrix
+		//glm::mat4 model{};
+
+		//// Copy elements from custom matrix4x4 to glm::mat4
+		//for (int i = 0; i < 4; ++i)
+		//	for (int j = 0; j < 4; ++j)
+		//		model[i][j] = transform.transform_matrix.m2[j][i];
+
 
 		// Combine matrices into the final MVP matrix
 		//glm::mat4 mvp = projection * view * model;
@@ -606,11 +617,7 @@ void Renderer::render()
 		// Render using batch renderer, passing the position and size directly
 		//batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), normalizedTexID);
 		// Draw the sprite using the batch renderer, passing the updated UV coordinates
-		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y),
-			glm::vec2(transform.scale.x, transform.scale.y),
-			glm::vec3(1.0f, 1.0f, 1.0f),
-			mappedTextureUnit,
-			uvCoordinates);
+		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 
 		entity_count++;
 	}

@@ -23,7 +23,7 @@ uniform mat4 view;
 void main()
 {
     // Outputs the positions/coordinates of all vertices
-    gl_Position = projection * view *  vec4(aPos, 1.0);
+    gl_Position = projection * view * vec4(aPos, 1.0);
     // Assigns the colors from the Vertex Data to "color"
     color = aColor;
     // Assigns the texture coordinates from the Vertex Data to "texCoord"

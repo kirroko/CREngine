@@ -69,9 +69,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png"); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png"); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png"); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 
 		// Initialize the renderer and collision systems
 		ECS::GetInstance().GetSystem<Renderer>()->init();
