@@ -46,9 +46,13 @@ namespace Ukemochi
 
 		EntityID CreateEntity();
 
+		void ReloadEntityManager();
+
 		void DestroyEntity(EntityID entity);
 
 		EntityID CloneEntity(EntityID entity);
+
+		unsigned long int GetLivingEntityCount() const;
 
 		std::vector<EntityID> GetAllEntities();
 
@@ -87,12 +91,12 @@ namespace Ukemochi
 		template<typename T>
 		void SetSystemSignature(SignatureID signature);
 
-		template<typename T>
-		static inline T* GetComponentForMono(EntityID entity)
-		{
-			// NOTE: What if we run a point where we haven't "Added" any thing yet but function gets called?
-			return &GetInstance().GetComponent<T>(entity); // I feel I know it works yet I don't know if this works
-		}
+		// template<typename T>
+		// static inline T* GetComponentForMono(EntityID entity)
+		// {
+		// 	// NOTE: What if we run a point where we haven't "Added" any thing yet but function gets called?
+		// 	return &GetInstance().GetComponent<T>(entity); // I feel I know it works yet I don't know if this works
+		// }
 
 		// Manage and verify the relationship between entity and their componenets within ECS
 		template<typename T>

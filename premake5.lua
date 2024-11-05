@@ -50,7 +50,8 @@ project "Ukemochi-Engine"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/**.tpp"
 	}
 
 	includedirs
@@ -94,7 +95,8 @@ project "Ukemochi-Engine"
 		{
 			"UME_PLATFORM_WINDOWS",
 			"UME_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
+			"UME_ENABLE_ASSERTS",
+			"GLFW_INCLUDE_NONE",
 		}
 
 		buildoptions { "/wd6285", "/wd26451","/wd26498","/wd26800", "/wd4996", "/wd6031", "/wd4603" }  -- Disable specific warnings globally
@@ -133,7 +135,7 @@ project "Ukemochi-Scripting"
 
 	files
 	{
-		"%{prj.name}/src/**.cs"
+		"%{prj.name}/**.cs"
 	}
 
 	filter "configurations:Debug"
@@ -165,7 +167,8 @@ project "Ukemochi-Game"
 	includedirs
 	{
 		"Ukemochi-Engine/vendor/spdlog/include",
-		"Ukemochi-Engine/src"
+		"Ukemochi-Engine/src",
+		"Ukemochi-Engine/vendor/Mono/include"
 	}
 
 	links
@@ -180,7 +183,12 @@ project "Ukemochi-Game"
 		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" ,
 		"{COPY} " .. freetype_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game",
 		"{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game",
-		"{COPY} ./Resources/Scripts ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
+		"{COPY} ./Resources/Scripts/ ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
+	}
+
+	postbuildcommands
+	{
+		"{COPY} ./Resources/Scripts/Ukemochi-Scripting.dll" .. " ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
 	}
 	
 	filter "system:windows"

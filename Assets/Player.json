@@ -43,6 +43,11 @@
               "Shape" : 0,
               "animated" : true,
               "animationIndex" : true
+            },
+            {
+                "Name": "Script",
+                "Path": "../Assets/Scripts/Player.cs",
+                "ClassName": "Player"
             }
         ]
     }

@@ -32,6 +32,11 @@ namespace Ukemochi
 		return m_EntityManager->CreateEntity();
 	}
 
+	void ECS::ReloadEntityManager()
+	{
+		m_EntityManager.reset(new EntityManager());
+	}
+
 	void ECS::DestroyEntity(EntityID entity)
 	{
 		m_EntityManager->DestroyEntity(entity);
@@ -52,6 +57,7 @@ namespace Ukemochi
 		auto cirlceCollider = m_ComponentManager->GetComponentType<CircleCollider2D>();
 		auto boxCollider = m_ComponentManager->GetComponentType<BoxCollider2D>();
 		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
+		auto script = m_ComponentManager->GetComponentType<Script>();
 
 		// Iterate through all possible components
 		for (ComponentTypeID i = 0; i < MAX_COMPONENTS; ++i)
@@ -84,6 +90,11 @@ namespace Ukemochi
 					SpriteRender originalComponent = m_ComponentManager->GetComponent<SpriteRender>(entity);
 					AddComponent<SpriteRender>(newEntity, originalComponent);
 				}
+				else if (i == script)
+				{
+					Script originalComponent = m_ComponentManager->GetComponent<Script>(entity);
+					AddComponent<Script>(newEntity, originalComponent);
+				}
 			}
 		}
 
@@ -91,9 +102,15 @@ namespace Ukemochi
 	}
 
 	// Provides a straightforward way to retrieve a list of all active entities by delegating this task to the EntityManager
-	std::vector<EntityID> ECS::GetAllEntities() {
-		return m_EntityManager->GetAllEntities();
-	}
+	// 0x4B45414E - No no no, This is not the jedi way
+	// std::vector<EntityID> ECS::GetAllEntities() {
+	// 	return m_EntityManager->GetAllEntities();
+	// }
 
+
+	unsigned long int ECS::GetLivingEntityCount() const
+	{
+		return m_EntityManager->GetLivingEntityCount();
+	}
 }
 // 0x4B45414E

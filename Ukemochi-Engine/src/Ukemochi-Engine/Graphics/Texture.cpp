@@ -36,6 +36,7 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);
+	std::cout << "Generated Texture ID: " << ID << " for texture path: " << image << std::endl;
 	// Assigns the texture to a Texture Unit
 	glActiveTexture(slot);
 	glBindTexture(texType, ID);
@@ -75,12 +76,12 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
  * @param uniform The name of the uniform variable in the shader.
  * @param unit The texture unit to assign (e.g., 0 for GL_TEXTURE0).
  */
-void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
+void Texture::texUnit(Shader* shader, const char* uniform, GLuint unit)
 {
 	// Gets the location of the uniform
-	GLuint texUni = glGetUniformLocation(shader.ID, uniform);
+	GLuint texUni = glGetUniformLocation(shader->ID, uniform);
 	// Shader needs to be activated before changing the value of a uniform
-	shader.Activate();
+	shader->Activate();
 	// Sets the value of the uniform
 	glUniform1i(texUni, unit);
 }
