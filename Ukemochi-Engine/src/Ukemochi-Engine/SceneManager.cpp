@@ -127,7 +127,7 @@ namespace Ukemochi
 		}
 		else
 		{
-			//LoadSaveFile(GetCurrScene());
+			LoadSaveFile(GetCurrScene()+".json");
 		}
 	}
 
@@ -149,7 +149,6 @@ namespace Ukemochi
 
 	void SceneManager::SceneMangerUpdate()
 	{
-		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 
 		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
@@ -378,7 +377,7 @@ namespace Ukemochi
 						componentData["Position"][0].GetFloat(),
 						componentData["Position"][1].GetFloat()
 					);
-					float rotation = componentData["rotation"].GetFloat();
+					float rotation = componentData["Rotation"].GetFloat();
 					Vec2 scale(
 						componentData["Scale"][0].GetFloat(),
 						componentData["Scale"][1].GetFloat()
@@ -465,7 +464,7 @@ namespace Ukemochi
 					{
 						newObject.AddComponent<SpriteRender>({ texturePath, shape });
 					}
-					//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath);
+					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath);
 					if (tag == "Player")
 					{
 						newObject.GetComponent<SpriteRender>().animated = true;
@@ -553,7 +552,7 @@ namespace Ukemochi
 				position.PushBack(transform.position.y, allocator);
 				transformComponent.AddMember("Position", position, allocator);
 
-				transformComponent.AddMember("rotation", transform.rotation, allocator);
+				transformComponent.AddMember("Rotation", transform.rotation, allocator);
 				
 				Value scale(rapidjson::kArrayType);
 				scale.PushBack(transform.scale.x, allocator);
@@ -667,6 +666,152 @@ namespace Ukemochi
 		if (!Serialization::PushJSON(file, document))
 		{
 			std::cerr << "Failed to save scene to file: " << file<< std::endl;
+		}
+	}
+
+	void SceneManager::SavePrefab(GameObject* prefabObj, const std::string& file_name)
+	{
+		//get file name to save
+		Document document;
+		document.SetObject();
+		Document::AllocatorType& allocator = document.GetAllocator();
+
+		// Create a JSON array to hold game object data
+		//Value gameObjectsArray(rapidjson::kObjectType);
+
+		//set the type
+		Value gameObjectData(rapidjson::kObjectType);
+		gameObjectData.AddMember("Name", Value(prefabObj->GetName().c_str(), allocator), allocator);
+		gameObjectData.AddMember("Tag", Value(prefabObj->GetTag().c_str(), allocator), allocator);
+
+		//set the type
+		Value componentsArray(rapidjson::kArrayType);
+
+		if (prefabObj->HasComponent<Transform>())
+		{
+			Value transformComponent(rapidjson::kObjectType);
+
+			transformComponent.AddMember("Name", Value("Transform", allocator), allocator);
+
+			const auto& transform = prefabObj->GetComponent<Transform>();
+			Value position(rapidjson::kArrayType);
+			position.PushBack(transform.position.x, allocator);
+			position.PushBack(transform.position.y, allocator);
+			transformComponent.AddMember("Position", position, allocator);
+
+			transformComponent.AddMember("Rotation", transform.rotation, allocator);
+
+			Value scale(rapidjson::kArrayType);
+			scale.PushBack(transform.scale.x, allocator);
+			scale.PushBack(transform.scale.y, allocator);
+			transformComponent.AddMember("Scale", scale, allocator);
+
+			componentsArray.PushBack(transformComponent, allocator);
+		}
+
+		if (prefabObj->HasComponent<Rigidbody2D>())
+		{
+			Value rigidbodyComponent(rapidjson::kObjectType);
+			rigidbodyComponent.AddMember("Name", "Rigidbody2D", allocator);
+
+			const auto& rigidbody = prefabObj->GetComponent<Rigidbody2D>();
+			Value position(rapidjson::kArrayType);
+			position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+			rigidbodyComponent.AddMember("Position", position, allocator);
+
+			Value velocity(rapidjson::kArrayType);
+			velocity.PushBack(rigidbody.velocity.x, allocator).PushBack(rigidbody.velocity.y, allocator);
+			rigidbodyComponent.AddMember("Velocity", velocity, allocator);
+
+			Value acceleration(rapidjson::kArrayType);
+			acceleration.PushBack(rigidbody.acceleration.x, allocator).PushBack(rigidbody.acceleration.y, allocator);
+			rigidbodyComponent.AddMember("Acceleration", acceleration, allocator);
+
+			Value force(rapidjson::kArrayType);
+			force.PushBack(rigidbody.force.x, allocator).PushBack(rigidbody.force.y, allocator);
+			rigidbodyComponent.AddMember("Force", force, allocator);
+
+			// Add the remaining properties like Acceleration, Force, Mass, etc.
+			rigidbodyComponent.AddMember("Mass", rigidbody.mass, allocator);
+			rigidbodyComponent.AddMember("Inverse Mass", rigidbody.inverse_mass, allocator);
+			rigidbodyComponent.AddMember("Linear Drag", rigidbody.linear_drag, allocator);
+
+			rigidbodyComponent.AddMember("Angle", rigidbody.angle, allocator);
+			rigidbodyComponent.AddMember("Angular Velocity", rigidbody.angular_velocity, allocator);
+			rigidbodyComponent.AddMember("Angular Acceleration", rigidbody.angular_acceleration, allocator);
+
+			rigidbodyComponent.AddMember("Torque", rigidbody.torque, allocator);
+			rigidbodyComponent.AddMember("Inertia Mass", rigidbody.inertia_mass, allocator);
+			rigidbodyComponent.AddMember("Inverse Inertia Mass", rigidbody.inv_inertia_mass ? rigidbody.inv_inertia_mass : 1, allocator);
+			rigidbodyComponent.AddMember("Angular Drag", rigidbody.angular_drag, allocator);
+
+
+			rigidbodyComponent.AddMember("use_gravity", rigidbody.use_gravity, allocator);
+			rigidbodyComponent.AddMember("is_kinematic", rigidbody.is_kinematic, allocator);
+
+			componentsArray.PushBack(rigidbodyComponent, allocator);
+		}
+
+		if (prefabObj->HasComponent<BoxCollider2D>())
+		{
+			Value boxColliderComponent(rapidjson::kObjectType);
+			boxColliderComponent.AddMember("Name", "BoxCollider2D", allocator);
+
+			const auto& boxCollider = prefabObj->GetComponent<BoxCollider2D>();
+			Value min(rapidjson::kArrayType);
+			min.PushBack(boxCollider.min.x, allocator).PushBack(boxCollider.min.y, allocator);
+			boxColliderComponent.AddMember("Min", min, allocator);
+
+			Value max(rapidjson::kArrayType);
+			max.PushBack(boxCollider.max.x, allocator).PushBack(boxCollider.max.y, allocator);
+			boxColliderComponent.AddMember("Max", max, allocator);
+
+			boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
+
+			boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
+			boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
+
+			componentsArray.PushBack(boxColliderComponent, allocator);
+		}
+
+		if (prefabObj->HasComponent<CircleCollider2D>())
+		{
+			Value circleColliderComponent(rapidjson::kObjectType);
+			circleColliderComponent.AddMember("Name", "CircleCollider2D", allocator);
+
+			const auto& circleCollider = prefabObj->GetComponent<CircleCollider2D>();
+			Value center(rapidjson::kArrayType);
+			center.PushBack(circleCollider.m_center.x, allocator).PushBack(circleCollider.m_center.y, allocator);
+			circleColliderComponent.AddMember("Center", center, allocator);
+
+			circleColliderComponent.AddMember("Radius", circleCollider.m_radius, allocator);
+
+			componentsArray.PushBack(circleColliderComponent, allocator);
+		}
+
+		if (prefabObj->HasComponent<SpriteRender>())
+		{
+			Value spriteRenderComponent(rapidjson::kObjectType);
+			spriteRenderComponent.AddMember("Name", "SpriteRender", allocator);
+
+			const auto& spriteRender = prefabObj->GetComponent<SpriteRender>();
+			spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator), allocator);
+			spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
+
+			componentsArray.PushBack(spriteRenderComponent, allocator);
+		}
+
+		gameObjectData.AddMember("Components", componentsArray, allocator);
+
+
+		//gameObjectsArray.PushBack(gameObjectData, allocator);
+		// Add the array to the document
+		document.AddMember("GameObject", gameObjectData, allocator);
+
+		std::string file = "../Assets/" + file_name + ".json";
+		if (!Serialization::PushJSON(file, document))
+		{
+			std::cerr << "Failed to save prefab to file: " << file << std::endl;
 		}
 	}
 }

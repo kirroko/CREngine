@@ -2,6 +2,7 @@
 #include "PreCompile.h"
 #include "ECS/ECS.h"
 #include "Game/GSM.h"
+#include "Factory/GameObject.h"
 
 namespace Ukemochi
 {
@@ -63,6 +64,8 @@ namespace Ukemochi
 
 		// Save the current scene to a file
 		void SaveScene(const std::string& file_name);
+
+		void SavePrefab(GameObject* prefabObj, const std::string& file_name);
 
 	private:
 		std::string sceneName;

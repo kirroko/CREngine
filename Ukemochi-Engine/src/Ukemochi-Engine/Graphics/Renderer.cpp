@@ -11,6 +11,7 @@
 #include "TextRenderer.h"
 #include "../Factory/Factory.h"
 #include "../Factory/GameObjectManager.h"
+#include "Ukemochi-Engine/SceneManager.h"
 
 using namespace Ukemochi;
 
@@ -544,7 +545,7 @@ void Renderer::render()
 		}
 
 		// 0x4B45414E | functions here sets up a new vertices and indices for the object
-		if (spriteRenderer.animated) 
+		if (spriteRenderer.animated && es_current == ENGINE_STATES::ES_PLAY) 
 		{
 			// Choose an animation based on the entity state (0 = idle, 1 = running)
 			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];

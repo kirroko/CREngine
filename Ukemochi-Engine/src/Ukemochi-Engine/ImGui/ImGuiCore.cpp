@@ -150,13 +150,20 @@ namespace Ukemochi
 		ImGui::Text("Control Panel Contents");
 		// Example: Add a button
 		if (ImGui::Button("Play"))
-		{
+		{	// save
+			SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+			// gsm_next = GS_PLAY;
+			es_current = ENGINE_STATES::ES_PLAY;
 			std::cout << "Game is Playing" << std::endl;
 			// Perform some action when button is clicked
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Stop"))
 		{
+			// free
+			SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
+			// gsm_next = GS_PLAY;
+			es_current = ENGINE_STATES::ES_ENGINE;
 			std::cout << "Game stopped" << std::endl;
 			// Implement functionality to stop the game (e.g., switch to editor mode)
 		}
@@ -228,7 +235,7 @@ namespace Ukemochi
 		ImGui::Begin("Scene Browser");
 
 		// Display the list of scenes
-		static int selectedSceneIndex = -1;
+		static int selectedSceneIndex = 0;
 		// State variable to manage the visibility of the input field for saving a scene
 		static bool showSaveInputField = false;
 		static char sceneName[128] = "Level"; // Default name for the scene
@@ -443,18 +450,21 @@ namespace Ukemochi
 		}
 
 		ImGui::Text("Entity Management");
-		ImGui::InputText("Player Data File", filePath, IM_ARRAYSIZE(filePath));
+		ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
 
-		if (ImGui::Button("Create Player Entity")) {
+		if (ImGui::Button("Create Entity")) {
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
+				ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath);
+				if (go.GetTag()=="Player")
+				{
+					ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
 
-				ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
-
-				ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
-				ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
-				ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
-				go.GetComponent<SpriteRender>().animated = true;
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
+					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+					go.GetComponent<SpriteRender>().animated = true;
+				}
 				showError = false; // Reset error
 			}
 			else {
@@ -480,20 +490,20 @@ namespace Ukemochi
 			if (selectedEntityIndex < gameObjects.size()) {
 				// GameObject* selectedObject = gameObjects[selectedEntityIndex];
 				// EditEntityProperties(*selectedObject);
-				GameObject& selectedObject = gameObjects[selectedEntityIndex];
+				GameObject* selectedObject = gameObjects[selectedEntityIndex];
 
 				// Flag modification based on ImGui inputs
-				ImGui::Text("Editing properties of: %s", selectedObject.GetName().c_str());
+				ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
 
-				if (selectedObject.HasComponent<Transform>()) {
-					Transform& transform = selectedObject.GetComponent<Transform>();
+				if (selectedObject->HasComponent<Transform>()) {
+					Transform& transform = selectedObject->GetComponent<Transform>();
 					if (ImGui::InputFloat2("Position", &transform.position.x)) modified = true;
 					if (ImGui::InputFloat("Rotation", &transform.rotation)) modified = true;
 					if (ImGui::InputFloat2("Scale", &transform.scale.x)) modified = true;
 				}
 
-				if (selectedObject.HasComponent<Rigidbody2D>()) {
-					Rigidbody2D& rb = selectedObject.GetComponent<Rigidbody2D>();
+				if (selectedObject->HasComponent<Rigidbody2D>()) {
+					Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
 					if (ImGui::InputFloat2("Velocity", &rb.velocity.x)) modified = true;
 					if (ImGui::InputFloat("Mass", &rb.mass)) modified = true;
 				}
@@ -502,6 +512,7 @@ namespace Ukemochi
 				if (modified) {
 					if (ImGui::Button("Save Entity")) {
 						std::cout << "Entity is Saved";
+						SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
 						//SaveEntity(selectedObject, filePath);  // Ensure filePath points to the correct location
 						modified = false;  // Reset modified flag after saving
 					}

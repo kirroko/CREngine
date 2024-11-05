@@ -5,7 +5,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 450.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [1600.0, 900.0]
                 }, {
                     "Name": "SpriteRender",
@@ -18,7 +18,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 675.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -56,7 +56,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 450.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [150.0, 150.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -94,7 +94,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [1200.0, 675.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -132,7 +132,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [400.0, 225.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -170,7 +170,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [1200.0, 225.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -208,7 +208,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [12.5, 450.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [25.0, 175.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -246,7 +246,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [1587.5, 450.0],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [25.0, 175.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -284,7 +284,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 12.5],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [175.0, 25.0]
                 }, {
                     "Name": "Rigidbody2D",
@@ -322,7 +322,7 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 887.5],
-                    "rotation": 0.0,
+                    "Rotation": 0.0,
                     "Scale": [175.0, 25.0]
                 }, {
                     "Name": "Rigidbody2D",

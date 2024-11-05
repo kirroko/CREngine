@@ -39,7 +39,7 @@
             },
             {
                 "Name": "SpriteRender",
-                "Sprite": "idle_player_sprite_sheet.png",
+                "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
                 "Shape" : 0,
                 "animated" : true,
                 "animationIndex" : true
