@@ -146,7 +146,7 @@ namespace Ukemochi
 		//ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
 
 		// Initialize the in game GUI system
-		//ECS::GetInstance().GetSystem<InGameGUI>()->Init();
+		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void SceneManager::SceneMangerUpdate()
