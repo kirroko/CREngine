@@ -4,7 +4,7 @@
 \file       Physics.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 19, 2024
+\date       Oct 31, 2024
 \brief      This file contains the definition of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,8 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Physics.h"            // for forward declaration
 #include "../FrameController.h" // for GetCurrentNumberOfSteps, GetFixedDeltaTime
-#include "../ECS/ECS.h"         // for entity components
 #include "../Math/MathUtils.h"  // for abs, clamp
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
 {
@@ -123,7 +123,7 @@ namespace Ukemochi
                 // Get references of entity components
                 auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
                 auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-
+                
                 // Skip if entity is kinematic (static objects)
                 if (rb.is_kinematic)
                     continue;

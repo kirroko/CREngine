@@ -135,6 +135,16 @@ public:
 	 */
 	GLboolean debug_mode_enabled = false;
 
+	/*!
+	* @brief Create a text object in the text renderer.
+	*/
+	void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
+
+	/*!
+	* @brief Update a text object in the text renderer.
+	*/
+	void UpdateTextObject(const std::string& id, const std::string& newText);
+	
 	void setupFramebuffer();
 
 	void beginFramebufferRender();

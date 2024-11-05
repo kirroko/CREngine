@@ -191,13 +191,13 @@ void Renderer::renderToFramebuffer()
 	beginFramebufferRender();
 
 	// Add debug information
-	std::cout << "Begin framebuffer render" << std::endl;
-	std::cout << "Number of entities: " << m_Entities.size() << std::endl;
+	//std::cout << "Begin framebuffer render" << std::endl;
+	//std::cout << "Number of entities: " << m_Entities.size() << std::endl;
 
 	// Perform your regular rendering here
 	render();
 
-	std::cout << "End framebuffer render" << std::endl;
+	//std::cout << "End framebuffer render" << std::endl;
 
 	endFramebufferRender();
 
@@ -211,7 +211,7 @@ void Renderer::renderToFramebuffer()
 
 GLuint Renderer::getTextureColorBuffer() const
 {
-	return textureColorbuffer;  // Assuming this is your framebuffer's color texture
+	return textureColorbuffer;  // this is framebuffer's color texture
 }
 
 void Renderer::initBoxBuffers()
@@ -534,7 +534,7 @@ void Renderer::render()
 
 	for (auto& entity : m_Entities)
 	{
-		std::cout << "Rendering entity " << entity_count << std::endl;
+		//std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
@@ -854,6 +854,19 @@ void Renderer::drawBoxAnimation()
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	vaos[ANIMATION_VAO]->Unbind();
 }
+
+/*!
+* @brief Create a text object in the text renderer.
+*/
+void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+{
+	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+}
+
+/*!
+* @brief Update a text object in the text renderer.
+*/
+void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
 void Renderer::initAnimationEntities()
 {

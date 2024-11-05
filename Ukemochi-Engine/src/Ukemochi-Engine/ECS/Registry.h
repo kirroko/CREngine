@@ -42,6 +42,12 @@ namespace Ukemochi
 
 		void EntityDestroyed(EntityID entity) override;
 
+		// Method to check if an entity has a component
+		// This function helps verify entity existence before accessing its components, preventing potential errors.
+		bool HasEntity(EntityID entity) const {
+			return m_EntityToIndexMap.find(entity) != m_EntityToIndexMap.end();
+		}
+
 	private:
 		// The packed array of components (of generic type T),
 		// set to a specified maximum amount, matching the maximum number

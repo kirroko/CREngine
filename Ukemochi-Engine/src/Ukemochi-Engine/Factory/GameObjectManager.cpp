@@ -18,12 +18,45 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "GameObjectManager.h"
 #include "Factory.h"
+#include "Ukemochi-Engine/Logic/Logic.h"
 
 using namespace Ukemochi;
 
-GameObject& GameObjectManager::CreateObject()
+std::unordered_map<std::string,std::function<void(GameObject&,MonoObject*)>> GameObjectManager::componentRegistry;
+
+GameObjectManager::GameObjectManager()
 {
-    auto go = std::make_unique<GameObject>(GameObjectFactory::CreateObject());
+    RegisterComponents();
+}
+
+void GameObjectManager::RegisterComponents()
+{
+    // TODO: This is a hacky way to register components for C#, might have to change this.. 
+    componentRegistry["Transform"] = [](GameObject& go, MonoObject* instance)
+    {
+        go.SetManagedComponentInstance(instance, "Transform");
+    };
+}
+
+GameObject& GameObjectManager::CreateObject(const std::string& name, const std::string& tag)
+{
+    auto go = std::make_unique<GameObject>(GameObjectFactory::CreateObject(name, tag));
+    auto id = go->GetInstanceID();
+    m_GOs.emplace(id, std::move(go));
+    return *m_GOs[id];
+}
+
+GameObject& GameObjectManager::CloneObject(const GameObject& targetGO, const std::string& name, const std::string& tag)
+{
+    auto go = std::make_unique<GameObject>(GameObjectFactory::CloneObject(targetGO,name,tag));
+    auto id = go->GetInstanceID();
+    m_GOs.emplace(id, std::move(go));
+    return *m_GOs[id];
+}
+
+GameObject& GameObjectManager::CreatePrefabObject(const std::string& prefabPath)
+{
+    auto go = std::make_unique<GameObject>(GameObjectFactory::CreatePrefebObject(prefabPath));
     auto id = go->GetInstanceID();
     m_GOs.emplace(id, std::move(go));
     return *m_GOs[id];
@@ -39,5 +72,15 @@ void GameObjectManager::DestroyObject(EntityID id)
 GameObject& GameObjectManager::GetGO(EntityID id)
 {
     return *m_GOs[id];
+}
+
+std::vector<GameObject*> GameObjectManager::GetAllGOs() const
+{
+    std::vector<GameObject*> gos;
+    for (auto& go : m_GOs)
+    {
+        gos.push_back(go.second.get());
+    }
+    return gos;
 }
 
