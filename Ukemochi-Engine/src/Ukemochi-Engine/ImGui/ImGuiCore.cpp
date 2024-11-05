@@ -344,6 +344,7 @@ namespace Ukemochi
 	}
 
 	void UseImGui::EditEntityProperties(GameObject& selectedObject) {
+
 		ImGui::Text("Editing properties of: %s", selectedObject.GetName().c_str());
 
 		if (selectedObject.HasComponent<Transform>()) {
@@ -375,6 +376,9 @@ namespace Ukemochi
 
 		static bool showError = false;
 		static float errorDisplayTime = 0.0f;
+
+		// Persistent flag to track if the selected entity was modified
+		static bool modified = false;
 
 		// Display the Asset Browser
 		ContentBrowser(filePath);
@@ -414,16 +418,40 @@ namespace Ukemochi
 
 		if (ImGui::Button("Remove Entity")) {
 			RemoveSelectedEntity(selectedEntityIndex);
+			modified = false;
 		}
 
 		if (selectedEntityIndex >= 0) {
 			auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
 			if (selectedEntityIndex < gameObjects.size()) {
 				GameObject& selectedObject = gameObjects[selectedEntityIndex];
-				EditEntityProperties(selectedObject);
+
+				// Flag modification based on ImGui inputs
+				ImGui::Text("Editing properties of: %s", selectedObject.GetName().c_str());
+
+				if (selectedObject.HasComponent<Transform>()) {
+					Transform& transform = selectedObject.GetComponent<Transform>();
+					if (ImGui::InputFloat2("Position", &transform.position.x)) modified = true;
+					if (ImGui::InputFloat("Rotation", &transform.rotation)) modified = true;
+					if (ImGui::InputFloat2("Scale", &transform.scale.x)) modified = true;
+				}
+
+				if (selectedObject.HasComponent<Rigidbody2D>()) {
+					Rigidbody2D& rb = selectedObject.GetComponent<Rigidbody2D>();
+					if (ImGui::InputFloat2("Velocity", &rb.velocity.x)) modified = true;
+					if (ImGui::InputFloat("Mass", &rb.mass)) modified = true;
+				}
+
+				// Show the Save button if modifications were made
+				if (modified) {
+					if (ImGui::Button("Save Entity")) {
+						std::cout << "Entity is Saved";
+						//SaveEntity(selectedObject, filePath);  // Ensure filePath points to the correct location
+						modified = false;  // Reset modified flag after saving
+					}
+				}
 			}
 		}
-
 		// End the dockable window
 		ImGui::End();
 	}
