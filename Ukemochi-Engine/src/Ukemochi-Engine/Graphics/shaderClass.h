@@ -48,6 +48,12 @@ public:
      * @brief Activates the shader program, making it the current shader in use by OpenGL.
      */
 	void Activate();
+
+    /*!
+     * @brief Deactivates the shader program, making it the current shader in use by OpenGL.
+     */
+    void Deactivate();
+
     /*!
      * @brief Deletes the shader program, freeing its allocated resources in OpenGL.
      */
@@ -66,6 +72,8 @@ public:
      * @param value The integer value to set.
      */
 	void setInt(const std::string& name, GLint value) const;
+
+    void setIntArray(const std::string& name, const GLint* values, GLint count) const;
 
     /*!
      * @brief Sets a floating-point uniform in the shader program.

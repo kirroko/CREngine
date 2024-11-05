@@ -16,12 +16,19 @@ glm::mat4 Camera::getCameraViewMatrix()
 
 glm::mat4 Camera::getCameraProjectionMatrix()
 {
-	GLfloat left = 0.0f;
+	/*GLfloat left = -viewport_size.x / 2.0f;
+	GLfloat right = viewport_size.x / 2.0f;
+	GLfloat bottom = -viewport_size.y / 2.0f;
+	GLfloat top = viewport_size.y / 2.0f;
+
+	return glm::ortho(left / zoom, right / zoom, bottom / zoom, top / zoom);*/
+
+	GLfloat left = 0.f;
 	GLfloat right = viewport_size.x;
-	GLfloat bottom = 0.0f;
+	GLfloat bottom = 0.f;
 	GLfloat top = viewport_size.y;
 
-	return glm::ortho(left / zoom, right / zoom, bottom / zoom, top / zoom);
+	return glm::ortho(left, right , bottom, top);
 }
 
 void Camera::setViewportSize(const glm::vec2& new_size)
