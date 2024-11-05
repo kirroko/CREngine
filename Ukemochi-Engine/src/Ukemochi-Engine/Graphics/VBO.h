@@ -24,19 +24,16 @@ public:
 	 * @brief The OpenGL ID reference for the Vertex Buffer Object.
 	 */
 	GLuint ID;
-	/*!
-	 * @brief Constructor that generates a Vertex Buffer Object (VBO) and links it to vertex data.
-	 * @param vertices A pointer to the array of vertex data.
-	 * @param size The size of the vertex data in bytes.
-	 */
-	VBO(GLfloat* vertices, GLsizeiptr size);
+
+
+	VBO(const GLfloat* vertices, GLsizeiptr size);
 
 	/*!
 	 * @brief Updates the vertex data in the VBO with new data.
 	 * @param vertices A pointer to the new array of vertex data.
 	 * @param size The size of the new vertex data in bytes.
 	 */
-	void UpdateData(GLfloat* vertices, GLsizeiptr size);
+	void UpdateData(const void* vertices, GLsizeiptr size);
 
 	/*!
 	 * @brief Binds the VBO, making it the current active buffer in OpenGL.

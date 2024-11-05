@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "TextRenderer.h"
 
+
 using namespace Ukemochi;
 
 /*!
@@ -52,7 +53,7 @@ Renderer::~Renderer()
 void Renderer::init()
 {
 	// Load shaders
-	setUpShaders();
+	//setUpShaders();
 
 	// Load Buffers for box drawing
 	initBoxBuffers();
@@ -86,6 +87,13 @@ void Renderer::init()
 	initAnimationEntities();
 	
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
+
+	batchRenderer = std::make_unique<BatchRenderer2D>();
+	// Load shaders and create shared pointer
+	
+	batchRenderer->init(shaderProgram);
+
+	
 }
 
 void Renderer::setupFramebuffer()
@@ -356,45 +364,94 @@ void Renderer::initAnimationBuffers()
  * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
  * @param texturePath The file path to the texture to be loaded.
  */
-void Renderer::setUpTextures(const std::string& texturePath)
+void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 {
-	// If a texture file path is provided, load and store the texture
 	if (!texturePath.empty())
 	{
-		// Check if the texture is already loaded in the cache and reuse existing texture
-		// 0x4B45414E | We use entity spriteRenderer.texturePath as key to store the texture and retrieve honestly this is a work around not a solution
 		auto it = textureCache.find(texturePath);
 		if (it != textureCache.end())
 		{
-			//textures.push_back(it->second);
-			//textures_enabled.push_back(true);
+			// Texture is already loaded; just return
+			std::cout << "Texture " << texturePath << " is already loaded with ID: " << it->second->ID << " at index " << textureIndex << std::endl;
 			return;
 		}
 
-		// Extract the file extension and determine format (GL_RGBA for PNG, GL_RGB for JPG)
+		// Determine format based on file extension
 		std::string extension = texturePath.substr(texturePath.find_last_of(".") + 1);
 		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
-		GLenum format;
-		if (extension == "png")
-			format = GL_RGBA;  // PNG files have transparency
-		else if (extension == "jpg" || extension == "jpeg")
-			format = GL_RGB;   // JPG files do not have transparency
-		else
-		{
-			std::cerr << "Warning: Unrecognized image format. Defaulting to GL_RGB." << std::endl;
-			format = GL_RGB;
-		}
+		GLenum format = (extension == "png") ? GL_RGBA : GL_RGB;
+		Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + textureIndex, format, GL_UNSIGNED_BYTE);
 
-		// Load and store the texture with the determined format
-		Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, format, GL_UNSIGNED_BYTE);
-		//textures.push_back(texture);
-		//textures_enabled.push_back(true);
-		texture->texUnit(*shaderProgram, "tex0", 0);
+		// Set the texture to the specific index in the shader array
+		std::string uniformName = "textures[" + std::to_string(textureIndex) + "]";
+		texture->texUnit(shaderProgram.get(), uniformName.c_str(), textureIndex);
 
 		textureCache[texturePath] = texture;
+		texturePathsOrder.push_back(texturePath);
+		// Log successful loading and texture ID
+		std::cout << "Loaded texture " << texturePath << " with ID: " << texture->ID << " at index " << textureIndex << std::endl;
+
+		textureIndex++;
 	}
+
 }
+
+void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
+{
+	// Set textureCount based on the number of unique textures, limited to 32
+	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
+	std::vector<int> textureUnits(textureCount);
+
+	std::cout << "Binding textures to shader units..." << std::endl;
+
+	for (int i = 0; i < texturePathsOrder.size() && nextAvailableTextureUnit < 32; ++i) {
+		const auto& path = texturePathsOrder[i];
+		Texture* texture = textureCache[path];
+
+		if (texture->ID == 0) {
+			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
+			continue;
+		}
+
+		// Check if this texture is already mapped to a unit
+		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
+			// New texture, assign to the next available texture unit
+			textureIDMap[texture->ID] = nextAvailableTextureUnit;
+
+			// Bind the texture to the OpenGL texture unit
+			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
+			glBindTexture(GL_TEXTURE_2D, texture->ID);
+
+			std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
+			textureUnits[i] = nextAvailableTextureUnit;
+
+			// Increment to the next available texture unit
+			nextAvailableTextureUnit++;
+		}
+		else {
+			// Texture already mapped, retrieve existing texture unit
+			textureUnits[i] = textureIDMap[texture->ID];
+		}
+	}
+	for (int i = 0; i < textureCount; ++i) {
+		const auto& path = texturePathsOrder[i];
+		Texture* texture = textureCache[path];
+
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, texture->ID);
+
+		// Verify that the texture is bound to the expected unit
+		GLint boundTexture;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+		std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
+			<< ", actual bound ID: " << boundTexture << std::endl;
+	}
+	// Pass the array of texture unit indices to the shader uniform array "textures"
+	shader->setIntArray("textures", textureUnits.data(), textureCount);
+}
+
+
 
 /*!
  * @brief Loads and sets up the shaders to be used for rendering.
@@ -402,9 +459,9 @@ void Renderer::setUpTextures(const std::string& texturePath)
  */
 void Renderer::setUpShaders()
 {
-	shaderProgram = new Shader("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
-	//particleShader = new Shader("../Assets/Shaders/particle.vert", "../Assets/Shaders/particle.frag");
+	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
 }
 
 /*!
@@ -446,124 +503,154 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
+	debug_shader_program->Deactivate();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Get the current time
 	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());  // This will return time in seconds
 	deltaTime = currentFrameTime - lastFrame;
-	lastFrame = currentFrameTime;  // Save the current frame for the next iteration
+	lastFrame = currentFrameTime;
 
-
-	// Specify the color of the background
+	// Clear the screen
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Get the camera system instance
+	// Get the camera's view and projection matrices
 	auto& camera = ECS::GetInstance().GetSystem<Camera>();
-
-	// Set up a view and projection matrix
 	glm::mat4 view = camera->getCameraViewMatrix();
 	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
-	// Send the projection and view matrices to the shader
+	// Set the projection and view matrices in the shader
 	shaderProgram->Activate();
+	bindTexturesToUnits(shaderProgram);
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
 
-
-	std::cout << "Begin render" << std::endl;
+	// Render entities
+	batchRenderer->beginBatch();
+	int entity_count = 0;
 	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
-	GLuint entity_count = 0;
 	for (auto& entity : m_Entities)
 	{
 		std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// Set vec2 to glm::vec3 for matrix transformations
-		glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-		glm::vec3 scale(transform.scale.x, transform.scale.y, 0.f);
-		// Set up the model matrix using the transform's position, scale, and rotation
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+		// Construct model matrix with scaling integrated
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
 
-		// Apply rotation if enabled
-		if (entity == playerObject->GetInstanceID() && rotation_enabled)
+		// Combine matrices into the final MVP matrix
+		//glm::mat4 mvp = projection * view * model;
+
+		// Initialize UV coordinates
+		GLfloat uvCoordinates[8];
+
+		// Check for animation
+		if (spriteRenderer.animated)
 		{
-			// Update the rotation angle based on deltaTime
-			transform.rotation += rotationSpeed * deltaTime;
-			if (transform.rotation >= 360.f)
-				transform.rotation -= 360.f;
-
-			// Apply rotation to the model matrix
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		}
-
-		// Determine the scale factors based on facing direction and scaling
-		GLfloat scaleX = transform.scale.x;
-		GLfloat scaleY = transform.scale.y;
-
-		// If the entity is the player, adjust based on the direction and scaling factor
-		if (entity == playerObject->GetInstanceID())
-		{
-			// Adjust X-axis scale to flip direction if not facing right
-			scaleX = isFacingRight ? -scaleX : scaleX;
-
-			// If scaling is enabled, apply the scale factor
-			if (scale_enabled)
-			{
-				scaleX *= scale_factor;
-				scaleY *= scale_factor;
-			}
-		}
-
-		// Apply the calculated scale to the model matrix
-		model = glm::scale(model, glm::vec3(scaleX, scaleY, 1.0f));
-
-		shaderProgram->setMat4("model", model);
-
-		// Bind the texture if available
-		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
-			textureCache.find(spriteRenderer.texturePath)->second->Bind();  // Make sure this binds to the correct texture ID
-			shaderProgram->setBool("useTexture", true);
-		}
-		else {
-			shaderProgram->setBool("useTexture", false);
-		}
-
-		// 0x4B45414E | functions here sets up a new vertices and indices for the object
-		if (spriteRenderer.animated) 
-		{
-			// Choose an animation based on the entity state (0 = idle, 1 = running)
+			// Fetch the current animation and frame data
 			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
+			currentAnimation.update(deltaTime);  // Advance frame if needed
 
-			// Update and draw the current animation
-			currentAnimation.update(deltaTime);
+			// Update UV coordinates for the current animation frame
 			updateAnimationFrame(currentAnimation.currentFrame,
 				currentAnimation.frameWidth,
 				currentAnimation.frameHeight,
 				currentAnimation.totalWidth,
-				currentAnimation.totalHeight);
-
-			drawBoxAnimation();
+				currentAnimation.totalHeight,
+				uvCoordinates);
+			// Flip UVs horizontally if the player is facing left
+			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+				// Swap left and right UV coordinates
+				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
+				std::swap(uvCoordinates[1], uvCoordinates[3]);
+				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
+				std::swap(uvCoordinates[5], uvCoordinates[7]);
+			}
 		}
-		else if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
-			drawBox();
-		else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-			drawCircle();
+		else
+		{
+			// Use default full texture UVs for static sprites
+			uvCoordinates[0] = 0.0f; uvCoordinates[1] = 0.0f;  // Bottom-left
+			uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
+			uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
+			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
 
-		if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::BOX)
-			drawBoxOutline();
-		else if (debug_mode_enabled && spriteRenderer.shape == SPRITE_SHAPE::CIRCLE)
-			drawCircleOutline();
+			// Flip UVs for static sprites if the player is facing left
+			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+				// Swap left and right UV coordinates
+				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
+				std::swap(uvCoordinates[1], uvCoordinates[3]);
+				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
+				std::swap(uvCoordinates[5], uvCoordinates[7]);
+			}
+		}
+
+
+		GLint textureID = -1;
+		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
+			textureID = textureCache[spriteRenderer.texturePath]->ID;
+		}
+		if (textureID < 0) {
+			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
+			continue;
+		}
+		std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
+
+		//int normalizedTexID = textureID - 2;
+		int mappedTextureUnit = textureIDMap[textureID];
+		// Render using batch renderer, passing the position and size directly
+		//batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), normalizedTexID);
+		// Draw the sprite using the batch renderer, passing the updated UV coordinates
+		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y),
+			glm::vec2(transform.scale.x, transform.scale.y),
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			mappedTextureUnit,
+			uvCoordinates);
+
 		entity_count++;
 	}
 
-	// Render all text objects
+
+	batchRenderer->endBatch();
+
+	// Render debug wireframes if debug mode is enabled
+	if (debug_mode_enabled) 
+	{
+		debug_shader_program->Activate();
+		debug_shader_program->setMat4("view", view);
+		debug_shader_program->setMat4("projection", projection);
+
+		for (auto& entity : m_Entities) 
+		{
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+			// Set up model matrix for the debug outline
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
+			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
+			debug_shader_program->setMat4("model", model);
+
+			// Draw box or circle outline depending on the entity shape
+			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) {
+				drawBoxOutline();  // This function uses GL_LINE_LOOP to draw the outline
+			}
+			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE) {
+				drawCircleOutline();  // Assuming you have a similar function for circles
+			}
+		}
+		debug_shader_program->Deactivate();
+	}
+
+	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
+
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).
@@ -608,12 +695,12 @@ void Renderer::cleanUp()
 	textureCache.clear();
 
 	// Delete the shader program
-	if (shaderProgram)
-	{
-		shaderProgram->Delete();
-		delete shaderProgram;  // Deallocate memory
-		shaderProgram = nullptr;
-	}
+	//if (shaderProgram)
+	//{
+	//	shaderProgram->Delete();
+	//	delete shaderProgram;  // Deallocate memory
+	//	shaderProgram = nullptr;
+	//}
 
 	if (framebuffer)
 		glDeleteFramebuffers(1, &framebuffer);
@@ -700,70 +787,62 @@ void Renderer::ToggleInputsForRotation()
 
 void Renderer::drawBoxOutline()
 {
+	debug_shader_program->Activate();
 	// Bind the VAO specifically for drawing outlines
 	vaos[BOX_OUTLINE]->Bind();
 
 	// Set the line width for better visibility (optional)
 	glLineWidth(2.0f);
 
-	// Set the shader uniform to enable wireframe mode
-	shaderProgram->setBool("useTexture", false);
 	// Set the wireframe color to red
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
+	debug_shader_program->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
 	// Draw the outline using GL_LINE_LOOP to draw only the edges
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
 
-	// Reset the uniform to disable wireframe mode for other objects
-	shaderProgram->setBool("useTexture", true);
-
 	vaos[BOX_OUTLINE]->Unbind();
+	debug_shader_program->Deactivate();
 }
 
 void Renderer::drawCircleOutline()
 {
+	debug_shader_program->Activate();
 	// Bind the VAO
 	vaos[CIRCLE_OUTLINE]->Bind();
 
-	// Set the shader uniform to enable wireframe mode
-	shaderProgram->setBool("useTexture", false);
-
 	// Set the wireframe color to red
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
+	debug_shader_program->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));  // Set uniform to red
 
 	// Draw the outline of the circle using GL_LINE_LOOP
 	glDrawArrays(GL_LINE_LOOP, 0, 1000);
 
-	// Set the shader uniform to disable wireframe mode
-	shaderProgram->setBool("useTexture", true);
 	// Unbind the VAO
 	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
-void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight)
+void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
 {
-	// Calculate the column and row of the current frame in the sprite sheet
+	// Calculate column and row of the current frame
 	int column = currentFrame % (totalWidth / frameWidth);
 	int row = currentFrame / (totalWidth / frameWidth);
 
-	// Calculate UV coordinates based on the current column and row
+	// Calculate normalized UV coordinates
 	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
-	float uvY = 1.0f - (row * frameHeight) / static_cast<float>(totalHeight) - (frameHeight / static_cast<float>(totalHeight)); // Flip vertically if needed
+	float uvY = 1.0f - ((row + 1) * frameHeight) / static_cast<float>(totalHeight); // Adjusted to flip vertically
 	float uvWidth = frameWidth / static_cast<float>(totalWidth);
 	float uvHeight = frameHeight / static_cast<float>(totalHeight);
 
-	// Update the UV coordinates in the VBO
-	GLfloat updatedUVs[] = {
-		// Positions         // Colors        // UVs
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY + uvHeight,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX, uvY,             // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  uvX + uvWidth, uvY + uvHeight    // Top-right
-	};
-
-	// Update VBO data
-	vbos[ANIMATION_VAO]->UpdateData(updatedUVs, sizeof(updatedUVs));
+	// Set UV coordinates with OpenGL bottom-left orientation
+	uvCoordinates[0] = uvX;                 // Bottom-left
+	uvCoordinates[1] = uvY;
+	uvCoordinates[2] = uvX + uvWidth;       // Bottom-right
+	uvCoordinates[3] = uvY;
+	uvCoordinates[4] = uvX + uvWidth;       // Top-right
+	uvCoordinates[5] = uvY + uvHeight;
+	uvCoordinates[6] = uvX;                 // Top-left
+	uvCoordinates[7] = uvY + uvHeight;
 }
+
 
 void Renderer::drawBoxAnimation()
 {

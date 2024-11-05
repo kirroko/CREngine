@@ -42,6 +42,8 @@ public:
 	 */
 	void LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
 
+	void LinkAttribInteger(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
+
 	/*!
 	 * @brief Binds the VAO, making it the current active Vertex Array Object in OpenGL.
 	 */
