@@ -334,8 +334,8 @@ namespace Ukemochi
 	void Level1_Draw()//rendering of the game for Level1
 	{
 		// Render the entities
-		//ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
-		ECS::GetInstance().GetSystem<Renderer>()->render();
+		ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+		//ECS::GetInstance().GetSystem<Renderer>()->render();
 
 	}
 
