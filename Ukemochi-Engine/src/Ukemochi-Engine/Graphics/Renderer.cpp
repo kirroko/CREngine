@@ -843,11 +843,12 @@ void Renderer::toggleSlowMotion()
 
 void Renderer::animationKeyInput()
 {
-	for (auto& GameObject : GameObjectFactory::GetAllObjectsInCurrentLevel())
+	std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+	for (auto& GameObject : list)
 	{
-		if (GetPlayer() == GameObject.GetInstanceID())
+		if (GetPlayer() == GameObject->GetInstanceID())
 		{
-			auto& playerSprite = GameObject.GetComponent<SpriteRender>();
+			auto& playerSprite = GameObject->GetComponent<SpriteRender>();
 
 			// File paths for the textures
 			std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";

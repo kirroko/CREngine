@@ -17,6 +17,11 @@
 namespace Ukemochi
 {
 	using namespace rapidjson;
+
+	const float SPRITE_SCALE = 100.f;
+	const float ENTITY_ACCEL = 750.f;
+	const float PLAYER_FORCE = 750.f;
+
 	SceneManager::SceneManager()
 		:sceneName("NewScene")
 	{
@@ -114,9 +119,15 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/idle_player_sprite_sheet.png"); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png"); // load texture
 
+		UseImGui::LoadScene();
+
 		if (UseImGui::GetSceneSize() == 0)
 		{
 			SaveScene("NewScene");
+		}
+		else
+		{
+			//LoadSaveFile(GetCurrScene());
 		}
 	}
 
@@ -133,7 +144,7 @@ namespace Ukemochi
 		//ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
 
 		// Initialize the in game GUI system
-		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
+		//ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void SceneManager::SceneMangerUpdate()
@@ -149,6 +160,86 @@ namespace Ukemochi
 
 	void SceneManager::SceneMangerRunSystems()
 	{
+		if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
+		{
+			GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
+			// --- HANDLE USER INPUTS ---
+
+		// Player Inputs for movement
+			auto& player_rb = playerObj->GetComponent<Rigidbody2D>();
+			// Press 'W' or up key to move the player up
+			if (Input::IsKeyPressed(UME_KEY_W))
+				ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
+			// Press 'S' or down key to move the player down
+			else if (Input::IsKeyPressed(UME_KEY_S))
+				ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
+			else
+				ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
+
+			// Press 'A' or left key to move the player left
+			if (Input::IsKeyPressed(UME_KEY_A))
+			{
+				ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
+				ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
+			}
+			// Press 'D' or right key to move the player to the right
+			else if (Input::IsKeyPressed(UME_KEY_D))
+			{
+				ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
+				ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
+			}
+			else
+				ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
+
+			// Input for rotation, to test rotate physics
+			if (Input::IsKeyPressed(UME_KEY_R))
+				ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
+			else if (Input::IsKeyPressed(UME_KEY_T))
+				ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
+			else
+				ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
+
+			// Input for scaling, to test scaling of the player
+			auto& player_trans = playerObj->GetComponent<Transform>();
+			if (Input::IsKeyPressed(UME_KEY_F))
+				ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
+			else if (Input::IsKeyPressed(UME_KEY_G))
+				ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
+		}
+		
+
+		// Renderer Inputs
+		/*if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_T))
+			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
+		else if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_Y))
+			ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
+		else*/
+		if (Input::IsKeyTriggered(UME_KEY_U))
+			ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled);
+
+		// Audio Inputs
+		//if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
+		//{
+		//	audioVolume -= 0.02f;
+		//	audioVolume = audioVolume < 0.f ? 0.f : audioVolume;
+		//	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+		//}
+		//if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_O))
+		//{
+		//	audioVolume += 0.02f;
+		//	audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
+		//	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+		//}
+		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
+		{
+			Audio::GetInstance().StopAllSoundsInGroup(LEVEL1);
+		}
+		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_N))
+		{
+			Audio::GetInstance().PlayAllSoundsInGroup(LEVEL1);
+		}
+
 		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
@@ -181,9 +272,10 @@ namespace Ukemochi
 
 	void SceneManager::SceneManagerFree()
 	{
-		for (auto& gameobject : GameObjectFactory::GetAllObjectsInCurrentLevel())
+		std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+		for (auto& gameobject : list)
 		{
-			GameObjectFactory::DestroyObject(gameobject);
+			GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
 		}
 		ECS::GetInstance().ReloadEntityManager();
 		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
@@ -272,7 +364,7 @@ namespace Ukemochi
 
 			// Create a new GameObject and add it to the scene
 			
-			GameObject& newObject = GameObjectManager::GetInstance().CreateObject();
+			GameObject& newObject = GameObjectManager::GetInstance().CreateObject(name,tag);
 			//GameObject newObject = GameObject(entity,name, tag);
 
 			// Iterate through components and add them based on their type
@@ -292,7 +384,11 @@ namespace Ukemochi
 						componentData["Scale"][1].GetFloat()
 					);
 					
-					newObject.AddComponent<Transform>({ Mtx44(), position, rotation, scale });
+					if (!newObject.HasComponent<Transform>())
+					{
+						newObject.AddComponent<Transform>({ Mtx44(), position, rotation, scale });
+					}
+
 				}
 				else if (componentName == "Rigidbody2D")
 				{
@@ -324,10 +420,12 @@ namespace Ukemochi
 					float angularDrag = componentData["Angular Drag"].GetFloat();
 					bool useGravity = componentData["use_gravity"].GetBool();
 					bool isKinematic = componentData["is_kinematic"].GetBool();
-
-					newObject.AddComponent<Rigidbody2D>({ position, velocity, acceleration, force, mass, inverseMass, linearDrag,
-														 angle, angularVelocity, angularAcceleration, torque, inertiaMass,
-														 inverseInertiaMass, angularDrag, useGravity, isKinematic });
+					if (!newObject.HasComponent<Rigidbody2D>())
+					{
+						newObject.AddComponent<Rigidbody2D>({ position, velocity, acceleration, force, mass, inverseMass, linearDrag,
+															 angle, angularVelocity, angularAcceleration, torque, inertiaMass,
+															 inverseInertiaMass, angularDrag, useGravity, isKinematic });
+					}
 				}
 				else if (componentName == "BoxCollider2D")
 				{
@@ -342,11 +440,9 @@ namespace Ukemochi
 					int collisionFlag = componentData["Collision Flag"].GetInt();
 					bool isTrigger = componentData["is_trigger"].GetBool();
 					std::string tag = componentData["Tag"].GetString();
-
-					newObject.AddComponent<BoxCollider2D>({ min, max, collisionFlag, isTrigger, tag });
-					if (newObject.GetComponent<BoxCollider2D>().tag == "Player")
+					if (!newObject.HasComponent<BoxCollider2D>())
 					{
-						
+						newObject.AddComponent<BoxCollider2D>({ min, max, collisionFlag, isTrigger, tag });
 					}
 				}
 				else if (componentName == "CircleCollider2D")
@@ -356,17 +452,20 @@ namespace Ukemochi
 						componentData["Center"][1].GetFloat()
 					);
 					float radius = componentData["Radius"].GetFloat();
-
-					newObject.AddComponent<CircleCollider2D>({ center, radius });
+					if (!newObject.HasComponent<CircleCollider2D>())
+					{
+						newObject.AddComponent<CircleCollider2D>({ center, radius });
+					}
 				}
 				else if (componentName == "SpriteRender")
 				{
 					std::string texturePath = componentData["Sprite"].GetString();
 					SPRITE_SHAPE shape = componentData["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE;
-
-					newObject.AddComponent<SpriteRender>({ texturePath, shape });
-					//set up the renderer
-					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath);
+					if (!newObject.HasComponent<SpriteRender>())
+					{
+						newObject.AddComponent<SpriteRender>({ texturePath, shape });
+					}
+					//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath);
 					if (tag == "Player")
 					{
 						newObject.GetComponent<SpriteRender>().animated = true;
@@ -430,24 +529,25 @@ namespace Ukemochi
 
 		// Create a JSON array to hold game object data
 		Value gameObjectsArray(rapidjson::kArrayType);
-		
-		for (auto& gameobject : GameObjectFactory::GetAllObjectsInCurrentLevel())
+
+		std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+		for (auto& gameobject : list)
 		{
 			//set the type
 			Value gameObjectData(rapidjson::kObjectType);
-			gameObjectData.AddMember("Name", Value(gameobject.GetName().c_str(), allocator), allocator);
-			gameObjectData.AddMember("Tag", Value(gameobject.GetTag().c_str(),allocator), allocator);
+			gameObjectData.AddMember("Name", Value(gameobject->GetName().c_str(), allocator), allocator);
+			gameObjectData.AddMember("Tag", Value(gameobject->GetTag().c_str(),allocator), allocator);
 
 			//set the type
 			Value componentsArray(rapidjson::kArrayType);
 
-			if (gameobject.HasComponent<Transform>())
+			if (gameobject->HasComponent<Transform>())
 			{
 				Value transformComponent(rapidjson::kObjectType);
 				
 				transformComponent.AddMember("Name", Value("Transform", allocator), allocator);
 				
-				const auto& transform = gameobject.GetComponent<Transform>();
+				const auto& transform = gameobject->GetComponent<Transform>();
 				Value position(rapidjson::kArrayType);
 				position.PushBack(transform.position.x, allocator);
 				position.PushBack(transform.position.y, allocator);
@@ -463,12 +563,12 @@ namespace Ukemochi
 				componentsArray.PushBack(transformComponent, allocator);
 			}
 
-			if (gameobject.HasComponent<Rigidbody2D>())
+			if (gameobject->HasComponent<Rigidbody2D>())
 			{
 				Value rigidbodyComponent(rapidjson::kObjectType);
 				rigidbodyComponent.AddMember("Name", "Rigidbody2D", allocator);
 
-				const auto& rigidbody = gameobject.GetComponent<Rigidbody2D>();
+				const auto& rigidbody = gameobject->GetComponent<Rigidbody2D>();
 				Value position(rapidjson::kArrayType);
 				position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
 				rigidbodyComponent.AddMember("Position", position, allocator);
@@ -506,12 +606,12 @@ namespace Ukemochi
 				componentsArray.PushBack(rigidbodyComponent, allocator);
 			}
 
-			if (gameobject.HasComponent<BoxCollider2D>())
+			if (gameobject->HasComponent<BoxCollider2D>())
 			{
 				Value boxColliderComponent(rapidjson::kObjectType);
 				boxColliderComponent.AddMember("Name", "BoxCollider2D", allocator);
 
-				const auto& boxCollider = gameobject.GetComponent<BoxCollider2D>();
+				const auto& boxCollider = gameobject->GetComponent<BoxCollider2D>();
 				Value min(rapidjson::kArrayType);
 				min.PushBack(boxCollider.min.x, allocator).PushBack(boxCollider.min.y, allocator);
 				boxColliderComponent.AddMember("Min", min, allocator);
@@ -528,12 +628,12 @@ namespace Ukemochi
 				componentsArray.PushBack(boxColliderComponent, allocator);
 			}
 
-			if (gameobject.HasComponent<CircleCollider2D>())
+			if (gameobject->HasComponent<CircleCollider2D>())
 			{
 				Value circleColliderComponent(rapidjson::kObjectType);
 				circleColliderComponent.AddMember("Name", "CircleCollider2D", allocator);
 
-				const auto& circleCollider = gameobject.GetComponent<CircleCollider2D>();
+				const auto& circleCollider = gameobject->GetComponent<CircleCollider2D>();
 				Value center(rapidjson::kArrayType);
 				center.PushBack(circleCollider.m_center.x, allocator).PushBack(circleCollider.m_center.y, allocator);
 				circleColliderComponent.AddMember("Center", center, allocator);
@@ -543,12 +643,12 @@ namespace Ukemochi
 				componentsArray.PushBack(circleColliderComponent, allocator);
 			}
 
-			if (gameobject.HasComponent<SpriteRender>())
+			if (gameobject->HasComponent<SpriteRender>())
 			{
 				Value spriteRenderComponent(rapidjson::kObjectType);
 				spriteRenderComponent.AddMember("Name", "SpriteRender", allocator);
 
-				const auto& spriteRender = gameobject.GetComponent<SpriteRender>();
+				const auto& spriteRender = gameobject->GetComponent<SpriteRender>();
 				spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator), allocator);
 				spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
 

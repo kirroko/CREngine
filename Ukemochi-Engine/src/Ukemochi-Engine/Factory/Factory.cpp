@@ -95,7 +95,7 @@ namespace Ukemochi
 						TexturePath,
 						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
 						}); // Default Component
-					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(TexturePath);
+					//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(TexturePath);
 				}
 				else if(component == "Script")
 				{
@@ -127,16 +127,17 @@ namespace Ukemochi
 		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
 	}
 
+
 	// retrieves all active game objects in the current level.
 	// 0x4B45414E - No no no, This is not the jedi way
-	// std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
-	// 	std::vector<GameObject> gameObjects;
-	// 	auto entities = ECS::GetInstance().GetAllEntities();
-	//
-	// 	for (const auto& entity : entities) {
-	// 		gameObjects.emplace_back(GameObject(entity));
-	// 	}
-	// 	return gameObjects;
-	// }
+	 //std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
+	 //	std::vector<GameObject> gameObjects;
+	 //	auto entities = ECS::GetInstance().GetAllEntities();
+	
+	 //	for (const auto& entity : entities) {
+	 //		gameObjects.emplace_back(GameObject(entity));
+	 //	}
+	 //	return gameObjects;
+	 //}
 
 }

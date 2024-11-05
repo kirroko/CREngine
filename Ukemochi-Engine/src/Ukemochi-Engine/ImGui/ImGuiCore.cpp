@@ -195,7 +195,7 @@ namespace Ukemochi
 		ImGui::Begin("Scene Browser");
 
 		// Display the list of scenes
-		static int selectedSceneIndex = 0;
+		static int selectedSceneIndex = -1;
 		// State variable to manage the visibility of the input field for saving a scene
 		static bool showSaveInputField = false;
 		static char sceneName[128] = "Level"; // Default name for the scene

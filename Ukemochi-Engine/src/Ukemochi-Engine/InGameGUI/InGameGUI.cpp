@@ -36,7 +36,7 @@ namespace Ukemochi
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
 
-		// Create some test GUI elements
+		//Create some test GUI elements
 		CreateImage(Vec2{ screen_width * 0.05f, screen_height * 0.9f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
 
 		CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
@@ -108,7 +108,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::CreateImage(const Vec2& pos, const Vec2& scale, const std::string& texture_path)
 	{
-		GameObject image = GameObjectFactory::CreateObject();
+		GameObject image = GameObjectManager::GetInstance().CreateObject();
 		// GameObject image = GameObjectManager::GetInstance().CreateObject("Image");
 		image.AddComponent(Transform{ Mtx44{}, pos, 0, scale });
 		image.AddComponent(SpriteRender{ texture_path });
@@ -120,7 +120,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::CreateButton(const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
 	{
-		GameObject button = GameObjectFactory::CreateObject();
+		GameObject button = GameObjectManager::GetInstance().CreateObject();
 		button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
 		button.AddComponent(SpriteRender{ texture_path });
 		button.AddComponent(Button{ on_click });

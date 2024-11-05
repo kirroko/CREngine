@@ -56,6 +56,6 @@ namespace Ukemochi
 		 */
 		static void DestroyObject(GameObject& targetobject);
 
-		static std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel();
+		//static std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel();
 	};
 };
