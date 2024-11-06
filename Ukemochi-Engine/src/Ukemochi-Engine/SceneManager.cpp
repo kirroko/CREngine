@@ -134,7 +134,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
-		ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+
 
 		// Set the player object in the Renderer
 		//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
@@ -242,7 +242,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
 		// --- GAME LOGIC UPDATE ---
-		ECS::GetInstance().GetSystem<LogicSystem>();
+		ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		// --- PHYSICS UPDATE ---
 		// Update the entities physics
 		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
@@ -256,7 +256,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
 		// --- DATA SYNC UPDATE ---
-		ECS::GetInstance().GetSystem<DataSyncSystem>();
+		ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
 		
 		SceneManagerDraw();
 	}
@@ -280,6 +280,7 @@ namespace Ukemochi
 		{
 			GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
 		}
+		ECS::GetInstance().GetSystem<LogicSystem>()->End();
 		ECS::GetInstance().ReloadEntityManager();
 		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 	}
@@ -474,9 +475,17 @@ namespace Ukemochi
 						newObject.GetComponent<SpriteRender>().animated = true;
 					}
 				}
+				else if (componentName == "Script")
+				{
+					if(!newObject.HasComponent<Script>())
+						newObject.AddComponent(Script{
+					componentData["Path"].GetString(),
+					componentData["ClassName"].GetString(),
+						ScriptingEngine::GetInstance().InstantiateClientClass(componentData["ClassName"].GetString())});
+				}
 				else
 				{
-					std::cerr << "Unknown component type: " << componentName << std::endl;
+					UME_ENGINE_ERROR("Unkown component type: {0}", componentName);
 				}
 
 				if (tag == "Player")
@@ -490,8 +499,8 @@ namespace Ukemochi
 			}
 		}
 
-		std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
-	
+		// std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
+		UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
 	}
 
 	//void SceneManager::InitScene()
@@ -524,7 +533,7 @@ namespace Ukemochi
 	//}
 
 	void SceneManager::SaveScene(const std::string& file_name)
-	{	
+	{	// TODO: Some day we will encapsulate all this into Serialization class...
 		//get file name to save
 		Document document;
 		document.SetObject();
@@ -658,6 +667,18 @@ namespace Ukemochi
 				componentsArray.PushBack(spriteRenderComponent, allocator);
 			}
 
+			if (gameobject->HasComponent<Script>())
+			{
+				Value scriptComponent(rapidjson::kObjectType);
+				scriptComponent.AddMember("Name", "Script", allocator);
+
+				const auto& script = gameobject->GetComponent<Script>();
+				scriptComponent.AddMember("Path", Value(script.scriptPath.c_str(), allocator), allocator);
+				scriptComponent.AddMember("ClassName", Value(script.scriptName.c_str(), allocator), allocator);
+
+				componentsArray.PushBack(scriptComponent,allocator);
+			}
+
 			gameObjectData.AddMember("Components", componentsArray, allocator);
 
 
@@ -674,7 +695,7 @@ namespace Ukemochi
 	}
 
 	void SceneManager::SavePrefab(GameObject* prefabObj, const std::string& file_name)
-	{
+	{ // TODO: Some day we will encapsulate all this into Serialization class...
 		//get file name to save
 		Document document;
 		document.SetObject();
@@ -803,6 +824,18 @@ namespace Ukemochi
 			spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
 
 			componentsArray.PushBack(spriteRenderComponent, allocator);
+		}
+		
+		if (prefabObj->HasComponent<Script>())
+		{
+			Value scriptComponent(rapidjson::kObjectType);
+			scriptComponent.AddMember("Name", "Script", allocator);
+
+			const auto& script = prefabObj->GetComponent<Script>();
+			scriptComponent.AddMember("Path", Value(script.scriptPath.c_str(), allocator), allocator);
+			scriptComponent.AddMember("ClassName", Value(script.scriptName.c_str(), allocator), allocator);
+
+			componentsArray.PushBack(scriptComponent,allocator);
 		}
 
 		gameObjectData.AddMember("Components", componentsArray, allocator);

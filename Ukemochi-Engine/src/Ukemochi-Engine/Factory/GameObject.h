@@ -176,6 +176,7 @@ namespace Ukemochi
          * @return The instance ID of the GameObject 
          */
         EntityID GetInstanceID() const;
+        void ReleaseHandle() const;
 
         // This function returns the name of the object as a constant reference to a std::string.
         const std::string& GetName() const { return m_Name; }

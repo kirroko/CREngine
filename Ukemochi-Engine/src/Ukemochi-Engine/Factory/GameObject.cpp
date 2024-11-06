@@ -72,3 +72,11 @@ EntityID GameObject::GetInstanceID() const
 {
     return m_InstanceID;
 }
+
+void GameObject::ReleaseHandle() const
+{
+    for(auto& pair : m_ManagedComponentsHandle)
+    {
+        mono_gchandle_free_v2(pair.second);
+    }
+}

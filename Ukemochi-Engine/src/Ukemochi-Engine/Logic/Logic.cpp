@@ -66,6 +66,11 @@ namespace Ukemochi
 
     void LogicSystem::End()
     {
+        auto objects = GameObjectManager::GetInstance().GetAllGOs();
+        for(auto& go : objects)
+        {
+            go->ReleaseHandle();
+        }
         // 0x4B45414E - Mono's GC will handle the destruction of the script instance when the domain is unloaded or when the application is closed
         // for(auto& entity : m_Entities)
         // {
