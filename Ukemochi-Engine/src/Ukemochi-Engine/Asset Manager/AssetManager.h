@@ -15,7 +15,7 @@ namespace Ukemochi
 	private:
 		std::map<std::string, std::shared_ptr<Sprite>> sprite_list;
 		std::map<std::string, std::shared_ptr<Texture>> texture_list;
-		//std::map<std::string, std::shared_ptr<Shader>> shader_list;
+		std::map<std::string, std::shared_ptr<Shader>> shader_list;
 		//std::map<std::string, Audio> audio_list;
 
 	public:

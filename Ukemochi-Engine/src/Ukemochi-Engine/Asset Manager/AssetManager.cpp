@@ -32,7 +32,7 @@ namespace Ukemochi
 		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		//texture->texUnit(*shaderProgram, "tex0", 0);
+		texture->texUnit(*(shader_list.begin()->second), "tex0", 0);
 
 		texture_list[file_name] = texture;
 	}
