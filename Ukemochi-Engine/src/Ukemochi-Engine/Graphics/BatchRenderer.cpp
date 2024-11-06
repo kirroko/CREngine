@@ -180,7 +180,7 @@ void BatchRenderer2D::flush()
 {
     if (vertices.empty()) 
     {
-        std::cout << "No vertices to flush." << std::endl;
+        //std::cout << "No vertices to flush." << std::endl;
         return;
     }
 

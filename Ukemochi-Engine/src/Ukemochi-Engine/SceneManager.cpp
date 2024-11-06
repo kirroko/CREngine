@@ -13,6 +13,7 @@
 #include "Factory/GameObjectManager.h"
 #include "ImGui/ImGuiCore.h"
 #include "InGameGUI/InGameGUI.h"
+#include "Application.h"
 
 namespace Ukemochi
 {
@@ -125,8 +126,12 @@ namespace Ukemochi
 		}
 		else
 		{
-			LoadSaveFile(GetCurrScene()+".json");
+
+			LoadSaveFile(UseImGui::GetStartScene());
 		}
+
+		// Initialize the in game GUI system
+		//ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void SceneManager::SceneMangerInit()
@@ -142,9 +147,6 @@ namespace Ukemochi
 
 		//// Set the player object in the Transformation
 		//ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
-
-		// Initialize the in game GUI system
-		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void SceneManager::SceneMangerUpdate()
@@ -343,6 +345,7 @@ namespace Ukemochi
 		}
 		//unload curr scene
 		SceneManagerFree();
+		bool playerFound = false;
 
 		std::string file_path = "../Assets/Scenes/" + file_name;
 		Document document;
@@ -491,11 +494,27 @@ namespace Ukemochi
 
 				if (tag == "Player")
 				{
+					playerFound = true;
 					ECS::GetInstance().GetSystem<Transformation>()->player = newObject.GetInstanceID();
 
 					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(newObject.GetInstanceID());
-					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
+					//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
 					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+				}
+				if (!playerFound)
+				{
+					ECS::GetInstance().GetSystem<Transformation>()->player = -1;
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
+				}
+
+				if (tag == "Button")
+				{
+					// Get the screen width and height
+					Application& app = Application::Get();
+					int screen_width = app.GetWindow().GetWidth();
+					int screen_height = app.GetWindow().GetHeight();
+					ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject,"pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+						Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
 				}
 			}
 		}
@@ -692,6 +711,23 @@ namespace Ukemochi
 		if (!Serialization::PushJSON(file, document))
 		{
 			std::cerr << "Failed to save scene to file: " << file<< std::endl;
+		}
+	}
+
+	void SceneManager::CreateNewScene(const std::string& file_name)
+	{
+		Document document;
+		document.SetObject();
+		Document::AllocatorType& allocator = document.GetAllocator();
+
+		// Create a JSON array to hold game object data
+		Value gameObjectsArray(rapidjson::kArrayType);
+		document.AddMember("GameObjects", gameObjectsArray, allocator);
+
+		std::string file = "../Assets/Scenes/" + file_name + ".json";
+		if (!Serialization::PushJSON(file, document))
+		{
+			std::cerr << "Failed to save scene to file: " << file << std::endl;
 		}
 	}
 

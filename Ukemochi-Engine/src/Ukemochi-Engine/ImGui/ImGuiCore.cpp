@@ -245,6 +245,7 @@ namespace Ukemochi
 			bool isSelected = (selectedSceneIndex == static_cast<int>(i));
 			if (ImGui::Selectable(sceneFiles[i].c_str(), isSelected)) {
 				selectedSceneIndex = static_cast<int>(i);
+				SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
 				SceneManager::GetInstance().LoadSaveFile(sceneFiles[selectedSceneIndex]);
 				std::cout << "Selected scene: " << sceneFiles[selectedSceneIndex] << std::endl;
 			}
@@ -322,7 +323,7 @@ namespace Ukemochi
 				// Call your CreateScene function
 				std::cout << "Creating scene: " << newSceneName << std::endl;
 
-				SceneManager::GetInstance().SaveScene(newSceneName);
+				SceneManager::GetInstance().CreateNewScene(newSceneName);
 				std::cout << "Scene created successfully: " << newSceneName << std::endl;
 				// Hide the input field after creating
 				showCreateInputField = false;
@@ -455,14 +456,20 @@ namespace Ukemochi
 
 		if (ImGui::Button("Create Entity")) {
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
+				if (ECS::GetInstance().GetLivingEntityCount() == 0)
+				{
+					ECS::GetInstance().GetSystem<Transformation>()->player = -1; 
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
+				}
+
 				auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
-				ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+				//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
 				if (go.GetTag()=="Player")
 				{
 					ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
 
 					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
-					ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
+					//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
 					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
 					go.GetComponent<SpriteRender>().animated = true;
 				}
@@ -536,6 +543,11 @@ namespace Ukemochi
 			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 }, { 1,0 });
 			ImGui::End();
 		}
+	}
+
+	std::string UseImGui::GetStartScene()
+	{
+		return sceneFiles[0];
 	}
 
 	void UseImGui::Begin()
