@@ -4,7 +4,7 @@
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Nov 5, 2024
+\date       Nov 6, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Collision.h"			// for forward declaration
 #include "../Math/MathUtils.h"	// for min, max, abs
-#include "../FrameController.h"	// for GetDeltaTime
+#include "../FrameController.h"	// for GetFixedDeltaTime
 #include "../Audio/Audio.h"		// for Audio sound effects
 #include "../Application.h"		// for screen size
 
@@ -66,9 +66,9 @@ namespace Ukemochi
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
 					// Check collision between objects
-					float tLast;
+					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
-						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2);
+						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
 				}
 
 				// Check collision between objects and the screen boundaries
@@ -115,7 +115,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between two boxes.
+	 Collision detection between two boxes.
 	*************************************************************************/
 	bool Collision::BoxBox_Intersection(BoxCollider2D& box1, const Vec2& vel1, BoxCollider2D& box2, const Vec2& vel2, float& firstTimeOfCollision)
 	{
@@ -266,7 +266,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between a box and the screen boundaries.
+	 Collision detection between a box and the screen boundaries.
 	*************************************************************************/
 	int Collision::BoxScreen_Intersection(BoxCollider2D& box)
 	{
@@ -294,7 +294,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between two circles.
+	 Collision detection between two circles.
 	*************************************************************************/
 	bool Collision::CircleCircle_Intersection(const CircleCollider2D& circle1, const CircleCollider2D& circle2)
 	{
@@ -309,7 +309,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between a circle and a box.
+	 Collision detection between a circle and a box.
 	*************************************************************************/
 	bool Collision::CircleBox_Intersection(const CircleCollider2D& circle, const BoxCollider2D& box)
 	{
@@ -331,16 +331,65 @@ namespace Ukemochi
 	\brief
 	 Collision response between two objects.
 	*************************************************************************/
-	void Collision::BoxBox_Response(Transform& trans1, const BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, Rigidbody2D& rb2)
+	void Collision::BoxBox_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
+		// PLAYER AND TRIGGER
 		if (box1.tag == "Player" && box2.is_trigger)
-			Trigger_Response(trans1, trans2, box2); // PLAYER AND TRIGGERS
-		else
-			Dynamic_Response(trans1, rb1, trans2, rb2); // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Trigger_Response(trans1, trans2, box2);
+		else // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 		// Play a sound effect on collision
 		if (!Audio::GetInstance().IsPlaying(HIT))
 			Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Collision response between a static object and a dynamic object, and between two dynamic objects.
+	*************************************************************************/
+	void Collision::StaticDynamic_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
+	{
+		// Skip trigger objects
+		if (box1.tag == "Player" && box2.is_trigger || box2.tag == "Player" && box1.is_trigger)
+			return;
+
+		// Move objects to the point of collision
+		if (!rb1.is_kinematic)
+			trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		if (!rb2.is_kinematic)
+			trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+
+		// Check collision flags and adjust velocities based on impact direction
+		if (box1.collision_flag & COLLISION_RIGHT && box2.collision_flag & COLLISION_LEFT)
+		{
+			// Collision on the right side of box1 and left side of box2
+			rb1.velocity.x = -abs(rb1.velocity.x); // Reverse box1's x velocity
+			rb2.velocity.x = abs(rb2.velocity.x); // Reverse box2's x velocity
+		}
+		else if (box1.collision_flag & COLLISION_LEFT && box2.collision_flag & COLLISION_RIGHT)
+		{
+			// Collision on the left side of box1 and right side of box2
+			rb1.velocity.x = abs(rb1.velocity.x); // Reverse box1's x velocity
+			rb2.velocity.x = -abs(rb2.velocity.x); // Reverse box2's x velocity
+		}
+
+		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		{
+			// Collision on the top side of box1 and bottom side of box2
+			rb1.velocity.y = abs(rb1.velocity.y); // Reverse box1's y velocity
+			rb2.velocity.y = -abs(rb2.velocity.y); // Reverse box2's y velocity
+		}
+		else if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		{
+			// Collision on the bottom side of box1 and top side of box2
+			rb1.velocity.y = -abs(rb1.velocity.y); // Reverse box1's y velocity
+			rb2.velocity.y = abs(rb2.velocity.y); // Reverse box2's y velocity
+		}
+
+		// Reset collision flags after handling response
+		box1.collision_flag = 0;
+		box2.collision_flag = 0;
 	}
 
 	/*!***********************************************************************
@@ -416,6 +465,7 @@ namespace Ukemochi
 				float penetration = overlap_x;
 				float response_x = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
+				// First object is on the left, second object is on the right
 				if (difference.x > 0)
 				{
 					// Check if the first object has physics
@@ -432,7 +482,7 @@ namespace Ukemochi
 						rb2.velocity.x = response_x;
 					}
 				}
-				else
+				else // First object is on the right, second object is on the left
 				{
 					// Check if the first object has physics
 					if (!rb1.is_kinematic)
@@ -455,6 +505,7 @@ namespace Ukemochi
 				float penetration = overlap_y;
 				float response_y = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
+				// First object is on the bottom, second object is on the top
 				if (difference.y > 0)
 				{
 					// Check if the first object has physics
@@ -471,7 +522,7 @@ namespace Ukemochi
 						rb2.velocity.y = response_y;
 					}
 				}
-				else
+				else // First object is on the top, second object is on the bottom
 				{
 					// Check if the first object has physics
 					if (!rb1.is_kinematic)
