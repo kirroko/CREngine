@@ -59,12 +59,12 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [80.0, 720.0],
+                    "Position": [80.0, 810.0],
                     "Rotation": 0.0,
-                    "Scale": [75.0, 75.0]
+                    "Scale": [75.0, 150.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/UI/pause.png",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
                     "Shape": 0
                 }]
         }, {
@@ -72,12 +72,428 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [240.00001525878906, 720.0],
+                    "Position": [80.0, 810.0],
                     "Rotation": 0.0,
-                    "Scale": [150.0, 75.0]
+                    "Scale": [75.0, 150.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/UI/base.png",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
                     "Shape": 0
                 }]
         }]

@@ -30,8 +30,6 @@ namespace Ukemochi
 
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoAssembly* ClientAssembly = nullptr;
-
-		std::string m_CProject;
 		
 		ScriptingEngine(const ScriptingEngine&) = delete;
 		ScriptingEngine& operator=(const ScriptingEngine&) = delete;
@@ -83,7 +81,7 @@ namespace Ukemochi
 		 * @brief Get a reference to a C# class
 		 * @param MonoAssembly Our C# Assembly
 		 * @param namespaceName The C# namespaceName
-		 * @param classNmae The C# class name
+		 * @param className The C# class name
 		 * @return Reference to the class
 		 */
 		MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className);

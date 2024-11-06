@@ -54,6 +54,6 @@ namespace Ukemochi
 		 * 
 		 * @param targetObject the gameObject to destroy
 		 */
-		static void DestroyObject(GameObject& targetobject);
+		static void DestroyObject(const GameObject& targetobject);
 	};
 };
