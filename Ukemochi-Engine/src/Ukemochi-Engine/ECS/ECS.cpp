@@ -32,11 +32,6 @@ namespace Ukemochi
 		return m_EntityManager->CreateEntity();
 	}
 
-	//void ECS::ReloadEntityManager()
-	//{
-	//	m_EntityManager.reset(new EntityManager());
-	//}
-
 	void ECS::DestroyEntity(EntityID entity)
 	{
 		m_EntityManager->DestroyEntity(entity);
@@ -105,16 +100,6 @@ namespace Ukemochi
 
 		return newEntity;
 	}
-
-	// Provides a straightforward way to retrieve a list of all active entities by delegating this task to the EntityManager
-	//std::vector<EntityID> ECS::GetAllEntities()
-	//{
-	//	return m_EntityManager->GetAllEntities();
-	//}
-	// 0x4B45414E - No no no, This is not the jedi way
-	// std::vector<EntityID> ECS::GetAllEntities() {
-	// 	return m_EntityManager->GetAllEntities();
-	// }
 
 	unsigned long int ECS::GetLivingEntityCount() const
 	{
