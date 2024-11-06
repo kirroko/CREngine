@@ -1,31 +1,18 @@
-#version 330 core
+#version 450 core
 
-// Outputs colors in RGBA
 out vec4 FragColor;
 
-
-// Inputs the color from the Vertex Shader
 in vec3 color;
-// Inputs the texture coordinates from the Vertex Shader
 in vec2 texCoord;
-
-// Gets the Texture Unit from the main function
-uniform sampler2D tex0;
-
-uniform bool useTexture;
-
-uniform vec3 objectColor;
+flat in int texID;
+uniform sampler2D textures[32];
 
 void main()
 {
-	if(useTexture)
-	{
-		vec4 texColor = texture(tex0, texCoord);
-    	if (texColor.a < 0.1) discard;  // Optional: Discard pixels with low alpha
-    	FragColor = texColor;
-	}
-	else
-	FragColor = vec4(objectColor, 1.0f);
 
-	
+   vec4 textureColor = texture(textures[texID], texCoord);
+
+   // Multiply by color only if you want a tint; otherwise, use just the texture color
+   FragColor = textureColor * vec4(color, 1.0);
+   
 }

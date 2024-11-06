@@ -1,0 +1,16 @@
+{
+    "GameObject": {
+        "Name": "GameObject",
+        "Tag": "Default",
+        "Components": [{
+                "Name": "Transform",
+                "Position": [80.0, 810.0],
+                "Rotation": 0.0,
+                "Scale": [75.0, 150.0]
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/UI/game_logo.png",
+                "Shape": 0
+            }]
+    }
+}

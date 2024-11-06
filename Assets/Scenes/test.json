@@ -1,0 +1,358 @@
+{
+    "GameObjects": [{
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [800.0, 450.0],
+                    "Rotation": 0.0,
+                    "Scale": [1600.0, 900.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/terrain.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Player",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [800.0, 675.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [800.0, 675.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [750.0, 625.0],
+                    "Max": [850.0, 725.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false,
+                    "Tag": "Player"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [800.0, 450.0],
+                    "Rotation": 0.0,
+                    "Scale": [150.0, 150.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [725.0, 375.0],
+                    "Max": [875.0, 525.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false,
+                    "Tag": "Untagged"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1200.0, 675.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [750.0, 750.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1150.0, 625.0],
+                    "Max": [1250.0, 725.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false,
+                    "Tag": "Enemy"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [400.0, 225.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [750.0, 750.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [350.0, 175.0],
+                    "Max": [450.0, 275.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false,
+                    "Tag": "Enemy"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1200.0, 225.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [750.0, 750.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1150.0, 175.0],
+                    "Max": [1250.0, 275.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false,
+                    "Tag": "Enemy"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [12.5, 450.0],
+                    "Rotation": 0.0,
+                    "Scale": [25.0, 175.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [0.0, 362.5],
+                    "Max": [25.0, 537.5],
+                    "Collision Flag": 0,
+                    "is_trigger": true,
+                    "Tag": "Left Door"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1587.5, 450.0],
+                    "Rotation": 0.0,
+                    "Scale": [25.0, 175.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1575.0, 362.5],
+                    "Max": [1600.0, 537.5],
+                    "Collision Flag": 0,
+                    "is_trigger": true,
+                    "Tag": "Right Door"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [800.0, 12.5],
+                    "Rotation": 0.0,
+                    "Scale": [175.0, 25.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [712.5, 0.0],
+                    "Max": [887.5, 25.0],
+                    "Collision Flag": 0,
+                    "is_trigger": true,
+                    "Tag": "Top Door"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [800.0, 887.5],
+                    "Rotation": 0.0,
+                    "Scale": [175.0, 25.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [712.5, 875.0],
+                    "Max": [887.5, 900.0],
+                    "Collision Flag": 0,
+                    "is_trigger": true,
+                    "Tag": "Btm Door"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }]
+}

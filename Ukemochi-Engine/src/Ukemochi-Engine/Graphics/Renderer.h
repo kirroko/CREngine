@@ -8,6 +8,7 @@
  */
 #ifndef RENDERER_CLASS_H
 #define RENDERER_CLASS_H
+#define GLM_ENABLE_EXPERIMENTAL
 #include<iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,6 +16,7 @@
 #include "../vendor/glm/glm/glm.hpp"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include <../vendor/glm/glm/gtc/type_ptr.hpp>
+#include <../vendor/glm/glm/gtx/string_cast.hpp>
 #include <cmath>
 #include <vector>
 #include <algorithm>
@@ -29,11 +31,19 @@
 #include "Camera2D.h"
 #include "Ukemochi-Engine/Factory/GameObject.h"
 #include "Ukemochi-Engine/ECS/Entity.h"
+#include "BatchRenderer.h"
 
-
-// Froward
+// Forward
 class TextRenderer;
 class ParticleSystem;
+
+struct SpriteData {
+	glm::vec3 position;
+	glm::vec2 size;
+	float rotation;
+	glm::vec4 color;
+	int textureID;
+};
 
 using namespace Ukemochi;
  /*!
@@ -76,8 +86,8 @@ public:
 	 * @param texturePath The file path to the texture to be loaded.
 	 * @return The texture ID for the loaded texture.
 	 */
-	void setUpTextures(const std::string& texturePath);
-
+	void setUpTextures(const std::string& texturePath, int& textureIndex);
+	int current_texture_index = 0;
 	static int const screen_width = 1600;
 	static int const screen_height = 900;
 
@@ -114,7 +124,8 @@ public:
 	 */
 	void drawCircleOutline();
 
-	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight);
+	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates);
+
 
 
 	void drawBoxAnimation();
@@ -150,7 +161,7 @@ private:
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/
-	Shader* shaderProgram;
+	std::shared_ptr<Shader> shaderProgram;
 
 	/*!
 	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.
@@ -180,18 +191,22 @@ private:
 	/*!
 	 * @brief Vector storing pointers to Texture objects used by the renderer.
 	 */
-	std::vector<Texture*> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	/*!
 	* @brief Texture cache to manage loaded textures
 	*/
 	std::unordered_map<std::string, Texture*> textureCache;
+	std::vector<std::string> texturePathsOrder;
+	std::unordered_map<GLuint, int> textureIDMap;
+	int nextAvailableTextureUnit = 0;
 
+public:
 	/*!
 	 * @brief Sets up and compiles the shaders used by the renderer.
 	 */
 	void setUpShaders();
-
+private:
 	/*!
 	 * @brief Sets up the VAO, VBO, and EBO for an object.
 	 * @param vertices Pointer to the vertex data.
@@ -200,6 +215,8 @@ private:
 	 * @param indexSize The size of the index data in bytes.
 	 */
 	void setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices, size_t indexSize);
+
+	void bindTexturesToUnits(std::shared_ptr<Shader> shader);
 
 	/*!
 	 * @brief Scale factor applied to objects when scaling is enabled.
@@ -273,7 +290,7 @@ private:
 		}
 	};
 	std::unordered_map<int, std::vector<Animation>> entity_animations;
-	void initAnimationEntities();
+
 	bool isSlowMotion = false;
 	float slowMotionFactor = 2.0f;
 	bool isFacingRight = false;
@@ -281,9 +298,9 @@ private:
 public:
 	void toggleSlowMotion();
 	void animationKeyInput();
+	void initAnimationEntities();
 
 private:
-
 
 	void initBoxBuffers();
 
@@ -319,6 +336,9 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
+	EntityID Player = -1;
+
+	std::unique_ptr<BatchRenderer2D> batchRenderer;
 
 public:
 	// Setter method to set the player object
@@ -327,8 +347,18 @@ public:
 			playerObject = &player;
 	}
 
+	EntityID GetPlayer()
+	{
+		return Player;
+	}
+	void SetPlayer(EntityID id)
+	{
+		Player = id;
+	}
+
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
+	std::unique_ptr<Shader> debug_shader_program;
 };
 #endif

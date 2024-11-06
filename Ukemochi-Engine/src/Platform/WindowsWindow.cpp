@@ -74,6 +74,11 @@ namespace Ukemochi {
 			(void)success;  // Mark the variable as used to suppress the warning
 		}
 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+
 		// Create GLFW window
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
@@ -84,6 +89,8 @@ namespace Ukemochi {
 		//UME_ENGINE_ASSERT(status, "Failed to initialize GLAD");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVsync(true);
+
+		glfwSetDropCallback(m_Window, fileDropCallback);
 
 		glViewport(0, 0, props.Width, props.Height);
 
@@ -213,6 +220,15 @@ namespace Ukemochi {
 			glfwSwapInterval(0);
 
 		m_Data.VSync = enabled;
+	}
+
+	void WindowsWindow::fileDropCallback(GLFWwindow* window, int count, const char** paths) {
+		WindowsWindow* windowInstance = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+
+		// Assuming count > 0, use the first dropped file path
+		if (count > 0) {
+			windowInstance->m_FilePath = paths[0]; // Update the filePath
+		}
 	}
 
 	//bool WindowsWindow::IsVsync() const

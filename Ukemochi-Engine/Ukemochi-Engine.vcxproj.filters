@@ -140,6 +140,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>

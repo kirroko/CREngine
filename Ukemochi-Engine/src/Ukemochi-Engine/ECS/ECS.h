@@ -50,11 +50,13 @@ namespace Ukemochi
 
 		void DestroyEntity(EntityID entity);
 
+		//void ReloadEntityManager();
+
 		EntityID CloneEntity(EntityID entity);
 
 		unsigned long int GetLivingEntityCount() const;
 
-		std::vector<EntityID> GetAllEntities();
+		//std::vector<EntityID> GetAllEntities();
 
 		/**
 		 * @brief Register a component type with the ECS

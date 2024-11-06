@@ -4,7 +4,7 @@
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 6, 2024
 \brief      This file contains the declaration of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -20,15 +20,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    /*!***********************************************************************
-    \brief
-     Normalized bounding box (width and height) sizes.
-    *************************************************************************/
-    const float BOUNDING_BOX_SIZE = 0.5f;
-
     class Collision : public System
     {
     private:
+        /*!***********************************************************************
+        \brief
+         Normalized bounding box (width and height) sizes.
+        *************************************************************************/
+        const float BOUNDING_BOX_SIZE = 0.5f;
+
         // Collision flags
         const unsigned int COLLISION_LEFT = 0x00000001;   //0001
         const unsigned int COLLISION_RIGHT = 0x00000002;  //0010
@@ -48,14 +48,14 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Check the collisions of all the entities.
+         Check the collisions of all the objects.
         *************************************************************************/
         void CheckCollisions();
 
     private:
         /*!***********************************************************************
         \brief
-         Update the bounding box of the entity.
+         Update the bounding box of the object.
         \param[out] box
          The BoxCollider2D component attached to the object.
         \param[in] trans
@@ -65,7 +65,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Implementation of collision detection between two boxes.
+         Collision detection between two boxes.
         \param[in/out] box1
          The bounding box of the first box.
         \param[in] vel1
@@ -83,7 +83,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Implementation of collision detection between a box and the screen boundaries.
+         Collision detection between a box and the screen boundaries.
         \param[in/out] box
          The box to collide.
         \return
@@ -93,7 +93,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Implementation of collision detection between two circles.
+         Collision detection between two circles.
         \param[in] circle1
          The first circle.
         \param[in] circle2
@@ -105,7 +105,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Implementation of collision detection between a circle and a box.
+         Collision detection between a circle and a box.
         \param[in] circle
          The circle to collide.
         \param[in] box
@@ -117,88 +117,98 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Collision response for collision between two boxes.
-        \param[in] box1
-         The first box that collided.
-        \param[in] box2
-         The second box that collided.
+         Collision response between two objects.
         \param[out] trans1
-         The transform component attached to the first collided object.
-        \param[out] trans2
-         The transform component attached to the second collided object.
-        \param[out] rb1
-         The rigidbody component attached to the first collided object.
-        \param[out] rb2
-         The rigidbody component attached to the second collided object.
-        *************************************************************************/
-        void BoxBox_Response(const BoxCollider2D& box1, const BoxCollider2D& box2, Transform& trans1, Transform& trans2, Rigidbody2D& rb1, Rigidbody2D& rb2);
-
-        /*!***********************************************************************
-        \brief
-         Collision response for collision between the player and a door.
-        \param[in] door_box
-         The BoxCollider2D component attached to the door object.
-        \param[out] player_trans
-         The transform component attached to the player object.
-        \param[in] door_trans
-         The transform component attached to the door object.
-        *************************************************************************/
-        void PlayerDoor_Response(const BoxCollider2D& door_box, Transform& player_trans, const Transform& door_trans);
-
-        /*!***********************************************************************
-        \brief
-         Collision response for static collision between two boxes.
+         The Transform component attached to the first collided object.
         \param[in] box1
          The BoxCollider2D component attached to the first collided object.
+        \param[out] rb1
+         The Rigidbody2D component attached to the first collided object.
+        \param[out] trans2
+         The Transform component attached to the second collided object.
         \param[in] box2
          The BoxCollider2D component attached to the second collided object.
-        \param[out] trans1
-         The transform component attached to the first collided object.
-        \param[out] trans2
-         The transform component attached to the second collided object.
-        \param[in] rb1
-         The rigidbody component attached to the first collided object.
-        \param[in] rb2
-         The rigidbody component attached to the second collided object.
-        *************************************************************************/
-        void Static_Response(const BoxCollider2D& box1, const BoxCollider2D& box2, Transform& trans1, Transform& trans2, const Rigidbody2D& rb1, const Rigidbody2D& rb2);
-
-        /*!***********************************************************************
-        \brief
-         Collision response for collision between the player and a enemy.
-        \param[in] player_box
-         The BoxCollider2D component attached to the player object.
-        \param[in] enemy_box
-         The BoxCollider2D component attached to the enemy object.
-        \param[out] enemy_rb
-         The Rigidbody2D component attached to the enemy object.
-        *************************************************************************/
-        void PlayerEnemy_Response(const BoxCollider2D& player_box, const BoxCollider2D& enemy_box, Rigidbody2D& enemy_rb);
-
-        /*!***********************************************************************
-        \brief
-         Collision response for collision between a enemy and a box.
-        \param[in] box1
-         The BoxCollider2D component attached to the enemy object.
-        \param[in] box2
-         The BoxCollider2D component attached to the box object.
-        \param[out] rb1
-         The Rigidbody2D component attached to the enemy object.
         \param[out] rb2
-         The Rigidbody2D component attached to the box object.
+         The Rigidbody2D component attached to the second collided object.
+        \param[in] firstTimeOfCollision
+         The calculated first time of collision.
         *************************************************************************/
-        void EnemyBox_Response(const BoxCollider2D& box1, const BoxCollider2D& box2, Rigidbody2D& rb1, Rigidbody2D& rb2);
+        void BoxBox_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision);
 
         /*!***********************************************************************
         \brief
-         Collision response for collision between a box and the screen boundaries.
-        \param[in] box
-         The box that collided.
-        \param[out] trans
-         The transform component attached to the collided object.
-        \param[out] rb
-         The rigidbody component attached to the collided object.
+         Collision response between a static object and a dynamic object, and between two dynamic objects.
+        \param[out] trans1
+         The Transform component attached to the first collided object.
+        \param[in] box1
+         The BoxCollider2D component attached to the first collided object.
+        \param[out] rb1
+         The Rigidbody2D component attached to the first collided object.
+        \param[out] trans2
+         The Transform component attached to the second collided object.
+        \param[in] box2
+         The BoxCollider2D component attached to the second collided object.
+        \param[out] rb2
+         The Rigidbody2D component attached to the second collided object.
+        \param[in] firstTimeOfCollision
+         The calculated first time of collision.
         *************************************************************************/
-        void BoxScreen_Response(const BoxCollider2D& box, Transform& trans, Rigidbody2D& rb);
+        void StaticDynamic_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision);
+
+        /*!***********************************************************************
+        \brief
+         Collision response between a static object and a dynamic object.
+        \param[out] trans1
+         The Transform component attached to the first collided object.
+        \param[in] box1
+         The BoxCollider2D component attached to the first collided object.
+        \param[in] rb1
+         The Rigidbody2D component attached to the first collided object.
+        \param[out] trans2
+         The Transform component attached to the second collided object.
+        \param[in] box2
+         The BoxCollider2D component attached to the second collided object.
+        \param[in] rb2
+         The Rigidbody2D component attached to the second collided object.
+        *************************************************************************/
+        void Static_Response(Transform& trans1, const BoxCollider2D& box1, const Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, const Rigidbody2D& rb2);
+
+        /*!***********************************************************************
+        \brief
+         Collision response between two dynamic objects.
+        \param[out] trans1
+         The Transform component attached to the first collided object.
+        \param[out] rb1
+         The Rigidbody2D component attached to the first collided object.
+        \param[out] trans2
+         The Transform component attached to the second collided object.
+        \param[out] rb2
+         The Rigidbody2D component attached to the second collided object.
+        *************************************************************************/
+        void Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2);
+
+        /*!***********************************************************************
+        \brief
+         Collision response between the player and a trigger object.
+        \param[out] player_trans
+         The Transform component attached to the player object.
+        \param[in] trigger_trans
+         The Transform component attached to the trigger object.
+        \param[in] trigger_box
+         The BoxCollider2D component attached to the trigger object.
+        *************************************************************************/
+        void Trigger_Response(Transform& player_trans, const Transform& trigger_trans, const BoxCollider2D& trigger_box);
+
+        /*!***********************************************************************
+        \brief
+         Collision response between an object and the screen boundaries.
+        \param[out] trans
+         The Transform component attached to the collided object.
+        \param[in] box
+         The BoxCollider2D component attached to the collided object.
+        \param[out] rb
+         The Rigidbody2D component attached to the collided object.
+        *************************************************************************/
+        void BoxScreen_Response(Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb);
     };
 }

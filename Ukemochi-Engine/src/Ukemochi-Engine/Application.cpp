@@ -23,70 +23,81 @@ DigiPen Institute of Technology is prohibited.
 #include "FrameController.h"
 
 // System Includes
-#include "Input/Input.h" // for input system
-#include "Physics/Physics.h"	   // for physics system
-#include "Collision/Collision.h"   // for collision system
-#include "Graphics/Renderer.h"     // for graphics system
+#include "Input/Input.h"				 // for input system
+#include "Physics/Physics.h"			 // for physics system
+#include "Collision/Collision.h"		 // for collision system
+#include "Graphics/Renderer.h"			 // for graphics system
 #include "Serialization/Serialization.h" //load json
 #include "ECS/ECS.h"
 #include <iomanip>
 
-//#include <glad/glad.h>
+// #include <glad/glad.h>
 #include "Audio/Audio.h"
 #include "ImGui/ImGuiCore.h"
 #include "SceneManager.h"
 #include "Logic/Scripting.h"
 #include "FileWatcher.h"
 
-#include <crtdbg.h>				// To check for memory leaks
+#include <crtdbg.h> // To check for memory leaks
 
-
-#include <crtdbg.h>				// To check for memory leaks
+#include <crtdbg.h> // To check for memory leaks
 
 namespace Ukemochi
 {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
-    Application* Application::s_Instance = nullptr;
+	Application *Application::s_Instance = nullptr;
 
-    void EnableMemoryLeakChecking(int breakAlloc = -1)
-    {
-        int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-        tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
-        _CrtSetDbgFlag(tmpDbgFlag);
-        if (breakAlloc != -1) _CrtSetBreakAlloc(breakAlloc);
-    }
-    
-    Application::Application()
-    {
-        s_Instance = this;
+	double accumulator = 0.0;
+	int currentNumberOfSteps = 0;
+	double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
+	double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
+	double deltaTime = 0.0;
 
-        unsigned int win_width, win_height;
-        std::string win_title;
-        rapidjson::Document config;
-        bool success = Serialization::LoadJSON("../Assets/config.json", config);
-        if (success)
-        {
-            const rapidjson::Value& window = config["Window"];
-            win_title = window["Title"].GetString();
-            win_height = window["Height"].GetUint();
-            win_width = window["Width"].GetUint();
-        }
-        else
-        {
-            win_title = "DEFAULT";
-            win_height = 900;
-            win_width = 1600;
-        }
-        WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
-        m_Window = std::make_unique<WindowsWindow>(props);
-        m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
+	void EnableMemoryLeakChecking(int breakAlloc = -1)
+	{
+		int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+		tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
+		_CrtSetDbgFlag(tmpDbgFlag);
+		if (breakAlloc != -1)
+			_CrtSetBreakAlloc(breakAlloc);
+	}
 
-        //GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-        //imguiInstance.ImGuiInit(glfwWindow);
+	Application::Application()
+	{
+		s_Instance = this;
 
-        auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
-        fileWatcher->Start([fileWatcher](const std::string& path_to_watch, FileStatus status)
-        {
+		unsigned int win_width, win_height;
+		std::string win_title;
+		rapidjson::Document config;
+		bool success = Serialization::LoadJSON("../Assets/config.json", config);
+		if (success)
+		{
+			const rapidjson::Value &window = config["Window"];
+			win_title = window["Title"].GetString();
+			win_height = window["Height"].GetUint();
+			win_width = window["Width"].GetUint();
+		}
+		else
+		{
+			win_title = "DEFAULT";
+			win_height = 900;
+			win_width = 1600;
+		}
+		WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
+		m_Window = std::make_unique<WindowsWindow>(props);
+		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
+
+		SceneManager::GetInstance();
+
+		GLFWwindow *glfwWindow = static_cast<GLFWwindow *>(m_Window->GetNativeWindow());
+		imguiInstance.ImGuiInit(glfwWindow);
+
+		// GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		// imguiInstance.ImGuiInit(glfwWindow);
+
+		auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
+		fileWatcher->Start([fileWatcher](const std::string &path_to_watch, FileStatus status)
+						   {
             // Logging levels:
             // TRACE (Capture execution of code)
             // DEBUG (Capture relevant detail of event)
@@ -115,213 +126,533 @@ namespace Ukemochi
             case Ukemochi::FileStatus::erased:
                 UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
                 break;
-            }
-        });
-        // ProjectHandler::GenerateSolutionAndProject("..\\Assets");
-        fwInstance = fileWatcher; // Keep a reference to the file watch instance
-    }
+            } });
+		// ProjectHandler::GenerateSolutionAndProject("..\\Assets");
+		fwInstance = fileWatcher; // Keep a reference to the file watch instance
+	}
 
-    Application::~Application()
-    {
-        imguiInstance.ImGuiClean();
-        m_running = false;
+	Application::~Application()
+	{
+		imguiInstance.ImGuiClean();
+		m_running = false;
 
-        // Ensure the thread is joined before exiting to prevent memory leaks
-        if (fwInstance)
-            fwInstance->Stop();
+		// Ensure the thread is joined before exiting to prevent memory leaks
+		if (fwInstance)
+			fwInstance->Stop();
 
-        ScriptingEngine::GetInstance().ShutDown();
-    }
+		ScriptingEngine::GetInstance().ShutDown();
+	}
 
-    void Application::EventIsOn(Event& e)
-    {
-        //imguiInstance.OnEvent(e);
-        EventDispatcher dispatch(e);
-        dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-        if (std::string(e.GetName()) != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
-            UME_ENGINE_TRACE("{0}", e.ToString());
-    }
+	void Application::EventIsOn(Event &e)
+	{
+		// imguiInstance.OnEvent(e);
+		EventDispatcher dispatch(e);
+		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
+		if (std::string(e.GetName()) != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
+			UME_ENGINE_TRACE("{0}", e.ToString());
+	}
 
-    bool Application::IsWindowClose(WindowCloseEvent& e)
-    {
-        (void)e; // Suppress the unused parameter warning
-        gsm_current = GS_STATES::GS_QUIT;
-        m_running = false;
-        return true;
-    }
+	bool Application::IsWindowClose(WindowCloseEvent &e)
+	{
+		(void)e; // Suppress the unused parameter warning
+		es_current = ENGINE_STATES::ES_QUIT;
+		m_running = false;
+		return true;
+	}
 
-    void Application::GameLoop()
-    {
-        // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-        EnableMemoryLeakChecking();
-        
-        double accumulator = 0.0;
-        int currentNumberOfSteps = 0;
-        double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
-        double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
+	void Application::GameLoop() // run
+	{
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-        //Set up SceneManager
-        SceneManager sceneManger;
-        GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
-        imguiInstance.ImGuiInit(glfwWindow);
-        //while engine running
-        while (gsm_current != GS_STATES::GS_QUIT && m_running)
-        {
-            if (Input::IsKeyPressed(GLFW_KEY_1))
-            {
-                gsm_next = GS_LEVEL1;
-                gsm_previous = gsm_current = gsm_next;
-                // If 'W' key is pressed, move forward
+		SceneManager sceneManager = SceneManager::GetInstance();
+		sceneManager.SceneMangerInit();
+		sceneManager.SceneMangerLoad();
 
+		while (es_current != ENGINE_STATES::ES_QUIT)
+		{
+			glClearColor(0, 0, 0, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
 
-                UME_ENGINE_INFO("1 key is pressed");
-            }
+			UpdateFPS();
+			if (sceneManager.GetOnIMGUI() == false)
+			{
+				sceneManager.SceneMangerUpdateCamera(deltaTime);
+			}
+			// engine
+			if (es_current == ENGINE_STATES::ES_ENGINE)
+			{
+				//if (Input::IsKeyTriggered(GLFW_KEY_1))
+				//{
+				//	// save
+				//	sceneManager.SaveScene(sceneManager.GetCurrScene());
+				//	// gsm_next = GS_PLAY;
+				//	es_current = ENGINE_STATES::ES_PLAY;
+				//	// sceneManager.SaveScene();
+				//	UME_ENGINE_INFO("1 key is pressed");
+				//}
+				//************ Update & Draw ************
+				sceneManager.SceneMangerUpdate();
+				//************ Update & Draw ************
+			}
+			// play
+			else if (es_current == ENGINE_STATES::ES_PLAY)
+			{
+				//if (Input::IsKeyTriggered(GLFW_KEY_2))
+				//{
+				//	// free
+				//	sceneManager.LoadSaveFile(sceneManager.GetCurrScene() + ".json");
+				//	// gsm_next = GS_PLAY;
+				//	es_current = ENGINE_STATES::ES_ENGINE;
+				//	// sceneManager.LoadSaveFile();
+				//	UME_ENGINE_INFO("2 key is pressed");
+				//}
+				sceneManager.SceneMangerRunSystems();
+			}
+			UpdateIMGUI();
 
-            //ENGINE STATES
-            if (gsm_current == GS_ENGINE && gsm_current == gsm_next)
-            {
-                glClearColor(0, 0, 0, 1);
-                glClear(GL_COLOR_BUFFER_BIT);
+			DrawFPS();
 
-                //************ FPS ************
-                g_FrameRateController.Update();
+			m_Window->OnUpdate();
+		}
 
-                //************ FPS ************
-                currentNumberOfSteps = 0;
-                // Use deltaTime from the FrameRateController
-                double deltaTime = g_FrameRateController.GetDeltaTime();
-                accumulator += deltaTime;
+		////while engine running
+		// while (es_current != ENGINE_STATES::ES_QUIT && m_running)
+		//{
+		//	//if (Input::IsKeyPressed(GLFW_KEY_1))
+		//	//{
+		//	//	gsm_next = GS_LEVEL1;
+		//	//	gsm_previous = gsm_current = gsm_next;
+		//	//	// If 'W' key is pressed, move forward
+		//	//
+		//	//
+		//	//
+		//	//	UME_ENGINE_INFO("1 key is pressed");
+		//	//}
 
-                // Run game logic at a fixed time step (e.g., 60 times per second)
-                while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
-                {
-                    // Update game logic with a fixed delta time
-                    accumulator -= g_FrameRateController.GetFixedDeltaTime();
-                    currentNumberOfSteps++;
-                }
-                g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
-                //************ FPS ************
+		//	//ENGINE STATES
+		//	if (es_current == ES_ENGINE && gsm_current == gsm_next)
+		//	{
+		//		sceneManager.LoadAndInitScene();
 
-                //************ Display FPS ************
-                double currentTime = glfwGetTime();
-                // Only log/display the FPS every second (or defined interval)
-                if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
-                {
-                    double fps = g_FrameRateController.GetFPS();
+		//		while (gsm_current == gsm_next && es_current == ES_ENGINE)
+		//		{
+		//			glClearColor(0, 0, 0, 1);
+		//			glClear(GL_COLOR_BUFFER_BIT);
+		//		//************ FPS ************
+		//		g_FrameRateController.Update();
 
-                    // Use std::ostringstream to format the FPS with 2 decimal places
-                    std::ostringstream oss;
-                    oss << std::fixed << std::setprecision(2) << fps;
-                    std::string fpsString = oss.str();
+		//		//************ FPS ************
+		//		currentNumberOfSteps = 0;
+		//		// Use deltaTime from the FrameRateController
+		//		double deltaTime = g_FrameRateController.GetDeltaTime();
+		//		accumulator += deltaTime;
 
-                    // Log or display the FPS
-                    UME_ENGINE_INFO("FPS: {0}", fpsString);
+		//		// Run game logic at a fixed time step (e.g., 60 times per second)
+		//		while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
+		//		{
+		//			// Update game logic with a fixed delta time
+		//			accumulator -= g_FrameRateController.GetFixedDeltaTime();
+		//			currentNumberOfSteps++;
+		//		}
+		//		g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
+		//		//************ FPS ************
+		//
+		//			if (Input::IsKeyPressed(GLFW_KEY_1))
+		//			{
+		//				//gsm_next = GS_PLAY;
+		//				sceneManager.SaveScene("test");
+		//				// If 'W' key is pressed, move forward
+		//				UME_ENGINE_INFO("1 key is pressed");
+		//			}
+		//			if (Input::IsKeyPressed(GLFW_KEY_2))
+		//			{
+		//				//gsm_next = GS_PLAY;
+		//				sceneManager.LoadSaveFile("test");
+		//				// If 'W' key is pressed, move forward
+		//				UME_ENGINE_INFO("2 key is pressed");
+		//			}
 
-                    // Update the last time we displayed the FPS
-                    lastFPSDisplayTime = currentTime;
-                }
-                //************ Display FPS ************
+		//			//************ Update & Draw ************
+		//			sceneManager.Update(deltaTime);
+		//			//************ Update & Draw ************
+		//
+		//			//************ Display FPS ************
+		//			double currentTime = glfwGetTime();
+		//			// Only log/display the FPS every second (or defined interval)
+		//			if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+		//			{
+		//				double fps = g_FrameRateController.GetFPS();
 
-                //************ Render IMGUI ************
-                imguiInstance.NewFrame();
-                //imguiInstance.ShowEntityManagementUI();
-                imguiInstance.LoadScene();
-                imguiInstance.Begin();
-                imguiInstance.ImGuiUpdate(); // Render ImGui elements
-                //************ Render IMGUI ************
+		//				// Use std::ostringstream to format the FPS with 2 decimal places
+		//				std::ostringstream oss;
+		//				oss << std::fixed << std::setprecision(2) << fps;
+		//				std::string fpsString = oss.str();
 
-                m_Window->OnUpdate();
-            }
-            else if (gsm_current != GS_ENGINE && gsm_current == gsm_next) //in game state
-            {
-                //current state != restart
-                if (gsm_current != GS_STATES::GS_RESTART)
-                {
-                    sceneManger.LoadScene();
-                }
-                else
-                {
-                    gsm_next = gsm_current = gsm_previous;
-                }
+		//				// Log or display the FPS
+		//				UME_ENGINE_INFO("FPS: {0}", fpsString);
 
-                //Init Scene
-                sceneManger.InitScene();
+		//				// Update the last time we displayed the FPS
+		//				lastFPSDisplayTime = currentTime;
+		//			}
+		//			//************ Display FPS ************
 
-                while (gsm_current == gsm_next && m_running)
-                {
-                    glClearColor(0, 0, 0, 1);
-                    glClear(GL_COLOR_BUFFER_BIT);
+		//		////************ Render IMGUI ************
+		//		//	imguiInstance.NewFrame();
+		//		//	imguiInstance.ShowEntityManagementUI();
+		//		//	imguiInstance.Begin();
+		//		//	imguiInstance.ImGuiUpdate();
+		//		////************ Render IMGUI ************
+		//		//************ Render IMGUI ************
+		//		imguiInstance.NewFrame();
+		//		imguiInstance.SceneBrowser();
+		//		//imguiInstance.AssetBrowser();
+		//		//imguiInstance.ShowEntityManagementUI();
+		//		//imguiInstance.LoadScene();
+		//		//imguiInstance.Begin();
+		//		imguiInstance.ImGuiUpdate(); // Render ImGui elements
+		//		//************ Render IMGUI ************
 
-                    //************ FPS ************
-                    g_FrameRateController.Update();
+		//			m_Window->OnUpdate();
+		//		}
+		//		//Free scene
+		//		gsm_fpFree();
+		//		//If game not restart unload Scene
+		//		if (gsm_next != GS_STATES::GS_RESTART)
+		//		{
+		//			sceneManager.ClearScene();
+		//		}
+		//		if (gsm_next == GS_PLAY)
+		//		{
+		//			es_current = ES_PLAY;
+		//			gsm_next = gsm_current;
+		//		}
 
-                    currentNumberOfSteps = 0;
-                    // Use deltaTime from the FrameRateController
-                    double deltaTime = g_FrameRateController.GetDeltaTime();
-                    accumulator += deltaTime;
+		//		gsm_previous = gsm_current = gsm_next;
 
-                    // Run game logic at a fixed time step (e.g., 60 times per second)
-                    while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
-                    {
-                        // Update game logic with a fixed delta time
-                        accumulator -= g_FrameRateController.GetFixedDeltaTime();
-                        currentNumberOfSteps++;
-                    }
-                    g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
-                    //************ FPS ************
+		//	}
+		//	else if (es_current == ES_PLAY && gsm_current == gsm_next)//in game state
+		//	{
+		//		sceneManager.LoadAndInitScene();
 
-                    if (Input::IsKeyPressed(GLFW_KEY_2))
-                    {
-                        gsm_next = GS_ENGINE;
-                        //gsm_previous = gsm_current = gsm_next;
+		//		while (gsm_current == gsm_next && m_running)
+		//		{
+		//			glClearColor(0, 0, 0, 1);
+		//			glClear(GL_COLOR_BUFFER_BIT);
 
-                        UME_ENGINE_INFO("2 key is pressed");
-                    }
+		//			//************ FPS ************
+		//			g_FrameRateController.Update();
 
-                    //************ Update & Draw ************
-                    sceneManger.Update(deltaTime);
-                    //************ Update & Draw ************
+		//			currentNumberOfSteps = 0;
+		//			// Use deltaTime from the FrameRateController
+		//			double deltaTime = g_FrameRateController.GetDeltaTime();
+		//			accumulator += deltaTime;
 
-                    //************ Render IMGUI ************
-                    imguiInstance.NewFrame();
-                    imguiInstance.ShowEntityManagementUI();
-                    imguiInstance.Begin();
-                    imguiInstance.ImGuiUpdate(); // Render ImGui elements
-                    //************ Render IMGUI ************
+		//			// Run game logic at a fixed time step (e.g., 60 times per second)
+		//			while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
+		//			{
+		//				// Update game logic with a fixed delta time
+		//				accumulator -= g_FrameRateController.GetFixedDeltaTime();
+		//				currentNumberOfSteps++;
+		//			}
+		//			g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
+		//			//************ FPS ************
 
-                    //************ Display FPS ************
-                    double currentTime = glfwGetTime();
-                    // Only log/display the FPS every second (or defined interval)
-                    if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
-                    {
-                        double fps = g_FrameRateController.GetFPS();
+		//			if (Input::IsKeyPressed(GLFW_KEY_2))
+		//			{
+		//				gsm_next = GS_ENGINE;
+		//				//gsm_previous = gsm_current = gsm_next;
 
-                        // Use std::ostringstream to format the FPS with 2 decimal places
-                        std::ostringstream oss;
-                        oss << std::fixed << std::setprecision(2) << fps;
-                        std::string fpsString = oss.str();
+		//				UME_ENGINE_INFO("2 key is pressed");
+		//			}
 
-                        // Log or display the FPS
-                        UME_ENGINE_INFO("FPS: {0}", fpsString);
+		//			//************ Update & Draw ************
+		//			sceneManager.UpdateScenes();
+		//			//************ Update & Draw ************
 
-                        // Update the last time we displayed the FPS
-                        lastFPSDisplayTime = currentTime;
-                    }
-                    //************ Display FPS ************
+		//			//************ Render IMGUI ************
+		//			imguiInstance.NewFrame();
+		//			imguiInstance.SceneBrowser();
+		//			//imguiInstance.AssetBrowser();
+		//			imguiInstance.SceneRender();
+		//			imguiInstance.ShowEntityManagementUI();
+		//			//imguiInstance.Begin();
+		//			imguiInstance.ImGuiUpdate(); // Render ImGui elements
+		//			//************ Render IMGUI ************
 
-                    //Update window
-                    m_Window->OnUpdate();
-                }
-                //Free scene
-                gsm_fpFree();
-                //If game not restart unload Scene
-                if (gsm_next != GS_STATES::GS_RESTART)
-                {
-                    sceneManger.ClearScene();
-                }
+		//			//************ Display FPS ************
+		//			double currentTime = glfwGetTime();
+		//			// Only log/display the FPS every second (or defined interval)
+		//			if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+		//			{
+		//				double fps = g_FrameRateController.GetFPS();
 
-                gsm_previous = gsm_current = gsm_next;
-            }
-        }
-    }
+		//				// Use std::ostringstream to format the FPS with 2 decimal places
+		//				std::ostringstream oss;
+		//				oss << std::fixed << std::setprecision(2) << fps;
+		//				std::string fpsString = oss.str();
+
+		//				// Log or display the FPS
+		//				UME_ENGINE_INFO("FPS: {0}", fpsString);
+
+		//				// Update the last time we displayed the FPS
+		//				lastFPSDisplayTime = currentTime;
+		//			}
+		//			//************ Display FPS ************
+
+		//			//Update window
+		//			m_Window->OnUpdate();
+		//		}
+		//		//Free scene
+		//		gsm_fpFree();
+		//		//If game not restart unload Scene
+		//		if (gsm_next != GS_STATES::GS_RESTART)
+		//		{
+		//			sceneManager.ClearScene();
+		//		}
+		//		if (gsm_next == GS_ENGINE)
+		//		{
+		//			es_current = ES_ENGINE;
+		//			gsm_next = gsm_current;
+		//		}
+
+		//		gsm_previous = gsm_current = gsm_next;
+		//	}
+		//}
+	}
+	void Application::UpdateFPS()
+	{
+		//************ FPS ************
+		g_FrameRateController.Update();
+
+		currentNumberOfSteps = 0;
+		// Use deltaTime from the FrameRateController
+		deltaTime = g_FrameRateController.GetDeltaTime();
+		accumulator += deltaTime;
+
+		// Run game logic at a fixed time step (e.g., 60 times per second)
+		while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
+		{
+			// Update game logic with a fixed delta time
+			accumulator -= g_FrameRateController.GetFixedDeltaTime();
+			currentNumberOfSteps++;
+		}
+		g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
+		//************ FPS ************
+	}
+	void Application::DrawFPS()
+	{
+		//************ Display FPS ************
+		double currentTime = glfwGetTime();
+		// Only log/display the FPS every second (or defined interval)
+		if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+		{
+			double fps = g_FrameRateController.GetFPS();
+
+			// Use std::ostringstream to format the FPS with 2 decimal places
+			std::ostringstream oss;
+			oss << std::fixed << std::setprecision(2) << fps;
+			std::string fpsString = oss.str();
+
+			// Log or display the FPS
+			UME_ENGINE_INFO("FPS: {0}", fpsString);
+
+			// Update the last time we displayed the FPS
+			lastFPSDisplayTime = currentTime;
+		}
+		//************ Display FPS ************
+	}
+	void Application::UpdateIMGUI()
+	{
+		//************ Render IMGUI ************
+		imguiInstance.NewFrame();
+		imguiInstance.SceneBrowser();
+		// imguiInstance.AssetBrowser();
+		imguiInstance.SceneRender();
+		imguiInstance.ShowEntityManagementUI();
+		// imguiInstance.Begin();
+		imguiInstance.ImGuiUpdate(); // Render ImGui elements
+									 //************ Render IMGUI ************
+	}
+
+	// bool Application::IsWindowClose(WindowCloseEvent& e)
+	// {
+	//     (void)e; // Suppress the unused parameter warning
+	//     gsm_current = GS_STATES::GS_QUIT;
+	//     m_running = false;
+	//     return true;
+	// }
+
+	// void Application::GameLoop()
+	// {
+	//     // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//     EnableMemoryLeakChecking();
+
+	//     double accumulator = 0.0;
+	//     int currentNumberOfSteps = 0;
+	//     double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
+	//     double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
+
+	//     //Set up SceneManager
+	//     SceneManager sceneManger;
+	//     GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+	//     imguiInstance.ImGuiInit(glfwWindow);
+	//     //while engine running
+	//     while (gsm_current != GS_STATES::GS_QUIT && m_running)
+	//     {
+	//         if (Input::IsKeyPressed(GLFW_KEY_1))
+	//         {
+	//             gsm_next = GS_LEVEL1;
+	//             gsm_previous = gsm_current = gsm_next;
+	//             // If 'W' key is pressed, move forward
+
+	//             UME_ENGINE_INFO("1 key is pressed");
+	//         }
+
+	//         //ENGINE STATES
+	//         if (gsm_current == GS_ENGINE && gsm_current == gsm_next)
+	//         {
+	//             glClearColor(0, 0, 0, 1);
+	//             glClear(GL_COLOR_BUFFER_BIT);
+
+	//             //************ FPS ************
+	//             g_FrameRateController.Update();
+
+	//             //************ FPS ************
+	//             currentNumberOfSteps = 0;
+	//             // Use deltaTime from the FrameRateController
+	//             double deltaTime = g_FrameRateController.GetDeltaTime();
+	//             accumulator += deltaTime;
+
+	//             // Run game logic at a fixed time step (e.g., 60 times per second)
+	//             while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
+	//             {
+	//                 // Update game logic with a fixed delta time
+	//                 accumulator -= g_FrameRateController.GetFixedDeltaTime();
+	//                 currentNumberOfSteps++;
+	//             }
+	//             g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
+	//             //************ FPS ************
+
+	//             //************ Display FPS ************
+	//             double currentTime = glfwGetTime();
+	//             // Only log/display the FPS every second (or defined interval)
+	//             if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+	//             {
+	//                 double fps = g_FrameRateController.GetFPS();
+
+	//                 // Use std::ostringstream to format the FPS with 2 decimal places
+	//                 std::ostringstream oss;
+	//                 oss << std::fixed << std::setprecision(2) << fps;
+	//                 std::string fpsString = oss.str();
+
+	//                 // Log or display the FPS
+	//                 UME_ENGINE_INFO("FPS: {0}", fpsString);
+
+	//                 // Update the last time we displayed the FPS
+	//                 lastFPSDisplayTime = currentTime;
+	//             }
+	//             //************ Display FPS ************
+
+	//             //************ Render IMGUI ************
+	//             imguiInstance.NewFrame();
+	//             //imguiInstance.ShowEntityManagementUI();
+	//             imguiInstance.LoadScene();
+	//             imguiInstance.Begin();
+	//             imguiInstance.ImGuiUpdate(); // Render ImGui elements
+	//             //************ Render IMGUI ************
+
+	//             m_Window->OnUpdate();
+	//         }
+	//         else if (gsm_current != GS_ENGINE && gsm_current == gsm_next) //in game state
+	//         {
+	//             //current state != restart
+	//             if (gsm_current != GS_STATES::GS_RESTART)
+	//             {
+	//                 sceneManger.LoadScene();
+	//             }
+	//             else
+	//             {
+	//                 gsm_next = gsm_current = gsm_previous;
+	//             }
+
+	//             //Init Scene
+	//             sceneManger.InitScene();
+
+	//             while (gsm_current == gsm_next && m_running)
+	//             {
+	//                 glClearColor(0, 0, 0, 1);
+	//                 glClear(GL_COLOR_BUFFER_BIT);
+
+	//                 //************ FPS ************
+	//                 g_FrameRateController.Update();
+
+	//                 currentNumberOfSteps = 0;
+	//                 // Use deltaTime from the FrameRateController
+	//                 double deltaTime = g_FrameRateController.GetDeltaTime();
+	//                 accumulator += deltaTime;
+
+	//                 // Run game logic at a fixed time step (e.g., 60 times per second)
+	//                 while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
+	//                 {
+	//                     // Update game logic with a fixed delta time
+	//                     accumulator -= g_FrameRateController.GetFixedDeltaTime();
+	//                     currentNumberOfSteps++;
+	//                 }
+	//                 g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
+	//                 //************ FPS ************
+
+	//                 if (Input::IsKeyPressed(GLFW_KEY_2))
+	//                 {
+	//                     gsm_next = GS_ENGINE;
+	//                     //gsm_previous = gsm_current = gsm_next;
+
+	//                     UME_ENGINE_INFO("2 key is pressed");
+	//                 }
+
+	//                 //************ Update & Draw ************
+	//                 sceneManger.Update(deltaTime);
+	//                 //************ Update & Draw ************
+
+	//                 //************ Render IMGUI ************
+	//                 imguiInstance.NewFrame();
+	//                 imguiInstance.ShowEntityManagementUI();
+	//                 imguiInstance.Begin();
+	//                 imguiInstance.ImGuiUpdate(); // Render ImGui elements
+	//                 //************ Render IMGUI ************
+
+	//                 //************ Display FPS ************
+	//                 double currentTime = glfwGetTime();
+	//                 // Only log/display the FPS every second (or defined interval)
+	//                 if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+	//                 {
+	//                     double fps = g_FrameRateController.GetFPS();
+
+	//                     // Use std::ostringstream to format the FPS with 2 decimal places
+	//                     std::ostringstream oss;
+	//                     oss << std::fixed << std::setprecision(2) << fps;
+	//                     std::string fpsString = oss.str();
+
+	//                     // Log or display the FPS
+	//                     UME_ENGINE_INFO("FPS: {0}", fpsString);
+
+	//                     // Update the last time we displayed the FPS
+	//                     lastFPSDisplayTime = currentTime;
+	//                 }
+	//                 //************ Display FPS ************
+
+	//                 //Update window
+	//                 m_Window->OnUpdate();
+	//             }
+	//             //Free scene
+	//             gsm_fpFree();
+	//             //If game not restart unload Scene
+	//             if (gsm_next != GS_STATES::GS_RESTART)
+	//             {
+	//                 sceneManger.ClearScene();
+	//             }
+
+	//             gsm_previous = gsm_current = gsm_next;
+	//         }
+	//     }
+	// }
 }

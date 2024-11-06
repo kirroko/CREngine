@@ -211,30 +211,16 @@ namespace UkemochiEngine.CoreModule
         public void RemoveTorque()
         {
             Torque = 0.0f;
-            AngularVelocity = AngularVelocity * AngularDrag;
-
-            if (System.Math.Abs(AngularVelocity) < 0.01f)
-                AngularVelocity = 0.0f;
         }
 
         public void RemoveForceX()
         {
             Force = new Vector2(0, Force.y);
-            // _force.x = 0;
-            Velocity = new Vector2(Velocity.x * Drag, Velocity.y);
-            // _velocity.x *= _drag;
-            if (System.Math.Abs(Velocity.x) < 0.01f)
-                Velocity = new Vector2(0, Velocity.y);
         }
 
         public void RemoveForceY()
         {
             Force = new Vector2(Force.x, 0);
-            // _force.y = 0;
-            Velocity = new Vector2(Velocity.x, Velocity.y * Drag);
-            // _velocity.y *= _drag;
-            if (System.Math.Abs(Velocity.y) < 0.01f)
-                Velocity = new Vector2(Velocity.x, 0);
         }
     }
 }

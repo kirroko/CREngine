@@ -6,7 +6,7 @@
         "Components": [
             {
                 "Name": "Transform",
-                "Position": [400, 275],
+                "Position": [300, 675],
                 "Rotation": 0,
                 "Scale": [100, 100]
             },
@@ -19,6 +19,13 @@
                 "Mass": 1,
                 "Inverse Mass": 1,
                 "Linear Drag": 0.9,
+                "Angle": 0,
+                "Angular Velocity": 0,
+                "Angular Acceleration": 0,
+                "Torque": 0,
+                "Inertia Mass": 1,
+                "Inverse Inertia Mass": 1,
+                "Angular Drag": 0.9,
                 "use_gravity": false,
                 "is_kinematic": false
             },
@@ -28,11 +35,11 @@
                 "Max": [1, 1],
                 "Collision Flag" : 0,
                 "is_trigger" : false,
-                "is_player" : true
+                "Tag" : "Player"
             },
             {
                 "Name": "SpriteRender",
-              "Sprite": "Ukemochi.png",
+              "Sprite": "Worm.png",
               "Shape" : 0
             }
         ]

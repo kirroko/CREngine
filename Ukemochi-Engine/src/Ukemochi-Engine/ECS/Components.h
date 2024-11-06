@@ -131,7 +131,7 @@ namespace Ukemochi
 		unsigned int textureID = 0;
 		bool animated = false;							// Is the object animated?
 
-		int animationIndex = 0;
+		int animationIndex = -1;
 		bool flipX = false;
 		bool flipY = false;
 		//bool visible = true;							// Is the object visible?

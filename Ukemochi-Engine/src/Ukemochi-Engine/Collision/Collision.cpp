@@ -4,7 +4,7 @@
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 6, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Collision.h"			// for forward declaration
 #include "../Math/MathUtils.h"	// for min, max, abs
-#include "../FrameController.h"	// for GetDeltaTime
+#include "../FrameController.h"	// for GetFixedDeltaTime
 #include "../Audio/Audio.h"		// for Audio sound effects
 #include "../Application.h"		// for screen size
 
@@ -37,57 +37,50 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Check and resolve the collisions of all the entities.
+	 Check the collisions of all the objects.
 	*************************************************************************/
 	void Collision::CheckCollisions()
 	{
-		for (auto const& entity : m_Entities)
+		// Update the collision based on the number of steps
+		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
-			// Get references of the first entity components
-			auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
-			auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-			auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
-
-			// Update the bounding box size
-			UpdateBoundingBox(box, trans);
-
-			for (auto const& entity2 : m_Entities)
+			for (auto const& entity : m_Entities)
 			{
-				// Skip self collision
-				if (entity == entity2)
-					continue;
+				// Get references of the first entity components
+				auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity);
+				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
-				// Get references of the second entity components
-				auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
-				auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
-				auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+				// Update the bounding box size
+				UpdateBoundingBox(box1, trans1);
 
-				// Check collision between entities
-				float tLast;
-				if (BoxBox_Intersection(box, rb.velocity, box2, rb2.velocity, tLast))
-					BoxBox_Response(box, box2, trans, trans2, rb, rb2);
+				for (auto const& entity2 : m_Entities)
+				{
+					// Skip self collision
+					if (entity == entity2)
+						continue;
+
+					// Get references of the second entity components
+					auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
+					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
+					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+
+					// Check collision between objects
+					float tLast{};
+					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
+						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
+				}
+
+				// Check collision between objects and the screen boundaries
+				if (BoxScreen_Intersection(box1))
+					BoxScreen_Response(trans1, box1, rb1);
 			}
-
-			// Check collision between entities and the screen boundaries
-			if (BoxScreen_Intersection(box))
-				BoxScreen_Response(box, trans, rb);
 		}
-	}
-
-	// Rotate a point by the angle
-	Vec2 RotatePoint(const Vec2& point, float angle)
-	{
-		// x' = x * cos(theta) - y * sin(theta)
-		// y' = x * sin(theta) - y * cos(theta)
-		return {
-			point.x * std::cos(angle) - point.y * std::sin(angle),
-			point.x * std::sin(angle) + point.y * std::cos(angle)
-		};
 	}
 
 	/*!***********************************************************************
 	\brief
-	 Update the bounding box of the entity.
+	 Update the bounding box of the object.
 	*************************************************************************/
 	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans)
 	{
@@ -107,7 +100,7 @@ namespace Ukemochi
 		//// Rotate all corners and translate by position
 		//for (int i = 0; i < 4; ++i)
 		//{
-		//	Vec2 rotated = RotatePoint(corners[i], trans.rotation);
+		//	Vec2 rotated = Vec2Rotate(corners[i], trans.rotation);
 		//	corners[i].x = rotated.x + trans.position.x;
 		//	corners[i].y = rotated.y + trans.position.y;
 		//}
@@ -122,7 +115,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between two boxes.
+	 Collision detection between two boxes.
 	*************************************************************************/
 	bool Collision::BoxBox_Intersection(BoxCollider2D& box1, const Vec2& vel1, BoxCollider2D& box2, const Vec2& vel2, float& firstTimeOfCollision)
 	{
@@ -139,7 +132,7 @@ namespace Ukemochi
 
 			// Initialize and calculate the new velocity of vRel
 			firstTimeOfCollision = 0.0f;
-			float tLast = static_cast<float>(Ukemochi::g_FrameRateController.GetDeltaTime());
+			float tLast = static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 			Vec2 vRel = { vel2.x - vel1.x, vel2.y - vel1.y };
 
 			// Check for collision in the x-axis
@@ -273,13 +266,10 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between a box and the screen boundaries.
+	 Collision detection between a box and the screen boundaries.
 	*************************************************************************/
 	int Collision::BoxScreen_Intersection(BoxCollider2D& box)
 	{
-		// might require +-camera delta if the camera is movable
-		//if (box.min.x < -cameraDelta.x)
-
 		int flag = 0;
 
 		// Check left screen boundary
@@ -304,7 +294,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between two circles.
+	 Collision detection between two circles.
 	*************************************************************************/
 	bool Collision::CircleCircle_Intersection(const CircleCollider2D& circle1, const CircleCollider2D& circle2)
 	{
@@ -319,7 +309,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between a circle and a box.
+	 Collision detection between a circle and a box.
 	*************************************************************************/
 	bool Collision::CircleBox_Intersection(const CircleCollider2D& circle, const BoxCollider2D& box)
 	{
@@ -339,35 +329,15 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Collision response for collision between two boxes.
+	 Collision response between two objects.
 	*************************************************************************/
-	void Collision::BoxBox_Response(const BoxCollider2D& box1, const BoxCollider2D& box2, Transform& trans1, Transform& trans2, Rigidbody2D& rb1, Rigidbody2D& rb2)
+	void Collision::BoxBox_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
-		if (box1.tag == "Player")
-		{
-			if (box2.is_trigger) // PLAYER AND TRIGGERS (trigger objects)
-			{
-				// PLAYER AND DOORS
-				if (box2.tag == "Left Door" || box2.tag == "Right Door" || box2.tag == "Top Door" || box2.tag == "Btm Door")
-					PlayerDoor_Response(box2, trans1, trans2);
-
-				// PLAYER AND OTHER TRIGGERS (coins, checkpoints, etc..)
-			}
-			else // PLAYER AND STATIC/DYNAMIC (static objects / dynamic objects)
-			{
-				// PLAYER AND WALL (static objects)
-				Static_Response(box1, box2, trans1, trans2, rb1, rb2);
-
-				if (box2.tag == "Enemy") // PLAYER AND ENEMY (dynamic objects)
-					PlayerEnemy_Response(box1, box2, rb2);
-			}
-		}
-		else if (box1.tag == "Enemy")
-		{
-			// ENEMY AND WALL/TRIGGER/ENEMY (static objects / trigger objects / dynamic objects)
-			Static_Response(box1, box2, trans1, trans2, rb1, rb2);
-			EnemyBox_Response(box1, box2, rb1, rb2);
-		}
+		// PLAYER AND TRIGGER
+		if (box1.tag == "Player" && box2.is_trigger)
+			Trigger_Response(trans1, trans2, box2);
+		else // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 		// Play a sound effect on collision
 		if (!Audio::GetInstance().IsPlaying(HIT))
@@ -376,83 +346,59 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Collision response for collision between the player and a door.
+	 Collision response between a static object and a dynamic object, and between two dynamic objects.
 	*************************************************************************/
-	void Collision::PlayerDoor_Response(const BoxCollider2D& door_box, Transform& player_trans, const Transform& door_trans)
+	void Collision::StaticDynamic_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
-		// To simulate moving between rooms
-		if (door_box.tag == "Left Door")
+		// Skip trigger objects
+		if (box1.tag == "Player" && box2.is_trigger || box2.tag == "Player" && box1.is_trigger)
+			return;
+
+		// Move objects to the point of collision
+		if (!rb1.is_kinematic)
+			trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		if (!rb2.is_kinematic)
+			trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+
+		// Check collision flags and adjust velocities based on impact direction
+		if (box1.collision_flag & COLLISION_RIGHT && box2.collision_flag & COLLISION_LEFT)
 		{
-			// If the player is colliding with the top or btm of the door, act as a wall
-			if (door_box.collision_flag & COLLISION_TOP)
-			{
-				player_trans.position.y = door_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			}
-			else if (door_box.collision_flag & COLLISION_BOTTOM)
-			{
-				player_trans.position.y = door_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			}
-			else // Player entered the left door
-			{
-				player_trans.position.x = screen_width - door_trans.scale.x - player_trans.scale.x * 0.5f;
-			}
+			// Collision on the right side of box1 and left side of box2
+			rb1.velocity.x = -abs(rb1.velocity.x); // Reverse box1's x velocity
+			rb2.velocity.x = abs(rb2.velocity.x); // Reverse box2's x velocity
 		}
-		else if (door_box.tag == "Right Door")
+		else if (box1.collision_flag & COLLISION_LEFT && box2.collision_flag & COLLISION_RIGHT)
 		{
-			// If the player is colliding with the top or btm of the door, act as a wall
-			if (door_box.collision_flag & COLLISION_TOP)
-			{
-				player_trans.position.y = door_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			}
-			else if (door_box.collision_flag & COLLISION_BOTTOM)
-			{
-				player_trans.position.y = door_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			}
-			else // Player entered the right door
-			{
-				player_trans.position.x = door_trans.scale.x + player_trans.scale.x * 0.5f;
-			}
+			// Collision on the left side of box1 and right side of box2
+			rb1.velocity.x = abs(rb1.velocity.x); // Reverse box1's x velocity
+			rb2.velocity.x = -abs(rb2.velocity.x); // Reverse box2's x velocity
 		}
-		else if (door_box.tag == "Top Door")
+
+		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
 		{
-			// If the player is colliding with the left or right of the door, act as a wall
-			if (door_box.collision_flag & COLLISION_LEFT)
-			{
-				player_trans.position.x = door_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			}
-			else if (door_box.collision_flag & COLLISION_RIGHT)
-			{
-				player_trans.position.x = door_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			}
-			else // Player entered the top door
-			{
-				player_trans.position.y = screen_height - door_trans.scale.y - player_trans.scale.y * 0.5f;
-			}
+			// Collision on the top side of box1 and bottom side of box2
+			rb1.velocity.y = abs(rb1.velocity.y); // Reverse box1's y velocity
+			rb2.velocity.y = -abs(rb2.velocity.y); // Reverse box2's y velocity
 		}
-		else if (door_box.tag == "Btm Door")
+		else if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
 		{
-			// If the player is colliding with the left or right of the door, act as a wall
-			if (door_box.collision_flag & COLLISION_LEFT)
-			{
-				player_trans.position.x = door_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			}
-			else if (door_box.collision_flag & COLLISION_RIGHT)
-			{
-				player_trans.position.x = door_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			}
-			else // Player entered the bottom door
-			{
-				player_trans.position.y = door_trans.scale.y + player_trans.scale.y * 0.5f;
-			}
+			// Collision on the bottom side of box1 and top side of box2
+			rb1.velocity.y = -abs(rb1.velocity.y); // Reverse box1's y velocity
+			rb2.velocity.y = abs(rb2.velocity.y); // Reverse box2's y velocity
 		}
+
+		// Reset collision flags after handling response
+		box1.collision_flag = 0;
+		box2.collision_flag = 0;
 	}
 
 	/*!***********************************************************************
 	\brief
-	 Collision response for static collision between two boxes.
+	 Collision response between a static object and a dynamic object.
 	*************************************************************************/
-	void Collision::Static_Response(const BoxCollider2D& box1, const BoxCollider2D& box2, Transform& trans1, Transform& trans2, const Rigidbody2D& rb1, const Rigidbody2D& rb2)
+	void Collision::Static_Response(Transform& trans1, const BoxCollider2D& box1, const Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, const Rigidbody2D& rb2)
 	{
+		// STATIC AND DYNAMIC
 		// Box 1 left and box 2 right collision response
 		if (box1.collision_flag & COLLISION_LEFT && box2.collision_flag & COLLISION_RIGHT)
 		{
@@ -496,91 +442,163 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Collision response for collision between the player and a enemy.
+	 Collision response between two dynamic objects.
 	*************************************************************************/
-	void Collision::PlayerEnemy_Response(const BoxCollider2D& player_box, const BoxCollider2D& enemy_box, Rigidbody2D& enemy_rb)
+	void Collision::Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2)
 	{
-		// Player left and enemy right collision response
-		if (player_box.collision_flag & COLLISION_LEFT && enemy_box.collision_flag & COLLISION_RIGHT)
-		{
-			// To simulate bounce effect
-			enemy_rb.velocity.x = -enemy_rb.velocity.x;
-		}
+		// DYNAMIC AND DYNAMIC
+		// Calculate the difference in positions
+		Vector2D difference = trans2.position - trans1.position;
+		Vector2D combine_half_scale = (trans1.scale + trans2.scale) * 0.5f;
 
-		// Player right and enemy left collision response
-		if (player_box.collision_flag & COLLISION_RIGHT && enemy_box.collision_flag & COLLISION_LEFT)
-		{
-			// To simulate bounce effect
-			enemy_rb.velocity.x = -enemy_rb.velocity.x;
-		}
+		// Calculate the overlap on the x and y axis
+		float overlap_x = combine_half_scale.x - std::abs(difference.x);
+		float overlap_y = combine_half_scale.y - std::abs(difference.y);
 
-		// Player top and enemy bottom collision response
-		if (player_box.collision_flag & COLLISION_TOP && enemy_box.collision_flag & COLLISION_BOTTOM)
+		// Check if there is an overlap on both axis
+		if (overlap_x > 0 && overlap_y > 0)
 		{
-			// To simulate bounce effect
-			enemy_rb.velocity.y = -enemy_rb.velocity.y;
-		}
+			// Determine the minimal axis of separation
+			if (overlap_x < overlap_y)
+			{
+				// Resolve along the x-axis
+				float penetration = overlap_x;
+				float response_x = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
-		// Box 1 bottom and box 2 top collision response
-		if (player_box.collision_flag & COLLISION_BOTTOM && enemy_box.collision_flag & COLLISION_TOP)
-		{
-			// To simulate bounce effect
-			enemy_rb.velocity.y = -enemy_rb.velocity.y;
+				// First object is on the left, second object is on the right
+				if (difference.x > 0)
+				{
+					// Check if the first object has physics
+					if (!rb1.is_kinematic)
+					{
+						trans1.position.x -= penetration * 0.5f;
+						rb1.velocity.x = -response_x;
+					}
+
+					// Check if the second object has physics
+					if (!rb2.is_kinematic)
+					{
+						trans2.position.x += penetration * 0.5f;
+						rb2.velocity.x = response_x;
+					}
+				}
+				else // First object is on the right, second object is on the left
+				{
+					// Check if the first object has physics
+					if (!rb1.is_kinematic)
+					{
+						trans1.position.x += penetration * 0.5f;
+						rb1.velocity.x = response_x;
+					}
+
+					// Check if the second object has physics
+					if (!rb2.is_kinematic)
+					{
+						trans2.position.x -= penetration * 0.5f;
+						rb2.velocity.x = -response_x;
+					}
+				}
+			}
+			else
+			{
+				// Resolve along the y-axis
+				float penetration = overlap_y;
+				float response_y = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+
+				// First object is on the bottom, second object is on the top
+				if (difference.y > 0)
+				{
+					// Check if the first object has physics
+					if (!rb1.is_kinematic)
+					{
+						trans1.position.y -= penetration * 0.5f;
+						rb1.velocity.y = -response_y;
+					}
+
+					// Check if the second object has physics
+					if (!rb2.is_kinematic)
+					{
+						trans2.position.y += penetration * 0.5f;
+						rb2.velocity.y = response_y;
+					}
+				}
+				else // First object is on the top, second object is on the bottom
+				{
+					// Check if the first object has physics
+					if (!rb1.is_kinematic)
+					{
+						trans1.position.y += penetration * 0.5f;
+						rb1.velocity.y = response_y;
+					}
+
+					// Check if the second object has physics
+					if (!rb2.is_kinematic)
+					{
+						trans2.position.y -= penetration * 0.5f;
+						rb2.velocity.y = -response_y;
+					}
+				}
+			}
 		}
 	}
 
 	/*!***********************************************************************
 	\brief
-	 Collision response for collision between a enemy and a box.
+	 Collision response between the player and a trigger object.
 	*************************************************************************/
-	void Collision::EnemyBox_Response(const BoxCollider2D& box1, const BoxCollider2D& box2, Rigidbody2D& rb1, Rigidbody2D& rb2)
+	void Collision::Trigger_Response(Transform& player_trans, const Transform& trigger_trans, const BoxCollider2D& trigger_box)
 	{
-		// Box 1 left and box 2 right collision response
-		if (box1.collision_flag & COLLISION_LEFT && box2.collision_flag & COLLISION_RIGHT)
+		// PLAYER AND DOORS
+		// To simulate moving between rooms
+		if (trigger_box.tag == "Left Door")
 		{
-			// To simulate bounce effect
-			if (box1.tag == "Enemy")
-				rb1.velocity.x = -rb1.velocity.x;
-			if (box2.tag == "Enemy")
-				rb2.velocity.x = -rb2.velocity.x;
+			// If the player is colliding with the top or btm of the door, act as a wall
+			if (trigger_box.collision_flag & COLLISION_TOP)
+				player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
+			else if (trigger_box.collision_flag & COLLISION_BOTTOM)
+				player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
+			else // Player entered the left door
+				player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
+		}
+		else if (trigger_box.tag == "Right Door")
+		{
+			// If the player is colliding with the top or btm of the door, act as a wall
+			if (trigger_box.collision_flag & COLLISION_TOP)
+				player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
+			else if (trigger_box.collision_flag & COLLISION_BOTTOM)
+				player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
+			else // Player entered the right door
+				player_trans.position.x = trigger_trans.scale.x + player_trans.scale.x * 0.5f;
+		}
+		else if (trigger_box.tag == "Top Door")
+		{
+			// If the player is colliding with the left or right of the door, act as a wall
+			if (trigger_box.collision_flag & COLLISION_LEFT)
+				player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
+			else if (trigger_box.collision_flag & COLLISION_RIGHT)
+				player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
+			else // Player entered the top door
+				player_trans.position.y = screen_height - trigger_trans.scale.y - player_trans.scale.y * 0.5f;
+		}
+		else if (trigger_box.tag == "Btm Door")
+		{
+			// If the player is colliding with the left or right of the door, act as a wall
+			if (trigger_box.collision_flag & COLLISION_LEFT)
+				player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
+			else if (trigger_box.collision_flag & COLLISION_RIGHT)
+				player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
+			else // Player entered the bottom door
+				player_trans.position.y = trigger_trans.scale.y + player_trans.scale.y * 0.5f;
 		}
 
-		// Box 1 right and box 2 left collision response
-		if (box1.collision_flag & COLLISION_RIGHT && box2.collision_flag & COLLISION_LEFT)
-		{
-			// To simulate bounce effect
-			if (box1.tag == "Enemy")
-				rb1.velocity.x = -rb1.velocity.x;
-			if (box2.tag == "Enemy")
-				rb2.velocity.x = -rb2.velocity.x;
-		}
-
-		// Box 1 top and box 2 bottom collision response
-		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
-		{
-			// To simulate bounce effect
-			if (box1.tag == "Enemy")
-				rb1.velocity.y = -rb1.velocity.y;
-			if (box2.tag == "Enemy")
-				rb2.velocity.y = -rb2.velocity.y;
-		}
-
-		// Box 1 bottom and box 2 top collision response
-		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
-		{
-			// To simulate bounce effect
-			if (box1.tag == "Enemy")
-				rb1.velocity.y = -rb1.velocity.y;
-			if (box2.tag == "Enemy")
-				rb2.velocity.y = -rb2.velocity.y;
-		}
+		// PLAYER AND OTHER TRIGGERS (coins, checkpoints, etc..)
 	}
 
 	/*!***********************************************************************
 	\brief
-	 Collision response for collision between a box and the screen boundaries.
+	 Collision response between an object and the screen boundaries.
 	*************************************************************************/
-	void Collision::BoxScreen_Response(const BoxCollider2D& box, Transform& trans, Rigidbody2D& rb)
+	void Collision::BoxScreen_Response(Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb)
 	{
 		// Colliding with left screen boundary
 		if (box.collision_flag & COLLISION_LEFT)

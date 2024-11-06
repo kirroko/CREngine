@@ -17,14 +17,14 @@
   * @param vertices A pointer to the array of vertex data.
   * @param size The size of the vertex data in bytes.
   */
-VBO::VBO(GLfloat* vertices, GLsizeiptr size)
+VBO::VBO(const GLfloat* vertices, GLsizeiptr size)
 {
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
 }
 
-void VBO::UpdateData(GLfloat* vertices, GLsizeiptr size)
+void VBO::UpdateData(const void* vertices, GLsizeiptr size)
 {
 	Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
