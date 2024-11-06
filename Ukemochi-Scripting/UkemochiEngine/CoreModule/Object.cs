@@ -19,7 +19,7 @@ namespace UkemochiEngine.CoreModule
 {
     public abstract class Object
     {
-        // ==================== PROPERTIES ====================
+        // ==================== FIELDS ========================
         private ulong _id = 0;
         
         // ==================== METHODS =======================
@@ -27,7 +27,5 @@ namespace UkemochiEngine.CoreModule
         {
             return _id;
         }
-        
-        // ==================== INTERNAL METHODS =======================
     }
 }

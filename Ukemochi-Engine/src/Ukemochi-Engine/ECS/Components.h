@@ -132,6 +132,8 @@ namespace Ukemochi
 		bool animated = false;							// Is the object animated?
 
 		int animationIndex = 0;
+		bool flipX = false;
+		bool flipY = false;
 		//bool visible = true;							// Is the object visible?
 		//float opacity = 1.0f;							// Opacity of the object
 	};

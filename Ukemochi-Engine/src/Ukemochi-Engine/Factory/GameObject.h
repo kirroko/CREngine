@@ -66,6 +66,7 @@ namespace Ukemochi
             UME_ENGINE_TRACE("GO ({0}) Adding Component: {1}", m_InstanceID, type);
             ECS::GetInstance().AddComponent(m_InstanceID, component);
 
+
             // We Instantiate the C# component
             // We probably don't need to check if the component is already in the map since the above code will stop
             if (strcmp(type.c_str(), "Script") == 0)
@@ -90,6 +91,7 @@ namespace Ukemochi
                 MonoObject* transform = ScriptingEngine::GetInstance().InstantiateClass(type);
                 ScriptingEngine::GetInstance().SetMonoPropertyValue(transform, "gameObject", m_ManagedInstance);
                 auto& transformCast = ECS::GetInstance().GetComponent<Transform>(m_InstanceID);
+                ScriptingEngine::GetInstance().SetMonoFieldValueULL(transform, "_id", &m_InstanceID);
 
                 ScriptingEngine::GetInstance().SetVector2Property(transform, "Position", transformCast.position.x,
                                                                   transformCast.position.y);
@@ -109,6 +111,7 @@ namespace Ukemochi
                 MonoObject* rigidbody = ScriptingEngine::GetInstance().InstantiateClass(type);
                 ScriptingEngine::GetInstance().SetMonoPropertyValue(rigidbody, "gameObject", m_ManagedInstance);
                 auto& rigidbodyCast = ECS::GetInstance().GetComponent<Rigidbody2D>(m_InstanceID);
+                ScriptingEngine::GetInstance().SetMonoFieldValueULL(rigidbody, "_id", &m_InstanceID);
 
                 ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Force", rigidbodyCast.force.x,
                                                                   rigidbodyCast.force.y);
@@ -117,13 +120,11 @@ namespace Ukemochi
                 ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Acceleration",
                                                                   rigidbodyCast.acceleration.x,
                                                                   rigidbodyCast.acceleration.y);
-                ScriptingEngine::GetInstance().SetMonoPropertyValue(rigidbody, "Mass", &rigidbodyCast.mass);
-                ScriptingEngine::GetInstance().SetMonoPropertyValue(rigidbody, "InverseMass",
-                                                                    &rigidbodyCast.inverse_mass);
-                ScriptingEngine::GetInstance().
-                    SetMonoPropertyValue(rigidbody, "UseGravity", &rigidbodyCast.use_gravity);
-                ScriptingEngine::GetInstance().SetMonoPropertyValue(rigidbody, "IsKinematic",
-                                                                    &rigidbodyCast.is_kinematic);
+                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_mass", &rigidbodyCast.mass);
+                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_inverseMass",
+                                                                &rigidbodyCast.inverse_mass);
+                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_useGravity", &rigidbodyCast.use_gravity);
+                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_isKinematic", &rigidbodyCast.is_kinematic);
 
                 m_ManagedComponents[type] = rigidbody;
                 m_ManagedComponentsHandle[type] = mono_gchandle_new_v2(rigidbody, true);
@@ -134,7 +135,7 @@ namespace Ukemochi
             }
             else
             {
-                UME_ENGINE_INFO("!! Item is still WIP");
+                UME_ENGINE_INFO("!! Item ({0}) is still WIP for C# data",type);
                 // m_ManagedComponents[type] = ScriptingEngine::GetInstance().InstantiateClass(type);
             }
 

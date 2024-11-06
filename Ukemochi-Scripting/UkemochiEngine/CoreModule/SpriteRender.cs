@@ -19,9 +19,31 @@ namespace UkemochiEngine.CoreModule
 {
     public class SpriteRender : Component
     {
+        // ==================== FIELDS ====================
+        private bool _flipX = false;
+        private bool _flipY = false;
+
         // ==================== PROPERTIES ====================
+        public bool FlipX
+        {
+            get => _flipX;
+            set
+            {
+                _flipX = value;
+                EngineInterop.SetSpriteRenderFlipX(GetInstanceID(), _flipX);
+            }
+        }
         
-        
+        public bool FlipY
+        {
+            get => _flipY;
+            set
+            {
+                _flipY = value;
+                EngineInterop.SetSpriteRenderFlipY(GetInstanceID(), _flipY);
+            }
+        }
+
         // ==================== METHODS =======================
     }
 }

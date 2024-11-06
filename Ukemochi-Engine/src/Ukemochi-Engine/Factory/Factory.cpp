@@ -31,9 +31,10 @@ namespace Ukemochi
 		return {entity, name, tag};
 	}
 
-	GameObject GameObjectFactory::CreatePrefebObject(const std::string& filePath)
+	GameObject& GameObjectFactory::CreatePrefebObject(const std::string& filePath)
 	{
-		EntityID entity = ECS::GetInstance().CreateEntity();
+		// EntityID entity = ECS::GetInstance().CreateEntity(); // A little bit special here
+		// We are going to call the GameObjectManager to create a empty Object for us and then we will fill it up
 		Document storage;
 		if (Serialization::LoadJSON(filePath, storage))
 		{
@@ -41,7 +42,8 @@ namespace Ukemochi
 
 			std::string name = object["Name"].GetString();
 			std::string tag = object["Tag"].GetString();
-			GameObject go = {entity, name, tag};
+			// GameObject go = {entity, name, tag};
+			GameObject& go = GameObjectManager::GetInstance().CreateObject(name, tag);
 			for (auto& comps : object["Components"].GetArray()) // TODO: Update whenever new components are added
 			{
 				std::string component = comps["Name"].GetString();
@@ -109,7 +111,8 @@ namespace Ukemochi
 
 			return go;
 		}
-		return {entity}; // Default GameObject
+		UME_ENGINE_ASSERT(false ,"Loading Prefab failed: {1}", filePath)
+		// Ignore the warning
 	}
 
 	GameObject GameObjectFactory::CloneObject(const GameObject& targetObject, const std::string& name, const std::string& tag)

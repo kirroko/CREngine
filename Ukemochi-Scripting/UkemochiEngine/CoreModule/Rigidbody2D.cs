@@ -15,27 +15,176 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header
  *******************************************************************/
+
 namespace UkemochiEngine.CoreModule
 {
     public class Rigidbody2D : Component
     {
+        // ==================== FIELDS ========================
+        private Vector2 _velocity;
+        private Vector2 _acceleration;
+        private Vector2 _force;
+
+        private float _mass = 1.0f;
+        private float _inverseMass = 1.0f;
+        private float _drag = 0.9f;
+        private float _angle;
+        private float _angularVelocity;
+        private float _torque;
+        private float _inertiaMass = 1.0f;
+        private float _inverseInertiaMass = 1.0f; // 1 / InertiaMass
+        private float _angularDrag = 0.9f;
+
+        private bool _useGravity;
+        private bool _isKinematic;
+
         // ==================== PROPERTIES ====================
-        public Vector2 Velocity { get; set; }
-        public Vector2 Acceleration { get; set; }
-        public Vector2 Force { get; set; } 
-        
-        public float Mass { get; set; } = 1.0f;
-        public float InverseMass { get; set; } = 1.0f;
-        public float Drag { get; set; } = 0.9f;
-        public float Angle { get; set; } = 0.0f;
-        public float AngularVelocity { get; set; } = 0.0f;
-        public float Torque { get; set; } = 0.0f;
-        public float InertiaMass { get; set; } = 1.0f;
-        public float InverseInertiaMass { get; set; } = 1.0f; // 1 / InertiaMass
-        public float AngularDrag { get; set; } = 0.9f;
-        
-        public bool UseGravity { get; set; } = false;
-        public bool IsKinematic { get; set; } = false;
+
+        #region Properties
+
+        public Vector2 Velocity
+        {
+            get => _velocity;
+            set
+            {
+                _velocity = value;
+                EngineInterop.LogMessage("Velocity: " + _velocity);
+                EngineInterop.SetRigidbodyVelocity(GetInstanceID(), _velocity.x, _velocity.y);
+            }
+        }
+
+        public Vector2 Acceleration
+        {
+            get => _acceleration;
+            set
+            {
+                _acceleration = value;
+                EngineInterop.SetRigidbodyAcceleration(GetInstanceID(), _acceleration.x, _acceleration.y);
+            }
+        }
+
+        public Vector2 Force
+        {
+            get => _force;
+            set
+            {
+                _force = value;
+                // EngineInterop.LogMessage("Force: " + _force);
+                EngineInterop.SetRigidbodyForce(GetInstanceID(), _force.x, _force.y);
+            }
+        }
+
+        public float Mass
+        {
+            get => _mass;
+            set
+            {
+                _mass = value;
+                EngineInterop.SetRigidbodyMass(GetInstanceID(), _mass);
+            }
+        }
+
+        public float InverseMass
+        {
+            get => _inverseMass;
+            set
+            {
+                _inverseMass = value / _mass;
+                EngineInterop.SetRigidbodyInverseMass(GetInstanceID(), _inverseMass);
+            }
+        }
+
+        public float Drag
+        {
+            get => _drag;
+            set
+            {
+                _drag = value;
+                EngineInterop.SetRigidbodyDrag(GetInstanceID(), _drag);
+            }
+        }
+
+        public float Angle
+        {
+            get => _angle;
+            set
+            {
+                _angle = value;
+                EngineInterop.SetRigidbodyAngle(GetInstanceID(), _angle);
+            }
+        }
+
+        public float AngularVelocity
+        {
+            get => _angularVelocity;
+            set
+            {
+                _angularVelocity = value;
+                EngineInterop.SetRigidbodyAngularVelocity(GetInstanceID(), _angularVelocity);
+            }
+        }
+
+        public float Torque
+        {
+            get => _torque;
+            set
+            {
+                _torque = value;
+                EngineInterop.SetRigidbodyTorque(GetInstanceID(), _torque);
+            }
+        }
+
+        public float InertiaMass
+        {
+            get => _inertiaMass;
+            set
+            {
+                _inertiaMass = value;
+                EngineInterop.SetRigidbodyInertiaMass(GetInstanceID(), _inertiaMass);
+            }
+        }
+
+        public float InverseInertiaMass
+        {
+            get => _inverseInertiaMass;
+            set
+            {
+                _inverseInertiaMass = value;
+                EngineInterop.SetRigidbodyInverseInertiaMass(GetInstanceID(), _inverseInertiaMass);
+            }
+        }
+
+        public float AngularDrag
+        {
+            get => _angularDrag;
+            set
+            {
+                _angularDrag = value;
+                EngineInterop.SetRigidbodyAngularDrag(GetInstanceID(), _angularDrag);
+            }
+        }
+
+        public bool UseGravity
+        {
+            get => _useGravity;
+            set
+            {
+                _useGravity = value;
+                EngineInterop.SetRigidbodyUseGravity(GetInstanceID(), _useGravity);
+            }
+        }
+
+        public bool IsKinematic
+        {
+            get => _isKinematic;
+            set
+            {
+                _isKinematic = value;
+                EngineInterop.SetRigidbodyIsKinematic(GetInstanceID(), _isKinematic);
+            }
+        }
+
+        #endregion
 
         // ==================== METHODS =======================
         public void AddForce(Vector2 force)
@@ -51,21 +200,40 @@ namespace UkemochiEngine.CoreModule
         public void AddForceY(float force)
         {
             Force = new Vector2(Force.x, force);
+            // _force.y = force;
+        }
+
+        public void AddTorque(float torque)
+        {
+            Torque = torque;
+        }
+
+        public void RemoveTorque()
+        {
+            Torque = 0.0f;
+            AngularVelocity = AngularVelocity * AngularDrag;
+
+            if (System.Math.Abs(AngularVelocity) < 0.01f)
+                AngularVelocity = 0.0f;
         }
 
         public void RemoveForceX()
         {
             Force = new Vector2(0, Force.y);
-            Velocity = new Vector2( Velocity.x * Drag, Velocity.y);
-            if(System.Math.Abs(Velocity.x) < 0.01f)
+            // _force.x = 0;
+            Velocity = new Vector2(Velocity.x * Drag, Velocity.y);
+            // _velocity.x *= _drag;
+            if (System.Math.Abs(Velocity.x) < 0.01f)
                 Velocity = new Vector2(0, Velocity.y);
         }
 
         public void RemoveForceY()
         {
             Force = new Vector2(Force.x, 0);
+            // _force.y = 0;
             Velocity = new Vector2(Velocity.x, Velocity.y * Drag);
-            if(System.Math.Abs(Velocity.y) < 0.01f)
+            // _velocity.y *= _drag;
+            if (System.Math.Abs(Velocity.y) < 0.01f)
                 Velocity = new Vector2(Velocity.x, 0);
         }
     }

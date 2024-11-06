@@ -26,7 +26,7 @@ GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(n
     m_ManagedInstance = ScriptingEngine::GetInstance().InstantiateClass("GameObject");
 
     m_ManagedInstanceHandle = mono_gchandle_new_v2(m_ManagedInstance,true);
-    ScriptingEngine::GetInstance().SetMonoFieldValue(m_ManagedInstance, "_id", &m_InstanceID);
+    ScriptingEngine::GetInstance().SetMonoFieldValueULL(m_ManagedInstance, "_id", &m_InstanceID);
     // void* params[] = {&m_InstanceID};
     // ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance, "SetID", params, 1);
     // AddComponent(Transform{Vec2(),0.0f,Vec2(1.0f,1.0f)}); // We don't set a default transform here, Other programmer will have to remember to add  instaed...
@@ -51,7 +51,7 @@ GameObject::~GameObject()
 
 MonoObject* GameObject::GetManagedInstance(const std::string& objectName) const
 {
-    if (strcmp(objectName.c_str(), "GameObject") != 0) // Well... Just in case yeah
+    if (strcmp(objectName.c_str(), "GameObject") == 0) // Well... Just in case yeah
         return m_ManagedInstance;
     
     return m_ManagedComponents.at(objectName);
