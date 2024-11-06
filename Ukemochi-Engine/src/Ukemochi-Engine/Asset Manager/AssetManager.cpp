@@ -23,12 +23,28 @@ namespace Ukemochi
 		{
 			file_render = GL_RGB;
 		}
+		else
+		{
+			file_render = GL_RGB;
+		}
 
+		// Load and store the texture with the determined format
+		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, file_render, GL_UNSIGNED_BYTE));
+		//textures.push_back(texture);
+		//textures_enabled.push_back(true);
+		//texture->texUnit(*shaderProgram, "tex0", 0);
+
+		texture_list[file_name] = texture;
 	}
 
 	Texture& AssetManager::getTexture(std::string key_name)
 	{
 		return *texture_list.find(key_name)->second;
+	}
+
+	void AssetManager::addSprite(std::string file_name, std::string file_path)
+	{
+
 	}
 
 	
