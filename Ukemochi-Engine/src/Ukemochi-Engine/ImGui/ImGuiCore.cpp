@@ -155,6 +155,7 @@ namespace Ukemochi
 			// gsm_next = GS_PLAY;
 			es_current = ENGINE_STATES::ES_PLAY;
 			std::cout << "Game is Playing" << std::endl;
+			ECS::GetInstance().GetSystem<LogicSystem>()->Init();
 			// Perform some action when button is clicked
 		}
 		ImGui::SameLine();

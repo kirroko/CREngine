@@ -31,71 +31,67 @@ namespace Ukemochi
 		// Set up ECS
 		ECS::GetInstance().Init();
 
-		// TODO: Register your components
-		ECS::GetInstance().RegisterComponent<Transform>();
-		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
-		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
-		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
-		ECS::GetInstance().RegisterComponent<SpriteRender>();
-		ECS::GetInstance().RegisterComponent<Script>();
-		ECS::GetInstance().RegisterComponent<Button>();
+        // TODO: Register your components
+        ECS::GetInstance().RegisterComponent<Transform>();
+        ECS::GetInstance().RegisterComponent<Rigidbody2D>();
+        ECS::GetInstance().RegisterComponent<BoxCollider2D>();
+        ECS::GetInstance().RegisterComponent<CircleCollider2D>();
+        ECS::GetInstance().RegisterComponent<SpriteRender>();
+        ECS::GetInstance().RegisterComponent<Script>();
+        ECS::GetInstance().RegisterComponent<Button>();
 
-		// TODO: Register your systems
-		ECS::GetInstance().RegisterSystem<Physics>();
-		ECS::GetInstance().RegisterSystem<Collision>();
-		ECS::GetInstance().RegisterSystem<Transformation>();
-		ECS::GetInstance().RegisterSystem<Renderer>();
-		ECS::GetInstance().RegisterSystem<LogicSystem>();
-		ECS::GetInstance().RegisterSystem<DataSyncSystem>();
-		ECS::GetInstance().RegisterSystem<Camera>();
-		ECS::GetInstance().RegisterSystem<InGameGUI>();
-		//ECS::GetInstance().RegisterSystem<Audio>();
+        // TODO: Register your systems
+        ECS::GetInstance().RegisterSystem<Physics>();
+        ECS::GetInstance().RegisterSystem<Collision>();
+        ECS::GetInstance().RegisterSystem<Transformation>();
+        ECS::GetInstance().RegisterSystem<Renderer>();
+        ECS::GetInstance().RegisterSystem<LogicSystem>();
+        ECS::GetInstance().RegisterSystem<Camera>();
+        ECS::GetInstance().RegisterSystem<InGameGUI>();
+        ECS::GetInstance().RegisterSystem<DataSyncSystem>();
+        //ECS::GetInstance().RegisterSystem<Audio>();
 
-		// TODO: Set a signature to your system
-		// Each system will have a signature to determine which entities it will process
+        // TODO: Set a signature to your system
+        // Each system will have a signature to determine which entities it will process
 
-		// For physics system
-		SignatureID sig;
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
-		ECS::GetInstance().SetSystemSignature<Physics>(sig);
+        // For physics system
+        SignatureID sig;
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+        ECS::GetInstance().SetSystemSignature<Physics>(sig);
 
-		// For renderer system
-		sig.reset();
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		sig.set(ECS::GetInstance().GetComponentType<SpriteRender>());
-		ECS::GetInstance().SetSystemSignature<Renderer>(sig);
+        // For renderer system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        sig.set(ECS::GetInstance().GetComponentType<SpriteRender>());
+        ECS::GetInstance().SetSystemSignature<Renderer>(sig);
 
-		// For collision system
-		sig.reset();
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
-		ECS::GetInstance().SetSystemSignature<Collision>(sig);
-	
-		////init GSM
-		//GSM_Initialize(GS_LEVEL1);
-		std::cout << "System Up and Running" << std::endl;
+        // For collision system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
+        ECS::GetInstance().SetSystemSignature<Collision>(sig);
 
-		// For Logic System
-		sig.reset();
-		sig.set(ECS::GetInstance().GetComponentType<Script>());
-		ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
+        // For Logic System
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Script>());
+        ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
+        
+        // For in game GUI system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        sig.set(ECS::GetInstance().GetComponentType<Button>());
+        ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
 
-		sig.reset();
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
-		ECS::GetInstance().SetSystemSignature<DataSyncSystem>(sig);
-	
+        // For Data Sync System
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
+        ECS::GetInstance().SetSystemSignature<DataSyncSystem>(sig);
 
-		// For in game GUI system
-		sig.reset();
-		sig.set(ECS::GetInstance().GetComponentType<Transform>());
-		sig.set(ECS::GetInstance().GetComponentType<Button>());
-		ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
-
-		//init GSM
-		//GSM_Initialize(GS_ENGINE);
-	}
+        //init GSM
+        //GSM_Initialize(GS_ENGINE);
+    }
 
 	SceneManager::~SceneManager()
 	{
@@ -139,6 +135,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
 
+
 		// Set the player object in the Renderer
 		//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
 
@@ -161,52 +158,52 @@ namespace Ukemochi
 
 	void SceneManager::SceneMangerRunSystems()
 	{
-		if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
-		{
-			GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
-			// --- HANDLE USER INPUTS ---
-
-		// Player Inputs for movement
-			auto& player_rb = playerObj->GetComponent<Rigidbody2D>();
-			// Press 'W' or up key to move the player up
-			if (Input::IsKeyPressed(UME_KEY_W))
-				ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
-			// Press 'S' or down key to move the player down
-			else if (Input::IsKeyPressed(UME_KEY_S))
-				ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
-			else
-				ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
-
-			// Press 'A' or left key to move the player left
-			if (Input::IsKeyPressed(UME_KEY_A))
-			{
-				ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
-				ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
-			}
-			// Press 'D' or right key to move the player to the right
-			else if (Input::IsKeyPressed(UME_KEY_D))
-			{
-				ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
-				ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
-			}
-			else
-				ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
-
-			// Input for rotation, to test rotate physics
-			if (Input::IsKeyPressed(UME_KEY_R))
-				ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
-			else if (Input::IsKeyPressed(UME_KEY_T))
-				ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
-			else
-				ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
-
-			// Input for scaling, to test scaling of the player
-			auto& player_trans = playerObj->GetComponent<Transform>();
-			if (Input::IsKeyPressed(UME_KEY_F))
-				ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
-			else if (Input::IsKeyPressed(UME_KEY_G))
-				ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
-		}
+		// if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
+		// {
+		// 	GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
+		// 	// --- HANDLE USER INPUTS ---
+		//
+		// // Player Inputs for movement
+		// 	auto& player_rb = playerObj->GetComponent<Rigidbody2D>();
+		// 	// Press 'W' or up key to move the player up
+		// 	if (Input::IsKeyPressed(UME_KEY_W))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
+		// 	// Press 'S' or down key to move the player down
+		// 	else if (Input::IsKeyPressed(UME_KEY_S))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
+		// 	else
+		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
+		//
+		// 	// Press 'A' or left key to move the player left
+		// 	if (Input::IsKeyPressed(UME_KEY_A))
+		// 	{
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
+		// 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
+		// 	}
+		// 	// Press 'D' or right key to move the player to the right
+		// 	else if (Input::IsKeyPressed(UME_KEY_D))
+		// 	{
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
+		// 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
+		// 	}
+		// 	else
+		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
+		//
+		// 	// Input for rotation, to test rotate physics
+		// 	if (Input::IsKeyPressed(UME_KEY_R))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
+		// 	else if (Input::IsKeyPressed(UME_KEY_T))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
+		// 	else
+		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
+		//
+		// 	// Input for scaling, to test scaling of the player
+		// 	auto& player_trans = playerObj->GetComponent<Transform>();
+		// 	if (Input::IsKeyPressed(UME_KEY_F))
+		// 		ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
+		// 	else if (Input::IsKeyPressed(UME_KEY_G))
+		// 		ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
+		// }
 		
 
 		// Renderer Inputs
@@ -244,6 +241,8 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
+		// --- GAME LOGIC UPDATE ---
+		ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		// --- PHYSICS UPDATE ---
 		// Update the entities physics
 		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
@@ -255,6 +254,9 @@ namespace Ukemochi
 		// --- TRANSFORMATION UPDATE ---
 		// Compute the entities transformations
 		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+
+		// --- DATA SYNC UPDATE ---
+		ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
 		
 		SceneManagerDraw();
 	}
@@ -278,6 +280,7 @@ namespace Ukemochi
 		{
 			GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
 		}
+		ECS::GetInstance().GetSystem<LogicSystem>()->End();
 		ECS::GetInstance().ReloadEntityManager();
 		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 	}
@@ -472,9 +475,17 @@ namespace Ukemochi
 						newObject.GetComponent<SpriteRender>().animated = true;
 					}
 				}
+				else if (componentName == "Script")
+				{
+					if(!newObject.HasComponent<Script>())
+						newObject.AddComponent(Script{
+					componentData["Path"].GetString(),
+					componentData["ClassName"].GetString(),
+						ScriptingEngine::GetInstance().InstantiateClientClass(componentData["ClassName"].GetString())});
+				}
 				else
 				{
-					std::cerr << "Unknown component type: " << componentName << std::endl;
+					UME_ENGINE_ERROR("Unkown component type: {0}", componentName);
 				}
 
 				if (tag == "Player")
@@ -488,8 +499,8 @@ namespace Ukemochi
 			}
 		}
 
-		std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
-	
+		// std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
+		UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
 	}
 
 	//void SceneManager::InitScene()
@@ -522,7 +533,7 @@ namespace Ukemochi
 	//}
 
 	void SceneManager::SaveScene(const std::string& file_name)
-	{	
+	{	// TODO: Some day we will encapsulate all this into Serialization class...
 		//get file name to save
 		Document document;
 		document.SetObject();
@@ -656,6 +667,18 @@ namespace Ukemochi
 				componentsArray.PushBack(spriteRenderComponent, allocator);
 			}
 
+			if (gameobject->HasComponent<Script>())
+			{
+				Value scriptComponent(rapidjson::kObjectType);
+				scriptComponent.AddMember("Name", "Script", allocator);
+
+				const auto& script = gameobject->GetComponent<Script>();
+				scriptComponent.AddMember("Path", Value(script.scriptPath.c_str(), allocator), allocator);
+				scriptComponent.AddMember("ClassName", Value(script.scriptName.c_str(), allocator), allocator);
+
+				componentsArray.PushBack(scriptComponent,allocator);
+			}
+
 			gameObjectData.AddMember("Components", componentsArray, allocator);
 
 
@@ -672,7 +695,7 @@ namespace Ukemochi
 	}
 
 	void SceneManager::SavePrefab(GameObject* prefabObj, const std::string& file_name)
-	{
+	{ // TODO: Some day we will encapsulate all this into Serialization class...
 		//get file name to save
 		Document document;
 		document.SetObject();
@@ -801,6 +824,18 @@ namespace Ukemochi
 			spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
 
 			componentsArray.PushBack(spriteRenderComponent, allocator);
+		}
+		
+		if (prefabObj->HasComponent<Script>())
+		{
+			Value scriptComponent(rapidjson::kObjectType);
+			scriptComponent.AddMember("Name", "Script", allocator);
+
+			const auto& script = prefabObj->GetComponent<Script>();
+			scriptComponent.AddMember("Path", Value(script.scriptPath.c_str(), allocator), allocator);
+			scriptComponent.AddMember("ClassName", Value(script.scriptName.c_str(), allocator), allocator);
+
+			componentsArray.PushBack(scriptComponent,allocator);
 		}
 
 		gameObjectData.AddMember("Components", componentsArray, allocator);

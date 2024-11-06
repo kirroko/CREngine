@@ -67,6 +67,7 @@ namespace UkemochiEngine.CoreModule
                 return;
             }
             obj.SetGameObject(this);
+            
             _dictionaryComponents.Add(nameof(Transform), obj);
             // _components.Add(obj);
         }

@@ -1,5 +1,5 @@
 {
-    "GameObjects": [{
+    "GameObject": [{
             "Name": "Player",
             "Tag": "Player",
             "Components": [{
@@ -36,10 +36,6 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
                     "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Player.cs",
-                    "ClassName": "Player"
                 }]
         }]
 }

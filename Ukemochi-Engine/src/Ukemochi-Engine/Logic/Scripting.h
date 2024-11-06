@@ -165,6 +165,14 @@ namespace Ukemochi
 		void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
 
 		/**
+		 * @brief Set the value of a field in a C# class. Value is of type unsigned long long
+		 * @param instance the instance of the class
+		 * @param fieldName the field name
+		 * @param value the value to be set
+		 */
+		void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
+
+		/**
 		 * @brief Set the value of a property in a C# class
 		 * @param instance the instance of the class
 		 * @param propertyName the property name
