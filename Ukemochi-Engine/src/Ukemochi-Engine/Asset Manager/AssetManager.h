@@ -22,7 +22,7 @@ namespace Ukemochi
 		void addSprite(std::string file_name, std::string file_path /* can add more if need any other arguements */);
 		Sprite& getSprite(std::string key_name);
 
-		void addTexture(std::string file_name, std::string file_path /* can add more if need any other arguements */);
+		void addTexture(std::string file_name, std::string file_path , std::string shader_name);
 		Texture& getTexture(std::string key_name);
 
 		/*void addShader(std::string file_name, std::string frag_path, std::string);

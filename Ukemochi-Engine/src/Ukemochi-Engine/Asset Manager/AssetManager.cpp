@@ -3,7 +3,7 @@
 namespace Ukemochi
 {
 	
-	void AssetManager::addTexture(std::string file_name, std::string file_path)
+	void AssetManager::addTexture(std::string file_name, std::string file_path, std::string shader_name)
 	{
 		if (texture_list.find(file_name) != texture_list.end())
 		{
@@ -32,7 +32,7 @@ namespace Ukemochi
 		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		texture->texUnit(*(shader_list.begin()->second), "tex0", 0);
+		texture->texUnit(*(shader_list.find(shader_name)->second), "tex0", 0);
 
 		texture_list[file_name] = texture;
 	}
