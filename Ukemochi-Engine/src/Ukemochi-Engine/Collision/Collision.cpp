@@ -33,6 +33,21 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
+
+		ConvexCollider2D convex1;
+		convex1.vertices.push_back(Vec2{ 0,0 });
+		convex1.vertices.push_back(Vec2{ 1,0 });
+		convex1.vertices.push_back(Vec2{ 1,1 });
+		convex1.vertices.push_back(Vec2{ 0,1 });
+
+		ConvexCollider2D convex2;
+		convex2.vertices.push_back(Vec2{ 0.5f,0.5f });
+		convex2.vertices.push_back(Vec2{ 1.5f,0.5f });
+		convex2.vertices.push_back(Vec2{ 1.5f,1.5f });
+		convex2.vertices.push_back(Vec2{ 0.5f,1.5f });
+
+		if (ConvexConvex_Intersection(convex1, convex2))
+			std::cout << "Convex collided\n";
 	}
 
 	/*!***********************************************************************
@@ -51,6 +66,8 @@ namespace Ukemochi
 				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
+				//auto& convex1 = ECS::GetInstance().GetComponent<ConvexCollider2D>(entity);
+
 				// Update the bounding box size
 				UpdateBoundingBox(box1, trans1);
 
@@ -65,13 +82,19 @@ namespace Ukemochi
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
-					// Check collision between objects
+					//auto& convex2 = ECS::GetInstance().GetComponent<ConvexCollider2D>(entity);
+
+					// Check collision between two box objects
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
 						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
+
+					// Check collision between two convex objects
+					//if (ConvexConvex_Intersection(convex1, convex2))
+					//	std::cout << "Convex collided\n";
 				}
 
-				// Check collision between objects and the screen boundaries
+				// Check collision between box objects and the screen boundaries
 				if (BoxScreen_Intersection(box1))
 					BoxScreen_Response(trans1, box1, rb1);
 			}
@@ -325,6 +348,65 @@ namespace Ukemochi
 		double distance_squared = dx * dx + dy * dy;
 		double radius_squared = circle.m_radius * circle.m_radius;
 		return distance_squared <= radius_squared;
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Check for collision detection between two convex.
+	*************************************************************************/
+	bool Collision::ConvexConvex_Intersection(const ConvexCollider2D& convex1, const ConvexCollider2D& convex2)
+	{
+		// Test each edge of the first convex
+		size_t count = convex1.vertices.size();
+		for (size_t i = 0; i < count; i++)
+		{
+			Vec2 edge = convex1.vertices[(i + 1) % count] - convex1.vertices[i];
+			Vec2 axis = edge.perpendicular();
+
+			float min0, max0, min1, max1;
+			ComputeProjInterval(convex1, axis, min0, max0);
+			ComputeProjInterval(convex2, axis, min1, max1);
+
+			// Check if the projections overlap
+			if (max0 < min1 || max1 < min0)
+				return false; // No collision
+		}
+
+		// Test each edge of the second convex
+		count = convex2.vertices.size();
+		for (size_t i = 0; i < count; i++)
+		{
+			Vec2 edge = convex2.vertices[(i + 1) % count] - convex2.vertices[i];
+			Vec2 axis = edge.perpendicular();
+
+			float min0, max0, min1, max1;
+			ComputeProjInterval(convex1, axis, min0, max0);
+			ComputeProjInterval(convex2, axis, min1, max1);
+
+			// Check if the projections overlap
+			if (max0 < min1 || max1 < min0)
+				return false; // No collision
+		}
+
+		return true; // Collision detected
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Project the vertices of a convex onto a given axis and find the min and max projection values.
+	*************************************************************************/
+	void Collision::ComputeProjInterval(const ConvexCollider2D& convex, const Vec2& axis, float& min, float& max)
+	{
+		min = max = Vec2DotProduct(convex.vertices[0], axis);
+
+		for (size_t i = 1; i < convex.vertices.size(); i++)
+		{
+			float projection = Vec2DotProduct(convex.vertices[i], axis);
+			if (projection < min)
+				min = projection;
+			else if (projection > max)
+				max = projection;
+		}
 	}
 
 	/*!***********************************************************************

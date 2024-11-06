@@ -36,6 +36,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterComponent<Rigidbody2D>();
 		ECS::GetInstance().RegisterComponent<BoxCollider2D>();
 		ECS::GetInstance().RegisterComponent<CircleCollider2D>();
+		ECS::GetInstance().RegisterComponent<ConvexCollider2D>();
 		ECS::GetInstance().RegisterComponent<SpriteRender>();
 		ECS::GetInstance().RegisterComponent<Script>();
 		ECS::GetInstance().RegisterComponent<Button>();

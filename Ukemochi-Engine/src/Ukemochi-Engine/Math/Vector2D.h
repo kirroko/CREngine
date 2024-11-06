@@ -4,7 +4,7 @@
 \file       Vector2D.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Sept 08, 2024
+\date       Nov 06, 2024
 \brief      This file contains the declaration of the Vector2D structure.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -117,6 +117,14 @@ namespace Ukemochi
          The negated vector.
         *************************************************************************/
         Vector2D operator-() const;
+
+        /*!***********************************************************************
+        \brief
+         Get the perpendicular vector. To get the normal of an edge.
+        \return
+         The perpendicular vector.
+        *************************************************************************/
+        Vector2D perpendicular() const;
 
     } Vector2D, Vec2;
 

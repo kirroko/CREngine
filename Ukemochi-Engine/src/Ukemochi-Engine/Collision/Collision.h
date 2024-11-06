@@ -65,7 +65,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Collision detection between two boxes.
+         Check for collision detection between two boxes.
         \param[in/out] box1
          The bounding box of the first box.
         \param[in] vel1
@@ -83,7 +83,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Collision detection between a box and the screen boundaries.
+         Check for collision detection between a box and the screen boundaries.
         \param[in/out] box
          The box to collide.
         \return
@@ -93,7 +93,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Collision detection between two circles.
+         Check for collision detection between two circles.
         \param[in] circle1
          The first circle.
         \param[in] circle2
@@ -105,7 +105,7 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Collision detection between a circle and a box.
+         Check for collision detection between a circle and a box.
         \param[in] circle
          The circle to collide.
         \param[in] box
@@ -114,6 +114,32 @@ namespace Ukemochi
          True if the circle and box intersect, false otherwise.
         *************************************************************************/
         bool CircleBox_Intersection(const CircleCollider2D& circle, const BoxCollider2D& box);
+
+        /*!***********************************************************************
+        \brief
+         Check for collision detection between two convex.
+        \param[in] convex1
+         The first convex.
+        \param[in] convex2
+         The second convex.
+        \return
+         True if the two convex intersect, false otherwise.
+        *************************************************************************/
+        bool ConvexConvex_Intersection(const ConvexCollider2D& convex1, const ConvexCollider2D& convex2);
+
+        /*!***********************************************************************
+        \brief
+         Project the vertices of a convex onto a given axis and find the min and max projection values.
+        \param[in] convex
+         The convex collider to project.
+        \param[in] axis
+         The axis which the convex vertices are projected.
+        \param[out] min
+         The minimum projection value.
+        \param[out] max
+         The maximum projection value.
+        *************************************************************************/
+        void ComputeProjInterval(const ConvexCollider2D& convex, const Vec2& axis, float& min, float& max);
 
         /*!***********************************************************************
         \brief
