@@ -25,7 +25,11 @@ namespace UkemochiEngine.CoreModule
         public float y;
         
         // ==================== METHODS ====================
-        
+        public override string ToString()
+        {
+            return $"({x}, {y})";
+        }
+
         public Vector2(float value)
         {
             x = value;

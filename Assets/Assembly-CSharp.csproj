@@ -11,11 +11,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>Temp\bin\Release\</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup></ItemGroup>
-    <ItemGroup>
-        <Reference Include="UkemochiEngine">
-            <HintPath>..\Ukemochi-Game\Resources\Scripts\Ukemochi-Scripting.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-</Project>
+  </PropertyGroup><ItemGroup>
+            <Reference Include="UkemochiEngine">
+                <HintPath>..\Ukemochi-Game\Resources\Scripts\Ukemochi-Scripting.dll</HintPath>
+            </Reference>
+        </ItemGroup>
+    </Project>

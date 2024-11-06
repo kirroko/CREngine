@@ -59,9 +59,9 @@ namespace Ukemochi
 		float angular_velocity{};
 		float angular_acceleration{};
 		float torque{};
-		float inertia_mass{ 1.f }; // Minimum inertia mass of 1
+		float inertia_mass{ 1.f };					  // Minimum inertia mass of 1
 		float inv_inertia_mass{ 1.f / inertia_mass }; // inverse inertia mass = 1/inertia mass
-		float angular_drag{ 0.9f }; // Adjust to control the friction from [0, 1]
+		float angular_drag{ 0.9f };					  // Adjust to control the friction from [0, 1]
 
 		bool use_gravity{ false };					  // If true, apply gravity
 		bool is_kinematic{ false };					  // If true, don't apply physics
@@ -141,6 +141,8 @@ namespace Ukemochi
 		bool animated = false;							// Is the object animated?
 
 		int animationIndex = -1;
+		bool flipX = false;
+		bool flipY = false;
 		//bool visible = true;							// Is the object visible?
 		//float opacity = 1.0f;							// Opacity of the object
 	};
