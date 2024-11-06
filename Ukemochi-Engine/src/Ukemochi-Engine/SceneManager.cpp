@@ -20,7 +20,7 @@ namespace Ukemochi
 
 	const float SPRITE_SCALE = 100.f;
 	const float ENTITY_ACCEL = 750.f;
-	const float PLAYER_FORCE = 750.f;
+	const float PLAYER_FORCE = 1500.f;
 
 	SceneManager::SceneManager()
 		:sceneName("NewScene")

@@ -4,7 +4,7 @@
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 6, 2024
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -64,7 +64,7 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Remove force from the entity's rigidbody in the x-axis.
-        \param[in/out] rb
+        \param[out] rb
          The rigidbody of the entity.
         *************************************************************************/
         void RemoveForceX(Rigidbody2D& rb);
@@ -72,7 +72,7 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Remove force from the entity's rigidbody in the y-axis.
-        \param[in/out] rb
+        \param[out] rb
          The rigidbody of the entity.
         *************************************************************************/
         void RemoveForceY(Rigidbody2D& rb);
@@ -90,7 +90,7 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Remove torque from the entity's rigidbody.
-        \param[in/out] rb
+        \param[out] rb
          The rigidbody of the entity.
         *************************************************************************/
         void RemoveTorque(Rigidbody2D& rb);
@@ -105,21 +105,25 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Update the linear physics of all the entities.
-        \param[in/out] rb
-         The rigidbody of the entity.
         \param[in/out] trans
          The transform of the entity.
+        \param[in/out] box
+         The box collider of the entity.
+        \param[in/out] rb
+         The rigidbody of the entity.
         *************************************************************************/
-        void UpdateLinearPhysics(Rigidbody2D& rb, Transform& trans);
+        void UpdateLinearPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb);
 
         /*!***********************************************************************
         \brief
          Update the rotational physics of all the entities.
-        \param[in/out] rb
-         The rigidbody of the entity.
         \param[in/out] trans
          The transform of the entity.
+        \param[in/out] box
+         The box collider of the entity.
+        \param[in/out] rb
+         The rigidbody of the entity.
         *************************************************************************/
-        void UpdateRotationalPhysics(Rigidbody2D& rb, Transform& trans);
+        void UpdateRotationalPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb);
     };
 }
