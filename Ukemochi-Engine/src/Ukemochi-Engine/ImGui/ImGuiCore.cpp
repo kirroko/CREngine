@@ -537,10 +537,33 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		//GLuint texture = renderer.getTextureColorBuffer();
 		GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
+
 		if (showGameView)
 		{
 			ImGui::Begin("Player Loader", &showGameView);   // Create a window called "Another Window"
 			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 }, { 1,0 });
+			
+			
+			// Get the position of the ImGui window
+			ImVec2 windowPos = ImGui::GetWindowPos();  // Top-left position of the window
+			ImVec2 windowSize = ImGui::GetWindowSize();  // Size of the window
+
+			// Get the mouse position in screen coordinates
+			ImVec2 mousePos = ImGui::GetMousePos();
+
+			// Calculate mouse position relative to the "Player Loader" window
+			float relativeX = mousePos.x - windowPos.x;
+			float relativeY = windowSize.y - (mousePos.y - windowPos.y);
+
+
+			// Check if the mouse is within the bounds of the window
+			if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
+			{
+				// Optional: Handle the mouse position within the window here
+				//std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
+			}
+			SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
+			
 			ImGui::End();
 		}
 	}

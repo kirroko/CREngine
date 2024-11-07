@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"	// for camera viewport
 #include "../Graphics/Renderer.h"	// for text objects
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+#include "../SceneManager.h"
 
 namespace Ukemochi
 {
@@ -151,6 +152,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
 	{
+		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
+		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y;
+		//std::cout << mouse_x << " : " << mouse_y << std::endl;
 		// Check for mouse left click
 		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
 		{
@@ -177,10 +181,12 @@ namespace Ukemochi
 	bool InGameGUI::IsInside(const Transform& trans)
 	{
 		// Get current mouse position in screen coordinates
-		auto [mouse_x, mouse_y] = Input::GetMousePosition();
+		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
+		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y - ECS::GetInstance().GetSystem<Camera>()->position.y;
+		//auto [mouse_x, mouse_y] = SceneManager::GetInstance().GetPlayScreen();//Input::GetMousePosition();
 
 		// Flip the mouse position in the y-axis
-		mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
+		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
 		// Offset mouse position
 		mouse_x += trans.scale.x * 0.5f;

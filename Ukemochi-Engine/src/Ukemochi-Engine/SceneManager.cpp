@@ -24,7 +24,7 @@ namespace Ukemochi
 	const float PLAYER_FORCE = 1500.f;
 
 	SceneManager::SceneManager()
-		:sceneName("NewScene")
+		:sceneName("NewScene"), CameraSize(0,0)
 	{
 		es_current = ES_ENGINE;
 		//Audio audio;
@@ -380,6 +380,7 @@ namespace Ukemochi
 
 				auto buttonComponent = new Button();
 				buttonComponent->on_click = []() {
+					std::cout << "PRESSED" << std::endl;
 					ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
 					};
 				ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(name,tag,"pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
@@ -898,5 +899,15 @@ namespace Ukemochi
 		{
 			std::cerr << "Failed to save prefab to file: " << file << std::endl;
 		}
+	}
+	Vec2 SceneManager::GetPlayScreen()
+	{
+		return GetInstance().CameraSize;
+	}
+	void SceneManager::SetPlayScreen(Vec2 playsize)
+	{
+		//playsize.y = -playsize.y;
+
+		GetInstance().CameraSize = playsize;
 	}
 }
