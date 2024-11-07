@@ -73,6 +73,19 @@ void GameObjectManager::DestroyObject(EntityID id)
     m_GOs.erase(id);
 }
 
+GameObject* GameObjectManager::GetGOByTag(const std::string& tag) const
+{
+    for(auto& go : m_GOs)
+    {
+        if(go.second->GetTag() != tag)
+            continue;
+
+        return go.second.get();
+    }
+    
+    return nullptr;
+}
+
 GameObject& GameObjectManager::GetGO(EntityID id)
 {
     return *m_GOs[id];

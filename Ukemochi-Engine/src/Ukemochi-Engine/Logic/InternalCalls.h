@@ -37,6 +37,24 @@ namespace Ukemochi
             return go.GetManagedInstance(mono_string_to_utf8(objectName));
         }
 
+        EXTERN_C UME_API inline MonoObject* GetMonoObjectByTag(MonoString* tag)
+        {
+            std::string tagStr = ScriptingEngine::MonoStringToUTF8(tag);
+            if(tagStr.empty())
+            {
+                UME_ENGINE_WARN("MonoString is null or empty!");
+                return nullptr;
+            }
+            const auto* go = GameObjectManager::GetInstance().GetGOByTag(ScriptingEngine::MonoStringToUTF8(tag));
+            if(go == nullptr)
+            {
+                UME_ENGINE_WARN("GameObject with tag {0} not found!", tagStr);
+                return nullptr;
+            }
+            
+            return go->GetManagedInstance();
+        }
+
         /**
          * \brief Adds a component to a GameObject by its ID and component type name.
          * \param id The unique identifier of the GameObject.

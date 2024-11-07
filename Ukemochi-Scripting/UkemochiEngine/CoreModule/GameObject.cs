@@ -34,12 +34,6 @@ namespace UkemochiEngine.CoreModule
         private Dictionary<string,Component> _dictionaryComponents = new Dictionary<string, Component>();
         
         // ==================== METHODS =======================
-        public GameObject()
-        {
-            // var compo = AddComponent<Transform>();
-            // compo.SetGameOjbect(this);
-        }
-        
         public T AddComponent<T>() where T : Component, new()
         {
             T component = new T();
@@ -56,9 +50,15 @@ namespace UkemochiEngine.CoreModule
             return (T)component;
             // return _components.OfType<T>().FirstOrDefault();
         }
+
+        public static GameObject FindWithTag(string tag)
+        {
+            return (GameObject)EngineInterop.GetMonoObjectByTag(tag);
+        }
         
         // ==================== INTERNAL INVOKES ====================
         // TODO: Remember to add new components for C++ to instantiate C# side
+        // TODO: Could be done by Interface, reflection or dynamic?
         internal void AddTransformComponent(object objTransform)
         {
             if (!(objTransform is Transform obj))

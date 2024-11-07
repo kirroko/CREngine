@@ -37,6 +37,9 @@ namespace UkemochiEngine.CoreModule
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern object GetMonoObject(ulong id);
+        
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        public static extern object GetMonoObjectByTag(string tag);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern bool GetKey(int key);
