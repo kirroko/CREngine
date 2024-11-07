@@ -26,8 +26,9 @@ GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(s
 {
     m_ManagedInstance = ScriptingEngine::GetInstance().InstantiateClass("GameObject");
 
-    m_ManagedInstanceHandle = mono_gchandle_new_v2(m_ManagedInstance,true);
-    ScriptingEngine::GetInstance().SetMonoFieldValueULL(m_ManagedInstance, "_id", &m_InstanceID);
+    m_ManagedInstanceHandle = mono_gchandle_new_v2(m_ManagedInstance, true);
+    ScriptingEngine::SetMonoFieldValueULL(m_ManagedInstance, "_id", &m_InstanceID);
+    ScriptingEngine::SetMonoFieldValueString(m_ManagedInstance, "name", m_Name);
 }
 
 GameObject& GameObject::operator=(const GameObject& other)
@@ -52,13 +53,13 @@ MonoObject* GameObject::GetManagedInstance(const std::string& objectName) const
 {
     if (strcmp(objectName.c_str(), "GameObject") == 0) // Well... Just in case yeah
         return m_ManagedInstance;
-    
+
     return m_ManagedComponents.at(objectName);
 }
 
 void GameObject::SetManagedComponentInstance(MonoObject* instance, const std::string& typeName)
 {
-    m_ManagedComponentsHandle[typeName] = mono_gchandle_new_v2(instance,true);
+    m_ManagedComponentsHandle[typeName] = mono_gchandle_new_v2(instance, true);
     m_ManagedComponents[typeName] = instance;
 }
 
@@ -74,7 +75,7 @@ EntityID GameObject::GetInstanceID() const
 
 void GameObject::ReleaseHandle() const
 {
-    for(auto& pair : m_ManagedComponentsHandle)
+    for (auto& pair : m_ManagedComponentsHandle)
     {
         mono_gchandle_free_v2(pair.second);
     }

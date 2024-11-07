@@ -91,7 +91,7 @@ namespace Ukemochi
                 MonoObject* transform = ScriptingEngine::GetInstance().InstantiateClass(type);
                 ScriptingEngine::GetInstance().SetMonoPropertyValue(transform, "gameObject", m_ManagedInstance);
                 auto& transformCast = ECS::GetInstance().GetComponent<Transform>(m_InstanceID);
-                ScriptingEngine::GetInstance().SetMonoFieldValueULL(transform, "_id", &m_InstanceID);
+                ScriptingEngine::SetMonoFieldValueULL(transform, "_id", &m_InstanceID);
 
                 ScriptingEngine::GetInstance().SetVector2Property(transform, "Position", transformCast.position.x,
                                                                   transformCast.position.y);
@@ -111,7 +111,7 @@ namespace Ukemochi
                 MonoObject* rigidbody = ScriptingEngine::GetInstance().InstantiateClass(type);
                 ScriptingEngine::GetInstance().SetMonoPropertyValue(rigidbody, "gameObject", m_ManagedInstance);
                 auto& rigidbodyCast = ECS::GetInstance().GetComponent<Rigidbody2D>(m_InstanceID);
-                ScriptingEngine::GetInstance().SetMonoFieldValueULL(rigidbody, "_id", &m_InstanceID);
+                ScriptingEngine::SetMonoFieldValueULL(rigidbody, "_id", &m_InstanceID);
 
                 ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Force", rigidbodyCast.force.x,
                                                                   rigidbodyCast.force.y);
@@ -120,11 +120,11 @@ namespace Ukemochi
                 ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Acceleration",
                                                                   rigidbodyCast.acceleration.x,
                                                                   rigidbodyCast.acceleration.y);
-                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_mass", &rigidbodyCast.mass);
-                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_inverseMass",
+                ScriptingEngine::SetMonoFieldValue(rigidbody, "_mass", &rigidbodyCast.mass);
+                ScriptingEngine::SetMonoFieldValue(rigidbody, "_inverseMass",
                                                                 &rigidbodyCast.inverse_mass);
-                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_useGravity", &rigidbodyCast.use_gravity);
-                ScriptingEngine::GetInstance().SetMonoFieldValue(rigidbody, "_isKinematic", &rigidbodyCast.is_kinematic);
+                ScriptingEngine::SetMonoFieldValue(rigidbody, "_useGravity", &rigidbodyCast.use_gravity);
+                ScriptingEngine::SetMonoFieldValue(rigidbody, "_isKinematic", &rigidbodyCast.is_kinematic);
 
                 m_ManagedComponents[type] = rigidbody;
                 m_ManagedComponentsHandle[type] = mono_gchandle_new_v2(rigidbody, true);

@@ -21,11 +21,18 @@ namespace UkemochiEngine.CoreModule
     {
         // ==================== FIELDS ========================
         private ulong _id = 0;
+
+        public string name;
         
         // ==================== METHODS =======================
         protected ulong GetInstanceID()
         {
             return _id;
+        }
+
+        public override string ToString()
+        {
+            return name;
         }
     }
 }

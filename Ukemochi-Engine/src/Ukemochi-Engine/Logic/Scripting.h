@@ -154,7 +154,15 @@ namespace Ukemochi
          * @param fieldName the field name
          * @param value the value to be set
          */
-        void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
+        static void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
+
+        /**
+         * @brief Set the value of a field in a C# class
+         * @param instance the instance of the class
+         * @param fieldName the field name
+         * @param value the value to be set
+         */
+        static void SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName, const std::string& value);
 
         /**
          * @brief Set the value of a field in a C# class. Value is of type unsigned long long
@@ -162,7 +170,7 @@ namespace Ukemochi
          * @param fieldName the field name
          * @param value the value to be set
          */
-        void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
+        static void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
 
         /**
          * @brief Set the value of a property in a C# class

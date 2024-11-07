@@ -45,7 +45,7 @@ namespace UkemochiEngine.CoreModule
 
         public T GetComponent<T>() where T : Component
         {
-            EngineInterop.LogMessage("Gameobject getting component");
+            EngineInterop.LogMessage("Gameobject " +  "getting component" + typeof(T).Name);
             var component = _dictionaryComponents[typeof(T).Name];
             return (T)component;
             // return _components.OfType<T>().FirstOrDefault();

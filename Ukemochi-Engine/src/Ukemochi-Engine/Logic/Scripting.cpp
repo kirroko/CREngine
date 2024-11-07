@@ -228,7 +228,7 @@ namespace Ukemochi
         MonoClass* klass = mono_object_get_class(instance);
         MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
 
-        MonoTypeEnum type = static_cast<MonoTypeEnum>(mono_type_get_type(mono_field_get_type(field))); // DEBUGGING
+        // MonoTypeEnum type = static_cast<MonoTypeEnum>(mono_type_get_type(mono_field_get_type(field))); // DEBUGGING
         // UME_ENGINE_INFO("Scripting Log: Setting type {0} for field {1}", static_cast<int>(type), fieldName);
 
         mono_field_set_value(instance, field, value);
@@ -237,6 +237,15 @@ namespace Ukemochi
         void* param = &fieldValue;
         mono_field_get_value(instance, field, param);
         // UME_ENGINE_INFO("Scripting Log: Field {0} has value {1}", fieldName, fieldValue);
+    }
+
+    void ScriptingEngine::SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName, const std::string& value)
+    {
+        MonoClass* klass = mono_object_get_class(instance);
+        MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
+
+        MonoString* nameValue = mono_string_new(mono_domain_get(), value.c_str());
+        mono_field_set_value(instance,field, nameValue);
     }
 
     void ScriptingEngine::SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value)
@@ -434,8 +443,8 @@ namespace Ukemochi
         mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformPosition",
                                (void*)InternalCalls::SetTransformPosition);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformRotation",
-                               (void*)InternalCalls::SetTransformRotation);
+        // mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformRotation",
+        //                        (void*)InternalCalls::SetTransformRotation);
 
         mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformScale",
                                (void*)InternalCalls::SetTransformScale);

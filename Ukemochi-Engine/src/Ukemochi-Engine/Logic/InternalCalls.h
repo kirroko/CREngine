@@ -98,13 +98,13 @@ namespace Ukemochi
             transform.position = Vec2(x, y);
         }
 
-        EXTERN_C UME_API inline void SetTransformRotation(uint64_t id, float x, float y)
-        {
-            // TODO: Implement rotation
-            // auto& go = GameObjectManager::GetInstance().GetGO(id);
-            // auto& transform = go.GetComponent<Transform>();
-            // transform.rotation = x;
-        }
+        // EXTERN_C UME_API inline void SetTransformRotation(uint64_t id, float x, float y)
+        // {
+        //     // TODO: Implement rotation
+        //     // auto& go = GameObjectManager::GetInstance().GetGO(id);
+        //     // auto& transform = go.GetComponent<Transform>();
+        //     // transform.rotation = x;
+        // }
 
         EXTERN_C UME_API inline void SetTransformScale(uint64_t id, float x, float y)
         {
