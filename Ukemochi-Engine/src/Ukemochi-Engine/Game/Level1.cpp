@@ -35,6 +35,8 @@ DigiPen Institute of Technology is prohibited.
 #include "../InGameGUI/InGameGUI.h" // for in game GUI system
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
+#include "../Asset Manager/AssetManager.h"
+
 namespace Ukemochi
 {
 	// --- TEMP player variables ---
@@ -76,17 +78,28 @@ namespace Ukemochi
 		}
 
 		//std::cout << "Level1:Initialize" << '\n';
-		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
+
+		ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
 		// load textures
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("terrain", "../Assets/Textures/terrain.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("Moon Floor", "../Assets/Textures/Moon Floor.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("Worm", "../Assets/Textures/Worm.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("Bunny_Right_Sprite", "../Assets/Textures/Bunny_Right_Sprite.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("running_player_sprite_sheet", "../Assets/Textures/running_player_sprite_sheet.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("pause", "../Assets/Textures/UI/pause.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("base", "../Assets/Textures/UI/base.png", "default");
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("game_logo", "../Assets/Textures/UI/game_logo.png", "default");
 
 		// Initialize the renderer and collision systems
 		ECS::GetInstance().GetSystem<Renderer>()->init();
@@ -108,9 +121,12 @@ namespace Ukemochi
 		// player_obj = GameObjectFactory::CreateObject(player_data);
 		player_obj = GameObjectManager::GetInstance().CreatePrefabObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
-		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		std::cout << ECS::GetInstance().GetSystem<Renderer>()->current_texture_index << std::endl;
+		//p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//std::cout << ECS::GetInstance().GetSystem<Renderer>()->current_texture_index << std::endl;
+
+		p_spriteRender.textureID = ECS::GetInstance().GetSystem<AssetManager>()->order_index;
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture(p_spriteRender.texturePath, "player sprite", "default");
 		p_spriteRender.animated = true;
 
 		// BACKGROUND OBJECT

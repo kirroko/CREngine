@@ -2,8 +2,7 @@
 #include "AssetManager.h"
 
 namespace Ukemochi
-{
-	
+{	
 	void AssetManager::addTexture(std::string file_name, std::string file_path, std::string shader_name)
 	{
 		if (texture_list.find(file_name) != texture_list.end())
@@ -30,12 +29,15 @@ namespace Ukemochi
 		}
 
 		// Load and store the texture with the determined format
-		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, file_render, GL_UNSIGNED_BYTE));
+		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + order_index, file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		texture->texUnit((shader_list.find(shader_name)->second), "tex0", 0);
+		std::string uniformName = "textures[" + std::to_string(order_index) + "]";
+		texture->texUnit(shader_list.find(shader_name)->second.get(), uniformName.c_str(), order_index);
 
 		texture_list[file_name] = texture;
+		texture_order.push_back(file_name);
+		order_index++;
 	}
 
 	Texture& AssetManager::getTexture(std::string key_name)
