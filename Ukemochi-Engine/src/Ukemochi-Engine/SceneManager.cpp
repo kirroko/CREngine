@@ -28,7 +28,7 @@ namespace Ukemochi
 	{
 		es_current = ES_ENGINE;
 		//Audio audio;
-		Audio::GetInstance();
+		//Audio::GetInstance();
 		// Set up ECS
 		ECS::GetInstance().Init();
 
@@ -51,7 +51,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Camera>();
         ECS::GetInstance().RegisterSystem<InGameGUI>();
         ECS::GetInstance().RegisterSystem<DataSyncSystem>();
-        //ECS::GetInstance().RegisterSystem<Audio>();
+        ECS::GetInstance().RegisterSystem<Audio>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -116,7 +116,6 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-
 
 		UseImGui::LoadScene();
 
@@ -370,6 +369,28 @@ namespace Ukemochi
 			std::string name = gameObjectData["Name"].GetString();
 			std::string tag = gameObjectData["Tag"].GetString();
 
+			if (tag == "Button")
+			{
+				// Get the screen width and height
+				Application& app = Application::Get();
+				int screen_width = app.GetWindow().GetWidth();
+				int screen_height = app.GetWindow().GetHeight();
+
+				ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+
+				auto buttonComponent = new Button();
+				buttonComponent->on_click = []() {
+					ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
+					};
+				ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(name,tag,"pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+					Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", buttonComponent->on_click);
+				continue;
+				//newObject.AddComponent(buttonComponent);
+				//newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
+				//ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+					//Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
+			}
+
 			// Create a new GameObject and add it to the scene
 			
 			GameObject& newObject = GameObjectManager::GetInstance().CreateObject(name,tag);
@@ -505,16 +526,6 @@ namespace Ukemochi
 				{
 					ECS::GetInstance().GetSystem<Transformation>()->player = -1;
 					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-				}
-
-				if (tag == "Button")
-				{
-					// Get the screen width and height
-					Application& app = Application::Get();
-					int screen_width = app.GetWindow().GetWidth();
-					int screen_height = app.GetWindow().GetHeight();
-					ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject,"pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-						Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
 				}
 			}
 		}

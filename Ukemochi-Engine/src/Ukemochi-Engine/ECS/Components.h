@@ -153,9 +153,9 @@ namespace Ukemochi
 	*************************************************************************/
 	struct AudioSource
 	{
-		//FMOD::Sound pSounds;
-		//FMOD::Channel pChannels;
-		//FMOD::ChannelGroup pChannelGroups;
+		FMOD::Sound pSounds;
+		FMOD::Channel pChannels;
+		FMOD::ChannelGroup pChannelGroups;
 	};
 
 	struct Script

@@ -83,5 +83,18 @@
                     "Path": "../Assets/Scripts/Player.cs",
                     "ClassName": "Player"
                 }]
+        }, {
+            "Name": "PauseButton",
+            "Tag": "Button",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 720.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 75.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/pause.png",
+                    "Shape": 0
+                }]
         }]
 }
