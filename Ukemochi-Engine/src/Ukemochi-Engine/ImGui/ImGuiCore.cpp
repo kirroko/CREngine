@@ -105,7 +105,7 @@ namespace Ukemochi
 
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 
@@ -239,7 +239,7 @@ namespace Ukemochi
 	void UseImGui::SceneBrowser()
 	{
 		// Get the current time
-		float currentTime = ImGui::GetTime();
+		float currentTime = static_cast<float>(ImGui::GetTime());
 
 		// Check if 1 second has passed since the last update
 		if (currentTime - m_LastSceneUpdateTime >= 1.0f) {
@@ -351,7 +351,7 @@ namespace Ukemochi
 		ImGui::End();
 	}
 
-	int UseImGui::GetSceneSize()
+	size_t UseImGui::GetSceneSize()
 	{
 		return sceneFiles.size();
 	}
@@ -399,7 +399,7 @@ namespace Ukemochi
 		}
 
 		// Display the ImGui Combo with the populated entityNamePointers
-		ImGui::Combo("Select Entity to Remove", &selectedEntityIndex, entityNamePointers.data(), entityNamePointers.size());
+		ImGui::Combo("Select Entity to Remove", &selectedEntityIndex, entityNamePointers.data(), static_cast<int>(entityNamePointers.size()));
 	}
 
 	void UseImGui::RemoveSelectedEntity(int& selectedEntityIndex) {
@@ -490,7 +490,7 @@ namespace Ukemochi
 		static int selectedEntityIndex = -1;
 
 		static bool showError = false;
-		static float errorDisplayTime = 0.0f;
+		static double errorDisplayTime = 0.0f;
 
 		// Persistent flag to track if the selected entity was modified
 		static bool modified = false;
@@ -519,8 +519,8 @@ namespace Ukemochi
 			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
 				if (ECS::GetInstance().GetLivingEntityCount() == 0)
 				{
-					ECS::GetInstance().GetSystem<Transformation>()->player = -1; 
-					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
+					ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<Ukemochi::EntityID>(-1);
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<Ukemochi::EntityID>(-1));
 				}
 
 				auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
@@ -588,7 +588,7 @@ namespace Ukemochi
 		if (showGameView)
 		{
 			ImGui::Begin("Player Loader", &showGameView);   // Create a window called "Another Window"
-			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 }, { 1,0 });
+			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight())), { 0, 1 }, { 1, 0 });
 			
 			
 			// Get the position of the ImGui window
@@ -632,7 +632,7 @@ namespace Ukemochi
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
 
 		ImGui::Render();
@@ -662,3 +662,5 @@ namespace Ukemochi
 	\param event Reference to the event to be dispatched.
 	*/
 }
+template class UME_API std::vector<std::string>;
+template class UME_API std::vector<std::string>;

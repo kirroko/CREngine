@@ -72,7 +72,7 @@ namespace Ukemochi
 
 		static void SceneBrowser();
 
-		static int GetSceneSize();
+		static size_t GetSceneSize();
 
 		static void SceneRender();
 
