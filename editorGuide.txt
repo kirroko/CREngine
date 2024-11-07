@@ -1,0 +1,20 @@
+The editor is loaded upon running the application.
+On the left side of the screen, there will be a Scene Browser, Content Browser and a Control Panel.
+In the middle, we have Scene Loader.
+On the right side of the screen, there's a Entity Management tab.
+
+For the Scene Browser tab, it will display all the json file that is in ../Assets/Scenes. It will update itself frequently so that it can detect new files. User can click on the json file that is shown on the Scene Brower and it will load the scene accordingly. There's also a Save Scene button and Create Scene button. User can create their own scene by clicking on the Create Scene button and save it by clicking on the Save Scene button. The Saved Scene will be stored in ../Assets/Scenes.
+
+For the Content Browser, it shows all the files that are in ../Assets. User will have to click on the Refresh Assets button to view the contents in ../Assets. User can click on any of the files and it will reflect on the Entity Management Tab.
+
+The Control Panel contains a FPS tracker and Play/Stop buttons. The FPS tracker keep track of the application FPS. Play Button will start the gameplay simulation and Stop button will reset the game to the starting state.
+
+The Scene Loader is where we render everything on.
+
+The Entity Management tab contains 3 parts. 
+Firstly, users can clicked on the Current GameObjects and a dropdown will appear. The dropdown consist of ALL the game objects that is currently in the scene. By clicking onto the Game Object, users can get a more detail information about the Game Object. 
+
+Next, we have the Entity Management. This is where users can Create or Remove Entity. Users can directly type in the file that they want to create OR use the Content Browser to select. When provided with the correct file type, clicking the Create Entity button will create an entity.
+Below the Create Entity button is a dropdown where users can select on the entity that they want to remove.
+
+Lastly, we have the Edit Entity. Using the dropdown "Select Entity", you can edit all the relevant components that the objects have. Users are given the option to use sliders or keying the input themselves. When you have finished editing the entity, you can choose if you want to save the changes you made.

@@ -57,3 +57,8 @@ namespace Ukemochi {
 	}
 
 }
+
+// Explicitly export std::vector<std::string> in case of using it in DLL boundary
+#ifdef UME_BUILD_DLL
+    template class UME_API std::vector<std::string>;
+#endif

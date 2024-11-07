@@ -50,7 +50,7 @@ namespace Ukemochi
 		SignatureID GetSignature(EntityID entity);
 		unsigned long int GetLivingEntityCount() const;
 
-		std::vector<EntityID> GetAllEntities();
+		//std::vector<EntityID> GetAllEntities();
 	};
 }
 // 0x4B45414E
