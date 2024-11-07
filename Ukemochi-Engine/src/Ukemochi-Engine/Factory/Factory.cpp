@@ -3,11 +3,35 @@
 /*!
 \file		Factory.cpp
 \par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
-\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
+\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \par		Course: CSD2400/CSD2401
 \date		19/10/24
 \brief		This file is responsible for creating, cloning, destroy game objects.
+		Also, it is responsible for creating prefabs.
+		
+		Usage:
+		1. CreateObject: Create a new game object with a name and tag.
+		2. CreatePrefabObject: Create a new game object from a prefab file.
+		3. CloneObject: Clone an existing game object with a new name and tag.
+		4. DestroyObject: Destroy an existing game object.
+		
+		Note: The prefab file must be in the JSON format.
+		
+		Example:
+		\code
+		// Create a new game object
+		GameObjectFactory::CreateObject("Player", "Player");
+		
+		// Create a new game object from a prefab file
+		GameObjectFactory::CreatePrefabObject("Assets/Prefabs/Player.json");
+		
+		// Clone an existing game object
+		GameObjectFactory::CloneObject(player, "Player(Clone)", "Player");
+		
+		// Destroy an existing game object
+		GameObjectFactory::DestroyObject(player);
+		\endcode
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -17,8 +41,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 *******************************************************************/
 #include "PreCompile.h"
 #include "Factory.h"
-#include "GameObjectManager.h"
-#include "../Graphics/Renderer.h"
 
 #include "GameObjectManager.h"
 
@@ -33,9 +55,10 @@ namespace Ukemochi
 		return {entity, name, tag};
 	}
 
-	GameObject GameObjectFactory::CreatePrefebObject(const std::string& filePath)
+	GameObject& GameObjectFactory::CreatePrefebObject(const std::string& filePath)
 	{
-		EntityID entity = ECS::GetInstance().CreateEntity();
+		// EntityID entity = ECS::GetInstance().CreateEntity(); // A little bit special here
+		// We are going to call the GameObjectManager to create an empty Object for us, and then we will fill it up
 		Document storage;
 		if (Serialization::LoadJSON(filePath, storage))
 		{
@@ -43,8 +66,8 @@ namespace Ukemochi
 
 			std::string name = object["Name"].GetString();
 			std::string tag = object["Tag"].GetString();
-
-			GameObject go = {entity, name, tag};
+			// GameObject go = {entity, name, tag};
+			GameObject& go = GameObjectManager::GetInstance().CreateObject(name, tag);
 			for (auto& comps : object["Components"].GetArray()) // TODO: Update whenever new components are added
 			{
 				std::string component = comps["Name"].GetString();
@@ -112,7 +135,8 @@ namespace Ukemochi
 
 			return go;
 		}
-		return {entity}; // Default GameObject
+		UME_ENGINE_ASSERT(false ,"Loading Prefab failed: {1}", filePath)
+		// Ignore the warning
 	}
 
 	GameObject GameObjectFactory::CloneObject(const GameObject& targetObject, const std::string& name, const std::string& tag)
@@ -121,22 +145,9 @@ namespace Ukemochi
 		return {new_entity, name, tag};
 	}
 
-	void GameObjectFactory::DestroyObject(GameObject& targetobject)
+	void GameObjectFactory::DestroyObject(const GameObject& targetobject)
 	{
 		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
 	}
-
-
-	// retrieves all active game objects in the current level.
-	// 0x4B45414E - No no no, This is not the jedi way
-	 //std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel() {
-	 //	std::vector<GameObject> gameObjects;
-	 //	auto entities = ECS::GetInstance().GetAllEntities();
-	
-	 //	for (const auto& entity : entities) {
-	 //		gameObjects.emplace_back(GameObject(entity));
-	 //	}
-	 //	return gameObjects;
-	 //}
 
 }

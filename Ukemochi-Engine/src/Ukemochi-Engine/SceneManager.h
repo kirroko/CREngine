@@ -65,9 +65,16 @@ namespace Ukemochi
 		// Save the current scene to a file
 		void SaveScene(const std::string& file_name);
 
+		void CreateNewScene(const std::string& file_name);
+
 		void SavePrefab(GameObject* prefabObj, const std::string& file_name);
+
+		Vec2 GetPlayScreen();
+
+		void SetPlayScreen(Vec2 playsize);
 
 	private:
 		std::string sceneName;
+		Vec2 CameraSize;
 	};
 }

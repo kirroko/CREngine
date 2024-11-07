@@ -13,7 +13,7 @@
                     "Shape": 0
                 }]
         }, {
-            "Name": "GameObject",
+            "Name": "Player",
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
@@ -89,8 +89,8 @@
                     "Shape": 0
                 }]
         }, {
-            "Name": "GameObject",
-            "Tag": "Default",
+            "Name": "Enemy",
+            "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
                     "Position": [1200.0, 675.0],

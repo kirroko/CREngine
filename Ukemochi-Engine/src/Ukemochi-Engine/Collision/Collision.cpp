@@ -4,7 +4,7 @@
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Nov 5, 2024
+\date       Nov 6, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Collision.h"			// for forward declaration
 #include "../Math/MathUtils.h"	// for min, max, abs
-#include "../FrameController.h"	// for GetDeltaTime
+#include "../FrameController.h"	// for GetFixedDeltaTime
 #include "../Audio/Audio.h"		// for Audio sound effects
 #include "../Application.h"		// for screen size
 
@@ -33,6 +33,21 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
+
+		ConvexCollider2D convex1;
+		convex1.vertices.push_back(Vec2{ 0,0 });
+		convex1.vertices.push_back(Vec2{ 1,0 });
+		convex1.vertices.push_back(Vec2{ 1,1 });
+		convex1.vertices.push_back(Vec2{ 0,1 });
+
+		ConvexCollider2D convex2;
+		convex2.vertices.push_back(Vec2{ 0.5f,0.5f });
+		convex2.vertices.push_back(Vec2{ 1.5f,0.5f });
+		convex2.vertices.push_back(Vec2{ 1.5f,1.5f });
+		convex2.vertices.push_back(Vec2{ 0.5f,1.5f });
+
+		if (ConvexConvex_Intersection(convex1, convex2))
+			std::cout << "Convex collided\n";
 	}
 
 	/*!***********************************************************************
@@ -51,6 +66,8 @@ namespace Ukemochi
 				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
+				//auto& convex1 = ECS::GetInstance().GetComponent<ConvexCollider2D>(entity);
+
 				// Update the bounding box size
 				UpdateBoundingBox(box1, trans1);
 
@@ -65,13 +82,19 @@ namespace Ukemochi
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
-					// Check collision between objects
-					float tLast;
+					//auto& convex2 = ECS::GetInstance().GetComponent<ConvexCollider2D>(entity);
+
+					// Check collision between two box objects
+					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
-						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2);
+						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
+
+					// Check collision between two convex objects
+					//if (ConvexConvex_Intersection(convex1, convex2))
+					//	std::cout << "Convex collided\n";
 				}
 
-				// Check collision between objects and the screen boundaries
+				// Check collision between box objects and the screen boundaries
 				if (BoxScreen_Intersection(box1))
 					BoxScreen_Response(trans1, box1, rb1);
 			}
@@ -115,7 +138,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between two boxes.
+	 Collision detection between two boxes.
 	*************************************************************************/
 	bool Collision::BoxBox_Intersection(BoxCollider2D& box1, const Vec2& vel1, BoxCollider2D& box2, const Vec2& vel2, float& firstTimeOfCollision)
 	{
@@ -266,7 +289,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between a box and the screen boundaries.
+	 Collision detection between a box and the screen boundaries.
 	*************************************************************************/
 	int Collision::BoxScreen_Intersection(BoxCollider2D& box)
 	{
@@ -294,7 +317,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between two circles.
+	 Collision detection between two circles.
 	*************************************************************************/
 	bool Collision::CircleCircle_Intersection(const CircleCollider2D& circle1, const CircleCollider2D& circle2)
 	{
@@ -309,7 +332,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Implementation of collision detection between a circle and a box.
+	 Collision detection between a circle and a box.
 	*************************************************************************/
 	bool Collision::CircleBox_Intersection(const CircleCollider2D& circle, const BoxCollider2D& box)
 	{
@@ -329,18 +352,126 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 Check for collision detection between two convex.
+	*************************************************************************/
+	bool Collision::ConvexConvex_Intersection(const ConvexCollider2D& convex1, const ConvexCollider2D& convex2)
+	{
+		// Test each edge of the first convex
+		size_t count = convex1.vertices.size();
+		for (size_t i = 0; i < count; i++)
+		{
+			Vec2 edge = convex1.vertices[(i + 1) % count] - convex1.vertices[i];
+			Vec2 axis = edge.perpendicular();
+
+			float min0, max0, min1, max1;
+			ComputeProjInterval(convex1, axis, min0, max0);
+			ComputeProjInterval(convex2, axis, min1, max1);
+
+			// Check if the projections overlap
+			if (max0 < min1 || max1 < min0)
+				return false; // No collision
+		}
+
+		// Test each edge of the second convex
+		count = convex2.vertices.size();
+		for (size_t i = 0; i < count; i++)
+		{
+			Vec2 edge = convex2.vertices[(i + 1) % count] - convex2.vertices[i];
+			Vec2 axis = edge.perpendicular();
+
+			float min0, max0, min1, max1;
+			ComputeProjInterval(convex1, axis, min0, max0);
+			ComputeProjInterval(convex2, axis, min1, max1);
+
+			// Check if the projections overlap
+			if (max0 < min1 || max1 < min0)
+				return false; // No collision
+		}
+
+		return true; // Collision detected
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Project the vertices of a convex onto a given axis and find the min and max projection values.
+	*************************************************************************/
+	void Collision::ComputeProjInterval(const ConvexCollider2D& convex, const Vec2& axis, float& min, float& max)
+	{
+		min = max = Vec2DotProduct(convex.vertices[0], axis);
+
+		for (size_t i = 1; i < convex.vertices.size(); i++)
+		{
+			float projection = Vec2DotProduct(convex.vertices[i], axis);
+			if (projection < min)
+				min = projection;
+			else if (projection > max)
+				max = projection;
+		}
+	}
+
+	/*!***********************************************************************
+	\brief
 	 Collision response between two objects.
 	*************************************************************************/
-	void Collision::BoxBox_Response(Transform& trans1, const BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, Rigidbody2D& rb2)
+	void Collision::BoxBox_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
+		// PLAYER AND TRIGGER
 		if (box1.tag == "Player" && box2.is_trigger)
-			Trigger_Response(trans1, trans2, box2); // PLAYER AND TRIGGERS
-		else
-			Dynamic_Response(trans1, box1, rb1, trans2, box2, rb2); // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Trigger_Response(trans1, trans2, box2);
+		else // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 		// Play a sound effect on collision
 		if (!Audio::GetInstance().IsPlaying(HIT))
 			Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Collision response between a static object and a dynamic object, and between two dynamic objects.
+	*************************************************************************/
+	void Collision::StaticDynamic_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
+	{
+		// Skip trigger objects
+		if (box1.tag == "Player" && box2.is_trigger || box2.tag == "Player" && box1.is_trigger)
+			return;
+
+		// Move objects to the point of collision
+		if (!rb1.is_kinematic)
+			trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		if (!rb2.is_kinematic)
+			trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+
+		// Check collision flags and adjust velocities based on impact direction
+		if (box1.collision_flag & COLLISION_RIGHT && box2.collision_flag & COLLISION_LEFT)
+		{
+			// Collision on the right side of box1 and left side of box2
+			rb1.velocity.x = -abs(rb1.velocity.x); // Reverse box1's x velocity
+			rb2.velocity.x = abs(rb2.velocity.x); // Reverse box2's x velocity
+		}
+		else if (box1.collision_flag & COLLISION_LEFT && box2.collision_flag & COLLISION_RIGHT)
+		{
+			// Collision on the left side of box1 and right side of box2
+			rb1.velocity.x = abs(rb1.velocity.x); // Reverse box1's x velocity
+			rb2.velocity.x = -abs(rb2.velocity.x); // Reverse box2's x velocity
+		}
+
+		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		{
+			// Collision on the top side of box1 and bottom side of box2
+			rb1.velocity.y = abs(rb1.velocity.y); // Reverse box1's y velocity
+			rb2.velocity.y = -abs(rb2.velocity.y); // Reverse box2's y velocity
+		}
+		else if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		{
+			// Collision on the bottom side of box1 and top side of box2
+			rb1.velocity.y = -abs(rb1.velocity.y); // Reverse box1's y velocity
+			rb2.velocity.y = abs(rb2.velocity.y); // Reverse box2's y velocity
+		}
+
+		// Reset collision flags after handling response
+		box1.collision_flag = 0;
+		box2.collision_flag = 0;
 	}
 
 	/*!***********************************************************************
@@ -395,12 +526,12 @@ namespace Ukemochi
 	\brief
 	 Collision response between two dynamic objects.
 	*************************************************************************/
-	void Collision::Dynamic_Response(Transform& trans1, const BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, Rigidbody2D& rb2)
+	void Collision::Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2)
 	{
 		// DYNAMIC AND DYNAMIC
 		// Calculate the difference in positions
 		Vector2D difference = trans2.position - trans1.position;
-		Vector2D combine_half_scale = { trans1.scale.x * 0.5f + trans2.scale.x * 0.5f, trans1.scale.y * 0.5f + trans2.scale.y * 0.5f };
+		Vector2D combine_half_scale = (trans1.scale + trans2.scale) * 0.5f;
 
 		// Calculate the overlap on the x and y axis
 		float overlap_x = combine_half_scale.x - std::abs(difference.x);
@@ -416,36 +547,37 @@ namespace Ukemochi
 				float penetration = overlap_x;
 				float response_x = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
+				// First object is on the left, second object is on the right
 				if (difference.x > 0)
 				{
 					// Check if the first object has physics
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.x -= penetration * 0.5f;
-						rb1.velocity.x = -response_x * 0.5f;
+						rb1.velocity.x = -response_x;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.x += penetration * 0.5f;
-						rb2.velocity.x = response_x * 0.5f;
+						rb2.velocity.x = response_x;
 					}
 				}
-				else
+				else // First object is on the right, second object is on the left
 				{
 					// Check if the first object has physics
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.x += penetration * 0.5f;
-						rb1.velocity.x = response_x * 0.5f;
+						rb1.velocity.x = response_x;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.x -= penetration * 0.5f;
-						rb2.velocity.x = -response_x * 0.5f;
+						rb2.velocity.x = -response_x;
 					}
 				}
 			}
@@ -453,38 +585,39 @@ namespace Ukemochi
 			{
 				// Resolve along the y-axis
 				float penetration = overlap_y;
-				float collisionResponseY = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+				float response_y = penetration / static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
+				// First object is on the bottom, second object is on the top
 				if (difference.y > 0)
 				{
 					// Check if the first object has physics
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.y -= penetration * 0.5f;
-						rb1.velocity.y = -collisionResponseY * 0.5f;
+						rb1.velocity.y = -response_y;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.y += penetration * 0.5f;
-						rb2.velocity.y = collisionResponseY * 0.5f;
+						rb2.velocity.y = response_y;
 					}
 				}
-				else
+				else // First object is on the top, second object is on the bottom
 				{
 					// Check if the first object has physics
 					if (!rb1.is_kinematic)
 					{
 						trans1.position.y += penetration * 0.5f;
-						rb1.velocity.y = collisionResponseY * 0.5f;
+						rb1.velocity.y = response_y;
 					}
 
 					// Check if the second object has physics
 					if (!rb2.is_kinematic)
 					{
 						trans2.position.y -= penetration * 0.5f;
-						rb2.velocity.y = -collisionResponseY * 0.5f;
+						rb2.velocity.y = -response_y;
 					}
 				}
 			}

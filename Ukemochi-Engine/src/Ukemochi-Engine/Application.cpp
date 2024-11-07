@@ -181,15 +181,12 @@ namespace Ukemochi
 			// engine
 			if (es_current == ENGINE_STATES::ES_ENGINE)
 			{
-				//if (Input::IsKeyTriggered(GLFW_KEY_1))
-				//{
-				//	// save
-				//	sceneManager.SaveScene(sceneManager.GetCurrScene());
-				//	// gsm_next = GS_PLAY;
-				//	es_current = ENGINE_STATES::ES_PLAY;
-				//	// sceneManager.SaveScene();
-				//	UME_ENGINE_INFO("1 key is pressed");
-				//}
+				if (Input::IsKeyTriggered(GLFW_KEY_1))
+				{
+					sceneManager.GetPlayScreen();
+					// sceneManager.SaveScene();
+					UME_ENGINE_INFO("1 key is pressed");
+				}
 				//************ Update & Draw ************
 				sceneManager.SceneMangerUpdate();
 				//************ Update & Draw ************

@@ -578,7 +578,7 @@ void Renderer::render()
 				currentAnimation.totalHeight,
 				uvCoordinates);
 			// Flip UVs horizontally if the player is facing left
-			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+			if (entity == GetPlayer() && isFacingRight) {
 				// Swap left and right UV coordinates
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -595,7 +595,7 @@ void Renderer::render()
 			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
 
 			// Flip UVs for static sprites if the player is facing left
-			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+			if (entity == GetPlayer() && isFacingRight) {
 				// Swap left and right UV coordinates
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);

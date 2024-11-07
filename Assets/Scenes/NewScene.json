@@ -1,44 +1,5 @@
 {
     "GameObjects": [{
-            "Name": "GameObject",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [80.0, 810.0],
-                    "Rotation": 0.0,
-                    "Scale": [75.0, 150.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/UI/game_logo.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "GameObject",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [80.0, 720.0],
-                    "Rotation": 0.0,
-                    "Scale": [75.0, 75.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/UI/pause.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "GameObject",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [240.00001525878906, 720.0],
-                    "Rotation": 0.0,
-                    "Scale": [150.0, 75.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/UI/base.png",
-                    "Shape": 0
-                }]
-        }, {
             "Name": "Player",
             "Tag": "Player",
             "Components": [{
@@ -74,6 +35,75 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
+                    "Shape": 0
+                }, {
+                    "Name": "Script",
+                    "Path": "../Assets/Scripts/Player.cs",
+                    "ClassName": "Player"
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "GameObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 810.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 150.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/game_logo.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "PauseButton",
+            "Tag": "Button",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [80.0, 720.0],
+                    "Rotation": 0.0,
+                    "Scale": [75.0, 75.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/UI/pause.png",
                     "Shape": 0
                 }]
         }]

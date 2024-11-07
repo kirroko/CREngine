@@ -7,7 +7,7 @@
 \par	junyukean.wong\@digipen.edu
 \par	Course: CSD2400/CSD2401
 \date	4/11/24
-\brief	This file is responsible for syncing data between the C# data into C++
+\brief	This file is responsible for passing data to C# so that scripts have the latest information.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
-void DataSyncSystem::SyncData()
+void DataSyncSystem::SyncData() const
 {
     for(auto& entity : m_Entities)
     {
@@ -31,9 +31,17 @@ void DataSyncSystem::SyncData()
         auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
         auto& go = GameObjectManager::GetInstance().GetGO(entity);
-        MonoObject* point = go.GetManagedInstance("Transform");
+        MonoObject* TransPoint = go.GetManagedInstance("Transform");
         MonoObject* rbPoint = go.GetManagedInstance("Rigidbody2D");
-
-        MonoProperty* prop = ScriptingEngine::GetInstance().GetMonoProperty(point, "position");
+        
+        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "Position", transform.position.x, transform.position.y);
+        
+        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "Scale", transform.scale.x, transform.scale.y);
+        
+        ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Velocity", rb.velocity.x, rb.velocity.y);
+        
+        ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Acceleration", rb.acceleration.x, rb.acceleration.y);
+        
+        ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Force", rb.force.x, rb.force.y);
     }
 }

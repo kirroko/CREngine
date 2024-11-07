@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"	// for camera viewport
 #include "../Graphics/Renderer.h"	// for text objects
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+#include "../SceneManager.h"
 
 namespace Ukemochi
 {
@@ -31,6 +32,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::Init()
 	{
+		//TO DO:: ADD COMPONENT FOR EACH BUTTON E.G. TAG = BUTTON COMPONENT NAME = PAUSE.
+
+
 		// Get the screen width and height
 		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
@@ -130,12 +134,27 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
 	}
 
+	void InGameGUI::CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
+	{
+		GameObject button = GameObjectManager::GetInstance().CreateObject(btn,btntag);
+		button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
+		button.AddComponent(SpriteRender{ texture_path });
+		button.AddComponent(Button{ on_click });
+
+		// Offset the text position to make it left and middle aligned
+		Vec2 text_pos = Vec2{ pos.x - button_scale.x * 0.4f, pos.y - button_scale.y * 0.25f };
+		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
+	}
+
 	/*!***********************************************************************
 	\brief
 	 Handle the GUI button inputs.
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
 	{
+		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
+		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y;
+		//std::cout << mouse_x << " : " << mouse_y << std::endl;
 		// Check for mouse left click
 		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
 		{
@@ -162,10 +181,12 @@ namespace Ukemochi
 	bool InGameGUI::IsInside(const Transform& trans)
 	{
 		// Get current mouse position in screen coordinates
-		auto [mouse_x, mouse_y] = Input::GetMousePosition();
+		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
+		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y - ECS::GetInstance().GetSystem<Camera>()->position.y;
+		//auto [mouse_x, mouse_y] = SceneManager::GetInstance().GetPlayScreen();//Input::GetMousePosition();
 
 		// Flip the mouse position in the y-axis
-		mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
+		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
 		// Offset mouse position
 		mouse_x += trans.scale.x * 0.5f;
