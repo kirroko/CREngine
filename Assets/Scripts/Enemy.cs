@@ -12,44 +12,49 @@ public class Enemy : BaseScript
         DEAD_STATE
     }
     EnemyStates enemyStates;
-    Rigidbody2D enemyRigi2D;
-    Rigidbody2D playerRigi2D;
+    Transform enemyTransform;
+    GameObject playerObj = null;
 
     public override void Start()
     {
         enemyStates = EnemyStates.ROAM_STATE;
-        enemyRigi2D = GetComponent<Rigidbody2D>();
-        playerRigi2D = null;
-        try
-        {
-            //playerRigi2D = GetComponent<Player>().GetPlayer();
-            Console.WriteLine("found player");
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
+        enemyTransform = GetComponent<Transform>();
+        playerObj = GameObject.FindWithTag("Player");
 
     }
 
     public override void Update()
     {
-        if (playerRigi2D != null)
+        if (playerObj.GetComponent<Transform>() == null)
         {
-            float distanceSquaredX = playerRigi2D.gameObject.transform.Position.x - enemyRigi2D.gameObject.transform.Position.x;
-            float distanceSquaredY = playerRigi2D.gameObject.transform.Position.y - enemyRigi2D.gameObject.transform.Position.y;
-            float distanceSquared = distanceSquaredX * distanceSquaredX + distanceSquaredY * distanceSquaredY;
-            float combinedRadiusSquared = (playerRigi2D.gameObject.transform.Scale.x + enemyRigi2D.gameObject.transform.Scale.x);
+            Debug.Log("PLAYER NULL " + playerObj.ToString());
         }
+        if (enemyTransform == null)
+        {
+            Debug.Log("ENEMY NULL");
+        }
+
+            //Console.WriteLine("HIHIIHIHIH found player");
+        float distanceX = playerObj.GetComponent<Transform>().Position.x - enemyTransform.Position.x;
+        float distanceY = playerObj.GetComponent<Transform>().Position.y - enemyTransform.Position.y;
+        float distanceSquared = (distanceX * distanceX + distanceY * distanceY);
+        float combinedRadiusSquared = (playerObj.GetComponent<Transform>().Scale.x + enemyTransform.Scale.x);
+
+        Debug.Log(playerObj.GetComponent<Transform>().Position.x.ToString());
+        Debug.Log(enemyTransform.Position.x.ToString());
 
         switch (enemyStates)
         {
             case EnemyStates.ROAM_STATE:
-                //Console.WriteLine("ROAM");
+                GetComponent<Rigidbody2D>().Velocity = new Vector2(0, 0);
+                if (distanceSquared < 100F)
+                {
+                    enemyStates = EnemyStates.CHASE_STATE;
+                }
                 break;
 
             case EnemyStates.CHASE_STATE:
+                GetComponent<Rigidbody2D>().Velocity = new Vector2(50, 50);
                 break;
 
             case EnemyStates.ATTACK_STATE:

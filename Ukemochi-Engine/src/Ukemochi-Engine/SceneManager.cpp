@@ -104,8 +104,14 @@ namespace Ukemochi
 	{
 		//load all assest
 		// load textures
-		Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-		Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+		//Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+		//Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+
+		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
+		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
+
 
 		// load textures
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
@@ -233,12 +239,34 @@ namespace Ukemochi
 		//}
 		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
 		{
-			Audio::GetInstance().StopAllSoundsInGroup(LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->StopAllSoundsInGroup(LEVEL1);
 		}
 		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_N))
 		{
-			Audio::GetInstance().PlayAllSoundsInGroup(LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->PlayAllSoundsInGroup(LEVEL1);
 		}
+
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->IsPlaying(BGM))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(BGM, 0.04f);
+		}
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->IsPlaying(HIT))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(HIT, 0.04f);
+		}
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->IsPlaying(READY))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::READY, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(READY, 0.04f);
+		}
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->IsPlaying(CONFIRMCLICK))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(CONFIRMCLICK, 0.04f);
+		}
+		ECS::GetInstance().GetSystem<Audio>()->Update();
 
 		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
