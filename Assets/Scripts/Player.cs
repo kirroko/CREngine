@@ -38,9 +38,4 @@ public class Player : BaseScript
         else
             rigi2D.RemoveTorque();
     }
-
-    public Rigidbody2D GetPlayer()
-    {
-        return GetComponent<Rigidbody2D>();
-    }
 }

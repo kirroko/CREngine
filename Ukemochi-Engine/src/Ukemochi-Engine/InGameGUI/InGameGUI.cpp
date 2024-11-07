@@ -133,9 +133,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
 	}
 
-	void InGameGUI::CreateButtonOBJ(GameObject button, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
+	void InGameGUI::CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
 	{
-		//GameObject button = GameObjectManager::GetInstance().CreateObject();
+		GameObject button = GameObjectManager::GetInstance().CreateObject(btn,btntag);
 		button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
 		button.AddComponent(SpriteRender{ texture_path });
 		button.AddComponent(Button{ on_click });

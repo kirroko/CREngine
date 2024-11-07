@@ -22,7 +22,7 @@ public class Enemy : BaseScript
         playerRigi2D = null;
         try
         {
-            playerRigi2D = GetComponent<Player>().GetPlayer();
+            //playerRigi2D = GetComponent<Player>().GetPlayer();
             Console.WriteLine("found player");
         }
         catch (Exception)
@@ -41,19 +41,6 @@ public class Enemy : BaseScript
             float distanceSquaredY = playerRigi2D.gameObject.transform.Position.y - enemyRigi2D.gameObject.transform.Position.y;
             float distanceSquared = distanceSquaredX * distanceSquaredX + distanceSquaredY * distanceSquaredY;
             float combinedRadiusSquared = (playerRigi2D.gameObject.transform.Scale.x + enemyRigi2D.gameObject.transform.Scale.x);
-        }
-        else
-        {
-            try
-            {
-                playerRigi2D = GetComponent<Player>().GetPlayer();
-                Console.WriteLine("found player");
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
         }
 
         switch (enemyStates)
