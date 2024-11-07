@@ -178,6 +178,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Audio\Audio.h" />
     <ClInclude Include="src\Ukemochi-Engine\Audio\AudioList.h" />
     <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h" />
@@ -242,6 +243,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Asset Manager\AssetManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Audio\Audio.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
