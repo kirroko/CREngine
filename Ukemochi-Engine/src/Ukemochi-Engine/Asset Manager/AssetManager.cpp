@@ -1,3 +1,4 @@
+#include "PreCompile.h"
 #include "AssetManager.h"
 
 namespace Ukemochi
@@ -32,7 +33,7 @@ namespace Ukemochi
 		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		texture->texUnit(*(shader_list.find(shader_name)->second), "tex0", 0);
+		texture->texUnit((shader_list.find(shader_name)->second), "tex0", 0);
 
 		texture_list[file_name] = texture;
 	}
@@ -53,4 +54,5 @@ namespace Ukemochi
 	{
 		return *shader_list.find(key_name)->second;
 	}
+
 }

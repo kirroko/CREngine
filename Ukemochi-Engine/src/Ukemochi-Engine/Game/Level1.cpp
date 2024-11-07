@@ -17,6 +17,7 @@ DigiPen Institute of Technology is prohibited.
 #include "GSM.h"
 #include "Level1.h"
 #include <iostream> // for std::cout
+#include <chrono>
 
 #include "../Factory/Factory.h"		//for Game Objects and its related functions
 #include "../ECS/ECS.h"				// for ECS
@@ -45,6 +46,12 @@ namespace Ukemochi
 	GameObject player_obj;
 	GameObject worm_0;
 	Renderer time;
+
+	// --- Frame Performance Viewer
+	std::chrono::duration<double> loop_time;
+	std::chrono::duration<double> collision_time;
+	std::chrono::duration<double> physics_time;
+	std::chrono::duration<double> graphics_time;
 	
 	//GLfloat lastFrameTime = 0.0f;
 	//GLfloat deltaTime = 0.0f;
@@ -394,5 +401,10 @@ namespace Ukemochi
 		{
 			Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 		}
+	}
+
+	void print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics)
+	{
+
 	}
 }
