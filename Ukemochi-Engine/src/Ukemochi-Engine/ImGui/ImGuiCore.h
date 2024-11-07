@@ -78,6 +78,8 @@ namespace Ukemochi
 
 		static float m_LastSceneUpdateTime;
 
+		static std::string GetStartScene();
+
 	private:
 		// Mouse and keyboard event handlers
 		/*bool IsMouseButtonPressedEvent(MouseButtonPressedEvent& e);

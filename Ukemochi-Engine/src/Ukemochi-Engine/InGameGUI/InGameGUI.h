@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../ECS/ECS.h" // for ECS system and components
+#include "../Factory/GameObject.h"
 
 namespace Ukemochi
 {
@@ -59,6 +60,7 @@ namespace Ukemochi
 		*************************************************************************/
 		void CreateButton(const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click);
 
+		void CreateButtonOBJ(GameObject button,const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click);
 	private:
 		/*!***********************************************************************
 		\brief

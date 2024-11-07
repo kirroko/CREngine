@@ -45,7 +45,7 @@ namespace Ukemochi
 
     ScriptingEngine::~ScriptingEngine()
     {
-        ShutDown(); // If we haven't already unload them
+        //ShutDown(); // If we haven't already unload them
     }
 
     void ScriptingEngine::Init()
