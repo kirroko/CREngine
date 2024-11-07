@@ -210,7 +210,7 @@ namespace Ukemochi
         // UME_ENGINE_TRACE("ScriptingEngine: Invoking method {0} in class {1}", methodName, mono_class_get_name(klass));
         MonoObject* exception = nullptr; // TODO: Do something with the exception?
         mono_runtime_invoke(method, instance, args, &exception); // TODO: Possible issues would occur here
-        if(exception != nullptr)
+        if (exception != nullptr)
         {
             MonoClass* exceptionClass = mono_object_get_class(exception);
             MonoProperty* messageProperty = mono_class_get_property_from_name(exceptionClass, "Message");
@@ -227,12 +227,12 @@ namespace Ukemochi
     {
         MonoClass* klass = mono_object_get_class(instance);
         MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
-        
+
         MonoTypeEnum type = static_cast<MonoTypeEnum>(mono_type_get_type(mono_field_get_type(field))); // DEBUGGING
         // UME_ENGINE_INFO("Scripting Log: Setting type {0} for field {1}", static_cast<int>(type), fieldName);
 
         mono_field_set_value(instance, field, value);
-        
+
         float fieldValue;
         void* param = &fieldValue;
         mono_field_get_value(instance, field, param);
@@ -243,7 +243,7 @@ namespace Ukemochi
     {
         MonoClass* klass = mono_object_get_class(instance);
         MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
-        
+
         mono_field_set_value(instance, field, value);
     }
 
@@ -285,7 +285,7 @@ namespace Ukemochi
         // void* data = mono_object_unbox(vector2Struct);
         // Vector2Data* vector2Data = static_cast<Vector2Data*>(data);
         // auto* vector2Data = static_cast<Vector2Data*>(mono_object_unbox(vector2Struct));
-        
+
         SetMonoFieldValue(vector2Struct, "x", &x);
         SetMonoFieldValue(vector2Struct, "y", &y);
 
@@ -418,6 +418,9 @@ namespace Ukemochi
     {
         mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::AddComponent",
                                (void*)InternalCalls::AddComponent);
+
+        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetMonoObjectByTag",
+                               (void*)InternalCalls::GetMonoObjectByTag);
 
         mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetKey",
                                (void*)InternalCalls::GetKey);
