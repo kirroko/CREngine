@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using UkemochiEngine.CoreModule;
+using Ukemochi;
 
 public class Enemy : BaseScript
 {
@@ -15,11 +15,23 @@ public class Enemy : BaseScript
     Rigidbody2D enemyRigi2D;
     Rigidbody2D playerRigi2D;
 
+    Transform playerTran;
+
     public override void Start()
     {
         enemyStates = EnemyStates.ROAM_STATE;
         enemyRigi2D = GetComponent<Rigidbody2D>();
-        playerRigi2D = null;
+        var go = GameObject.FindWithTag("Player");
+        if (go != null)
+        {
+            Debug.Log("Found Player!");
+            playerTran = go.transform;
+            if (playerTran != null)
+            {
+                Debug.Log("!!! player transform !!!");
+            }
+        }
+
         try
         {
             //playerRigi2D = GetComponent<Player>().GetPlayer();
@@ -35,12 +47,14 @@ public class Enemy : BaseScript
 
     public override void Update()
     {
-        if (playerRigi2D != null)
+        if (playerTran != null)
         {
-            float distanceSquaredX = playerRigi2D.gameObject.transform.Position.x - enemyRigi2D.gameObject.transform.Position.x;
-            float distanceSquaredY = playerRigi2D.gameObject.transform.Position.y - enemyRigi2D.gameObject.transform.Position.y;
-            float distanceSquared = distanceSquaredX * distanceSquaredX + distanceSquaredY * distanceSquaredY;
-            float combinedRadiusSquared = (playerRigi2D.gameObject.transform.Scale.x + enemyRigi2D.gameObject.transform.Scale.x);
+            Debug.Log("Player's Position: " + playerTran.position);
+            Vector2 distanceSquared = playerTran.position - gameObject.transform.position;
+            //float distanceSquaredX = playerRigi2D.gameObject.transform.position.x - enemyRigi2D.gameObject.transform.position.x;
+            //float distanceSquaredY = playerRigi2D.gameObject.transform.position.y - enemyRigi2D.gameObject.transform.position.y;
+            //float distanceSquared = distanceSquaredX * distanceSquaredX + distanceSquaredY * distanceSquaredY;
+            //float combinedRadiusSquared = (playerRigi2D.gameObject.transform.scale.x + enemyRigi2D.gameObject.transform.scale.x);
         }
 
         switch (enemyStates)

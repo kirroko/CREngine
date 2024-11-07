@@ -19,84 +19,106 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 using System;
 using System.Runtime.CompilerServices;
 
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public static class EngineInterop
     {
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetMonoObject(object obj);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void AddComponent(ulong id, object component, string typeName);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern void SetTransformPosition(ulong id, float x, float y);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern void SetTransformRotation(ulong id, float x, float y);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern void SetTransformScale(ulong id, float x, float y);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern object GetMonoObject(ulong id);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool HasComponent(ulong id, Type componentType);
         
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern object GetMonoObjectByTag(string tag);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTransformPosition(ulong id, float x, float y);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetTransformPosition(ulong id, ref float x, ref float y);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTransformRotation(ulong id, float x, float y); // TODO: WIP
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetTransformRotation(ulong id, ref float x, ref float y);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTransformScale(ulong id, float x, float y);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetTransformScale(ulong id, ref float x, ref float y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetObjectByTag(string tag, out ulong id);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetKey(int key);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetKeyDown(int key);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LogMessage(string message);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyVelocity(ulong getInstanceId, float velocityX, float velocityY);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetRigidbodyVelocity(ulong getInstanceId, ref float velocityX, ref float velocityY);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyAcceleration(ulong getInstanceId, float accelerationX,
             float accelerationY);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetRigidbodyAcceleration(ulong getInstanceId, ref float accelerationX,
+            ref float accelerationY);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyForce(ulong getInstanceId, float forceX, float forceY);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetRigidbodyForce(ulong getInstanceId, ref float forceX, ref float forceY);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyMass(ulong getInstanceId, float mass);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyInverseMass(ulong getInstanceId, float inverseMass);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyDrag(ulong getInstanceId, float drag);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyAngle(ulong getInstanceId, float angle);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyAngularVelocity(ulong getInstanceId, float angularVelocity);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyTorque(ulong getInstanceId, float torque);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyInertiaMass(ulong getInstanceId, float inertiaMass);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyInverseInertiaMass(ulong getInstanceId, float inverseInertiaMass);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyAngularDrag(ulong getInstanceId, float angularDrag);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyUseGravity(ulong getInstanceId, bool useGravity);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyIsKinematic(ulong getInstanceId, bool isKinematic);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetSpriteRenderFlipX(ulong getInstanceId, bool isFacingRight);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetSpriteRenderFlipY(ulong getInstanceId, bool flipY);
     }
 }

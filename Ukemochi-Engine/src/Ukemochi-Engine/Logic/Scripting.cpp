@@ -55,6 +55,7 @@ namespace Ukemochi
         CoreAssembly = LoadCSharpAssembly("Resources/Scripts/Ukemochi-Scripting.dll");
         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "C# Assembly Null!")
         PrintAssemblyTypes(CoreAssembly); // Print out the types in the assembly for tracing
+        m_pCoreAssemblyImage = mono_assembly_get_image(CoreAssembly);
 
         RegisterMonoFunctions();
 
@@ -130,14 +131,19 @@ namespace Ukemochi
         // TODO: Our MonoObject instance are still pointing to the old assembly, we need to update them
     }
 
+    MonoImage* ScriptingEngine::GetCoreAssemblyImage() const
+    {
+        return m_pCoreAssemblyImage;
+    }
+
     MonoObject* ScriptingEngine::InstantiateStruct(const std::string& structName)
     {
         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        MonoClass* klass = GetClassInAssembly(CoreAssembly, "UkemochiEngine.CoreModule", structName.c_str());
+        MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", structName.c_str());
         if (klass == nullptr)
             UME_ENGINE_ASSERT(false, "Failed to instantiate struct: {1}", structName)
 
-        MonoObject* instance = mono_value_box(m_pAppDomain, klass, nullptr);
+        MonoObject* instance = mono_object_new(m_pAppDomain, klass);
 
         return instance;
     }
@@ -145,7 +151,7 @@ namespace Ukemochi
     MonoObject* ScriptingEngine::InstantiateClass(const std::string& className)
     {
         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        MonoClass* klass = GetClassInAssembly(CoreAssembly, "UkemochiEngine.CoreModule", className.c_str());
+        MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", className.c_str());
         // TODO: Client declared Namespace?
         if (klass == nullptr)
             UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className)
@@ -208,8 +214,8 @@ namespace Ukemochi
             return;
         }
         // UME_ENGINE_TRACE("ScriptingEngine: Invoking method {0} in class {1}", methodName, mono_class_get_name(klass));
-        MonoObject* exception = nullptr; // TODO: Do something with the exception?
-        mono_runtime_invoke(method, instance, args, &exception); // TODO: Possible issues would occur here
+        MonoObject* exception = nullptr; 
+        mono_runtime_invoke(method, instance, args, &exception);
         if (exception != nullptr)
         {
             MonoClass* exceptionClass = mono_object_get_class(exception);
@@ -217,8 +223,8 @@ namespace Ukemochi
             MonoString* message = (MonoString*)mono_property_get_value(messageProperty, exception, nullptr, nullptr);
             char* messageStr = mono_string_to_utf8(message);
             std::string messageString = messageStr;
-            UME_ENGINE_WARN("Scripting Log: " + messageString);
             mono_free(messageStr);
+            UME_ENGINE_ASSERT(false,"Scripting Log: " + messageString)
         }
     }
 
@@ -233,19 +239,35 @@ namespace Ukemochi
 
         mono_field_set_value(instance, field, value);
 
-        float fieldValue;
-        void* param = &fieldValue;
-        mono_field_get_value(instance, field, param);
+        // float fieldValue;
+        // void* param = &fieldValue;
+        // mono_field_get_value(instance, field, param);
         // UME_ENGINE_INFO("Scripting Log: Field {0} has value {1}", fieldName, fieldValue);
     }
 
-    void ScriptingEngine::SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName, const std::string& value)
+    void ScriptingEngine::SetMonoFieldValueFloat(MonoObject* instance, const std::string& fieldName, float* value)
+    {
+        MonoClass* klass = mono_object_get_class(instance);
+        MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
+
+        float Value;
+        mono_field_get_value(instance, field, &Value);
+
+        Value = *value;
+        mono_field_set_value(instance, field, &Value);
+
+        float debugValue;
+        mono_field_get_value(instance, field, &debugValue);
+    }
+
+    void ScriptingEngine::SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName,
+                                                  const std::string& value)
     {
         MonoClass* klass = mono_object_get_class(instance);
         MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
 
         MonoString* nameValue = mono_string_new(mono_domain_get(), value.c_str());
-        mono_field_set_value(instance,field, nameValue);
+        mono_field_set_value(instance, field, nameValue);
     }
 
     void ScriptingEngine::SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value)
@@ -274,30 +296,62 @@ namespace Ukemochi
         return property;
     }
 
-    void ScriptingEngine::SetVector2Property(MonoObject* instance, const std::string& propertyName, float x, float y)
+    void ScriptingEngine::SetVector2Property(MonoObject* instanceClass, const std::string& propertyName, float x,
+                                             float y)
     {
-        UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance),
-                                                                   propertyName.c_str());
-        if (!property)
-            UME_ENGINE_ASSERT(false, "Property not found: {1}", propertyName)
+        MonoObject* vector2Instance = InstantiateStruct("Vector2");
+        MonoClassField* xField = mono_class_get_field_from_name(mono_object_get_class(vector2Instance), "x");
+        MonoClassField* yField = mono_class_get_field_from_name(mono_object_get_class(vector2Instance), "y");
 
-        MonoObject* vector2Struct = mono_property_get_value(property, instance, nullptr, nullptr);
-        if (!vector2Struct)
-            UME_ENGINE_ASSERT(false, "Failed to get Vector2 struct")
+        mono_field_set_value(vector2Instance, xField, &x);
+        mono_field_set_value(vector2Instance, yField, &y);
 
-        struct Vector2Data
+        float debugX,debugY;
+        mono_field_get_value(vector2Instance, xField, &debugX);
+        mono_field_get_value(vector2Instance, yField, &debugY);
+
+        MonoProperty* positionProperty = mono_class_get_property_from_name(mono_object_get_class(instanceClass),
+                                                                          propertyName.c_str());
+        MonoMethod* setPositionMethod = mono_property_get_set_method(positionProperty);
+        void* args[1];
+        args[0] = vector2Instance;
+        MonoObject* exception = nullptr; 
+        mono_runtime_invoke(setPositionMethod, instanceClass, args, nullptr);
+        if (exception != nullptr)
         {
-            float x;
-            float y;
-        };
+            MonoClass* exceptionClass = mono_object_get_class(exception);
+            MonoProperty* messageProperty = mono_class_get_property_from_name(exceptionClass, "Message");
+            MonoString* message = (MonoString*)mono_property_get_value(messageProperty, exception, nullptr, nullptr);
+            char* messageStr = mono_string_to_utf8(message);
+            std::string messageString = messageStr;
+            mono_free(messageStr);
+            UME_ENGINE_ASSERT(false,"Scripting Log: " + messageString);
+        }
+        // UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
+        // MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instanceClass),
+        //                                                            propertyName.c_str());
+        // if (!property)
+        //     UME_ENGINE_ASSERT(false, "Property not found: {1}", propertyName)
+        //
+        // MonoObject* vector2Struct = mono_property_get_value(property, instanceClass, nullptr, nullptr);
+        // if (!vector2Struct)
+        //     UME_ENGINE_ASSERT(false, "Failed to get Vector2 struct")
+        //
+        // SetMonoFieldValueFloat(vector2Struct, "x", &x);
+        // SetMonoFieldValueFloat(vector2Struct, "y", &y);
+        //
+        // void* args[] = { vector2Struct };
+        // mono_property_set_value(property, instanceClass, args, nullptr); 
+
+        // struct Vector2Data
+        // {
+        //     float x;
+        //     float y;
+        // };
         // void* data = mono_object_unbox(vector2Struct);
         // Vector2Data* vector2Data = static_cast<Vector2Data*>(data);
         // auto* vector2Data = static_cast<Vector2Data*>(mono_object_unbox(vector2Struct));
-
-        SetMonoFieldValue(vector2Struct, "x", &x);
-        SetMonoFieldValue(vector2Struct, "y", &y);
-
+            
         // void* args[] = { vector2Struct };
         // MonoObject* exception = nullptr;
         // mono_property_set_value(property, instance, args, &exception);
@@ -314,7 +368,7 @@ namespace Ukemochi
 
         //         // Create a new Vector2 Obj
         //         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        //         MonoClass* klass = GetClassInAssembly(CoreAssembly, "UkemochiEngine.CoreModule", "Vector2");
+        //         MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", "Vector2");
         //         if (klass == nullptr)
         //             UME_ENGINE_ASSERT(false, "Failed to instantiate struct: {1}", "Vector2")
         //
@@ -425,76 +479,98 @@ namespace Ukemochi
     void ScriptingEngine::RegisterMonoFunctions()
     // TODO: Type-Safe Component Registration and Access? Meta-Programming with Reflection??
     {
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::AddComponent",
-                               (void*)InternalCalls::AddComponent);
+        // mono_add_internal_call("Ukemochi.EngineInterop::GetMonoObject",
+        //                        InternalCalls::GetMonoObject);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetMonoObjectByTag",
-                               (void*)InternalCalls::GetMonoObjectByTag);
+        // mono_add_internal_call("Ukemochi.EngineInterop::AddComponent",
+        //                        (void*)InternalCalls::AddComponent);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetKey",
+        mono_add_internal_call("Ukemochi.EngineInterop::HasComponent",
+                               (void*)InternalCalls::HasComponent);
+
+
+        mono_add_internal_call("Ukemochi.EngineInterop::GetObjectByTag",
+                               (void*)InternalCalls::GetObjectByTag);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::GetKey",
                                (void*)InternalCalls::GetKey);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::GetKeyDown",
+        mono_add_internal_call("Ukemochi.EngineInterop::GetKeyDown",
                                (void*)InternalCalls::GetKeyDown);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::LogMessage",
+        mono_add_internal_call("Ukemochi.EngineInterop::LogMessage",
                                (void*)InternalCalls::LogMessage);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformPosition",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetTransformPosition",
                                (void*)InternalCalls::SetTransformPosition);
 
-        // mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformRotation",
+        mono_add_internal_call("Ukemochi.EngineInterop::GetTransformPosition",
+                               (void*)InternalCalls::GetTransformPosition);
+
+        // mono_add_internal_call("Ukemochi.EngineInterop::SetTransformRotation",
         //                        (void*)InternalCalls::SetTransformRotation);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetTransformScale",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetTransformScale",
                                (void*)InternalCalls::SetTransformScale);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyVelocity",
-                               (void*)InternalCalls::SetRigidbodyVelocity);
+        mono_add_internal_call("Ukemochi_EngineInterop::GetTransformScale",
+                               (void*)InternalCalls::GetTransformScale);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyAcceleration",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyVelocity",
+                               (void*)InternalCalls::SetRigidbodyVelocity);
+        
+        mono_add_internal_call("Ukemochi.EngineInterop::GetRigidbodyVelocity",
+                               (void*)InternalCalls::GetRigidbodyVelocity);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyAcceleration",
                                (void*)InternalCalls::SetRigidbodyAcceleration);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyForce",
+        mono_add_internal_call("Ukemochi.EngineInterop::GetRigidbodyAcceleration",
+                               (void*)InternalCalls::GetRigidbodyAcceleration);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyForce",
                                (void*)InternalCalls::SetRigidbodyForce);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyMass",
+        mono_add_internal_call("Ukemochi.EngineInterop::GetRigidbodyForce",
+                               (void*)InternalCalls::GetRigidbodyForce);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyMass",
                                (void*)InternalCalls::SetRigidbodyMass);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyInverseMass",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyInverseMass",
                                (void*)InternalCalls::SetRigidbodyInverseMass);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyDrag",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyDrag",
                                (void*)InternalCalls::SetRigidbodyDrag);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyAngle",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyAngle",
                                (void*)InternalCalls::SetRigidbodyAngle);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyAngularVelocity",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyAngularVelocity",
                                (void*)InternalCalls::SetRigidbodyAngularVelocity);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyTorque",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyTorque",
                                (void*)InternalCalls::SetRigidbodyTorque);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyInertiaMass",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyInertiaMass",
                                (void*)InternalCalls::SetRigidbodyInertiaMass);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyInverseInertiaMass",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyInverseInertiaMass",
                                (void*)InternalCalls::SetRigidbodyInverseInertiaMass);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyAngularDrag",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyAngularDrag",
                                (void*)InternalCalls::SetRigidbodyAngularDrag);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyUseGravity",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyUseGravity",
                                (void*)InternalCalls::SetRigidbodyUseGravity);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetRigidbodyIsKinematic",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyIsKinematic",
                                (void*)InternalCalls::SetRigidbodyIsKinematic);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetSpriteRenderFlipX",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetSpriteRenderFlipX",
                                (void*)InternalCalls::SetSpriteRenderFlipX);
 
-        mono_add_internal_call("UkemochiEngine.CoreModule.EngineInterop::SetSpriteRenderFlipY",
+        mono_add_internal_call("Ukemochi.EngineInterop::SetSpriteRenderFlipY",
                                (void*)InternalCalls::SetSpriteRenderFlipY);
     }
 

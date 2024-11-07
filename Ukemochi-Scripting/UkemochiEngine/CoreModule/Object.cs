@@ -15,16 +15,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header
  *******************************************************************/
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public abstract class Object
     {
         // ==================== FIELDS ========================
-        private ulong _id = 0;
-
+        internal ulong _id = 0;
         public string name;
         
         // ==================== METHODS =======================
+
         protected ulong GetInstanceID()
         {
             return _id;

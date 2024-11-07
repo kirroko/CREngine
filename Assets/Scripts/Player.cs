@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using UkemochiEngine.CoreModule;
+using Ukemochi;
 
 public class Player : BaseScript
 {
@@ -11,15 +11,12 @@ public class Player : BaseScript
 
     public override void Start()
     {
-        Debug.Log("Hello world! Player script start is called");
         rigi2D = GetComponent<Rigidbody2D>();
         enemy = GameObject.FindWithTag("Enemy");
-        Debug.Log("Object fonud " + enemy.name);
     }
 
     public override void Update()
     {
-        //Debug.Log("Hallo, Update");
         if (Input.GetKey(KeyCode.W))
             rigi2D.AddForceY(PLAYER_FORCE);
         else if (Input.GetKey(KeyCode.S))

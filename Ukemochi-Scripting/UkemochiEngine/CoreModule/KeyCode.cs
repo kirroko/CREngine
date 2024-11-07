@@ -1,4 +1,4 @@
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public enum KeyCode
     {

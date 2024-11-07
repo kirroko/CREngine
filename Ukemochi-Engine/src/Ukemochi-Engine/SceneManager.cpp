@@ -258,7 +258,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
 		// --- DATA SYNC UPDATE ---
-		ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
+		// ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
 		
 		SceneManagerDraw();
 	}

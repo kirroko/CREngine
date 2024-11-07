@@ -16,29 +16,57 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header
  *******************************************************************/
-namespace UkemochiEngine.CoreModule
+
+using System;
+
+namespace Ukemochi
 {
     public struct Vector2
     {
         // ==================== FIELDS ====================
+
         public float x;
         public float y;
-        
-        // ==================== METHODS ====================
-        public override string ToString()
-        {
-            return $"({x}, {y})";
-        }
 
+        // ==================== METHODS ====================
+        public static Vector2 Zero => new Vector2(0.0f);
+        
         public Vector2(float value)
         {
             x = value;
             y = value;
         }
+
         public Vector2(float x, float y)
         {
             this.x = x;
             this.y = y;
+        }
+
+        public override string ToString()
+        {
+            return $"({x}, {y})";
+        }
+
+        // ==================== OPERATORS ====================
+        public static Vector2 operator +(Vector2 a, Vector2 b)
+        {
+            return new Vector2(a.x + b.x, a.y + b.y);
+        }
+
+        public static Vector2 operator -(Vector2 a, Vector2 b)
+        {
+            return new Vector2(a.x - b.x, a.y - b.y);
+        }
+
+        public static Vector2 operator *(Vector2 a, float b)
+        {
+            return new Vector2(a.x * b, a.y * b);
+        }
+
+        public static Vector2 operator /(Vector2 a, float b)
+        {
+            return new Vector2(a.x / b, a.y / b);
         }
     }
 }
