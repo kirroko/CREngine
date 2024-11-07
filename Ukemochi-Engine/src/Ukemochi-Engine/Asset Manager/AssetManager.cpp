@@ -42,10 +42,15 @@ namespace Ukemochi
 		return *texture_list.find(key_name)->second;
 	}
 
-	void AssetManager::addSprite(std::string file_name, std::string file_path)
+	void AssetManager::addShader(std::string file_name, std::string vert_path, std::string frag_path)
 	{
+		std::shared_ptr<Shader> shader(new Shader(vert_path.c_str(), frag_path.c_str()));
 
+		shader_list[file_name] = shader;
 	}
 
-	
+	Shader& AssetManager::getShader(std::string key_name)
+	{
+		return *shader_list.find(key_name)->second;
+	}
 }
