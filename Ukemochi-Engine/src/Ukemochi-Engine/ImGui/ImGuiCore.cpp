@@ -92,6 +92,14 @@ namespace Ukemochi
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		// Update DeltaTime
+		float currentTime = static_cast<float>(glfwGetTime());  // Get the current time in seconds
+		float deltaTime = currentTime - m_Time;                  // Calculate time since last frame
+		m_Time = currentTime;                                    // Update the time for the next frame
+
+		float fps = 1.0f / deltaTime;
+
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
@@ -135,16 +143,20 @@ namespace Ukemochi
 			ImGui::DockSpace(dockspace_id, ImVec2(0, 0), dockspace_flags);
 		}
 
-		ControlPanel();
+		ControlPanel(fps);
+
 
 		ImGui::End(); // End the dockspace window
 
 		//ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
 	}
 
-	void UseImGui::ControlPanel()
+	void UseImGui::ControlPanel(float fps)
 	{
 		ImGui::Begin("Control Panel");  // Create a new window titled "Control Panel"
+
+		// Add FPS display inside ControlPanel
+		ImGui::Text("FPS: %.2f", fps);  // Show FPS with 2 decimal places
 
 		// Add controls such as buttons, sliders, or entity selectors here
 		ImGui::Text("Control Panel Contents");
@@ -395,21 +407,67 @@ namespace Ukemochi
 		}
 	}
 
-	void UseImGui::EditEntityProperties(GameObject& selectedObject) {
+	void UseImGui::EditEntityProperties(GameObject* selectedObject, bool& modified) {
 
-		ImGui::Text("Editing properties of: %s", selectedObject.GetName().c_str());
+		if (!selectedObject) return;
 
-		if (selectedObject.HasComponent<Transform>()) {
-			Transform& transform = selectedObject.GetComponent<Transform>();
-			ImGui::InputFloat2("Position", &transform.position.x);
-			ImGui::InputFloat("Rotation", &transform.rotation);
-			ImGui::InputFloat2("Scale", &transform.scale.x);
+		ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
+
+		// Checkbox to toggle between sliders and input fields
+		static bool useSliders = true;
+		ImGui::Checkbox("Use Sliders", &useSliders);
+
+		if (selectedObject->HasComponent<Transform>()) {
+			Transform& transform = selectedObject->GetComponent<Transform>();
+
+			// Position
+			ImGui::Text("Position");
+			if (useSliders) {
+				if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f)) modified = true;
+			}
+			else {
+				if (ImGui::InputFloat2("##PositionInput", &transform.position.x)) modified = true;
+			}
+
+			// Rotation
+			ImGui::Text("Rotation");
+			if (useSliders) {
+				if (ImGui::SliderFloat("##RotationSlider", &transform.rotation, -180.0f, 180.0f)) modified = true;
+			}
+			else {
+				if (ImGui::InputFloat("##RotationInput", &transform.rotation)) modified = true;
+			}
+
+			// Scale
+			ImGui::Text("Scale");
+			if (useSliders) {
+				if (ImGui::SliderFloat2("##ScaleSlider", &transform.scale.x, 70.f, 250.0f)) modified = true;
+			}
+			else {
+				if (ImGui::InputFloat2("##ScaleInput", &transform.scale.x)) modified = true;
+			}
 		}
 
-		if (selectedObject.HasComponent<Rigidbody2D>()) {
-			Rigidbody2D& rb = selectedObject.GetComponent<Rigidbody2D>();
-			ImGui::InputFloat2("Velocity", &rb.velocity.x);
-			ImGui::InputFloat("Mass", &rb.mass);
+		if (selectedObject->HasComponent<Rigidbody2D>()) {
+			Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
+
+			// Velocity
+			ImGui::Text("Velocity");
+			if (useSliders) {
+				if (ImGui::SliderFloat2("##VelocitySlider", &rb.velocity.x, -50.0f, 50.0f)) modified = true;
+			}
+			else {
+				if (ImGui::InputFloat2("##VelocityInput", &rb.velocity.x)) modified = true;
+			}
+
+			// Mass
+			ImGui::Text("Mass");
+			if (useSliders) {
+				if (ImGui::SliderFloat("##MassSlider", &rb.mass, 0.1f, 100.0f)) modified = true;
+			}
+			else {
+				if (ImGui::InputFloat("##MassInput", &rb.mass)) modified = true;
+			}
 		}
 	}
 
@@ -492,21 +550,7 @@ namespace Ukemochi
 				// EditEntityProperties(*selectedObject);
 				GameObject* selectedObject = gameObjects[selectedEntityIndex];
 
-				// Flag modification based on ImGui inputs
-				ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
-
-				if (selectedObject->HasComponent<Transform>()) {
-					Transform& transform = selectedObject->GetComponent<Transform>();
-					if (ImGui::InputFloat2("Position", &transform.position.x)) modified = true;
-					if (ImGui::InputFloat("Rotation", &transform.rotation)) modified = true;
-					if (ImGui::InputFloat2("Scale", &transform.scale.x)) modified = true;
-				}
-
-				if (selectedObject->HasComponent<Rigidbody2D>()) {
-					Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
-					if (ImGui::InputFloat2("Velocity", &rb.velocity.x)) modified = true;
-					if (ImGui::InputFloat("Mass", &rb.mass)) modified = true;
-				}
+				EditEntityProperties(selectedObject, modified);
 
 				// Show the Save button if modifications were made
 				if (modified) {
