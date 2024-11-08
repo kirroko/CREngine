@@ -7,6 +7,9 @@
     <Filter Include="Ukemochi-Engine">
       <UniqueIdentifier>{9D9C9A89-0928-084E-1239-8B427E43644E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Asset Manager">
+      <UniqueIdentifier>{E781FDE0-539A-E40A-1C47-74A4881E79A4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Audio">
       <UniqueIdentifier>{5E6C13FA-CAD8-CEF4-93CC-6652FFF7F05C}</UniqueIdentifier>
     </Filter>
@@ -61,6 +64,9 @@
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h">
       <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h">
+      <Filter>Ukemochi-Engine\Asset Manager</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Audio\Audio.h">
       <Filter>Ukemochi-Engine\Audio</Filter>
@@ -227,7 +233,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -236,6 +241,9 @@
     <ClCompile Include="src\PreCompile.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp">
       <Filter>Ukemochi-Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Asset Manager\AssetManager.cpp">
+      <Filter>Ukemochi-Engine\Asset Manager</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Audio\Audio.cpp">
       <Filter>Ukemochi-Engine\Audio</Filter>
@@ -363,7 +371,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Asset Manager\AssetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

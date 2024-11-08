@@ -22,7 +22,7 @@
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [800.0, 675.0],
+                    "Position": [300.0, 675.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
@@ -40,8 +40,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [750.0, 625.0],
-                    "Max": [850.0, 725.0],
+                    "Min": [250.0, 625.0],
+                    "Max": [350.0, 725.0],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Player"
@@ -97,13 +97,13 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1200.0, 675.0],
+                    "Position": [1546.481201171875, 680.294921875],
                     "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [750.0, 750.0],
+                    "Position": [1546.481201171875, 680.294921875],
+                    "Velocity": [212.13201904296875, -212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -120,8 +120,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1150.0, 625.0],
-                    "Max": [1250.0, 725.0],
+                    "Min": [1496.481201171875, 630.294921875],
+                    "Max": [1596.481201171875, 730.294921875],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Enemy"
@@ -139,13 +139,13 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [400.0, 225.0],
+                    "Position": [600.7991333007813, 571.5274047851563],
                     "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [750.0, 750.0],
+                    "Position": [600.7991333007813, 571.5274047851563],
+                    "Velocity": [-212.13201904296875, 212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -162,8 +162,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [350.0, 175.0],
-                    "Max": [450.0, 275.0],
+                    "Min": [550.7991333007813, 521.5274047851563],
+                    "Max": [650.7991333007813, 621.5274047851563],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Enemy"
@@ -181,13 +181,13 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1200.0, 225.0],
+                    "Position": [1500.3048095703125, 571.5357666015625],
                     "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [750.0, 750.0],
+                    "Position": [1500.3048095703125, 571.5357666015625],
+                    "Velocity": [-212.13201904296875, 212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -204,8 +204,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1150.0, 175.0],
-                    "Max": [1250.0, 275.0],
+                    "Min": [1450.3048095703125, 521.5357666015625],
+                    "Max": [1550.3048095703125, 621.5357666015625],
                     "Collision Flag": 0,
                     "is_trigger": false,
                     "Tag": "Enemy"

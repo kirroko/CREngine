@@ -4,6 +4,7 @@
 			handling OpenGL rendering, including setting up shaders, buffers, textures,
 			and rendering 2D objects like boxes and circles.
  * @author  t.shunzhitomy@digipen.edu
+ * @co-author h.kairui@digipen.edu
  * @date    25/09/2024
  */
 #include "PreCompile.h"

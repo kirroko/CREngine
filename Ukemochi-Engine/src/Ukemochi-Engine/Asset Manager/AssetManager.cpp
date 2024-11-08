@@ -29,11 +29,11 @@ namespace Ukemochi
 		}
 
 		// Load and store the texture with the determined format
-		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + order_index, file_render, GL_UNSIGNED_BYTE));
+		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(order_index), file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
 		std::string uniformName = "textures[" + std::to_string(order_index) + "]";
-		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), order_index);
+		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(order_index));
 
 		texture_list[file_path] = texture;
 		texture_order.push_back(file_path);

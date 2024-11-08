@@ -4,6 +4,7 @@
 			for handling OpenGL rendering, including setting up shaders, buffers,
 			textures, and rendering 2D objects like boxes and circles.
  * @author  t.shunzhitomy@digipen.edu
+ * @co-author h.kairui@digipen.edu
  * @date    25/09/2024
  */
 #ifndef RENDERER_CLASS_H
@@ -253,7 +254,10 @@ private:
 	 */
 	GLfloat lastFrame = 0.0f;
 
-	// Animation control
+	/*!
+	 * @struct Animation
+	 * @brief Manages frame-based animations for entities.
+	 */
 	struct Animation {
 		int totalFrames;
 		int currentFrame;
@@ -263,10 +267,24 @@ private:
 		int frameWidth, frameHeight, totalWidth, totalHeight;
 		bool loop;
 
+		/*!
+		 * @brief Constructs an Animation object with specified parameters.
+		 * @param totalFrames Total frames in the animation.
+		 * @param frameWidth Width of each frame.
+		 * @param frameHeight Height of each frame.
+		 * @param totalWidth Width of the sprite sheet.
+		 * @param totalHeight Height of the sprite sheet.
+		 * @param frameDuration Duration for each frame.
+		 * @param loop Whether the animation should loop (default is true).
+		 */
 		Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
 			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
 			elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
 
+		/*!
+		 * @brief Updates the animation frame based on elapsed time.
+		 * @param deltaTime Time passed since the last update.
+		 */
 		void update(float deltaTime)
 		{
 			elapsedTime += deltaTime;
@@ -280,40 +298,78 @@ private:
 				elapsedTime = 0.0f; // Reset elapsed time
 			}
 		}
-
+		/*!
+		 * @brief Sets a new duration for each frame.
+		 * @param newDuration New frame duration (in seconds).
+		 */
 		void setFrameDuration(float newDuration) 
 		{
 			frameDuration = newDuration;
 		}
-
+		/*!
+		 * @brief Resets the frame duration to its original value.
+		 */
 		void resetFrameDuration() 
 		{
 			frameDuration = originalFrameDuration;
 		}
 	};
+	/*!
+	 * @brief Stores animations for each entity by entity ID.
+	 */
 	std::unordered_map<size_t, std::vector<Animation>> entity_animations;
 
-	bool isSlowMotion = false;
+	bool isSlowMotion = false;  // Flag to indicate if animations are in slow motion.
 	float slowMotionFactor = 2.0f;
 	bool isFacingRight = false;
 
 public:
+	/*!
+	 * @brief Toggles slow-motion mode for animations.
+	 */
 	void toggleSlowMotion();
+	/*!
+	 * @brief Handles animation input from the user.
+	 */
 	void animationKeyInput();
+	/*!
+	 * @brief Initializes animations for entities.
+	 */
 	void initAnimationEntities();
 
 private:
 
+	/*!
+	 * @brief Initializes buffers for rendering boxes.
+	 */
 	void initBoxBuffers();
 
+	/*!
+	 * @brief Initializes buffers for rendering box wireframes (debug view).
+	 */
 	void initDebugBoxBuffers();
 
+	/*!
+	 * @brief Initializes buffers for rendering circles.
+	 * @param segments Number of segments for the circle (default is 1000).
+	 */
 	void initCircleBuffers(GLuint segments = 1000);
 
+	/*!
+	 * @brief Initializes buffers for rendering circle wireframes (debug view).
+	 * @param segments Number of segments for the circle (default is 1000).
+	 */
 	void initCircleOutlineBuffers(GLuint segments = 1000);
 
+	/*!
+	 * @brief Initializes buffers required for animation rendering.
+	 */
 	void initAnimationBuffers();
 
+	/*!
+	 * @enum objectIDs
+	 * @brief Enumerates unique identifiers for different VAOs used in rendering.
+	 */
 	enum objectIDs {
 		BOX_VAO = 0,
 		BOX_OUTLINE = 1,
@@ -322,19 +378,46 @@ private:
 		ANIMATION_VAO = 4
 	};
 
+	/*!
+	 * @brief Framebuffer object used for off-screen rendering.
+	 */
 	GLuint framebuffer;
 
+	/*!
+	 * @brief Texture color buffer attached to the framebuffer.
+	 */
 	GLuint textureColorbuffer;
 
+	/*!
+	 * @brief Renderbuffer object for depth and stencil attachment.
+	 */
 	GLuint rbo;
+
+	/*!
+	 * @brief VAO for rendering the screen quad.
+	 */
 	std::unique_ptr<VAO> screenQuadVAO;
+
+	/*!
+	 * @brief VBO for the vertices of the screen quad.
+	 */
 	std::unique_ptr<VBO> screenQuadVBO;
 	//std::unique_ptr<Shader> framebufferShader;
+
+	/*!
+	 * @brief Shader used for rendering the framebuffer to the screen.
+	 */
 	std::shared_ptr<Shader> framebufferShader;
+
+	/*!
+	 * @brief Initializes the vertex array and vertex buffer for the screen quad.
+	 */
 	void initScreenQuad();
+
+	/*!
+	 * @brief Renders the screen quad, typically used for post-processing effects.
+	 */
 	void renderScreenQuad();
-
-
 	
 	TextRenderer* textRenderer;
 
@@ -359,6 +442,7 @@ public:
 		Player = id;
 	}
 
+	// Not in use at the moment
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
