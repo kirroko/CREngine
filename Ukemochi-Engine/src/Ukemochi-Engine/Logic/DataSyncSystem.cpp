@@ -27,21 +27,21 @@ void DataSyncSystem::SyncData() const
 {
     for(auto& entity : m_Entities)
     {
-        auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-        auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
-
-        auto* go = GameObjectManager::GetInstance().GetGO(entity);
-        MonoObject* TransPoint = go->GetManagedInstance("Transform");
-        MonoObject* rbPoint = go->GetManagedInstance("Rigidbody2D");
-        
-        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "position", transform.position.x, transform.position.y);
-        
-        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "scale", transform.scale.x, transform.scale.y);
-        
-        ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Velocity", rb.velocity.x, rb.velocity.y);
-        
-        ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Acceleration", rb.acceleration.x, rb.acceleration.y);
-        
-        ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Force", rb.force.x, rb.force.y);
+        // auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+        // auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+        //
+        // auto* go = GameObjectManager::GetInstance().GetGO(entity);
+        // MonoObject* TransPoint = go->GetManagedInstance("Transform");
+        // MonoObject* rbPoint = go->GetManagedInstance("Rigidbody2D");
+        //
+        // ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "position", transform.position.x, transform.position.y);
+        //
+        // ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "scale", transform.scale.x, transform.scale.y);
+        //
+        // ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Velocity", rb.velocity.x, rb.velocity.y);
+        //
+        // ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Acceleration", rb.acceleration.x, rb.acceleration.y);
+        //
+        // ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Force", rb.force.x, rb.force.y);
     }
 }

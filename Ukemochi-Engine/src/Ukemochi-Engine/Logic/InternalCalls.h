@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 #include <mono/metadata/object.h> // for MonoObject
 
+#include "Scripting.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/Input/Input.h"
 
@@ -77,9 +78,9 @@ namespace Ukemochi
             UME_ENGINE_ASSERT(go, "GameObject not found")
             
             MonoType* managedType = mono_reflection_type_get_type(componentType);
-            UME_ENGINE_ASSERT(GameObjectManager::s_EntityHasCompoentFuncs.find(managedType) != GameObjectManager::s_EntityHasCompoentFuncs.end(),
+            UME_ENGINE_ASSERT(ScriptingEngine::s_EntityHasComponentFuncs.find(managedType) != ScriptingEngine::s_EntityHasComponentFuncs.end(),
                               "Component type not found in registry")
-            auto tdebug = GameObjectManager::s_EntityHasCompoentFuncs.at(managedType)(id);
+            auto tdebug = ScriptingEngine::s_EntityHasComponentFuncs.at(managedType)(id);
             return tdebug;
         }
 

@@ -43,6 +43,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Factory.h"
 
 #include "GameObjectManager.h"
+#include "../Logic/Scripting.h"
 
 namespace Ukemochi
 {

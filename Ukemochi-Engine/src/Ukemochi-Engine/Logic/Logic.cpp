@@ -60,7 +60,7 @@ namespace Ukemochi
         for (auto& entity : m_Entities)
         {
             auto& logic = ECS::GetInstance().GetComponent<Script>(entity);
-
+            
             ScriptingEngine::GetInstance().InvokeMethod(static_cast<MonoObject*>(logic.instance), "Update");
         }
     }

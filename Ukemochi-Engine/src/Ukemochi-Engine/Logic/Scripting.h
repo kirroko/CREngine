@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 
+#include "Ukemochi-Engine/ECS/Entity.h"
+
 namespace Ukemochi
 {
     class ScriptingEngine
@@ -33,8 +35,6 @@ namespace Ukemochi
 
         MonoImage* m_pCoreAssemblyImage = nullptr;
 
-        ScriptingEngine(const ScriptingEngine&) = delete;
-        ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
         /**
          * @brief load a file into an array of bytes
@@ -89,8 +89,16 @@ namespace Ukemochi
             return instance;
         }
 
+        static std::unordered_map<MonoType*, std::function<bool(EntityID)>> s_EntityHasComponentFuncs;
+
+        template <class Component>
+        static void RegisterComponent();
+        void RegisterComponents();
+
         ScriptingEngine();
-        ~ScriptingEngine();
+        ~ScriptingEngine() = default;
+        ScriptingEngine(const ScriptingEngine&) = delete;
+        ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
         /**
          * @brief Initialize Mono by creating an app domain
@@ -100,7 +108,7 @@ namespace Ukemochi
         /**
          * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
          */
-        void ShutDown(); // TODO: Did you remember to call this function when application is closed?
+        void ShutDown() const; // TODO: Did you remember to call this function when application is closed?
 
         /**
          * @brief Compile client's script aseembly during runtime
@@ -132,13 +140,6 @@ namespace Ukemochi
         MonoImage* GetCoreAssemblyImage() const;
 
         /**
-         * @brief Instantiate C# struct object
-         * @param structName the struct name
-         * @return an instance of the struct
-         */
-        MonoObject* InstantiateStruct(const std::string& structName);
-
-        /**
          * @brief Instantiate C# class object that is internal
          * @param className the class name of the internal class
          * @return an instance of the class
@@ -158,7 +159,7 @@ namespace Ukemochi
          * @param instance the instance of the class
          * @return an instance of the method
          */
-        MonoMethod* InstatiateMethod(const std::string& methodName, MonoObject* instance);
+        static MonoMethod* InstantiateMethod(const std::string& methodName, MonoObject* instance);
 
         /**
          * @brief Invoke script Methods (Start, Update, etc)
@@ -167,31 +168,8 @@ namespace Ukemochi
          * @param args the arguments to be passed to the method, default is nullptr
          * @param numArgs the number of arguments, default is 0
          */
-        void InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[] = nullptr, int numArgs = 0);
-
-        /**
-         * @brief Set the value of a field in a C# class
-         * @param instance the instance of the class
-         * @param fieldName the field name
-         * @param value the value to be set
-         */
-        static void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
-
-        /**
-         * @brief Set the value of a field in a C# class. Value is of type float
-         * @param instance the instance of the class
-         * @param fieldName the field name
-         * @param value the value to be set
-         */
-        static void SetMonoFieldValueFloat(MonoObject* instance, const std::string& fieldName, float* value);
-
-        /**
-         * @brief Set the value of a field in a C# class
-         * @param instance the instance of the class
-         * @param fieldName the field name
-         * @param value the value to be set
-         */
-        static void SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName, const std::string& value);
+        static void InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[] = nullptr,
+                                 int numArgs = 0);
 
         /**
          * @brief Set the value of a field in a C# class. Value is of type unsigned long long
@@ -200,31 +178,6 @@ namespace Ukemochi
          * @param value the value to be set
          */
         static void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
-
-        /**
-         * @brief Set the value of a property in a C# class
-         * @param instance the instance of the class
-         * @param propertyName the property name
-         * @param value the value to be set
-         */
-        void SetMonoPropertyValue(MonoObject* instance, const std::string& propertyName, void* value);
-
-        /**
-         * @brief Get the property of a C# class
-         * @param instance the instance of the class
-         * @param propertyName the property name
-         * @return the property
-         */
-        MonoProperty* GetMonoProperty(MonoObject* instance, const std::string& propertyName);
-
-        /**
-         * @brief Set the value of a Vector2 field in a C# class
-         * @param instanceClass the instance of the class
-         * @param propertyName the field name
-         * @param x 
-         * @param y 
-         */
-        void SetVector2Property(MonoObject* instanceClass, const std::string& propertyName, float x, float y);
 
         /**
         * @brief Convert a MonoString to UTF8(std::string), This function has error handling and will return an empty string

@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GLFW/glfw3.h>
 #include "../Application.h"
 
+#include "../Logic/Logic.h"
 #include "../Factory/Factory.h"
 #include "../ECS/ECS.h"
 
