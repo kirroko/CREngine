@@ -577,13 +577,14 @@ namespace Ukemochi
 					if(!newObject.HasComponent<Script>())
 						{
                         MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
-                            componentData["ClassName"].GetString());
+                            componentData["ClassName"].GetString()); 
                         EntityID newScriptID = newObject.GetInstanceID();
                         ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
                         newObject.AddComponent(Script{
                             componentData["Path"].GetString(),
                             componentData["ClassName"].GetString(),
-                            newScript
+                            newScript,
+                            ScriptingEngine::CreateGCHandle(newScript)
                         });
                     }
                 }

@@ -157,6 +157,17 @@ namespace Ukemochi
         return mono_gchandle_new_v2(instance, true);
     }
 
+    MonoObject* ScriptingEngine::GetObjectFromGCHandle(const MonoGCHandle& handle)
+    {
+        MonoObject* obj = mono_gchandle_get_target_v2(handle);
+        if(!obj)
+        {
+            UME_ENGINE_WARN("Cannot get object from GCHandle");
+            return nullptr;
+        }
+        return obj;
+    }
+
     void ScriptingEngine::DestroyGCHandle(const MonoGCHandle& handle)
     {
         mono_gchandle_free_v2(handle);

@@ -128,6 +128,13 @@ namespace Ukemochi
         static MonoGCHandle CreateGCHandle(MonoObject* instance);
 
         /**
+         * @brief Get the C# object from a GCHandle
+         * @param handle the handle to get the object from
+         * @return the object
+         */
+        static MonoObject* GetObjectFromGCHandle(const MonoGCHandle& handle);
+
+        /**
          * @brief Destroy a GCHandle
          * @param handle the handle to be destroyed
          */
