@@ -3,23 +3,26 @@ Ukemochi is a adventure game featuring a Soul Harvest mechanic combined with Hac
 
 TEAM ROSTER
 Wong Jun Yu Kean (Product Manager)
-Pek Jun Kai Gerald (Tech Lead)
+Lum Ko Sand (Technical Lead)
 Tan Si Han (Design Lead)
 Lim Jia Ying Lera (Art Lead)
-Lum Ko Sand (Physics/Collision Champion)
+Pek Jun Kai Gerald (Gameplay/AI Champion)
 Hurng Kai Rui (Engine Champion)
 Tan Shun Zhi Tomy (Graphics Champion)
 Chia Naomi Maidison Yu Ning (Animation Champion)
 
 USER CONTROLS
-1 - set GSM to level 1
-2 - set GSM to engine
-WASD/arrow keys - move player
-T - toggle scale
-Y - toggle rotation
+WASD - move player
+R/T - rotate the player
+F/G - scale the player
 U - toggle debug draw
 P - decrease volume
 O - increase volume
 M - mute volume
 N - unmute volume
 L - object clone
+
+EDITOR CONTROLS
+Q - Zoom in
+E - Zoom out
+arrow keys - Camera movement
