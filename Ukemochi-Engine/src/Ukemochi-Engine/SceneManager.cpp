@@ -330,7 +330,7 @@ namespace Ukemochi
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
     {
         // Camera
-        ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
+        ECS::GetInstance().GetSystem<Camera>()->processCameraInput(static_cast<GLfloat>(deltaTime));
     }
 
     void SceneManager::SceneManagerDraw()

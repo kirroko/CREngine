@@ -52,7 +52,7 @@ namespace Ukemochi
         \param[in] z
          The z coordinate.
         *************************************************************************/
-        Vector3D(float x, float y, float z) : x(x), y(y), z(z) {}
+        Vector3D(float x, float y, float z) : x(x), y(y), z(z), m{ x, y, z } {}
 
         /*!***********************************************************************
         \brief

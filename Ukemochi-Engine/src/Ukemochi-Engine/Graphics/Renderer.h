@@ -289,7 +289,7 @@ private:
 			frameDuration = originalFrameDuration;
 		}
 	};
-	std::unordered_map<int, std::vector<Animation>> entity_animations;
+	std::unordered_map<size_t, std::vector<Animation>> entity_animations;
 
 	bool isSlowMotion = false;
 	float slowMotionFactor = 2.0f;
@@ -336,7 +336,7 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
-	EntityID Player = -1;
+	int Player = -1;
 
 	std::unique_ptr<BatchRenderer2D> batchRenderer;
 
@@ -347,11 +347,11 @@ public:
 			playerObject = &player;
 	}
 
-	EntityID GetPlayer()
+	int GetPlayer()
 	{
 		return Player;
 	}
-	void SetPlayer(EntityID id)
+	void SetPlayer(int id)
 	{
 		Player = id;
 	}

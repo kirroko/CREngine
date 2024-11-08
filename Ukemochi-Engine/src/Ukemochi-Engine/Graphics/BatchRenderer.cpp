@@ -201,7 +201,7 @@ void BatchRenderer2D::flush()
     shader->Activate();
 
     // Calculate the correct index count based on the number of quads in the batch
-    int indexCount = (vertices.size() / 4) * 6; // Each quad has 6 indices
+    int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 

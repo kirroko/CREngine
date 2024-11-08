@@ -312,7 +312,7 @@ void Renderer::initCircleBuffers(GLuint segments)
 	vertices.push_back(0.5f);  // Texture coordinate (t)
 
 	// Generate vertices around the circle
-	for (int i = 0; i <= segments; ++i)
+	for (GLuint i = 0; i <= segments; ++i)
 	{
 		GLfloat angle = i * 2.0f * 3.1415926f / segments;
 		GLfloat dx = cosf(angle);
@@ -341,7 +341,7 @@ void Renderer::initCircleBuffers(GLuint segments)
 	indices.push_back(1); // Close the loop
 
 	// Set up buffers once
-	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
+	setUpBuffers(vertices.data(), static_cast<GLuint>(vertices.size() * sizeof(GLfloat)), indices.data(), static_cast<GLuint>(indices.size() * sizeof(GLuint)));
 }
 
 /*!
@@ -357,7 +357,7 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 	GLfloat z = 0.0f;
 
 	// Generate vertices for the circle's outline
-	for (int i = 0; i <= segments; ++i) {
+	for (size_t i = 0; i <= segments; ++i) {
 		GLfloat angle = i * 2.0f * 3.1415926f / segments;
 		GLfloat dx = cosf(angle);
 		GLfloat dy = sinf(angle);
@@ -560,7 +560,7 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Get the camera's view and projection matrices
-	auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
 	glm::mat4 view = camera->getCameraViewMatrix();
 	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
@@ -937,7 +937,7 @@ void Renderer::UpdateTextObject(const std::string& id, const std::string& newTex
  */
 void Renderer::initAnimationEntities()
 {
-	int playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
+	size_t playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
 
 	// Create animations for the player
 	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 

@@ -107,15 +107,16 @@ public:
 
 private:
 	FT_Library ft; // FreeType library instance
-	FT_Face activeFace; // Current active font face
+	FT_Face activeFace = nullptr; // Current active font face
 	std::string activeFontName; // Name of the current active font
 	std::map<std::string, FT_Face> fontFaces; // Map of loaded font faces
 	std::map<std::string, std::map<GLchar, Character>> fontCharacters; // Map of characters for each font
 
 	std::map<std::string, TextObject> textObjects; // Map of text objects to render
 
-	GLuint textVAO, textVBO; // VAO and VBO for text rendering
-	Shader* textShaderProgram; // Shader Program for text rendering
+	GLuint textVAO{};
+	GLuint textVBO{}; // VAO and VBO for text rendering
+	Shader* textShaderProgram = nullptr; // Shader Program for text rendering
 	GLuint screenWidth, screenHeight; // Screen dimensions
 
 	/*!
