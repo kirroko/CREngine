@@ -529,9 +529,9 @@ namespace Ukemochi
 				//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
 				if (go.GetTag()=="Player")
 				{
-					ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
+					ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
 
-					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
 					//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
 					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
 					go.GetComponent<SpriteRender>().animated = true;

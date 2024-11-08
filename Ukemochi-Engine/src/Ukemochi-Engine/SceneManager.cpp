@@ -541,10 +541,10 @@ namespace Ukemochi
                     );
                     int collisionFlag = componentData["Collision Flag"].GetInt();
                     bool isTrigger = componentData["is_trigger"].GetBool();
-                    std::string tag = componentData["Tag"].GetString();
+                    std::string collisionTag = componentData["Tag"].GetString();
                     if (!newObject.HasComponent<BoxCollider2D>())
                     {
-                        newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger, tag});
+                        newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger, collisionTag});
                     }
                 }
                 else if (componentName == "CircleCollider2D")
@@ -601,9 +601,9 @@ namespace Ukemochi
                 if (tag == "Player")
                 {
                     playerFound = true;
-                    ECS::GetInstance().GetSystem<Transformation>()->player = newObject.GetInstanceID();
+                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(newObject.GetInstanceID());
 
-                    ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(newObject.GetInstanceID());
+                    ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(newObject.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
                     ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                 }
