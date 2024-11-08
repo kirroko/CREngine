@@ -16,15 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header
  *******************************************************************/
 
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public class Rigidbody2D : Component
     {
         // ==================== FIELDS ========================
-        private Vector2 _velocity;
-        private Vector2 _acceleration;
-        private Vector2 _force;
-
         private float _mass = 1.0f;
         private float _inverseMass = 1.0f;
         private float _drag = 0.9f;
@@ -44,37 +40,41 @@ namespace UkemochiEngine.CoreModule
 
         public Vector2 Velocity
         {
-            get => _velocity;
-            set
+            get
             {
-                _velocity = value;
-                EngineInterop.LogMessage("Velocity: " + _velocity);
-                EngineInterop.SetRigidbodyVelocity(GetInstanceID(), _velocity.x, _velocity.y);
+                float x = 0.0f;
+                float y = 0.0f;
+                EngineInterop.GetRigidbodyVelocity(GetInstanceID(), ref x, ref y);
+                return new Vector2(x, y);
             }
+            set => EngineInterop.SetRigidbodyVelocity(GetInstanceID(), value.x, value.y);
         }
 
         public Vector2 Acceleration
         {
-            get => _acceleration;
-            set
+            get
             {
-                _acceleration = value;
-                EngineInterop.SetRigidbodyAcceleration(GetInstanceID(), _acceleration.x, _acceleration.y);
+                float x = 0.0f;
+                float y = 0.0f;
+                EngineInterop.GetRigidbodyAcceleration(GetInstanceID(), ref x, ref y);
+                return new Vector2(x, y);
             }
+            set => EngineInterop.SetRigidbodyAcceleration(GetInstanceID(), value.x, value.y);
         }
 
         public Vector2 Force
         {
-            get => _force;
-            set
+            get
             {
-                _force = value;
-                // EngineInterop.LogMessage("Force: " + _force);
-                EngineInterop.SetRigidbodyForce(GetInstanceID(), _force.x, _force.y);
+                float x = 0.0f;
+                float y = 0.0f;
+                EngineInterop.GetRigidbodyForce(GetInstanceID(), ref x, ref y);
+                return new Vector2(x, y);
             }
+            set => EngineInterop.SetRigidbodyForce(GetInstanceID(), value.x, value.y);
         }
 
-        public float Mass
+        public float Mass // TODO: To be refactored
         {
             get => _mass;
             set

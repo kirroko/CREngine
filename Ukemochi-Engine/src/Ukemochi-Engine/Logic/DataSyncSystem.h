@@ -26,6 +26,6 @@ namespace Ukemochi
         /**
          * @brief Handles the syncing of data between C# and C++
          */
-        void SyncData();
+        void SyncData() const;
     };
 }

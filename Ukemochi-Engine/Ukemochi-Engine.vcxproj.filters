@@ -54,9 +54,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGLFramebuffer.h">
-      <Filter>Platform</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -149,9 +146,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Framebuffer.h">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -236,9 +230,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp">
-      <Filter>Platform</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
@@ -298,9 +289,6 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Framebuffer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp">

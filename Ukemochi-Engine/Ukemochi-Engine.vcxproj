@@ -173,7 +173,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Platform\WindowsWindow.h" />
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
@@ -207,7 +206,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Framebuffer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
@@ -237,7 +235,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
     <ClCompile Include="src\PreCompile.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -262,7 +259,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\Framebuffer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />

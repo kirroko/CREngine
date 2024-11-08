@@ -17,7 +17,7 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [800.0, 675.0],
+                    "Position": [300.0, 675.0],
                     "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
@@ -49,6 +49,10 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
                     "Shape": 0
+                },{
+                    "Name": "Script",
+                    "Path": "../Assets/Scripts/Player.cs",
+                    "ClassName": "Player"
                 }]
         }, {
             "Name": "GameObject",

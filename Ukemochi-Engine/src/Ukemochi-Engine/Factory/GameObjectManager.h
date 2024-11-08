@@ -24,6 +24,8 @@ namespace Ukemochi
     class GameObjectManager
     {
         GameObjectManager();
+        template <class Component>
+        void RegisterComponent();
         std::unordered_map<EntityID, std::unique_ptr<GameObject>> m_GOs;
 
     public:
@@ -32,9 +34,7 @@ namespace Ukemochi
             static GameObjectManager instance;
             return instance;
         }
-
-        // Type Registry
-        static std::unordered_map<std::string, std::function<void(GameObject&, MonoObject*)>> componentRegistry;
+        static std::unordered_map<MonoType*, std::function<bool(EntityID)>> s_EntityHasCompoentFuncs;
 
         void RegisterComponents();
 
@@ -66,6 +66,13 @@ namespace Ukemochi
          * @param id The id of the game object to destroy
          */
         void DestroyObject(EntityID id);
+
+        /**
+         * @brief Get a gameobject by its tag
+         * @param tag a tag to search for
+         * @return a gameobject
+         */
+        GameObject* GetGOByTag(const std::string& tag) const;
 
         /**
          * @brief Get a game object by its id

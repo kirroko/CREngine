@@ -18,47 +18,46 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using System.Globalization;
 
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public class Transform : Component
     {
-        // ==================== FIELDS ====================
-        private Vector2 _position;
-        private Vector2 _rotation;
-        private Vector2 _scale = new Vector2(1,1);
-        
         // ==================== PROPERTIES ====================
-        public Vector2 Position
+        public Vector2 position
         {
-            get => _position;
-            set
+            get
             {
-                _position = value; 
-                EngineInterop.SetTransformPosition(GetInstanceID(), _position.x, _position.y);
+                float x = 0.0f;
+                float y = 0.0f;
+                EngineInterop.GetTransformPosition(GetInstanceID(), ref x, ref y);
+                return new Vector2(x, y);
             }
+            set => EngineInterop.SetTransformPosition(GetInstanceID(), value.x, value.y);
         }
-        public Vector2 Rotation
+
+        public Vector2 rotation
         {
-            get => _rotation;
-            set
+            get
             {
-                _rotation = value;
-                EngineInterop.SetTransformRotation(GetInstanceID(), _rotation.x, _rotation.y);
+                float x = 0.0f;
+                float y = 0.0f;
+                EngineInterop.GetTransformRotation(GetInstanceID(), ref x, ref y);
+                return new Vector2(x, y);
             }
+            set => EngineInterop.SetTransformRotation(GetInstanceID(), value.x, value.y);
         } // Unity is Quaternion, but for simplicity, we will use Vector2
 
-        public Vector2 Scale
+        public Vector2 scale
         {
-            get => _scale;
-            
-            set
+            get
             {
-                _scale = value;
-                EngineInterop.SetTransformScale(GetInstanceID(), _scale.x, _scale.y);
+                float x = 0.0f;
+                float y = 0.0f;
+                EngineInterop.GetTransformScale(GetInstanceID(), ref x, ref y);
+                return new Vector2(x, y);
             }
+            set => EngineInterop.SetTransformScale(GetInstanceID(), value.x, value.y);
         }
-
         // ==================== METHODS =======================
-        
     }
 }
