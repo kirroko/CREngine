@@ -239,7 +239,7 @@ namespace Ukemochi
         assetFiles.clear();
 
         // Load assets from the Assets directory
-        std::string assetsDir = "../Assets";
+        std::string assetsDir = "../Assets/Prefabs";
         for (const auto& entry : std::filesystem::directory_iterator(assetsDir))
         {
             if (entry.is_regular_file())
