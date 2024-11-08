@@ -71,7 +71,6 @@
     <Compile Include="UkemochiEngine\CoreModule\SpriteRender.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Transform.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Vector2.cs" />
-    <Compile Include="UkemochiEngine\Wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

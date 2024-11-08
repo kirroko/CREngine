@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header
  *******************************************************************/
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public class BoxCollider2D : Component
     {

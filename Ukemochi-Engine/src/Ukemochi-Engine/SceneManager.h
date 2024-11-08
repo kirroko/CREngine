@@ -1,8 +1,25 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       SceneManager.h
+\author     Tan Si Han, t.sihan, 2301264
+\par        email: t.sihan\@digipen.edu
+\date       Nov 8, 2024
+\brief      This file contains the declaration of the SceneManger system.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
+
 #pragma once
 #include "PreCompile.h"
 #include "ECS/ECS.h"
 #include "Game/GSM.h"
 #include "Factory/GameObject.h"
+#include "InGameGUI/InGameGUI.h"
 
 namespace Ukemochi
 {
@@ -69,7 +86,12 @@ namespace Ukemochi
 
 		void SavePrefab(GameObject* prefabObj, const std::string& file_name);
 
+		Vec2 GetPlayScreen();
+
+		void SetPlayScreen(Vec2 playsize);
+
 	private:
 		std::string sceneName;
+		Vec2 cameraSize;
 	};
 }

@@ -153,9 +153,9 @@ namespace Ukemochi
 	*************************************************************************/
 	struct AudioSource
 	{
-		//FMOD::Sound pSounds;
-		//FMOD::Channel pChannels;
-		//FMOD::ChannelGroup pChannelGroups;
+		FMOD::Sound pSounds;
+		FMOD::Channel pChannels;
+		FMOD::ChannelGroup pChannelGroups;
 	};
 
 	struct Script
@@ -163,6 +163,7 @@ namespace Ukemochi
 		std::string scriptPath;
 		std::string scriptName;
 		void* instance = nullptr; // MonoObject from client script
+		void* handle = nullptr; // MonoGCHandle from client script
 		void* methodInstance = nullptr; // MonoMethod from client script
 	};
 }

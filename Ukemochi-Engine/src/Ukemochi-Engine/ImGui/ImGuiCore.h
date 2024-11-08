@@ -51,7 +51,9 @@ namespace Ukemochi
 		*/
 		static void ImGuiClean();
 
-		static void ControlPanel();
+		static void DragAndDropHandler();
+
+		static void ControlPanel(float fps);
 
 		static void LoadScene();
 
@@ -62,7 +64,7 @@ namespace Ukemochi
 
 		static void RemoveSelectedEntity(int& selectedEntityIndex);
 
-		static void EditEntityProperties(GameObject& selectedObject);
+		static void EditEntityProperties(GameObject* selectedObject, bool& modified);
 
 		static void ShowEntityManagementUI();
 
@@ -70,7 +72,7 @@ namespace Ukemochi
 
 		static void SceneBrowser();
 
-		static int GetSceneSize();
+		static size_t GetSceneSize();
 
 		static void SceneRender();
 

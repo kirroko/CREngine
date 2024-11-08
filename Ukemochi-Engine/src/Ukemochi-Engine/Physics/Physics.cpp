@@ -146,6 +146,7 @@ namespace Ukemochi
         }
 
         // Apply linear drag to the velocity of the player
+       
         if (box.tag == "Player")
         {
             rb.velocity.x *= rb.linear_drag;

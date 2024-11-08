@@ -136,6 +136,7 @@ namespace Ukemochi
 			return go;
 		}
 		UME_ENGINE_ASSERT(false ,"Loading Prefab failed: {1}", filePath)
+		return GameObjectManager::GetInstance().CreateObject();
 		// Ignore the warning
 	}
 
