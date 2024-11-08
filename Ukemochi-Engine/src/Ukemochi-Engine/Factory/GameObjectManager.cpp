@@ -80,6 +80,8 @@ GameObject& GameObjectManager::CreatePrefabObject(const std::string& prefabPath)
 void GameObjectManager::DestroyObject(EntityID id)
 {
     // Before we erase, we tell ECS to destroy the entity
+    if(ECS::GetInstance().HasComponent<Script>(id))
+        ECS::GetInstance().GetComponent<Script>(id).instance = nullptr;
     GameObjectFactory::DestroyObject(*m_GOs[id]);
     m_GOs.erase(id);
 }
@@ -97,9 +99,15 @@ GameObject* GameObjectManager::GetGOByTag(const std::string& tag) const
     return nullptr;
 }
 
-GameObject& GameObjectManager::GetGO(EntityID id)
+GameObject* GameObjectManager::GetGO(EntityID id)
 {
-    return *m_GOs[id];
+    auto it = m_GOs.find(id);
+    if (it != m_GOs.end())
+    {
+        return it->second.get();
+    }
+    UME_ENGINE_ERROR("GameObject with ID {0} not found", id);
+    return nullptr;
 }
 
 std::vector<GameObject*> GameObjectManager::GetAllGOs() const
