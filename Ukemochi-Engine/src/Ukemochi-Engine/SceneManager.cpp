@@ -1,3 +1,19 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file       SceneManager.h
+\author     Tan Si Han, t.sihan, 2301264
+\par        email: t.sihan\@digipen.edu
+\date       Nov 8, 2024
+\brief      This file contains the definition of the SceneManger system.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
+
 #include "PreCompile.h"
 #include "SceneManager.h"
 #include "Audio/Audio.h"
@@ -17,6 +33,7 @@
 
 namespace Ukemochi
 {
+	//for save & load
 	using namespace rapidjson;
 
 	const float SPRITE_SCALE = 100.f;
@@ -24,11 +41,9 @@ namespace Ukemochi
 	const float PLAYER_FORCE = 1500.f;
 
 	SceneManager::SceneManager()
-		:sceneName("NewScene"), CameraSize(0,0)
+		:sceneName("NewScene"), cameraSize(0,0)
 	{
 		es_current = ES_ENGINE;
-		//Audio audio;
-		//Audio::GetInstance();
 		// Set up ECS
 		ECS::GetInstance().Init();
 
@@ -97,20 +112,16 @@ namespace Ukemochi
 
 	SceneManager::~SceneManager()
 	{
-
 	}
 
 	void SceneManager::SceneMangerLoad()
 	{
 		//load all assest
-		// load textures
-		//Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-		//Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
 
-		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
-		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
-		ECS::GetInstance().GetSystem<Audio>()->LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
 
 		// load textures
@@ -125,13 +136,14 @@ namespace Ukemochi
 
 		UseImGui::LoadScene();
 
+		//if fresh start
 		if (UseImGui::GetSceneSize() == 0)
 		{
-			SaveScene("NewScene");
+			CreateNewScene("NewScene");
 		}
 		else
 		{
-
+			//load first scene
 			LoadSaveFile(UseImGui::GetStartScene());
 		}
 
@@ -239,34 +251,34 @@ namespace Ukemochi
 		//}
 		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
 		{
-			ECS::GetInstance().GetSystem<Audio>()->StopAllSoundsInGroup(LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSoundsInGroup(LEVEL1);
 		}
 		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_N))
 		{
-			ECS::GetInstance().GetSystem<Audio>()->PlayAllSoundsInGroup(LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlayAllSoundsInGroup(LEVEL1);
 		}
 
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->IsPlaying(BGM))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
 		{
-			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(BGM, 0.04f);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
 		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->IsPlaying(HIT))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 		{
-			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(HIT, 0.04f);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(HIT, 0.04f);
 		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->IsPlaying(READY))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(READY))
 		{
-			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::READY, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(READY, 0.04f);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::READY, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(READY, 0.04f);
 		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->IsPlaying(CONFIRMCLICK))
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(CONFIRMCLICK))
 		{
-			ECS::GetInstance().GetSystem<Audio>()->PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->SetAudioVolume(CONFIRMCLICK, 0.04f);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
 		}
-		ECS::GetInstance().GetSystem<Audio>()->Update();
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
 		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 		ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
@@ -312,11 +324,12 @@ namespace Ukemochi
 		}
 		ECS::GetInstance().GetSystem<LogicSystem>()->End();
 		ECS::GetInstance().ReloadEntityManager();
-		Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
 	}
 
 	void SceneManager::SceneManagerUnload()
 	{
+		SceneManagerFree();
 		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
 	}
 
@@ -406,13 +419,13 @@ namespace Ukemochi
 
 				ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
 
-				auto buttonComponent = new Button();
-				buttonComponent->on_click = []() {
+				Button buttonComponent;
+				buttonComponent.on_click = []() {
 					std::cout << "PRESSED" << std::endl;
 					ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
 					};
 				ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(name,tag,"pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-					Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", buttonComponent->on_click);
+					Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
 				continue;
 				//newObject.AddComponent(buttonComponent);
 				//newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
@@ -527,6 +540,7 @@ namespace Ukemochi
 					if (tag == "Player")
 					{
 						newObject.GetComponent<SpriteRender>().animated = true;
+						newObject.GetComponent<SpriteRender>().animationIndex = 1;
 					}
 				}
 				else if (componentName == "Script")
@@ -930,12 +944,10 @@ namespace Ukemochi
 	}
 	Vec2 SceneManager::GetPlayScreen()
 	{
-		return GetInstance().CameraSize;
+		return GetInstance().cameraSize;
 	}
 	void SceneManager::SetPlayScreen(Vec2 playsize)
 	{
-		//playsize.y = -playsize.y;
-
-		GetInstance().CameraSize = playsize;
+		GetInstance().cameraSize = playsize;
 	}
 }

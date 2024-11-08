@@ -181,12 +181,12 @@ namespace Ukemochi
 			// engine
 			if (es_current == ENGINE_STATES::ES_ENGINE)
 			{
-				if (Input::IsKeyTriggered(GLFW_KEY_1))
-				{
-					sceneManager.GetPlayScreen();
-					// sceneManager.SaveScene();
-					UME_ENGINE_INFO("1 key is pressed");
-				}
+				//if (Input::IsKeyTriggered(GLFW_KEY_1))
+				//{
+				//	sceneManager.GetPlayScreen();
+				//	// sceneManager.SaveScene();
+				//	UME_ENGINE_INFO("1 key is pressed");
+				//}
 				//************ Update & Draw ************
 				sceneManager.SceneMangerUpdate();
 				//************ Update & Draw ************
@@ -211,6 +211,7 @@ namespace Ukemochi
 
 			m_Window->OnUpdate();
 		}
+		sceneManager.SceneManagerUnload();
 
 		////while engine running
 		// while (es_current != ENGINE_STATES::ES_QUIT && m_running)
@@ -463,7 +464,7 @@ namespace Ukemochi
 		//************ Render IMGUI ************
 		imguiInstance.NewFrame();
 		imguiInstance.SceneBrowser();
-		// imguiInstance.AssetBrowser();
+		//imguiInstance.AssetBrowser();
 		imguiInstance.SceneRender();
 		imguiInstance.ShowEntityManagementUI();
 		// imguiInstance.Begin();
