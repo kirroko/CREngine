@@ -40,9 +40,9 @@ namespace Ukemochi
 		order_index++;
 	}
 
-	Texture& AssetManager::getTexture(std::string key_name)
+	std::shared_ptr<Texture> AssetManager::getTexture(std::string key_name)
 	{
-		return *texture_list.find(key_name)->second;
+		return texture_list.find(key_name)->second;
 	}
 
 	void AssetManager::addShader(std::string file_name, std::string vert_path, std::string frag_path)
@@ -52,9 +52,9 @@ namespace Ukemochi
 		shader_list[file_name] = shader;
 	}
 
-	Shader& AssetManager::getShader(std::string key_name)
+	std::shared_ptr<Shader> AssetManager::getShader(std::string key_name)
 	{
-		return *shader_list.find(key_name)->second;
+		return shader_list.find(key_name)->second;
 	}
 
 }

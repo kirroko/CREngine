@@ -33,6 +33,8 @@
 #include "Ukemochi-Engine/ECS/Entity.h"
 #include "BatchRenderer.h"
 
+#include "../Asset Manager/AssetManager.h"
+
 // Forward
 class TextRenderer;
 class ParticleSystem;
@@ -327,7 +329,8 @@ private:
 	GLuint rbo;
 	std::unique_ptr<VAO> screenQuadVAO;
 	std::unique_ptr<VBO> screenQuadVBO;
-	std::unique_ptr<Shader> framebufferShader;
+	//std::unique_ptr<Shader> framebufferShader;
+	std::shared_ptr<Shader> framebufferShader;
 	void initScreenQuad();
 	void renderScreenQuad();
 

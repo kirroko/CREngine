@@ -5,7 +5,7 @@
 #include "../Graphics/Renderer.h"
 #include "../ECS/Components.h"
 #include "../Graphics/Texture.h"
-
+#include "../Graphics/textRenderer.h"
 #include "../ECS/ECS.h"
 
 
@@ -15,22 +15,25 @@ namespace Ukemochi
 	{
 	private:
 		//std::map<std::string, std::shared_ptr<SpriteRender>> sprite_list;
-		std::map<std::string, std::shared_ptr<Texture>> texture_list;
-		std::vector<std::string> texture_order;
-		std::map<std::string, std::shared_ptr<Shader>> shader_list;
 		//std::map<std::string, std::shared_ptr<FMOD::Sound>> audio_list;
-
 	public:
 		//void addSprite(std::string file_name, std::string file_path /* can add more if need any other arguements */);
 		//SpriteRender& getSprite(std::string key_name);
 
 		void addTexture(std::string file_name, std::string file_path , std::string shader_name);
-		Texture& getTexture(std::string key_name);
+		std::shared_ptr<Texture> getTexture(std::string key_name);
 
 		void addShader(std::string file_name, std::string vert_path, std::string frag_path);
-		Shader& getShader(std::string key_name);
+		std::shared_ptr<Shader> getShader(std::string key_name);
+
+		void addFont(std::string file_namme, std::string file_path);
+		std::shared_ptr<FT_Face> getFont(std::string key_name);
 
 		size_t order_index{};
+		std::vector<std::string> texture_order;
+		std::map<std::string, std::shared_ptr<Texture>> texture_list;
+		std::map<std::string, std::shared_ptr<Shader>> shader_list;
+		std::map<std::string, std::shared_ptr<FT_Face>> font_list;
 
 	};
 

@@ -165,7 +165,11 @@ void Renderer::initScreenQuad()
 	screenQuadVAO->LinkAttrib(*screenQuadVBO, 1, 2, GL_FLOAT, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 	// Create a shader for rendering the framebuffer texture
-	framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+	//framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+
+	ECS::GetInstance().GetSystem<AssetManager>()->addShader("framebuffer", "../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+	framebufferShader = ECS::GetInstance().GetSystem<AssetManager>()->getShader("framebuffer");
+
 }
 
 void Renderer::beginFramebufferRender()
@@ -403,14 +407,19 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
 	// Set textureCount based on the number of unique textures, limited to 32
-	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
+	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
+	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->texture_order.size());
+	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
 
 	//std::cout << "Binding textures to shader units..." << std::endl;
 
-	for (int i = 0; i < texturePathsOrder.size() && nextAvailableTextureUnit < 32; ++i) {
-		const auto& path = texturePathsOrder[i];
-		Texture* texture = textureCache[path];
+	for (int i = 0; i < /*texturePathsOrder.size()*/ texture_order_count && nextAvailableTextureUnit < 32; ++i) {
+		/*const auto& path = texturePathsOrder[i];
+		Texture* texture = textureCache[path];*/
+
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		if (texture->ID == 0) {
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
@@ -606,8 +615,10 @@ void Renderer::render()
 
 
 		GLint textureID = -1;
-		if (textureCache.find(spriteRenderer.texturePath) != textureCache.end()) {
-			textureID = textureCache[spriteRenderer.texturePath]->ID;
+		if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
+			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end()) {
+			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
 		}
 		if (textureID < 0) {
 			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
