@@ -90,6 +90,19 @@ namespace Ukemochi
 
 		void SetPlayScreen(Vec2 playsize);
 
+		void print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics);
+
+		// --- Frame Performance Viewer
+		// TODO: Quick Hack needs to be encapsulated
+		static std::chrono::duration<double> loop_time;
+		static std::chrono::duration<double> collision_time;
+		static std::chrono::duration<double> physics_time;
+		static std::chrono::duration<double> graphics_time;
+
+		std::chrono::steady_clock::time_point sys_start;
+		std::chrono::steady_clock::time_point sys_end;
+		std::chrono::steady_clock::time_point loop_start;
+		std::chrono::steady_clock::time_point loop_end;
 	private:
 		std::string sceneName;
 		Vec2 cameraSize;

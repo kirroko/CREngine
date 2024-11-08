@@ -17,6 +17,7 @@ DigiPen Institute of Technology is prohibited.
 #include "GSM.h"
 #include "Level1.h"
 #include <iostream> // for std::cout
+#include <chrono>
 
 #include "../Factory/Factory.h"		//for Game Objects and its related functions
 #include "../ECS/ECS.h"				// for ECS
@@ -33,6 +34,8 @@ DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"
 #include "../InGameGUI/InGameGUI.h" // for in game GUI system
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+
+#include "../Asset Manager/AssetManager.h"
 
 namespace Ukemochi
 {
@@ -101,6 +104,7 @@ namespace Ukemochi
 		// player_obj = GameObjectFactory::CreateObject(player_data);
 		player_obj = GameObjectManager::GetInstance().CreatePrefabObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
+		
 		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		p_spriteRender.animated = true;
@@ -364,14 +368,14 @@ namespace Ukemochi
 		// --- PHYSICS UPDATE ---
 		// Update the entities physics
 		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
-
 		// --- COLLISION UPDATE ---
 		// Check the collisions between the entities
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
-
 		// --- TRANSFORMATION UPDATE ---
 		// Compute the entities transformations
 		ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+
+
 	}
 
 	void Level1_Draw()//rendering of the game for Level1

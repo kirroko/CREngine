@@ -40,12 +40,20 @@ namespace Ukemochi
     const float ENTITY_ACCEL = 150.f;
     const float PLAYER_FORCE = 1500.f;
 
-    SceneManager::SceneManager()
-        : sceneName("NewScene"), cameraSize(0, 0)
-    {
-        es_current = ES_ENGINE;
-        // Set up ECS
-        ECS::GetInstance().Init();
+    std::chrono::duration<double> SceneManager::loop_time{};
+    std::chrono::duration<double> SceneManager::collision_time{};
+    std::chrono::duration<double> SceneManager::physics_time{};
+    std::chrono::duration<double> SceneManager::graphics_time{};
+
+
+	//bool func_toggle = false;
+
+	SceneManager::SceneManager()
+		:sceneName("NewScene"), cameraSize(0,0)
+	{
+		es_current = ES_ENGINE;
+		// Set up ECS
+		ECS::GetInstance().Init();
 
         // TODO: Register your components
         ECS::GetInstance().RegisterComponent<Transform>();
@@ -67,6 +75,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<InGameGUI>();
         ECS::GetInstance().RegisterSystem<DataSyncSystem>();
         ECS::GetInstance().RegisterSystem<Audio>();
+		ECS::GetInstance().RegisterSystem<AssetManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -124,31 +133,38 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
 
-        // load textures
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
+        // // load textures
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         UseImGui::LoadScene();
 
@@ -171,8 +187,9 @@ namespace Ukemochi
     {
         // Initialize the graphics and collision system
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
-        ECS::GetInstance().GetSystem<Renderer>()->init();
-        ECS::GetInstance().GetSystem<Collision>()->Init();
+        ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+		ECS::GetInstance().GetSystem<Renderer>()->init();
+		ECS::GetInstance().GetSystem<Collision>()->Init();
 
 
         // Set the player object in the Renderer
@@ -193,53 +210,54 @@ namespace Ukemochi
 
     void SceneManager::SceneMangerRunSystems()
     {
-        // if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
-        // {
-        // 	GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
-        // 	// --- HANDLE USER INPUTS ---
-        //
-        // // Player Inputs for movement
-        // 	auto& player_rb = playerObj->GetComponent<Rigidbody2D>();
-        // 	// Press 'W' or up key to move the player up
-        // 	if (Input::IsKeyPressed(UME_KEY_W))
-        // 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
-        // 	// Press 'S' or down key to move the player down
-        // 	else if (Input::IsKeyPressed(UME_KEY_S))
-        // 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
-        // 	else
-        // 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
-        //
-        // 	// Press 'A' or left key to move the player left
-        // 	if (Input::IsKeyPressed(UME_KEY_A))
-        // 	{
-        // 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
-        // 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
-        // 	}
-        // 	// Press 'D' or right key to move the player to the right
-        // 	else if (Input::IsKeyPressed(UME_KEY_D))
-        // 	{
-        // 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
-        // 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
-        // 	}
-        // 	else
-        // 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
-        //
-        // 	// Input for rotation, to test rotate physics
-        // 	if (Input::IsKeyPressed(UME_KEY_R))
-        // 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
-        // 	else if (Input::IsKeyPressed(UME_KEY_T))
-        // 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
-        // 	else
-        // 		ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
-        //
-        // 	// Input for scaling, to test scaling of the player
-        // 	auto& player_trans = playerObj->GetComponent<Transform>();
-        // 	if (Input::IsKeyPressed(UME_KEY_F))
-        // 		ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
-        // 	else if (Input::IsKeyPressed(UME_KEY_G))
-        // 		ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
-        // }
-
+        loop_start = std::chrono::steady_clock::now();
+		// if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
+		// {
+		// 	GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
+		// 	// --- HANDLE USER INPUTS ---
+		//
+		// // Player Inputs for movement
+		// 	auto& player_rb = playerObj->GetComponent<Rigidbody2D>();
+		// 	// Press 'W' or up key to move the player up
+		// 	if (Input::IsKeyPressed(UME_KEY_W))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
+		// 	// Press 'S' or down key to move the player down
+		// 	else if (Input::IsKeyPressed(UME_KEY_S))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
+		// 	else
+		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
+		//
+		// 	// Press 'A' or left key to move the player left
+		// 	if (Input::IsKeyPressed(UME_KEY_A))
+		// 	{
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
+		// 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
+		// 	}
+		// 	// Press 'D' or right key to move the player to the right
+		// 	else if (Input::IsKeyPressed(UME_KEY_D))
+		// 	{
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
+		// 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
+		// 	}
+		// 	else
+		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
+		//
+		// 	// Input for rotation, to test rotate physics
+		// 	if (Input::IsKeyPressed(UME_KEY_R))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
+		// 	else if (Input::IsKeyPressed(UME_KEY_T))
+		// 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
+		// 	else
+		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
+		//
+		// 	// Input for scaling, to test scaling of the player
+		// 	auto& player_trans = playerObj->GetComponent<Transform>();
+		// 	if (Input::IsKeyPressed(UME_KEY_F))
+		// 		ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
+		// 	else if (Input::IsKeyPressed(UME_KEY_G))
+		// 		ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
+		// }
+		
 
         // Renderer Inputs
         /*if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
@@ -274,35 +292,29 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlayAllSoundsInGroup(LEVEL1);
         }
 
-        if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().
-                                                                               IsPlaying(BGM))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().
-                               PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
-        }
-        if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().
-                                                                               IsPlaying(HIT))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().
-                               PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(HIT, 0.04f);
-        }
-        if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().
-                                                                               IsPlaying(READY))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(
-                AudioList::READY, ChannelGroups::LEVEL1);
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(READY, 0.04f);
-        }
-        if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().
-                                                                               IsPlaying(CONFIRMCLICK))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(
-                AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
-        }
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
+		}
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(HIT, 0.04f);
+		}
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(READY))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::READY, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(READY, 0.04f);
+		}
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(CONFIRMCLICK))
+		{
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
+		}
+
+
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
         ECS::GetInstance().GetSystem<InGameGUI>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
@@ -311,11 +323,17 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
         // --- PHYSICS UPDATE ---
         // Update the entities physics
-        ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+        sys_start = std::chrono::steady_clock::now();
+		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+		sys_end = std::chrono::steady_clock::now();
+		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- COLLISION UPDATE ---
         // Check the collisions between the entities
-        ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+        sys_start = std::chrono::steady_clock::now();
+		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+		sys_end = std::chrono::steady_clock::now();
+		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- TRANSFORMATION UPDATE ---
         // Compute the entities transformations
@@ -324,8 +342,22 @@ namespace Ukemochi
         // --- DATA SYNC UPDATE ---
         // ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
 
-        SceneManagerDraw();
-    }
+        sys_start = std::chrono::steady_clock::now();
+		SceneManagerDraw();
+		sys_end = std::chrono::steady_clock::now();
+		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+
+		loop_end = std::chrono::steady_clock::now();
+		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
+
+		//toggle console output for performance
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
+		{
+			//func_toggle = (func_toggle + 1) % 2;
+			print_performance(loop_time, collision_time, physics_time, graphics_time);
+			//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
+		}
+	}
 
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
     {
@@ -569,19 +601,20 @@ namespace Ukemochi
                     {
                         newObject.AddComponent<SpriteRender>({texturePath, shape});
                     }
-                    ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
-                        newObject.GetComponent<SpriteRender>().texturePath,
-                        ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
-                    if (tag == "Player")
-                    {
-                        newObject.GetComponent<SpriteRender>().animated = true;
-                        newObject.GetComponent<SpriteRender>().animationIndex = 1;
-                    }
-                }
-                else if (componentName == "Script")
-                {
-                    if (!newObject.HasComponent<Script>())
-                    {
+                    // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
+                    //     newObject.GetComponent<SpriteRender>().texturePath,
+                    //     ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+					if (tag == "Player")
+					{
+						newObject.GetComponent<SpriteRender>().animated = true;
+						newObject.GetComponent<SpriteRender>().animationIndex = 1;
+					}
+				}
+				else if (componentName == "Script")
+				{
+					if(!newObject.HasComponent<Script>())
+						{
                         MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
                             componentData["ClassName"].GetString());
                         EntityID newScriptID = newObject.GetInstanceID();
@@ -1000,4 +1033,22 @@ namespace Ukemochi
     {
         GetInstance().cameraSize = playsize;
     }
+
+	void SceneManager::print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics)
+	{
+		double collision_percent = static_cast<double>((collision.count() / loop.count()) * 100.f);
+		double physics_percent = static_cast<double>((physics.count() / loop.count()) * 100.f);
+		double graphics_percent = static_cast<double>((graphics.count() / loop.count()) * 100.f);
+
+		/*std::cout << "Performance View:" << std::endl;
+		std::cout << "Collision: " << collision_percent << "%" << std::endl;
+		std::cout << "Physics: " << physics_percent << "%" << std::endl;
+		std::cout << "Graphics: " << graphics_percent << "%" << std::endl;*/
+
+		UME_ENGINE_INFO("Performance View\n");
+		UME_ENGINE_INFO("Collision: {0}%", collision_percent);
+		UME_ENGINE_INFO("Physics: {0}%", physics_percent);
+		UME_ENGINE_INFO("Graphics: {0}%", graphics_percent);
+
+	}
 }

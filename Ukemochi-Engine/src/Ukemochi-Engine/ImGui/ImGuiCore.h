@@ -40,6 +40,8 @@ namespace Ukemochi
 		*/
 		static void NewFrame();
 
+
+
 		static void Begin();
 		/*!
 		\brief Renders the current ImGui frame.
@@ -58,7 +60,8 @@ namespace Ukemochi
 		static void LoadScene();
 
 		static void DisplayEntityDetails(GameObject& obj);
-
+		
+		static void DebugWindow();
 
 		static void DisplayEntitySelectionCombo(int& selectedEntityIndex);
 
