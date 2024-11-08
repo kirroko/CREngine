@@ -711,17 +711,17 @@ namespace Ukemochi
             {
                 if (ECS::GetInstance().GetLivingEntityCount() == 0)
                 {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<Ukemochi::EntityID>(-1);
-                    ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<Ukemochi::EntityID>(-1));
+                    ECS::GetInstance().GetSystem<Transformation>()->player = -1;
+                    ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
                 }
 
                 auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
                 //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
                 if (go.GetTag() == "Player")
                 {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
+                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
 
-                    ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
+                    ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
                     ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                     go.GetComponent<SpriteRender>().animated = true;
