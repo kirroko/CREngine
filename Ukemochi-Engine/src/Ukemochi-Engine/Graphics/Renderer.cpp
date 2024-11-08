@@ -707,6 +707,9 @@ void Renderer::cleanUp()
 	// Clear texture cache
 	textureCache.clear();
 
+	texturePathsOrder.clear();
+	textureIDMap.clear();
+
 	// Delete the shader program
 	//if (shaderProgram)
 	//{

@@ -44,14 +44,16 @@ public class Enemy : BaseScript
         }
 
             //Console.WriteLine("HIHIIHIHIH found player");
-        float distanceX = playerObj.GetComponent<Transform>().Position.x - enemyTransform.Position.x;
-        float distanceY = playerObj.GetComponent<Transform>().Position.y - enemyTransform.Position.y;
-        float distanceSquared = (distanceX * distanceX + distanceY * distanceY);
-        float combinedRadiusSquared = (playerObj.GetComponent<Transform>().Scale.x + enemyTransform.Scale.x) *
-                                       (playerObj.GetComponent<Transform>().Scale.x + enemyTransform.Scale.x);
+        float distanceX = playerObj.GetComponent<Transform>().position.x - enemyTransform.position.x;
+        float distanceY = playerObj.GetComponent<Transform>().position.y - enemyTransform.position.y;
+        float distanceSquared = (distanceX + distanceY)* (distanceX + distanceY);
+        float combinedRadiusSquared = 200*200;
+        //float combinedRadiusSquared = (playerObj.GetComponent<Transform>().scale.x + enemyTransform.scale.x) *
+        //                             (playerObj.GetComponent<Transform>().scale.x + enemyTransform.scale.x);
 
-        //Debug.Log(playerObj.GetComponent<Transform>().Position.x.ToString());
-        //Debug.Log(enemyTransform.Position.x.ToString());
+        //Debug.Log(playerObj.GetComponent<Transform>().position.x.ToString());
+        //Debug.Log(enemyTransform.position.x.ToString());
+        //Debug.Log(distanceSquared.ToString());
         
         if (enemyStates != EnemyStates.ROAM_STATE)
         {
