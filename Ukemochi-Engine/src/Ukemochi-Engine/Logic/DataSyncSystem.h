@@ -7,7 +7,7 @@
 \par	junyukean.wong\@digipen.edu
 \par	Course: CSD2400/CSD2401
 \date	4/11/24
-\brief	This file is responsible for syncing data between the C# data into C++
+\brief	This file is responsible for syncing data between the C# data into C++ | Not is used!
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -26,6 +26,6 @@ namespace Ukemochi
         /**
          * @brief Handles the syncing of data between C# and C++
          */
-        void SyncData();
+        void SyncData() const;
     };
 }

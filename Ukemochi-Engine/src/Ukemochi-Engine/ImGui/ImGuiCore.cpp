@@ -30,12 +30,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"
 
 #include "../Graphics/Renderer.h"
+#include "../SceneManager.h"
+#include "../Math/Transformation.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
 {
 	float UseImGui::m_Time = 0.0f; //!< Time since last frame for calculating DeltaTime.
-
+	float UseImGui::m_LastAssetUpdateTime = 0.0f;
+	float UseImGui::m_LastSceneUpdateTime = 0.0f;
+	std::vector<std::string> UseImGui::assetFiles;
+	std::vector<std::string> UseImGui::sceneFiles;
 
 	/*!
 	\brief Initializes the ImGui context and sets up OpenGL.
@@ -52,13 +57,20 @@ namespace Ukemochi
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
+		//ImGui::LoadIniSettingsFromDisk("imgui_layout.ini");
+
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
-
 		ImGuiStyle& style = ImGui::GetStyle();
+		style.Alpha = 1.0f; // Set the overall alpha of the UI
+		style.WindowRounding = 5.0f; // Round corners of windows
+		style.FrameRounding = 3.0f; // Round corners of frames
+		style.ItemSpacing = ImVec2(10, 10); // Spacing between items
+
+		//ImGuiStyle& style = ImGui::GetStyle();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			style.WindowRounding = 0.0f;
+			style.WindowRounding = 5.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
@@ -67,6 +79,7 @@ namespace Ukemochi
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
+		//ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
 	}
 	/*!
 	\brief Prepares a new ImGui frame and handles window dimensions and timing.
@@ -74,6 +87,7 @@ namespace Ukemochi
 	void UseImGui::NewFrame()
 	{
 
+		// ImGui frame setup
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -82,12 +96,249 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+		// Toggle to enable or disable docking
+		static bool enableDocking = true;
+
+		// Create a main menu bar with an option to toggle docking
+		ImGui::BeginMainMenuBar();
+		if (ImGui::BeginMenu("Options"))
+		{
+			ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+
+		// Set up the window to cover the entire viewport
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		// Configure window flags for a fullscreen dockspace
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+			ImGuiWindowFlags_NoNavFocus;
+
+		// Optionally make the background transparent
+		window_flags |= ImGuiWindowFlags_NoBackground;
+
+		// Begin the main dockspace window
+		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+
+		// Set up the dockspace only if docking is enabled
+		if (enableDocking)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+			ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+			ImGui::DockSpace(dockspace_id, ImVec2(0, 0), dockspace_flags);
+		}
+
+		ControlPanel();
+
+		ImGui::End(); // End the dockspace window
+
+		//ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
+	}
+
+	void UseImGui::ControlPanel()
+	{
+		ImGui::Begin("Control Panel");  // Create a new window titled "Control Panel"
+
+		// Add controls such as buttons, sliders, or entity selectors here
+		ImGui::Text("Control Panel Contents");
+		// Example: Add a button
+		if (ImGui::Button("Play"))
+		{	// save
+			SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+			// gsm_next = GS_PLAY;
+			es_current = ENGINE_STATES::ES_PLAY;
+			std::cout << "Game is Playing" << std::endl;
+			ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+			// Perform some action when button is clicked
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop"))
+		{
+			// free
+			SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
+			// gsm_next = GS_PLAY;
+			es_current = ENGINE_STATES::ES_ENGINE;
+			std::cout << "Game stopped" << std::endl;
+			// Implement functionality to stop the game (e.g., switch to editor mode)
+		}
+
+		ImGui::End(); // End the control panel window
+	}
+
+	void UseImGui::LoadContents()
+	{
+		// Clear the previous asset list
+		assetFiles.clear();
+
+		// Load assets from the Assets directory
+		std::string assetsDir = "../Assets";
+		for (const auto& entry : std::filesystem::directory_iterator(assetsDir)) {
+			if (entry.is_regular_file()) {
+				assetFiles.push_back(entry.path().filename().string());
+			}
+		}
+	}
+
+	void UseImGui::ContentBrowser(char* filePath)
+	{
+		ImGui::Begin("Content Browser");
+		//LoadAssets();
+		if (ImGui::Button("Refresh Assets")) {
+			LoadContents(); // Manually trigger loading assets
+		}
+
+		static int selectedAssetIndex = -1;
+		for (size_t i = 0; i < assetFiles.size(); ++i) {
+			bool isSelected = (selectedAssetIndex == static_cast<int>(i));
+			if (ImGui::Selectable(assetFiles[i].c_str(), isSelected)) {
+				selectedAssetIndex = static_cast<int>(i);
+				std::string fullPath = "../Assets/" + assetFiles[i];
+				std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void UseImGui::LoadScene()
 	{
-		static char filePath[256] = "../Assets/.json";
+		// Clear the previous asset list
+		sceneFiles.clear();
 
+		// Load assets from the Assets directory
+		std::string scenesDir = "../Assets/Scenes";
+		for (const auto& entry : std::filesystem::directory_iterator(scenesDir)) {
+			if (entry.is_regular_file()) {
+				sceneFiles.push_back(entry.path().filename().string());
+			}
+		}
+	}
+
+	void UseImGui::SceneBrowser()
+	{
+		// Get the current time
+		float currentTime = ImGui::GetTime();
+
+		// Check if 1 second has passed since the last update
+		if (currentTime - m_LastSceneUpdateTime >= 1.0f) {
+			// Update the asset list
+			LoadScene();
+			m_LastSceneUpdateTime = currentTime; // Reset the timer
+		}
+
+		ImGui::Begin("Scene Browser");
+
+		// Display the list of scenes
+		static int selectedSceneIndex = 0;
+		// State variable to manage the visibility of the input field for saving a scene
+		static bool showSaveInputField = false;
+		static char sceneName[128] = "Level"; // Default name for the scene
+
+		for (size_t i = 0; i < sceneFiles.size(); ++i) {
+			bool isSelected = (selectedSceneIndex == static_cast<int>(i));
+			if (ImGui::Selectable(sceneFiles[i].c_str(), isSelected)) {
+				selectedSceneIndex = static_cast<int>(i);
+				SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+				SceneManager::GetInstance().LoadSaveFile(sceneFiles[selectedSceneIndex]);
+				std::cout << "Selected scene: " << sceneFiles[selectedSceneIndex] << std::endl;
+			}
+		}
+
+		
+		// Add a button to save the scene
+		if (ImGui::Button("Save Scene")) {
+			showSaveInputField = !showSaveInputField; // Toggle the input field visibility
+			SceneManager::GetInstance().GetOnIMGUI() = showSaveInputField;
+
+			// Get the selected scene's name and remove the ".json" extension if it exists
+			std::string selectedScene = sceneFiles[selectedSceneIndex];
+			size_t extensionPos = selectedScene.find(".json");
+			if (extensionPos != std::string::npos) {
+				selectedScene = selectedScene.substr(0, extensionPos);
+			}
+
+			// Copy the modified name into sceneName
+			std::strncpy(sceneName, selectedScene.c_str(), sizeof(sceneName) - 1);
+			sceneName[sizeof(sceneName) - 1] = '\0'; // Ensure null-termination
+		}
+
+		// Display the input field if showSaveInputField is true
+		if (showSaveInputField) {
+			ImGui::InputText("Scene Name", sceneName, IM_ARRAYSIZE(sceneName));
+
+			if (ImGui::Button("Confirm Save")) {
+				// Call your SaveScene function
+				std::cout << "Scene saved as: " << sceneName << std::endl;
+
+				SceneManager::GetInstance().SaveScene(sceneName);
+				std::cout << "Scene saved successfully: " << sceneName << std::endl;
+				// Hide the input field after saving
+				showSaveInputField = false;
+				// Optionally, reset the scene name for the next save
+				sceneName[0] = '\0'; // Clear the input field
+				SceneManager::GetInstance().GetOnIMGUI() = showSaveInputField;
+			}
+		}
+
+		// State variable to manage the visibility of the input field for creating a scene
+		static bool showCreateInputField = false;
+		static char newSceneName[128] = "NewScene"; // Default name for the new scene
+		int maxIndex = 0;
+		std::string newName = "";
+
+		//find the next sceneName
+		for (const auto& scene : sceneFiles)
+		{
+			if (scene.rfind("NewScene", 0) == 0)
+			{ // Checks if scene starts with "NewScene"
+				int index = std::atoi(scene.substr(8).c_str()); // Extract the number after "NewScene"
+				if (index > maxIndex)
+				{
+					maxIndex = index;
+				}
+			}
+		}
+		newName = "NewScene" + std::to_string(maxIndex + 1);
+
+		// Add a button to create a new scene
+		if (ImGui::Button("Create Scene")) {
+			showCreateInputField = !showCreateInputField; // Toggle the input field visibility
+			SceneManager::GetInstance().GetOnIMGUI() = showCreateInputField;
+			std::strncpy(newSceneName, newName.c_str(), sizeof(newSceneName) - 1);
+			newSceneName[sizeof(newSceneName) - 1] = '\0'; // Ensure null-termination
+		}
+
+		// Display the input field if showCreateInputField is true
+		if (showCreateInputField) {
+			ImGui::InputText("New Scene Name", newSceneName, IM_ARRAYSIZE(newSceneName));
+
+			if (ImGui::Button("Confirm Create")) {
+				// Call your CreateScene function
+				std::cout << "Creating scene: " << newSceneName << std::endl;
+
+				SceneManager::GetInstance().CreateNewScene(newSceneName);
+				std::cout << "Scene created successfully: " << newSceneName << std::endl;
+				// Hide the input field after creating
+				showCreateInputField = false;
+				// Optionally, reset the new scene name for the next creation
+				//newSceneName[0] = '\0'; // Clear the input field
+				SceneManager::GetInstance().GetOnIMGUI() = showCreateInputField;
+			}
+		}
+
+		ImGui::End();
+	}
+
+	int UseImGui::GetSceneSize()
+	{
+		return sceneFiles.size();
 	}
 
 	void UseImGui::DisplayEntityDetails(GameObject& obj) {
@@ -121,6 +372,11 @@ namespace Ukemochi
 			entityNames.push_back(std::to_string(obj->GetInstanceID()) + ": " + obj->GetName());
 		}
 
+		// Check if there are any entities and set the selected index
+		if (!entityNames.empty() && selectedEntityIndex == -1) {
+			selectedEntityIndex = 0; // Default to the first item if nothing is selected
+		}
+
 		// Create a vector of const char* pointers to each name in entityNames
 		std::vector<const char*> entityNamePointers;
 		for (const auto& name : entityNames) {
@@ -142,6 +398,7 @@ namespace Ukemochi
 	}
 
 	void UseImGui::EditEntityProperties(GameObject& selectedObject) {
+
 		ImGui::Text("Editing properties of: %s", selectedObject.GetName().c_str());
 
 		if (selectedObject.HasComponent<Transform>()) {
@@ -158,10 +415,27 @@ namespace Ukemochi
 		}
 	}
 
+	bool IsJsonFile(const std::string& filePath)
+	{
+		return filePath.size() >= 5 && filePath.substr(filePath.size() - 5) == ".json";
+	}
+
 	void UseImGui::ShowEntityManagementUI()
 	{
+		// Begin a dockable window
+		ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
+
 		static char filePath[256] = "../Assets/Player.json";
 		static int selectedEntityIndex = -1;
+
+		static bool showError = false;
+		static float errorDisplayTime = 0.0f;
+
+		// Persistent flag to track if the selected entity was modified
+		static bool modified = false;
+
+		// Display the Asset Browser
+		ContentBrowser(filePath);
 
 		if (ImGui::TreeNode("Current GameObjects")) {
 			// auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
@@ -178,36 +452,87 @@ namespace Ukemochi
 		}
 
 		ImGui::Text("Entity Management");
-		ImGui::InputText("Player Data File", filePath, IM_ARRAYSIZE(filePath));
+		ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
 
-		if (ImGui::Button("Create Player Entity")) {
-			if (filePath[0] != '\0') {
-				GameObjectManager::GetInstance().CreatePrefabObject(filePath);
-				// GameObjectFactory::CreateObject(filePath);
+		if (ImGui::Button("Create Entity")) {
+			if (filePath[0] != '\0' && IsJsonFile(filePath)) {
+				if (ECS::GetInstance().GetLivingEntityCount() == 0)
+				{
+					ECS::GetInstance().GetSystem<Transformation>()->player = -1; 
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
+				}
+
+				auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
+				//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+				if (go.GetTag()=="Player")
+				{
+					ECS::GetInstance().GetSystem<Transformation>()->player = go.GetInstanceID();
+
+					ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(go.GetInstanceID());
+					//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
+					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+					go.GetComponent<SpriteRender>().animated = true;
+				}
+				showError = false; // Reset error
+			}
+			else {
+				showError = true; // Show error message
+				errorDisplayTime = ImGui::GetTime();
 			}
 		}
 
-		// Pass selectedEntityIndex by reference so it can be updated in the combo function
+		if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f) {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid file type. Only .json files can be used to create an object.");
+		}
+
 		DisplayEntitySelectionCombo(selectedEntityIndex);
 
 		if (ImGui::Button("Remove Entity")) {
 			RemoveSelectedEntity(selectedEntityIndex);
+			modified = false;
 		}
 
 		if (selectedEntityIndex >= 0) {
 			// auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
 			auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
 			if (selectedEntityIndex < gameObjects.size()) {
+				// GameObject* selectedObject = gameObjects[selectedEntityIndex];
+				// EditEntityProperties(*selectedObject);
 				GameObject* selectedObject = gameObjects[selectedEntityIndex];
-				EditEntityProperties(*selectedObject);
+
+				// Flag modification based on ImGui inputs
+				ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
+
+				if (selectedObject->HasComponent<Transform>()) {
+					Transform& transform = selectedObject->GetComponent<Transform>();
+					if (ImGui::InputFloat2("Position", &transform.position.x)) modified = true;
+					if (ImGui::InputFloat("Rotation", &transform.rotation)) modified = true;
+					if (ImGui::InputFloat2("Scale", &transform.scale.x)) modified = true;
+				}
+
+				if (selectedObject->HasComponent<Rigidbody2D>()) {
+					Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
+					if (ImGui::InputFloat2("Velocity", &rb.velocity.x)) modified = true;
+					if (ImGui::InputFloat("Mass", &rb.mass)) modified = true;
+				}
+
+				// Show the Save button if modifications were made
+				if (modified) {
+					if (ImGui::Button("Save Entity")) {
+						std::cout << "Entity is Saved";
+						SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
+						//SaveEntity(selectedObject, filePath);  // Ensure filePath points to the correct location
+						modified = false;  // Reset modified flag after saving
+					}
+				}
 			}
 		}
+		// End the dockable window
+		ImGui::End();
 	}
 
-	void UseImGui::Begin()
+	void UseImGui::SceneRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 		static bool showGameView = true;
 		Application& app = Application::Get();
 		//GLuint texture = renderer.getTextureColorBuffer();
@@ -215,16 +540,20 @@ namespace Ukemochi
 		if (showGameView)
 		{
 			ImGui::Begin("Player Loader", &showGameView);   // Create a window called "Another Window"
-			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 },{1,0});
+			ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()), { 0,1 }, { 1,0 });
 			ImGui::End();
 		}
+	}
 
-		/*static bool showHierarchy = true;
-		if (showHierarchy)
-		{
-			ImGui::Begin("Scene Hierarchy", &showHierarchy);
-			ImGui::End();
-		}*/
+	std::string UseImGui::GetStartScene()
+	{
+		return sceneFiles[0];
+	}
+
+	void UseImGui::Begin()
+	{
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
 	}
 	/*!
 	\brief Renders the current ImGui frame and draws the UI.
@@ -234,6 +563,7 @@ namespace Ukemochi
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

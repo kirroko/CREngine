@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component.h" // ComponentManager
 #include "Entity.h"    // EntityManager
 #include "Systems.h"   // SystemManager
-#include "Components.h"
+#include "Components.h" // DO NOT REMOVE
 
 namespace Ukemochi
 {
@@ -32,15 +32,18 @@ namespace Ukemochi
 
 		ECS() = default;
 		~ECS() = default;
-		ECS(const ECS&) = delete;
-		ECS& operator=(const ECS&) = delete;
 	public:
 		static ECS& GetInstance()
 		{
 			static ECS instance;
 			return instance;
 		}
-
+		
+		ECS(const ECS&) = delete;
+		ECS& operator=(const ECS&) = delete;
+		ECS(ECS&&) = delete;
+		ECS& operator=(ECS&&) = delete;
+		
 		// Create pointers to each manager
 		void Init();
 
@@ -52,9 +55,11 @@ namespace Ukemochi
 
 		EntityID CloneEntity(EntityID entity);
 
+		/**
+		 * @brief Get the number of living entities in the ECS
+		 * @return The number of living entities
+		 */
 		unsigned long int GetLivingEntityCount() const;
-
-		std::vector<EntityID> GetAllEntities();
 
 		/**
 		 * @brief Register a component type with the ECS
@@ -91,16 +96,10 @@ namespace Ukemochi
 		template<typename T>
 		void SetSystemSignature(SignatureID signature);
 
-		// template<typename T>
-		// static inline T* GetComponentForMono(EntityID entity)
-		// {
-		// 	// NOTE: What if we run a point where we haven't "Added" any thing yet but function gets called?
-		// 	return &GetInstance().GetComponent<T>(entity); // I feel I know it works yet I don't know if this works
-		// }
-
-		// Manage and verify the relationship between entity and their componenets within ECS
+		// Manage and verify the relationship between entity and their components within ECS
 		template<typename T>
-		bool HasComponent(EntityID entity) {
+		bool HasComponent(EntityID entity) const
+		{
 			return m_ComponentManager->HasComponent<T>(entity);
 		}
 	};

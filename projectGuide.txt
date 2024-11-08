@@ -1,3 +1,8 @@
 PROJECT SETTINGS
 Make sure the start-up project is targeted at Ukemochi-Game project solution.
 
+REQUIRED ITEMS
+- .NET desktop development (.NET Framework 4.7.2)
+This is required because the project uses Dotnet 8.x.x to compile the user's scripts, without it the project will not be able to compile
+the user's scripts assembly and the game may not run as intended.
+

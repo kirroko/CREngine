@@ -113,6 +113,8 @@ namespace Ukemochi
         *************************************************************************/
         void StopAllSoundsInGroup(int groupIndex);
 
+        void StopAudioGroup(int groupIndex);
+
         /*!***********************************************************************
         \brief
          Play all sounds within a specific group.

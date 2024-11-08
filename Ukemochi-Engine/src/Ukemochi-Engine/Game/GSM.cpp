@@ -22,6 +22,8 @@ namespace Ukemochi
 {
 	int gsm_current = 0, gsm_previous = 0, gsm_next = 0;
 
+	int es_current = 0;
+
 	FP gsm_fpLoad = nullptr, gsm_fpInitialize = nullptr, gsm_fpUpdate = nullptr, gsm_fpDraw = nullptr, gsm_fpFree = nullptr, gsm_fpUnload = nullptr;
 
 	void GSM_Initialize(int startingState) // initialize the state manager
@@ -67,8 +69,6 @@ namespace Ukemochi
 			gsm_fpUnload = Level2_Unload;
 			break;
 		case GS_RESTART:
-			break;
-		case GS_QUIT:
 			break;
 		default:
 			break;

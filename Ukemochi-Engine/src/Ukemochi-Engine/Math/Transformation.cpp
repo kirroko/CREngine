@@ -38,7 +38,7 @@ namespace Ukemochi
 			Mtx44Scale(scale, transform.scale.x, transform.scale.y, 0);
 
 			// If the entity is the player, adjust based on the direction and scaling factor
-			if (entity == playerObject->GetInstanceID())
+			if (entity == player)
 				scale.m2[0][0] = isFacingRight ? -scale.m2[0][0] : scale.m2[0][0]; // Adjust X-axis scale to flip direction if not facing right
 
 			transform.transform_matrix = trans * rot * scale;

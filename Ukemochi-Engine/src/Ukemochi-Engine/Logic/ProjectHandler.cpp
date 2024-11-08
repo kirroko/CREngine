@@ -95,8 +95,7 @@ namespace Ukemochi
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>Temp\bin\Release\</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>)";
+  </PropertyGroup>)";
 
         // Add each script file
         // for (const auto& script : scriptFiles)
@@ -107,18 +106,18 @@ namespace Ukemochi
         //     csprojString += "\n <Compile Include=\"" + script + "\" />\n";
         // }
 
-        csprojString += R"(</ItemGroup>
-    <ItemGroup>
-        <Reference Include="UkemochiEngine">
-            <HintPath>..\Ukemochi-Game\Resources\Scripts\Ukemochi-Scripting.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-</Project>
+
+        csprojString += R"(<ItemGroup>
+            <Reference Include="UkemochiEngine">
+                <HintPath>..\Ukemochi-Game\Resources\Scripts\Ukemochi-Scripting.dll</HintPath>
+            </Reference>
+        </ItemGroup>
+    </Project>
 )";
 
         // Write csproject
         std::ofstream csprojFile(projectPath + "\\Assembly-CSharp.csproj");
-        if(csprojFile.is_open())
+        if (csprojFile.is_open())
         {
             csprojFile << csprojString;
             csprojFile.close();

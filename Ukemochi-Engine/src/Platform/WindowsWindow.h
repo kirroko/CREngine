@@ -100,6 +100,10 @@ namespace Ukemochi {
 		*/
 		void* GetNativeWindow() const { return m_Window; }
 
+		static void fileDropCallback(GLFWwindow* window, int count, const char** paths);
+
+		std::string m_FilePath;
+
 	private:
 		/*!
 		\brief Initializes the window with the specified properties.
@@ -127,6 +131,7 @@ namespace Ukemochi {
 
 		WindowData m_Data; //!< Instance of window data.
 		static bool s_GLFWInitialized;  //!< Static variable to track GLFW initialization.
+
 	};
 
 } // namespace UME

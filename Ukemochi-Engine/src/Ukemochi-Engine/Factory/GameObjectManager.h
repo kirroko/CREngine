@@ -24,18 +24,20 @@ namespace Ukemochi
     class GameObjectManager
     {
         GameObjectManager();
-        std::unordered_map<EntityID,std::unique_ptr<GameObject>> m_GOs;
+        std::unordered_map<EntityID, std::unique_ptr<GameObject>> m_GOs;
+
     public:
         static GameObjectManager& GetInstance()
         {
             static GameObjectManager instance;
             return instance;
         }
+
         // Type Registry
-        static std::unordered_map<std::string,std::function<void(GameObject&,MonoObject*)>> componentRegistry;
-        
+        static std::unordered_map<std::string, std::function<void(GameObject&, MonoObject*)>> componentRegistry;
+
         void RegisterComponents();
-        
+
         /**
          * @brief Create a new gameobject from a prefab
          * @param prefabPath The path to the prefab
@@ -49,12 +51,40 @@ namespace Ukemochi
          */
         GameObject& CreateObject(const std::string& name = "GameObject", const std::string& tag = "Default");
 
-        GameObject& CloneObject(const GameObject& targetGO, const std::string& name = "GameObject", const std::string& tag = "Default");
+        /**
+         * @brief Clone a game object
+         * @param targetGO The game object to clone
+         * @param  name The name of the new game object
+         * @param tag The tag of the new game object
+         * @return reference to the new created game object
+         */
+        GameObject& CloneObject(const GameObject& targetGO, const std::string& name = "GameObject",
+                                const std::string& tag = "Default");
 
+        /**
+         * @brief Destroy a game object
+         * @param id The id of the game object to destroy
+         */
         void DestroyObject(EntityID id);
 
+        /**
+         * @brief Get a gameobject by its tag
+         * @param tag a tag to search for
+         * @return a gameobject
+         */
+        GameObject* GetGOByTag(const std::string& tag) const;
+
+        /**
+         * @brief Get a game object by its id
+         * @param id The id of the game object
+         * @return reference to the game object
+         */
         GameObject& GetGO(EntityID id);
 
+        /**
+         * @brief Get all game objects
+         * @return vector of game objects
+         */
         std::vector<GameObject*> GetAllGOs() const;
     };
 }

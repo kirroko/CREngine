@@ -46,20 +46,28 @@ namespace Ukemochi
 	GameObject worm_0;
 	Renderer time;
 	
-	GLfloat lastFrameTime = 0.0f;
-	GLfloat deltaTime = 0.0f;
+	//GLfloat lastFrameTime = 0.0f;
+	//GLfloat deltaTime = 0.0f;
 
 	void Level1_Load()//Load all necessary assets before start of Level1
 	{
 		//std::cout << "Level1:Load" << '\n';
-		Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-		Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+		if (es_current == ES_PLAY)
+		{
+			Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+			Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+		}
+
 	}
 
 	void Level1_Initialize()//Initialize the game at the start of Level1
 	{
-		Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-		Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+		if (es_current == ES_PLAY)
+		{
+			Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
+			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+		}
+
 		//std::cout << "Level1:Initialize" << '\n';
 		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
 
@@ -335,10 +343,10 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
 
 		// Camera
-		GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
-		deltaTime = currentFrameTime - lastFrameTime;
-		lastFrameTime = currentFrameTime;
-		ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
+		//GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+		//deltaTime = currentFrameTime - lastFrameTime;
+		//lastFrameTime = currentFrameTime;
+		//ECS::GetInstance().GetSystem<Camera>()->processCameraInput(deltaTime);
 
 		// Animation
 		// Check for slow motion toggle key (M key in this case)
@@ -383,6 +391,9 @@ namespace Ukemochi
 	{
 		// Unload the renderer system
 		ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
-		Audio::GetInstance().StopAllSoundsInGroup(ChannelGroups::LEVEL1);
+		if (es_current == ES_PLAY)
+		{
+			Audio::GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
+		}
 	}
 }

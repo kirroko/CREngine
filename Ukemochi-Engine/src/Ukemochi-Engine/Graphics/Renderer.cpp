@@ -9,6 +9,9 @@
 #include "PreCompile.h"
 #include "Renderer.h"
 #include "TextRenderer.h"
+#include "../Factory/Factory.h"
+#include "../Factory/GameObjectManager.h"
+#include "Ukemochi-Engine/SceneManager.h"
 
 
 using namespace Ukemochi;
@@ -432,7 +435,7 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 		textureCache[texturePath] = texture;
 		texturePathsOrder.push_back(texturePath);
 		// Log successful loading and texture ID
-		std::cout << "Loaded texture " << texturePath << " with ID: " << texture->ID << " at index " << textureIndex << std::endl;
+		//std::cout << "Loaded texture " << texturePath << " with ID: " << texture->ID << " at index " << textureIndex << std::endl;
 
 		textureIndex++;
 	}
@@ -449,7 +452,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
 	std::vector<int> textureUnits(textureCount);
 
-	std::cout << "Binding textures to shader units..." << std::endl;
+	//std::cout << "Binding textures to shader units..." << std::endl;
 
 	for (int i = 0; i < texturePathsOrder.size() && nextAvailableTextureUnit < 32; ++i) {
 		const auto& path = texturePathsOrder[i];
@@ -469,7 +472,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
 			glBindTexture(GL_TEXTURE_2D, texture->ID);
 
-			std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
+			//std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
 			textureUnits[i] = nextAvailableTextureUnit;
 
 			// Increment to the next available texture unit
@@ -490,8 +493,8 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Verify that the texture is bound to the expected unit
 		GLint boundTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
-		std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
-			<< ", actual bound ID: " << boundTexture << std::endl;
+		//std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
+		//	<< ", actual bound ID: " << boundTexture << std::endl;
 	}
 	// Pass the array of texture unit indices to the shader uniform array "textures"
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
@@ -576,7 +579,7 @@ void Renderer::render()
 	// Render entities
 	batchRenderer->beginBatch();
 	int entity_count = 0;
-	std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
+	//std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	for (auto& entity : m_Entities)
 	{
@@ -596,7 +599,7 @@ void Renderer::render()
 		GLfloat uvCoordinates[8];
 
 		// Check for animation
-		if (spriteRenderer.animated)
+		if (spriteRenderer.animated && es_current == ENGINE_STATES::ES_PLAY)
 		{
 			// Fetch the current animation and frame data
 			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
@@ -610,7 +613,7 @@ void Renderer::render()
 				currentAnimation.totalHeight,
 				uvCoordinates);
 			// Flip UVs horizontally if the player is facing left
-			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+			if (entity == GetPlayer() && isFacingRight) {
 				// Swap left and right UV coordinates
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -627,7 +630,7 @@ void Renderer::render()
 			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
 
 			// Flip UVs for static sprites if the player is facing left
-			if (entity == playerObject->GetInstanceID() && isFacingRight) {
+			if (entity == GetPlayer() && isFacingRight) {
 				// Swap left and right UV coordinates
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -645,7 +648,7 @@ void Renderer::render()
 			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
 			continue;
 		}
-		std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
+		//std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
 
 		//int normalizedTexID = textureID - 2;
 		int mappedTextureUnit = textureIDMap[textureID];
@@ -938,7 +941,7 @@ void Renderer::UpdateTextObject(const std::string& id, const std::string& newTex
  */
 void Renderer::initAnimationEntities()
 {
-	int playerEntityID = 1; // Replace with actual entity IDs from your ECS or game logic
+	int playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
 
 	// Create animations for the player
 	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
@@ -986,45 +989,95 @@ void Renderer::toggleSlowMotion()
  */
 void Renderer::animationKeyInput()
 {
-	auto& playerSprite = playerObject->GetComponent<SpriteRender>();
-
-	// File paths for the textures
-	std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
-	std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
-
-	if (Input::IsKeyPressed(GLFW_KEY_A)) {
-		isFacingRight = false; // Moving left
-	}
-	else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-		isFacingRight = true; // Moving right
-	}
-
-	// Check if any movement keys are pressed
-	if (Input::IsKeyPressed(GLFW_KEY_W) ||
-		Input::IsKeyPressed(GLFW_KEY_A) ||
-		Input::IsKeyPressed(GLFW_KEY_S) ||
-		Input::IsKeyPressed(GLFW_KEY_D))
+	std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+	for (auto& GameObject : list)
 	{
-		// If we are not already in the running state, switch to the running texture
-		if (playerSprite.animationIndex != 1)
+		if (GetPlayer() == GameObject->GetInstanceID())
 		{
-			playerSprite.animationIndex = 1;
-			playerSprite.texturePath = runningTexturePath;
+			auto& playerSprite = GameObject->GetComponent<SpriteRender>();
 
-			// Set the animation index and texture path to indicate running state
-			std::cout << "Switching to running animation.\n";
+			// File paths for the textures
+			std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+			std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+			if (Input::IsKeyPressed(GLFW_KEY_A)) {
+				isFacingRight = false; // Moving left
+			}
+			else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+				isFacingRight = true; // Moving right
+			}
+
+			// Check if any movement keys are pressed
+			if (Input::IsKeyPressed(GLFW_KEY_W) ||
+				Input::IsKeyPressed(GLFW_KEY_A) ||
+				Input::IsKeyPressed(GLFW_KEY_S) ||
+				Input::IsKeyPressed(GLFW_KEY_D))
+			{
+				// If we are not already in the running state, switch to the running texture
+				if (playerSprite.animationIndex != 1)
+				{
+					playerSprite.animationIndex = 1;
+					playerSprite.texturePath = runningTexturePath;
+
+					// Set the animation index and texture path to indicate running state
+					std::cout << "Switching to running animation.\n";
+				}
+			}
+			else
+			{
+				// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+				if (playerSprite.animationIndex != 0)
+				{
+					playerSprite.animationIndex = 0;
+					playerSprite.texturePath = idleTexturePath;
+
+					// Set the animation index and texture path to indicate idle state
+					std::cout << "Switching to idle animation.\n";
+				}
+			}
+			break;
 		}
 	}
-	else
-	{
-		// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-		if (playerSprite.animationIndex != 0)
-		{
-			playerSprite.animationIndex = 0;
-			playerSprite.texturePath = idleTexturePath;
 
-			// Set the animation index and texture path to indicate idle state
-			std::cout << "Switching to idle animation.\n";
-		}
-	}
+	//auto& playerSprite = playerObject->GetComponent<SpriteRender>();
+
+	//// File paths for the textures
+	//std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	//std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+
+	//if (Input::IsKeyPressed(GLFW_KEY_A)) {
+	//	isFacingRight = false; // Moving left
+	//}
+	//else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+	//	isFacingRight = true; // Moving right
+	//}
+
+	//// Check if any movement keys are pressed
+	//if (Input::IsKeyPressed(GLFW_KEY_W) ||
+	//	Input::IsKeyPressed(GLFW_KEY_A) ||
+	//	Input::IsKeyPressed(GLFW_KEY_S) ||
+	//	Input::IsKeyPressed(GLFW_KEY_D))
+	//{
+	//	// If we are not already in the running state, switch to the running texture
+	//	if (playerSprite.animationIndex != 1)
+	//	{
+	//		playerSprite.animationIndex = 1;
+	//		playerSprite.texturePath = runningTexturePath;
+
+	//		// Set the animation index and texture path to indicate running state
+	//		std::cout << "Switching to running animation.\n";
+	//	}
+	//}
+	//else
+	//{
+	//	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+	//	if (playerSprite.animationIndex != 0)
+	//	{
+	//		playerSprite.animationIndex = 0;
+	//		playerSprite.texturePath = idleTexturePath;
+
+	//		// Set the animation index and texture path to indicate idle state
+	//		std::cout << "Switching to idle animation.\n";
+	//	}
+	//}
 }

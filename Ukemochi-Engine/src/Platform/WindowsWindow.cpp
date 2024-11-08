@@ -90,6 +90,8 @@ namespace Ukemochi {
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVsync(true);
 
+		glfwSetDropCallback(m_Window, fileDropCallback);
+
 		glViewport(0, 0, props.Width, props.Height);
 
 		// GLFW CALLBACK // Set GLFW callbacks for various events
@@ -218,6 +220,15 @@ namespace Ukemochi {
 			glfwSwapInterval(0);
 
 		m_Data.VSync = enabled;
+	}
+
+	void WindowsWindow::fileDropCallback(GLFWwindow* window, int count, const char** paths) {
+		WindowsWindow* windowInstance = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
+
+		// Assuming count > 0, use the first dropped file path
+		if (count > 0) {
+			windowInstance->m_FilePath = paths[0]; // Update the filePath
+		}
 	}
 
 	//bool WindowsWindow::IsVsync() const

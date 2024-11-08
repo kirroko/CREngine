@@ -22,6 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
+// Static member initialization, this is where we register a function to create a component via a name.
+// C# will call addcomponent with the component name and the instance of the component
+// We will then call the function to create the component and add it to the GameObject in C++ side
 std::unordered_map<std::string,std::function<void(GameObject&,MonoObject*)>> GameObjectManager::componentRegistry;
 
 GameObjectManager::GameObjectManager()
@@ -36,6 +39,7 @@ void GameObjectManager::RegisterComponents()
     {
         go.SetManagedComponentInstance(instance, "Transform");
     };
+    // TODO: More components to be added here
 }
 
 GameObject& GameObjectManager::CreateObject(const std::string& name, const std::string& tag)
@@ -67,6 +71,19 @@ void GameObjectManager::DestroyObject(EntityID id)
     // Before we erase, we tell ECS to destroy the entity
     GameObjectFactory::DestroyObject(*m_GOs[id]);
     m_GOs.erase(id);
+}
+
+GameObject* GameObjectManager::GetGOByTag(const std::string& tag) const
+{
+    for(auto& go : m_GOs)
+    {
+        if(go.second->GetTag() != tag)
+            continue;
+
+        return go.second.get();
+    }
+    
+    return nullptr;
 }
 
 GameObject& GameObjectManager::GetGO(EntityID id)

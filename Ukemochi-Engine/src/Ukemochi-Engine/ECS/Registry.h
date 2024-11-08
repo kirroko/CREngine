@@ -62,7 +62,7 @@ namespace Ukemochi
 		std::unordered_map<size_t, EntityID> m_IndexToEntityMap;
 
 		// Total size of valid entries in the array.
-		size_t m_Size;
+		size_t m_Size = 0;
 	};
 }
 #include "Registry.tpp"

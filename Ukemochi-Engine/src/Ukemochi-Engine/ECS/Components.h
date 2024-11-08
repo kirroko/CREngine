@@ -94,6 +94,15 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 ConvexCollider2D component structure.
+	*************************************************************************/
+	struct ConvexCollider2D
+	{
+		std::vector<Vec2> vertices;
+	};
+
+	/*!***********************************************************************
+	\brief
 	 GUI Text component structure.
 	*************************************************************************/
 	//struct Text
@@ -131,7 +140,9 @@ namespace Ukemochi
 		unsigned int textureID = 0;
 		bool animated = false;							// Is the object animated?
 
-		int animationIndex = 0;
+		int animationIndex = -1;
+		bool flipX = false;
+		bool flipY = false;
 		//bool visible = true;							// Is the object visible?
 		//float opacity = 1.0f;							// Opacity of the object
 	};

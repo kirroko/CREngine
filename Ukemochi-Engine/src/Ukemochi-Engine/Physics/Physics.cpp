@@ -4,7 +4,7 @@
 \file       Physics.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263
 \par        email: kosand.lum\@digipen.edu
-\date       Oct 31, 2024
+\date       Nov 6, 2024
 \brief      This file contains the definition of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -18,7 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Physics.h"            // for forward declaration
 #include "../FrameController.h" // for GetCurrentNumberOfSteps, GetFixedDeltaTime
 #include "../Math/MathUtils.h"  // for abs, clamp
-#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
 {
@@ -30,10 +29,7 @@ namespace Ukemochi
     \param[in] force
      The amount of force to add.
     *************************************************************************/
-    void Physics::AddForceX(Rigidbody2D& rb, const float force)
-    {
-        rb.force.x = force;
-    }
+    void Physics::AddForceX(Rigidbody2D& rb, const float force) { rb.force.x = force; }
 
     /*!***********************************************************************
     \brief
@@ -43,10 +39,7 @@ namespace Ukemochi
     \param[in] force
      The amount of force to add.
     *************************************************************************/
-    void Physics::AddForceY(Rigidbody2D& rb, const float force)
-    {
-        rb.force.y = force;
-    }
+    void Physics::AddForceY(Rigidbody2D& rb, const float force) { rb.force.y = force; }
 
     /*!***********************************************************************
     \brief
@@ -54,15 +47,7 @@ namespace Ukemochi
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::RemoveForceX(Rigidbody2D& rb)
-    {
-        rb.force.x = 0.f;
-        rb.velocity.x *= rb.linear_drag;
-
-        // Complete stop if almost still
-        if (abs(rb.velocity.x) < 0.01f)
-            rb.velocity.x = 0.f;
-    }
+    void Physics::RemoveForceX(Rigidbody2D& rb) { rb.force.x = 0.f; }
 
     /*!***********************************************************************
     \brief
@@ -70,15 +55,7 @@ namespace Ukemochi
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::RemoveForceY(Rigidbody2D& rb)
-    {
-        rb.force.y = 0.f;
-        rb.velocity.y *= rb.linear_drag;
-
-        // Complete stop if almost still
-        if (abs(rb.velocity.y) < 0.01f)
-            rb.velocity.y = 0.f;
-    }
+    void Physics::RemoveForceY(Rigidbody2D& rb) { rb.force.y = 0.f; }
 
     /*!***********************************************************************
     \brief
@@ -88,10 +65,7 @@ namespace Ukemochi
     \param[in] torque
      The amount of torque to add.
     *************************************************************************/
-    void Physics::AddTorque(Rigidbody2D& rb, const float torque)
-    {
-        rb.torque = torque;
-    }
+    void Physics::AddTorque(Rigidbody2D& rb, const float torque) { rb.torque = torque; }
 
     /*!***********************************************************************
     \brief
@@ -99,15 +73,7 @@ namespace Ukemochi
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::RemoveTorque(Rigidbody2D& rb)
-    {
-        rb.torque = 0.f;
-        rb.angular_velocity *= rb.angular_drag;
-
-        // Complete stop if almost still
-        if (abs(rb.angular_velocity) < 0.01f)
-            rb.angular_velocity = 0.f;
-    }
+    void Physics::RemoveTorque(Rigidbody2D& rb) { rb.torque = 0.f; }
 
     /*!***********************************************************************
     \brief
@@ -121,18 +87,19 @@ namespace Ukemochi
             for (auto& entity : m_Entities)
             {
                 // Get references of entity components
-                auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
                 auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-                
+                auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+                auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+
                 // Skip if entity is kinematic (static objects)
                 if (rb.is_kinematic)
                     continue;
 
                 // Update the linear physics of the entity
-                UpdateLinearPhysics(rb, trans);
+                UpdateLinearPhysics(trans, box, rb);
 
                 // Update the rotational physics of the entity
-                UpdateRotationalPhysics(rb, trans);
+                UpdateRotationalPhysics(trans, box, rb);
             }
         }
     }
@@ -140,12 +107,14 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Update the linear physics of all the entities.
-    \param[in/out] rb
-     The rigidbody of the entity.
     \param[in/out] trans
      The transform of the entity.
+    \param[in/out] box
+     The box collider of the entity.
+    \param[in/out] rb
+     The rigidbody of the entity.
     *************************************************************************/
-    void Physics::UpdateLinearPhysics(Rigidbody2D& rb, Transform& trans)
+    void Physics::UpdateLinearPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb)
     {
         // Update physics position with the transform position
         rb.position = trans.position;
@@ -176,6 +145,22 @@ namespace Ukemochi
             rb.velocity.y *= scale;
         }
 
+        // Apply linear drag to the velocity of the player
+        if (box.tag == "Player")
+        {
+            rb.velocity.x *= rb.linear_drag;
+
+            // Complete stop if almost still
+            if (abs(rb.velocity.x) < 0.01f)
+                rb.velocity.x = 0.f;
+
+            rb.velocity.y *= rb.linear_drag;
+
+            // Complete stop if almost still
+            if (abs(rb.velocity.y) < 0.01f)
+                rb.velocity.y = 0.f;
+        }
+
         // Apply velocity to the position (dx = v * dt)
         rb.position = rb.position + rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
@@ -186,12 +171,14 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Update the rotational physics of all the entities.
-    \param[in/out] rb
-     The rigidbody of the entity.
     \param[in/out] trans
      The transform of the entity.
+    \param[in/out] box
+     The box collider of the entity.
+    \param[in/out] rb
+     The rigidbody of the entity.
     *************************************************************************/
-    void Physics::UpdateRotationalPhysics(Rigidbody2D& rb, Transform& trans)
+    void Physics::UpdateRotationalPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb)
     {
         // Update physics angle with the transform rotation
         rb.angle = trans.rotation;
@@ -204,6 +191,16 @@ namespace Ukemochi
 
         // Clamp the angular velocity to prevent exceeding max angular velocity
         rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
+
+        // Apply angular drag to the angular velocity of the player
+        if (box.tag == "Player")
+        {
+            rb.angular_velocity *= rb.angular_drag;
+
+            // Complete stop if almost still
+            if (abs(rb.angular_velocity) < 0.01f)
+                rb.angular_velocity = 0.f;
+        }
 
         // Apply angular velocity to the angle
         rb.angle = rb.angle + rb.angular_velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());

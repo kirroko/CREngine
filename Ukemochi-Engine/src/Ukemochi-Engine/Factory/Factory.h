@@ -38,7 +38,7 @@ namespace Ukemochi
 		 * @param filePath the path to the JSON file
 		 * @return GameObject& a reference to the newly created GameObject
 		 */
-		static GameObject CreatePrefebObject(const std::string& filePath);
+		static GameObject& CreatePrefebObject(const std::string& filePath);
 		/**
 		 * @brief Clone a GameObject
 		 *
@@ -54,8 +54,6 @@ namespace Ukemochi
 		 * 
 		 * @param targetObject the gameObject to destroy
 		 */
-		static void DestroyObject(GameObject& targetobject);
-
-		static std::vector<GameObject> GameObjectFactory::GetAllObjectsInCurrentLevel();
+		static void DestroyObject(const GameObject& targetobject);
 	};
 };
