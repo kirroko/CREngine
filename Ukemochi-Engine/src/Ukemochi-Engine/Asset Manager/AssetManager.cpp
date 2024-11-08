@@ -3,9 +3,9 @@
 
 namespace Ukemochi
 {	
-	void AssetManager::addTexture(std::string file_name, std::string file_path, std::string shader_name)
+	void AssetManager::addTexture(std::string file_path, size_t& order_index)
 	{
-		if (texture_list.find(file_name) != texture_list.end())
+		if (texture_list.find(file_path) != texture_list.end())
 		{
 			std::cout << "Texture already exists";
 			return;
@@ -33,10 +33,10 @@ namespace Ukemochi
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
 		std::string uniformName = "textures[" + std::to_string(order_index) + "]";
-		texture->texUnit(shader_list.find(shader_name)->second.get(), uniformName.c_str(), order_index);
+		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), order_index);
 
-		texture_list[file_name] = texture;
-		texture_order.push_back(file_name);
+		texture_list[file_path] = texture;
+		texture_order.push_back(file_path);
 		order_index++;
 	}
 

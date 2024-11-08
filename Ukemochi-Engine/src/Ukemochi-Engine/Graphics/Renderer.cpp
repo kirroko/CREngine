@@ -446,9 +446,14 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			textureUnits[i] = textureIDMap[texture->ID];
 		}
 	}
-	for (int i = 0; i < textureCount; ++i) {
+	/*for (int i = 0; i < textureCount; ++i) {
 		const auto& path = texturePathsOrder[i];
-		Texture* texture = textureCache[path];
+		Texture* texture = textureCache[path];*/
+
+	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->order_index; i++)
+	{
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, texture->ID);

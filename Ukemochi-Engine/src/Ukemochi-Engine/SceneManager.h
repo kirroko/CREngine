@@ -90,6 +90,8 @@ namespace Ukemochi
 
 		void SetPlayScreen(Vec2 playsize);
 
+		void print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics);
+
 	private:
 		std::string sceneName;
 		Vec2 cameraSize;

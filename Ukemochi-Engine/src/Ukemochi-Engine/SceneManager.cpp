@@ -40,6 +40,19 @@ namespace Ukemochi
 	const float ENTITY_ACCEL = 750.f;
 	const float PLAYER_FORCE = 1500.f;
 
+	// --- Frame Performance Viewer
+	std::chrono::duration<double> loop_time{};
+	std::chrono::duration<double> collision_time{};
+	std::chrono::duration<double> physics_time{};
+	std::chrono::duration<double> graphics_time{};
+
+	std::chrono::steady_clock::time_point sys_start;
+	std::chrono::steady_clock::time_point sys_end;
+	std::chrono::steady_clock::time_point loop_start;
+	std::chrono::steady_clock::time_point loop_end;
+
+	//bool func_toggle = false;
+
 	SceneManager::SceneManager()
 		:sceneName("NewScene"), cameraSize(0,0)
 	{
@@ -67,6 +80,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<InGameGUI>();
         ECS::GetInstance().RegisterSystem<DataSyncSystem>();
         ECS::GetInstance().RegisterSystem<Audio>();
+		ECS::GetInstance().RegisterSystem<AssetManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -125,14 +139,23 @@ namespace Ukemochi
 
 
 		// load textures
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+		//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
+
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
 		UseImGui::LoadScene();
 
@@ -155,6 +178,7 @@ namespace Ukemochi
 	{
 		// Initialize the graphics and collision system
 		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
+		ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 		ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
 
@@ -178,6 +202,7 @@ namespace Ukemochi
 
 	void SceneManager::SceneMangerRunSystems()
 	{
+		loop_start = std::chrono::steady_clock::now();
 		// if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
 		// {
 		// 	GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
@@ -278,6 +303,8 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
 		}
+
+
 		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
 		ECS::GetInstance().GetSystem<InGameGUI>()->Update();
@@ -287,11 +314,17 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		// --- PHYSICS UPDATE ---
 		// Update the entities physics
+		sys_start = std::chrono::steady_clock::now();
 		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+		sys_end = std::chrono::steady_clock::now();
+		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
 		// --- COLLISION UPDATE ---
 		// Check the collisions between the entities
+		sys_start = std::chrono::steady_clock::now();
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+		sys_end = std::chrono::steady_clock::now();
+		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
 		// --- TRANSFORMATION UPDATE ---
 		// Compute the entities transformations
@@ -300,7 +333,21 @@ namespace Ukemochi
 		// --- DATA SYNC UPDATE ---
 		// ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
 		
+		sys_start = std::chrono::steady_clock::now();
 		SceneManagerDraw();
+		sys_end = std::chrono::steady_clock::now();
+		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+
+		loop_end = std::chrono::steady_clock::now();
+		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
+
+		//toggle console output for performance
+		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
+		{
+			//func_toggle = (func_toggle + 1) % 2;
+			print_performance(loop_time, collision_time, physics_time, graphics_time);
+			//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
+		}
 	}
 
 	void SceneManager::SceneMangerUpdateCamera(double deltaTime)
@@ -536,7 +583,8 @@ namespace Ukemochi
 					{
 						newObject.AddComponent<SpriteRender>({ texturePath, shape });
 					}
-					ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+					//ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+					ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 					if (tag == "Player")
 					{
 						newObject.GetComponent<SpriteRender>().animated = true;
@@ -949,5 +997,23 @@ namespace Ukemochi
 	void SceneManager::SetPlayScreen(Vec2 playsize)
 	{
 		GetInstance().cameraSize = playsize;
+	}
+
+	void SceneManager::print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics)
+	{
+		double collision_percent = static_cast<double>((collision.count() / loop.count()) * 100.f);
+		double physics_percent = static_cast<double>((physics.count() / loop.count()) * 100.f);
+		double graphics_percent = static_cast<double>((graphics.count() / loop.count()) * 100.f);
+
+		/*std::cout << "Performance View:" << std::endl;
+		std::cout << "Collision: " << collision_percent << "%" << std::endl;
+		std::cout << "Physics: " << physics_percent << "%" << std::endl;
+		std::cout << "Graphics: " << graphics_percent << "%" << std::endl;*/
+
+		UME_ENGINE_INFO("Performance View\n");
+		UME_ENGINE_INFO("Collision: {0}%", collision_percent);
+		UME_ENGINE_INFO("Physics: {0}%", physics_percent);
+		UME_ENGINE_INFO("Graphics: {0}%", graphics_percent);
+
 	}
 }
