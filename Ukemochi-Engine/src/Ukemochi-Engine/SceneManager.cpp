@@ -40,16 +40,11 @@ namespace Ukemochi
     const float ENTITY_ACCEL = 150.f;
     const float PLAYER_FORCE = 1500.f;
 
-    // --- Frame Performance Viewer
-	std::chrono::duration<double> loop_time{};
-	std::chrono::duration<double> collision_time{};
-	std::chrono::duration<double> physics_time{};
-	std::chrono::duration<double> graphics_time{};
+    std::chrono::duration<double> SceneManager::loop_time{};
+    std::chrono::duration<double> SceneManager::collision_time{};
+    std::chrono::duration<double> SceneManager::physics_time{};
+    std::chrono::duration<double> SceneManager::graphics_time{};
 
-	std::chrono::steady_clock::time_point sys_start;
-	std::chrono::steady_clock::time_point sys_end;
-	std::chrono::steady_clock::time_point loop_start;
-	std::chrono::steady_clock::time_point loop_end;
 
 	//bool func_toggle = false;
 
@@ -138,28 +133,28 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
 
-        // load textures
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png",
-                                                                ECS::GetInstance().GetSystem<Renderer>()->
-                                                                current_texture_index); // load texture
+        // // load textures
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
+        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png",
+        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
+        //                                                         current_texture_index); // load texture
         //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -606,9 +601,9 @@ namespace Ukemochi
                     {
                         newObject.AddComponent<SpriteRender>({texturePath, shape});
                     }
-                    //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
-                        newObject.GetComponent<SpriteRender>().texturePath,
-                        ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+                    // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
+                    //     newObject.GetComponent<SpriteRender>().texturePath,
+                    //     ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
                     ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 					if (tag == "Player")
 					{
