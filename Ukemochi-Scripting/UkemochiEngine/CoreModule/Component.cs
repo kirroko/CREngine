@@ -33,7 +33,7 @@ namespace Ukemochi
             // gameObject.AddComponent<typeof(T).BaseType>();
         }
 
-        public bool HasComponent<T>() where T : Component
+        public bool HasComponent<T>() where T : Component, new()
         {
             Type componentType = typeof(T);
             return EngineInterop.HasComponent(GetInstanceID(), componentType);
@@ -44,7 +44,7 @@ namespace Ukemochi
             if (!HasComponent<T>())
                 return null;
 
-            T component = new T();
+            T component = new T() {_id = this._id};
             return component;
         }
         

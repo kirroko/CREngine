@@ -30,9 +30,9 @@ void DataSyncSystem::SyncData() const
         auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
         auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
-        auto& go = GameObjectManager::GetInstance().GetGO(entity);
-        MonoObject* TransPoint = go.GetManagedInstance("Transform");
-        MonoObject* rbPoint = go.GetManagedInstance("Rigidbody2D");
+        auto* go = GameObjectManager::GetInstance().GetGO(entity);
+        MonoObject* TransPoint = go->GetManagedInstance("Transform");
+        MonoObject* rbPoint = go->GetManagedInstance("Rigidbody2D");
         
         ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "position", transform.position.x, transform.position.y);
         
