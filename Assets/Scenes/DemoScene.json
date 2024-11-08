@@ -17,7 +17,7 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [800.0, 675.0],
+                    "Position": [300.0, 675.0],
                     "Rotation": 0.0,
                     "Scale": [100.0, 100.0]
                 }, {
@@ -49,7 +49,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
                     "Shape": 0
-                },{
+                }, {
                     "Name": "Script",
                     "Path": "../Assets/Scripts/Player.cs",
                     "ClassName": "Player"
@@ -129,10 +129,14 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
+                }, {
+                    "Name": "Script",
+                    "Path": "../Assets/Scripts/Enemy.cs",
+                    "ClassName": "Enemy"
                 }]
         }, {
-            "Name": "GameObject",
-            "Tag": "Default",
+            "Name": "Enemy2",
+            "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
                     "Position": [400.0, 225.0],
@@ -167,10 +171,14 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
+                }, {
+                    "Name": "Script",
+                    "Path": "../Assets/Scripts/Enemy.cs",
+                    "ClassName": "Enemy"
                 }]
         }, {
-            "Name": "GameObject",
-            "Tag": "Default",
+            "Name": "Enemy3",
+            "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
                     "Position": [1200.0, 225.0],
@@ -205,6 +213,10 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
+                }, {
+                    "Name": "Script",
+                    "Path": "../Assets/Scripts/Enemy.cs",
+                    "ClassName": "Enemy"
                 }]
         }, {
             "Name": "GameObject",

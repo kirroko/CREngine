@@ -25,21 +25,32 @@ using namespace Ukemochi;
 // Static member initialization, this is where we register a function to create a component via a name.
 // C# will call addcomponent with the component name and the instance of the component
 // We will then call the function to create the component and add it to the GameObject in C++ side
-std::unordered_map<std::string,std::function<void(GameObject&,MonoObject*)>> GameObjectManager::componentRegistry;
+
+std::unordered_map<MonoType*,std::function<bool(EntityID)>> GameObjectManager::s_EntityHasCompoentFuncs;
+
 
 GameObjectManager::GameObjectManager()
 {
     RegisterComponents();
 }
 
+template <typename Component>
+void GameObjectManager::RegisterComponent()
+{
+    std::string_view typeName = typeid(Component).name();
+    size_t pos = typeName.find_last_of(':');
+    std::string_view structName = typeName.substr(pos + 1);
+    std::string managedTypename = fmt::format("Ukemochi.{}", structName);
+
+    MonoType* managedType = mono_reflection_type_from_name(managedTypename.data(), ScriptingEngine::GetInstance().GetCoreAssemblyImage());
+    UME_ENGINE_ASSERT(managedType, "Failed to get managed type for component")
+    s_EntityHasCompoentFuncs[managedType] = [](EntityID id) { return ECS::GetInstance().HasComponent<Component>(id);};
+}
+
 void GameObjectManager::RegisterComponents()
 {
-    // TODO: This is a hacky way to register components for C#, might have to change this.. 
-    componentRegistry["Transform"] = [](GameObject& go, MonoObject* instance)
-    {
-        go.SetManagedComponentInstance(instance, "Transform");
-    };
-    // TODO: More components to be added here
+    RegisterComponent<Transform>();
+    RegisterComponent<Rigidbody2D>();
 }
 
 GameObject& GameObjectManager::CreateObject(const std::string& name, const std::string& tag)
@@ -69,6 +80,8 @@ GameObject& GameObjectManager::CreatePrefabObject(const std::string& prefabPath)
 void GameObjectManager::DestroyObject(EntityID id)
 {
     // Before we erase, we tell ECS to destroy the entity
+    if(ECS::GetInstance().HasComponent<Script>(id))
+        ECS::GetInstance().GetComponent<Script>(id).instance = nullptr;
     GameObjectFactory::DestroyObject(*m_GOs[id]);
     m_GOs.erase(id);
 }
@@ -86,9 +99,15 @@ GameObject* GameObjectManager::GetGOByTag(const std::string& tag) const
     return nullptr;
 }
 
-GameObject& GameObjectManager::GetGO(EntityID id)
+GameObject* GameObjectManager::GetGO(EntityID id)
 {
-    return *m_GOs[id];
+    auto it = m_GOs.find(id);
+    if (it != m_GOs.end())
+    {
+        return it->second.get();
+    }
+    UME_ENGINE_ERROR("GameObject with ID {0} not found", id);
+    return nullptr;
 }
 
 std::vector<GameObject*> GameObjectManager::GetAllGOs() const

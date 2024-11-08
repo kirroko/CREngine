@@ -31,6 +31,8 @@ namespace Ukemochi
         MonoAssembly* CoreAssembly = nullptr;
         MonoAssembly* ClientAssembly = nullptr;
 
+        MonoImage* m_pCoreAssemblyImage = nullptr;
+
         ScriptingEngine(const ScriptingEngine&) = delete;
         ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
@@ -111,6 +113,12 @@ namespace Ukemochi
         void Reload();
 
         /**
+         * @brief Get the core assembly image
+         * @return the core assembly image
+         */
+        MonoImage* GetCoreAssemblyImage() const;
+
+        /**
          * @brief Instantiate C# struct object
          * @param structName the struct name
          * @return an instance of the struct
@@ -154,7 +162,23 @@ namespace Ukemochi
          * @param fieldName the field name
          * @param value the value to be set
          */
-        void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
+        static void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
+
+        /**
+         * @brief Set the value of a field in a C# class. Value is of type float
+         * @param instance the instance of the class
+         * @param fieldName the field name
+         * @param value the value to be set
+         */
+        static void SetMonoFieldValueFloat(MonoObject* instance, const std::string& fieldName, float* value);
+
+        /**
+         * @brief Set the value of a field in a C# class
+         * @param instance the instance of the class
+         * @param fieldName the field name
+         * @param value the value to be set
+         */
+        static void SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName, const std::string& value);
 
         /**
          * @brief Set the value of a field in a C# class. Value is of type unsigned long long
@@ -162,7 +186,7 @@ namespace Ukemochi
          * @param fieldName the field name
          * @param value the value to be set
          */
-        void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
+        static void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
 
         /**
          * @brief Set the value of a property in a C# class
@@ -182,12 +206,12 @@ namespace Ukemochi
 
         /**
          * @brief Set the value of a Vector2 field in a C# class
-         * @param instance the instance of the class
+         * @param instanceClass the instance of the class
          * @param propertyName the field name
          * @param x 
          * @param y 
          */
-        void SetVector2Property(MonoObject* instance, const std::string& propertyName, float x, float y);
+        void SetVector2Property(MonoObject* instanceClass, const std::string& propertyName, float x, float y);
 
         /**
         * @brief Convert a MonoString to UTF8(std::string), This function has error handling and will return an empty string

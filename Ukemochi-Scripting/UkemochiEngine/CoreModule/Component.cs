@@ -20,7 +20,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public abstract class Component : Object
     {
@@ -33,10 +33,19 @@ namespace UkemochiEngine.CoreModule
             // gameObject.AddComponent<typeof(T).BaseType>();
         }
 
-        public T GetComponent<T>() where T : Component
+        public bool HasComponent<T>() where T : Component, new()
         {
-            EngineInterop.LogMessage("Getting component");
-            return gameObject.GetComponent<T>();
+            Type componentType = typeof(T);
+            return EngineInterop.HasComponent(GetInstanceID(), componentType);
+        }
+
+        public T GetComponent<T>() where T : Component, new()
+        {
+            if (!HasComponent<T>())
+                return null;
+
+            T component = new T() {_id = this._id};
+            return component;
         }
         
         // ==================== INTERNAL METHODS =======================

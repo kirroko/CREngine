@@ -18,13 +18,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using System;
 
-namespace UkemochiEngine.CoreModule
+namespace Ukemochi
 {
     public class BaseScript : Component
     {
-        // ==================== PROPERTIES ====================
-        
-        
         // ==================== METHODS ====================
         public virtual void Start()
         {
