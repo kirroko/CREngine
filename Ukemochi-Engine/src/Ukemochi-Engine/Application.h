@@ -2,9 +2,9 @@
 /*!
 \file       Application.h
 \par		Ukemochi
-\author 	HURNG Kai Rui, h.kairui, 230xxxx, h.kairui\@digipen.edu (80%)
-\co-authors x, x, 230xxxx, x\@digipen.edu (x%)
-			Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (5%)
+\author 	HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (50%)
+\co-authors TAN Si Han, t.sihan , 2301264, t.sihan\@digipen.edu (30%)
+			Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (15%)
 			Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (5%)
 			x, x, 230xxxx, x\@digipen.edu (x%)
 \par        Course: CSD2400/CSD2401

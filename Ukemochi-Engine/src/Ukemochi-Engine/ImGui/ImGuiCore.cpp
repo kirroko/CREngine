@@ -346,6 +346,12 @@ namespace Ukemochi
 
         ImGui::Begin("Scene Browser");
 
+        if (es_current == ENGINE_STATES::ES_PLAY)
+        {
+            ImGui::End();
+            return;
+        }
+
         // Display the list of scenes
         static int selectedSceneIndex = 0;
         // State variable to manage the visibility of the input field for saving a scene

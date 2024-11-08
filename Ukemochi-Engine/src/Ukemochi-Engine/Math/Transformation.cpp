@@ -3,7 +3,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\co-author  TAN Shun Zhi Tomy, t.shunzhitomy, , t.shunzhitomy@digipen.edu
+co-author  TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
 \date       Nov 3, 2024
 \brief      This file contains the definition of the Transformation system.
 

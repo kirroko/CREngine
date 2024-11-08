@@ -60,24 +60,8 @@ namespace Ukemochi
 
 		std::string& GetCurrScene();
 
-		//void LoadAndInitScene();
-
-		//// Load the scene from a file or data source
-		//void LoadScene();
-
 		// Load save file to Scene
 		void LoadSaveFile(const std::string& file_name);
-
-		//// Initialize the scene entities and systems
-		//void InitScene();
-
-		//// Update the scene and its entities
-		//void Update(double deltaTime);
-
-		//void UpdateScenes(double deltaTime);
-
-		//// Clear current scene (entities and resources)
-		//void ClearScene();
 
 		// Save the current scene to a file
 		void SaveScene(const std::string& file_name);

@@ -4,7 +4,7 @@
 			for handling OpenGL rendering, including setting up shaders, buffers,
 			textures, and rendering 2D objects like boxes and circles.
  * @author  t.shunzhitomy@digipen.edu
- * @co-author h.kairui@digipen.edu
+ * @co-author  t.sihan@digipen.edu
  * @date    25/09/2024
  */
 #ifndef RENDERER_CLASS_H

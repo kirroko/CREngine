@@ -5,6 +5,7 @@
 			and rendering 2D objects like boxes and circles.
  * @author  t.shunzhitomy@digipen.edu
  * @co-author h.kairui@digipen.edu
+ * @co-author  t.sihan@digipen.edu
  * @date    25/09/2024
  */
 #include "PreCompile.h"
@@ -84,8 +85,8 @@ void Renderer::init()
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
 	// Add text objects
-	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 200.0f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 150.0f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
 	initAnimationEntities();
 	
