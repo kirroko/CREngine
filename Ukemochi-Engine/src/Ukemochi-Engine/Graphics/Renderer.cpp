@@ -434,8 +434,6 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 
 		textureCache[texturePath] = texture;
 		texturePathsOrder.push_back(texturePath);
-		// Log successful loading and texture ID
-		//std::cout << "Loaded texture " << texturePath << " with ID: " << texture->ID << " at index " << textureIndex << std::endl;
 
 		textureIndex++;
 	}
@@ -452,7 +450,6 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 	int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
 	std::vector<int> textureUnits(textureCount);
 
-	//std::cout << "Binding textures to shader units..." << std::endl;
 
 	for (int i = 0; i < texturePathsOrder.size() && nextAvailableTextureUnit < 32; ++i) {
 		const auto& path = texturePathsOrder[i];
@@ -472,7 +469,6 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
 			glBindTexture(GL_TEXTURE_2D, texture->ID);
 
-			//std::cout << "Bound texture ID " << texture->ID << " to texture unit " << nextAvailableTextureUnit << std::endl;
 			textureUnits[i] = nextAvailableTextureUnit;
 
 			// Increment to the next available texture unit
@@ -493,8 +489,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Verify that the texture is bound to the expected unit
 		GLint boundTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
-		//std::cout << "Expected texture ID " << texture->ID << " bound to unit " << i
-		//	<< ", actual bound ID: " << boundTexture << std::endl;
+
 	}
 	// Pass the array of texture unit indices to the shader uniform array "textures"
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
@@ -579,11 +574,9 @@ void Renderer::render()
 	// Render entities
 	batchRenderer->beginBatch();
 	int entity_count = 0;
-	//std::cout << "Number of entities to render: " << m_Entities.size() << std::endl;
 
 	for (auto& entity : m_Entities)
 	{
-		//std::cout << "Rendering entity " << entity_count << std::endl;
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
@@ -648,12 +641,9 @@ void Renderer::render()
 			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
 			continue;
 		}
-		//std::cout << "Using Texture ID: " << textureID << " for sprite at " << transform.position.x << ", " << transform.position.y << std::endl;
 
-		//int normalizedTexID = textureID - 2;
 		int mappedTextureUnit = textureIDMap[textureID];
-		// Render using batch renderer, passing the position and size directly
-		//batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), normalizedTexID);
+
 		// Draw the sprite using the batch renderer, passing the updated UV coordinates
 		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 
@@ -744,14 +734,6 @@ void Renderer::cleanUp()
 
 	texturePathsOrder.clear();
 	textureIDMap.clear();
-
-	// Delete the shader program
-	//if (shaderProgram)
-	//{
-	//	shaderProgram->Delete();
-	//	delete shaderProgram;  // Deallocate memory
-	//	shaderProgram = nullptr;
-	//}
 
 	if (framebuffer)
 		glDeleteFramebuffers(1, &framebuffer);

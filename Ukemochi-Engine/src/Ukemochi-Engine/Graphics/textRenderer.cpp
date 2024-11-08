@@ -66,7 +66,6 @@ void TextRenderer::initBuffers()
  */
 void TextRenderer::loadTextFont(const std::string& fontName, const char* font_path)
 {
-	std::cout << "Loading font: " << fontName << " from path: " << font_path << std::endl;
 	FT_Face face;
 
 	// Loads Font Face from the font_path variable provided

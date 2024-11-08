@@ -69,7 +69,6 @@ void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader)
     ebo->Unbind();
 
     shader = sharedShader;
-    std::cout << "BatchRenderer initialized with maxSprites: " << maxSprites << std::endl;
 }
 
 /*!
@@ -174,7 +173,6 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
     vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
 
-   // std::cout << "Sprite rotation angle: " << rotation << " radians" << std::endl;
 }
 
 /*!
@@ -202,7 +200,6 @@ void BatchRenderer2D::flush()
     ebo->Bind();
     shader->Activate();
 
-    //std::cout << "Flushing batch with " << vertices.size() << " vertices and " << indices.size() << " indices." << std::endl;
     // Calculate the correct index count based on the number of quads in the batch
     int indexCount = (vertices.size() / 4) * 6; // Each quad has 6 indices
 
@@ -212,7 +209,5 @@ void BatchRenderer2D::flush()
     ebo->Unbind();
 
     vertices.clear();
-   // std::cout << "Batch cleared after flush." << std::endl;
-
 }
 

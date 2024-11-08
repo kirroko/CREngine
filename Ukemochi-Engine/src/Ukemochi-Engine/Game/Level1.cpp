@@ -103,7 +103,6 @@ namespace Ukemochi
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		std::cout << ECS::GetInstance().GetSystem<Renderer>()->current_texture_index << std::endl;
 		p_spriteRender.animated = true;
 
 		// BACKGROUND OBJECT
