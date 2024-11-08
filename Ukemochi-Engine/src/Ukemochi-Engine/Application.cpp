@@ -96,39 +96,68 @@ namespace Ukemochi
 		// imguiInstance.ImGuiInit(glfwWindow);
 
 		auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
-		fileWatcher->Start([fileWatcher](const std::string &path_to_watch, FileStatus status)
-						   {
-            // Logging levels:
-            // TRACE (Capture execution of code)
-            // DEBUG (Capture relevant detail of event)
-            // INFO (Capture an event that occurred)
-            // WARN (Indicate unexpected event, disrupt or delay)
-            // ERROR (Capture a system interfering with functionalities)
-            // FATAL (Capture a system crash)
+		std::weak_ptr<FileWatcher> weakFileWatcher = fileWatcher;
 
-            // std::filesystem::path path(path_to_watch);
-            // path.filename();
-            switch (status)
-            {
-            case Ukemochi::FileStatus::created:
-                UME_ENGINE_INFO("File created: {0}", path_to_watch);
-            // std::filesystem::path filePath(path_to_watch);
-            // if(filePath.extension() == ".cs")
-            // {
-            //     // recompile clinet assembly
-            //     ScriptingEngine::GetInstance().CompileScriptAssembly();
-            //     ScriptingEngine::GetInstance().Reload();
-            // }
-                break;
-            case Ukemochi::FileStatus::modified:
-                UME_ENGINE_INFO("File modified: {0}", path_to_watch);
-                break;
-            case Ukemochi::FileStatus::erased:
-                UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
-                break;
-            } });
-		// ProjectHandler::GenerateSolutionAndProject("..\\Assets");
+		fileWatcher->Start([weakFileWatcher](const std::string& path_to_watch, FileStatus status)
+			{
+				if (auto fileWatcher = weakFileWatcher.lock()) // Convert weak_ptr to shared_ptr if still valid
+				{
+					switch (status)
+					{
+					case Ukemochi::FileStatus::created:
+						UME_ENGINE_INFO("File created: {0}", path_to_watch);
+						break;
+					case Ukemochi::FileStatus::modified:
+						UME_ENGINE_INFO("File modified: {0}", path_to_watch);
+						break;
+					case Ukemochi::FileStatus::erased:
+						UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
+						break;
+					}
+				}
+				else
+				{
+					// The fileWatcher object has been destroyed, so no action is taken.
+				}
+			});
 		fwInstance = fileWatcher; // Keep a reference to the file watch instance
+
+		fileWatcher->Stop();
+		fileWatcher.reset();
+		//auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
+		//fileWatcher->Start([fileWatcher](const std::string &path_to_watch, FileStatus status)
+		//				   {
+  //          // Logging levels:
+  //          // TRACE (Capture execution of code)
+  //          // DEBUG (Capture relevant detail of event)
+  //          // INFO (Capture an event that occurred)
+  //          // WARN (Indicate unexpected event, disrupt or delay)
+  //          // ERROR (Capture a system interfering with functionalities)
+  //          // FATAL (Capture a system crash)
+
+  //          // std::filesystem::path path(path_to_watch);
+  //          // path.filename();
+  //          switch (status)
+  //          {
+  //          case Ukemochi::FileStatus::created:
+  //              UME_ENGINE_INFO("File created: {0}", path_to_watch);
+  //          // std::filesystem::path filePath(path_to_watch);
+  //          // if(filePath.extension() == ".cs")
+  //          // {
+  //          //     // recompile clinet assembly
+  //          //     ScriptingEngine::GetInstance().CompileScriptAssembly();
+  //          //     ScriptingEngine::GetInstance().Reload();
+  //          // }
+  //              break;
+  //          case Ukemochi::FileStatus::modified:
+  //              UME_ENGINE_INFO("File modified: {0}", path_to_watch);
+  //              break;
+  //          case Ukemochi::FileStatus::erased:
+  //              UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
+  //              break;
+  //          } });
+		//// ProjectHandler::GenerateSolutionAndProject("..\\Assets");
+		//fwInstance = fileWatcher; // Keep a reference to the file watch instance
 	}
 
 	Application::~Application()
@@ -141,6 +170,8 @@ namespace Ukemochi
 			fwInstance->Stop();
 
 		ScriptingEngine::GetInstance().ShutDown();
+
+		fwInstance.reset();
 	}
 
 	void Application::EventIsOn(Event &e)
