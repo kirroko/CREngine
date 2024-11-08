@@ -1,4 +1,19 @@
-﻿using System;
+﻿/* Start Header
+*****************************************************************/
+/*!
+\file       Enemy.cs
+\author     Tan Si Han, t.sihan, 2301264
+\par        email: t.sihan\@digipen.edu
+\date       Nov 8, 2024
+\brief      Basic Enemy StateMachine in Csharp
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
+using System;
 using System.Runtime.CompilerServices;
 using Ukemochi;
 using System.Numerics;

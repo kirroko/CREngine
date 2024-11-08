@@ -132,31 +132,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
-
-        // // load textures
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png",
-        //                                                         ECS::GetInstance().GetSystem<Renderer>()->
-        //                                                         current_texture_index); // load texture
-        //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-
+        //load Asset Manager Texture
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -166,6 +142,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
+        //Get Scenelist
         UseImGui::LoadScene();
 
         //if fresh start
@@ -188,17 +165,12 @@ namespace Ukemochi
         // Initialize the graphics and collision system
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
         ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
-		ECS::GetInstance().GetSystem<Renderer>()->init();
+		
+        ECS::GetInstance().GetSystem<Renderer>()->init();
 		ECS::GetInstance().GetSystem<Collision>()->Init();
-
-
-        // Set the player object in the Renderer
-        //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
-
-        //// Set the player object in the Transformation
-        //ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
     }
 
+     //When in game Engine State
     void SceneManager::SceneMangerUpdate()
     {
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
@@ -208,9 +180,12 @@ namespace Ukemochi
         SceneManagerDraw();
     }
 
+    //When engine is Running the scene
     void SceneManager::SceneMangerRunSystems()
     {
         loop_start = std::chrono::steady_clock::now();
+        /* Level 1 Stuff For Ref, will be removed
+
 		// if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
 		// {
 		// 	GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
@@ -260,16 +235,19 @@ namespace Ukemochi
 		
 
         // Renderer Inputs
-        /*if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
+        if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
         if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_T))
             ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
         else if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_Y))
             ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
-        else*/
+        else
+        */
+
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
 
+        /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
         //{
@@ -283,6 +261,7 @@ namespace Ukemochi
         //	audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
         //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
         //}
+        */
         if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
         {
             ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSoundsInGroup(LEVEL1);
@@ -399,37 +378,6 @@ namespace Ukemochi
     {
         return GetInstance().sceneName;
     }
-
-    //void SceneManager::LoadAndInitScene()
-    //{
-    //	//current state != restart
-    //	if (gsm_current != GS_STATES::GS_RESTART)
-    //	{
-    //		//LoadScene();
-    //	}
-    //	else
-    //	{
-    //		gsm_next = gsm_current = gsm_previous;
-    //	}
-
-    //	//Init Scene
-    //	InitScene();
-    //}
-
-    //void SceneManager::LoadScene()
-    //{
-    //	//update GSM
-    //	GSM_Update();
-
-    //	// Load resources associated with the scene
-    //	gsm_fpLoad();
-
-    //	//if save file exist
-    //	//look for save file
-    //	//if exist
-    //	
-    //	//LoadSaveFile(sceneFile);
-    //}
 
     void SceneManager::LoadSaveFile(const std::string& file_name)
     {
@@ -651,35 +599,6 @@ namespace Ukemochi
         // std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
         UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
     }
-
-    //void SceneManager::InitScene()
-    //{
-    //	//gsm_fpInitialize();
-    //	//init ECS here e.g. player
-    //}
-
-    //void SceneManager::Update(double deltaTime)
-    //{
-    //	(void)deltaTime;
-    //	//gsm_fpDraw();
-    //}
-
-    //void SceneManager::UpdateScenes(double deltaTime)
-    //{
-    //	(void)deltaTime;
-    //	//Update
-    //	//gsm_fpUpdate();
-    //	//update ECS
-
-    //	//Draw
-    //	//gsm_fpDraw();
-    //}
-
-    //void SceneManager::ClearScene()
-    //{
-    //	gsm_fpUnload();
-    //	// Clear the ECS entities and components
-    //}
 
     void SceneManager::SaveScene(const std::string& file_name)
     {
