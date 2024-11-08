@@ -26,7 +26,7 @@ public class Enemy : BaseScript
 
     public override void Start()
     {
-        direction = new System.Numerics.Vector2 (1, 1);
+        direction = new System.Numerics.Vector2 (0, 0);
         enemyStates = EnemyStates.ROAM_STATE;
         enemyTransform = GetComponent<Transform>();
         playerObj = GameObject.FindWithTag("Player");
@@ -83,6 +83,10 @@ public class Enemy : BaseScript
                 float speed = 150; // Adjust speed value as necessary
                 GetComponent<Rigidbody2D>().Velocity = new Ukemochi.Vector2(direction.X * speed, direction.Y * speed);
                 //Debug.Log("Velocity: " + GetComponent<Rigidbody2D>().Velocity);
+            }
+            else
+            {
+                GetComponent<Rigidbody2D>().Velocity = Ukemochi.Vector2.Zero;
             }
             //System.Numerics.Vector2 newDir = new System.Numerics.Vector2(1 / (playerObj.GetComponent<Transform>().position.x - enemyTransform.position.x), 1 / (playerObj.GetComponent<Transform>().position.y - enemyTransform.position.y));
             //direction = 0.95f * direction + 0.05f * newDir;
