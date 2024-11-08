@@ -47,8 +47,7 @@ Renderer::~Renderer()
 }
 
 /*!
- * @brief Initializes the renderer, including loading shaders.
- * This function should be called once at the beginning to set up necessary resources.
+ * @brief Initializes the renderer, including buffers, and text renderer.
  */
 void Renderer::init()
 {
@@ -96,6 +95,9 @@ void Renderer::init()
 	
 }
 
+/*!
+ * @brief Sets up the framebuffer for off-screen rendering.
+ */
 void Renderer::setupFramebuffer()
 {
 	glGenFramebuffers(1, &framebuffer);
@@ -127,6 +129,11 @@ void Renderer::setupFramebuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+/*!
+ * @brief Resizes the framebuffer and adjusts the color and render buffers to fit the new dimensions.
+ * @param width The new width for the framebuffer.
+ * @param height The new height for the framebuffer.
+ */
 void Renderer::resizeFramebuffer(int width, int height) {
 	// Resize color texture
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
@@ -140,6 +147,9 @@ void Renderer::resizeFramebuffer(int width, int height) {
 	//screen_height = height;
 }
 
+/*!
+ * @brief Initializes the screen quad for rendering the framebuffer texture to the screen.
+ */
 void Renderer::initScreenQuad()
 {
 	float quadVertices[] = {
@@ -165,6 +175,9 @@ void Renderer::initScreenQuad()
 	framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
 }
 
+/*!
+ * @brief Begins rendering to the framebuffer.
+ */
 void Renderer::beginFramebufferRender()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -172,6 +185,9 @@ void Renderer::beginFramebufferRender()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+/*!
+ * @brief Ends rendering to the framebuffer.
+ */
 void Renderer::endFramebufferRender()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -186,6 +202,9 @@ void Renderer::renderScreenQuad()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+/*!
+ * @brief Renders the framebuffer texture to the screen.
+ */
 void Renderer::renderToFramebuffer()
 {
 	beginFramebufferRender();
@@ -209,11 +228,18 @@ void Renderer::renderToFramebuffer()
 	//glEnable(GL_DEPTH_TEST);
 }
 
+/*!
+ * @brief Gets the color buffer texture of the framebuffer.
+ * @return The texture ID of the framebuffer's color buffer.
+ */
 GLuint Renderer::getTextureColorBuffer() const
 {
 	return textureColorbuffer;  // this is framebuffer's color texture
 }
 
+/*!
+ * @brief Initializes vertex and index buffers for drawing a 2D box.
+ */
 void Renderer::initBoxBuffers()
 {
 	// Define vertices for a box (centered around origin)
@@ -235,6 +261,9 @@ void Renderer::initBoxBuffers()
 	indices_count.push_back(6);
 }
 
+/*!
+ * @brief Initializes vertex and index buffers for drawing a wireframe outline of a 2D box.
+ */
 void Renderer::initDebugBoxBuffers()
 {
 	// Define vertices for a box (centered around origin)
@@ -258,6 +287,10 @@ void Renderer::initDebugBoxBuffers()
 	indices_count.push_back(4); // 4 lines with 2 vertices each
 }
 
+/*!
+ * @brief Initializes vertex and index buffers for drawing a 2D circle with texture mapping.
+ * @param segments The number of segments to approximate the circle.
+ */
 void Renderer::initCircleBuffers(GLuint segments)
 {
 
@@ -308,6 +341,11 @@ void Renderer::initCircleBuffers(GLuint segments)
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), indices.data(), indices.size() * sizeof(GLuint));
 }
 
+/*!
+ * @brief Initializes vertex and index buffers for drawing a wireframe outline of a 2D circle.
+ * @param segments The number of segments to approximate the circle.
+ */
+
 void Renderer::initCircleOutlineBuffers(GLuint segments)
 {
 	std::vector<GLfloat> vertices;
@@ -338,6 +376,9 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
 }
 
+/*!
+ * @brief Initializes buffers for animated sprite rendering.
+ */
 void Renderer::initAnimationBuffers()
 {
 	// Define the vertices with placeholder texture coordinates.
@@ -363,6 +404,7 @@ void Renderer::initAnimationBuffers()
  * @brief Loads and sets up a texture based on the given file path.
  * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
  * @param texturePath The file path to the texture to be loaded.
+ * @param textureIndex Reference to the texture index, incremented for each new texture loaded.
  */
 void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 {
@@ -397,6 +439,10 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 
 }
 
+/*!
+ * @brief Binds textures to OpenGL texture units and sets them up in the shader.
+ * @param shader The shader program to bind textures to.
+ */
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
 	// Set textureCount based on the number of unique textures, limited to 32
@@ -454,8 +500,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 
 
 /*!
- * @brief Loads and sets up the shaders to be used for rendering.
- * Currently loads vertex and fragment shaders from the specified paths.
+ * @brief Sets up and compiles shaders used by the renderer.
  */
 void Renderer::setUpShaders()
 {
@@ -539,23 +584,13 @@ void Renderer::render()
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// Construct model matrix with scaling integrated
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
-		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
-		
-
-		//// Set up the model matrix
-		//glm::mat4 model{};
-
-		//// Copy elements from custom matrix4x4 to glm::mat4
-		//for (int i = 0; i < 4; ++i)
-		//	for (int j = 0; j < 4; ++j)
-		//		model[i][j] = transform.transform_matrix.m2[j][i];
-
-
-		// Combine matrices into the final MVP matrix
-		//glm::mat4 mvp = projection * view * model;
+		// Set up the model matrix
+		glm::mat4 model{};
+		 
+		// Copy elements from custom matrix4x4 to glm::mat4
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				model[i][j] = transform.transform_matrix.m2[j][i];
 
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
@@ -701,14 +736,6 @@ void Renderer::cleanUp()
 	// Clear texture cache
 	textureCache.clear();
 
-	// Delete the shader program
-	//if (shaderProgram)
-	//{
-	//	shaderProgram->Delete();
-	//	delete shaderProgram;  // Deallocate memory
-	//	shaderProgram = nullptr;
-	//}
-
 	if (framebuffer)
 		glDeleteFramebuffers(1, &framebuffer);
 	framebuffer = 0;
@@ -773,6 +800,9 @@ void Renderer::drawCircle()
 	vaos[CIRCLE_VAO]->Unbind();
 }
 
+/*!
+ * @brief Toggles scale transformation for objects.
+ */
 void Renderer::ToggleInputsForScale()
 {
 	scale_enabled = static_cast<GLboolean>(!scale_enabled);
@@ -783,6 +813,9 @@ void Renderer::ToggleInputsForScale()
 		scale_factor = 1.0f;
 }
 
+/*!
+ * @brief Toggles rotation transformation for objects.
+ */
 void Renderer::ToggleInputsForRotation()
 {
 	rotation_enabled = static_cast<GLboolean>(!rotation_enabled);
@@ -792,6 +825,9 @@ void Renderer::ToggleInputsForRotation()
 	}
 }
 
+/*!
+ * @brief Draws the outline of a 2D box using a wireframe.
+ */
 void Renderer::drawBoxOutline()
 {
 	debug_shader_program->Activate();
@@ -811,6 +847,9 @@ void Renderer::drawBoxOutline()
 	debug_shader_program->Deactivate();
 }
 
+/*!
+ * @brief Draws the outline of a 2D circle using a wireframe.
+ */
 void Renderer::drawCircleOutline()
 {
 	debug_shader_program->Activate();
@@ -827,6 +866,15 @@ void Renderer::drawCircleOutline()
 	vaos[CIRCLE_OUTLINE]->Unbind();
 }
 
+/*!
+ * @brief Updates the UV coordinates for the current frame of an animation.
+ * @param currentFrame The current frame index.
+ * @param frameWidth Width of each frame in pixels.
+ * @param frameHeight Height of each frame in pixels.
+ * @param totalWidth Total width of the sprite sheet.
+ * @param totalHeight Total height of the sprite sheet.
+ * @param uvCoordinates Output UV coordinates for the current frame.
+ */
 void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
 {
 	// Calculate column and row of the current frame
@@ -850,7 +898,9 @@ void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameH
 	uvCoordinates[7] = uvY + uvHeight;
 }
 
-
+/*!
+ * @brief Draws an animated 2D box.
+ */
 void Renderer::drawBoxAnimation()
 {
 	// Activate the shader program and bind the texture.
@@ -863,18 +913,29 @@ void Renderer::drawBoxAnimation()
 }
 
 /*!
-* @brief Create a text object in the text renderer.
-*/
+ * @brief Creates a text object in the text renderer with the specified properties.
+ * @param id Unique identifier for the text object.
+ * @param label Text content of the object.
+ * @param pos Position of the text in screen coordinates.
+ * @param scale Scale of the text.
+ * @param color Color of the text.
+ * @param font_name Font to be used for rendering the text.
+ */
 void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
 {
 	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
 }
 
 /*!
-* @brief Update a text object in the text renderer.
-*/
+ * @brief Updates the text of an existing text object.
+ * @param id Identifier of the text object.
+ * @param newText The new text content.
+ */
 void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
+/*!
+ * @brief Initializes animation entities, creating idle and running animations for the player entity.
+ */
 void Renderer::initAnimationEntities()
 {
 	int playerEntityID = 1; // Replace with actual entity IDs from your ECS or game logic
@@ -888,6 +949,9 @@ void Renderer::initAnimationEntities()
 
 }
 
+/*!
+ * @brief Toggles slow-motion mode by adjusting animation frame duration.
+ */
 void Renderer::toggleSlowMotion()
 {
 	// Toggle slow-motion state
@@ -917,6 +981,9 @@ void Renderer::toggleSlowMotion()
 	}
 }
 
+/*!
+ * @brief Handles key inputs for switching between idle and running animations based on movement keys.
+ */
 void Renderer::animationKeyInput()
 {
 	auto& playerSprite = playerObject->GetComponent<SpriteRender>();

@@ -1,6 +1,18 @@
+/*!
+ * @file    TextRenderer.cpp
+ * @brief   Implementation of the TextRenderer class for rendering text using FreeType and OpenGL.
+ * @date    06/11/2024
+ * @author  t.shunzhitomy
+ */
 #include "PreCompile.h"
 #include "TextRenderer.h"
 #include "Camera2D.h"
+
+ /*!
+  * @brief Constructs a TextRenderer and initializes FreeType and text buffers.
+  * @param screenWidth Width of the screen.
+  * @param screenHeight Height of the screen.
+  */
 TextRenderer::TextRenderer(GLuint screenWidth, GLuint screenHeight)
 	: screenWidth(screenWidth), screenHeight(screenHeight)
 {
@@ -16,6 +28,9 @@ TextRenderer::TextRenderer(GLuint screenWidth, GLuint screenHeight)
 	textShaderProgram = new Shader("../Assets/Shaders/text_rendering.vert", "../Assets/Shaders/text_rendering.frag");
 }
 
+/*!
+ * @brief Destructor to release resources, font faces, and FreeType library.
+ */
 TextRenderer::~TextRenderer() {
 	// Clean up resources
 	releaseFaces();
@@ -23,6 +38,9 @@ TextRenderer::~TextRenderer() {
 	delete textShaderProgram;
 }
 
+/*!
+ * @brief Initializes the VAO and VBO for text rendering.
+ */
 void TextRenderer::initBuffers()
 {
 	// Generate and bind the VAO
@@ -41,7 +59,11 @@ void TextRenderer::initBuffers()
 	glBindVertexArray(0);
 }
 
-
+/*!
+ * @brief Loads a font and its characters into memory.
+ * @param fontName Name to associate with the loaded font.
+ * @param font_path Path to the font file.
+ */
 void TextRenderer::loadTextFont(const std::string& fontName, const char* font_path)
 {
 	std::cout << "Loading font: " << fontName << " from path: " << font_path << std::endl;
@@ -69,6 +91,10 @@ void TextRenderer::loadTextFont(const std::string& fontName, const char* font_pa
 		setActiveFont(fontName);
 }
 
+/*!
+ * @brief Sets the active font for rendering.
+ * @param font_name Name of the font to set as active.
+ */
 void TextRenderer::setActiveFont(const std::string& font_name)
 {
 	auto it = fontCharacters.find(font_name);
@@ -81,7 +107,11 @@ void TextRenderer::setActiveFont(const std::string& font_name)
 	}
 }
 
-
+/*!
+ * @brief Loads character glyphs from a font face into a character map.
+ * @param face The font face to load characters from.
+ * @param characterMap Map to store the loaded characters.
+ */
 void TextRenderer::loadCharacters(FT_Face face, std::map<GLchar, Character>& characterMap) 
 {
 	for (GLubyte c = 0; c < 128; c++) {
@@ -112,6 +142,9 @@ void TextRenderer::loadCharacters(FT_Face face, std::map<GLchar, Character>& cha
 	}
 }
 
+/*!
+ * @brief Releases all loaded font faces from memory.
+ */
 void TextRenderer::releaseFaces()
 {
 	// Release each font face stored in the map
@@ -123,17 +156,32 @@ void TextRenderer::releaseFaces()
 	fontFaces.clear();
 }
 
+/*!
+ * @brief Adds a text object for rendering.
+ * @param id Identifier for the text object.
+ * @param textObj The TextObject to add.
+ */
 void TextRenderer::addTextObject(const std::string& id, const TextObject& textObj) 
 {
 	textObjects[id] = textObj;
 }
 
+/*!
+ * @brief Updates the text content of an existing text object.
+ * @param id Identifier for the text object.
+ * @param newText New text content.
+ */
 void TextRenderer::updateTextObject(const std::string& id, const std::string& newText) 
 {
 	if (textObjects.find(id) != textObjects.end())
 		textObjects[id].text = newText;
 }
 
+/*!
+ * @brief Updates the position of an existing text object.
+ * @param id Identifier for the text object.
+ * @param newPosition New position for the text.
+ */
 void TextRenderer::updateTextPosition(const std::string& id, glm::vec2 newPosition) 
 {
 	if (textObjects.find(id) != textObjects.end()) {
@@ -141,6 +189,9 @@ void TextRenderer::updateTextPosition(const std::string& id, glm::vec2 newPositi
 	}
 }
 
+/*!
+ * @brief Renders all added text objects on the screen.
+ */
 void TextRenderer::renderAllText() 
 {
 	textShaderProgram->Activate();
