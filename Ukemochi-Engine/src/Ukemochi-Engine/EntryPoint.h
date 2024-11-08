@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 extern Ukemochi::Application* Ukemochi::CreateApplication();
 
-int main(int argc, char** argv)
+int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 

@@ -152,9 +152,6 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
 	{
-		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
-		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y;
-
 		// Check for mouse left click
 		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
 		{

@@ -3,6 +3,7 @@
 /*!
 \file       ImGuiCore.cpp
 \author     Hurng Kai Rui, h.kairui, 2301278
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
 \par        email: h.kairui\@digipen.edu
 \date       Sept 25, 2024
 \brief      This file contains the implementation of the UseImGui class,
@@ -197,6 +198,23 @@ namespace Ukemochi
         ImGui::End();
     }
 
+    /**
+ * @brief Displays the control panel in the ImGui interface, showing FPS and various control options.
+ *
+ * This function creates a control panel window in ImGui where information such as FPS is displayed,
+ * and controls for interacting with the engine, like starting and stopping the game, are provided.
+ * It provides options to play and stop the game, updating the game state accordingly.
+ *
+ * @param fps The current frames per second (FPS) value, displayed to the user for performance insights.
+ *
+ * @details
+ * The control panel includes:
+ * - **FPS Display**: Shows the current FPS with two decimal precision.
+ * - **Play Button**: On click, saves the current scene, updates the engine state to `ES_PLAY`, and
+ *   initializes the `LogicSystem` to begin game execution.
+ * - **Stop Button**: On click, reloads the current scene from a saved file, updates the engine state to `ES_ENGINE`,
+ *   and halts the game to allow further editing.
+ */
     void UseImGui::ControlPanel(float fps)
     {
         ImGui::Begin("Control Panel"); // Create a new window titled "Control Panel"
@@ -233,13 +251,19 @@ namespace Ukemochi
         ImGui::End(); // End the control panel window
     }
 
+    /**
+ * @brief Loads asset filenames from the `../Assets/Prefabs` directory into `assetFiles`.
+ *
+ * Clears `assetFiles`, then populates it with names of regular files in the `Prefabs` folder.
+ * This updates the asset list dynamically for display in the ImGui interface.
+ */
     void UseImGui::LoadContents()
     {
         // Clear the previous asset list
         assetFiles.clear();
 
         // Load assets from the Assets directory
-        std::string assetsDir = "../Assets";
+        std::string assetsDir = "../Assets/Prefabs";
         for (const auto& entry : std::filesystem::directory_iterator(assetsDir))
         {
             if (entry.is_regular_file())
@@ -273,6 +297,14 @@ namespace Ukemochi
         ImGui::End();
     }
 
+    /**
+ * @brief Displays a content browser window in ImGui for selecting assets.
+ *
+ * Lists assets loaded in `assetFiles` with selectable options. Allows users to refresh the list
+ * and select an asset, updating `filePath` with the full path of the selected item.
+ *
+ * @param filePath A character array to store the path of the selected asset.
+ */
     void UseImGui::LoadScene()
     {
         // Clear the previous asset list
@@ -289,6 +321,16 @@ namespace Ukemochi
         }
     }
 
+    /**
+ * @brief Displays a Scene Browser in ImGui for viewing, saving, and creating scenes.
+ *
+ * - **Automatic Scene Refresh**: Updates the scene list every second.
+ * - **Scene Selection**: Lists available scenes. Selecting a scene saves the current scene and loads the selected one.
+ * - **Save Scene**: Toggles an input field to specify a name for saving the current scene.
+ * - **Create Scene**: Toggles an input field to name and create a new scene, automatically suggesting a unique name.
+ *
+ * This function enables scene management directly through the ImGui interface.
+ */
     void UseImGui::SceneBrowser()
     {
         // Get the current time
@@ -415,11 +457,26 @@ namespace Ukemochi
         ImGui::End();
     }
 
+    /**
+ * @brief Returns the number of scenes in the scene list.
+ *
+ * This function provides the size of the `sceneFiles` list, representing the total number of scenes available.
+ *
+ * @return The number of scenes in the `sceneFiles` list.
+ */
     size_t UseImGui::GetSceneSize()
     {
         return sceneFiles.size();
     }
 
+    /**
+ * @brief Displays detailed information of a `GameObject` in the ImGui interface.
+ *
+ * This function shows the `GameObject`'s ID, name, and tag, and conditionally displays details for any
+ * components attached to the object, such as `Transform` and `Rigidbody2D`.
+ *
+ * @param obj The `GameObject` whose details are displayed.
+ */
     void UseImGui::DisplayEntityDetails(GameObject& obj)
     {
         ImGui::Text("ID: %d", obj.GetInstanceID());
@@ -444,6 +501,14 @@ namespace Ukemochi
         }
     }
 
+    /**
+ * @brief Displays a combo box for selecting a `GameObject` from the current level.
+ *
+ * This function populates a combo box with the names and IDs of all game objects in the current level.
+ * It allows the user to select an entity by index, updating `selectedEntityIndex` based on the selection.
+ *
+ * @param selectedEntityIndex The index of the currently selected entity, which will be updated upon selection.
+ */
     void UseImGui::DisplayEntitySelectionCombo(int& selectedEntityIndex)
     {
         // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
@@ -474,6 +539,14 @@ namespace Ukemochi
                      static_cast<int>(entityNamePointers.size()));
     }
 
+    /**
+ * @brief Removes the selected `GameObject` from the game world.
+ *
+ * This function destroys the `GameObject` at the index specified by `selectedEntityIndex`
+ * and resets the selection index to -1.
+ *
+ * @param selectedEntityIndex The index of the selected entity to be removed.
+ */
     void UseImGui::RemoveSelectedEntity(int& selectedEntityIndex)
     {
         // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
@@ -486,6 +559,16 @@ namespace Ukemochi
         }
     }
 
+    /**
+ * @brief Displays and edits the properties of the selected `GameObject`.
+ *
+ * This function allows editing of the `Transform` and `Rigidbody2D` components
+ * of the `GameObject` using either sliders or input fields. The `modified` flag is set
+ * to `true` whenever a property is changed.
+ *
+ * @param selectedObject The `GameObject` whose properties are being edited.
+ * @param modified A reference to a boolean that is set to `true` when any property is modified.
+ */
     void UseImGui::EditEntityProperties(GameObject* selectedObject, bool& modified)
     {
         if (!selectedObject) return;
@@ -562,11 +645,29 @@ namespace Ukemochi
         }
     }
 
+    /**
+ * @brief Checks if the given file path corresponds to a JSON file.
+ *
+ * This function verifies if the provided file path ends with the `.json` extension.
+ *
+ * @param filePath The path of the file to check.
+ * @return `true` if the file is a JSON file, otherwise `false`.
+ */
     bool IsJsonFile(const std::string& filePath)
     {
         return filePath.size() >= 5 && filePath.substr(filePath.size() - 5) == ".json";
     }
 
+
+    /**
+ * @brief Displays an ImGui interface for managing game entities.
+ *
+ * This function allows users to create, select, edit, and remove game entities.
+ * It validates file paths for entity creation, shows error messages for invalid files,
+ * and lets users modify entity properties such as position, rotation, and scale.
+ *
+ * @return None
+ */
     void UseImGui::ShowEntityManagementUI()
     {
         // Begin a dockable window
@@ -678,6 +779,16 @@ namespace Ukemochi
         ImGui::End();
     }
 
+    /**
+ * @brief Renders the game scene within an ImGui window and handles mouse interaction.
+ *
+ * This function displays the game scene in a "Player Loader" window using a texture from the renderer system.
+ * It also calculates the mouse position relative to the window and updates the play screen with the mouse's
+ * position for interaction. The scene is displayed using ImGui's `Image` widget, and the mouse position
+ * within the window is used to set the play screen coordinates.
+ *
+ * @return None
+ */
     void UseImGui::SceneRender()
     {
         static bool showGameView = true;

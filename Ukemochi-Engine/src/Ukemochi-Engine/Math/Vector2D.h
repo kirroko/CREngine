@@ -50,7 +50,7 @@ namespace Ukemochi
         \param[in] y
          The y coordinate.
         *************************************************************************/
-        Vector2D(float x, float y) : x(x), y(y) {}
+        Vector2D(float x, float y) : x(x), y(y), m{ x, y } {}
 
         /*!***********************************************************************
         \brief

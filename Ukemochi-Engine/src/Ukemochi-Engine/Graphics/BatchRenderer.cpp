@@ -1,3 +1,9 @@
+/*!
+ * @file    BatchRenderer.cpp
+ * @brief   Implementation of the BatchRenderer2D class for efficient sprite rendering.
+ * @author  t.shunzhitomy@digipen.edu
+ * @date    06/11/2024
+ */
 #include "PreCompile.h"
 #include "BatchRenderer.h"
 #include "shaderClass.h"
@@ -6,14 +12,16 @@
 #include "VAO.h"
 #include "Texture.h"
 
+ /*!
+  * @brief Constructs a new BatchRenderer2D object.
+  */
 BatchRenderer2D::BatchRenderer2D(){
     // Initialize batch renderer
 }
 
-//BatchRenderer2D::BatchRenderer2D() {
-//    // Constructor
-//}
-
+/*!
+ * @brief Destroys the BatchRenderer2D object and cleans up resources.
+ */
 BatchRenderer2D::~BatchRenderer2D() {
     // Cleanup VAO, VBO, and EBO
     vao->Delete();
@@ -22,6 +30,10 @@ BatchRenderer2D::~BatchRenderer2D() {
     vertices.clear();
 }
 
+/*!
+ * @brief Initializes the batch renderer with a shared shader and sets up vertex and index buffers.
+ * @param sharedShader The shader to be used for rendering.
+ */
 void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader) 
 {
     // Reserve memory for vertices and indices
@@ -58,25 +70,36 @@ void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader)
     ebo->Unbind();
 
     shader = sharedShader;
-    std::cout << "BatchRenderer initialized with maxSprites: " << maxSprites << std::endl;
 }
 
+/*!
+ * @brief Clears the vertex buffer to start a new batch.
+ */
 void BatchRenderer2D::beginBatch()
 {
     vertices.clear();
 }
 
+/*!
+ * @brief Ends the current batch by flushing it for rendering.
+ */
 void BatchRenderer2D::endBatch()
 {
     flush();
 }
 
+/*!
+ * @brief Creates and configures the VAO for the batch.
+ */
 void BatchRenderer2D::createVertexArray() 
 {
     vao = std::make_unique<VAO>();
     vao->Bind();
 }
 
+/*!
+ * @brief Creates and configures the VBO for the batch and links vertex attributes.
+ */
 void BatchRenderer2D::createVertexBuffer()
 {
     vbo = std::make_unique<VBO>(nullptr, sizeof(Vertex) * maxSprites * 4);
@@ -88,6 +111,15 @@ void BatchRenderer2D::createVertexBuffer()
     vao->LinkAttribInteger(*vbo, 3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, textureID));
 }
 
+/*!
+ * @brief Adds a sprite to the batch, handling rotation and texture information.
+ * @param position Position of the sprite.
+ * @param size Size of the sprite.
+ * @param color Color tint of the sprite.
+ * @param textureID Texture ID to use.
+ * @param uvCoordinates UV coordinates for the texture.
+ * @param rotation Rotation angle in radians.
+ */
 void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation)
 {
     if (vertices.size() >= maxSprites * 4)
@@ -142,41 +174,11 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
     vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
 
-   // std::cout << "Sprite rotation angle: " << rotation << " radians" << std::endl;
 }
 
-//void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color)
-//{
-//    // Check if we need to flush the batch
-//    if (vertices.size() >= maxSprites * 4) 
-//    {
-//        std::cout << "Reached maxSprites in batch, flushing..." << std::endl;
-//        flush();
-//        beginBatch();
-//    }
-//
-//    // Calculate the positions of the four corners of the sprite based on the position and size
-//   // Assuming the center of the sprite is at `position`
-//    glm::vec3 pos1 = glm::vec3(position.x - size.x / 2.0f, position.y - size.y / 2.0f, 0.0f); // Bottom-left
-//    glm::vec3 pos2 = glm::vec3(position.x + size.x / 2.0f, position.y - size.y / 2.0f, 0.0f); // Bottom-right
-//    glm::vec3 pos3 = glm::vec3(position.x + size.x / 2.0f, position.y + size.y / 2.0f, 0.0f); // Top-right
-//    glm::vec3 pos4 = glm::vec3(position.x - size.x / 2.0f, position.y + size.y / 2.0f, 0.0f); // Top-left
-//
-//    // Define UV coordinates for a basic texture mapping (if textures are involved)
-//    glm::vec2 uv1(0.0f, 0.0f); // Bottom-left UV
-//    glm::vec2 uv2(1.0f, 0.0f); // Bottom-right UV
-//    glm::vec2 uv3(1.0f, 1.0f); // Top-right UV
-//    glm::vec2 uv4(0.0f, 1.0f); // Top-left UV
-//
-//    // Push vertices into the batch's vertex buffer
-//    vertices.push_back({ pos1, color, uv1 });
-//    vertices.push_back({ pos2, color, uv2 });
-//    vertices.push_back({ pos3, color, uv3 });
-//    vertices.push_back({ pos4, color, uv4 });
-//
-//}
-
-
+/*!
+ * @brief Flushes the batch, rendering all sprites in the vertex buffer.
+ */
 void BatchRenderer2D::flush() 
 {
     if (vertices.empty()) 
@@ -199,9 +201,8 @@ void BatchRenderer2D::flush()
     ebo->Bind();
     shader->Activate();
 
-    //std::cout << "Flushing batch with " << vertices.size() << " vertices and " << indices.size() << " indices." << std::endl;
     // Calculate the correct index count based on the number of quads in the batch
-    int indexCount = (vertices.size() / 4) * 6; // Each quad has 6 indices
+    int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
@@ -209,7 +210,5 @@ void BatchRenderer2D::flush()
     ebo->Unbind();
 
     vertices.clear();
-   // std::cout << "Batch cleared after flush." << std::endl;
-
 }
 

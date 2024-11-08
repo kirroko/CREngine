@@ -107,7 +107,6 @@ namespace Ukemochi
 		
 		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		std::cout << ECS::GetInstance().GetSystem<Renderer>()->current_texture_index << std::endl;
 		p_spriteRender.animated = true;
 
 		// BACKGROUND OBJECT
@@ -240,8 +239,9 @@ namespace Ukemochi
 		// Circle Creation for Testing
 		/*GameObject circle = GameObjectFactory::CreateObject();
 		circle.AddComponent(Transform{
-			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.f,
-			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.0f},
+			Mtx44{},
+			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.2f,
+			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.5f},
 			0,
 			Vec2{SPRITE_SCALE * 0.5f, SPRITE_SCALE * 0.5f}
 			});

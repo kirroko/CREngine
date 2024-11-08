@@ -36,7 +36,6 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);
-	std::cout << "Generated Texture ID: " << ID << " for texture path: " << image << std::endl;
 	// Assigns the texture to a Texture Unit
 	glActiveTexture(slot);
 	glBindTexture(texType, ID);

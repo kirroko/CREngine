@@ -31,7 +31,7 @@ namespace Ukemochi
     class Transformation : public System
 	{
 	public:
-        EntityID player = -1;
+        int player = -1;
         GameObject* playerObject = nullptr;
         bool isFacingRight{ false };
 
