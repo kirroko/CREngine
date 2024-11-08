@@ -419,7 +419,10 @@ namespace Ukemochi
 		if (box1.tag == "Player" && box2.is_trigger)
 			Trigger_Response(trans1, trans2, box2);
 		else // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+		{
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+		}
 
 		// Play a sound effect on collision
 		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))

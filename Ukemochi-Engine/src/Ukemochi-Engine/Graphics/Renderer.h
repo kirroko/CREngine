@@ -33,6 +33,8 @@
 #include "Ukemochi-Engine/ECS/Entity.h"
 #include "BatchRenderer.h"
 
+#include "../Asset Manager/AssetManager.h"
+
 // Forward
 class TextRenderer;
 class ParticleSystem;
@@ -289,7 +291,7 @@ private:
 			frameDuration = originalFrameDuration;
 		}
 	};
-	std::unordered_map<int, std::vector<Animation>> entity_animations;
+	std::unordered_map<size_t, std::vector<Animation>> entity_animations;
 
 	bool isSlowMotion = false;
 	float slowMotionFactor = 2.0f;
@@ -327,7 +329,8 @@ private:
 	GLuint rbo;
 	std::unique_ptr<VAO> screenQuadVAO;
 	std::unique_ptr<VBO> screenQuadVBO;
-	std::unique_ptr<Shader> framebufferShader;
+	//std::unique_ptr<Shader> framebufferShader;
+	std::shared_ptr<Shader> framebufferShader;
 	void initScreenQuad();
 	void renderScreenQuad();
 
@@ -336,7 +339,7 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
-	EntityID Player = -1;
+	int Player = -1;
 
 	std::unique_ptr<BatchRenderer2D> batchRenderer;
 
@@ -347,11 +350,11 @@ public:
 			playerObject = &player;
 	}
 
-	EntityID GetPlayer()
+	int GetPlayer()
 	{
 		return Player;
 	}
-	void SetPlayer(EntityID id)
+	void SetPlayer(int id)
 	{
 		Player = id;
 	}

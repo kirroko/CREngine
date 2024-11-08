@@ -1,10 +1,29 @@
+/*!
+ * @file    Camera2D.cpp
+ * @brief   Implementation of the Camera class for managing a 2D camera in a game or application.
+ * @author  t.shunzhitomy@digipen.edu
+ * @date    06/11/2024
+ */
 #include "PreCompile.h"
 #include "Camera2D.h"
 
+ /*!
+  * @brief Default constructor initializing the camera at origin with default zoom and viewport size.
+  */
 Camera::Camera() : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) {}
+/*!
+ * @brief Constructs a Camera object with a specified viewport size.
+ * @param viewportSize Initial size of the viewport.
+ */
+Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) 
+{
+	(void)viewportSize;
+}
 
-Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) {}
-
+/*!
+ * @brief Computes the view matrix based on the camera's position and zoom level.
+ * @return A 4x4 matrix representing the camera's view transformation.
+ */
 glm::mat4 Camera::getCameraViewMatrix()
 {
 	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-position, 0.0f));
@@ -14,15 +33,12 @@ glm::mat4 Camera::getCameraViewMatrix()
 	return view;
 }
 
+/*!
+ * @brief Computes an orthographic projection matrix for the camera.
+ * @return A 4x4 orthographic projection matrix.
+ */
 glm::mat4 Camera::getCameraProjectionMatrix()
 {
-	/*GLfloat left = -viewport_size.x / 2.0f;
-	GLfloat right = viewport_size.x / 2.0f;
-	GLfloat bottom = -viewport_size.y / 2.0f;
-	GLfloat top = viewport_size.y / 2.0f;
-
-	return glm::ortho(left / zoom, right / zoom, bottom / zoom, top / zoom);*/
-
 	GLfloat left = 0.f;
 	GLfloat right = viewport_size.x;
 	GLfloat bottom = 0.f;
@@ -31,11 +47,19 @@ glm::mat4 Camera::getCameraProjectionMatrix()
 	return glm::ortho(left, right , bottom, top);
 }
 
+/*!
+ * @brief Sets the viewport size of the camera, used for projection calculations.
+ * @param new_size The new dimensions for the viewport.
+ */
 void Camera::setViewportSize(const glm::vec2& new_size)
 {
 	viewport_size = new_size;
 }
 
+/*!
+ * @brief Processes keyboard input to move and zoom the camera, updating its position and zoom based on user input.
+ * @param delta_time Time elapsed since the last frame, affecting movement speed.
+ */
 void Camera::processCameraInput(GLfloat delta_time)
 {
 	GLfloat speed = camera_speed * delta_time;
@@ -60,6 +84,10 @@ void Camera::processCameraInput(GLfloat delta_time)
 
 }
 
+/*!
+ * @brief Zooms the camera towards the cursor, adjusting the position to keep the cursor's world position constant.
+ * @param zoomFactor The factor by which to zoom.
+ */
 void Camera::ZoomTowardsCursor(float zoomFactor)
 {
 	// Get current mouse position in screen coordinates

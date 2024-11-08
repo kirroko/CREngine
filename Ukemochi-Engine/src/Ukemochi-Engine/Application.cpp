@@ -494,6 +494,7 @@ namespace Ukemochi
 	{
 		//************ Render IMGUI ************
 		imguiInstance.NewFrame();
+		imguiInstance.DebugWindow();
 		imguiInstance.SceneBrowser();
 		//imguiInstance.AssetBrowser();
 		imguiInstance.SceneRender();

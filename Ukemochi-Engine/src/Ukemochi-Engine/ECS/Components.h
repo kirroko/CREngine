@@ -35,7 +35,7 @@ namespace Ukemochi
 	{
 		Mtx44 transform_matrix;
 		Vec2 position;
-		float rotation; // TODO: Change to Quaternion?
+		float rotation = 0.f; // TODO: Change to Quaternion?
 		Vec2 scale;
 	};
 
