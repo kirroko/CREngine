@@ -25,4 +25,6 @@ namespace Ukemochi
 	void Level1_Free();//release unused assets/variable memories
 
 	void Level1_Unload();//unload the level
+
+	void print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics);
 }
