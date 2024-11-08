@@ -79,7 +79,7 @@ namespace Ukemochi
          * @param id The id of the game object
          * @return reference to the game object
          */
-        GameObject& GetGO(EntityID id);
+        GameObject* GetGO(EntityID id);
 
         /**
          * @brief Get all game objects
