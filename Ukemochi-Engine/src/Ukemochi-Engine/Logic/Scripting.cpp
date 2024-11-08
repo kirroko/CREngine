@@ -131,6 +131,16 @@ namespace Ukemochi
         // TODO: Our MonoObject instance are still pointing to the old assembly, we need to update them
     }
 
+    MonoGCHandle ScriptingEngine::CreateGCHandle(MonoObject* instance)
+    {
+        return mono_gchandle_new_v2(instance,true);
+    }
+
+    void ScriptingEngine::DestroyGCHandle(const MonoGCHandle& handle)
+    {
+        mono_gchandle_free_v2(handle);
+    }
+
     MonoImage* ScriptingEngine::GetCoreAssemblyImage() const
     {
         return m_pCoreAssemblyImage;

@@ -57,6 +57,9 @@ namespace Ukemochi
         public static GameObject FindWithTag(string tag)
         {
             EngineInterop.GetObjectByTag(tag, out ulong id);
+            if (id == 999999)
+                return null;
+            
             var obj = new GameObject();
             obj._id = id;
             obj.transform = new Transform();

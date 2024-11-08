@@ -113,6 +113,19 @@ namespace Ukemochi
         void Reload();
 
         /**
+         * @brief Create a GCHandle for a C# object
+         * @param instance the instance of the object
+         * @return the GCHandle
+         */
+        static MonoGCHandle CreateGCHandle(MonoObject* instance);
+
+        /**
+         * @brief Destroy a GCHandle
+         * @param handle the handle to be destroyed
+         */
+        static void DestroyGCHandle(const MonoGCHandle& handle);
+
+        /**
          * @brief Get the core assembly image
          * @return the core assembly image
          */

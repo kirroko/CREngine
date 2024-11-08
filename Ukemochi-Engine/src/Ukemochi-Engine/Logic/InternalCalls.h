@@ -41,7 +41,13 @@ namespace Ukemochi
         EXTERN_C UME_API inline void GetObjectByTag(MonoString* tag, uint64_t* id)
         {
             auto* go = GameObjectManager::GetInstance().GetGOByTag(ScriptingEngine::MonoStringToUTF8(tag));
-            *id = go->GetInstanceID();
+            if(go != nullptr)
+            {
+                *id = go->GetInstanceID();
+                return;
+            }
+            UME_ENGINE_WARN("GameObject with tag '{0}' not found", ScriptingEngine::MonoStringToUTF8(tag));
+            *id = 999999; // TODO: We'll come back to this another day, Handle no gameobject found
         }
 
         /**

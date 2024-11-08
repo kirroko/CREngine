@@ -41,6 +41,7 @@ namespace Ukemochi
                 // We instantiate the client's script here
                 // TODO: DID WE FORGET TO INSTANTIATE THE CLIENT'S ASSEMBLY?? 1/11/24 3:16pm
                 scriptObj.instance = ScriptingEngine::GetInstance().InstantiateClientClass(scriptObj.scriptName);
+                scriptObj.handle = ScriptingEngine::CreateGCHandle(static_cast<MonoObject*>(scriptObj.instance));
                 if (scriptObj.instance)
                 {
                     UME_ENGINE_ASSERT(false, "No Instance created! Check filename {1}", fileName)

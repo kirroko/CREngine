@@ -81,7 +81,10 @@ void GameObjectManager::DestroyObject(EntityID id)
 {
     // Before we erase, we tell ECS to destroy the entity
     if(ECS::GetInstance().HasComponent<Script>(id))
+    {
         ECS::GetInstance().GetComponent<Script>(id).instance = nullptr;
+        ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(id).handle);
+    }
     GameObjectFactory::DestroyObject(*m_GOs[id]);
     m_GOs.erase(id);
 }
