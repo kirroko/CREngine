@@ -691,7 +691,10 @@ void Renderer::cleanUp()
 
 	for (auto& texture : textureCache)
 	{
-		texture.second->Delete();
+		if (texture.second)
+		{
+			texture.second->Delete();
+		}
 		delete texture.second;
 	}
 
@@ -926,6 +929,10 @@ void Renderer::toggleSlowMotion()
 void Renderer::animationKeyInput()
 {
 	std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+	if (list.empty())
+	{
+		return;
+	}
 	for (auto& GameObject : list)
 	{
 		if (GetPlayer() == GameObject->GetInstanceID())

@@ -154,10 +154,11 @@ namespace Ukemochi
 	{
 		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
 		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y;
-		//std::cout << mouse_x << " : " << mouse_y << std::endl;
+
 		// Check for mouse left click
 		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
 		{
+			//std::cout << mouse_x << " : " << mouse_y << std::endl;
 			for (auto const& entity : m_Entities)
 			{
 				auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
@@ -182,19 +183,20 @@ namespace Ukemochi
 	{
 		// Get current mouse position in screen coordinates
 		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
-		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y - ECS::GetInstance().GetSystem<Camera>()->position.y;
+		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y;
 		//auto [mouse_x, mouse_y] = SceneManager::GetInstance().GetPlayScreen();//Input::GetMousePosition();
 
 		// Flip the mouse position in the y-axis
 		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
 		// Offset mouse position
-		mouse_x += trans.scale.x * 0.5f;
-		mouse_y += trans.scale.y * 0.5f;
+		//mouse_x += trans.scale.x *0.5f;
+		//mouse_y += trans.scale.y;
+		//std::cout << "mouse_Y" << " : " << trans.position.y << std::endl;
 
-		return mouse_x >= trans.position.x
-			&& mouse_y >= trans.position.y
-			&& mouse_x <= trans.position.x + trans.scale.x
-			&& mouse_y <= trans.position.y + trans.scale.y;
+		return mouse_y <= trans.position.y - 20.f
+			&& mouse_y >= trans.position.y - trans.scale.y - 20.f
+			&& mouse_x >= trans.position.x - trans.scale.x * 0.5f
+			&& mouse_x <= trans.position.x + trans.scale.x * 0.5f;
 	}
 }

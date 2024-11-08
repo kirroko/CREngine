@@ -533,6 +533,7 @@ namespace Ukemochi
 					//ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
 					ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
 					go.GetComponent<SpriteRender>().animated = true;
+					//go.GetComponent<SpriteRender>().animationIndex = 1;
 				}
 				showError = false; // Reset error
 			}

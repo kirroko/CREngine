@@ -422,8 +422,8 @@ namespace Ukemochi
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 		// Play a sound effect on collision
-		if (!Audio::GetInstance().IsPlaying(HIT))
-			Audio::GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 	}
 
 	/*!***********************************************************************
