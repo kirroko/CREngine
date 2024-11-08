@@ -7,7 +7,7 @@ public class Player : BaseScript
     Rigidbody2D rigi2D;
     GameObject enemy;
 
-    const float PLAYER_FORCE = 750.0f;
+    const float PLAYER_FORCE = 1500F;
 
     public override void Start()
     {

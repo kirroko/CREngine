@@ -80,6 +80,7 @@ namespace Ukemochi {
 
 
 		// Create GLFW window
+		//m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		//m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
 		glfwMakeContextCurrent(m_Window);

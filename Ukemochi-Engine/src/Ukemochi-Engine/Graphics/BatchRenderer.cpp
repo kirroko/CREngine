@@ -27,6 +27,7 @@ BatchRenderer2D::~BatchRenderer2D() {
     vao->Delete();
     vbo->Delete();
     ebo->Delete();
+    vertices.clear();
 }
 
 /*!
