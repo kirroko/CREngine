@@ -194,7 +194,7 @@ namespace Ukemochi
         rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
 
         // Apply angular drag to the angular velocity of the player
-        //if (box.tag == "Player")
+        if (box.tag == "Player")
         {
             rb.angular_velocity *= rb.angular_drag;
 
