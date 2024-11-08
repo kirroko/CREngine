@@ -26,6 +26,12 @@ project "freetype"
 			"_CRT_SECURE_NO_WARNINGS"
 		}
 
+
+		postbuildcommands
+        {
+            -- Adjust the paths according to your project structure
+            "{COPY} ../freetype/lib/freetype.lib %{cfg.targetdir}"
+        }
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
