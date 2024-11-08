@@ -31,28 +31,17 @@ namespace Ukemochi
          * \param objectName The name of the GameObject.
          * \return A MonoObject pointer representing the managed instance of the GameObject.
          */
-        EXTERN_C UME_API inline MonoObject* GetMonoObject(const uint64_t id, MonoString* objectName)
-        {
-            const auto& go = GameObjectManager::GetInstance().GetGO(id);
-            return go.GetManagedInstance(mono_string_to_utf8(objectName));
-        }
+        // EXTERN_C UME_API inline MonoObject* GetMonoObject(const uint64_t id, MonoString* objectName)
+        // {
+        //     const auto& go = GameObjectManager::GetInstance().GetGO(id);
+        //     return go.GetManagedInstance(mono_string_to_utf8(objectName));
+        // }
 
-        EXTERN_C UME_API inline MonoObject* GetMonoObjectByTag(MonoString* tag)
+
+        EXTERN_C UME_API inline void GetObjectByTag(MonoString* tag, uint64_t* id)
         {
-            std::string tagStr = ScriptingEngine::MonoStringToUTF8(tag);
-            if(tagStr.empty())
-            {
-                UME_ENGINE_WARN("MonoString is null or empty!");
-                return nullptr;
-            }
-            const auto* go = GameObjectManager::GetInstance().GetGOByTag(ScriptingEngine::MonoStringToUTF8(tag));
-            if(go == nullptr)
-            {
-                UME_ENGINE_WARN("GameObject with tag {0} not found!", tagStr);
-                return nullptr;
-            }
-            
-            return go->GetManagedInstance();
+            auto* go = GameObjectManager::GetInstance().GetGOByTag(ScriptingEngine::MonoStringToUTF8(tag));
+            *id = go->GetInstanceID();
         }
 
         /**
@@ -60,20 +49,30 @@ namespace Ukemochi
          * \param id The unique identifier of the GameObject.
          * \param typeName The name of the component type to add.
          */
-        EXTERN_C UME_API inline void AddComponent(uint64_t id, MonoObject* component, MonoString* typeName)
+        // EXTERN_C UME_API inline void AddComponent(uint64_t id, MonoObject* component, MonoString* typeName)
+        // {
+        //     auto& go = GameObjectManager::GetInstance().GetGO(id);
+        //
+        //     std::string typeNameStr = mono_string_to_utf8(typeName);
+        //     auto it = GameObjectManager::componentRegistry.find(typeNameStr);
+        //     if (it != GameObjectManager::componentRegistry.end())
+        //     {
+        //         it->second(go, component);
+        //     }
+        //     else
+        //     {
+        //         UME_ENGINE_WARN("Component type '{0}' not found in registry", typeNameStr); // check registry GOmanager
+        //     }
+        // }
+
+        EXTERN_C UME_API inline bool HasComponent(uint64_t id, MonoReflectionType* componentType)
         {
             auto& go = GameObjectManager::GetInstance().GetGO(id);
 
-            std::string typeNameStr = mono_string_to_utf8(typeName);
-            auto it = GameObjectManager::componentRegistry.find(typeNameStr);
-            if (it != GameObjectManager::componentRegistry.end())
-            {
-                it->second(go, component);
-            }
-            else
-            {
-                UME_ENGINE_WARN("Component type '{0}' not found in registry", typeNameStr); // check registry GOmanager
-            }
+            MonoType* managedType = mono_reflection_type_get_type(componentType);
+            UME_ENGINE_ASSERT(GameObjectManager::s_EntityHasCompoentFuncs.find(managedType) != GameObjectManager::s_EntityHasCompoentFuncs.end(),
+                              "Component type not found in registry")
+            return GameObjectManager::s_EntityHasCompoentFuncs.at(managedType)(id);
         }
 
         EXTERN_C UME_API inline bool GetKey(int32_t key)
@@ -91,19 +90,35 @@ namespace Ukemochi
             UME_ENGINE_INFO("Ukemochi log: {0}", std::string(mono_string_to_utf8(message)));
         }
 
-        EXTERN_C UME_API inline void SetTransformPosition(uint64_t id, float x, float y)
+        EXTERN_C UME_API inline void SetTransformPosition(uint64_t id, float* x, float* y)
         {
             auto& go = GameObjectManager::GetInstance().GetGO(id);
             auto& transform = go.GetComponent<Transform>();
-            transform.position = Vec2(x, y);
+            transform.position = Vec2(*x, *y);
         }
 
-        EXTERN_C UME_API inline void SetTransformRotation(uint64_t id, float x, float y)
+        EXTERN_C UME_API inline void GetTransformPosition(uint64_t id, float* x, float* y)
         {
-            // TODO: Implement rotation
-            // auto& go = GameObjectManager::GetInstance().GetGO(id);
-            // auto& transform = go.GetComponent<Transform>();
-            // transform.rotation = x;
+            auto& go = GameObjectManager::GetInstance().GetGO(id);
+            auto& transform = go.GetComponent<Transform>();
+            *x = transform.position.x;
+            *y = transform.position.y;
+        }
+
+        // EXTERN_C UME_API inline void SetTransformRotation(uint64_t id, float x, float y)
+        // {
+        //     // TODO: Implement rotation
+        //     // auto& go = GameObjectManager::GetInstance().GetGO(id);
+        //     // auto& transform = go.GetComponent<Transform>();
+        //     // transform.rotation = x;
+        // }
+
+        EXTERN_C UME_API inline void GetTransformRotation(uint64_t id, float* x, float* y)
+        {
+            auto& go = GameObjectManager::GetInstance().GetGO(id);
+            auto& transform = go.GetComponent<Transform>();
+            *x = transform.rotation;
+            *y = transform.rotation;
         }
 
         EXTERN_C UME_API inline void SetTransformScale(uint64_t id, float x, float y)
@@ -113,11 +128,27 @@ namespace Ukemochi
             transform.scale = Vec2(x, y);
         }
 
+        EXTERN_C UME_API inline void GetTransformScale(uint64_t id, float* x, float* y)
+        {
+            auto& go = GameObjectManager::GetInstance().GetGO(id);
+            auto& transform = go.GetComponent<Transform>();
+            *x = transform.scale.x;
+            *y = transform.scale.y;
+        }
+
         EXTERN_C UME_API inline void SetRigidbodyVelocity(uint64_t id, float x, float y)
         {
             auto& go = GameObjectManager::GetInstance().GetGO(id);
             auto& rb = go.GetComponent<Rigidbody2D>();
             rb.velocity = Vec2(x, y);
+        }
+
+        EXTERN_C UME_API inline void GetRigidbodyVelocity(uint64_t id, float* x, float* y)
+        {
+            auto& go = GameObjectManager::GetInstance().GetGO(id);
+            auto& rb = go.GetComponent<Rigidbody2D>();
+            *x = rb.velocity.x;
+            *y = rb.velocity.y;
         }
 
         EXTERN_C UME_API inline void SetRigidbodyAcceleration(uint64_t id, float x, float y)
@@ -127,11 +158,27 @@ namespace Ukemochi
             rb.acceleration = Vec2(x, y);
         }
 
+        EXTERN_C UME_API inline void GetRigidbodyAcceleration(uint64_t id, float* x, float* y)
+        {
+            auto& go = GameObjectManager::GetInstance().GetGO(id);
+            auto& rb = go.GetComponent<Rigidbody2D>();
+            *x = rb.acceleration.x;
+            *y = rb.acceleration.y;
+        }
+
         EXTERN_C UME_API inline void SetRigidbodyForce(uint64_t id, float x, float y)
         {
             auto& go = GameObjectManager::GetInstance().GetGO(id);
             auto& rb = go.GetComponent<Rigidbody2D>();
             rb.force = Vec2(x, y);
+        }
+
+        EXTERN_C UME_API inline void GetRigidbodyForce(uint64_t id, float* x, float* y)
+        {
+            auto& go = GameObjectManager::GetInstance().GetGO(id);
+            auto& rb = go.GetComponent<Rigidbody2D>();
+            *x = rb.force.x;
+            *y = rb.force.y;
         }
 
         EXTERN_C UME_API inline void SetRigidbodyMass(uint64_t id, float mass)

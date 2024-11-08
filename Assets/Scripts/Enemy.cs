@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using UkemochiEngine.CoreModule;
+using Ukemochi;
 
 public class Enemy : BaseScript
 {
@@ -21,6 +21,8 @@ public class Enemy : BaseScript
     //private float smoothingFactor = 0.05f;
     float currentDirX = 0.0f; // Initialize and store outside of loop/scope for persistent direction state
     float currentDirY = 0.0f;
+
+    Transform playerTran;
 
     public override void Start()
     {

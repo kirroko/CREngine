@@ -34,9 +34,9 @@ void DataSyncSystem::SyncData() const
         MonoObject* TransPoint = go.GetManagedInstance("Transform");
         MonoObject* rbPoint = go.GetManagedInstance("Rigidbody2D");
         
-        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "Position", transform.position.x, transform.position.y);
+        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "position", transform.position.x, transform.position.y);
         
-        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "Scale", transform.scale.x, transform.scale.y);
+        ScriptingEngine::GetInstance().SetVector2Property(TransPoint, "scale", transform.scale.x, transform.scale.y);
         
         ScriptingEngine::GetInstance().SetVector2Property(rbPoint, "Velocity", rb.velocity.x, rb.velocity.y);
         

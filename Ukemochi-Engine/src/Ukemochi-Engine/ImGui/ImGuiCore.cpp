@@ -166,6 +166,8 @@ namespace Ukemochi
 		// Example: Add a button
 		if (ImGui::Button("Play"))
 		{	// save
+			// ScriptingEngine::GetInstance().CompileScriptAssembly();
+			// ScriptingEngine::GetInstance().Reload();
 			SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
 			// gsm_next = GS_PLAY;
 			es_current = ENGINE_STATES::ES_PLAY;

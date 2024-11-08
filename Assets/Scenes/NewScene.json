@@ -96,5 +96,47 @@
                     "Sprite": "../Assets/Textures/UI/pause.png",
                     "Shape": 0
                 }]
+        }, {
+            "Name": "Enemy",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [250.0, 200.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [750.0, 750.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1150.0, 625.0],
+                    "Max": [1250.0, 725.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false,
+                    "Tag": "Enemy"
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Shape": 0
+                }, {
+                    "Name": "Script",
+                    "Path": "../Assets/Scripts/Enemy.cs",
+                    "ClassName": "Enemy"
+                }]
         }]
 }
