@@ -80,7 +80,8 @@ namespace Ukemochi
         RegisterMonoFunctions();
 
         UME_ENGINE_INFO("Compiling Script Assembly");
-        CompileScriptAssembly();
+        if(CompileScriptAssembly())
+            UME_ENGINE_WARN("Loading Old Client Assembly instead!!!");
 
         UME_ENGINE_INFO("Loading Client Assembly");
         ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
@@ -97,7 +98,7 @@ namespace Ukemochi
         mono_jit_cleanup(m_pRootDomain); // Unload the root domain and all the assemblies
     }
 
-    void ScriptingEngine::CompileScriptAssembly()
+    bool ScriptingEngine::CompileScriptAssembly()
     {
         // Search for the csproj file
         std::string csprojPath = "../Assets/Assembly-CSharp.csproj"; // TODO: Hardcoded path here
@@ -139,22 +140,22 @@ namespace Ukemochi
         {
             UME_ENGINE_ERROR("Failed to compile the script assembly!");
             ScriptHasError = true;
+            GetInstance().compile_flag = true; // Do you know, how horrible this is?
         }
+        return result;
     }
 
     void ScriptingEngine::Reload()
     {
+        MonoDomain* new_domain = mono_domain_create_appdomain("new_domain_name", nullptr);
+        mono_domain_set(new_domain, true);
+        Init(); // Reinitialize the engine aka loading back the assemblies
+        
+        GameObjectManager::GetInstance().ReleaseAllHandles(); // Release all the handles before reloading the assemblies
         mono_domain_unload(m_pAppDomain); // Unload the app domain and all the assemblies
-        m_pAppDomain = mono_domain_create_appdomain("UkemochiDomain", nullptr);
-        mono_domain_set(m_pAppDomain, true);
+        m_pAppDomain = new_domain;
 
-        Init(); // Reinitialize the engine
-        // Load client assembly
-        ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
-        UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
-        PrintAssemblyTypes(ClientAssembly); // Print out the types in the assembly for tracing
-
-        // TODO: Our MonoObject instance are still pointing to the old assembly, we need to update them
+        GameObjectManager::GetInstance().InitAllHandles(); // reset all the handles after reloading the assemblies
     }
 
     MonoGCHandle ScriptingEngine::CreateGCHandle(MonoObject* instance)

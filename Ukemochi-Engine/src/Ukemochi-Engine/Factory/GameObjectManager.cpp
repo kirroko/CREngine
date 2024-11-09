@@ -92,3 +92,29 @@ std::vector<GameObject*> GameObjectManager::GetAllGOs() const
     return gos;
 }
 
+void GameObjectManager::InitAllHandles() const
+{
+    for(auto& go : m_GOs)
+    {
+        if(ECS::GetInstance().HasComponent<Script>(go.first))
+        {
+            auto& script = ECS::GetInstance().GetComponent<Script>(go.first);
+            script.instance = ScriptingEngine::GetInstance().InstantiateClientClass(script.scriptName);
+            EntityID id = go.first;
+            ScriptingEngine::SetMonoFieldValueULL(static_cast<MonoObject*>(script.instance), "_id", &id);
+            script.handle = ScriptingEngine::CreateGCHandle(static_cast<MonoObject*>(script.instance));
+        }
+    }
+}
+
+void GameObjectManager::ReleaseAllHandles() const
+{
+    for(auto& go : m_GOs)
+    {
+        if(ECS::GetInstance().HasComponent<Script>(go.first))
+        {
+            ECS::GetInstance().GetComponent<Script>(go.first).instance = nullptr;
+            ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(go.first).handle);
+        }
+    }
+}

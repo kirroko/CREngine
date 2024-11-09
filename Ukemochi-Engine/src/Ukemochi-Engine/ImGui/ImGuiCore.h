@@ -40,8 +40,6 @@ namespace Ukemochi
 		*/
 		static void NewFrame();
 
-
-
 		static void Begin();
 		/*!
 		\brief Renders the current ImGui frame.
@@ -104,5 +102,6 @@ namespace Ukemochi
 		static void LoadContents(); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 		static bool m_CompileError;
+		static bool m_Compiling;
 	};
 }

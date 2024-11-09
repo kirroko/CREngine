@@ -44,6 +44,7 @@ namespace Ukemochi
     std::vector<std::string> UseImGui::assetFiles;
     std::vector<std::string> UseImGui::sceneFiles;
     bool UseImGui::m_CompileError = false;
+    bool UseImGui::m_Compiling = false;
 
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
@@ -243,15 +244,21 @@ namespace Ukemochi
         // Example: Add a button
         if (ImGui::Button("Play"))
         {
-            // save
-            SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+            // Recompile scripts and display popup that its compiling. Remove popup when done
+            if(ScriptingEngine::GetInstance().compile_flag)
+            {
+                UME_ENGINE_INFO("Begin Script reloading");
+                m_Compiling = true;
+                ScriptingEngine::GetInstance().Reload();
+            }
 
             // Perform some action when button is clicked
             if (!ScriptingEngine::ScriptHasError)
             {
+                // save
+                SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
                 m_CompileError = false;
                 es_current = ENGINE_STATES::ES_PLAY;
-                // std::cout << "Game is Playing" << std::endl;
                 UME_ENGINE_INFO("Simulation (Game is playing) started");
                 ECS::GetInstance().GetSystem<LogicSystem>()->Init();
             }

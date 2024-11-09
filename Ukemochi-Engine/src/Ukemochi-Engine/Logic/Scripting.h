@@ -1,5 +1,5 @@
 /* Start Header
-*****************************************************************/
+ *****************************************************************/
 /*!
 \file	Scripting.h
 \par	Ukemochi
@@ -89,6 +89,8 @@ namespace Ukemochi
             return instance;
         }
 
+        bool compile_flag = false;
+     
         static std::unordered_map<MonoType*, std::function<bool(EntityID)>> s_EntityHasComponentFuncs;
         static bool ScriptHasError;
 
@@ -98,7 +100,7 @@ namespace Ukemochi
          */
         template <class Component>
         static void RegisterComponent();
-     
+
         /**
          * @brief Register all the components to the scripting engine
          */
@@ -122,7 +124,7 @@ namespace Ukemochi
         /**
          * @brief Compile client's script aseembly during runtime
          */
-        static void CompileScriptAssembly();
+        static bool CompileScriptAssembly();
 
         /**
          * @brief Reload the script assembly

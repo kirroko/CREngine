@@ -80,5 +80,7 @@ namespace Ukemochi
          * @return vector of game objects
          */
         std::vector<GameObject*> GetAllGOs() const;
+        void InitAllHandles() const;
+        void ReleaseAllHandles() const;
     };
 }

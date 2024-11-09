@@ -101,20 +101,33 @@ namespace Ukemochi
                 {
                     UME_ENGINE_INFO("File created: {0}", path_to_watch);
                     std::filesystem::path filePath(path_to_watch);
-                    if(filePath.extension() == ".cs")
+                    if (filePath.extension() == ".cs")
                     {
-                        
+                        ScriptingEngine::GetInstance().compile_flag = true;
+                        UME_ENGINE_INFO("Compile flag is open");
                     }
                     break;
                 }
             case FileStatus::modified:
                 {
                     UME_ENGINE_INFO("File modified: {0}", path_to_watch);
+                    std::filesystem::path filePath(path_to_watch);
+                    if (filePath.extension() == ".cs")
+                    {
+                        ScriptingEngine::GetInstance().compile_flag = true;
+                        UME_ENGINE_INFO("Compile flag is open");
+                    }
                     break;
                 }
             case FileStatus::erased:
                 {
                     UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
+                    std::filesystem::path filePath(path_to_watch);
+                    if (filePath.extension() == ".cs")
+                    {
+                        ScriptingEngine::GetInstance().compile_flag = true;
+                        UME_ENGINE_INFO("Compile flag is open");
+                    }
                     break;
                 }
             }
@@ -132,7 +145,6 @@ namespace Ukemochi
         fwInstance.reset();
 
         ScriptingEngine::GetInstance().ShutDown();
-
     }
 
     void Application::EventIsOn(Event& e)
@@ -156,7 +168,7 @@ namespace Ukemochi
     {
         // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
         EnableMemoryLeakChecking();
-        
+
         SceneManager sceneManager = SceneManager::GetInstance();
         sceneManager.SceneMangerInit();
         sceneManager.SceneMangerLoad();
@@ -231,7 +243,7 @@ namespace Ukemochi
             std::string fpsString = oss.str();
 
             // Log or display the FPS
-            UME_ENGINE_INFO("FPS: {0}", fpsString);
+            // UME_ENGINE_INFO("FPS: {0}", fpsString);
 
             // Update the last time we displayed the FPS
             lastFPSDisplayTime = currentTime;

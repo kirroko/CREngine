@@ -36,7 +36,7 @@ public class Enemy : BaseScript
     float currentDirY = 0.0f;
 
     Transform playerTran;
-
+    
     public override void Start()
     {
         direction = new Vector2 (0, 0);
@@ -105,7 +105,7 @@ public class Enemy : BaseScript
             //direction = new System.Numerics.Vector2(1/direction.X, 1/direction.Y);
 
             //GetComponent<Rigidbody2D>().Velocity = new Ukemochi.Vector2(direction.X, direction.Y);
-            Debug.Log("Vel " + GetComponent<Rigidbody2D>().Velocity.ToString());
+            //Debug.Log("Vel " + GetComponent<Rigidbody2D>().Velocity.ToString());
         }
 
         switch (enemyStates)
