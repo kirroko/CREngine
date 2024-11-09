@@ -14,9 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header
 *******************************************************************/
 using System;
-using System.Runtime.CompilerServices;
 using Ukemochi;
-using System.Numerics;
 
 public class Enemy : BaseScript
 {
@@ -31,7 +29,7 @@ public class Enemy : BaseScript
     Transform enemyTransform;
     GameObject playerObj = null;
 
-    private System.Numerics.Vector2 direction;
+    private Vector2 direction;
     private float movementSpeed = 1.0f; // Adjust movement speed
     //private float smoothingFactor = 0.05f;
     float currentDirX = 0.0f; // Initialize and store outside of loop/scope for persistent direction state
@@ -41,11 +39,10 @@ public class Enemy : BaseScript
 
     public override void Start()
     {
-        direction = new System.Numerics.Vector2 (0, 0);
+        direction = new Vector2 (0, 0);
         enemyStates = EnemyStates.ROAM_STATE;
         enemyTransform = GetComponent<Transform>();
         playerObj = GameObject.FindWithTag("Player");
-
     }
 
     public override void Update()
@@ -60,8 +57,8 @@ public class Enemy : BaseScript
         }
 
         //Console.WriteLine("HIHIIHIHIH found player");
-        Ukemochi.Vector2 playerPosition = playerObj.GetComponent<Transform>().position;
-        Ukemochi.Vector2 enemyPosition = enemyTransform.position;
+        Vector2 playerPosition = playerObj.GetComponent<Transform>().position;
+        Vector2 enemyPosition = enemyTransform.position;
         //Debug.Log("PlayerX " + playerPosition.x.ToString() + " : " + "PlayerY" + playerPosition.y.ToString());
         //Debug.Log("EnemyX " + enemyPosition.x.ToString() + " : " + "EnemyY" + enemyPosition.y.ToString());
 
@@ -82,26 +79,26 @@ public class Enemy : BaseScript
         
         if (enemyStates != EnemyStates.ROAM_STATE && enemyStates != EnemyStates.ATTACK_STATE)
         {
-            System.Numerics.Vector2 directionToPlayer = new System.Numerics.Vector2(
+            Vector2 directionToPlayer = new Vector2(
                 playerObj.GetComponent<Transform>().position.x - enemyTransform.position.x,
                 playerObj.GetComponent<Transform>().position.y - enemyTransform.position.y
             );
 
             // Normalize the direction vector
-            float magnitude = (float)Math.Sqrt(directionToPlayer.X * directionToPlayer.X + directionToPlayer.Y * directionToPlayer.Y);
-            if (magnitude > 0)
+            //float magnitude = (float)Math.Sqrt(directionToPlayer.X * directionToPlayer.X + directionToPlayer.Y * directionToPlayer.Y);
+            if (directionToPlayer.magnitude > 0)
             {
-                directionToPlayer /= magnitude; // Normalize to unit length
+                directionToPlayer /= directionToPlayer.magnitude; // Normalize to unit length
                 direction = 0.95f * direction + 0.05f * directionToPlayer;
 
                 // Set velocity based on direction scaled by speed
                 float speed = 150; // Adjust speed value as necessary
-                GetComponent<Rigidbody2D>().Velocity = new Ukemochi.Vector2(direction.X * speed, direction.Y * speed);
+                GetComponent<Rigidbody2D>().Velocity = new Vector2(direction.x * speed, direction.y * speed);
                 //Debug.Log("Velocity: " + GetComponent<Rigidbody2D>().Velocity);
             }
             else
             {
-                GetComponent<Rigidbody2D>().Velocity = Ukemochi.Vector2.Zero;
+                GetComponent<Rigidbody2D>().Velocity = Vector2.zero;
             }
             //System.Numerics.Vector2 newDir = new System.Numerics.Vector2(1 / (playerObj.GetComponent<Transform>().position.x - enemyTransform.position.x), 1 / (playerObj.GetComponent<Transform>().position.y - enemyTransform.position.y));
             //direction = 0.95f * direction + 0.05f * newDir;

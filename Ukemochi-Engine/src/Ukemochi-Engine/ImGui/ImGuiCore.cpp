@@ -43,6 +43,7 @@ namespace Ukemochi
     float UseImGui::m_LastSceneUpdateTime = 0.0f;
     std::vector<std::string> UseImGui::assetFiles;
     std::vector<std::string> UseImGui::sceneFiles;
+    bool UseImGui::m_CompileError = false;
 
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
@@ -152,8 +153,16 @@ namespace Ukemochi
 
         ControlPanel(fps);
 
+
         ImGui::End(); // End the dockspace window
 
+        if(m_CompileError)
+        {
+            ImGui::OpenPopup("Error");
+            m_CompileError = false;
+        }
+        ShowErrorPopup("A compile error has occurred. Please check the console for more information.");
+        
         //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
 
@@ -163,9 +172,11 @@ namespace Ukemochi
         static double cachedCollisionTime = 0.0;
         static double cachedPhysicsTime = 0.0;
         static double cachedGraphicsTime = 0.0;
+        static double cachedLogicTime = 0.0;
         static double cachedCollisionPercent = 0.0;
         static double cachedPhysicsPercent = 0.0;
         static double cachedGraphicsPercent = 0.0;
+        static double cachedLogicPercent = 0.0;
         static std::string cacheMessage = "WAITING FOR SIMULATION";
 
         double currentTime = ImGui::GetTime();
@@ -174,28 +185,32 @@ namespace Ukemochi
         std::chrono::duration<double> collision = SceneManager::collision_time;
         std::chrono::duration<double> physics = SceneManager::physics_time;
         std::chrono::duration<double> graphics = SceneManager::graphics_time;
+        std::chrono::duration<double> logic = SceneManager::logic_time;
 
         ImGui::Begin("Debug Window");
         if (currentTime - lastUpdateTime >= 1.0)
         {
             lastUpdateTime = currentTime;
 
-            cachedCollisionTime = SceneManager::GetInstance().collision_time.count() * 1000.f;
-            cachedPhysicsTime = SceneManager::GetInstance().physics_time.count() * 1000.f;
-            cachedGraphicsTime = SceneManager::GetInstance().graphics_time.count() * 1000.f;
+            cachedCollisionTime = SceneManager::collision_time.count() * 1000.f;
+            cachedPhysicsTime = SceneManager::physics_time.count() * 1000.f;
+            cachedGraphicsTime = SceneManager::graphics_time.count() * 1000.f;
+            cachedLogicTime = SceneManager::logic_time.count() * 1000.f;
 
-            cachedCollisionPercent = static_cast<double>((collision.count() / loop.count()) * 100.f);
-            cachedPhysicsPercent = static_cast<double>((physics.count() / loop.count()) * 100.f);
-            cachedGraphicsPercent = static_cast<double>((graphics.count() / loop.count()) * 100.f);
+            cachedCollisionPercent = collision.count() / loop.count() * 100.f;
+            cachedPhysicsPercent = physics.count() / loop.count() * 100.f;
+            cachedGraphicsPercent = graphics.count() / loop.count() * 100.f;
+            cachedLogicPercent = logic.count() / loop.count() * 100.f;
         }
-        if(es_current == ES_PLAY)
+        if (es_current == ES_PLAY)
             ImGui::Text("SIMULATION RUNNING");
         else
             ImGui::Text("WAITING FOR SIMULATION");
-        
+
         ImGui::Text("Collision Time: %.2f ms (%.2f%%)", cachedCollisionTime, cachedCollisionPercent);
         ImGui::Text("Physics Time: %.2f ms (%.2f%%)", cachedPhysicsTime, cachedPhysicsPercent);
         ImGui::Text("Graphics Time: %.2f ms (%.2f%%)", cachedGraphicsTime, cachedGraphicsPercent);
+        ImGui::Text("Logic Time: %.2f ms (%.2f%%)", cachedLogicTime, cachedLogicPercent);
         ImGui::End();
     }
 
@@ -229,27 +244,50 @@ namespace Ukemochi
         if (ImGui::Button("Play"))
         {
             // save
-            // ScriptingEngine::GetInstance().CompileScriptAssembly();
-            // ScriptingEngine::GetInstance().Reload();
             SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-            // gsm_next = GS_PLAY;
-            es_current = ENGINE_STATES::ES_PLAY;
-            std::cout << "Game is Playing" << std::endl;
-            ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+
             // Perform some action when button is clicked
+            if (!ScriptingEngine::ScriptHasError)
+            {
+                m_CompileError = false;
+                es_current = ENGINE_STATES::ES_PLAY;
+                // std::cout << "Game is Playing" << std::endl;
+                UME_ENGINE_INFO("Simulation (Game is playing) started");
+                ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+            }
+            else
+            {
+                m_CompileError = true;
+            }
         }
         ImGui::SameLine();
         if (ImGui::Button("Stop"))
         {
             // free
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
-            // gsm_next = GS_PLAY;
-            es_current = ENGINE_STATES::ES_ENGINE;
-            std::cout << "Game stopped" << std::endl;
+            
             // Implement functionality to stop the game (e.g., switch to editor mode)
+            es_current = ENGINE_STATES::ES_ENGINE;
+            UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
         }
 
         ImGui::End(); // End the control panel window
+    }
+
+    void UseImGui::ShowErrorPopup(const std::string& errorMessage)
+    {
+        // ImGui::OpenPopupOnItemClick()
+
+        if(ImGui::BeginPopupModal("Error", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("%s",errorMessage.c_str());
+            
+            if(ImGui::Button("OK"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
     }
 
     /**

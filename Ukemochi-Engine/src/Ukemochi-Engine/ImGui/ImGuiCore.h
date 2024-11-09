@@ -56,6 +56,8 @@ namespace Ukemochi
 		static void DragAndDropHandler();
 
 		static void ControlPanel(float fps);
+		
+		static void ShowErrorPopup(const std::string& errorMessage);
 
 		static void LoadScene();
 
@@ -101,5 +103,6 @@ namespace Ukemochi
 		static std::vector<std::string> sceneFiles;
 		static void LoadContents(); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
+		static bool m_CompileError;
 	};
 }

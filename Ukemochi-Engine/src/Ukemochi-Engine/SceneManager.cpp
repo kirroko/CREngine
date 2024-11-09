@@ -44,6 +44,7 @@ namespace Ukemochi
     std::chrono::duration<double> SceneManager::collision_time{};
     std::chrono::duration<double> SceneManager::physics_time{};
     std::chrono::duration<double> SceneManager::graphics_time{};
+    std::chrono::duration<double> SceneManager::logic_time{};
 
 
 	//bool func_toggle = false;
@@ -312,7 +313,11 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         // --- GAME LOGIC UPDATE ---
+	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+	    sys_end = std::chrono::steady_clock::now();
+	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+	    
         // --- PHYSICS UPDATE ---
         // Update the entities physics
         sys_start = std::chrono::steady_clock::now();
@@ -343,12 +348,12 @@ namespace Ukemochi
 		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
 
 		//toggle console output for performance
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
-		{
-			//func_toggle = (func_toggle + 1) % 2;
-			print_performance(loop_time, collision_time, physics_time, graphics_time);
-			//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
-		}
+		// if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
+		// {
+		// 	//func_toggle = (func_toggle + 1) % 2;
+		// 	print_performance(loop_time, collision_time, physics_time, graphics_time);
+		// 	//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
+		// }
 	}
 
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)

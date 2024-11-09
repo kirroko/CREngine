@@ -90,10 +90,19 @@ namespace Ukemochi
         }
 
         static std::unordered_map<MonoType*, std::function<bool(EntityID)>> s_EntityHasComponentFuncs;
+        static bool ScriptHasError;
 
+        /**
+         * @brief Register a component to the scripting engine
+         * @tparam Component the component to be registered
+         */
         template <class Component>
         static void RegisterComponent();
-        void RegisterComponents();
+     
+        /**
+         * @brief Register all the components to the scripting engine
+         */
+        static void RegisterComponents();
 
         ScriptingEngine();
         ~ScriptingEngine() = default;
@@ -113,7 +122,7 @@ namespace Ukemochi
         /**
          * @brief Compile client's script aseembly during runtime
          */
-        void CompileScriptAssembly();
+        static void CompileScriptAssembly();
 
         /**
          * @brief Reload the script assembly

@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Ukemochi
 {
     std::unordered_map<MonoType*, std::function<bool(EntityID)>> ScriptingEngine::s_EntityHasComponentFuncs;
+    bool ScriptingEngine::ScriptHasError = false;
 
     template <typename Component>
     void ScriptingEngine::RegisterComponent()
@@ -79,8 +80,8 @@ namespace Ukemochi
         RegisterMonoFunctions();
 
         UME_ENGINE_INFO("Compiling Script Assembly");
-
         CompileScriptAssembly();
+
         UME_ENGINE_INFO("Loading Client Assembly");
         ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
@@ -110,6 +111,7 @@ namespace Ukemochi
         if (result == 0) // Successful
         {
             UME_ENGINE_INFO("Successfully compiled the script assembly!");
+            ScriptHasError = false;
             try
             {
                 std::filesystem::path sourcePath = "../Assets/bin/Debug/net472/Assembly-CSharp.dll";
@@ -134,7 +136,10 @@ namespace Ukemochi
             }
         }
         else // Failed
+        {
             UME_ENGINE_ERROR("Failed to compile the script assembly!");
+            ScriptHasError = true;
+        }
     }
 
     void ScriptingEngine::Reload()

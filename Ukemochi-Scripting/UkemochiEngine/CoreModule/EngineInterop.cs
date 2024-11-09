@@ -21,7 +21,7 @@ using System.Runtime.CompilerServices;
 
 namespace Ukemochi
 {
-    public static class EngineInterop
+    internal static class EngineInterop
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetMonoObject(object obj);
