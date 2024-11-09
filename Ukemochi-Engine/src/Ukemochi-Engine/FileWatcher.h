@@ -37,10 +37,10 @@ namespace Ukemochi
 		
 		std::string m_path_to_watch;
 		
-		std::atomic_bool m_running = true;
+		std::thread m_thread;
 		
 		std::chrono::duration<int,std::milli> m_delay;
-		std::thread m_thread;
+		std::atomic_bool m_running = true;
 
 		bool contains(const std::string& key);
 	public:

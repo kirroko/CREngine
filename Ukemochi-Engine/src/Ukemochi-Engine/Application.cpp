@@ -40,211 +40,216 @@ DigiPen Institute of Technology is prohibited.
 
 #include <crtdbg.h> // To check for memory leaks
 
-#include <crtdbg.h> // To check for memory leaks
-
 namespace Ukemochi
 {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
-	Application *Application::s_Instance = nullptr;
+    Application* Application::s_Instance = nullptr;
 
-	double accumulator = 0.0;
-	int currentNumberOfSteps = 0;
-	double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
-	double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
-	double deltaTime = 0.0;
+    double accumulator = 0.0;
+    int currentNumberOfSteps = 0;
+    double lastFPSDisplayTime = 0.0; // To track when we last displayed the FPS
+    double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
+    double deltaTime = 0.0;
 
-	void EnableMemoryLeakChecking(int breakAlloc = -1)
-	{
-		int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-		tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
-		_CrtSetDbgFlag(tmpDbgFlag);
-		if (breakAlloc != -1)
-			_CrtSetBreakAlloc(breakAlloc);
-	}
+    void EnableMemoryLeakChecking(int breakAlloc = -1)
+    {
+        int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+        tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
+        _CrtSetDbgFlag(tmpDbgFlag);
+        if (breakAlloc != -1)
+            _CrtSetBreakAlloc(breakAlloc);
+    }
 
-	Application::Application()
-	{
-		s_Instance = this;
+    Application::Application()
+    {
+        s_Instance = this;
 
-		unsigned int win_width, win_height;
-		std::string win_title;
-		rapidjson::Document config;
-		bool success = Serialization::LoadJSON("../Assets/config.json", config);
-		if (success)
-		{
-			const rapidjson::Value &window = config["Window"];
-			win_title = window["Title"].GetString();
-			win_height = window["Height"].GetUint();
-			win_width = window["Width"].GetUint();
-		}
-		else
-		{
-			win_title = "DEFAULT";
-			win_height = 900;
-			win_width = 1600;
-		}
-		WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
-		m_Window = std::make_unique<WindowsWindow>(props);
-		m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
+        unsigned int win_width, win_height;
+        std::string win_title;
+        rapidjson::Document config;
+        bool success = Serialization::LoadJSON("../Assets/config.json", config);
+        if (success)
+        {
+            const rapidjson::Value& window = config["Window"];
+            win_title = window["Title"].GetString();
+            win_height = window["Height"].GetUint();
+            win_width = window["Width"].GetUint();
+        }
+        else
+        {
+            win_title = "DEFAULT";
+            win_height = 900;
+            win_width = 1600;
+        }
+        WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
+        m_Window = std::make_unique<WindowsWindow>(props);
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::EventIsOn));
 
-		SceneManager::GetInstance();
+        SceneManager::GetInstance();
 
-		GLFWwindow *glfwWindow = static_cast<GLFWwindow *>(m_Window->GetNativeWindow());
-		imguiInstance.ImGuiInit(glfwWindow);
+        GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+        imguiInstance.ImGuiInit(glfwWindow);
 
-		auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
-		std::weak_ptr<FileWatcher> weakFileWatcher = fileWatcher;
+        auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
+        std::weak_ptr weakFileWatcher = fileWatcher;
 
-		fileWatcher->Start([weakFileWatcher](const std::string& path_to_watch, FileStatus status)
-			{
-				if (auto fileWatcher = weakFileWatcher.lock()) // Convert weak_ptr to shared_ptr if still valid
-				{
-					switch (status)
-					{
-					case Ukemochi::FileStatus::created:
-						UME_ENGINE_INFO("File created: {0}", path_to_watch);
-						break;
-					case Ukemochi::FileStatus::modified:
-						UME_ENGINE_INFO("File modified: {0}", path_to_watch);
-						break;
-					case Ukemochi::FileStatus::erased:
-						UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
-						break;
-					}
-				}
-			});
-		fwInstance = fileWatcher;
+        fileWatcher->Start([&weakFileWatcher](const std::string& path_to_watch, FileStatus status)
+        {
+            switch (status)
+            {
+            case FileStatus::created:
+                {
+                    UME_ENGINE_INFO("File created: {0}", path_to_watch);
+                    std::filesystem::path filePath(path_to_watch);
+                    if(filePath.extension() == ".cs")
+                    {
+                        
+                    }
+                    break;
+                }
+            case FileStatus::modified:
+                {
+                    UME_ENGINE_INFO("File modified: {0}", path_to_watch);
+                    break;
+                }
+            case FileStatus::erased:
+                {
+                    UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
+                    break;
+                }
+            }
+        });
+        fwInstance = fileWatcher;
+    }
 
-		fileWatcher->Stop();
-		fileWatcher.reset();
-	}
+    Application::~Application()
+    {
+        imguiInstance.ImGuiClean();
+        m_running = false;
 
-	Application::~Application()
-	{
-		imguiInstance.ImGuiClean();
-		m_running = false;
+        // Ensure the thread is joined before exiting to prevent memory leaks
+        fwInstance->Stop();
+        fwInstance.reset();
 
-		// Ensure the thread is joined before exiting to prevent memory leaks
-		if (fwInstance)
-			fwInstance->Stop();
+        ScriptingEngine::GetInstance().ShutDown();
 
-		ScriptingEngine::GetInstance().ShutDown();
+    }
 
-		fwInstance.reset();
-	}
+    void Application::EventIsOn(Event& e)
+    {
+        // imguiInstance.OnEvent(e);
+        EventDispatcher dispatch(e);
+        dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
+        if (std::string(e.GetName()) != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
+            UME_ENGINE_TRACE("{0}", e.ToString());
+    }
 
-	void Application::EventIsOn(Event &e)
-	{
-		// imguiInstance.OnEvent(e);
-		EventDispatcher dispatch(e);
-		dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-		if (std::string(e.GetName()) != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
-			UME_ENGINE_TRACE("{0}", e.ToString());
-	}
+    bool Application::IsWindowClose(WindowCloseEvent& e)
+    {
+        (void)e; // Suppress the unused parameter warning
+        es_current = ENGINE_STATES::ES_QUIT;
+        m_running = false;
+        return true;
+    }
 
-	bool Application::IsWindowClose(WindowCloseEvent &e)
-	{
-		(void)e; // Suppress the unused parameter warning
-		es_current = ENGINE_STATES::ES_QUIT;
-		m_running = false;
-		return true;
-	}
+    void Application::GameLoop() // run
+    {
+        // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+        EnableMemoryLeakChecking();
+        
+        SceneManager sceneManager = SceneManager::GetInstance();
+        sceneManager.SceneMangerInit();
+        sceneManager.SceneMangerLoad();
 
-	void Application::GameLoop() // run
-	{
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+        while (es_current != ENGINE_STATES::ES_QUIT)
+        {
+            glClearColor(0, 0, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-		SceneManager sceneManager = SceneManager::GetInstance();
-		sceneManager.SceneMangerInit();
-		sceneManager.SceneMangerLoad();
+            UpdateFPS();
+            if (sceneManager.GetOnIMGUI() == false)
+            {
+                sceneManager.SceneMangerUpdateCamera(deltaTime);
+            }
+            // engine
+            if (es_current == ENGINE_STATES::ES_ENGINE)
+            {
+                //************ Update & Draw ************
+                sceneManager.SceneMangerUpdate();
+                //************ Update & Draw ************
+            }
+            // play
+            else if (es_current == ENGINE_STATES::ES_PLAY)
+            {
+                //Run all the systems using ECS
+                //************ Update & Draw ************
+                sceneManager.SceneMangerRunSystems();
+                //************ Update & Draw ************
+            }
+            UpdateIMGUI();
 
-		while (es_current != ENGINE_STATES::ES_QUIT)
-		{
-			glClearColor(0, 0, 0, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+            DrawFPS();
 
-			UpdateFPS();
-			if (sceneManager.GetOnIMGUI() == false)
-			{
-				sceneManager.SceneMangerUpdateCamera(deltaTime);
-			}
-			// engine
-			if (es_current == ENGINE_STATES::ES_ENGINE)
-			{
-				//************ Update & Draw ************
-				sceneManager.SceneMangerUpdate();
-				//************ Update & Draw ************
-			}
-			// play
-			else if (es_current == ENGINE_STATES::ES_PLAY)
-			{
-				//Run all the systems using ECS
-				//************ Update & Draw ************
-				sceneManager.SceneMangerRunSystems();
-				//************ Update & Draw ************
-			}
-			UpdateIMGUI();
+            m_Window->OnUpdate();
+        }
+        sceneManager.SceneManagerUnload();
+    }
 
-			DrawFPS();
+    void Application::UpdateFPS()
+    {
+        //************ FPS ************
+        g_FrameRateController.Update();
 
-			m_Window->OnUpdate();
-		}
-		sceneManager.SceneManagerUnload();
-	}
+        currentNumberOfSteps = 0;
+        // Use deltaTime from the FrameRateController
+        deltaTime = g_FrameRateController.GetDeltaTime();
+        accumulator += deltaTime;
 
-	void Application::UpdateFPS()
-	{
-		//************ FPS ************
-		g_FrameRateController.Update();
+        // Run game logic at a fixed time step (e.g., 60 times per second)
+        while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
+        {
+            // Update game logic with a fixed delta time
+            accumulator -= g_FrameRateController.GetFixedDeltaTime();
+            currentNumberOfSteps++;
+        }
+        g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
+        //************ FPS ************
+    }
 
-		currentNumberOfSteps = 0;
-		// Use deltaTime from the FrameRateController
-		deltaTime = g_FrameRateController.GetDeltaTime();
-		accumulator += deltaTime;
+    void Application::DrawFPS()
+    {
+        //************ Display FPS ************
+        double currentTime = glfwGetTime();
+        // Only log/display the FPS every second (or defined interval)
+        if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
+        {
+            double fps = g_FrameRateController.GetFPS();
 
-		// Run game logic at a fixed time step (e.g., 60 times per second)
-		while (accumulator >= g_FrameRateController.GetFixedDeltaTime())
-		{
-			// Update game logic with a fixed delta time
-			accumulator -= g_FrameRateController.GetFixedDeltaTime();
-			currentNumberOfSteps++;
-		}
-		g_FrameRateController.SetCurrentNumberOfSteps(currentNumberOfSteps);
-		//************ FPS ************
-	}
-	void Application::DrawFPS()
-	{
-		//************ Display FPS ************
-		double currentTime = glfwGetTime();
-		// Only log/display the FPS every second (or defined interval)
-		if (currentTime - lastFPSDisplayTime >= fpsDisplayInterval)
-		{
-			double fps = g_FrameRateController.GetFPS();
+            // Use std::ostringstream to format the FPS with 2 decimal places
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(2) << fps;
+            std::string fpsString = oss.str();
 
-			// Use std::ostringstream to format the FPS with 2 decimal places
-			std::ostringstream oss;
-			oss << std::fixed << std::setprecision(2) << fps;
-			std::string fpsString = oss.str();
+            // Log or display the FPS
+            UME_ENGINE_INFO("FPS: {0}", fpsString);
 
-			// Log or display the FPS
-			UME_ENGINE_INFO("FPS: {0}", fpsString);
+            // Update the last time we displayed the FPS
+            lastFPSDisplayTime = currentTime;
+        }
+        //************ Display FPS ************
+    }
 
-			// Update the last time we displayed the FPS
-			lastFPSDisplayTime = currentTime;
-		}
-		//************ Display FPS ************
-	}
-	void Application::UpdateIMGUI()
-	{
-		//************ Render IMGUI ************
-		imguiInstance.NewFrame();
-		imguiInstance.DebugWindow();
-		imguiInstance.SceneBrowser();
-		//imguiInstance.AssetBrowser();
-		imguiInstance.SceneRender();
-		imguiInstance.ShowEntityManagementUI();
-		// imguiInstance.Begin();
-		imguiInstance.ImGuiUpdate(); // Render ImGui elements
-		//************ Render IMGUI ************
-	}
+    void Application::UpdateIMGUI()
+    {
+        //************ Render IMGUI ************
+        imguiInstance.NewFrame();
+        imguiInstance.DebugWindow();
+        imguiInstance.SceneBrowser();
+        //imguiInstance.AssetBrowser();
+        imguiInstance.SceneRender();
+        imguiInstance.ShowEntityManagementUI();
+        // imguiInstance.Begin();
+        imguiInstance.ImGuiUpdate(); // Render ImGui elements
+        //************ Render IMGUI ************
+    }
 }
