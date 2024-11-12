@@ -23,5 +23,10 @@ namespace Ukemochi
         {
             EngineInterop.LogMessage(message);
         }
+        
+        public static void LogWarning(string message)
+        {
+            EngineInterop.LogWarning(message);
+        }
     }
 }

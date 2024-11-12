@@ -188,7 +188,6 @@ namespace Ukemochi
     {
         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
         MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", className.c_str());
-        // TODO: Client declared Namespace?
         if (klass == nullptr)
             UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className)
 
@@ -206,6 +205,7 @@ namespace Ukemochi
     {
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
         MonoClass* klass = GetClassInAssembly(ClientAssembly, "", className.c_str());
+        // TODO: Client declare namespace handle?
         if (klass == nullptr)
             UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className)
 
@@ -236,7 +236,7 @@ namespace Ukemochi
     }
 
 
-    void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[], int numArgs)
+    void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, const bool ignoreDebug, void* args[], int numArgs)
     {
         MonoClass* klass = mono_object_get_class(instance);
         UME_ENGINE_ASSERT(numArgs >= 0, "InvokeMethod has negative number of arguments")
@@ -246,6 +246,9 @@ namespace Ukemochi
         if (!method)
         {
             // If the method is not found, check if the coreAssembly or ClientAssembly been rebuilt and reloaded
+            if(ignoreDebug)
+                return;
+            
             UME_ENGINE_FATAL("Failed to find method: {0} in class.", methodName);
             return;
         }
@@ -347,18 +350,10 @@ namespace Ukemochi
     // Use this to bind C++ functions with Mono so they can be invoked from C#
     // Calls from C++ to C# are done through the mono_runtime_invoke function of the MonoObject instance of the class
     void ScriptingEngine::RegisterMonoFunctions()
-    // TODO: Type-Safe Component Registration and Access? Meta-Programming with Reflection??
     {
-        // mono_add_internal_call("Ukemochi.EngineInterop::GetMonoObject",
-        //                        InternalCalls::GetMonoObject);
-
-        // mono_add_internal_call("Ukemochi.EngineInterop::AddComponent",
-        //                        (void*)InternalCalls::AddComponent);
-
         mono_add_internal_call("Ukemochi.EngineInterop::HasComponent",
                                (void*)InternalCalls::HasComponent);
-
-
+        
         mono_add_internal_call("Ukemochi.EngineInterop::GetObjectByTag",
                                (void*)InternalCalls::GetObjectByTag);
 
@@ -370,6 +365,9 @@ namespace Ukemochi
 
         mono_add_internal_call("Ukemochi.EngineInterop::LogMessage",
                                (void*)InternalCalls::LogMessage);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::LogWarning",
+                               (void*)InternalCalls::LogWarning);
 
         mono_add_internal_call("Ukemochi.EngineInterop::SetTransformPosition",
                                (void*)InternalCalls::SetTransformPosition);

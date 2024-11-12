@@ -80,7 +80,15 @@ namespace Ukemochi
          * @return vector of game objects
          */
         std::vector<GameObject*> GetAllGOs() const;
+
+        /**
+         * @brief Initialize all the MonoGCHandles for the game objects
+         */
         void InitAllHandles() const;
+
+        /**
+         * @brief Release all the MonoGCHandles for the game objects
+         */
         void ReleaseAllHandles() const;
     };
 }

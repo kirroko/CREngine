@@ -248,8 +248,8 @@ namespace Ukemochi
             if(ScriptingEngine::GetInstance().compile_flag)
             {
                 UME_ENGINE_INFO("Begin Script reloading");
-                m_Compiling = true;
-                ScriptingEngine::GetInstance().Reload();
+                ScriptingEngine::GetInstance().compile_flag = false;
+                ScriptingEngine::GetInstance().Reload(); // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
             }
 
             // Perform some action when button is clicked

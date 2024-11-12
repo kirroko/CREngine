@@ -22,7 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Transformation.h"
 #include "Graphics/Renderer.h"
 #include "Serialization/Serialization.h"
-#include "Logic/DataSyncSystem.h"
 #include "Logic/Logic.h"
 #include "Graphics/Camera2D.h"
 #include "Factory/Factory.h"
@@ -74,7 +73,6 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<LogicSystem>();
         ECS::GetInstance().RegisterSystem<Camera>();
         ECS::GetInstance().RegisterSystem<InGameGUI>();
-        ECS::GetInstance().RegisterSystem<DataSyncSystem>();
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 
@@ -109,12 +107,6 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         sig.set(ECS::GetInstance().GetComponentType<Button>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
-
-        // For Data Sync System
-        sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<Transform>());
-        sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
-        ECS::GetInstance().SetSystemSignature<DataSyncSystem>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);

@@ -37,5 +37,10 @@ namespace Ukemochi
         {
             
         }
+
+        public virtual void OnCollisionEnter2D()
+        {
+
+        }
     }
 }

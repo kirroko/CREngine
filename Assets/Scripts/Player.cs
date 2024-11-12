@@ -13,7 +13,7 @@ public class Player : BaseScript
     {
         rigi2D = GetComponent<Rigidbody2D>();
         if (rigi2D == null)
-            Debug.Log("Player's Rigi2D is missing!");
+            Debug.LogWarning("Player's Rigi2D is missing!");
         
         enemy = GameObject.FindWithTag("Enemy");
     }

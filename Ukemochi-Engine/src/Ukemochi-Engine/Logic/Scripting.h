@@ -119,7 +119,7 @@ namespace Ukemochi
         /**
          * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
          */
-        void ShutDown() const; // TODO: Did you remember to call this function when application is closed?
+        void ShutDown() const;
 
         /**
          * @brief Compile client's script aseembly during runtime
@@ -183,11 +183,12 @@ namespace Ukemochi
          * @brief Invoke script Methods (Start, Update, etc)
          * @param instance C# script instance
          * @param methodName the method name to be invoked
+         * @param ignoreDebug = false
          * @param args the arguments to be passed to the method, default is nullptr
          * @param numArgs the number of arguments, default is 0
          */
-        static void InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[] = nullptr,
-                                 int numArgs = 0);
+        static void InvokeMethod(MonoObject* instance, const std::string& methodName, bool ignoreDebug,
+                                 void* args[] = nullptr, int numArgs = 0);
 
         /**
          * @brief Set the value of a field in a C# class. Value is of type unsigned long long

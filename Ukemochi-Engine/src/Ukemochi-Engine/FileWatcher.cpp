@@ -42,7 +42,7 @@ namespace Ukemochi
             if (file.path().extension() == ".cs")
             {
                 std::string copyString = file.path().string();
-                size_t pos = copyString.find("Scripts"); // TODO: Hard Path here
+                size_t pos = copyString.find("Scripts");
                 copyString = copyString.substr(pos);
                 m_ScriptPaths.push_back(copyString);
                 // UME_ENGINE_TRACE("Found Script: {0}", copyString);

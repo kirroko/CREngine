@@ -32,7 +32,7 @@ namespace Ukemochi
         {
             auto& logic = ECS::GetInstance().GetComponent<Script>(entity);
 
-            ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(logic.handle), "Start");
+            ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(logic.handle), "Start", false);
         }
     }
 
@@ -42,7 +42,7 @@ namespace Ukemochi
         {
             auto& logic = ECS::GetInstance().GetComponent<Script>(entity);
 
-            ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(logic.handle), "Update");
+            ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(logic.handle), "Update", false);
         }
     }
 

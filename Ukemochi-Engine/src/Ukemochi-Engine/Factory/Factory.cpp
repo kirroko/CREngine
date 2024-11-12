@@ -111,6 +111,10 @@ namespace Ukemochi
 						comps["Radius"].GetFloat()
 						});
 				}
+				else if(component == "ConvexCollider2D")
+				{
+					go.AddComponent(ConvexCollider2D{});
+				}
 				else if (component == "SpriteRender")
 				{
 					std::string TexturePath = std::string(comps["Sprite"].GetString());
@@ -127,6 +131,10 @@ namespace Ukemochi
 					comps["ClassName"].GetString(),
 						ScriptingEngine::GetInstance().InstantiateClientClass(comps["ClassName"].GetString())
 					});
+				}
+				else if(component == "Button")
+				{
+					go.AddComponent(Button{});
 				}
 				else
 				{

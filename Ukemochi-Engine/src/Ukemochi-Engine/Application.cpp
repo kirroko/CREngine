@@ -152,7 +152,8 @@ namespace Ukemochi
         // imguiInstance.OnEvent(e);
         EventDispatcher dispatch(e);
         dispatch.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::IsWindowClose));
-        if (std::string(e.GetName()) != "MouseMoved") // NO SPAM MOUSE MOVED EVENT
+        std::string eventName(e.GetName());
+        if (eventName != "MouseMoved" && eventName != "KeyPressed" && eventName != "KeyTyped" && eventName != "KeyReleased") // NO SPAM MOUSE MOVED EVENT
             UME_ENGINE_TRACE("{0}", e.ToString());
     }
 
@@ -243,7 +244,7 @@ namespace Ukemochi
             std::string fpsString = oss.str();
 
             // Log or display the FPS
-            // UME_ENGINE_INFO("FPS: {0}", fpsString);
+            UME_ENGINE_INFO("FPS: {0}", fpsString);
 
             // Update the last time we displayed the FPS
             lastFPSDisplayTime = currentTime;

@@ -36,7 +36,7 @@ GameObject& GameObject::operator=(const GameObject& other)
     m_Name = other.m_Name;
     m_Tag = other.m_Tag;
     m_InstanceID = other.m_InstanceID;
-    // TODO: Copy the managed instance and components 7/11/24
+    
     return *this;
 }
 
