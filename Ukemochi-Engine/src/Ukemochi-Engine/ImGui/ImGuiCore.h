@@ -1,21 +1,18 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       ImGuiCore.h
-\author     Hurng Kai Rui, h.kairui, 2301278
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 25, 2024
 \brief      This file declares the UseImGui class, which manages the 
             initialization, rendering, and event handling for ImGui 
             within the Ukemochi Engine.
 
-
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include <../vendor/GLFW/include/GLFW/glfw3.h>
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"

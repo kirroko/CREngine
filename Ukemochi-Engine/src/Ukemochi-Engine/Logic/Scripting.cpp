@@ -1,20 +1,16 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file	Scripting.cpp
-\par	Ukemochi
-\author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par	junyukean.wong\@digipen.edu
-\par	Course: CSD2400/CSD2401
-\date	11/10/24
-\brief	This file handles everything related to Mono (i.e., initialization, script execution, shutdown)
+\file       Scripting.cpp
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\date       Nov 11, 2024
+\brief      This file handles everything related to Mono (i.e., initialization, script execution, shutdown).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Scripting.h"
 #include "../ECS/ECS.h"

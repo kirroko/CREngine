@@ -1,21 +1,18 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file		Factory.h
-\par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
-\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
-\par		Course: CSD2400/CSD2401
-\date		29/09/24
-\brief		This file contains the declaration of the GameObjectFactory class. This class is responsible for creating and cloning game objects.
-		You can create a game object with a default constructor or with a file path to load the game object from a JSON file
+\file       Factory.h
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
+\co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
+\date       Sept 29, 2024
+\brief      This file contains the declaration of the GameObjectFactory class. This class is responsible for creating and cloning game objects.
+			You can create a game object with a default constructor or with a file path to load the game object from a JSON file.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include "PreCompile.h"
 #include "GameObject.h"

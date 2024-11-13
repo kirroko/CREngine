@@ -1,9 +1,16 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    Camera2D.cpp
- * @brief   Implementation of the Camera class for managing a 2D camera in a game or application.
- * @author  t.shunzhitomy@digipen.edu
- * @date    06/11/2024
- */
+\file       Camera2D.cpp
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Implementation of the Camera class for managing a 2D camera in a game or application.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Camera2D.h"
 

@@ -1,11 +1,17 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    VAO.h
- * @brief   This file contains the declaration of the VAO (Vertex Array Object) class, responsible for managing vertex attributes and linking them to vertex buffer objects (VBOs) in OpenGL.
- *          The VAO class helps bind and manage vertex attributes like position, color, and texture coordinates in the rendering pipeline.
- *          It provides functionality to bind, unbind, and delete VAOs, as well as link VBO attributes.
- * @author  t.shunzhitomy@digipen.edu
- * @date    25/09/2024
- */
+\file       VAO.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the declaration of the VAO (Vertex Array Object) class, responsible for managing vertex attributes and linking them to vertex buffer objects (VBOs) in OpenGL.
+            The VAO class helps bind and manage vertex attributes like position, color, and texture coordinates in the rendering pipeline.
+            It provides functionality to bind, unbind, and delete VAOs, as well as link VBO attributes.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 
 #ifndef VAO_CLASS_H
 #define VAO_CLASS_H

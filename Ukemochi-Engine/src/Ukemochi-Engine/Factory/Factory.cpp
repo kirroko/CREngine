@@ -1,44 +1,41 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file		Factory.cpp
-\par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
+\file       Factory.cpp
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
 \co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
-\par		Course: CSD2400/CSD2401
-\date		19/10/24
-\brief		This file is responsible for creating, cloning, destroy game objects.
-		Also, it is responsible for creating prefabs.
+\date       Oct 19, 2024
+\brief      This file is responsible for creating, cloning, destroy game objects.
+			Also, it is responsible for creating prefabs.
 		
-		Usage:
-		1. CreateObject: Create a new game object with a name and tag.
-		2. CreatePrefabObject: Create a new game object from a prefab file.
-		3. CloneObject: Clone an existing game object with a new name and tag.
-		4. DestroyObject: Destroy an existing game object.
+			Usage:
+			1. CreateObject: Create a new game object with a name and tag.
+			2. CreatePrefabObject: Create a new game object from a prefab file.
+			3. CloneObject: Clone an existing game object with a new name and tag.
+			4. DestroyObject: Destroy an existing game object.
 		
-		Note: The prefab file must be in the JSON format.
+			Note: The prefab file must be in the JSON format.
 		
-		Example:
-		\code
-		// Create a new game object
-		GameObjectFactory::CreateObject("Player", "Player");
+			Example:
+			\code
+			// Create a new game object
+			GameObjectFactory::CreateObject("Player", "Player");
 		
-		// Create a new game object from a prefab file
-		GameObjectFactory::CreatePrefabObject("Assets/Prefabs/Player.json");
+			// Create a new game object from a prefab file
+			GameObjectFactory::CreatePrefabObject("Assets/Prefabs/Player.json");
 		
-		// Clone an existing game object
-		GameObjectFactory::CloneObject(player, "Player(Clone)", "Player");
+			// Clone an existing game object
+			GameObjectFactory::CloneObject(player, "Player(Clone)", "Player");
 		
-		// Destroy an existing game object
-		GameObjectFactory::DestroyObject(player);
-		\endcode
+			// Destroy an existing game object
+			GameObjectFactory::DestroyObject(player);
+			\endcode
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Factory.h"
 

@@ -1,11 +1,17 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    Texture.h
- * @brief   This file contains the declaration of the Texture class, responsible for loading, binding, and managing textures in OpenGL.
- *          It includes functionality to bind textures to shaders and manage their lifecycle (e.g., creation, binding, and deletion).
- *          The class interacts with shaders to apply textures to objects during rendering.
- * @author  t.shunzhitomy@digipen.edu
- * @date    25/09/2024
- */
+\file       Texture.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the declaration of the Texture class, responsible for loading, binding, and managing textures in OpenGL.
+            It includes functionality to bind textures to shaders and manage their lifecycle (e.g., creation, binding, and deletion).
+            The class interacts with shaders to apply textures to objects during rendering.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 
 #ifndef TEXTURE_CLASS_H
 #define TEXTURE_CLASS_H
