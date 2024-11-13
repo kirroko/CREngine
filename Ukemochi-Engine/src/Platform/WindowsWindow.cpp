@@ -229,6 +229,7 @@ namespace Ukemochi {
 
 		// Assuming count > 0, use the first dropped file path
 		if (count > 0) {
+			std::cout << "File dropped: " << paths[0] << std::endl;
 			windowInstance->m_FilePath = paths[0]; // Update the filePath
 		}
 	}

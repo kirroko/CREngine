@@ -115,14 +115,10 @@ namespace Ukemochi
         // Toggle to enable or disable docking
         static bool enableDocking = true;
 
-        // Create a main menu bar with an option to toggle docking
-        ImGui::BeginMainMenuBar();
-        if (ImGui::BeginMenu("Options"))
+        if (io.KeyCtrl && io.KeysDown[ImGuiKey_D])
         {
-            ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
-            ImGui::EndMenu();
+            enableDocking = !enableDocking;
         }
-        ImGui::EndMainMenuBar();
 
         // Set up the window to cover the entire viewport
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -133,10 +129,7 @@ namespace Ukemochi
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
             ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus;
-
-        // Optionally make the background transparent
-        window_flags |= ImGuiWindowFlags_NoBackground;
+            ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
         // Begin the main dockspace window
         ImGui::Begin("DockSpace Demo", nullptr, window_flags);
@@ -152,7 +145,6 @@ namespace Ukemochi
         ControlPanel(fps);
 
         ImGui::End(); // End the dockspace window
-
         //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
 
