@@ -126,11 +126,15 @@ namespace Ukemochi
 				}
 				else if(component == "Script")
 				{
+					MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(comps["ClassName"].GetString());
+					EntityID newScriptID = go.GetInstanceID();
+					ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
 					go.AddComponent(Script{
-					comps["Path"].GetString(),
-					comps["ClassName"].GetString(),
-						ScriptingEngine::GetInstance().InstantiateClientClass(comps["ClassName"].GetString())
-					});
+						comps["Path"].GetString(),
+						comps["ClassName"].GetString(),
+						newScript,
+						ScriptingEngine::CreateGCHandle(newScript)
+						});
 				}
 				else if(component == "Button")
 				{

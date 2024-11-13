@@ -165,6 +165,7 @@ namespace Ukemochi
 
     MonoObject* ScriptingEngine::GetObjectFromGCHandle(const MonoGCHandle& handle)
     {
+        UME_ENGINE_ASSERT(handle != nullptr, "GCHandle is null!");
         MonoObject* obj = mono_gchandle_get_target_v2(handle);
         if(!obj)
         {
