@@ -22,37 +22,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
-// Static member initialization, this is where we register a function to create a component via a name.
-// C# will call addcomponent with the component name and the instance of the component
-// We will then call the function to create the component and add it to the GameObject in C++ side
-
-std::unordered_map<MonoType*,std::function<bool(EntityID)>> GameObjectManager::s_EntityHasCompoentFuncs;
-
-
-GameObjectManager::GameObjectManager()
-{
-    RegisterComponents();
-}
-
-template <typename Component>
-void GameObjectManager::RegisterComponent()
-{
-    std::string_view typeName = typeid(Component).name();
-    size_t pos = typeName.find_last_of(':');
-    std::string_view structName = typeName.substr(pos + 1);
-    std::string managedTypename = fmt::format("Ukemochi.{}", structName);
-
-    MonoType* managedType = mono_reflection_type_from_name(managedTypename.data(), ScriptingEngine::GetInstance().GetCoreAssemblyImage());
-    UME_ENGINE_ASSERT(managedType, "Failed to get managed type for component")
-    s_EntityHasCompoentFuncs[managedType] = [](EntityID id) { return ECS::GetInstance().HasComponent<Component>(id);};
-}
-
-void GameObjectManager::RegisterComponents()
-{
-    RegisterComponent<Transform>();
-    RegisterComponent<Rigidbody2D>();
-}
-
 GameObject& GameObjectManager::CreateObject(const std::string& name, const std::string& tag)
 {
     auto go = std::make_unique<GameObject>(GameObjectFactory::CreateObject(name, tag));
@@ -123,3 +92,29 @@ std::vector<GameObject*> GameObjectManager::GetAllGOs() const
     return gos;
 }
 
+void GameObjectManager::InitAllHandles() const
+{
+    for(auto& go : m_GOs)
+    {
+        if(ECS::GetInstance().HasComponent<Script>(go.first))
+        {
+            auto& script = ECS::GetInstance().GetComponent<Script>(go.first);
+            script.instance = ScriptingEngine::GetInstance().InstantiateClientClass(script.scriptName);
+            EntityID id = go.first;
+            ScriptingEngine::SetMonoFieldValueULL(static_cast<MonoObject*>(script.instance), "_id", &id);
+            script.handle = ScriptingEngine::CreateGCHandle(static_cast<MonoObject*>(script.instance));
+        }
+    }
+}
+
+void GameObjectManager::ReleaseAllHandles() const
+{
+    for(auto& go : m_GOs)
+    {
+        if(ECS::GetInstance().HasComponent<Script>(go.first))
+        {
+            ECS::GetInstance().GetComponent<Script>(go.first).instance = nullptr;
+            ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(go.first).handle);
+        }
+    }
+}

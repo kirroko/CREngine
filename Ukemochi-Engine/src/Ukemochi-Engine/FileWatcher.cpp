@@ -42,10 +42,10 @@ namespace Ukemochi
             if (file.path().extension() == ".cs")
             {
                 std::string copyString = file.path().string();
-                size_t pos = copyString.find("Scripts"); // TODO: Hard Path here
+                size_t pos = copyString.find("Scripts");
                 copyString = copyString.substr(pos);
                 m_ScriptPaths.push_back(copyString);
-                UME_ENGINE_TRACE("Found Script: {0}", copyString);
+                // UME_ENGINE_TRACE("Found Script: {0}", copyString);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Ukemochi
             {
                 // wait for "m_delay" milliseconds
                 std::this_thread::sleep_for(m_delay);
-                UME_ENGINE_TRACE("File Watcher: Checking for changes");
+                // UME_ENGINE_TRACE("File Watcher: Checking for changes");
 
                 // Update the m_paths to check for any file been deleted.
                 auto it = m_Paths.begin();

@@ -23,9 +23,6 @@ namespace Ukemochi
 {
     class GameObjectManager
     {
-        GameObjectManager();
-        template <class Component>
-        void RegisterComponent();
         std::unordered_map<EntityID, std::unique_ptr<GameObject>> m_GOs;
 
     public:
@@ -34,9 +31,6 @@ namespace Ukemochi
             static GameObjectManager instance;
             return instance;
         }
-        static std::unordered_map<MonoType*, std::function<bool(EntityID)>> s_EntityHasCompoentFuncs;
-
-        void RegisterComponents();
 
         /**
          * @brief Create a new gameobject from a prefab
@@ -86,5 +80,15 @@ namespace Ukemochi
          * @return vector of game objects
          */
         std::vector<GameObject*> GetAllGOs() const;
+
+        /**
+         * @brief Initialize all the MonoGCHandles for the game objects
+         */
+        void InitAllHandles() const;
+
+        /**
+         * @brief Release all the MonoGCHandles for the game objects
+         */
+        void ReleaseAllHandles() const;
     };
 }

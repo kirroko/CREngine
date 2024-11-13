@@ -21,9 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 
 #include "../ECS/ECS.h"
-#include "Ukemochi-Engine/Logic/Logic.h"
 
-#include <mono/metadata/object-forward.h>
 #include <typeinfo>
 
 namespace Ukemochi
@@ -32,14 +30,6 @@ namespace Ukemochi
     {
         std::string m_Name;
         std::string m_Tag;
-
-        MonoObject* m_ManagedInstance = nullptr;
-        // C# instance // TODO: To be refactored to let mono_gchandle_get_target() handle this
-        MonoGCHandle m_ManagedInstanceHandle; // Handle to the C# instance 
-
-        std::unordered_map<std::string, MonoObject*> m_ManagedComponents;
-        // C# components // TODO: To be refactored to let mono_gchandle_get_target() handle this
-        std::unordered_map<std::string, MonoGCHandle> m_ManagedComponentsHandle; // Handle to the C# components
 
         EntityID m_InstanceID{};
 
@@ -51,13 +41,11 @@ namespace Ukemochi
         GameObject(const GameObject& other) = default;
         GameObject(GameObject&& other) noexcept = default;
         GameObject& operator=(const GameObject& other);
-        ~GameObject();
 
 
         template <typename T>
         void AddComponent(T component)
         {
-            // For Script component
             std::string type = typeid(T).name();
             size_t pos = type.find_first_of("::");
             if (pos != std::string::npos)
@@ -65,109 +53,16 @@ namespace Ukemochi
 
             UME_ENGINE_TRACE("GO ({0}) Adding Component: {1}", m_InstanceID, type);
             ECS::GetInstance().AddComponent(m_InstanceID, component);
-
-
-            // We Instantiate the C# component
-            // We probably don't need to check if the component is already in the map since the above code will stop
-            // if (strcmp(type.c_str(), "Script") == 0)
-            // {
-            //     auto& script = ECS::GetInstance().GetComponent<Script>(m_InstanceID);
-            //     MonoObject* scriptInstance = static_cast<MonoObject*>(script.instance);
-            //     if (!scriptInstance)
-            //         UME_ENGINE_ASSERT(false, "Failed to cast Script component")
-            //
-            //     ScriptingEngine::GetInstance().SetMonoFieldValueULL(scriptInstance, "_id", &m_InstanceID);
-            //     
-            //
-            //     // ScriptingEngine::GetInstance().SetMonoPropertyValue(static_cast<MonoObject*>(script.instance),
-            //     //                                                     "gameObject", m_ManagedInstance);
-            //
-            //     // m_ManagedComponents[type] = static_cast<MonoObject*>(script.instance); // Instantiate at Factory
-            //     // m_ManagedComponentsHandle[type] = mono_gchandle_new_v2(static_cast<MonoObject*>(script.instance), true);
-            //     //
-            //     // void* param[] = {m_ManagedComponents.at(type)};
-            //     // ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance,
-            //     //                                             "Add" + type + "Component", param, 1);
-            //     //
-            // }
-            // else if (strcmp(type.c_str(), "Transform") == 0)
-            // {
-            //     // MonoObject* transform = ScriptingEngine::GetInstance().InstantiateClass(type);
-            //     // ScriptingEngine::GetInstance().SetMonoPropertyValue(transform, "gameObject", m_ManagedInstance);
-            //     // auto& transformCast = ECS::GetInstance().GetComponent<Transform>(m_InstanceID);
-            //     // ScriptingEngine::SetMonoFieldValueULL(transform, "_id", &m_InstanceID);
-            //     //
-            //     // ScriptingEngine::GetInstance().SetVector2Property(transform, "position", transformCast.position.x,
-            //     //                                                   transformCast.position.y);
-            //     // // ScriptingEngine::GetInstance().SetVector2Property(transform, "Rotation", transformCast->rotation); // TODO: Rotation not completed
-            //     // ScriptingEngine::GetInstance().SetVector2Property(transform, "scale", transformCast.scale.x,
-            //     //                                                   transformCast.scale.y);
-            //     //
-            //     // m_ManagedComponents[type] = transform;
-            //     // m_ManagedComponentsHandle[type] = mono_gchandle_new_v2(transform, true);
-            //     //
-            //     // void* param[] = { transform };
-            //     // ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance,
-            //     //                                             "Add" + type + "Component", param, 1);
-            // }
-            // else if (strcmp(type.c_str(), "Rigidbody2D") == 0)
-            // {
-            //     MonoObject* rigidbody = ScriptingEngine::GetInstance().InstantiateClass(type);
-            //     ScriptingEngine::GetInstance().SetMonoPropertyValue(rigidbody, "gameObject", m_ManagedInstance);
-            //     auto& rigidbodyCast = ECS::GetInstance().GetComponent<Rigidbody2D>(m_InstanceID);
-            //     ScriptingEngine::SetMonoFieldValueULL(rigidbody, "_id", &m_InstanceID);
-            //
-            //     ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Force", rigidbodyCast.force.x,
-            //                                                       rigidbodyCast.force.y);
-            //     ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Velocity", rigidbodyCast.velocity.x,
-            //                                                       rigidbodyCast.velocity.y);
-            //     ScriptingEngine::GetInstance().SetVector2Property(rigidbody, "Acceleration",
-            //                                                       rigidbodyCast.acceleration.x,
-            //                                                       rigidbodyCast.acceleration.y);
-            //     ScriptingEngine::SetMonoFieldValue(rigidbody, "_mass", &rigidbodyCast.mass);
-            //     ScriptingEngine::SetMonoFieldValue(rigidbody, "_inverseMass",
-            //                                                     &rigidbodyCast.inverse_mass);
-            //     ScriptingEngine::SetMonoFieldValue(rigidbody, "_useGravity", &rigidbodyCast.use_gravity);
-            //     ScriptingEngine::SetMonoFieldValue(rigidbody, "_isKinematic", &rigidbodyCast.is_kinematic);
-            //
-            //     m_ManagedComponents[type] = rigidbody;
-            //     m_ManagedComponentsHandle[type] = mono_gchandle_new_v2(rigidbody, true);
-            //
-            //     void* param[] = {m_ManagedComponents.at(type)};
-            //     ScriptingEngine::GetInstance().InvokeMethod(m_ManagedInstance,
-            //                                                 "Add" + type + "Component", param, 1);
-            // }
-            // else
-            // {
-            //     UME_ENGINE_INFO("!! Item ({0}) is still WIP for C# data",type);
-            //     // m_ManagedComponents[type] = ScriptingEngine::GetInstance().InstantiateClass(type);
-            // }
         }
 
         template <typename T>
         T& GetComponent() { return ECS::GetInstance().GetComponent<T>(m_InstanceID); }
 
         template <typename T>
-        void RemoveCoponent() { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
+        void RemoveComponent() const { ECS::GetInstance().RemoveComponent<T>(m_InstanceID); }
 
-        /**
-         * @brief Set the managed instance of the component
-         * @param instance The managed instance of the component 
-         */
-        void SetManagedComponentInstance(MonoObject* instance, const std::string& typeName);
-
-        /**
-         * @brief Returns back the managed instance of the GameObject (C# GameObject class)
-         * @return The managed instance of the GameObject
-         */
-        MonoObject* GetManagedInstance() const;
-
-        /**
-         * @brief Returns the managed instance of the components inside GameObject
-         * @param objectName the name of the class object (Transform, Rigidbody2D, etc.)
-         * @return The managed instance of the component
-         */
-        MonoObject* GetManagedInstance(const std::string& objectName) const;
+        template <typename T>
+        bool HasComponent() const { return ECS::GetInstance().HasComponent<T>(m_InstanceID); }
 
         /**
          * @brief returns the instance ID of the GameObject
@@ -176,21 +71,15 @@ namespace Ukemochi
         EntityID GetInstanceID() const;
 
         /**
-         * @brief Releases the handle of the GameObject
+         * @brief This function returns the name of the object as a constant reference to a std::string.
+         * @return The name of the object as a constant reference to a std::string.
          */
-        void ReleaseHandle() const;
-
-        // This function returns the name of the object as a constant reference to a std::string.
         const std::string& GetName() const { return m_Name; }
 
-        // This function returns the tag of the object, also as a constant reference.
+        /**
+         * @brief This function returns the tag of the object, also as a constant reference.
+         * @return The tag of the object as a constant reference to a std::string.
+         */
         const std::string& GetTag() const { return m_Tag; }
-
-        // This templated function checks if the object has a specific component of type T.
-        template <typename T>
-        bool HasComponent() const
-        {
-            return ECS::GetInstance().HasComponent<T>(m_InstanceID);
-        }
     };
 };

@@ -7,7 +7,8 @@ namespace Ukemochi
 	{
 		if (texture_list.find(file_path) != texture_list.end())
 		{
-			std::cout << "Texture already exists";
+			// std::cout << "Texture already exists";
+			UME_ENGINE_INFO("Texture {0} already exists in list", file_path);
 			return;
 		}
 		

@@ -53,6 +53,12 @@ namespace Ukemochi {
 
 #pragma warning(pop)  // Re-enable the warning
 
+// Logging levels:
+// TRACE (Capture execution of code)
+// INFO (Capture an event that occurred)
+// WARN (Indicate unexpected event, disrupt or delay)
+// ERROR (Capture a system interfering with functionalities)
+// FATAL (Capture a system crash)
  // Engine log macros
  #define UME_ENGINE_TRACE(...) ::Ukemochi::Log::GetEngineLogger() -> trace(__VA_ARGS__)
  #define UME_ENGINE_INFO(...)  ::Ukemochi::Log::GetEngineLogger() -> info(__VA_ARGS__)

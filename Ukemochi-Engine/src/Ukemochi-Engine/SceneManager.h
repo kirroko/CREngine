@@ -82,6 +82,7 @@ namespace Ukemochi
 		static std::chrono::duration<double> collision_time;
 		static std::chrono::duration<double> physics_time;
 		static std::chrono::duration<double> graphics_time;
+		static std::chrono::duration<double> logic_time;
 
 		std::chrono::steady_clock::time_point sys_start;
 		std::chrono::steady_clock::time_point sys_end;

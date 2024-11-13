@@ -36,47 +36,11 @@ GameObject& GameObject::operator=(const GameObject& other)
     m_Name = other.m_Name;
     m_Tag = other.m_Tag;
     m_InstanceID = other.m_InstanceID;
-    // TODO: Copy the managed instance and components 7/11/24
+    
     return *this;
-}
-
-GameObject::~GameObject()
-{
-    // mono_gchandle_free_v2(m_ManagedInstanceHandle);
-    // for (auto& component : m_ManagedComponentsHandle)
-    // {
-    //     mono_gchandle_free_v2(component.second);
-    // }
-}
-
-MonoObject* GameObject::GetManagedInstance(const std::string& objectName) const
-{
-    if (strcmp(objectName.c_str(), "GameObject") == 0) // Well... Just in case yeah
-        return m_ManagedInstance;
-
-    return m_ManagedComponents.at(objectName);
-}
-
-void GameObject::SetManagedComponentInstance(MonoObject* instance, const std::string& typeName)
-{
-    m_ManagedComponentsHandle[typeName] = mono_gchandle_new_v2(instance, true);
-    m_ManagedComponents[typeName] = instance;
-}
-
-MonoObject* GameObject::GetManagedInstance() const
-{
-    return m_ManagedInstance;
 }
 
 EntityID GameObject::GetInstanceID() const
 {
     return m_InstanceID;
-}
-
-void GameObject::ReleaseHandle() const
-{
-    for (auto& pair : m_ManagedComponentsHandle)
-    {
-        mono_gchandle_free_v2(pair.second);
-    }
 }

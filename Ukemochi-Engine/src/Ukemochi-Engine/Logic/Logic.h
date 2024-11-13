@@ -34,12 +34,12 @@ namespace Ukemochi
 		/**
 		 * @brief Init mono and Invoke all script Start Method
 		 */
-		void Init();
+		void Init() const;
 
 		/**
 		 * @brief Invoke all entity's script Update Method
 		 */
-		void Update();
+		void Update() const;
 
 		/**
 		 * @brief Remove all script instance
