@@ -340,11 +340,6 @@ public:
 private:
 
 	/*!
-	 * @brief Initializes buffers for rendering boxes.
-	 */
-	void initBoxBuffers();
-
-	/*!
 	 * @brief Initializes buffers for rendering box wireframes (debug view).
 	 */
 	void initDebugBoxBuffers();
@@ -360,11 +355,6 @@ private:
 	 * @param segments Number of segments for the circle (default is 1000).
 	 */
 	void initCircleOutlineBuffers(GLuint segments = 1000);
-
-	/*!
-	 * @brief Initializes buffers required for animation rendering.
-	 */
-	void initAnimationBuffers();
 
 	/*!
 	 * @enum objectIDs

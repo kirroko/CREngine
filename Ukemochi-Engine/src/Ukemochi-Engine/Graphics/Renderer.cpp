@@ -56,11 +56,6 @@ Renderer::~Renderer()
  */
 void Renderer::init()
 {
-	// Load shaders
-	//setUpShaders();
-
-	// Load Buffers for box drawing
-	initBoxBuffers();
 
 	// Load Buffers for debug/wireframe box drawing
 	initDebugBoxBuffers();
@@ -74,7 +69,6 @@ void Renderer::init()
 
 	setupFramebuffer();
 	initScreenQuad();
-	initAnimationBuffers();
 
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
@@ -247,30 +241,6 @@ GLuint Renderer::getTextureColorBuffer() const
 }
 
 /*!
- * @brief Initializes vertex and index buffers for drawing a 2D box.
- */
-void Renderer::initBoxBuffers()
-{
-	// Define vertices for a box (centered around origin)
-	GLfloat vertices_box[] = {
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f    // Top-right
-	};
-	GLuint indices_box[] = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	// Set up the buffers once, and bind the VAO/VBO/EBO
-	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
-
-	// Store the number of indices to be drawn
-	indices_count.push_back(6);
-}
-
-/*!
  * @brief Initializes vertex and index buffers for drawing a wireframe outline of a 2D box.
  */
 void Renderer::initDebugBoxBuffers()
@@ -384,30 +354,6 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 	// Set up a VAO/VBO for the circle outline
 	setUpBuffers(vertices.data(), vertices.size() * sizeof(GLfloat), nullptr, 0); // No indices since it's a line loop
 }
-
-/*!
- * @brief Initializes buffers for animated sprite rendering.
- */
-void Renderer::initAnimationBuffers()
-{
-	// Define the vertices with placeholder texture coordinates.
-	GLfloat vertices[] = {
-		// Positions         // Colors        // UVs (to be updated dynamically)
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 1.0f    // Top-right
-	};
-
-	GLuint indices[] = {
-		0, 1, 2,  // First triangle
-		0, 2, 3   // Second triangle
-	};
-
-	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
-	//indices_count.push_back(6);
-}
-
 
 /*!
  * @brief Loads and sets up a texture based on the given file path.
@@ -1056,46 +1002,4 @@ void Renderer::animationKeyInput()
 			break;
 		}
 	}
-
-	//auto& playerSprite = playerObject->GetComponent<SpriteRender>();
-
-	//// File paths for the textures
-	//std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
-	//std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
-
-	//if (Input::IsKeyPressed(GLFW_KEY_A)) {
-	//	isFacingRight = false; // Moving left
-	//}
-	//else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-	//	isFacingRight = true; // Moving right
-	//}
-
-	//// Check if any movement keys are pressed
-	//if (Input::IsKeyPressed(GLFW_KEY_W) ||
-	//	Input::IsKeyPressed(GLFW_KEY_A) ||
-	//	Input::IsKeyPressed(GLFW_KEY_S) ||
-	//	Input::IsKeyPressed(GLFW_KEY_D))
-	//{
-	//	// If we are not already in the running state, switch to the running texture
-	//	if (playerSprite.animationIndex != 1)
-	//	{
-	//		playerSprite.animationIndex = 1;
-	//		playerSprite.texturePath = runningTexturePath;
-
-	//		// Set the animation index and texture path to indicate running state
-	//		std::cout << "Switching to running animation.\n";
-	//	}
-	//}
-	//else
-	//{
-	//	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-	//	if (playerSprite.animationIndex != 0)
-	//	{
-	//		playerSprite.animationIndex = 0;
-	//		playerSprite.texturePath = idleTexturePath;
-
-	//		// Set the animation index and texture path to indicate idle state
-	//		std::cout << "Switching to idle animation.\n";
-	//	}
-	//}
 }
