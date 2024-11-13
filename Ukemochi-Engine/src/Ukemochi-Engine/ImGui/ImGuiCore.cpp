@@ -335,7 +335,7 @@ namespace Ukemochi
             if (ImGui::Selectable(assetFiles[i].c_str(), isSelected))
             {
                 selectedAssetIndex = static_cast<int>(i);
-                std::string fullPath = "../Assets/" + assetFiles[i];
+                std::string fullPath = "../Assets/Prefabs/" + assetFiles[i];
                 std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
             }
         }
