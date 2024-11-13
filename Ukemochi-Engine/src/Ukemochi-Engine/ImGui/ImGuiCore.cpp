@@ -725,7 +725,7 @@ namespace Ukemochi
         // Begin a dockable window
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
-        static char filePath[256] = "../Assets/Player.json";
+        static char filePath[256] = "../Assets/Prefabs/Player.json";
         static int selectedEntityIndex = -1;
 
         static bool showError = false;
