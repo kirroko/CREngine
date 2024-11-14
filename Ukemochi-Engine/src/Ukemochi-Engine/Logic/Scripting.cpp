@@ -360,6 +360,12 @@ namespace Ukemochi
         mono_add_internal_call("Ukemochi.EngineInterop::GetKeyDown",
                                (void*)InternalCalls::GetKeyDown);
 
+        mono_add_internal_call("Ukemochi.EngineInterop::GetMouseButton",
+                               (void*)InternalCalls::GetMouseButton);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::GetMouseButtonDown",
+                               (void*)InternalCalls::GetMouseButtonDown);
+
         mono_add_internal_call("Ukemochi.EngineInterop::LogMessage",
                                (void*)InternalCalls::LogMessage);
 

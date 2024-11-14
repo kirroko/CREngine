@@ -28,5 +28,15 @@ namespace Ukemochi
         {
             return EngineInterop.GetKeyDown((int)key);
         }
+        
+        public static bool GetMouseButton(KeyCode button)
+        {
+            return EngineInterop.GetMouseButton((int)button);
+        }
+
+        public static bool GetMouseButtonDown(KeyCode button)
+        {
+            return EngineInterop.GetMouseButtonDown((int)button);
+        }
     }
 }
