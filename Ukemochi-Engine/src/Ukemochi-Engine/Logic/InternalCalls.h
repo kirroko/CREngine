@@ -57,6 +57,16 @@ namespace Ukemochi
             return Input::IsKeyTriggered(key);
         }
 
+        EXTERN_C UME_API inline bool GetMouseButton(int32_t button)
+        {
+            return Input::IsMouseButtonPressed(button);
+        }
+
+        EXTERN_C UME_API inline bool GetMouseButtonDown(int32_t button)
+        {
+            return Input::IsMouseButtonTriggered(button);
+        }
+
         EXTERN_C UME_API inline void LogMessage(MonoString* message)
         {
             UME_ENGINE_INFO("Ukemochi log: {0}", ScriptingEngine::MonoStringToUTF8(message));

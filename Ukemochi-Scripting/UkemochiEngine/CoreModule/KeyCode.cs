@@ -2,6 +2,13 @@ namespace Ukemochi
 {
     public enum KeyCode
     {
+        Mouse0 = 0,
+        Mouse1 = 1,
+        Mouse2 = 2,
+        Mouse3 = 3,
+        Mouse4 = 4,
+        Mouse5 = 5,
+        Mouse6 = 6,
         Space = 32,
         Apostrophe = 39, /* ' */
         Comma = 44, /* , */
