@@ -36,6 +36,8 @@ namespace Ukemochi
 		\brief Prepares a new ImGui frame.
 		*/
 		static void NewFrame();
+		
+		static void SpriteEditorWindow();
 
 		static void Begin();
 		/*!
@@ -94,7 +96,7 @@ namespace Ukemochi
 		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
 		static std::vector<std::string> assetFiles;
-
+		static std::vector<std::string> textureFiles;
 		static std::vector<std::string> sceneFiles;
 		static void LoadContents(); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
