@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file       SceneManager.h
-\author     Tan Si Han, t.sihan, 2301264
-\par        email: t.sihan\@digipen.edu
+\file       SceneManager.cpp
+\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
 \date       Nov 8, 2024
 \brief      This file contains the definition of the SceneManger system.
 
@@ -11,8 +9,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include "SceneManager.h"

@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       EntryPoint.h
-\author     
-\par        
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 15, 2024
 \brief      This header file defines the main entry point for the Ukemochi Engine application.
             It initializes logging, sets up memory leak detection, and runs the application loop.
@@ -12,8 +10,8 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include <crtdbg.h>				// To check for memory leaks
 

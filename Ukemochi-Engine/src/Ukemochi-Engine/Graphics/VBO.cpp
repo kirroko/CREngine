@@ -1,12 +1,18 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    VBO.cpp
- * @brief   This file contains the implementation of the VBO (Vertex Buffer Object) class, responsible for managing vertex data in OpenGL.
- *          The VBO class allows you to create, bind, unbind, and delete vertex data used for rendering.
- *          It interacts with VAOs to manage vertex attribute data for rendering objects in OpenGL.
- *          This class sends vertex data to the GPU for use in rendering pipelines.
- * @author  t.shunzhitomy@digipen.edu
- * @date    25/09/2024
- */
+\file       VBO.cpp
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the implementation of the VBO (Vertex Buffer Object) class, responsible for managing vertex data in OpenGL.
+            The VBO class allows you to create, bind, unbind, and delete vertex data used for rendering.
+            It interacts with VAOs to manage vertex attribute data for rendering objects in OpenGL.
+            This class sends vertex data to the GPU for use in rendering pipelines.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include"VBO.h"

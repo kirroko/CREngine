@@ -1,23 +1,25 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    Camera2D.h
- * @brief   Header file for the Camera class, which provides 2D camera functionalities for panning, zooming, and viewport management.
- * @author  t.shunzhitomy@digipen.edu
- * @date    06/11/2024
- */
+\file       Camera2D.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Header file for the Camera class, which provides 2D camera functionalities for panning, zooming, and viewport management.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #ifndef CAMERA_CLASS_H
 #define CAMERA_CLASS_H
- /*!
-  * @file    Camera2D.h
-  * @brief   Header file for the Camera class, which provides 2D camera functionalities for panning, zooming, and viewport management.
-  * @date    06/11/2024
-  */
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "../vendor/glm/glm/glm.hpp"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp>
 #include "../Input/Input.h"
 #include "../ECS/Systems.h"
-
 
 /*!
  * @class Camera

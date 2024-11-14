@@ -1,12 +1,19 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    VAO.cpp
- * @brief   This file contains the implementation of the VAO (Vertex Array Object) class, responsible for managing 
+\file       VAO.cpp
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the implementation of the VAO (Vertex Array Object) class, responsible for managing 
 			vertex attributes and linking them to vertex buffer objects (VBOs) in OpenGL.
- *          It provides functionality to bind, unbind, delete VAOs, and link VBO attributes like position and color.
- *          The VAO helps manage the layout of vertex data and optimize the rendering pipeline in OpenGL.
- * @author  t.shunzhitomy
- * @date    25/09/2024
- */
+            It provides functionality to bind, unbind, delete VAOs, and link VBO attributes like position and color.
+            The VAO helps manage the layout of vertex data and optimize the rendering pipeline in OpenGL.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include"VAO.h"
 

@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       WindowsWindow.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 12, 2024
 \brief      This file contains the declaration and implementation of the WindowsWindow class, 
             which manages window creation, input handling, and rendering for a windowed application using GLFW.
@@ -12,8 +10,8 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "WindowsWindow.h"
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"

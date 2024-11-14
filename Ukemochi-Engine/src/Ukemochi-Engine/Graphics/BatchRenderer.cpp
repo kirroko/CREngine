@@ -1,9 +1,16 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    BatchRenderer.cpp
- * @brief   Implementation of the BatchRenderer2D class for efficient sprite rendering.
- * @author  t.shunzhitomy@digipen.edu
- * @date    06/11/2024
- */
+\file       BatchRenderer.cpp
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Implementation of the BatchRenderer2D class for efficient sprite rendering.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "BatchRenderer.h"
 #include "shaderClass.h"

@@ -1,18 +1,16 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       FrameController.h
-\author     Hurng Kai Rui, h.kairui, 2301278
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 12, 2024
-\brief      Header file for the FrameRateController class
+\brief      Header file for the FrameRateController class.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include "Core.h"
 

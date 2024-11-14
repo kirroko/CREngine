@@ -50,6 +50,7 @@ public class Enemy : BaseScript
         if (playerObj.GetComponent<Transform>() == null)
         {
             Debug.Log("PLAYER NULL " + playerObj.ToString());
+            return;
         }
         if (enemyTransform == null)
         {

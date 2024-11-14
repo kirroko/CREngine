@@ -1,21 +1,18 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       Input.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 23, 2024
 \brief      This file implements input handling functions for the Ukemochi
             Engine, providing functionalities to check key and mouse button 
             states, and retrieve mouse position.
 
-
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "../Application.h"
 #include "Input.h"

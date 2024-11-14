@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       Transformation.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\co-author  TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
 \date       Nov 3, 2024
 \brief      This file contains the declaration of the Transformation system.
 
@@ -11,8 +9,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #pragma once
 

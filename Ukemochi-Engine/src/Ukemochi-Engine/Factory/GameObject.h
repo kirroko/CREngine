@@ -1,22 +1,19 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file		GameObject.h
-\par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
+\file       GameObject.h
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
 \co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
-\par		Course: CSD2400/CSD2401
-\date		29/09/24
-\brief		This file contains the declaration of the GameObject class. This class is responsible for
-		creating and managing game objects. This applies to the C# side as well. It reflects the gameobject instance
-		on the C# side of things
+\date       Sept 29, 2024
+\brief      This file contains the declaration of the GameObject class. This class is responsible for
+        creating and managing game objects. This applies to the C# side as well. It reflects the gameobject instance
+        on the C# side of things.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include "PreCompile.h"
 

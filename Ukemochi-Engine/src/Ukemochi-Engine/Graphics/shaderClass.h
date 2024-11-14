@@ -1,11 +1,18 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    Shader.h
- * @brief   This file contains the declaration of the Shader class, responsible for compiling and managing OpenGL shaders (vertex and fragment shaders).
- *          It provides functionality to activate, delete, and set uniform values for shaders.
- *          The Shader class also includes utility functions to work with various types of uniforms such as bool, int, float, vectors, and matrices.
- * @author  t.shunzhitomy@digipen.edu
- * @date    25/09/2024
- */
+\file       shaderClass.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the declaration of the Shader class, responsible for compiling and managing OpenGL shaders (vertex and fragment shaders).
+            It provides functionality to activate, delete, and set uniform values for shaders.
+            The Shader class also includes utility functions to work with various types of uniforms such as bool, int, float, vectors, and matrices.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #ifndef SHADER_CLASS_H
 #define SHADER_CLASS_H
 

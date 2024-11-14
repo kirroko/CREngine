@@ -1,20 +1,16 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file	Systems.h
-\par	Ukemochi
-\author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par	junyukean.wong\@digipen.edu
-\par	Course: CSD2400/CSD2401
-\date	15/09/24
-\brief	To maintain a record of registered systems and their signatures.
+\file       Systems.h
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\date       Sep 15, 2024
+\brief      To maintain a record of registered systems and their signatures.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include <unordered_map> // std::unordered_map
 #include <set>           // std::set

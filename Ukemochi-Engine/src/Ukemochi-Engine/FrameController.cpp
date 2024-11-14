@@ -1,21 +1,18 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       FrameController.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 12, 2024
 \brief      Implementation of the FrameRateController class, which manages frame rate calculations
-             and delta time between frames in a game or graphical application. This class provides
-             functionality to update frame counts, calculate frames per second (FPS), and retrieve
-             delta time for smoother rendering and timing control.
+            and delta time between frames in a game or graphical application. This class provides
+            functionality to update frame counts, calculate frames per second (FPS), and retrieve
+            delta time for smoother rendering and timing control.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include "FrameController.h"

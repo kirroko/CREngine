@@ -1,15 +1,16 @@
 /* Start Header ************************************************************************/
 /*!
-\file    GSM.hpp
-\author  Tan Si Han, t.sihan, 2301264
-\par     t.sihan@digipen.edu
-\date    20/09/2024
-\brief   This files contains the declaration of the GameStateManager which handles the game state.
+\file       GSM.h
+\author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu
+\date       Sept 20, 2024
+\brief      This files contains the declaration of the GameStateManager which handles the game state.
 
-
-Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure of this file or its contents without the prior written consent of DigiPen Institute of Technology is prohibited.
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header **************************************************************************/
+
 #pragma once
 #include "GameStateList.h"
 namespace Ukemochi

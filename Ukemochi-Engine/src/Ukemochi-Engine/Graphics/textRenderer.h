@@ -1,9 +1,16 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    TextRenderer.h
- * @brief   Header file for the TextRenderer class, which provides functionality for rendering text using FreeType and OpenGL.
- * @date    06/11/2024
- * @author  t.shunzhitomy
- */
+\file       TextRenderer.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Header file for the TextRenderer class, which provides functionality for rendering text using FreeType and OpenGL.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #ifndef TEXT_RENDERER_CLASS_H
 #define TEXT_RENDERER_CLASS_H
 #include "ft2build.h"

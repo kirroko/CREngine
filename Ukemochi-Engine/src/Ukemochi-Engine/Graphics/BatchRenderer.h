@@ -1,9 +1,16 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    BatchRenderer.h
- * @brief   Header file for the BatchRenderer2D class, which handles efficient rendering of multiple 2D sprites in batches.
- * @author  t.shunzhitomy@digipen.edu
- * @date    06/11/2024
- */
+\file       BatchRenderer.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Header file for the BatchRenderer2D class, which handles efficient rendering of multiple 2D sprites in batches.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #ifndef BATCH_RENDERER_H
 #define BATHC_RENDERER_H
 

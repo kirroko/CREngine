@@ -1,21 +1,19 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Application.cpp
-\par		Ukemochi
-\author 	HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (50%)
+\author     HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (50%)
 \co-authors TAN Si Han, t.sihan , 2301264, t.sihan\@digipen.edu (30%)
-			Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (15%)
-			Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (5%)
-			x, x, 230xxxx, x\@digipen.edu (x%)
-\par        Course: CSD2400/CSD2401
-\date   	25-09-2024
+\co-authors Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (15%)
+\co-authors Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (5%)
+\date       Sept 25, 2024
 \brief      This file contains the function definitions of application.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written consent of
-DigiPen Institute of Technology is prohibited.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Application.h"
 #include "Game/GSM.h"
