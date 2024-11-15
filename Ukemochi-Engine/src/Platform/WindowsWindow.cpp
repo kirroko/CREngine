@@ -222,13 +222,15 @@ namespace Ukemochi {
 		m_Data.VSync = enabled;
 	}
 
-	void WindowsWindow::fileDropCallback(GLFWwindow* window, int count, const char** paths) {
-		WindowsWindow* windowInstance = static_cast<WindowsWindow*>(glfwGetWindowUserPointer(window));
-
-		// Assuming count > 0, use the first dropped file path
-		if (count > 0) {
+	//bool fileDropped = false;
+	void WindowsWindow::fileDropCallback(GLFWwindow* window, int count, const char** paths)
+	{
+		if (count > 0)
+		{
 			std::cout << "File dropped: " << paths[0] << std::endl;
-			windowInstance->m_FilePath = paths[0]; // Update the filePath
+			WindowsWindow* win = (WindowsWindow*)glfwGetWindowUserPointer(window);
+			win->m_FilePath = std::string(paths[0]);
+			win->fileDropped = true; // Set flag when a file is dropped
 		}
 	}
 

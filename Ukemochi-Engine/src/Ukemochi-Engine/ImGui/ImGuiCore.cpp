@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "ImGuiCore.h"
+#include <filesystem>
 
 #include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -39,6 +40,7 @@ namespace Ukemochi
     float UseImGui::m_LastSceneUpdateTime = 0.0f;
     std::vector<std::string> UseImGui::assetFiles;
     std::vector<std::string> UseImGui::sceneFiles;
+    std::vector<std::string> UseImGui::folderNames;
     bool UseImGui::m_CompileError = false;
     bool UseImGui::m_Compiling = false;
 
@@ -114,7 +116,7 @@ namespace Ukemochi
         // Toggle to enable or disable docking
         static bool enableDocking = true;
 
-        if (io.KeyCtrl && io.KeysDown[ImGuiKey_D])
+        if (io.KeyCtrl && Input::IsKeyTriggered(UME_KEY_D))
         {
             enableDocking = !enableDocking;
         }
@@ -155,6 +157,24 @@ namespace Ukemochi
         
         //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
+
+    //void UseImGui::CheckAndHandleFileDrop()
+    //{
+    //    Application& app = Application::Get();
+    //    WindowsWindow& win = (WindowsWindow&)app.GetWindow();
+
+    //    if (win.fileDropped) {
+    //        std::cout << "File drop detected!" << std::endl;
+    //        const std::string& filePath = win.GetFilePath();
+    //        std::cout << "File dropped: " << filePath << std::endl;
+
+    //        ImGui::Begin("File Drop Window");
+    //        ImGui::Text("Dropped File Path: %s", filePath.c_str());
+    //        win.ClearFilePath();
+    //        win.fileDropped = false;  // Reset flag
+    //        ImGui::End();
+    //    }
+    //}
 
     void UseImGui::DebugWindow()
     {
@@ -223,10 +243,24 @@ namespace Ukemochi
  */
     void UseImGui::ControlPanel(float fps)
     {
+        static std::vector<float> fpsHistory;
+        static const int maxHistorySize = 144; // Maximum number of FPS values to store
+
+
+        fpsHistory.push_back(fps);
+
+        // If the history size exceeds the maximum, remove the oldest value
+        if (fpsHistory.size() > maxHistorySize)
+        {
+            fpsHistory.erase(fpsHistory.begin());
+        }
+
         ImGui::Begin("Control Panel"); // Create a new window titled "Control Panel"
 
         // Add FPS display inside ControlPanel
         ImGui::Text("FPS: %.2f", fps); // Show FPS with 2 decimal places
+
+        ImGui::PlotLines("FPS History", fpsHistory.data(), fpsHistory.size(), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
 
         // Add controls such as buttons, sliders, or entity selectors here
         ImGui::Text("Control Panel Contents");
@@ -292,16 +326,20 @@ namespace Ukemochi
  * Clears `assetFiles`, then populates it with names of regular files in the `Prefabs` folder.
  * This updates the asset list dynamically for display in the ImGui interface.
  */
-    void UseImGui::LoadContents()
+    void UseImGui::LoadContents(const std::string& directory)
     {
         // Clear the previous asset list
         assetFiles.clear();
+        folderNames.clear();
 
-        // Load assets from the Assets directory
-        std::string assetsDir = "../Assets/Prefabs";
-        for (const auto& entry : std::filesystem::directory_iterator(assetsDir))
+        // Load assets from the specified directory
+        for (const auto& entry : std::filesystem::directory_iterator(directory))
         {
-            if (entry.is_regular_file())
+            if (entry.is_directory())
+            {
+                folderNames.push_back(entry.path().filename().string());
+            }
+            else if (entry.is_regular_file())
             {
                 assetFiles.push_back(entry.path().filename().string());
             }
@@ -310,13 +348,37 @@ namespace Ukemochi
 
     void UseImGui::ContentBrowser(char* filePath)
     {
+        static std::string currentDirectory = "../Assets";
         ImGui::Begin("Content Browser");
-        //LoadAssets();
-        if (ImGui::Button("Refresh Assets"))
+
+        // Back Button
+        if (currentDirectory != "../Assets" && ImGui::Button("Back"))
         {
-            LoadContents(); // Manually trigger loading assets
+            // Go to the parent directory
+            currentDirectory = std::filesystem::path(currentDirectory).parent_path().string();
+            LoadContents(currentDirectory);
         }
 
+        // Refresh Button
+        if (ImGui::Button("Refresh Assets"))
+        {
+            LoadContents(currentDirectory);
+        }
+
+        ImGui::Separator();
+
+        // Display folders first
+        for (size_t i = 0; i < folderNames.size(); ++i)
+        {
+            if (ImGui::Selectable(("[Folder] " + folderNames[i]).c_str(), false))
+            {
+                // Update to the new directory and reload contents
+                currentDirectory += "/" + folderNames[i];
+                LoadContents(currentDirectory);
+            }
+        }
+
+        // Display files
         static int selectedAssetIndex = -1;
         for (size_t i = 0; i < assetFiles.size(); ++i)
         {
@@ -324,8 +386,18 @@ namespace Ukemochi
             if (ImGui::Selectable(assetFiles[i].c_str(), isSelected))
             {
                 selectedAssetIndex = static_cast<int>(i);
-                std::string fullPath = "../Assets/Prefabs/" + assetFiles[i];
+                std::string fullPath = currentDirectory + "/" + assetFiles[i];
                 std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
+            }
+
+            // Enable dragging for the asset file
+            if (ImGui::BeginDragDropSource())
+            {
+                // Set up the payload to drag
+                std::string assetPath = currentDirectory + "/" + assetFiles[i];
+                ImGui::SetDragDropPayload("ASSET_PATH", assetPath.c_str(), assetPath.size() + 1);
+                ImGui::Text("Drag: %s", assetFiles[i].c_str());  // Text for the drag preview
+                ImGui::EndDragDropSource();
             }
         }
 
@@ -864,7 +936,41 @@ namespace Ukemochi
                 //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
+            // Handle the drop target (accept file drops here)
+            if (ImGui::BeginDragDropTarget())
+            {
+                const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH");
+                if (payload)
+                {
+                    // The payload data is the file path
+                    const char* droppedFilePath = static_cast<const char*>(payload->Data);
+                    std::cout << "Dropped File: " << droppedFilePath << std::endl;
 
+                    // Create an entity based on the dropped file
+                    if (droppedFilePath[0] != '\0' && IsJsonFile(droppedFilePath))
+                    {
+                        if (ECS::GetInstance().GetLivingEntityCount() == 0)
+                        {
+                            ECS::GetInstance().GetSystem<Transformation>()->player = -1;
+                            ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
+                        }
+
+                        auto& go = GameObjectManager::GetInstance().CreatePrefabObject(droppedFilePath);
+                        // You can add additional logic for the entity, like setting up textures, animations, etc.
+                        if (go.GetTag() == "Player")
+                        {
+                            ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
+                            ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
+                            ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                            go.GetComponent<SpriteRender>().animated = true;
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
             ImGui::End();
         }
     }
@@ -890,6 +996,10 @@ namespace Ukemochi
         io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
                                 static_cast<float>(app.GetWindow().GetHeight()));
 
+
+
+        // Call the combined function to check and handle file drops
+        //CheckAndHandleFileDrop();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
