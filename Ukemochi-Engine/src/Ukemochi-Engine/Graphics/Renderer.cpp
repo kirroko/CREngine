@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/Factory.h"
 #include "../Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/SceneManager.h"
-
+#include "UIButton.h"
 
 using namespace Ukemochi;
 
@@ -98,7 +98,9 @@ void Renderer::init()
 	
 	batchRenderer->init(shaderProgram);
 
-	
+	UIRenderer = std::make_unique<UIButtonRenderer>();
+
+	UIRenderer->init(UI_shader_program, );
 }
 
 /*!
@@ -474,6 +476,8 @@ void Renderer::setUpShaders()
 	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
 	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+
+	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
 }
 
 /*!
@@ -548,6 +552,10 @@ void Renderer::render()
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+		//auto& GameObject
+		GameObject *go = GameObjectManager::GetInstance().GetGO(entity); 
+		if (go->GetTag() == "Button")
+			std::cout << "Button" << std::endl;
 
 		// Set up the model matrix
 		glm::mat4 model{};
