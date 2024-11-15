@@ -210,13 +210,20 @@ namespace Ukemochi
         {
             textureFiles.clear();
         }
-
+        // Static variables
         static int selectedAssetIndex = -1;
         static GLuint texture = 0;
         static int textureWidth = 0;
         static int textureHeight = 0;
         static bool showGrid = false;
         static std::string fileName;
+        // Input for total frames
+        static int totalFrames = 1;
+        
+        // Sprite size
+        static int pixelSize[2] = {64, 64};
+
+        // Display the list of textures
         for (size_t i = 0; i < textureFiles.size(); ++i)
         {
             bool isSelected = (selectedAssetIndex == static_cast<int>(i));
@@ -234,7 +241,15 @@ namespace Ukemochi
                     textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->height;
                     std::filesystem::path filePath(fullPath);
                     fileName = filePath.stem().string();
-                    
+                    filePath.replace_extension(".json");
+                    rapidjson::Document document;
+                    if(Serialization::LoadJSON(filePath.string(), document))
+                    {
+                        const rapidjson::Value& object = document["TextureMeta"];
+                        totalFrames = object["TotalFrames"].GetInt();
+                        pixelSize[0] = object["PixelWidth"].GetInt();
+                        pixelSize[1] = object["PixelHeight"].GetInt();
+                    }
                 }
                 else
                 {
@@ -248,12 +263,6 @@ namespace Ukemochi
         // Display the texture details
         ImGui::Text("File = %s", fileName.c_str());
         ImGui::Text("Size = %d x %d", textureWidth, textureHeight);
-
-        // Input for total frames
-        static int totalFrames = 1;
-        
-        // Sprite size
-        static int pixelSize[2] = {64, 64};
         
         // Calculate the number of columns and rows
         // static int numColumns = std::ceil(textureWidth / pixelSize[0]);
@@ -335,21 +344,38 @@ namespace Ukemochi
             float scaledCellWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth) * displayWidth;
             float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight) * displayHeight;
 
-            for(float x = 0; x <= displayWidth; x += scaledCellWidth)
+            int colums = textureWidth / pixelSize[0];
+            int rows = textureHeight / pixelSize[1];
+            int maxRows = (totalFrames + colums - 1) / colums;
+
+            for(int i = 0; i < totalFrames; i++)
             {
-                drawList->AddLine(
-                    ImVec2(canvasPos.x + x, canvasPos.y),
-                    ImVec2(canvasPos.x + x, canvasPos.y + displayHeight),
-                    IM_COL32(255,255,255,255));
+                int col = i % colums;
+                int row = i / colums;
+                if(row >= maxRows) break;
+
+                drawList->AddRect(ImVec2(canvasPos.x + static_cast<float>(col) * scaledCellWidth, canvasPos.y +
+                                         static_cast<float>(row) * scaledCellHeight),
+                                  ImVec2(canvasPos.x + static_cast<float>(col + 1) * scaledCellWidth, canvasPos.y + 
+                                             static_cast<float>(row + 1) * scaledCellHeight),
+                                  IM_COL32(255,255,255,255));
             }
 
-            for(float y = 0; y <= displayHeight; y += scaledCellHeight)
-            {
-                drawList->AddLine(
-                    ImVec2(canvasPos.x, canvasPos.y + y),
-                    ImVec2(canvasPos.x + displayWidth, canvasPos.y + y),
-                    IM_COL32(255,255,255,255));
-            }
+            // for(float x = 0; x <= displayWidth; x += scaledCellWidth)
+            // {
+            //     drawList->AddLine(
+            //         ImVec2(canvasPos.x + x, canvasPos.y),
+            //         ImVec2(canvasPos.x + x, canvasPos.y + displayHeight),
+            //         IM_COL32(255,255,255,255));
+            // }
+            //
+            // for(float y = 0; y <= displayHeight; y += scaledCellHeight)
+            // {
+            //     drawList->AddLine(
+            //         ImVec2(canvasPos.x, canvasPos.y + y),
+            //         ImVec2(canvasPos.x + displayWidth, canvasPos.y + y),
+            //         IM_COL32(255,255,255,255));
+            // }
         }
         ImGui::End();
     }

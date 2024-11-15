@@ -143,6 +143,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Animation.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -187,9 +190,6 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
       <Filter>Ukemochi-Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h">
-      <Filter>Ukemochi-Engine\Logic</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h">
       <Filter>Ukemochi-Engine\Logic</Filter>
@@ -290,6 +290,9 @@
     <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Animation.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
@@ -331,9 +334,6 @@
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp">
       <Filter>Ukemochi-Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp">
-      <Filter>Ukemochi-Engine\Logic</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp">
       <Filter>Ukemochi-Engine\Logic</Filter>
