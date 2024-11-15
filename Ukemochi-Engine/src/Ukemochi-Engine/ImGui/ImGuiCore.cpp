@@ -39,6 +39,7 @@ namespace Ukemochi
     float UseImGui::m_LastAssetUpdateTime = 0.0f;
     float UseImGui::m_LastSceneUpdateTime = 0.0f;
     std::vector<std::string> UseImGui::assetFiles;
+    std::vector<std::string> UseImGui::textureFiles;
     std::vector<std::string> UseImGui::sceneFiles;
     std::vector<std::string> UseImGui::folderNames;
     bool UseImGui::m_CompileError = false;
@@ -72,6 +73,8 @@ namespace Ukemochi
         style.WindowRounding = 5.0f; // Round corners of windows
         style.FrameRounding = 3.0f; // Round corners of frames
         style.ItemSpacing = ImVec2(10, 10); // Spacing between items
+        style.WindowBorderSize = 0.0f; // No border for windows
+        style.WindowPadding = ImVec2(0.0f,-1.5f); // Padding for windows
 
         //ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -122,7 +125,9 @@ namespace Ukemochi
         }
 
         // Set up the window to cover the entire viewport
-        ImGui::SetNextWindowPos(viewport->Pos);
+        ImVec2 window_pos = viewport->Pos;
+        window_pos.y += ImGui::GetFrameHeightWithSpacing() - 10.0f;
+        ImGui::SetNextWindowPos(window_pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
 
@@ -176,6 +181,95 @@ namespace Ukemochi
     //    }
     //}
 
+    void UseImGui::SpriteEditorWindow()
+    {
+        ImGui::Begin("Sprite Editor");
+        ImGui::Text("Sprite Editor Contents");
+        if(ImGui::Button("Refresh Assets"))
+        {
+            textureFiles.clear();
+            for (const auto& entry : std::filesystem::directory_iterator("../Assets/Textures")) // TODO: Temporarily soulution
+            {
+                std::string path = entry.path().string();
+                // size_t pos = path.find('\\');
+                std::replace(path.begin(), path.end(), '\\', '/');
+                textureFiles.push_back(std::move(path));
+            }
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Clear Assets"))
+        {
+            textureFiles.clear();
+        }
+
+        static int selectedAssetIndex = -1;
+        static GLuint texture = -1;
+        static int x = 0;
+        static int y = 0;
+        for (size_t i = 0; i < textureFiles.size(); ++i)
+        {
+            bool isSelected = (selectedAssetIndex == static_cast<int>(i));
+            if (ImGui::Selectable(textureFiles[i].c_str(), isSelected))
+            {
+                selectedAssetIndex = static_cast<int>(i);
+                std::string fullPath = textureFiles[i];
+
+                // Hey, if you're reading this... why did you piggyback my ECS for this? Make it a singleton or something man :( - Corn
+                if(ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(fullPath) !=
+                    ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+                {
+                    texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->ID;
+                    x = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->width;
+                    y = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->height;
+                }
+                else
+                {
+                    UME_ENGINE_WARN("No texture found in AssetManager for path, was it loaded? : {0}", fullPath);
+                }
+            }
+        }
+
+        ImVec2 availSize = ImGui::GetContentRegionAvail();
+
+        // Calculate the aspect ration of the image
+        float aspectRatio = static_cast<float>(x) / static_cast<float>(y);
+
+        // determine the final size to display the image
+        float displayWidth = static_cast<float>(x);
+        float displayHeight = static_cast<float>(y);
+
+        if(static_cast<float>(x) > availSize.x || static_cast<float>(y) > availSize.y)
+        {
+            if(availSize.x / aspectRatio <= availSize.y)
+            {
+                displayWidth = availSize.x;
+                displayHeight = availSize.x / aspectRatio;
+            }
+            else
+            {
+                displayWidth = availSize.y * aspectRatio;
+                displayHeight = availSize.y;
+            }
+        }
+
+        float xOffset = (availSize.x - displayWidth) * 0.5f;
+        float yOffset = (availSize.y - displayHeight) * 0.5f;
+
+        
+        ImGui::Text("pointer = %x", texture);
+        ImGui::Text("Size = %d x %d", x, y);
+        
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xOffset);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
+        ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::End();
+    }
+
+    /**
+     * @brief Displays the debug window in the ImGui interface, showing the time taken by various systems.
+     */
     void UseImGui::DebugWindow()
     {
         static double lastUpdateTime = 0.0;

@@ -29,11 +29,21 @@ namespace Ukemochi
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetObjectByTag(string tag, out ulong id);
 
+        #region Input
+        
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetKey(int key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetKeyDown(int key);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetMouseButton(int button);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetMouseButtonDown(int button);
+        
+        #endregion
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LogMessage(string message);
@@ -129,5 +139,7 @@ namespace Ukemochi
         public static extern void SetSpriteRenderFlipY(ulong getInstanceId, bool flipY);
 
         #endregion
+
+
     }
 }

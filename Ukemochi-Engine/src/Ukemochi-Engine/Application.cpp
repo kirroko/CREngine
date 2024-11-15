@@ -254,6 +254,7 @@ namespace Ukemochi
     {
         //************ Render IMGUI ************
         imguiInstance.NewFrame();
+        imguiInstance.SpriteEditorWindow();
         imguiInstance.DebugWindow();
         imguiInstance.SceneBrowser();
         //imguiInstance.AssetBrowser();
