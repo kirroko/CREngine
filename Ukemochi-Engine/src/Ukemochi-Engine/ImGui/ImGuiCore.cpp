@@ -119,10 +119,17 @@ namespace Ukemochi
         // Toggle to enable or disable docking
         static bool enableDocking = true;
 
-        if (io.KeyCtrl && Input::IsKeyTriggered(UME_KEY_D))
+        //if (io.KeyCtrl && Input::IsKeyTriggered(UME_KEY_D))
+        //{
+        //    enableDocking = !enableDocking;
+        //}
+        ImGui::BeginMainMenuBar();
+        if (ImGui::BeginMenu("Options"))
         {
-            enableDocking = !enableDocking;
+            ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
+            ImGui::EndMenu();
         }
+        ImGui::EndMainMenuBar();
 
         // Set up the window to cover the entire viewport
         ImVec2 window_pos = viewport->Pos;
