@@ -127,7 +127,13 @@ namespace Ukemochi
 	void AssetManager::loadAssetsFromFolder(std::string directory)
 	{
 		std::filesystem::directory_entry dir_to_watch{ directory };
-		
+		for (std::filesystem::recursive_directory_iterator current(dir_to_watch), end; current != end; current++)
+		{
+			if (current->is_directory())
+			{
+				//check this new directory that is further in
+			}
+		}
 
 	}
 
