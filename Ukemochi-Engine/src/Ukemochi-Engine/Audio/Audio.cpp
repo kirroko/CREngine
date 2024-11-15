@@ -352,4 +352,14 @@ namespace Ukemochi
         }
         return isPlaying;
     }
+
+    /*!***********************************************************************
+    \brief by Gerald
+    get pointer to fmod system
+    \return pointer to fmod system
+    *************************************************************************/
+    FMOD::System* Audio::accessSys()
+    {
+        return pSystem;
+    }
 }

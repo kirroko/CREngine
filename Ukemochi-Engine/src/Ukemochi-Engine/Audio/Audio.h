@@ -135,6 +135,13 @@ namespace Ukemochi
         *************************************************************************/
         bool IsPlaying(int soundIndex);
 
+        /*!***********************************************************************
+        \brief by Gerald
+         get pointer to fmod system
+         \return pointer to fmod system
+        *************************************************************************/
+        FMOD::System* accessSys();
+
     private:
         FMOD::System* pSystem;  // Pointer to the FMOD system, which manages all sound operations
 
