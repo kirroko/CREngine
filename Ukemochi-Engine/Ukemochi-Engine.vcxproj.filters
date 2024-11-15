@@ -188,9 +188,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
       <Filter>Ukemochi-Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h">
-      <Filter>Ukemochi-Engine\Logic</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h">
       <Filter>Ukemochi-Engine\Logic</Filter>
     </ClInclude>
@@ -233,6 +230,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -332,9 +330,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp">
       <Filter>Ukemochi-Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp">
-      <Filter>Ukemochi-Engine\Logic</Filter>
-    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp">
       <Filter>Ukemochi-Engine\Logic</Filter>
     </ClCompile>
@@ -371,6 +366,7 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\UIButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

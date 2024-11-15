@@ -209,6 +209,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButton.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
@@ -261,6 +262,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\UIButton.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
