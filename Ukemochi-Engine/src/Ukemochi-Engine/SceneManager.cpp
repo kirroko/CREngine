@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGui/ImGuiCore.h"
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
+#include "Graphics/Animation.h"
 
 namespace Ukemochi
 {
@@ -59,6 +60,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<CircleCollider2D>();
         ECS::GetInstance().RegisterComponent<ConvexCollider2D>();
         ECS::GetInstance().RegisterComponent<SpriteRender>();
+	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
         ECS::GetInstance().RegisterComponent<Button>();
 
@@ -72,6 +74,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<InGameGUI>();
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
+	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -104,6 +107,11 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         sig.set(ECS::GetInstance().GetComponentType<Button>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
+
+	    // For Animation System
+	    sig.reset();
+	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
+	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);
@@ -178,7 +186,7 @@ namespace Ukemochi
     {
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
-        ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+        // ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         SceneManagerDraw();
     }
@@ -299,7 +307,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
         ECS::GetInstance().GetSystem<InGameGUI>()->Update();
-        ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+        // ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
@@ -325,9 +333,10 @@ namespace Ukemochi
         // Compute the entities transformations
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
-        // --- DATA SYNC UPDATE ---
-        // ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
+	    // --- ANIMATION UPDATE ---
+	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
 
+	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
 		SceneManagerDraw();
 		sys_end = std::chrono::steady_clock::now();
@@ -335,14 +344,6 @@ namespace Ukemochi
 
 		loop_end = std::chrono::steady_clock::now();
 		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
-
-		//toggle console output for performance
-		// if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
-		// {
-		// 	//func_toggle = (func_toggle + 1) % 2;
-		// 	print_performance(loop_time, collision_time, physics_time, graphics_time);
-		// 	//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
-		// }
 	}
 
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
@@ -554,17 +555,35 @@ namespace Ukemochi
                                              : SPRITE_SHAPE::CIRCLE;
                     if (!newObject.HasComponent<SpriteRender>())
                     {
-                        newObject.AddComponent<SpriteRender>({texturePath, shape});
+                        SpriteRender sr = {texturePath, shape};
+                        // Let's check if there's a metadata for the sprite to know if spritesheet
+                        std::string metaDataPath = texturePath.replace(texturePath.find_last_of('.'), std::string::npos, ".json");
+                        if(std::filesystem::exists(metaDataPath))
+                        {
+                            Document storage;
+                            if(Serialization::LoadJSON(metaDataPath,storage))
+                            {
+                                const Value& object = storage["TextureMeta"];
+
+                                // Animation anim;
+                                // anim.total_frames = object["TotalFrames"].GetInt();
+                                // anim.pixel_width = object["PixelWidth"].GetInt();
+                                // anim.pixel_height = object["PixelHeight"].GetInt();
+                                // anim.total_width = object["TextureWidth"].GetInt();
+                                // anim.total_height = object["TextureHeight"].GetInt();
+                            }
+                            sr.animated = true;
+                            
+                        }
+                        newObject.AddComponent<SpriteRender>(sr);
                     }
-                    // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
-                    //     newObject.GetComponent<SpriteRender>().texturePath,
-                    //     ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
+
                     ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-					if (tag == "Player")
-					{
-						newObject.GetComponent<SpriteRender>().animated = true;
-						newObject.GetComponent<SpriteRender>().animationIndex = 1;
-					}
+					// if (tag == "Player")
+					// {
+					// 	newObject.GetComponent<SpriteRender>().animated = true;
+					// 	newObject.GetComponent<SpriteRender>().animationIndex = 1;
+					// }
 				}
 				else if (componentName == "Script")
 				{
@@ -594,7 +613,7 @@ namespace Ukemochi
 
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(newObject.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
-                    ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                    // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                 }
                 if (!playerFound)
                 {

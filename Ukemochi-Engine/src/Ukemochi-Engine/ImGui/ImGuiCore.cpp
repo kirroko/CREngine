@@ -192,9 +192,11 @@ namespace Ukemochi
         }
 
         static int selectedAssetIndex = -1;
-        static GLuint texture = -1;
-        static int x = 0;
-        static int y = 0;
+        static GLuint texture = 0;
+        static int textureWidth = 0;
+        static int textureHeight = 0;
+        static bool showGrid = false;
+        static std::string fileName;
         for (size_t i = 0; i < textureFiles.size(); ++i)
         {
             bool isSelected = (selectedAssetIndex == static_cast<int>(i));
@@ -208,26 +210,80 @@ namespace Ukemochi
                     ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
                 {
                     texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->ID;
-                    x = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->width;
-                    y = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->height;
+                    textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->width;
+                    textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->height;
+                    std::filesystem::path filePath(fullPath);
+                    fileName = filePath.stem().string();
+                    
                 }
                 else
                 {
                     UME_ENGINE_WARN("No texture found in AssetManager for path, was it loaded? : {0}", fullPath);
                 }
+
+                textureFiles.clear();
             }
         }
 
+        // Display the texture details
+        ImGui::Text("File = %s", fileName.c_str());
+        ImGui::Text("Size = %d x %d", textureWidth, textureHeight);
+
+        // Input for total frames
+        static int totalFrames = 1;
+        
+        // Sprite size
+        static int pixelSize[2] = {64, 64};
+        
+        // Calculate the number of columns and rows
+        // static int numColumns = std::ceil(textureWidth / pixelSize[0]);
+        // static int numRows = std::ceil(textureHeight / pixelSize[1]);
+        // float cellWidthScaled = pixelSize[0] * (displayWidth / static_cast<float>(textureWidth));
+        // float cellHeightScaled = pixelSize[1] * (displayHeight / static_cast<float>(textureHeight));
+
+        ImGui::InputInt("Total Frame",&totalFrames);
+        totalFrames = std::max(1, totalFrames);
+        
+        // Input for pixel size
+        ImGui::InputInt2("Pixel Size", pixelSize);
+        pixelSize[0] = std::max(1, pixelSize[0]);
+        pixelSize[1] = std::max(1, pixelSize[1]);
+        
+        ImGui::Checkbox("Show Grid", &showGrid);
+        
+        if(ImGui::Button("Export"))
+        {
+            // Get file name to save
+            rapidjson::Document document;
+            document.SetObject();
+            rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+
+            rapidjson::Value textureMetaData(rapidjson::kObjectType);
+            textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
+            textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
+            textureMetaData.AddMember("PixelHeight", pixelSize[1],allocator);
+            textureMetaData.AddMember("TextureWidth", textureWidth, allocator);
+            textureMetaData.AddMember("TextureHeight", textureHeight, allocator);
+
+            document.AddMember("TextureMeta", textureMetaData, allocator);
+            // Serialize the texture
+            std::string path = "../Assets/Textures/" + fileName + ".json";
+            if(!Serialization::PushJSON(path,document))
+            {
+                UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path);
+            }
+        }
+
+        // Display Image
+        // Calculate the aspect ratio of the image
+        float aspectRatio = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
         ImVec2 availSize = ImGui::GetContentRegionAvail();
 
-        // Calculate the aspect ration of the image
-        float aspectRatio = static_cast<float>(x) / static_cast<float>(y);
-
         // determine the final size to display the image
-        float displayWidth = static_cast<float>(x);
-        float displayHeight = static_cast<float>(y);
+        float displayWidth = static_cast<float>(textureWidth);
+        float displayHeight = static_cast<float>(textureHeight);
 
-        if(static_cast<float>(x) > availSize.x || static_cast<float>(y) > availSize.y)
+        if(static_cast<float>(textureWidth) > availSize.x || static_cast<float>(textureHeight) > availSize.y)
         {
             if(availSize.x / aspectRatio <= availSize.y)
             {
@@ -240,17 +296,41 @@ namespace Ukemochi
                 displayHeight = availSize.y;
             }
         }
-
+        
         float xOffset = (availSize.x - displayWidth) * 0.5f;
         float yOffset = (availSize.y - displayHeight) * 0.5f;
-
-        
-        ImGui::Text("pointer = %x", texture);
-        ImGui::Text("Size = %d x %d", x, y);
         
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xOffset);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
+        ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+        
         ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), ImVec2(0, 1), ImVec2(1, 0));
+
+        // Draw the grid
+        if(showGrid)
+        {
+           ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+            // scale the grid to match the resized image
+            float scaledCellWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth) * displayWidth;
+            float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight) * displayHeight;
+
+            for(float x = 0; x <= displayWidth; x += scaledCellWidth)
+            {
+                drawList->AddLine(
+                    ImVec2(canvasPos.x + x, canvasPos.y),
+                    ImVec2(canvasPos.x + x, canvasPos.y + displayHeight),
+                    IM_COL32(255,255,255,255));
+            }
+
+            for(float y = 0; y <= displayHeight; y += scaledCellHeight)
+            {
+                drawList->AddLine(
+                    ImVec2(canvasPos.x, canvasPos.y + y),
+                    ImVec2(canvasPos.x + displayWidth, canvasPos.y + y),
+                    IM_COL32(255,255,255,255));
+            }
+        }
         ImGui::End();
     }
 
@@ -864,9 +944,8 @@ namespace Ukemochi
                     ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
 
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
-                    //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
-                    ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
-                    go.GetComponent<SpriteRender>().animated = true;
+                    // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                    // go.GetComponent<SpriteRender>().animated = true;
                     //go.GetComponent<SpriteRender>().animationIndex = 1;
                 }
                 showError = false; // Reset error

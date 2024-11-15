@@ -101,8 +101,11 @@ namespace Ukemochi
         UME_ENGINE_ASSERT(std::filesystem::exists(csprojPath), "csproj file does not exist!")
 
         // Set to build in Release configuration, default is also debug
-        // TODO: Remember to change the configuration to Release
+#if _DEBUG
         std::wstring buildCmd = L"dotnet build -c Debug " + std::wstring(csprojPath.begin(), csprojPath.end());
+#else
+        std::wstring buildCmd = L"dotnet build -c Release " + std::wstring(csprojPath.begin(), csprojPath.end());
+#endif
         UME_ENGINE_INFO("Executing Dotnet build!");
         int result = _wsystem(buildCmd.c_str()); // Execute the build command
         if (result == 0) // Successful
@@ -111,7 +114,11 @@ namespace Ukemochi
             ScriptHasError = false;
             try
             {
+#if _DEBUG
                 std::filesystem::path sourcePath = "../Assets/bin/Debug/net472/Assembly-CSharp.dll";
+#else
+                std::filesystem::path sourcePath = "../Assets/bin/Release/net472/Assembly-CSharp.dll";
+#endif
                 std::filesystem::path destinationPath = "Resources/Scripts/Assembly-CSharp.dll";
 
                 if (std::filesystem::exists(sourcePath))

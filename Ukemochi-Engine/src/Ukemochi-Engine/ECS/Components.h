@@ -129,20 +129,71 @@ namespace Ukemochi
 	*************************************************************************/
 	enum class SPRITE_SHAPE { BOX = 0, CIRCLE = 1 }; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
+	struct AnimationClip
+	{
+		std::string name{};			// Name of the animation clip
+		GLuint textureID = 0;		// The texture ID, to be set during runtime
+		int total_frames = 1;				// Total frames in the animation
+		int pixel_width = 64;				// Width of each frame in pixels
+		int pixel_height = 64;				// Height of each frame in pixels
+		int total_width = 64;				// Width of the sprite sheet
+		int total_height = 64;				// Height of the sprite sheet
+		float frameTime = 0.05f;	// Duration of each frame
+		bool looping = true;		// Should the animation loop?
+	};
+	
+	/*!
+	 * @struct Animation
+	 * @brief Manages frame-based animations for entities.
+	 */
+	struct Animation
+	{
+		std::unordered_map<std::string, AnimationClip> clips;	// Animation clips
+		std::string currentClip{};								// Name of the active animation.
+		int current_frame = 0;									// Current frame index
+		float time_since_last_frame = 0.0f;						// Time since the last frame
+
+		void SetAnimation(const std::string& name)
+		{
+			if(clips.find(name) != clips.end() && name != currentClip)
+			{
+				currentClip = name;
+				current_frame = 0;
+				time_since_last_frame = 0.0f;
+			}
+		}
+		
+		void update(float dt)
+		{
+			if(clips.find(currentClip) != clips.end()) return;
+
+			AnimationClip& clip = clips[currentClip];
+			time_since_last_frame += dt;
+
+			// Advance new frame
+			if(time_since_last_frame >= clip.frameTime)
+			{
+				time_since_last_frame -= clip.frameTime;
+				current_frame++;
+				if(current_frame >= clip.total_frames)
+					current_frame = clip.looping ? 0 : clip.total_frames - 1;
+			}
+
+			// Renderer system handles the UV coordinates for us
+		}
+	};
+	
 	struct SpriteRender
 	{
-		std::string texturePath{};				// Path to the texture file (sprite)
-		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;	// Draw as BOX | Circle
-		unsigned int textureID = 0;
-		bool animated = false;							// Is the object animated?
-
-		int animationIndex = -1;
+		std::string texturePath{};					// The path acting as a key to the texture
+		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;		// Draw as BOX | Circle
+		GLuint textureID = 0;						// The texture ID, to be set during runtime
+		bool animated = false;						// Is the object animated?
+		
 		bool flipX = false;
 		bool flipY = false;
-		//bool visible = true;							// Is the object visible?
-		//float opacity = 1.0f;							// Opacity of the object
 	};
-
+	
 	/*!***********************************************************************
 	\brief
 	 AudioSource component structure.
