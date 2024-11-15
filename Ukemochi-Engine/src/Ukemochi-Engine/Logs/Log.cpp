@@ -1,21 +1,18 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       Log.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
 \date       Sept 14, 2024
 \brief      This file implements logging functionality for the Ukemochi 
             Engine using the spdlog library, providing an interface 
             for engine and client/game logging.
 
-
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 
 #include "../Logs/Log.h"

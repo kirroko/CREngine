@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       SceneManager.h
-\author     Tan Si Han, t.sihan, 2301264
-\par        email: t.sihan\@digipen.edu
+\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
 \date       Nov 8, 2024
 \brief      This file contains the declaration of the SceneManger system.
 
@@ -11,8 +9,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #pragma once
 #include "PreCompile.h"
@@ -82,6 +79,7 @@ namespace Ukemochi
 		static std::chrono::duration<double> collision_time;
 		static std::chrono::duration<double> physics_time;
 		static std::chrono::duration<double> graphics_time;
+		static std::chrono::duration<double> logic_time;
 
 		std::chrono::steady_clock::time_point sys_start;
 		std::chrono::steady_clock::time_point sys_end;

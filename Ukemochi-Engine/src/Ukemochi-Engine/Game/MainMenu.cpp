@@ -1,15 +1,16 @@
 /* Start Header ************************************************************************/
 /*!
-\file    MainMenu.cpp
-\author  Tan Si Han, t.sihan, 2301264
-\par     t.sihan@digipen.edu
-\date    20/09/2024
-\brief   This files contains the definction of functions in MainMenu.
+\file       MainMenu.cpp
+\author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu
+\date       Sept 20, 2024
+\brief      This files contains the definition of functions in MainMenu.
 
-
-Copyright (C) 2024 DigiPen Institute of Technology.  Reproduction or disclosure of this file or its contents without the prior written consent of DigiPen Institute of Technology is prohibited.
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "GSM.h"
 #include "MainMenu.h"

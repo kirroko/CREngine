@@ -1,3 +1,16 @@
+/* Start Header ************************************************************************/
+/*!
+\file       Particle.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 13, 2024
+\brief      This file contains the declaration of the Particle system.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #ifndef PARTICLE_CLASS_H 
 #define PARTICLE_CLASS_H 
 #include "../vendor/glm/glm/glm.hpp" 

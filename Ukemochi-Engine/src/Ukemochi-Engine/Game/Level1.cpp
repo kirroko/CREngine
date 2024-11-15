@@ -1,17 +1,18 @@
 /* Start Header ************************************************************************/
 /*!
-\file    Level1.cpp
-\author		Tan Si Han, t.sihan, 2301264. t.sihan\@digipen.edu
-\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
+\file       Level1.cpp
+\author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (70%)
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
 \co-authors Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (5%)
-\date    20/09/2024
-\brief   This files contains the definition of functions in Level1.
+\date       Sept 20, 2024
+\brief      This files contains the definition of functions in Level1.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written consent of
-DigiPen Institute of Technology is prohibited.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header **************************************************************************/
+
 #include "PreCompile.h"
 
 #include "GSM.h"

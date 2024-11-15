@@ -1,22 +1,18 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       ImGuiCore.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278
-\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
-\par        email: h.kairui\@digipen.edu
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (%)
 \date       Sept 25, 2024
 \brief      This file contains the implementation of the UseImGui class,
             which manages the initialization, rendering, and event handling 
             for ImGui within the engine.
 
-
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include "ImGuiCore.h"
@@ -27,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GLFW/glfw3.h>
 #include "../Application.h"
 
+#include "../Logic/Logic.h"
 #include "../Factory/Factory.h"
 #include "../ECS/ECS.h"
 
@@ -42,6 +39,8 @@ namespace Ukemochi
     float UseImGui::m_LastSceneUpdateTime = 0.0f;
     std::vector<std::string> UseImGui::assetFiles;
     std::vector<std::string> UseImGui::sceneFiles;
+    bool UseImGui::m_CompileError = false;
+    bool UseImGui::m_Compiling = false;
 
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
@@ -151,8 +150,16 @@ namespace Ukemochi
 
         ControlPanel(fps);
 
+
         ImGui::End(); // End the dockspace window
 
+        if(m_CompileError)
+        {
+            ImGui::OpenPopup("Error");
+            m_CompileError = false;
+        }
+        ShowErrorPopup("A compile error has occurred. Please check the console for more information.");
+        
         //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
 
@@ -162,9 +169,11 @@ namespace Ukemochi
         static double cachedCollisionTime = 0.0;
         static double cachedPhysicsTime = 0.0;
         static double cachedGraphicsTime = 0.0;
+        static double cachedLogicTime = 0.0;
         static double cachedCollisionPercent = 0.0;
         static double cachedPhysicsPercent = 0.0;
         static double cachedGraphicsPercent = 0.0;
+        static double cachedLogicPercent = 0.0;
         static std::string cacheMessage = "WAITING FOR SIMULATION";
 
         double currentTime = ImGui::GetTime();
@@ -173,28 +182,32 @@ namespace Ukemochi
         std::chrono::duration<double> collision = SceneManager::collision_time;
         std::chrono::duration<double> physics = SceneManager::physics_time;
         std::chrono::duration<double> graphics = SceneManager::graphics_time;
+        std::chrono::duration<double> logic = SceneManager::logic_time;
 
         ImGui::Begin("Debug Window");
         if (currentTime - lastUpdateTime >= 1.0)
         {
             lastUpdateTime = currentTime;
 
-            cachedCollisionTime = SceneManager::GetInstance().collision_time.count() * 1000.f;
-            cachedPhysicsTime = SceneManager::GetInstance().physics_time.count() * 1000.f;
-            cachedGraphicsTime = SceneManager::GetInstance().graphics_time.count() * 1000.f;
+            cachedCollisionTime = SceneManager::collision_time.count() * 1000.f;
+            cachedPhysicsTime = SceneManager::physics_time.count() * 1000.f;
+            cachedGraphicsTime = SceneManager::graphics_time.count() * 1000.f;
+            cachedLogicTime = SceneManager::logic_time.count() * 1000.f;
 
-            cachedCollisionPercent = static_cast<double>((collision.count() / loop.count()) * 100.f);
-            cachedPhysicsPercent = static_cast<double>((physics.count() / loop.count()) * 100.f);
-            cachedGraphicsPercent = static_cast<double>((graphics.count() / loop.count()) * 100.f);
+            cachedCollisionPercent = collision.count() / loop.count() * 100.f;
+            cachedPhysicsPercent = physics.count() / loop.count() * 100.f;
+            cachedGraphicsPercent = graphics.count() / loop.count() * 100.f;
+            cachedLogicPercent = logic.count() / loop.count() * 100.f;
         }
-        if(es_current == ES_PLAY)
+        if (es_current == ES_PLAY)
             ImGui::Text("SIMULATION RUNNING");
         else
             ImGui::Text("WAITING FOR SIMULATION");
-        
+
         ImGui::Text("Collision Time: %.2f ms (%.2f%%)", cachedCollisionTime, cachedCollisionPercent);
         ImGui::Text("Physics Time: %.2f ms (%.2f%%)", cachedPhysicsTime, cachedPhysicsPercent);
         ImGui::Text("Graphics Time: %.2f ms (%.2f%%)", cachedGraphicsTime, cachedGraphicsPercent);
+        ImGui::Text("Logic Time: %.2f ms (%.2f%%)", cachedLogicTime, cachedLogicPercent);
         ImGui::End();
     }
 
@@ -227,28 +240,57 @@ namespace Ukemochi
         // Example: Add a button
         if (ImGui::Button("Play"))
         {
-            // save
-            // ScriptingEngine::GetInstance().CompileScriptAssembly();
-            // ScriptingEngine::GetInstance().Reload();
-            SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-            // gsm_next = GS_PLAY;
-            es_current = ENGINE_STATES::ES_PLAY;
-            std::cout << "Game is Playing" << std::endl;
-            ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+            // Recompile scripts and display popup that its compiling. Remove popup when done
+            if(ScriptingEngine::GetInstance().compile_flag)
+            {
+                UME_ENGINE_INFO("Begin Script reloading");
+                ScriptingEngine::GetInstance().compile_flag = false;
+                ScriptingEngine::GetInstance().Reload(); // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
+            }
+
             // Perform some action when button is clicked
+            if (!ScriptingEngine::ScriptHasError)
+            {
+                // save
+                SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+                m_CompileError = false;
+                es_current = ENGINE_STATES::ES_PLAY;
+                UME_ENGINE_INFO("Simulation (Game is playing) started");
+                ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+            }
+            else
+            {
+                m_CompileError = true;
+            }
         }
         ImGui::SameLine();
         if (ImGui::Button("Stop"))
         {
             // free
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
-            // gsm_next = GS_PLAY;
-            es_current = ENGINE_STATES::ES_ENGINE;
-            std::cout << "Game stopped" << std::endl;
+            
             // Implement functionality to stop the game (e.g., switch to editor mode)
+            es_current = ENGINE_STATES::ES_ENGINE;
+            UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
         }
 
         ImGui::End(); // End the control panel window
+    }
+
+    void UseImGui::ShowErrorPopup(const std::string& errorMessage)
+    {
+        // ImGui::OpenPopupOnItemClick()
+
+        if(ImGui::BeginPopupModal("Error", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("%s",errorMessage.c_str());
+            
+            if(ImGui::Button("OK"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
     }
 
     /**
@@ -289,7 +331,7 @@ namespace Ukemochi
             if (ImGui::Selectable(assetFiles[i].c_str(), isSelected))
             {
                 selectedAssetIndex = static_cast<int>(i);
-                std::string fullPath = "../Assets/" + assetFiles[i];
+                std::string fullPath = "../Assets/Prefabs/" + assetFiles[i];
                 std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
             }
         }
@@ -679,7 +721,7 @@ namespace Ukemochi
         // Begin a dockable window
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
-        static char filePath[256] = "../Assets/Player.json";
+        static char filePath[256] = "../Assets/Prefabs/Player.json";
         static int selectedEntityIndex = -1;
 
         static bool showError = false;

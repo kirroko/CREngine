@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       Collision.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263
-\par        email: kosand.lum\@digipen.edu
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
 \date       Nov 6, 2024
 \brief      This file contains the definition of the Collision system.
 
@@ -11,8 +9,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include "Collision.h"			// for forward declaration
@@ -20,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"	// for GetFixedDeltaTime
 #include "../Audio/Audio.h"		// for Audio sound effects
 #include "../Application.h"		// for screen size
+#include "Ukemochi-Engine/Logic/Scripting.h"
 
 namespace Ukemochi
 {
@@ -87,7 +85,20 @@ namespace Ukemochi
 					// Check collision between two box objects
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
+					{
 						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
+						if(ECS::GetInstance().HasComponent<Script>(entity2))
+						{
+							// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
+							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
+							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+						}
+						if(ECS::GetInstance().HasComponent<Script>(entity))
+						{
+							auto& script = ECS::GetInstance().GetComponent<Script>(entity);
+							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+						}
+					}
 
 					// Check collision between two convex objects
 					//if (ConvexConvex_Intersection(convex1, convex2))
@@ -96,7 +107,15 @@ namespace Ukemochi
 
 				// Check collision between box objects and the screen boundaries
 				if (BoxScreen_Intersection(box1))
+				{
 					BoxScreen_Response(trans1, box1, rb1);
+					if(ECS::GetInstance().HasComponent<Script>(entity))
+					{
+						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
+						auto& script = ECS::GetInstance().GetComponent<Script>(entity);
+						// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+					}
+				}
 			}
 		}
 	}

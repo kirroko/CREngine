@@ -1,11 +1,17 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    EBO.h
- * @brief   This file contains the declaration of the EBO (Element Buffer Object) class, 
+\file       EBO.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Sept 25, 2024
+\brief      This file contains the declaration of the EBO (Element Buffer Object) class, 
 			responsible for managing OpenGL indices buffers used in rendering objects with glDrawElements().
  *          It provides functionality to bind, unbind, and delete the EBO.
- * @author  t.shunzhitomy@digipen.edu
- * @date    25/09/2024
- */
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 
 #ifndef EBO_CLASS_H
 #define EBO_CLASS_H

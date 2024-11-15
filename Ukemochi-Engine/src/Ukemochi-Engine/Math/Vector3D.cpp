@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
 \file       Vector3D.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263
-\par        email: kosand.lum\@digipen.edu
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
 \date       Sept 08, 2024
 \brief      This file contains the definition of the Vector3D structure.
 
@@ -11,8 +9,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include "Vector3D.h" // for forward declaration

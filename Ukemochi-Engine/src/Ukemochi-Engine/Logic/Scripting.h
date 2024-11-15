@@ -1,25 +1,23 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file	Scripting.h
-\par	Ukemochi
-\author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par	junyukean.wong\@digipen.edu
-\par	Course: CSD2400/CSD2401
-\date	11/10/24
-\brief	This file handles everything related to Mono (i.e., initialization, script execution, shutdown)
+\file       Scripting.h
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\date       Nov 11, 2024
+\brief      This file handles everything related to Mono (i.e., initialization, script execution, shutdown).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 #include "PreCompile.h"
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
+
+#include "Ukemochi-Engine/ECS/Entity.h"
 
 namespace Ukemochi
 {
@@ -33,8 +31,6 @@ namespace Ukemochi
 
         MonoImage* m_pCoreAssemblyImage = nullptr;
 
-        ScriptingEngine(const ScriptingEngine&) = delete;
-        ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
         /**
          * @brief load a file into an array of bytes
@@ -89,8 +85,27 @@ namespace Ukemochi
             return instance;
         }
 
+        bool compile_flag = false;
+     
+        static std::unordered_map<MonoType*, std::function<bool(EntityID)>> s_EntityHasComponentFuncs;
+        static bool ScriptHasError;
+
+        /**
+         * @brief Register a component to the scripting engine
+         * @tparam Component the component to be registered
+         */
+        template <class Component>
+        static void RegisterComponent();
+
+        /**
+         * @brief Register all the components to the scripting engine
+         */
+        static void RegisterComponents();
+
         ScriptingEngine();
-        ~ScriptingEngine();
+        ~ScriptingEngine() = default;
+        ScriptingEngine(const ScriptingEngine&) = delete;
+        ScriptingEngine& operator=(const ScriptingEngine&) = delete;
 
         /**
          * @brief Initialize Mono by creating an app domain
@@ -100,12 +115,12 @@ namespace Ukemochi
         /**
          * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
          */
-        void ShutDown(); // TODO: Did you remember to call this function when application is closed?
+        void ShutDown() const;
 
         /**
          * @brief Compile client's script aseembly during runtime
          */
-        void CompileScriptAssembly();
+        static bool CompileScriptAssembly();
 
         /**
          * @brief Reload the script assembly
@@ -120,6 +135,13 @@ namespace Ukemochi
         static MonoGCHandle CreateGCHandle(MonoObject* instance);
 
         /**
+         * @brief Get the C# object from a GCHandle
+         * @param handle the handle to get the object from
+         * @return the object
+         */
+        static MonoObject* GetObjectFromGCHandle(const MonoGCHandle& handle);
+
+        /**
          * @brief Destroy a GCHandle
          * @param handle the handle to be destroyed
          */
@@ -130,13 +152,6 @@ namespace Ukemochi
          * @return the core assembly image
          */
         MonoImage* GetCoreAssemblyImage() const;
-
-        /**
-         * @brief Instantiate C# struct object
-         * @param structName the struct name
-         * @return an instance of the struct
-         */
-        MonoObject* InstantiateStruct(const std::string& structName);
 
         /**
          * @brief Instantiate C# class object that is internal
@@ -158,40 +173,18 @@ namespace Ukemochi
          * @param instance the instance of the class
          * @return an instance of the method
          */
-        MonoMethod* InstatiateMethod(const std::string& methodName, MonoObject* instance);
+        static MonoMethod* InstantiateMethod(const std::string& methodName, MonoObject* instance);
 
         /**
          * @brief Invoke script Methods (Start, Update, etc)
          * @param instance C# script instance
          * @param methodName the method name to be invoked
+         * @param ignoreDebug = false
          * @param args the arguments to be passed to the method, default is nullptr
          * @param numArgs the number of arguments, default is 0
          */
-        void InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[] = nullptr, int numArgs = 0);
-
-        /**
-         * @brief Set the value of a field in a C# class
-         * @param instance the instance of the class
-         * @param fieldName the field name
-         * @param value the value to be set
-         */
-        static void SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value);
-
-        /**
-         * @brief Set the value of a field in a C# class. Value is of type float
-         * @param instance the instance of the class
-         * @param fieldName the field name
-         * @param value the value to be set
-         */
-        static void SetMonoFieldValueFloat(MonoObject* instance, const std::string& fieldName, float* value);
-
-        /**
-         * @brief Set the value of a field in a C# class
-         * @param instance the instance of the class
-         * @param fieldName the field name
-         * @param value the value to be set
-         */
-        static void SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName, const std::string& value);
+        static void InvokeMethod(MonoObject* instance, const std::string& methodName, bool ignoreDebug,
+                                 void* args[] = nullptr, int numArgs = 0);
 
         /**
          * @brief Set the value of a field in a C# class. Value is of type unsigned long long
@@ -200,31 +193,6 @@ namespace Ukemochi
          * @param value the value to be set
          */
         static void SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value);
-
-        /**
-         * @brief Set the value of a property in a C# class
-         * @param instance the instance of the class
-         * @param propertyName the property name
-         * @param value the value to be set
-         */
-        void SetMonoPropertyValue(MonoObject* instance, const std::string& propertyName, void* value);
-
-        /**
-         * @brief Get the property of a C# class
-         * @param instance the instance of the class
-         * @param propertyName the property name
-         * @return the property
-         */
-        MonoProperty* GetMonoProperty(MonoObject* instance, const std::string& propertyName);
-
-        /**
-         * @brief Set the value of a Vector2 field in a C# class
-         * @param instanceClass the instance of the class
-         * @param propertyName the field name
-         * @param x 
-         * @param y 
-         */
-        void SetVector2Property(MonoObject* instanceClass, const std::string& propertyName, float x, float y);
 
         /**
         * @brief Convert a MonoString to UTF8(std::string), This function has error handling and will return an empty string

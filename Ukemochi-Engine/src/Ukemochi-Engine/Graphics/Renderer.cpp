@@ -1,13 +1,20 @@
+/* Start Header ************************************************************************/
 /*!
- * @file    Renderer.cpp
- * @brief   This file contains the implementation of the Renderer class responsible for
+\file       Renderer.cpp
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
+\co-authors Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (%)
+\date       Sept 25, 2024
+\brief      This file contains the implementation of the Renderer class responsible for
 			handling OpenGL rendering, including setting up shaders, buffers, textures,
 			and rendering 2D objects like boxes and circles.
- * @author  t.shunzhitomy@digipen.edu
- * @co-author h.kairui@digipen.edu
- * @co-author  t.sihan@digipen.edu
- * @date    25/09/2024
- */
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Renderer.h"
 #include "TextRenderer.h"

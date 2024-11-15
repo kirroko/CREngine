@@ -1,3 +1,16 @@
+/* Start Header ************************************************************************/
+/*!
+\file       AssetManager.h
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\date       Nov 13, 2024
+\brief      This file contains the declaration of the Asset Manager.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #pragma once
 
 #include <filesystem>

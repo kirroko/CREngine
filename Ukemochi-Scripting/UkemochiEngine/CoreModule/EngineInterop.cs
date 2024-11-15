@@ -21,38 +21,16 @@ using System.Runtime.CompilerServices;
 
 namespace Ukemochi
 {
-    public static class EngineInterop
+    internal static class EngineInterop
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void GetMonoObject(object obj);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void AddComponent(ulong id, object component, string typeName);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool HasComponent(ulong id, Type componentType);
-        
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetTransformPosition(ulong id, float x, float y);
-        
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void GetTransformPosition(ulong id, ref float x, ref float y);
-        
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetTransformRotation(ulong id, float x, float y); // TODO: WIP
-        
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void GetTransformRotation(ulong id, ref float x, ref float y);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetTransformScale(ulong id, float x, float y);
-        
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void GetTransformScale(ulong id, ref float x, ref float y);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetObjectByTag(string tag, out ulong id);
 
+        #region Input
+        
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetKey(int key);
 
@@ -60,25 +38,60 @@ namespace Ukemochi
         public static extern bool GetKeyDown(int key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetMouseButton(int button);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetMouseButtonDown(int button);
+        
+        #endregion
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LogMessage(string message);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void LogWarning(string message);
+
+        #region Transform
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTransformPosition(ulong id, float x, float y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetTransformPosition(ulong id, ref float x, ref float y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTransformRotation(ulong id, float x, float y); // TODO: WIP
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetTransformRotation(ulong id, ref float x, ref float y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTransformScale(ulong id, float x, float y);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetTransformScale(ulong id, ref float x, ref float y);
+
+        #endregion
+
+        #region Rigibody
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyVelocity(ulong getInstanceId, float velocityX, float velocityY);
-        
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetRigidbodyVelocity(ulong getInstanceId, ref float velocityX, ref float velocityY);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyAcceleration(ulong getInstanceId, float accelerationX,
             float accelerationY);
-        
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetRigidbodyAcceleration(ulong getInstanceId, ref float accelerationX,
             ref float accelerationY);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyForce(ulong getInstanceId, float forceX, float forceY);
-        
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetRigidbodyForce(ulong getInstanceId, ref float forceX, ref float forceY);
 
@@ -115,10 +128,18 @@ namespace Ukemochi
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetRigidbodyIsKinematic(ulong getInstanceId, bool isKinematic);
 
+        #endregion
+
+        #region SpriteRenderer
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetSpriteRenderFlipX(ulong getInstanceId, bool isFacingRight);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetSpriteRenderFlipY(ulong getInstanceId, bool flipY);
+
+        #endregion
+
+
     }
 }

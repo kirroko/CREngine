@@ -1,21 +1,17 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file		Components.h
-\par		Ukemochi
-\author		WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
-\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\par		junyukean.wong\@digipen.edu
-\par		Course: CSD2400/CSD2401
-\date		26/09/24
-\brief		Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc)
+\file       Components.h
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
+\date       Nov 13, 2024
+\brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #pragma once
 
 #include <glad/glad.h>			// for GLuint

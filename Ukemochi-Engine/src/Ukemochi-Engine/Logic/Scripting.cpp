@@ -1,20 +1,16 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file	Scripting.cpp
-\par	Ukemochi
-\author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par	junyukean.wong\@digipen.edu
-\par	Course: CSD2400/CSD2401
-\date	11/10/24
-\brief	This file handles everything related to Mono (i.e., initialization, script execution, shutdown)
+\file       Scripting.cpp
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\date       Nov 11, 2024
+\brief      This file handles everything related to Mono (i.e., initialization, script execution, shutdown).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Scripting.h"
 #include "../ECS/ECS.h"
@@ -22,11 +18,36 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    std::unordered_map<MonoType*, std::function<bool(EntityID)>> ScriptingEngine::s_EntityHasComponentFuncs;
+    bool ScriptingEngine::ScriptHasError = false;
+
+    template <typename Component>
+    void ScriptingEngine::RegisterComponent()
+    {
+        std::string_view typeName = typeid(Component).name();
+        size_t pos = typeName.find_last_of(':');
+        std::string_view structName = typeName.substr(pos + 1);
+        std::string managedTypename = fmt::format("Ukemochi.{}", structName);
+
+        MonoType* managedType = mono_reflection_type_from_name(managedTypename.data(),
+                                                               ScriptingEngine::GetInstance().GetCoreAssemblyImage());
+        UME_ENGINE_ASSERT(managedType, "Failed to get managed type for component")
+        s_EntityHasComponentFuncs[managedType] = [](EntityID id)
+        {
+            return ECS::GetInstance().HasComponent<Component>(id);
+        };
+    }
+
+    void ScriptingEngine::RegisterComponents()
+    {
+        RegisterComponent<Transform>();
+        RegisterComponent<Rigidbody2D>();
+    }
+
     // ================== PUBLIC FUNCTIONS ==================
     ScriptingEngine::ScriptingEngine()
     {
         // ================== Initialize Mono Runtime ==================
-        //mono_set_assemblies_path("../Ukemochi-Engine/vendor/mono/lib/4.5"); // current working dir is Ukemochi-Game
         mono_set_assemblies_path("Mono/lib/4.5");
 
         MonoDomain* rootDomain = mono_jit_init("MonoRuntime");
@@ -43,11 +64,6 @@ namespace Ukemochi
         mono_domain_set(m_pAppDomain, true);
     }
 
-    ScriptingEngine::~ScriptingEngine()
-    {
-        //ShutDown(); // If we haven't already unload them
-    }
-
     void ScriptingEngine::Init()
     {
         // Load compiled assemblies into engine (This is our C# code wrapper library for the engine)
@@ -60,22 +76,25 @@ namespace Ukemochi
         RegisterMonoFunctions();
 
         UME_ENGINE_INFO("Compiling Script Assembly");
+        if(CompileScriptAssembly())
+            UME_ENGINE_WARN("Loading Old Client Assembly instead!!!");
 
-        CompileScriptAssembly();
         UME_ENGINE_INFO("Loading Client Assembly");
         ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
         PrintAssemblyTypes(ClientAssembly); // Print out the types in the assembly for tracing
+
+        RegisterComponents();
     }
 
-    void ScriptingEngine::ShutDown()
+    void ScriptingEngine::ShutDown() const
     {
         mono_domain_set(mono_get_root_domain(), false);
 
         mono_jit_cleanup(m_pRootDomain); // Unload the root domain and all the assemblies
     }
 
-    void ScriptingEngine::CompileScriptAssembly()
+    bool ScriptingEngine::CompileScriptAssembly()
     {
         // Search for the csproj file
         std::string csprojPath = "../Assets/Assembly-CSharp.csproj"; // TODO: Hardcoded path here
@@ -89,6 +108,7 @@ namespace Ukemochi
         if (result == 0) // Successful
         {
             UME_ENGINE_INFO("Successfully compiled the script assembly!");
+            ScriptHasError = false;
             try
             {
                 std::filesystem::path sourcePath = "../Assets/bin/Debug/net472/Assembly-CSharp.dll";
@@ -113,27 +133,42 @@ namespace Ukemochi
             }
         }
         else // Failed
+        {
             UME_ENGINE_ERROR("Failed to compile the script assembly!");
+            ScriptHasError = true;
+            GetInstance().compile_flag = true; // Do you know, how horrible this is?
+        }
+        return result;
     }
 
     void ScriptingEngine::Reload()
     {
+        MonoDomain* new_domain = mono_domain_create_appdomain("new_domain_name", nullptr);
+        mono_domain_set(new_domain, true);
+        Init(); // Reinitialize the engine aka loading back the assemblies
+        
+        GameObjectManager::GetInstance().ReleaseAllHandles(); // Release all the handles before reloading the assemblies
         mono_domain_unload(m_pAppDomain); // Unload the app domain and all the assemblies
-        m_pAppDomain = mono_domain_create_appdomain("UkemochiDomain", nullptr);
-        mono_domain_set(m_pAppDomain, true);
+        m_pAppDomain = new_domain;
 
-        Init(); // Reinitialize the engine
-        // Load client assembly
-        ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
-        UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
-        PrintAssemblyTypes(ClientAssembly); // Print out the types in the assembly for tracing
-
-        // TODO: Our MonoObject instance are still pointing to the old assembly, we need to update them
+        GameObjectManager::GetInstance().InitAllHandles(); // reset all the handles after reloading the assemblies
     }
 
     MonoGCHandle ScriptingEngine::CreateGCHandle(MonoObject* instance)
     {
-        return mono_gchandle_new_v2(instance,true);
+        return mono_gchandle_new_v2(instance, true);
+    }
+
+    MonoObject* ScriptingEngine::GetObjectFromGCHandle(const MonoGCHandle& handle)
+    {
+        UME_ENGINE_ASSERT(handle != nullptr, "GCHandle is null!");
+        MonoObject* obj = mono_gchandle_get_target_v2(handle);
+        if(!obj)
+        {
+            UME_ENGINE_WARN("Cannot get object from GCHandle");
+            return nullptr;
+        }
+        return obj;
     }
 
     void ScriptingEngine::DestroyGCHandle(const MonoGCHandle& handle)
@@ -146,23 +181,10 @@ namespace Ukemochi
         return m_pCoreAssemblyImage;
     }
 
-    MonoObject* ScriptingEngine::InstantiateStruct(const std::string& structName)
-    {
-        UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", structName.c_str());
-        if (klass == nullptr)
-            UME_ENGINE_ASSERT(false, "Failed to instantiate struct: {1}", structName)
-
-        MonoObject* instance = mono_object_new(m_pAppDomain, klass);
-
-        return instance;
-    }
-
     MonoObject* ScriptingEngine::InstantiateClass(const std::string& className)
     {
         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
         MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", className.c_str());
-        // TODO: Client declared Namespace?
         if (klass == nullptr)
             UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className)
 
@@ -180,6 +202,7 @@ namespace Ukemochi
     {
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
         MonoClass* klass = GetClassInAssembly(ClientAssembly, "", className.c_str());
+        // TODO: Client declare namespace handle?
         if (klass == nullptr)
             UME_ENGINE_ASSERT(false, "Failed to instantiate class: {1}", className)
 
@@ -197,7 +220,7 @@ namespace Ukemochi
         return instance;
     }
 
-    MonoMethod* ScriptingEngine::InstatiateMethod(const std::string& methodName, MonoObject* instance)
+    MonoMethod* ScriptingEngine::InstantiateMethod(const std::string& methodName, MonoObject* instance)
     {
         MonoClass* klass = mono_object_get_class(instance);
         MonoMethod* method = mono_class_get_method_from_name(klass, methodName.c_str(), 0);
@@ -210,7 +233,7 @@ namespace Ukemochi
     }
 
 
-    void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, void* args[], int numArgs)
+    void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, const bool ignoreDebug, void* args[], int numArgs)
     {
         MonoClass* klass = mono_object_get_class(instance);
         UME_ENGINE_ASSERT(numArgs >= 0, "InvokeMethod has negative number of arguments")
@@ -220,11 +243,14 @@ namespace Ukemochi
         if (!method)
         {
             // If the method is not found, check if the coreAssembly or ClientAssembly been rebuilt and reloaded
-            UME_ENGINE_ERROR("Failed to find method: {0} in class.", methodName);
+            if(ignoreDebug)
+                return;
+            
+            UME_ENGINE_FATAL("Failed to find method: {0} in class.", methodName);
             return;
         }
         // UME_ENGINE_TRACE("ScriptingEngine: Invoking method {0} in class {1}", methodName, mono_class_get_name(klass));
-        MonoObject* exception = nullptr; 
+        MonoObject* exception = nullptr;
         mono_runtime_invoke(method, instance, args, &exception);
         if (exception != nullptr)
         {
@@ -234,50 +260,8 @@ namespace Ukemochi
             char* messageStr = mono_string_to_utf8(message);
             std::string messageString = messageStr;
             mono_free(messageStr);
-            UME_ENGINE_ASSERT(false,"Scripting Log: " + messageString)
+            UME_ENGINE_ASSERT(false, "Scripting Log: " + messageString)
         }
-    }
-
-    void ScriptingEngine::SetMonoFieldValue(MonoObject* instance, const std::string& fieldName, void* value)
-    //TODO : Turn to template, get data type for field value
-    {
-        MonoClass* klass = mono_object_get_class(instance);
-        MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
-
-        // MonoTypeEnum type = static_cast<MonoTypeEnum>(mono_type_get_type(mono_field_get_type(field))); // DEBUGGING
-        // UME_ENGINE_INFO("Scripting Log: Setting type {0} for field {1}", static_cast<int>(type), fieldName);
-
-        mono_field_set_value(instance, field, value);
-
-        // float fieldValue;
-        // void* param = &fieldValue;
-        // mono_field_get_value(instance, field, param);
-        // UME_ENGINE_INFO("Scripting Log: Field {0} has value {1}", fieldName, fieldValue);
-    }
-
-    void ScriptingEngine::SetMonoFieldValueFloat(MonoObject* instance, const std::string& fieldName, float* value)
-    {
-        MonoClass* klass = mono_object_get_class(instance);
-        MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
-
-        float Value;
-        mono_field_get_value(instance, field, &Value);
-
-        Value = *value;
-        mono_field_set_value(instance, field, &Value);
-
-        float debugValue;
-        mono_field_get_value(instance, field, &debugValue);
-    }
-
-    void ScriptingEngine::SetMonoFieldValueString(MonoObject* instance, const std::string& fieldName,
-                                                  const std::string& value)
-    {
-        MonoClass* klass = mono_object_get_class(instance);
-        MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
-
-        MonoString* nameValue = mono_string_new(mono_domain_get(), value.c_str());
-        mono_field_set_value(instance, field, nameValue);
     }
 
     void ScriptingEngine::SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value)
@@ -286,130 +270,6 @@ namespace Ukemochi
         MonoClassField* field = mono_class_get_field_from_name(klass, fieldName.c_str());
 
         mono_field_set_value(instance, field, value);
-    }
-
-    void ScriptingEngine::SetMonoPropertyValue(MonoObject* instance, const std::string& propertyName, void* value)
-    {
-        MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance),
-                                                                   propertyName.c_str());
-        void* args[] = {value};
-        mono_property_set_value(property, instance, args, nullptr);
-    }
-
-    MonoProperty* ScriptingEngine::GetMonoProperty(MonoObject* instance, const std::string& propertyName)
-    {
-        MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance),
-                                                                   propertyName.c_str());
-        if (property == nullptr)
-            UME_ENGINE_ERROR("Failed to get property: {0}", propertyName);
-
-        return property;
-    }
-
-    void ScriptingEngine::SetVector2Property(MonoObject* instanceClass, const std::string& propertyName, float x,
-                                             float y)
-    {
-        MonoObject* vector2Instance = InstantiateStruct("Vector2");
-        MonoClassField* xField = mono_class_get_field_from_name(mono_object_get_class(vector2Instance), "x");
-        MonoClassField* yField = mono_class_get_field_from_name(mono_object_get_class(vector2Instance), "y");
-
-        mono_field_set_value(vector2Instance, xField, &x);
-        mono_field_set_value(vector2Instance, yField, &y);
-
-        float debugX,debugY;
-        mono_field_get_value(vector2Instance, xField, &debugX);
-        mono_field_get_value(vector2Instance, yField, &debugY);
-
-        MonoProperty* positionProperty = mono_class_get_property_from_name(mono_object_get_class(instanceClass),
-                                                                          propertyName.c_str());
-        MonoMethod* setPositionMethod = mono_property_get_set_method(positionProperty);
-        void* args[1];
-        args[0] = vector2Instance;
-        MonoObject* exception = nullptr; 
-        mono_runtime_invoke(setPositionMethod, instanceClass, args, nullptr);
-        if (exception != nullptr)
-        {
-            MonoClass* exceptionClass = mono_object_get_class(exception);
-            MonoProperty* messageProperty = mono_class_get_property_from_name(exceptionClass, "Message");
-            MonoString* message = (MonoString*)mono_property_get_value(messageProperty, exception, nullptr, nullptr);
-            char* messageStr = mono_string_to_utf8(message);
-            std::string messageString = messageStr;
-            mono_free(messageStr);
-            UME_ENGINE_ASSERT(false,"Scripting Log: " + messageString);
-        }
-        // UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        // MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instanceClass),
-        //                                                            propertyName.c_str());
-        // if (!property)
-        //     UME_ENGINE_ASSERT(false, "Property not found: {1}", propertyName)
-        //
-        // MonoObject* vector2Struct = mono_property_get_value(property, instanceClass, nullptr, nullptr);
-        // if (!vector2Struct)
-        //     UME_ENGINE_ASSERT(false, "Failed to get Vector2 struct")
-        //
-        // SetMonoFieldValueFloat(vector2Struct, "x", &x);
-        // SetMonoFieldValueFloat(vector2Struct, "y", &y);
-        //
-        // void* args[] = { vector2Struct };
-        // mono_property_set_value(property, instanceClass, args, nullptr); 
-
-        // struct Vector2Data
-        // {
-        //     float x;
-        //     float y;
-        // };
-        // void* data = mono_object_unbox(vector2Struct);
-        // Vector2Data* vector2Data = static_cast<Vector2Data*>(data);
-        // auto* vector2Data = static_cast<Vector2Data*>(mono_object_unbox(vector2Struct));
-            
-        // void* args[] = { vector2Struct };
-        // MonoObject* exception = nullptr;
-        // mono_property_set_value(property, instance, args, &exception);
-        // if(exception != nullptr)
-        // {
-        //     MonoClass* exceptionClass = mono_object_get_class(exception);
-        //     MonoProperty* messageProperty = mono_class_get_property_from_name(exceptionClass, "Message");
-        //     MonoString* message = (MonoString*)mono_property_get_value(messageProperty, exception, nullptr, nullptr);
-        //     char* messageStr = mono_string_to_utf8(message);
-        //     std::string messageString = messageStr;
-        //     UME_ENGINE_WARN(messageString);
-        //     mono_free(messageStr);
-        // }
-
-        //         // Create a new Vector2 Obj
-        //         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
-        //         MonoClass* klass = GetClassInAssembly(CoreAssembly, "Ukemochi", "Vector2");
-        //         if (klass == nullptr)
-        //             UME_ENGINE_ASSERT(false, "Failed to instantiate struct: {1}", "Vector2")
-        //
-        // #pragma pack(push, 1) // Ensure no padding is added
-        //         struct
-        //         {
-        //             float x;
-        //             float y;
-        //         } vector2Instance = {x, y};
-        // #pragma pack(pop)
-        //
-        //         MonoObject* vector2Obj = mono_value_box(m_pAppDomain, klass, &vector2Instance);
-        //         if (!vector2Obj)
-        //             UME_ENGINE_ASSERT(false, "Failed to instantiate Vector2 struct")
-        //
-        //         // Set the x and y fields on the Vector2 Object
-        //         // SetMonoFieldValue(vector2Obj, "x", &x);
-        //         // SetMonoFieldValue(vector2Obj, "y", &y);
-        //         
-        //         // Get the property on the Object
-        //         MonoProperty* property = mono_class_get_property_from_name(mono_object_get_class(instance),
-        //                                                                    propertyName.c_str());
-        //         if(!property)
-        //             UME_ENGINE_ASSERT(false, "Failed to get property: {1}", propertyName)
-        //
-        //         // Set the Vector2 property on the object
-        //         void* agrs[] = { vector2Obj };
-        //         mono_property_set_value(property, instance, agrs, nullptr);
-        //
-        //         // Debug logging
-        //         UME_ENGINE_INFO("SetVector2Property: Set {0} to ({1}, {2})", propertyName, x, y);
     }
 
     // ================== PRIVATE FUNCTIONS ==================
@@ -487,18 +347,10 @@ namespace Ukemochi
     // Use this to bind C++ functions with Mono so they can be invoked from C#
     // Calls from C++ to C# are done through the mono_runtime_invoke function of the MonoObject instance of the class
     void ScriptingEngine::RegisterMonoFunctions()
-    // TODO: Type-Safe Component Registration and Access? Meta-Programming with Reflection??
     {
-        // mono_add_internal_call("Ukemochi.EngineInterop::GetMonoObject",
-        //                        InternalCalls::GetMonoObject);
-
-        // mono_add_internal_call("Ukemochi.EngineInterop::AddComponent",
-        //                        (void*)InternalCalls::AddComponent);
-
         mono_add_internal_call("Ukemochi.EngineInterop::HasComponent",
                                (void*)InternalCalls::HasComponent);
-
-
+        
         mono_add_internal_call("Ukemochi.EngineInterop::GetObjectByTag",
                                (void*)InternalCalls::GetObjectByTag);
 
@@ -508,8 +360,17 @@ namespace Ukemochi
         mono_add_internal_call("Ukemochi.EngineInterop::GetKeyDown",
                                (void*)InternalCalls::GetKeyDown);
 
+        mono_add_internal_call("Ukemochi.EngineInterop::GetMouseButton",
+                               (void*)InternalCalls::GetMouseButton);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::GetMouseButtonDown",
+                               (void*)InternalCalls::GetMouseButtonDown);
+
         mono_add_internal_call("Ukemochi.EngineInterop::LogMessage",
                                (void*)InternalCalls::LogMessage);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::LogWarning",
+                               (void*)InternalCalls::LogWarning);
 
         mono_add_internal_call("Ukemochi.EngineInterop::SetTransformPosition",
                                (void*)InternalCalls::SetTransformPosition);
@@ -528,7 +389,7 @@ namespace Ukemochi
 
         mono_add_internal_call("Ukemochi.EngineInterop::SetRigidbodyVelocity",
                                (void*)InternalCalls::SetRigidbodyVelocity);
-        
+
         mono_add_internal_call("Ukemochi.EngineInterop::GetRigidbodyVelocity",
                                (void*)InternalCalls::GetRigidbodyVelocity);
 

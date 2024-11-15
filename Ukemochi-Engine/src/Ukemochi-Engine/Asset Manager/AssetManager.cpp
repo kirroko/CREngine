@@ -1,3 +1,16 @@
+/* Start Header ************************************************************************/
+/*!
+\file       AssetManager.cpp
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\date       Nov 13, 2024
+\brief      This file contains the definition of the Asset Manager.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "AssetManager.h"
 
@@ -7,7 +20,8 @@ namespace Ukemochi
 	{
 		if (texture_list.find(file_path) != texture_list.end())
 		{
-			std::cout << "Texture already exists";
+			// std::cout << "Texture already exists";
+			UME_ENGINE_INFO("Texture {0} already exists in list", file_path);
 			return;
 		}
 		

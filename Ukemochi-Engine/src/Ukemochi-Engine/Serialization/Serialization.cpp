@@ -1,21 +1,16 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file		Serialization.cpp
-\par		Ukemochi
-\author		Pek Jun Kai Gerald, p.junkaigerald, 2301334
-\co-authors
-\par		p.junkaigerald\@digipen.edu
-\par		Course: CSD2400/CSD2401
-\date		20/09/24
-\brief		This file contains the definition of the functions in the Serialization namespace.
+\file       Serialization.cpp
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\date       Sept 20, 2024
+\brief      This file contains the definition of the functions in the Serialization namespace.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "Serialization.h"
 

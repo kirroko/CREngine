@@ -1,9 +1,7 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file       SceneManager.h
-\author     Tan Si Han, t.sihan, 2301264
-\par        email: t.sihan\@digipen.edu
+\file       SceneManager.cpp
+\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
 \date       Nov 8, 2024
 \brief      This file contains the definition of the SceneManger system.
 
@@ -11,8 +9,7 @@ Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
 
 #include "PreCompile.h"
 #include "SceneManager.h"
@@ -22,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Transformation.h"
 #include "Graphics/Renderer.h"
 #include "Serialization/Serialization.h"
-#include "Logic/DataSyncSystem.h"
 #include "Logic/Logic.h"
 #include "Graphics/Camera2D.h"
 #include "Factory/Factory.h"
@@ -44,6 +40,7 @@ namespace Ukemochi
     std::chrono::duration<double> SceneManager::collision_time{};
     std::chrono::duration<double> SceneManager::physics_time{};
     std::chrono::duration<double> SceneManager::graphics_time{};
+    std::chrono::duration<double> SceneManager::logic_time{};
 
 
 	//bool func_toggle = false;
@@ -73,7 +70,6 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<LogicSystem>();
         ECS::GetInstance().RegisterSystem<Camera>();
         ECS::GetInstance().RegisterSystem<InGameGUI>();
-        ECS::GetInstance().RegisterSystem<DataSyncSystem>();
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 
@@ -108,12 +104,6 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         sig.set(ECS::GetInstance().GetComponentType<Button>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
-
-        // For Data Sync System
-        sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<Transform>());
-        sig.set(ECS::GetInstance().GetComponentType<Rigidbody2D>());
-        ECS::GetInstance().SetSystemSignature<DataSyncSystem>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);
@@ -312,7 +302,11 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         // --- GAME LOGIC UPDATE ---
+	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+	    sys_end = std::chrono::steady_clock::now();
+	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+	    
         // --- PHYSICS UPDATE ---
         // Update the entities physics
         sys_start = std::chrono::steady_clock::now();
@@ -343,12 +337,12 @@ namespace Ukemochi
 		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
 
 		//toggle console output for performance
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
-		{
-			//func_toggle = (func_toggle + 1) % 2;
-			print_performance(loop_time, collision_time, physics_time, graphics_time);
-			//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
-		}
+		// if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
+		// {
+		// 	//func_toggle = (func_toggle + 1) % 2;
+		// 	print_performance(loop_time, collision_time, physics_time, graphics_time);
+		// 	//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
+		// }
 	}
 
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
@@ -577,13 +571,14 @@ namespace Ukemochi
 					if(!newObject.HasComponent<Script>())
 						{
                         MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
-                            componentData["ClassName"].GetString());
+                            componentData["ClassName"].GetString()); 
                         EntityID newScriptID = newObject.GetInstanceID();
                         ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
                         newObject.AddComponent(Script{
                             componentData["Path"].GetString(),
                             componentData["ClassName"].GetString(),
-                            newScript
+                            newScript,
+                            ScriptingEngine::CreateGCHandle(newScript)
                         });
                     }
                 }

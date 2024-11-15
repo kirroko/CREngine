@@ -1,20 +1,16 @@
-/* Start Header
-*****************************************************************/
+/* Start Header ************************************************************************/
 /*!
-\file ECS.cpp
-\par	Ukemochi
-\author WONG JUN YU, Kean, junyukean.wong, 2301234
-\par	junyukean.wong\@digipen.edu
-\par	Course: CSD2400/CSD2401
-\date	15/09/24
-\brief This file contains the definition of the member function of ECS
+\file       ECS.cpp
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\date       Sep 15, 2024
+\brief      This file contains the definition of the member function of ECS.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
-/* End Header
-*******************************************************************/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "ECS.h"
 
@@ -54,10 +50,12 @@ namespace Ukemochi
 		// TODO: Keep updating components as the list grows
 		auto transform = m_ComponentManager->GetComponentType<Transform>();
 		auto rigidbody2D = m_ComponentManager->GetComponentType<Rigidbody2D>();
-		auto cirlceCollider = m_ComponentManager->GetComponentType<CircleCollider2D>();
 		auto boxCollider = m_ComponentManager->GetComponentType<BoxCollider2D>();
+		auto cirlceCollider = m_ComponentManager->GetComponentType<CircleCollider2D>();
+		auto convexCollider = m_ComponentManager->GetComponentType<ConvexCollider2D>();
 		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
 		auto script = m_ComponentManager->GetComponentType<Script>();
+		auto button = m_ComponentManager->GetComponentType<Button>();
 
 		// Iterate through all possible components
 		for (ComponentTypeID i = 0; i < MAX_COMPONENTS; ++i)
@@ -85,6 +83,11 @@ namespace Ukemochi
 					BoxCollider2D originalComponent = m_ComponentManager->GetComponent<BoxCollider2D>(entity);
 					AddComponent<BoxCollider2D>(newEntity, originalComponent);
 				}
+				else if(i == convexCollider)
+				{
+					ConvexCollider2D originalComponent = m_ComponentManager->GetComponent<ConvexCollider2D>(entity);
+					AddComponent<ConvexCollider2D>(newEntity, originalComponent);
+				}
 				else if (i == spriteRenderer)
 				{
 					SpriteRender originalComponent = m_ComponentManager->GetComponent<SpriteRender>(entity);
@@ -94,6 +97,15 @@ namespace Ukemochi
 				{
 					Script originalComponent = m_ComponentManager->GetComponent<Script>(entity);
 					AddComponent<Script>(newEntity, originalComponent);
+				}
+				else if(i == button)
+				{
+					Button originalComponent = m_ComponentManager->GetComponent<Button>(entity);
+					AddComponent<Button>(newEntity, originalComponent);
+				}
+				else
+				{
+					UME_ENGINE_WARN("Missing component type in CloneEntity");
 				}
 			}
 		}
