@@ -195,6 +195,27 @@ void TextRenderer::updateTextPosition(const std::string& id, glm::vec2 newPositi
 	}
 }
 
+float TextRenderer::getTextWidth(const std::string& text, float scale, const std::string& fontName) 
+{
+	auto fontIter = fontCharacters.find(fontName);
+	if (fontIter == fontCharacters.end()) {
+		std::cerr << "Font not found: " << fontName << std::endl;
+		return 0.0f;
+	}
+
+	const auto& characters = fontIter->second;
+	float width = 0.0f;
+
+	for (char c : text) {
+		if (characters.find(c) != characters.end()) {
+			width += (characters.at(c).Advance >> 6) * scale; // Advance is in 1/64th pixels
+		}
+	}
+
+	return width;
+}
+
+
 /*!
  * @brief Renders all added text objects on the screen.
  */
@@ -250,3 +271,4 @@ void TextRenderer::renderAllText()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+

@@ -47,6 +47,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 class TextRenderer;
 class ParticleSystem;
 class UIButton;
+class UIButtonRenderer;
 
 struct SpriteData {
 	glm::vec3 position;
@@ -422,7 +423,7 @@ private:
 	GameObject* playerObject = nullptr;
 	int Player = -1;
 
-	std::unique_ptr<BatchRenderer2D> batchRenderer;
+	std::shared_ptr<BatchRenderer2D> batchRenderer;
 
 	std::unique_ptr<UIButtonRenderer> UIRenderer;
 
@@ -450,5 +451,7 @@ public:
 
 private:
 	std::shared_ptr<Shader> UI_shader_program;
+
+
 };
 #endif

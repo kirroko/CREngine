@@ -153,14 +153,9 @@ namespace Ukemochi
         int screen_width = app.GetWindow().GetWidth();
         int screen_height = app.GetWindow().GetHeight();
 
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
+        /*ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
             Vec2{ screen_width * 0.1f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text2", "Hi",
-            Vec2{ screen_width * 0.5f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
-
+            1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");*/
     }
 
     void SceneManager::SceneMangerInit()

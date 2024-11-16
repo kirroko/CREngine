@@ -85,22 +85,27 @@ void Renderer::init()
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
-	// Add text objects
-	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
-
 	initAnimationEntities();
 	
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 
-	batchRenderer = std::make_unique<BatchRenderer2D>();
+	batchRenderer = std::make_shared<BatchRenderer2D>();
 	// Load shaders and create shared pointer
 	
 	batchRenderer->init(shaderProgram);
 
-	UIRenderer = std::make_unique<UIButtonRenderer>();
+	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
-	UIRenderer->init(UI_shader_program, );
+	// Add buttons
+	UIRenderer->addButton(UIButton("pauseButton",
+		glm::vec2(100.0f, 700.0f),
+		glm::vec2(150.0f, 100.0f),
+		5,  // Replace with actual texture ID
+		"hi",
+		glm::vec3(1.0f),
+		"Exo2",
+		1.0f
+	));
 }
 
 /*!
@@ -661,6 +666,46 @@ void Renderer::render()
 		debug_shader_program->Deactivate();
 	}
 
+	//glm::mat4 uiProjection = glm::ortho(0.0f, static_cast<float>(screen_width), static_cast<float>(screen_height), 0.0f);
+	//UIRenderer->beginBatch();
+	//shaderProgram->Activate();  // Or use a separate UI shader if needed
+	//shaderProgram->setMat4("projection", uiProjection);
+	//shaderProgram->setMat4("view", glm::mat4(1.0f));  // Identity matrix for UI rendering
+
+	//for (auto& entity : m_Entities) {
+	//	GameObject* go = GameObjectManager::GetInstance().GetGO(entity);
+	//	if (go->GetTag() == "Button") {
+	//		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+	//		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+	//		GLint textureID = -1;
+	//		if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
+	//			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end()) {
+	//			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+	//		}
+	//		if (textureID < 0) {
+	//			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
+	//			continue;
+	//		}
+
+	//		int mappedTextureUnit = textureIDMap[textureID];
+	//		// Draw the button
+	//		UIRenderer->drawButton(UIButton(
+	//			glm::vec2(transform.position.x, transform.position.y),
+	//			glm::vec2(transform.scale.x, transform.scale.y),
+	//			glm::vec3(1.f, 1.f, 1.f),
+	//			spriteRenderer.texturePath,
+	//			textureID,
+	//			"Play",              // Text
+	//			glm::vec3(1.0f),     // Text color
+	//			"Ukemochi"           // Font name
+	//		));
+	//	}
+	//}
+
+	//UIRenderer->endBatch();
+
+	UIRenderer->renderButtons(*camera);
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }

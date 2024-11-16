@@ -111,6 +111,16 @@ public:
 	 */
 	void renderAllText();
 
+	/*!
+	 * @brief Calculates the pixel width of a string of text.
+	 * @param text The text to measure.
+	 * @param scale The scale of the text.
+	 * @param fontName The font to use for measuring.
+	 * @return The width of the text in pixels.
+	 */
+	float getTextWidth(const std::string& text, float scale, const std::string& fontName);
+
+	float getTextHeight(const std::string& text, float scale, const std::string& fontName);
 
 private:
 	FT_Library ft; // FreeType library instance

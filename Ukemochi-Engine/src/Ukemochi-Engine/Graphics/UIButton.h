@@ -1,64 +1,87 @@
-#ifndef UI_BUTTON_CLASS_H
-#define UI_BUTTON_CLASS_H
+#ifndef UI_BUTTON_H
+#define UI_BUTTON_H
+
 #include "../vendor/glm/glm/glm.hpp"
-#include "glad/glad.h"
 #include <string>
-#include <iostream>
+#include <vector>
+#include "TextRenderer.h"
 
-class VAO;
-class VBO;
-class EBO;
 class Shader;
-class TextRenderer;
+class BatchRenderer2D;
+class Camera;
 
-struct ButtonVertex {
-    glm::vec3 position;
-    glm::vec3 color;
-    glm::vec2 texCoord;
-    GLint textureID;
+enum class TextAlignment {
+    Center,
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight
 };
 
-struct UIButton {
-    glm::vec2 position;
-    glm::vec2 size;
-    glm::vec3 color;             // Background color of the button
-    GLint textureID = -1;        // ID of the texture, if available
-    std::string text = "";       // Button text
-    std::string fontName = "";   // Font name to use for the text
-    glm::vec3 textColor = { 1.0f, 1.0f, 1.0f };  // Color of the text
-
-    UIButton(const glm::vec2& pos, const glm::vec2& sz, const glm::vec3& col,
-        const std::string& txt = "", const std::string& font = "", GLint texID = -1)
-        : position(pos), size(sz), color(col), text(txt), fontName(font), textureID(texID) {}
-};
-
-class UIButtonRenderer {
+/*!
+ * @class UIButton
+ * @brief Represents a button in the UI, with a background texture and a text label.
+ */
+class UIButton {
 public:
-    UIButtonRenderer();
-    ~UIButtonRenderer();
-    void init(std::shared_ptr<Shader> sharedShader, GLuint screenWidth, GLuint screenHeight);
+    std::string id;
+    glm::vec2 position;    // Screen position
+    glm::vec2 size;        // Size of the button
+    GLuint textureID;      // Texture for the button background
+    std::string text;      // Button label
+    glm::vec3 textColor;   // Label color
+    std::string fontName;  // Font for the label
+    float textScale;       // Text scale
+    TextAlignment textAlignment;
 
-    void beginBatch();
-    void endBatch();
-    void flush();
-
-    // Draw button with optional text and texture
-    void drawButton(const UIButton& button);
-
-private:
-    void createVertexArray();
-    void createVertexBuffer();
-
-    std::unique_ptr<VAO> vao;
-    std::unique_ptr<VBO> vbo;
-    std::unique_ptr<EBO> ebo;
-    std::shared_ptr<Shader> shader;
-    std::vector<ButtonVertex> vertices;
-    std::vector<GLuint> indices;
-    TextRenderer* textRenderer; // For rendering text in buttons
-
-    int maxButtons = 100;  // Adjust as needed
-    GLuint screenWidth, screenHeight;
+    /*!
+     * @brief Constructs a UIButton object with the given parameters.
+     * @param id of the button
+     * @param position Screen position of the button.
+     * @param size Size of the button.
+     * @param textureID OpenGL texture ID for the button background.
+     * @param text Label text on the button.
+     * @param textColor Color of the label text.
+     * @param fontName Font used for the label text.
+     * @param textScale Scale of the label text.
+     */
+    UIButton(const std::string& id, glm::vec2 position, glm::vec2 size, GLuint textureID, const std::string& text, glm::vec3 textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center)
+        : id(id), position(position), size(size), textureID(textureID), text(text), textColor(textColor), fontName(fontName), textScale(textScale), textAlignment(alignment) {}
 };
 
-#endif // !
+/*!
+ * @class UIButtonRenderer
+ * @brief Renders a collection of UI buttons using a batch renderer and a text renderer.
+ */
+class UIButtonRenderer {
+private:
+    std::vector<UIButton> buttons;   // List of buttons to render
+    std::shared_ptr<BatchRenderer2D> batchRenderer; // For button background
+    TextRenderer* textRenderer;      // For button text
+    glm::mat4 projectionMatrix;      // Static orthographic projection
+    glm::mat4 viewMatrix;
+    std::shared_ptr<Shader> uiShader;
+
+public:
+
+    UIButtonRenderer(std::shared_ptr<BatchRenderer2D> batchRenderer, TextRenderer* textRenderer, int screenWidth, int screenHeight, std::shared_ptr<Shader> uiShader);
+
+    /*!
+     * @brief Adds a button to the renderer's collection.
+     * @param button The UIButton to add.
+     */
+    void addButton(const UIButton& button);
+
+    /*!
+     * @brief Renders all buttons in the collection.
+     */
+    void renderButtons(const Camera& camera); 
+
+    void setViewMatrix(const glm::mat4& view);
+
+    void removeButton(const std::string& id);
+
+    void clearButtons();
+};
+
+#endif // UI_BUTTON_H
