@@ -215,6 +215,34 @@ float TextRenderer::getTextWidth(const std::string& text, float scale, const std
 	return width;
 }
 
+float TextRenderer::getTextHeight(const std::string& text, float scale, const std::string& fontName) 
+{
+	// Check if the font exists
+	auto fontIter = fontCharacters.find(fontName);
+	if (fontIter == fontCharacters.end()) {
+		std::cerr << "Font not found: " << fontName << std::endl;
+		return 0.0f;
+	}
+
+	const auto& characters = fontIter->second;
+	float maxHeight = 0.0f;
+
+	// Iterate through each character in the text
+	for (char c : text) {
+		// Ensure the character exists in the font's character map
+		if (characters.find(c) != characters.end()) {
+			const Character& ch = characters.at(c);
+			// Update the maxHeight to the largest height encountered
+			float characterHeight = static_cast<float>(ch.Size.y) * scale;
+			if (characterHeight > maxHeight) {
+				maxHeight = characterHeight;
+			}
+		}
+	}
+
+	return maxHeight;
+}
+
 
 /*!
  * @brief Renders all added text objects on the screen.

@@ -36,7 +36,7 @@ void UIButtonRenderer::addButton(const UIButton& button) {
 void UIButtonRenderer::renderButtons(const Camera& camera)
 {
     uiShader->Activate(); 
-    uiShader->setMat4("projection", projectionMatrix);
+    uiShader->setMat4("projection", projectionMatrix); 
     uiShader->setMat4("view", viewMatrix);
     batchRenderer->beginBatch();
 
@@ -51,8 +51,9 @@ void UIButtonRenderer::renderButtons(const Camera& camera)
 
     batchRenderer->endBatch();
 
-    for (const UIButton& button : buttons) {
-        glm::vec2 textPos = button.position + glm::vec2(button.size.x * 0.5f, button.size.y * 0.5f);
+    for (const UIButton& button : buttons) 
+    {
+        glm::vec2 textPos = button.position + glm::vec2(button.size.x * 0.f, button.size.y * -0.1f);
         textPos -= glm::vec2(textRenderer->getTextWidth(button.text, button.textScale, button.fontName) * 0.5f, 0.0f);
         textRenderer->addTextObject("ui_" + button.text, TextObject(button.text, textPos, button.textScale, button.textColor, button.fontName));
     }

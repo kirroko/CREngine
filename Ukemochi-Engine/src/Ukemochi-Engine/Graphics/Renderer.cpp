@@ -102,7 +102,7 @@ void Renderer::init()
 		glm::vec2(150.0f, 100.0f),
 		5,  // Replace with actual texture ID
 		"hi",
-		glm::vec3(1.0f),
+		glm::vec3(1.0f,0.f,0.f),
 		"Exo2",
 		1.0f
 	));
