@@ -693,25 +693,72 @@ namespace Ukemochi
  */
     void UseImGui::DisplayEntityDetails(GameObject& obj)
     {
-        ImGui::Text("ID: %d", obj.GetInstanceID());
-        ImGui::Text("Name: %s", obj.GetName().c_str());
-        ImGui::Text("Tag: %s", obj.GetTag().c_str());
+        // Basic Entity Info
+        ImGui::Separator();
+        ImGui::Text("Entity Details");
+        ImGui::BulletText("ID: %d", obj.GetInstanceID());
+        ImGui::BulletText("Name: %s", obj.GetName().c_str());
+        ImGui::BulletText("Tag: %s", obj.GetTag().c_str());
+        ImGui::Separator();
 
+        // Display Transform Component
         if (obj.HasComponent<Transform>())
         {
-            Transform& transform = obj.GetComponent<Transform>();
-            ImGui::Text("Transform Component");
-            ImGui::Text("Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
-            ImGui::Text("Rotation: %.2f", transform.rotation);
-            ImGui::Text("Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+            if (ImGui::CollapsingHeader("Transform Component"))
+            {
+                Transform& transform = obj.GetComponent<Transform>();
+                ImGui::BulletText("Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
+                ImGui::BulletText("Rotation: %.2f", transform.rotation);
+                ImGui::BulletText("Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+            }
         }
 
+        // Display Rigidbody2D Component
         if (obj.HasComponent<Rigidbody2D>())
         {
-            Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
-            ImGui::Text("Rigidbody2D Component");
-            ImGui::Text("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
-            ImGui::Text("Mass: %.2f", rb.mass);
+            if (ImGui::CollapsingHeader("Rigidbody2D Component"))
+            {
+                Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
+                ImGui::BulletText("Position: (%.2f, %.2f)", rb.position.x, rb.position.y);
+                ImGui::BulletText("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
+                ImGui::BulletText("Acceleration: (%.2f, %.2f)", rb.acceleration.x, rb.acceleration.y);
+                ImGui::BulletText("Force: (%.2f, %.2f)", rb.force.x, rb.force.y);
+                ImGui::BulletText("Mass: %.2f", rb.mass);
+                ImGui::BulletText("Use Gravity: %s", rb.use_gravity ? "True" : "False");
+                ImGui::BulletText("Is Kinematic: %s", rb.is_kinematic ? "True" : "False");
+            }
+        }
+
+        // Display BoxCollider2D Component
+        if (obj.HasComponent<BoxCollider2D>())
+        {
+            if (ImGui::CollapsingHeader("BoxCollider2D Component"))
+            {
+                BoxCollider2D& collider = obj.GetComponent<BoxCollider2D>();
+                ImGui::BulletText("Is Trigger: %s", collider.is_trigger ? "True" : "False");
+            }
+        }
+
+        // Display SpriteRender Component
+        if (obj.HasComponent<SpriteRender>())
+        {
+            if (ImGui::CollapsingHeader("SpriteRender Component"))
+            {
+                SpriteRender& sprite = obj.GetComponent<SpriteRender>();
+                ImGui::BulletText("Sprite Path: %s", sprite.texturePath.c_str());
+                ImGui::BulletText("Shape: %d", sprite.shape);
+            }
+        }
+
+        // Display Script Component
+        if (obj.HasComponent<Script>())
+        {
+            if (ImGui::CollapsingHeader("Script Component"))
+            {
+                Script& script = obj.GetComponent<Script>();
+                ImGui::BulletText("Script Path: %s", script.scriptPath.c_str());
+                ImGui::BulletText("Class Name: %s", script.scriptName.c_str());
+            }
         }
     }
 
@@ -855,6 +902,134 @@ namespace Ukemochi
             else
             {
                 if (ImGui::InputFloat("##MassInput", &rb.mass)) modified = true;
+            }
+
+            // Force
+            ImGui::Text("Force");
+            if (useSliders)
+            {
+                if (ImGui::SliderFloat("##ForceSlider", &rb.force.x, 0.1f, 100.0f)) modified = true;
+            }
+            else
+            {
+                if (ImGui::InputFloat("##ForceInput", &rb.force.x)) modified = true;
+            }
+
+            // Use Gravity Checkbox
+            ImGui::Text("Use Gravity");
+            if (ImGui::Checkbox("##UseGravityCheckbox", &rb.use_gravity)) modified = true;
+
+            // Is Kinematic Checkbox
+            ImGui::Text("Is Kinematic");
+            if (ImGui::Checkbox("##IsKinematicCheckbox", &rb.is_kinematic)) modified = true;
+        }
+
+        if (selectedObject->HasComponent<BoxCollider2D>())
+        {
+            BoxCollider2D& collider = selectedObject->GetComponent<BoxCollider2D>();
+
+            ImGui::Text("Use Collider Box");
+            if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger)) modified = true;
+        }
+
+        if (selectedObject->HasComponent<SpriteRender>())
+        {
+            SpriteRender& sprite = selectedObject->GetComponent<SpriteRender>();
+
+            // Texture Path
+            ImGui::Text("Texture Path");
+            char texturePathBuffer[256];
+            strncpy(texturePathBuffer, sprite.texturePath.c_str(), sizeof(texturePathBuffer));
+            texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
+
+            bool modified = false;
+
+            // Make the input box read-only by disabling it
+            ImGui::BeginDisabled(true); // Disable the input box
+
+            ImGui::InputText("##TexturePathInput", texturePathBuffer, sizeof(texturePathBuffer));
+
+            ImGui::EndDisabled(); // Re-enable UI elements after this block
+
+            // Check for drag-and-drop onto the texture path input
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                {
+                    // If something is dragged onto the texture path input, validate the extension
+                    std::string draggedPath = std::string((const char*)payload->Data);
+
+                    // Extract the file extension
+                    std::filesystem::path filePath(draggedPath);
+                    std::string extension = filePath.extension().string();
+
+                    // Check if the file has a .png extension
+                    if (extension == ".png")
+                    {
+                        // Update the texture path if it's a .png file
+                        strncpy(texturePathBuffer, draggedPath.c_str(), sizeof(texturePathBuffer));
+                        texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
+
+                        sprite.texturePath = draggedPath; // Update the texture path in the sprite component
+                        modified = true;
+                    }
+                    else
+                    {
+                        // Optionally, display an error or feedback if the file is not a .png
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .png files are allowed!");
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+        }
+
+        // Script Component
+        if (selectedObject->HasComponent<Script>())
+        {
+            Script& script = selectedObject->GetComponent<Script>();
+            ImGui::Text("Script Path");
+
+            char scriptPathBuffer[256];
+            strncpy(scriptPathBuffer, script.scriptPath.c_str(), sizeof(scriptPathBuffer));
+            scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+
+            bool modified = false;
+
+            // Make the input box read-only by disabling it
+            ImGui::BeginDisabled(true); // Disable the input box
+
+            ImGui::InputText("##ScriptPathInput", scriptPathBuffer, sizeof(scriptPathBuffer));
+
+            ImGui::EndDisabled(); // Re-enable UI elements after this block
+
+            // Check for drag-and-drop onto the script path input
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                {
+                    // If something is dragged onto the script path input, validate the extension
+                    std::string draggedPath = std::string((const char*)payload->Data);
+
+                    // Extract the file extension
+                    std::filesystem::path filePath(draggedPath);
+                    std::string extension = filePath.extension().string();
+
+                    // Check if the file has a .cs extension
+                    if (extension == ".cs")
+                    {
+                        strncpy(scriptPathBuffer, draggedPath.c_str(), sizeof(scriptPathBuffer));
+                        scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+
+                        script.scriptPath = draggedPath; // Update the script path in the Script component
+                        modified = true;
+                    }
+                    else
+                    {
+                        // Optionally, display an error or feedback if the file is not a .lua
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .cs files are allowed!");
+                    }
+                }
+                ImGui::EndDragDropTarget();
             }
         }
     }
