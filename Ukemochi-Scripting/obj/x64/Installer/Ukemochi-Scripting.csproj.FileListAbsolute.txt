@@ -1,0 +1,6 @@
+C:\Users\lum_k\OneDrive\Desktop\SEP3_csd2401\team_cozyraccoons_f24\Ukemochi-Scripting\bin\x64\Installer\Ukemochi-Scripting.dll
+C:\Users\lum_k\OneDrive\Desktop\SEP3_csd2401\team_cozyraccoons_f24\Ukemochi-Scripting\bin\x64\Installer\Ukemochi-Scripting.pdb
+C:\Users\lum_k\OneDrive\Desktop\SEP3_csd2401\team_cozyraccoons_f24\Ukemochi-Scripting\obj\x64\Installer\Ukemochi-Scripting.csproj.AssemblyReference.cache
+C:\Users\lum_k\OneDrive\Desktop\SEP3_csd2401\team_cozyraccoons_f24\Ukemochi-Scripting\obj\x64\Installer\Ukemochi-Scripting.csproj.CoreCompileInputs.cache
+C:\Users\lum_k\OneDrive\Desktop\SEP3_csd2401\team_cozyraccoons_f24\Ukemochi-Scripting\obj\x64\Installer\Ukemochi-Scripting.dll
+C:\Users\lum_k\OneDrive\Desktop\SEP3_csd2401\team_cozyraccoons_f24\Ukemochi-Scripting\obj\x64\Installer\Ukemochi-Scripting.pdb
