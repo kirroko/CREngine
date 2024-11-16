@@ -1,31 +1,59 @@
+/* Start Header ************************************************************************/
+/*!
+\file       WindowsWindow.cpp
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
+\date       Sept 12, 2024
+\brief      This file contains the declaration and implementation of the WindowsWindow class, 
+            which manages window creation, input handling, and rendering for a windowed application using GLFW.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "WindowsWindow.h"
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 
-#include <GLFW/glfw3.h> 
+#include <glad/glad.h>
 
-namespace UME {
+namespace Ukemochi {
 
+	// Static variable to track the GLFW initialization status.
 	bool WindowsWindow::s_GLFWInitialized = false;
 
+	/*!
+	\brief GLFW error callback function to handle error messages.
+	\param error_code The error code.
+	\param description The error description.
+	*/
 	static void GLFWErrorCB(int error_code, const char* description)
 	{
 		UME_ENGINE_ERROR("GLFW Error ({0}): {1}", error_code, description);
 	}
 
-
+	/*!
+	\brief Constructs a WindowsWindow instance and initializes it.
+	\param props The properties for the window.
+	*/
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
 		Init(props);
 	}
-
+	/*!
+	\brief Destroys the WindowsWindow instance and cleans up resources.
+	*/
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
 	}
-
+	/*!
+	\brief Initializes the window with the specified properties.
+	\param props The properties for window creation.
+	*/
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
@@ -34,22 +62,39 @@ namespace UME {
 
 		UME_ENGINE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
+		// Initialize GLFW if not already done
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();
 			UME_ENGINE_ASSERT(success, "Could not initialize GLFW");
 			glfwSetErrorCallback(GLFWErrorCB);
 			s_GLFWInitialized = true;
+			(void)success;  // Mark the variable as used to suppress the warning
 		}
 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+
+		// Create GLFW window
+		//m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		//m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
 		glfwMakeContextCurrent(m_Window);
+
+		// Load OpenGL function pointers
+		gladLoadGL();
 		//int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		//UME_ENGINE_ASSERT(status, "Failed to initialize GLAD");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVsync(true);
 
-		// GLFW CALLBACK
+		glfwSetDropCallback(m_Window, fileDropCallback);
+
+		glViewport(0, 0, props.Width, props.Height);
+
+		// GLFW CALLBACK // Set GLFW callbacks for various events
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData& info = *(WindowData*)(glfwGetWindowUserPointer(window));
@@ -73,6 +118,10 @@ namespace UME {
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& info = *(WindowData*)(glfwGetWindowUserPointer(window));
+
+				(void)scancode; // Suppress the warning by marking scancode as unused
+
+				(void)mods;
 
 				switch (action)
 				{
@@ -98,10 +147,18 @@ namespace UME {
 
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int character)
+			{
+				WindowData& info = *(WindowData*)(glfwGetWindowUserPointer(window));
+				KeyTypedEvent event(character);
+				info.EventCallback(event);
+			});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& info = *(WindowData*)(glfwGetWindowUserPointer(window));
 
+				(void)mods;
 				switch (action)
 				{
 				case GLFW_PRESS:
@@ -136,18 +193,25 @@ namespace UME {
 				info.EventCallback(event);
 			});
 	}
-
+	/*!
+	\brief Shuts down the window and releases resources.
+	*/
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
 	}
-
+	/*!
+	\brief Updates the window by polling events and swapping buffers.
+	*/
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
 	}
-
+	/*!
+	\brief Sets vertical synchronization for the window.
+	\param enabled A boolean indicating whether VSync should be enabled or disabled.
+	*/
 	void WindowsWindow::SetVsync(bool enabled)
 	{
 		if (enabled)
@@ -156,6 +220,18 @@ namespace UME {
 			glfwSwapInterval(0);
 
 		m_Data.VSync = enabled;
+	}
+
+	//bool fileDropped = false;
+	void WindowsWindow::fileDropCallback(GLFWwindow* window, int count, const char** paths)
+	{
+		if (count > 0)
+		{
+			std::cout << "File dropped: " << paths[0] << std::endl;
+			WindowsWindow* win = (WindowsWindow*)glfwGetWindowUserPointer(window);
+			win->m_FilePath = std::string(paths[0]);
+			win->fileDropped = true; // Set flag when a file is dropped
+		}
 	}
 
 	//bool WindowsWindow::IsVsync() const

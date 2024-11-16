@@ -78,38 +78,46 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 /wd26495 /wd33010 /wd4251 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\Fmod\lib;vendor\freetype\lib;vendor\Mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Debug-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Debug-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 /wd26495 /wd33010 /wd4251 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -117,26 +125,33 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\Fmod\lib;vendor\freetype\lib;vendor\Mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 /wd26495 /wd33010 /wd4251 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -144,11 +159,17 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\Fmod\lib;vendor\freetype\lib;vendor\Mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Dist-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Dist-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -156,24 +177,61 @@
     <ClInclude Include="src\PreCompile.h" />
     <ClInclude Include="src\Ukemochi-Engine.h" />
     <ClInclude Include="src\Ukemochi-Engine\Application.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Audio\Audio.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Audio\AudioList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h" />
     <ClInclude Include="src\Ukemochi-Engine\Core.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h" />
     <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\Event.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h" />
+    <ClInclude Include="src\Ukemochi-Engine\FileWatcher.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Input.h" />
-    <ClInclude Include="src\Ukemochi-Engine\KeyCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\textRenderer.h" />
+    <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h" />
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\Input.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Logic.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\ProjectHandler.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Scripting.h" />
     <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h" />
-    <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Window.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
+    <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
@@ -181,17 +239,69 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Asset Manager\AssetManager.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Audio\Audio.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\FileWatcher.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\stb.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Input.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\ProjectHandler.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp" />
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp" />
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
+      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\Glad\Glad.vcxproj">
+      <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\freetype\freetype.vcxproj">
+      <Project>{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

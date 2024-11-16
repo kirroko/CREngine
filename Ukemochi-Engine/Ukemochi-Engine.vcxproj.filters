@@ -7,14 +7,53 @@
     <Filter Include="Ukemochi-Engine">
       <UniqueIdentifier>{9D9C9A89-0928-084E-1239-8B427E43644E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Asset Manager">
+      <UniqueIdentifier>{E781FDE0-539A-E40A-1C47-74A4881E79A4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Audio">
+      <UniqueIdentifier>{5E6C13FA-CAD8-CEF4-93CC-6652FFF7F05C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Collision">
+      <UniqueIdentifier>{F8F9A142-64BC-D5CC-AD6C-6459196EAEAA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\ECS">
+      <UniqueIdentifier>{6797BCD8-D3F8-99E6-5C66-E098C8C6D0A5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ukemochi-Engine\Events">
       <UniqueIdentifier>{E155E845-CD4F-1198-B6BC-A7A8A2557704}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Factory">
+      <UniqueIdentifier>{E4FDCF1E-5035-18B6-593F-7CD9C5F53EAF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Game">
+      <UniqueIdentifier>{662051F0-52AF-DAB9-FBCD-EEB4E73BEB5F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Graphics">
+      <UniqueIdentifier>{7DE5B8FC-690A-087D-9255-ED0C7ED9069B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\ImGui">
+      <UniqueIdentifier>{87539FFA-F3BF-5AF5-BCB3-F25228DF7C5D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\InGameGUI">
+      <UniqueIdentifier>{E264B7D7-4E27-EB61-97D7-79EE03D9C33F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Input">
+      <UniqueIdentifier>{5C8EA0FA-C8FA-5BF5-91EE-F352FD197E5D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Logic">
+      <UniqueIdentifier>{5A3CD7FA-C6A8-92F5-8F9C-2A53FBC7B45D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Ukemochi-Engine\Logs">
       <UniqueIdentifier>{211954F0-0DA8-DDB9-B6C6-F1B4A234EE5F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ukemochi-Engine\Graphics">
-      <UniqueIdentifier>{9e18843b-6b81-406e-9561-f14d36259758}</UniqueIdentifier>
+    <Filter Include="Ukemochi-Engine\Math">
+      <UniqueIdentifier>{966B54F0-82FA-DDB9-2B19-F2B41787EE5F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Physics">
+      <UniqueIdentifier>{0FED7732-7B24-C0C9-842E-24EDF0E4E6C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ukemochi-Engine\Serialization">
+      <UniqueIdentifier>{EA434876-565C-2FA0-1F09-BF398BE0C339}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,8 +65,38 @@
     <ClInclude Include="src\Ukemochi-Engine\Application.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Asset Manager\AssetManager.h">
+      <Filter>Ukemochi-Engine\Asset Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Audio\Audio.h">
+      <Filter>Ukemochi-Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Audio\AudioList.h">
+      <Filter>Ukemochi-Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Core.h">
       <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Component.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Components.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\ECS.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Entity.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Registry.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ECS\Systems.h">
+      <Filter>Ukemochi-Engine\ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\EntryPoint.h">
       <Filter>Ukemochi-Engine</Filter>
@@ -44,34 +113,49 @@
     <ClInclude Include="src\Ukemochi-Engine\Events\MouseEvent.h">
       <Filter>Ukemochi-Engine\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Factory\Factory.h">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObject.h">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\FileWatcher.h">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Input.h">
-      <Filter>Ukemochi-Engine</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\KeyCode.h">
-      <Filter>Ukemochi-Engine</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h">
-      <Filter>Ukemochi-Engine\Logs</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\MouseButtonCode.h">
-      <Filter>Ukemochi-Engine</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Window.h">
-      <Filter>Ukemochi-Engine</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h">
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h">
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h">
@@ -79,6 +163,75 @@
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\VBO.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\shaderClass.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\textRenderer.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\ImGui\ImGuiCore.h">
+      <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.h">
+      <Filter>Ukemochi-Engine\InGameGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Input\Input.h">
+      <Filter>Ukemochi-Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Input\KeyCode.h">
+      <Filter>Ukemochi-Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Input\MouseButtonCode.h">
+      <Filter>Ukemochi-Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\DataSyncSystem.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\InternalCalls.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Logic.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\ProjectHandler.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logic\Scripting.h">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Logs\Log.h">
+      <Filter>Ukemochi-Engine\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\MathUtils.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix3x3.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Matrix4x4.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Transformation.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector2D.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Math\Vector3D.h">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h">
+      <Filter>Ukemochi-Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\SceneManager.h">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
+      <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -89,28 +242,67 @@
     <ClCompile Include="src\Ukemochi-Engine\Application.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Asset Manager\AssetManager.cpp">
+      <Filter>Ukemochi-Engine\Asset Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Audio\Audio.cpp">
+      <Filter>Ukemochi-Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\ECS.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Entity.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ECS\Systems.cpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Factory\Factory.cpp">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObject.cpp">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp">
+      <Filter>Ukemochi-Engine\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\FileWatcher.cpp">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Input.cpp">
-      <Filter>Ukemochi-Engine</Filter>
+    <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
-      <Filter>Ukemochi-Engine\Logs</Filter>
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\glad.c">
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\stb.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
@@ -122,5 +314,79 @@
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VBO.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\shaderClass.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\textRenderer.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiBuild.cpp">
+      <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\ImGui\ImGuiCore.cpp">
+      <Filter>Ukemochi-Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\InGameGUI\InGameGUI.cpp">
+      <Filter>Ukemochi-Engine\InGameGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Input\Input.cpp">
+      <Filter>Ukemochi-Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\DataSyncSystem.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Logic.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\ProjectHandler.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logic\Scripting.cpp">
+      <Filter>Ukemochi-Engine\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Logs\Log.cpp">
+      <Filter>Ukemochi-Engine\Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix3x3.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Matrix4x4.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Transformation.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector2D.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Math\Vector3D.cpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp">
+      <Filter>Ukemochi-Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp">
+      <Filter>Ukemochi-Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
+      <Filter>Ukemochi-Engine\Serialization</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Ukemochi-Engine\ECS\Component.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\ECS.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\Registry.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\ECS\Systems.tpp">
+      <Filter>Ukemochi-Engine\ECS</Filter>
+    </None>
+    <None Include="src\Ukemochi-Engine\Math\MathUtils.tpp">
+      <Filter>Ukemochi-Engine\Math</Filter>
+    </None>
   </ItemGroup>
 </Project>
