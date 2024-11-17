@@ -67,6 +67,10 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 	// Generates MipMaps
 	glGenerateMipmap(texType);
 
+	// Set the width and height of the texture
+	width = widthImg;
+	height = heightImg;
+
 	// Deletes the image data as it is already in the OpenGL Texture object
 	stbi_image_free(bytes);
 

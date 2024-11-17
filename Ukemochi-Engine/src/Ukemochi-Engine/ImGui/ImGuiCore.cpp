@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "ImGuiCore.h"
+#include <filesystem>
 
 #include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -38,7 +39,9 @@ namespace Ukemochi
     float UseImGui::m_LastAssetUpdateTime = 0.0f;
     float UseImGui::m_LastSceneUpdateTime = 0.0f;
     std::vector<std::string> UseImGui::assetFiles;
+    std::vector<std::string> UseImGui::textureFiles;
     std::vector<std::string> UseImGui::sceneFiles;
+    std::vector<std::string> UseImGui::folderNames;
     bool UseImGui::m_CompileError = false;
     bool UseImGui::m_Compiling = false;
 
@@ -70,6 +73,8 @@ namespace Ukemochi
         style.WindowRounding = 5.0f; // Round corners of windows
         style.FrameRounding = 3.0f; // Round corners of frames
         style.ItemSpacing = ImVec2(10, 10); // Spacing between items
+        style.WindowBorderSize = 0.0f; // No border for windows
+        style.WindowPadding = ImVec2(0.0f,-1.5f); // Padding for windows
 
         //ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -114,7 +119,10 @@ namespace Ukemochi
         // Toggle to enable or disable docking
         static bool enableDocking = true;
 
-        // Create a main menu bar with an option to toggle docking
+        //if (io.KeyCtrl && Input::IsKeyTriggered(UME_KEY_D))
+        //{
+        //    enableDocking = !enableDocking;
+        //}
         ImGui::BeginMainMenuBar();
         if (ImGui::BeginMenu("Options"))
         {
@@ -124,7 +132,9 @@ namespace Ukemochi
         ImGui::EndMainMenuBar();
 
         // Set up the window to cover the entire viewport
-        ImGui::SetNextWindowPos(viewport->Pos);
+        ImVec2 window_pos = viewport->Pos;
+        window_pos.y += ImGui::GetFrameHeightWithSpacing() - 10.0f;
+        ImGui::SetNextWindowPos(window_pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
 
@@ -132,10 +142,7 @@ namespace Ukemochi
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
             ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus;
-
-        // Optionally make the background transparent
-        window_flags |= ImGuiWindowFlags_NoBackground;
+            ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
         // Begin the main dockspace window
         ImGui::Begin("DockSpace Demo", nullptr, window_flags);
@@ -163,6 +170,113 @@ namespace Ukemochi
         //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
 
+    //void UseImGui::CheckAndHandleFileDrop()
+    //{
+    //    Application& app = Application::Get();
+    //    WindowsWindow& win = (WindowsWindow&)app.GetWindow();
+
+    //    if (win.fileDropped) {
+    //        std::cout << "File drop detected!" << std::endl;
+    //        const std::string& filePath = win.GetFilePath();
+    //        std::cout << "File dropped: " << filePath << std::endl;
+
+    //        ImGui::Begin("File Drop Window");
+    //        ImGui::Text("Dropped File Path: %s", filePath.c_str());
+    //        win.ClearFilePath();
+    //        win.fileDropped = false;  // Reset flag
+    //        ImGui::End();
+    //    }
+    //}
+
+    void UseImGui::SpriteEditorWindow()
+    {
+        ImGui::Begin("Sprite Editor");
+        ImGui::Text("Sprite Editor Contents");
+        if(ImGui::Button("Refresh Assets"))
+        {
+            textureFiles.clear();
+            for (const auto& entry : std::filesystem::directory_iterator("../Assets/Textures")) // TODO: Temporarily soulution
+            {
+                std::string path = entry.path().string();
+                // size_t pos = path.find('\\');
+                std::replace(path.begin(), path.end(), '\\', '/');
+                textureFiles.push_back(std::move(path));
+            }
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Clear Assets"))
+        {
+            textureFiles.clear();
+        }
+
+        static int selectedAssetIndex = -1;
+        static GLuint texture = -1;
+        static int x = 0;
+        static int y = 0;
+        for (size_t i = 0; i < textureFiles.size(); ++i)
+        {
+            bool isSelected = (selectedAssetIndex == static_cast<int>(i));
+            if (ImGui::Selectable(textureFiles[i].c_str(), isSelected))
+            {
+                selectedAssetIndex = static_cast<int>(i);
+                std::string fullPath = textureFiles[i];
+
+                // Hey, if you're reading this... why did you piggyback my ECS for this? Make it a singleton or something man :( - Corn
+                if(ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(fullPath) !=
+                    ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+                {
+                    texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->ID;
+                    x = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->width;
+                    y = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[fullPath]->height;
+                }
+                else
+                {
+                    UME_ENGINE_WARN("No texture found in AssetManager for path, was it loaded? : {0}", fullPath);
+                }
+            }
+        }
+
+        ImVec2 availSize = ImGui::GetContentRegionAvail();
+
+        // Calculate the aspect ration of the image
+        float aspectRatio = static_cast<float>(x) / static_cast<float>(y);
+
+        // determine the final size to display the image
+        float displayWidth = static_cast<float>(x);
+        float displayHeight = static_cast<float>(y);
+
+        if(static_cast<float>(x) > availSize.x || static_cast<float>(y) > availSize.y)
+        {
+            if(availSize.x / aspectRatio <= availSize.y)
+            {
+                displayWidth = availSize.x;
+                displayHeight = availSize.x / aspectRatio;
+            }
+            else
+            {
+                displayWidth = availSize.y * aspectRatio;
+                displayHeight = availSize.y;
+            }
+        }
+
+        float xOffset = (availSize.x - displayWidth) * 0.5f;
+        float yOffset = (availSize.y - displayHeight) * 0.5f;
+
+        
+        ImGui::Text("pointer = %x", texture);
+        ImGui::Text("Size = %d x %d", x, y);
+        
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xOffset);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
+        ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::End();
+    }
+
+    /**
+     * @brief Displays the debug window in the ImGui interface, showing the time taken by various systems.
+     */
     void UseImGui::DebugWindow()
     {
         static double lastUpdateTime = 0.0;
@@ -230,10 +344,24 @@ namespace Ukemochi
  */
     void UseImGui::ControlPanel(float fps)
     {
+        static std::vector<float> fpsHistory;
+        static const int maxHistorySize = 144; // Maximum number of FPS values to store
+
+
+        fpsHistory.push_back(fps);
+
+        // If the history size exceeds the maximum, remove the oldest value
+        if (fpsHistory.size() > maxHistorySize)
+        {
+            fpsHistory.erase(fpsHistory.begin());
+        }
+
         ImGui::Begin("Control Panel"); // Create a new window titled "Control Panel"
 
         // Add FPS display inside ControlPanel
         ImGui::Text("FPS: %.2f", fps); // Show FPS with 2 decimal places
+
+        ImGui::PlotLines("FPS History", fpsHistory.data(), fpsHistory.size(), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
 
         // Add controls such as buttons, sliders, or entity selectors here
         ImGui::Text("Control Panel Contents");
@@ -299,16 +427,20 @@ namespace Ukemochi
  * Clears `assetFiles`, then populates it with names of regular files in the `Prefabs` folder.
  * This updates the asset list dynamically for display in the ImGui interface.
  */
-    void UseImGui::LoadContents()
+    void UseImGui::LoadContents(const std::string& directory)
     {
         // Clear the previous asset list
         assetFiles.clear();
+        folderNames.clear();
 
-        // Load assets from the Assets directory
-        std::string assetsDir = "../Assets/Prefabs";
-        for (const auto& entry : std::filesystem::directory_iterator(assetsDir))
+        // Load assets from the specified directory
+        for (const auto& entry : std::filesystem::directory_iterator(directory))
         {
-            if (entry.is_regular_file())
+            if (entry.is_directory())
+            {
+                folderNames.push_back(entry.path().filename().string());
+            }
+            else if (entry.is_regular_file())
             {
                 assetFiles.push_back(entry.path().filename().string());
             }
@@ -317,13 +449,37 @@ namespace Ukemochi
 
     void UseImGui::ContentBrowser(char* filePath)
     {
+        static std::string currentDirectory = "../Assets";
         ImGui::Begin("Content Browser");
-        //LoadAssets();
-        if (ImGui::Button("Refresh Assets"))
+
+        // Back Button
+        if (currentDirectory != "../Assets" && ImGui::Button("Back"))
         {
-            LoadContents(); // Manually trigger loading assets
+            // Go to the parent directory
+            currentDirectory = std::filesystem::path(currentDirectory).parent_path().string();
+            LoadContents(currentDirectory);
         }
 
+        // Refresh Button
+        if (ImGui::Button("Refresh Assets"))
+        {
+            LoadContents(currentDirectory);
+        }
+
+        ImGui::Separator();
+
+        // Display folders first
+        for (size_t i = 0; i < folderNames.size(); ++i)
+        {
+            if (ImGui::Selectable(("[Folder] " + folderNames[i]).c_str(), false))
+            {
+                // Update to the new directory and reload contents
+                currentDirectory += "/" + folderNames[i];
+                LoadContents(currentDirectory);
+            }
+        }
+
+        // Display files
         static int selectedAssetIndex = -1;
         for (size_t i = 0; i < assetFiles.size(); ++i)
         {
@@ -331,8 +487,18 @@ namespace Ukemochi
             if (ImGui::Selectable(assetFiles[i].c_str(), isSelected))
             {
                 selectedAssetIndex = static_cast<int>(i);
-                std::string fullPath = "../Assets/Prefabs/" + assetFiles[i];
+                std::string fullPath = currentDirectory + "/" + assetFiles[i];
                 std::strncpy(filePath, fullPath.c_str(), 256); // Update filePath with the selected asset
+            }
+
+            // Enable dragging for the asset file
+            if (ImGui::BeginDragDropSource())
+            {
+                // Set up the payload to drag
+                std::string assetPath = currentDirectory + "/" + assetFiles[i];
+                ImGui::SetDragDropPayload("ASSET_PATH", assetPath.c_str(), assetPath.size() + 1);
+                ImGui::Text("Drag: %s", assetFiles[i].c_str());  // Text for the drag preview
+                ImGui::EndDragDropSource();
             }
         }
 
@@ -527,25 +693,72 @@ namespace Ukemochi
  */
     void UseImGui::DisplayEntityDetails(GameObject& obj)
     {
-        ImGui::Text("ID: %d", obj.GetInstanceID());
-        ImGui::Text("Name: %s", obj.GetName().c_str());
-        ImGui::Text("Tag: %s", obj.GetTag().c_str());
+        // Basic Entity Info
+        ImGui::Separator();
+        ImGui::Text("Entity Details");
+        ImGui::BulletText("ID: %d", obj.GetInstanceID());
+        ImGui::BulletText("Name: %s", obj.GetName().c_str());
+        ImGui::BulletText("Tag: %s", obj.GetTag().c_str());
+        ImGui::Separator();
 
+        // Display Transform Component
         if (obj.HasComponent<Transform>())
         {
-            Transform& transform = obj.GetComponent<Transform>();
-            ImGui::Text("Transform Component");
-            ImGui::Text("Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
-            ImGui::Text("Rotation: %.2f", transform.rotation);
-            ImGui::Text("Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+            if (ImGui::CollapsingHeader("Transform Component"))
+            {
+                Transform& transform = obj.GetComponent<Transform>();
+                ImGui::BulletText("Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
+                ImGui::BulletText("Rotation: %.2f", transform.rotation);
+                ImGui::BulletText("Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+            }
         }
 
+        // Display Rigidbody2D Component
         if (obj.HasComponent<Rigidbody2D>())
         {
-            Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
-            ImGui::Text("Rigidbody2D Component");
-            ImGui::Text("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
-            ImGui::Text("Mass: %.2f", rb.mass);
+            if (ImGui::CollapsingHeader("Rigidbody2D Component"))
+            {
+                Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
+                ImGui::BulletText("Position: (%.2f, %.2f)", rb.position.x, rb.position.y);
+                ImGui::BulletText("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
+                ImGui::BulletText("Acceleration: (%.2f, %.2f)", rb.acceleration.x, rb.acceleration.y);
+                ImGui::BulletText("Force: (%.2f, %.2f)", rb.force.x, rb.force.y);
+                ImGui::BulletText("Mass: %.2f", rb.mass);
+                ImGui::BulletText("Use Gravity: %s", rb.use_gravity ? "True" : "False");
+                ImGui::BulletText("Is Kinematic: %s", rb.is_kinematic ? "True" : "False");
+            }
+        }
+
+        // Display BoxCollider2D Component
+        if (obj.HasComponent<BoxCollider2D>())
+        {
+            if (ImGui::CollapsingHeader("BoxCollider2D Component"))
+            {
+                BoxCollider2D& collider = obj.GetComponent<BoxCollider2D>();
+                ImGui::BulletText("Is Trigger: %s", collider.is_trigger ? "True" : "False");
+            }
+        }
+
+        // Display SpriteRender Component
+        if (obj.HasComponent<SpriteRender>())
+        {
+            if (ImGui::CollapsingHeader("SpriteRender Component"))
+            {
+                SpriteRender& sprite = obj.GetComponent<SpriteRender>();
+                ImGui::BulletText("Sprite Path: %s", sprite.texturePath.c_str());
+                ImGui::BulletText("Shape: %d", sprite.shape);
+            }
+        }
+
+        // Display Script Component
+        if (obj.HasComponent<Script>())
+        {
+            if (ImGui::CollapsingHeader("Script Component"))
+            {
+                Script& script = obj.GetComponent<Script>();
+                ImGui::BulletText("Script Path: %s", script.scriptPath.c_str());
+                ImGui::BulletText("Class Name: %s", script.scriptName.c_str());
+            }
         }
     }
 
@@ -689,6 +902,134 @@ namespace Ukemochi
             else
             {
                 if (ImGui::InputFloat("##MassInput", &rb.mass)) modified = true;
+            }
+
+            // Force
+            ImGui::Text("Force");
+            if (useSliders)
+            {
+                if (ImGui::SliderFloat("##ForceSlider", &rb.force.x, 0.1f, 100.0f)) modified = true;
+            }
+            else
+            {
+                if (ImGui::InputFloat("##ForceInput", &rb.force.x)) modified = true;
+            }
+
+            // Use Gravity Checkbox
+            ImGui::Text("Use Gravity");
+            if (ImGui::Checkbox("##UseGravityCheckbox", &rb.use_gravity)) modified = true;
+
+            // Is Kinematic Checkbox
+            ImGui::Text("Is Kinematic");
+            if (ImGui::Checkbox("##IsKinematicCheckbox", &rb.is_kinematic)) modified = true;
+        }
+
+        if (selectedObject->HasComponent<BoxCollider2D>())
+        {
+            BoxCollider2D& collider = selectedObject->GetComponent<BoxCollider2D>();
+
+            ImGui::Text("Use Collider Box");
+            if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger)) modified = true;
+        }
+
+        if (selectedObject->HasComponent<SpriteRender>())
+        {
+            SpriteRender& sprite = selectedObject->GetComponent<SpriteRender>();
+
+            // Texture Path
+            ImGui::Text("Texture Path");
+            char texturePathBuffer[256];
+            strncpy(texturePathBuffer, sprite.texturePath.c_str(), sizeof(texturePathBuffer));
+            texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
+
+            bool modified = false;
+
+            // Make the input box read-only by disabling it
+            ImGui::BeginDisabled(true); // Disable the input box
+
+            ImGui::InputText("##TexturePathInput", texturePathBuffer, sizeof(texturePathBuffer));
+
+            ImGui::EndDisabled(); // Re-enable UI elements after this block
+
+            // Check for drag-and-drop onto the texture path input
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                {
+                    // If something is dragged onto the texture path input, validate the extension
+                    std::string draggedPath = std::string((const char*)payload->Data);
+
+                    // Extract the file extension
+                    std::filesystem::path filePath(draggedPath);
+                    std::string extension = filePath.extension().string();
+
+                    // Check if the file has a .png extension
+                    if (extension == ".png")
+                    {
+                        // Update the texture path if it's a .png file
+                        strncpy(texturePathBuffer, draggedPath.c_str(), sizeof(texturePathBuffer));
+                        texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
+
+                        sprite.texturePath = draggedPath; // Update the texture path in the sprite component
+                        modified = true;
+                    }
+                    else
+                    {
+                        // Optionally, display an error or feedback if the file is not a .png
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .png files are allowed!");
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+        }
+
+        // Script Component
+        if (selectedObject->HasComponent<Script>())
+        {
+            Script& script = selectedObject->GetComponent<Script>();
+            ImGui::Text("Script Path");
+
+            char scriptPathBuffer[256];
+            strncpy(scriptPathBuffer, script.scriptPath.c_str(), sizeof(scriptPathBuffer));
+            scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+
+            bool modified = false;
+
+            // Make the input box read-only by disabling it
+            ImGui::BeginDisabled(true); // Disable the input box
+
+            ImGui::InputText("##ScriptPathInput", scriptPathBuffer, sizeof(scriptPathBuffer));
+
+            ImGui::EndDisabled(); // Re-enable UI elements after this block
+
+            // Check for drag-and-drop onto the script path input
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                {
+                    // If something is dragged onto the script path input, validate the extension
+                    std::string draggedPath = std::string((const char*)payload->Data);
+
+                    // Extract the file extension
+                    std::filesystem::path filePath(draggedPath);
+                    std::string extension = filePath.extension().string();
+
+                    // Check if the file has a .cs extension
+                    if (extension == ".cs")
+                    {
+                        strncpy(scriptPathBuffer, draggedPath.c_str(), sizeof(scriptPathBuffer));
+                        scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+
+                        script.scriptPath = draggedPath; // Update the script path in the Script component
+                        modified = true;
+                    }
+                    else
+                    {
+                        // Optionally, display an error or feedback if the file is not a .lua
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .cs files are allowed!");
+                    }
+                }
+                ImGui::EndDragDropTarget();
             }
         }
     }
@@ -871,7 +1212,41 @@ namespace Ukemochi
                 //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
+            // Handle the drop target (accept file drops here)
+            if (ImGui::BeginDragDropTarget())
+            {
+                const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH");
+                if (payload)
+                {
+                    // The payload data is the file path
+                    const char* droppedFilePath = static_cast<const char*>(payload->Data);
+                    std::cout << "Dropped File: " << droppedFilePath << std::endl;
 
+                    // Create an entity based on the dropped file
+                    if (droppedFilePath[0] != '\0' && IsJsonFile(droppedFilePath))
+                    {
+                        if (ECS::GetInstance().GetLivingEntityCount() == 0)
+                        {
+                            ECS::GetInstance().GetSystem<Transformation>()->player = -1;
+                            ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
+                        }
+
+                        auto& go = GameObjectManager::GetInstance().CreatePrefabObject(droppedFilePath);
+                        // You can add additional logic for the entity, like setting up textures, animations, etc.
+                        if (go.GetTag() == "Player")
+                        {
+                            ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
+                            ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
+                            ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                            go.GetComponent<SpriteRender>().animated = true;
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
             ImGui::End();
         }
     }
@@ -897,6 +1272,10 @@ namespace Ukemochi
         io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
                                 static_cast<float>(app.GetWindow().GetHeight()));
 
+
+
+        // Call the combined function to check and handle file drops
+        //CheckAndHandleFileDrop();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
