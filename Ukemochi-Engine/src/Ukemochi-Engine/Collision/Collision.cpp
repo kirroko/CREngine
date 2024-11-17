@@ -32,7 +32,8 @@ namespace Ukemochi
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 
-		ConvexCollider2D convex1;
+		// Convex Testing
+		/*ConvexCollider2D convex1;
 		convex1.vertices.push_back(Vec2{ 0,0 });
 		convex1.vertices.push_back(Vec2{ 1,0 });
 		convex1.vertices.push_back(Vec2{ 1,1 });
@@ -45,7 +46,7 @@ namespace Ukemochi
 		convex2.vertices.push_back(Vec2{ 0.5f,1.5f });
 
 		if (ConvexConvex_Intersection(convex1, convex2))
-			std::cout << "Convex collided\n";
+			std::cout << "Convex collided\n";*/
 	}
 
 	/*!***********************************************************************
@@ -64,8 +65,6 @@ namespace Ukemochi
 				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
-				//auto& convex1 = ECS::GetInstance().GetComponent<ConvexCollider2D>(entity);
-
 				// Update the bounding box size
 				UpdateBoundingBox(box1, trans1);
 
@@ -80,13 +79,12 @@ namespace Ukemochi
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
-					//auto& convex2 = ECS::GetInstance().GetComponent<ConvexCollider2D>(entity);
-
 					// Check collision between two box objects
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
 					{
 						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
+
 						if(ECS::GetInstance().HasComponent<Script>(entity2))
 						{
 							// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
@@ -99,20 +97,17 @@ namespace Ukemochi
 							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
 						}
 					}
-
-					// Check collision between two convex objects
-					//if (ConvexConvex_Intersection(convex1, convex2))
-					//	std::cout << "Convex collided\n";
 				}
 
 				// Check collision between box objects and the screen boundaries
 				if (BoxScreen_Intersection(box1))
 				{
 					BoxScreen_Response(trans1, box1, rb1);
+
 					if(ECS::GetInstance().HasComponent<Script>(entity))
 					{
 						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						auto& script = ECS::GetInstance().GetComponent<Script>(entity);
+						// auto& script = ECS::GetInstance().GetComponent<Script>(entity);
 						// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
 					}
 				}
@@ -437,8 +432,13 @@ namespace Ukemochi
 		// PLAYER AND TRIGGER
 		if (box1.tag == "Player" && box2.is_trigger)
 			Trigger_Response(trans1, trans2, box2);
-		else // STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+		else
 		{
+			// Skip trigger objects
+			if (box1.is_trigger || box2.is_trigger)
+				return;
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 		}
@@ -454,10 +454,6 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::StaticDynamic_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
-		// Skip trigger objects
-		if (box1.tag == "Player" && box2.is_trigger || box2.tag == "Player" && box1.is_trigger)
-			return;
-
 		// Move objects to the point of collision
 		if (!rb1.is_kinematic)
 			trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
