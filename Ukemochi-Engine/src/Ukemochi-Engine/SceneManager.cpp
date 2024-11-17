@@ -136,6 +136,10 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi Complete Base Sprite-Base-Attack 1_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);

@@ -165,7 +165,7 @@ public:
 
 	GLuint getTextureColorBuffer() const;
 
-	void resizeFramebuffer(int width, int height);
+	void resizeFramebuffer(unsigned int width, unsigned int height) const;
 
 private:
 	/*!

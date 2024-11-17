@@ -146,17 +146,22 @@ void Renderer::setupFramebuffer()
  * @param width The new width for the framebuffer.
  * @param height The new height for the framebuffer.
  */
-void Renderer::resizeFramebuffer(int width, int height) {
+void Renderer::resizeFramebuffer(unsigned int width, unsigned int height) const
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	
 	// Resize color texture
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int>(width), static_cast<int>(height), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 	// Resize renderbuffer
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, static_cast<int>(width), static_cast<int>(height));
 
-	//screen_width = width;
-	//screen_height = height;
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+
+	// May as well update viewport?
+	glViewport(0,0,width,height);
 }
 
 /*!

@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 #include <../vendor/GLFW/include/GLFW/glfw3.h>
+
+#include "imgui.h"
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
@@ -75,6 +77,8 @@ namespace Ukemochi
 		static void EditEntityProperties(GameObject* selectedObject, bool& modified);
 
 		static void ShowEntityManagementUI();
+		
+		static void UpdateFramebufferSize(ImVec2 panelSize);
 
 		static void ContentBrowser(char* filePath);
 
@@ -110,6 +114,8 @@ namespace Ukemochi
 		static void LoadContents(const std::string& directory); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
 		static int m_global_selected;
+		static unsigned int m_currentPanelWidth;
+		static unsigned int m_currentPanelHeight;
 		static bool m_CompileError;
 		static bool m_SpriteFlag;
 		static bool m_Compiling;

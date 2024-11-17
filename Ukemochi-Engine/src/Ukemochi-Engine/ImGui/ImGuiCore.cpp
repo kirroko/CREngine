@@ -47,6 +47,8 @@ namespace Ukemochi
     bool UseImGui::m_SpriteFlag = false;
     std::string UseImGui::m_SpritePath;
     int UseImGui::m_global_selected = 0;
+    unsigned int UseImGui::m_currentPanelWidth = 1600;
+    unsigned int UseImGui::m_currentPanelHeight = 900;
 
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
@@ -357,35 +359,6 @@ namespace Ukemochi
                 };
                 anim.SetAnimation(clipName);
             }
-            // Read the metadata from the file
-            // rapidjson::Document document;
-            // if (!Serialization::LoadJSON(filePath.string(), document))
-            // {
-            //     UME_ENGINE_ERROR("Failed to load metadata from file: {0}", filePath.string());
-            //     return;
-            // }
-            //
-            // const rapidjson::Value& object = document["TextureMeta"];
-            //
-            // auto GOs = GameObjectManager::GetInstance().GetAllGOs();
-            // if (GOs[m_global_selected]->HasComponent<Animation>())
-            // {
-            //     auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
-            //     GLuint textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
-            //     std::string name = object["ClipName"].GetString();
-            //     anim.clips[name] = AnimationClip{
-            //         name, textureID, object["TotalFrames"].GetInt(),
-            //         object["PixelWidth"].GetInt(), object["PixelHeight"].GetInt(),
-            //         object["TextureWidth"].GetInt(), object["TextureHeight"].GetInt(),
-            //         object["FrameTime"].GetFloat(), object["Looping"].GetBool()
-            //     };
-            //     anim.SetAnimation(name);
-            // }
-            // else
-            // {
-            //     // Else popup saying selected GO does not have animation component
-            //     UME_ENGINE_WARN("Selected GO does not have Animation component");
-            // }
         }
 
         // Display Image
@@ -446,22 +419,6 @@ namespace Ukemochi
                                          static_cast<float>(row + 1) * scaledCellHeight),
                                   IM_COL32(255, 255, 255, 255));
             }
-
-            // for(float x = 0; x <= displayWidth; x += scaledCellWidth)
-            // {
-            //     drawList->AddLine(
-            //         ImVec2(canvasPos.x + x, canvasPos.y),
-            //         ImVec2(canvasPos.x + x, canvasPos.y + displayHeight),
-            //         IM_COL32(255,255,255,255));
-            // }
-            //
-            // for(float y = 0; y <= displayHeight; y += scaledCellHeight)
-            // {
-            //     drawList->AddLine(
-            //         ImVec2(canvasPos.x, canvasPos.y + y),
-            //         ImVec2(canvasPos.x + displayWidth, canvasPos.y + y),
-            //         IM_COL32(255,255,255,255));
-            // }
         }
         ImGui::End();
     }
@@ -1455,7 +1412,7 @@ namespace Ukemochi
                 static char currentClipBuffer[256] = "";
                 strncpy(currentClipBuffer, animation.currentClip.c_str(), sizeof(currentClipBuffer));
                 ImGui::BeginDisabled(true);
-                ImGui::InputText("##CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
+                ImGui::InputText("CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
                 ImGui::EndDisabled();
                 
                 static char changeClipBuffer[256] = "";
@@ -1616,6 +1573,20 @@ namespace Ukemochi
         ImGui::End();
     }
 
+    void UseImGui::UpdateFramebufferSize(ImVec2 panelSize)
+    {
+        unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
+        unsigned int newHeight = static_cast<unsigned int>(panelSize.y);
+
+        if (newWidth != m_currentPanelWidth || newHeight != m_currentPanelHeight)
+        {
+            m_currentPanelWidth = newWidth;
+            m_currentPanelHeight = newHeight;
+
+            ECS::GetInstance().GetSystem<Renderer>()->resizeFramebuffer(m_currentPanelWidth,m_currentPanelHeight);
+        }
+    }
+
     /**
  * @brief Renders the game scene within an ImGui window and handles mouse interaction.
  *
@@ -1636,9 +1607,34 @@ namespace Ukemochi
         if (showGameView)
         {
             ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
-            ImGui::Image((ImTextureID)(intptr_t)texture,
-                         ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
-                                static_cast<float>(app.GetWindow().GetHeight())), {0, 1}, {1, 0});
+            
+            ImVec2 panelSize = ImGui::GetContentRegionAvail();
+            UpdateFramebufferSize(panelSize);
+            
+            float targetAspect = 16.0f / 9.0f;
+            float panelAspect = panelSize.x / panelSize.y;
+            float displayWidth, displayHeight;
+            if (panelAspect > targetAspect)
+            {
+                displayWidth = panelSize.y * targetAspect;
+                displayHeight = panelSize.y;
+            }
+            else
+            {
+                displayWidth = panelSize.x;
+                displayHeight = panelSize.x / targetAspect;
+            }
+            float offsetX = (panelSize.x - displayWidth) * 0.5f;
+            float offsetY = (panelSize.y - displayHeight) * 0.5f;
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offsetY);
+
+            
+            ImGui::Image((ImTextureID)(intptr_t)texture,{displayWidth,displayHeight},
+                {0, 1}, {1, 0});
+            // ImGui::Image((ImTextureID)(intptr_t)texture,
+            //              ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
+            //                     static_cast<float>(app.GetWindow().GetHeight())), {0, 1}, {1, 0});
 
 
             // Get the position of the ImGui window
