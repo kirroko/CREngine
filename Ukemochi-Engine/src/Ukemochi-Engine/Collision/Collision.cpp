@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 6, 2024
+\date       Nov 17, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -12,12 +12,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
-#include "Collision.h"			// for forward declaration
-#include "../Math/MathUtils.h"	// for min, max, abs
-#include "../FrameController.h"	// for GetFixedDeltaTime
-#include "../Audio/Audio.h"		// for Audio sound effects
-#include "../Application.h"		// for screen size
-#include "Ukemochi-Engine/Logic/Scripting.h"
+#include "Collision.h"						 // for forward declaration
+#include "../Math/MathUtils.h"				 // for min, max, abs
+#include "../FrameController.h"				 // for GetFixedDeltaTime
+#include "../Audio/Audio.h"					 // for Audio sound effects
+#include "../Application.h"					 // for screen size
+#include "../Factory/GameObjectManager.h"	 // for game object tag
+#include "Ukemochi-Engine/Logic/Scripting.h" // for invoking OnCollisonEnter2D
 
 namespace Ukemochi
 {
@@ -58,12 +59,15 @@ namespace Ukemochi
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
-			for (auto const& entity : m_Entities)
+			for (auto const& entity1 : m_Entities)
 			{
+				// Get the tag of the first entity
+				std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
+
 				// Get references of the first entity components
-				auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity);
-				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
-				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+				auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity1);
+				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
 
 				// Update the bounding box size
 				UpdateBoundingBox(box1, trans1);
@@ -71,8 +75,11 @@ namespace Ukemochi
 				for (auto const& entity2 : m_Entities)
 				{
 					// Skip self collision
-					if (entity == entity2)
+					if (entity1 == entity2)
 						continue;
+
+					// Get the tag of the second entity
+					std::string tag2 = GameObjectManager::GetInstance().GetGO(entity2)->GetTag();
 
 					// Get references of the second entity components
 					auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
@@ -83,17 +90,17 @@ namespace Ukemochi
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
 					{
-						BoxBox_Response(trans1, box1, rb1, trans2, box2, rb2, tLast);
+						BoxBox_Response(tag1, trans1, box1, rb1, tag2, trans2, box2, rb2, tLast);
 
-						if(ECS::GetInstance().HasComponent<Script>(entity2))
+						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
+						if (ECS::GetInstance().HasComponent<Script>(entity1))
 						{
-							// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
+							auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
 							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
 						}
-						if(ECS::GetInstance().HasComponent<Script>(entity))
+						if(ECS::GetInstance().HasComponent<Script>(entity2))
 						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity);
+							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
 							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
 						}
 					}
@@ -102,14 +109,14 @@ namespace Ukemochi
 				// Check collision between box objects and the screen boundaries
 				if (BoxScreen_Intersection(box1))
 				{
-					BoxScreen_Response(trans1, box1, rb1);
+					BoxScreen_Response(tag1, trans1, box1, rb1);
 
-					if(ECS::GetInstance().HasComponent<Script>(entity))
-					{
-						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						// auto& script = ECS::GetInstance().GetComponent<Script>(entity);
-						// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-					}
+					//if(ECS::GetInstance().HasComponent<Script>(entity1))
+					//{
+					//	// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
+					//	// auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
+					//	// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+					//}
 				}
 			}
 		}
@@ -427,11 +434,11 @@ namespace Ukemochi
 	\brief
 	 Collision response between two objects.
 	*************************************************************************/
-	void Collision::BoxBox_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
+	void Collision::BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
 		// PLAYER AND TRIGGER
-		if (box1.tag == "Player" && box2.is_trigger)
-			Trigger_Response(trans1, trans2, box2);
+		if (tag1 == "Player" && box2.is_trigger)
+			Trigger_Response(trans1, tag2, trans2, box2);
 		else
 		{
 			// Skip trigger objects
@@ -646,11 +653,11 @@ namespace Ukemochi
 	\brief
 	 Collision response between the player and a trigger object.
 	*************************************************************************/
-	void Collision::Trigger_Response(Transform& player_trans, const Transform& trigger_trans, const BoxCollider2D& trigger_box)
+	void Collision::Trigger_Response(Transform& player_trans, const std::string& trigger_tag, const Transform& trigger_trans, const BoxCollider2D& trigger_box)
 	{
 		// PLAYER AND DOORS
 		// To simulate moving between rooms
-		if (trigger_box.tag == "Left Door")
+		if (trigger_tag == "Left Door")
 		{
 			// If the player is colliding with the top or btm of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_TOP)
@@ -660,7 +667,7 @@ namespace Ukemochi
 			else // Player entered the left door
 				player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
 		}
-		else if (trigger_box.tag == "Right Door")
+		else if (trigger_tag == "Right Door")
 		{
 			// If the player is colliding with the top or btm of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_TOP)
@@ -670,7 +677,7 @@ namespace Ukemochi
 			else // Player entered the right door
 				player_trans.position.x = trigger_trans.scale.x + player_trans.scale.x * 0.5f;
 		}
-		else if (trigger_box.tag == "Top Door")
+		else if (trigger_tag == "Top Door")
 		{
 			// If the player is colliding with the left or right of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_LEFT)
@@ -680,7 +687,7 @@ namespace Ukemochi
 			else // Player entered the top door
 				player_trans.position.y = screen_height - trigger_trans.scale.y - player_trans.scale.y * 0.5f;
 		}
-		else if (trigger_box.tag == "Btm Door")
+		else if (trigger_tag == "Btm Door")
 		{
 			// If the player is colliding with the left or right of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_LEFT)
@@ -698,14 +705,14 @@ namespace Ukemochi
 	\brief
 	 Collision response between an object and the screen boundaries.
 	*************************************************************************/
-	void Collision::BoxScreen_Response(Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb)
+	void Collision::BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb)
 	{
 		// Colliding with left screen boundary
 		if (box.collision_flag & COLLISION_LEFT)
 		{
 			trans.position.x = trans.scale.x * 0.5f;
 
-			if (box.tag == "Enemy")
+			if (tag == "Enemy")
 				rb.velocity.x = -rb.velocity.x;
 		}
 
@@ -714,7 +721,7 @@ namespace Ukemochi
 		{
 			trans.position.x = screen_width - trans.scale.x * 0.5f;
 
-			if (box.tag == "Enemy")
+			if (tag == "Enemy")
 				rb.velocity.x = -rb.velocity.x;
 		}
 
@@ -723,7 +730,7 @@ namespace Ukemochi
 		{
 			trans.position.y = trans.scale.y * 0.5f;
 
-			if (box.tag == "Enemy")
+			if (tag == "Enemy")
 				rb.velocity.y = -rb.velocity.y;
 		}
 
@@ -732,7 +739,7 @@ namespace Ukemochi
 		{
 			trans.position.y = screen_height - trans.scale.y * 0.5f;
 
-			if (box.tag == "Enemy")
+			if (tag == "Enemy")
 				rb.velocity.y = -rb.velocity.y;
 		}
 	}

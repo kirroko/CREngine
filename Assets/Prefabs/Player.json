@@ -30,8 +30,7 @@
                 "Min": [0.0, 0.0],
                 "Max": [1.0, 1.0],
                 "Collision Flag": 0,
-                "is_trigger": false,
-                "Tag": "Player"
+                "is_trigger": false
             }, {
                 "Name": "SpriteRender",
                 "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",

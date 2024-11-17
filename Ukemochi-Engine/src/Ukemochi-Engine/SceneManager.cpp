@@ -528,10 +528,10 @@ namespace Ukemochi
                     );
                     int collisionFlag = componentData["Collision Flag"].GetInt();
                     bool isTrigger = componentData["is_trigger"].GetBool();
-                    std::string collisionTag = componentData["Tag"].GetString();
+                    //std::string collisionTag = componentData["Tag"].GetString();
                     if (!newObject.HasComponent<BoxCollider2D>())
                     {
-                        newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger, collisionTag});
+                        newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger});
                     }
                 }
                 else if (componentName == "CircleCollider2D")
@@ -714,7 +714,7 @@ namespace Ukemochi
                 boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
 
                 boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-                boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
+                //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
                 componentsArray.PushBack(boxColliderComponent, allocator);
             }
@@ -893,7 +893,7 @@ namespace Ukemochi
             boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
 
             boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-            boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
+            //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
             componentsArray.PushBack(boxColliderComponent, allocator);
         }

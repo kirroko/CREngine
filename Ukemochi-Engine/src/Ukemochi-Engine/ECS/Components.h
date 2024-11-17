@@ -3,7 +3,7 @@
 \file       Components.h
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
-\date       Nov 13, 2024
+\date       Nov 17, 2024
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -75,7 +75,7 @@ namespace Ukemochi
 
 		int collision_flag{};		   // Track the collision flags
 		bool is_trigger{ false };	   // If true, act as a trigger
-		std::string tag{ "Untagged" }; // temp
+		//bool enabled{ true };		   // If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -154,6 +154,10 @@ namespace Ukemochi
 		FMOD::ChannelGroup pChannelGroups;
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Script component structure.
+	*************************************************************************/
 	struct Script
 	{
 		std::string scriptPath;

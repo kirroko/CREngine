@@ -2,7 +2,7 @@
 /*!
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 6, 2024
+\date       Nov 17, 2024
 \brief      This file contains the declaration of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -141,12 +141,16 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Collision response between two objects.
+        \param[in] tag1
+         The tag of the first collided object.
         \param[out] trans1
          The Transform component attached to the first collided object.
         \param[in] box1
          The BoxCollider2D component attached to the first collided object.
         \param[out] rb1
          The Rigidbody2D component attached to the first collided object.
+        \param[in] tag2
+         The tag of the second collided object.
         \param[out] trans2
          The Transform component attached to the second collided object.
         \param[in] box2
@@ -156,7 +160,7 @@ namespace Ukemochi
         \param[in] firstTimeOfCollision
          The calculated first time of collision.
         *************************************************************************/
-        void BoxBox_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision);
+        void BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision);
 
         /*!***********************************************************************
         \brief
@@ -215,16 +219,20 @@ namespace Ukemochi
          Collision response between the player and a trigger object.
         \param[out] player_trans
          The Transform component attached to the player object.
+        \param[in] trigger_tag
+         The tag of the trigger object.
         \param[in] trigger_trans
          The Transform component attached to the trigger object.
         \param[in] trigger_box
          The BoxCollider2D component attached to the trigger object.
         *************************************************************************/
-        void Trigger_Response(Transform& player_trans, const Transform& trigger_trans, const BoxCollider2D& trigger_box);
+        void Trigger_Response(Transform& player_trans, const std::string& trigger_tag, const Transform& trigger_trans, const BoxCollider2D& trigger_box);
 
         /*!***********************************************************************
         \brief
          Collision response between an object and the screen boundaries.
+        \param[in] tag
+         The tag of the collided object.
         \param[out] trans
          The Transform component attached to the collided object.
         \param[in] box
@@ -232,6 +240,6 @@ namespace Ukemochi
         \param[out] rb
          The Rigidbody2D component attached to the collided object.
         *************************************************************************/
-        void BoxScreen_Response(Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb);
+        void BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb);
     };
 }
