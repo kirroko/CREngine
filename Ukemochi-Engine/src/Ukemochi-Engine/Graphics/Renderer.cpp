@@ -637,6 +637,7 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
+	UIRenderer->renderButtons(*camera);
 	// Render debug wireframes if debug mode is enabled
 	if (debug_mode_enabled)
 	{
@@ -666,7 +667,6 @@ void Renderer::render()
 		debug_shader_program->Deactivate();
 	}
 
-	UIRenderer->renderButtons(*camera);
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
