@@ -16,8 +16,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header
  *******************************************************************/
 
-using System.Globalization;
-
 namespace Ukemochi
 {
     public class Transform : Component

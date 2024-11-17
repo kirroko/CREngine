@@ -106,7 +106,6 @@ namespace Ukemochi
 		player_obj = GameObjectManager::GetInstance().CreatePrefabObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		
-		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		p_spriteRender.animated = true;
 

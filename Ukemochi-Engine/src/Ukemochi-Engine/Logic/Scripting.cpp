@@ -21,8 +21,9 @@ namespace Ukemochi
     std::unordered_map<MonoType*, std::function<bool(EntityID)>> ScriptingEngine::s_EntityHasComponentFuncs;
     bool ScriptingEngine::ScriptHasError = false;
 
+    // Reminded, this is because we're using reflection type to check if the entity has the component
     template <typename Component>
-    void ScriptingEngine::RegisterComponent()
+    void ScriptingEngine::RegisterComponent() // TODO: 
     {
         std::string_view typeName = typeid(Component).name();
         size_t pos = typeName.find_last_of(':');
@@ -42,6 +43,9 @@ namespace Ukemochi
     {
         RegisterComponent<Transform>();
         RegisterComponent<Rigidbody2D>();
+        RegisterComponent<BoxCollider2D>();
+        RegisterComponent<SpriteRender>();
+        RegisterComponent<Animation>();
     }
 
     // ================== PUBLIC FUNCTIONS ==================
@@ -101,8 +105,11 @@ namespace Ukemochi
         UME_ENGINE_ASSERT(std::filesystem::exists(csprojPath), "csproj file does not exist!")
 
         // Set to build in Release configuration, default is also debug
-        // TODO: Remember to change the configuration to Release
+#if _DEBUG
         std::wstring buildCmd = L"dotnet build -c Debug " + std::wstring(csprojPath.begin(), csprojPath.end());
+#else
+        std::wstring buildCmd = L"dotnet build -c Release " + std::wstring(csprojPath.begin(), csprojPath.end());
+#endif
         UME_ENGINE_INFO("Executing Dotnet build!");
         int result = _wsystem(buildCmd.c_str()); // Execute the build command
         if (result == 0) // Successful
@@ -111,7 +118,11 @@ namespace Ukemochi
             ScriptHasError = false;
             try
             {
+#if _DEBUG
                 std::filesystem::path sourcePath = "../Assets/bin/Debug/net472/Assembly-CSharp.dll";
+#else
+                std::filesystem::path sourcePath = "../Assets/bin/Release/net472/Assembly-CSharp.dll";
+#endif
                 std::filesystem::path destinationPath = "Resources/Scripts/Assembly-CSharp.dll";
 
                 if (std::filesystem::exists(sourcePath))
@@ -443,6 +454,9 @@ namespace Ukemochi
 
         mono_add_internal_call("Ukemochi.EngineInterop::SetSpriteRenderFlipY",
                                (void*)InternalCalls::SetSpriteRenderFlipY);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::PlayAnimation",
+                               (void*)InternalCalls::PlayAnimation);
     }
 
     bool ScriptingEngine::CheckMonoError(MonoError& error)

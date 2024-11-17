@@ -115,7 +115,7 @@ namespace Ukemochi
 				else if (component == "SpriteRender")
 				{
 					std::string TexturePath = std::string(comps["Sprite"].GetString());
-
+			
 					go.AddComponent(SpriteRender{
 						TexturePath,
 						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE

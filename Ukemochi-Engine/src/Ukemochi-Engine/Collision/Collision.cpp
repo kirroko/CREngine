@@ -112,7 +112,7 @@ namespace Ukemochi
 					if(ECS::GetInstance().HasComponent<Script>(entity))
 					{
 						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						auto& script = ECS::GetInstance().GetComponent<Script>(entity);
+						// auto& script = ECS::GetInstance().GetComponent<Script>(entity);
 						// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
 					}
 				}
