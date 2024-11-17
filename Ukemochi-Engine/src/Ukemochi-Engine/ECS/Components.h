@@ -138,8 +138,12 @@ namespace Ukemochi
 		int pixel_height = 64;				// Height of each frame in pixels
 		int total_width = 64;				// Width of the sprite sheet
 		int total_height = 64;				// Height of the sprite sheet
-		float frameTime = 0.05f;	// Duration of each frame
+		float frame_time = 0.05f;	// Duration of each frame
 		bool looping = true;		// Should the animation loop?
+
+		// AnimationClip();
+		// AnimationClip(std::string name, GLuint textureID, int total_frames, int pixel_width, int pixel_height, int total_width, int total_height, float frameTime, bool looping)
+		// 	: name(std::move(name)), textureID(textureID), total_frames(total_frames), pixel_width(pixel_width), pixel_height(pixel_height), total_width(total_width), total_height(total_height), frame_time(frameTime), looping(looping) {}
 	};
 	
 	/*!
@@ -152,34 +156,58 @@ namespace Ukemochi
 		std::string currentClip{};								// Name of the active animation.
 		int current_frame = 0;									// Current frame index
 		float time_since_last_frame = 0.0f;						// Time since the last frame
+		float original_frame_time = 0.05f;						// Original frame time
 
-		void SetAnimation(const std::string& name)
+		bool SetAnimation(const std::string& name)
 		{
 			if(clips.find(name) != clips.end() && name != currentClip)
 			{
 				currentClip = name;
 				current_frame = 0;
 				time_since_last_frame = 0.0f;
+
+				return true;
 			}
+			return false;
 		}
 		
 		void update(float dt)
 		{
-			if(clips.find(currentClip) != clips.end()) return;
+			if(clips.find(currentClip) == clips.end())
+				return;
+			
 
 			AnimationClip& clip = clips[currentClip];
 			time_since_last_frame += dt;
 
 			// Advance new frame
-			if(time_since_last_frame >= clip.frameTime)
+			if(time_since_last_frame >= clip.frame_time)
 			{
-				time_since_last_frame -= clip.frameTime;
 				current_frame++;
+				// time_since_last_frame -= clip.frame_time;
 				if(current_frame >= clip.total_frames)
 					current_frame = clip.looping ? 0 : clip.total_frames - 1;
+				time_since_last_frame = 0.0f; // Reset time
 			}
 
 			// Renderer system handles the UV coordinates for us
+		}
+
+		void setCurrentClipDuration(float newDuration)
+		{
+			if(clips.find(currentClip) == clips.end())
+				return;
+			
+			original_frame_time = clips[currentClip].frame_time;
+			clips[currentClip].frame_time = newDuration;
+		}
+
+		void resetCurrentClipDuration()
+		{
+			if (clips.find(currentClip) == clips.end())
+				return;
+
+			clips[currentClip].frame_time = original_frame_time;
 		}
 	};
 	

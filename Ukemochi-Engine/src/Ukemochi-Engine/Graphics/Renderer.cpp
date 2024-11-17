@@ -617,7 +617,9 @@ void Renderer::render()
 		if(ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
-			
+			auto& clip = ani.clips[ani.currentClip];
+
+			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
 			// auto& animator = ECS::GetInstance().GetComponent<Animator>(entity);
 			// Animation ani = animator.animations[animator.current_animation_index];
 			// updateAnimationFrame(ani.current_frame, ani.pixel_width, ani.pixel_height, ani.total_width, ani.total_height, uvCoordinates);

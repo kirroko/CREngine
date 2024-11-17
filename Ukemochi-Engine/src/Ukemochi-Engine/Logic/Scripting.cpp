@@ -450,6 +450,9 @@ namespace Ukemochi
 
         mono_add_internal_call("Ukemochi.EngineInterop::SetSpriteRenderFlipY",
                                (void*)InternalCalls::SetSpriteRenderFlipY);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::PlayAnimation",
+                               (void*)InternalCalls::PlayAnimation);
     }
 
     bool ScriptingEngine::CheckMonoError(MonoError& error)

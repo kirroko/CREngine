@@ -20,6 +20,7 @@ namespace Ukemochi
     {
         float m_time = 0.0f;
     public:
+        void Init();
         void Update();
     };
 }

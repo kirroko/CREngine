@@ -556,25 +556,6 @@ namespace Ukemochi
                     if (!newObject.HasComponent<SpriteRender>())
                     {
                         SpriteRender sr = {texturePath, shape};
-                        // Let's check if there's a metadata for the sprite to know if spritesheet
-                        std::string metaDataPath = texturePath.replace(texturePath.find_last_of('.'), std::string::npos, ".json");
-                        if(std::filesystem::exists(metaDataPath))
-                        {
-                            Document storage;
-                            if(Serialization::LoadJSON(metaDataPath,storage))
-                            {
-                                const Value& object = storage["TextureMeta"];
-
-                                // Animation anim;
-                                // anim.total_frames = object["TotalFrames"].GetInt();
-                                // anim.pixel_width = object["PixelWidth"].GetInt();
-                                // anim.pixel_height = object["PixelHeight"].GetInt();
-                                // anim.total_width = object["TextureWidth"].GetInt();
-                                // anim.total_height = object["TextureHeight"].GetInt();
-                            }
-                            sr.animated = true;
-                            
-                        }
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
@@ -601,9 +582,34 @@ namespace Ukemochi
                         });
                     }
                 }
+            	else if (componentName == "Animation")
+            	{
+            		if(!newObject.HasComponent<Animation>())
+            		{
+            			// Get clips and put them in map of Animation
+            			Animation anim;
+            			for (auto itr = componentData["Clips"].MemberBegin(); itr != componentData["Clips"].MemberEnd(); ++itr)
+						{
+							AnimationClip newClip;
+							newClip.name = itr->name.GetString();
+							newClip.total_frames = itr->value[1].GetInt();
+							newClip.pixel_width = itr->value[2].GetInt();
+							newClip.pixel_height = itr->value[3].GetInt();
+							newClip.total_width = itr->value[4].GetInt();
+							newClip.total_height = itr->value[5].GetInt();
+							newClip.frame_time = itr->value[6].GetFloat();
+							newClip.looping = itr->value[7].GetBool();
+							anim.clips[newClip.name] = newClip;
+						}
+
+            			anim.currentClip = componentData["CurrentClip"].GetString();
+
+            			newObject.AddComponent(std::move(anim));
+            		}
+            	}
                 else
                 {
-                    UME_ENGINE_ERROR("Unkown component type: {0}", componentName);
+                    UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
                 }
 
                 if (tag == "Player")
@@ -777,6 +783,32 @@ namespace Ukemochi
 
                 componentsArray.PushBack(scriptComponent, allocator);
             }
+
+        	if(gameobject->HasComponent<Animation>())
+        	{
+        		Value animationComponent(rapidjson::kObjectType);
+        		animationComponent.AddMember("Name", "Animation", allocator);
+
+        		Value clipsList(kObjectType);
+        		const auto& animation = gameobject->GetComponent<Animation>();
+        		for(const auto& [key,value] : animation.clips)
+        		{
+        			Value clip(key.c_str(),allocator);
+        			Value clipData(kArrayType);
+        			clipData.PushBack(Value(key.c_str(),allocator), allocator);
+        			clipData.PushBack(value.total_frames, allocator);
+        			clipData.PushBack(value.pixel_width, allocator);
+        			clipData.PushBack(value.pixel_height,allocator);
+        			clipData.PushBack(value.total_width, allocator);
+        			clipData.PushBack(value.total_height, allocator);
+        			clipData.PushBack(value.frame_time, allocator);
+        			clipData.PushBack(value.looping, allocator);
+        			clipsList.AddMember(clip, clipData, allocator);
+        		}
+        		animationComponent.AddMember("Clips", clipsList, allocator);
+        		animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
+        		componentsArray.PushBack(animationComponent, allocator);
+        	}
 
             gameObjectData.AddMember("Components", componentsArray, allocator);
 
@@ -955,6 +987,32 @@ namespace Ukemochi
 
             componentsArray.PushBack(scriptComponent, allocator);
         }
+
+	    if(prefabObj->HasComponent<Animation>())
+	    {
+	        Value animationComponent(rapidjson::kObjectType);
+	        animationComponent.AddMember("Name", "Animation", allocator);
+
+	    	Value clipsList(kObjectType);
+	        const auto& animation = prefabObj->GetComponent<Animation>();
+	        for(const auto& [key,value] : animation.clips)
+	        {
+	            Value clip(key.c_str(),allocator);
+	        	Value clipData(kArrayType);
+	        	clipData.PushBack(Value(key.c_str(),allocator), allocator);
+	        	clipData.PushBack(value.total_frames, allocator);
+	        	clipData.PushBack(value.pixel_width, allocator);
+	        	clipData.PushBack(value.pixel_height,allocator);
+	        	clipData.PushBack(value.total_width, allocator);
+	        	clipData.PushBack(value.total_height, allocator);
+	        	clipData.PushBack(value.frame_time, allocator);
+	        	clipData.PushBack(value.looping, allocator);
+	        	clipsList.AddMember(clip, clipData, allocator);
+	        }
+			animationComponent.AddMember("Clips", clipsList, allocator);
+	    	animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
+	    	componentsArray.PushBack(animationComponent, allocator);
+	    }
 
         gameObjectData.AddMember("Components", componentsArray, allocator);
 

@@ -102,9 +102,12 @@ namespace Ukemochi
 
 		static std::vector<std::string> textureFiles;
 		static std::vector<std::string> sceneFiles;
+		static std::string m_SpritePath;
 		static void LoadContents(const std::string& directory); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
+		static int m_global_selected;
 		static bool m_CompileError;
+		static bool m_SpriteFlag;
 		static bool m_Compiling;
 	};
 }

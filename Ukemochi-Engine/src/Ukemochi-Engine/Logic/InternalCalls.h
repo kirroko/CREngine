@@ -261,5 +261,12 @@ namespace Ukemochi
             auto& sr = go->GetComponent<SpriteRender>();
             sr.flipY = flipY;
         }
+
+        EXTERN_C UME_API inline bool PlayAnimation(uint64_t id, MonoString* clipName)
+        {
+            auto* go = GameObjectManager::GetInstance().GetGO(id);
+            auto& anim = go->GetComponent<Animation>();
+            return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName));
+        }
     }
 }

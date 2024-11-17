@@ -1,0 +1,12 @@
+{
+    "TextureMeta": {
+        "ClipName": "Idle",
+        "TotalFrames": 37,
+        "PixelWidth": 442,
+        "PixelHeight": 448,
+        "TextureWidth": 4096,
+        "TextureHeight": 4096,
+        "FrameTime": 0.05000000074505806,
+        "Looping": true
+    }
+}

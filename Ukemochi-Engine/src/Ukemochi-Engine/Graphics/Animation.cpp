@@ -6,6 +6,15 @@
 
 namespace Ukemochi
 {
+    void AnimationSystem::Init()
+    {
+        // Read for any metaData of the texture and set the animation clips
+        for(auto& entity : m_Entities)
+        {
+            auto& animation = ECS::GetInstance().GetComponent<Animation>(entity);
+        }
+    }
+
     void AnimationSystem::Update()
     {
         for(auto& entity : m_Entities)
