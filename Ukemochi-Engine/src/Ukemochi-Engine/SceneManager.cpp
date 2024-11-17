@@ -588,17 +588,19 @@ namespace Ukemochi
             		{
             			// Get clips and put them in map of Animation
             			Animation anim;
+            			
             			for (auto itr = componentData["Clips"].MemberBegin(); itr != componentData["Clips"].MemberEnd(); ++itr)
 						{
 							AnimationClip newClip;
-							newClip.name = itr->name.GetString();
-							newClip.total_frames = itr->value[1].GetInt();
-							newClip.pixel_width = itr->value[2].GetInt();
-							newClip.pixel_height = itr->value[3].GetInt();
-							newClip.total_width = itr->value[4].GetInt();
-							newClip.total_height = itr->value[5].GetInt();
-							newClip.frame_time = itr->value[6].GetFloat();
-							newClip.looping = itr->value[7].GetBool();
+            				newClip.keyPath = itr->value[0].GetString();
+							newClip.name = itr->value[1].GetString();
+							newClip.total_frames = itr->value[2].GetInt();
+							newClip.pixel_width = itr->value[3].GetInt();
+							newClip.pixel_height = itr->value[4].GetInt();
+							newClip.total_width = itr->value[5].GetInt();
+							newClip.total_height = itr->value[6].GetInt();
+							newClip.frame_time = itr->value[7].GetFloat();
+							newClip.looping = itr->value[8].GetBool();
 							anim.clips[newClip.name] = newClip;
 						}
 
@@ -795,6 +797,7 @@ namespace Ukemochi
         		{
         			Value clip(key.c_str(),allocator);
         			Value clipData(kArrayType);
+        			clipData.PushBack(Value(value.keyPath.c_str(),allocator), allocator);
         			clipData.PushBack(Value(key.c_str(),allocator), allocator);
         			clipData.PushBack(value.total_frames, allocator);
         			clipData.PushBack(value.pixel_width, allocator);

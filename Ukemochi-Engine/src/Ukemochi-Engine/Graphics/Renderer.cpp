@@ -612,23 +612,44 @@ void Renderer::render()
 
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
-
+		GLint textureID = -1;
+		
 		// Check for an Animator component
 		if(ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
-			auto& clip = ani.clips[ani.currentClip];
-
-			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
-			// auto& animator = ECS::GetInstance().GetComponent<Animator>(entity);
-			// Animation ani = animator.animations[animator.current_animation_index];
-			// updateAnimationFrame(ani.current_frame, ani.pixel_width, ani.pixel_height, ani.total_width, ani.total_height, uvCoordinates);
+			if (ani.clips.find(ani.currentClip) == ani.clips.end())
+			{
+				UME_ENGINE_WARN("Clip not found for {0}, using default UV for now.", ani.currentClip);
+				// Use default full texture UVs for static sprites
+				uvCoordinates[0] = 0.0f; uvCoordinates[1] = 0.0f;  // Bottom-left
+				uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
+				uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
+				uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
+			}
+			else
+			{
+				auto& clip = ani.clips[ani.currentClip];
+				spriteRenderer.texturePath = clip.keyPath;
+				updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
+			}
+			
 			if(spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
 				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
+			}
+
+			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			{
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			}
+			if (textureID < 0) {
+				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
+				continue;
 			}
 		}
 		else
@@ -647,19 +668,18 @@ void Renderer::render()
 				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
-		}
 
-		GLint textureID = -1;
-		if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
-			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
-		{
-			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			{
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			}
+			if (textureID < 0) {
+				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
+				continue;
+			}
 		}
-		if (textureID < 0) {
-			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
-			continue;
-		}
-
+		
 		int mappedTextureUnit = textureIDMap[textureID];
 
 		// Draw the sprite using the batch renderer, passing the updated UV coordinates

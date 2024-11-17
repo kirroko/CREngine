@@ -195,24 +195,6 @@ namespace Ukemochi
     {
         ImGui::Begin("Sprite Editor");
         ImGui::Text("Sprite Editor Contents");
-        // if(ImGui::Button("Refresh Assets"))
-        // {
-        //     textureFiles.clear();
-        //     for (const auto& entry : std::filesystem::directory_iterator("../Assets/Textures")) // TODO: Temporarily soulution
-        //     {
-        //         std::string path = entry.path().string();
-        //         // size_t pos = path.find('\\');
-        //         std::replace(path.begin(), path.end(), '\\', '/');
-        //         textureFiles.push_back(std::move(path));
-        //     }
-        // }
-        //
-        // ImGui::SameLine();
-        //
-        // if(ImGui::Button("Clear Assets"))
-        // {
-        //     textureFiles.clear();
-        // }
 
         // Static variables
         static GLuint texture = 0;
@@ -225,80 +207,80 @@ namespace Ukemochi
         static bool looping = true;
 
         // Editor variables
-        static int selectedAssetIndex = -1;
         static bool showTools = false;
         static bool showGrid = false;
         static std::string fileName;
-        std::filesystem::path filePath;
-        // Display the list of textures
-        // for (size_t i = 0; i < textureFiles.size(); ++i)
-        // {
-        //     bool isSelected = (selectedAssetIndex == static_cast<int>(i));
-        //     if (ImGui::Selectable(textureFiles[i].c_str(), isSelected))
-        //     {
-        //         selectedAssetIndex = static_cast<int>(i);
-        //         std::string fullPath = textureFiles[i];
-        //         
-        //         textureFiles.clear();
-        //     }
-        // }
 
-        if (!m_SpriteFlag)
+        if (m_SpriteFlag)
         {
-            ImGui::End();
-            return;
-        }
-
-        showTools = true;
-
-        // Hey, if you're reading this... why did you piggyback my ECS for this? Make it a singleton or something man :( - Corn
-        // Set-up the texture details
-        if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(m_SpritePath) !=
-            ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
-        {
-            texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
-            textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->width;
-            textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->height;
-            filePath = m_SpritePath;
-            fileName = filePath.stem().string();
-            filePath.replace_extension(".json");
-            rapidjson::Document document;
-            if (Serialization::LoadJSON(filePath.string(), document))
+            // Set up the texture details
+            if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(m_SpritePath) !=
+                ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
             {
-                const rapidjson::Value& object = document["TextureMeta"];
-                if (object.HasMember("ClipName") && object.HasMember("TotalFrames") &&
-                    object.HasMember("PixelWidth") && object.HasMember("PixelHeight") &&
-                    object.HasMember("FrameTime") && object.HasMember("Looping"))
+                std::filesystem::path filePath;
+                showGrid = true;
+                texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
+                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->width;
+                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->height;
+                filePath = m_SpritePath;
+                fileName = filePath.stem().string();
+                filePath.replace_extension(".json");
+                rapidjson::Document document;
+                if (Serialization::LoadJSON(filePath.string(), document))
                 {
-                    std::string temp = object["ClipName"].GetString();
-                    std::copy(temp.begin(), temp.end(), clipName);
-                    totalFrames = object["TotalFrames"].GetInt();
-                    pixelSize[0] = object["PixelWidth"].GetInt();
-                    pixelSize[1] = object["PixelHeight"].GetInt();
-                    frameTime = object["FrameTime"].GetFloat();
-                    looping = object["Looping"].GetBool();
+                    const rapidjson::Value& object = document["TextureMeta"];
+                    if (object.HasMember("KeyPath") && object.HasMember("ClipName") && object.HasMember("TotalFrames") &&
+                        object.HasMember("PixelWidth") && object.HasMember("PixelHeight") &&
+                        object.HasMember("FrameTime") && object.HasMember("Looping"))
+                    {
+                        // std::copy(temp.begin(), temp.end(), clipName);
+                        // std::string temp = object["KeyPath"].GetString();
+                        std::string temp = object["ClipName"].GetString();
+                        std::copy(temp.begin(),temp.end(), clipName);
+                        totalFrames = object["TotalFrames"].GetInt();
+                        pixelSize[0] = object["PixelWidth"].GetInt();
+                        pixelSize[1] = object["PixelHeight"].GetInt();
+                        frameTime = object["FrameTime"].GetFloat();
+                        looping = object["Looping"].GetBool();
+                    }
+                    else
+                    {
+                        UME_ENGINE_ERROR("Missing required fields in TextureMeta");
+                    }
                 }
                 else
                 {
-                    UME_ENGINE_ERROR("Missing required fields in TextureMeta");
+                    UME_ENGINE_WARN("No metadata found");
+                    std::fill(std::begin(clipName), std::end(clipName), 0);
+                    totalFrames = 1;
+                    pixelSize[0] = 64;
+                    pixelSize[1] = 64;
+                    frameTime = 0.05f;
+                    looping = true;
+                    m_SpriteFlag = false;
+                    showTools = false;
+                    showGrid = false;
                 }
+                m_SpriteFlag = false;
+                showTools = true;
             }
-        }
-        else
-        {
-            UME_ENGINE_WARN("No texture found in AssetManager for path, was it loaded? : {0}", m_SpritePath);
-            fileName.clear();
-            textureWidth = 0;
-            textureHeight = 0;
-            texture = 0;
-            std::fill(std::begin(clipName), std::end(clipName), 0);
-            totalFrames = 1;
-            pixelSize[0] = 64;
-            pixelSize[1] = 64;
-            frameTime = 0.05f;
-            looping = true;
-            m_SpriteFlag = false;
-            showTools = false;
+            else
+            {
+                UME_ENGINE_WARN("No texture found in AssetManager for path, was it loaded? : {0}", m_SpritePath);
+                fileName.clear();
+                textureWidth = 0;
+                textureHeight = 0;
+                texture = 0;
+                std::fill(std::begin(clipName), std::end(clipName), 0);
+                totalFrames = 1;
+                pixelSize[0] = 64;
+                pixelSize[1] = 64;
+                frameTime = 0.05f;
+                looping = true;
+                m_SpriteFlag = false;
+                showTools = false;
+                showGrid = false;
+            }
         }
 
         if (!showTools)
@@ -342,6 +324,7 @@ namespace Ukemochi
 
             rapidjson::Value textureMetaData(rapidjson::kObjectType);
             std::string tempStr = clipName;
+            textureMetaData.AddMember("KeyPath", rapidjson::Value(m_SpritePath.c_str(), allocator), allocator);
             textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
             textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
             textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
@@ -364,35 +347,45 @@ namespace Ukemochi
 
         if (ImGui::Button("Add Clip to GO"))
         {
-            // Read the metadata from the file
-            rapidjson::Document document;
-            if (!Serialization::LoadJSON(filePath.string(), document))
-            {
-                UME_ENGINE_ERROR("Failed to load metadata from file: {0}", filePath.string());
-                return;
-            }
-
-            const rapidjson::Value& object = document["TextureMeta"];
-
             auto GOs = GameObjectManager::GetInstance().GetAllGOs();
             if (GOs[m_global_selected]->HasComponent<Animation>())
             {
                 auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
-                GLuint textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
-                std::string name = object["ClipName"].GetString();
-                anim.clips[name] = AnimationClip{
-                    name, textureID, object["TotalFrames"].GetInt(),
-                    object["PixelWidth"].GetInt(), object["PixelHeight"].GetInt(),
-                    object["TextureWidth"].GetInt(), object["TextureHeight"].GetInt(),
-                    object["FrameTime"].GetFloat(), object["Looping"].GetBool()
+                anim.clips[clipName] = AnimationClip{
+                    m_SpritePath, clipName, texture, totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                    looping
                 };
-                anim.SetAnimation(name);
+                anim.SetAnimation(clipName);
             }
-            else
-            {
-                // Else popup saying selected GO does not have animation component
-                UME_ENGINE_WARN("Selected GO does not have Animation component");
-            }
+            // Read the metadata from the file
+            // rapidjson::Document document;
+            // if (!Serialization::LoadJSON(filePath.string(), document))
+            // {
+            //     UME_ENGINE_ERROR("Failed to load metadata from file: {0}", filePath.string());
+            //     return;
+            // }
+            //
+            // const rapidjson::Value& object = document["TextureMeta"];
+            //
+            // auto GOs = GameObjectManager::GetInstance().GetAllGOs();
+            // if (GOs[m_global_selected]->HasComponent<Animation>())
+            // {
+            //     auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
+            //     GLuint textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
+            //     std::string name = object["ClipName"].GetString();
+            //     anim.clips[name] = AnimationClip{
+            //         name, textureID, object["TotalFrames"].GetInt(),
+            //         object["PixelWidth"].GetInt(), object["PixelHeight"].GetInt(),
+            //         object["TextureWidth"].GetInt(), object["TextureHeight"].GetInt(),
+            //         object["FrameTime"].GetFloat(), object["Looping"].GetBool()
+            //     };
+            //     anim.SetAnimation(name);
+            // }
+            // else
+            // {
+            //     // Else popup saying selected GO does not have animation component
+            //     UME_ENGINE_WARN("Selected GO does not have Animation component");
+            // }
         }
 
         // Display Image
@@ -1042,7 +1035,8 @@ namespace Ukemochi
             "Rigidbody2D",
             "BoxCollider2D",
             "SpriteRender",
-            "Script"
+            "Script",
+            "Animation"
         };
 
         ImGui::Text("Add Component");
@@ -1088,6 +1082,13 @@ namespace Ukemochi
                     modified = true;
                 }
                 break;
+            case 5: // Animation
+                if (!selectedObject->HasComponent<Animation>())
+                {
+                    selectedObject->AddComponent<Animation>(Animation{});
+                    auto& anim = selectedObject->GetComponent<Animation>();
+                    modified = true;
+                }
             default:
                 break;
             }
@@ -1450,6 +1451,24 @@ namespace Ukemochi
                         }
                     }
                     ImGui::TreePop();
+                }
+                static char currentClipBuffer[256] = "";
+                strncpy(currentClipBuffer, animation.currentClip.c_str(), sizeof(currentClipBuffer));
+                ImGui::BeginDisabled(true);
+                ImGui::InputText("##CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
+                ImGui::EndDisabled();
+                
+                static char changeClipBuffer[256] = "";
+                ImGui::InputTextWithHint("Default Clip", "Enter Clip Name", changeClipBuffer, IM_ARRAYSIZE(changeClipBuffer));
+                if (ImGui::Button("Set Current Clip"))
+                {
+                    animation.currentClip = changeClipBuffer;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Clear all Clips"))
+                {
+                    animation.clips.clear();
+                    animation.currentClip = "";
                 }
             }
         }

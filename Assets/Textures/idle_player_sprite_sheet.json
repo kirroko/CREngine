@@ -1,5 +1,6 @@
 {
     "TextureMeta": {
+        "KeyPath": "../Assets/Textures/idle_player_sprite_sheet.png",
         "ClipName": "Idle",
         "TotalFrames": 37,
         "PixelWidth": 442,

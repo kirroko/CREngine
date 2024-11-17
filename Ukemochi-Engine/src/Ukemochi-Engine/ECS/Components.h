@@ -131,6 +131,7 @@ namespace Ukemochi
 
 	struct AnimationClip
 	{
+		std::string keyPath{};
 		std::string name{};			// Name of the animation clip
 		GLuint textureID = 0;		// The texture ID, to be set during runtime
 		int total_frames = 1;				// Total frames in the animation
