@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
  /*!
   * @brief Constructs a new BatchRenderer2D object.
   */
-BatchRenderer2D::BatchRenderer2D(){
+BatchRenderer2D::BatchRenderer2D() {
     // Initialize batch renderer
 }
 
@@ -41,7 +41,7 @@ BatchRenderer2D::~BatchRenderer2D() {
  * @brief Initializes the batch renderer with a shared shader and sets up vertex and index buffers.
  * @param sharedShader The shader to be used for rendering.
  */
-void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader) 
+void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader)
 {
     // Reserve memory for vertices and indices
     vertices.reserve(maxSprites * 4); // 4 vertices per sprite
@@ -98,7 +98,7 @@ void BatchRenderer2D::endBatch()
 /*!
  * @brief Creates and configures the VAO for the batch.
  */
-void BatchRenderer2D::createVertexArray() 
+void BatchRenderer2D::createVertexArray()
 {
     vao = std::make_unique<VAO>();
     vao->Bind();
@@ -112,9 +112,9 @@ void BatchRenderer2D::createVertexBuffer()
     vbo = std::make_unique<VBO>(nullptr, sizeof(Vertex) * maxSprites * 4);
     vbo->Bind();
 
-    vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position)); 
-    vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color)); 
-    vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord)); 
+    vao->LinkAttrib(*vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
     vao->LinkAttribInteger(*vbo, 3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, textureID));
 }
 
@@ -186,9 +186,9 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
 /*!
  * @brief Flushes the batch, rendering all sprites in the vertex buffer.
  */
-void BatchRenderer2D::flush() 
+void BatchRenderer2D::flush()
 {
-    if (vertices.empty()) 
+    if (vertices.empty())
     {
         //std::cout << "No vertices to flush." << std::endl;
         return;
@@ -202,11 +202,15 @@ void BatchRenderer2D::flush()
 
     // Print vertex data for debugging
     vbo->UpdateData(vertices.data(), vertices.size() * sizeof(Vertex));
-    vbo->Unbind(); 
+    vbo->Unbind();
 
     // Bind EBO
     ebo->Bind();
-    shader->Activate();
+    //shader->Activate();
+
+    if (activeShader) {
+        activeShader->Activate(); // Use the active shader
+    }
 
     // Calculate the correct index count based on the number of quads in the batch
     int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
@@ -219,3 +223,7 @@ void BatchRenderer2D::flush()
     vertices.clear();
 }
 
+void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> shader)
+{
+    activeShader = shader; // Assign the new shader
+}

@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/Factory.h"
 #include "../Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/SceneManager.h"
-
+#include "UIButton.h"
 
 using namespace Ukemochi;
 
@@ -63,11 +63,6 @@ Renderer::~Renderer()
  */
 void Renderer::init()
 {
-	// Load shaders
-	//setUpShaders();
-
-	// Load Buffers for box drawing
-	initBoxBuffers();
 
 	// Load Buffers for debug/wireframe box drawing
 	initDebugBoxBuffers();
@@ -81,7 +76,6 @@ void Renderer::init()
 
 	setupFramebuffer();
 	initScreenQuad();
-	initAnimationBuffers();
 
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
@@ -91,20 +85,27 @@ void Renderer::init()
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
-	// Add text objects
-	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
-
 	initAnimationEntities();
-	
+
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 
-	batchRenderer = std::make_unique<BatchRenderer2D>();
+	batchRenderer = std::make_shared<BatchRenderer2D>();
 	// Load shaders and create shared pointer
-	
+
 	batchRenderer->init(shaderProgram);
 
-	
+	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
+
+	// Add buttons
+	UIRenderer->addButton(UIButton("pauseButton",
+		glm::vec2(100.0f, 700.0f),
+		glm::vec2(150.0f, 100.0f),
+		5,  // Replace with actual texture ID
+		"hi",
+		glm::vec3(1.0f, 0.f, 0.f),
+		"Exo2",
+		1.0f
+	));
 }
 
 /*!
@@ -254,30 +255,6 @@ GLuint Renderer::getTextureColorBuffer() const
 }
 
 /*!
- * @brief Initializes vertex and index buffers for drawing a 2D box.
- */
-void Renderer::initBoxBuffers()
-{
-	// Define vertices for a box (centered around origin)
-	GLfloat vertices_box[] = {
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f    // Top-right
-	};
-	GLuint indices_box[] = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	// Set up the buffers once, and bind the VAO/VBO/EBO
-	setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
-
-	// Store the number of indices to be drawn
-	indices_count.push_back(6);
-}
-
-/*!
  * @brief Initializes vertex and index buffers for drawing a wireframe outline of a 2D box.
  */
 void Renderer::initDebugBoxBuffers()
@@ -393,30 +370,6 @@ void Renderer::initCircleOutlineBuffers(GLuint segments)
 }
 
 /*!
- * @brief Initializes buffers for animated sprite rendering.
- */
-void Renderer::initAnimationBuffers()
-{
-	// Define the vertices with placeholder texture coordinates.
-	GLfloat vertices[] = {
-		// Positions         // Colors        // UVs (to be updated dynamically)
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,   // Top-left
-		-0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,   // Bottom-left
-		 0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 0.0f,   // Bottom-right
-		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  0.125f, 1.0f    // Top-right
-	};
-
-	GLuint indices[] = {
-		0, 1, 2,  // First triangle
-		0, 2, 3   // Second triangle
-	};
-
-	setUpBuffers(vertices, sizeof(vertices), indices, sizeof(indices));
-	//indices_count.push_back(6);
-}
-
-
-/*!
  * @brief Loads and sets up a texture based on the given file path.
  * Supports PNG (GL_RGBA) and JPG (GL_RGB) formats.
  * @param texturePath The file path to the texture to be loaded.
@@ -528,6 +481,8 @@ void Renderer::setUpShaders()
 	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
 	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+
+	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
 }
 
 /*!
@@ -592,7 +547,7 @@ void Renderer::render()
 	bindTexturesToUnits(shaderProgram);
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
-	
+
 
 	// Render entities
 	batchRenderer->beginBatch();
@@ -602,10 +557,14 @@ void Renderer::render()
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+		//auto& GameObject
+		GameObject* go = GameObjectManager::GetInstance().GetGO(entity);
+		if (go->GetTag() == "Button")
+			std::cout << "Button" << std::endl;
 
 		// Set up the model matrix
 		glm::mat4 model{};
-		 
+
 		// Copy elements from custom matrix4x4 to glm::mat4
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
@@ -658,7 +617,7 @@ void Renderer::render()
 
 		GLint textureID = -1;
 		if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
-			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
 			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end()) {
 			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
 		}
@@ -679,13 +638,13 @@ void Renderer::render()
 	batchRenderer->endBatch();
 
 	// Render debug wireframes if debug mode is enabled
-	if (debug_mode_enabled) 
+	if (debug_mode_enabled)
 	{
 		debug_shader_program->Activate();
 		debug_shader_program->setMat4("view", view);
 		debug_shader_program->setMat4("projection", projection);
 
-		for (auto& entity : m_Entities) 
+		for (auto& entity : m_Entities)
 		{
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
@@ -707,6 +666,7 @@ void Renderer::render()
 		debug_shader_program->Deactivate();
 	}
 
+	UIRenderer->renderButtons(*camera);
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
@@ -965,8 +925,8 @@ void Renderer::initAnimationEntities()
 	size_t playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
 
 	// Create animations for the player
-	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
-	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
+	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true);
+	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true);
 
 	// Add multiple animations for the player entity (idle and running animations)
 	entity_animations[playerEntityID] = { idleAnimation, runAnimation };
@@ -1063,46 +1023,4 @@ void Renderer::animationKeyInput()
 			break;
 		}
 	}
-
-	//auto& playerSprite = playerObject->GetComponent<SpriteRender>();
-
-	//// File paths for the textures
-	//std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
-	//std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
-
-	//if (Input::IsKeyPressed(GLFW_KEY_A)) {
-	//	isFacingRight = false; // Moving left
-	//}
-	//else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-	//	isFacingRight = true; // Moving right
-	//}
-
-	//// Check if any movement keys are pressed
-	//if (Input::IsKeyPressed(GLFW_KEY_W) ||
-	//	Input::IsKeyPressed(GLFW_KEY_A) ||
-	//	Input::IsKeyPressed(GLFW_KEY_S) ||
-	//	Input::IsKeyPressed(GLFW_KEY_D))
-	//{
-	//	// If we are not already in the running state, switch to the running texture
-	//	if (playerSprite.animationIndex != 1)
-	//	{
-	//		playerSprite.animationIndex = 1;
-	//		playerSprite.texturePath = runningTexturePath;
-
-	//		// Set the animation index and texture path to indicate running state
-	//		std::cout << "Switching to running animation.\n";
-	//	}
-	//}
-	//else
-	//{
-	//	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-	//	if (playerSprite.animationIndex != 0)
-	//	{
-	//		playerSprite.animationIndex = 0;
-	//		playerSprite.texturePath = idleTexturePath;
-
-	//		// Set the animation index and texture path to indicate idle state
-	//		std::cout << "Switching to idle animation.\n";
-	//	}
-	//}
 }
