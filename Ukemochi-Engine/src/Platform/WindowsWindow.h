@@ -101,6 +101,11 @@ namespace Ukemochi {
 
 		std::string m_FilePath;
 
+		const std::string& GetFilePath() const { return m_FilePath; }
+		void ClearFilePath() { m_FilePath.clear(); }
+
+		bool fileDropped = false;
+
 	private:
 		/*!
 		\brief Initializes the window with the specified properties.

@@ -5,6 +5,10 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Installer|x64">
+      <Configuration>Installer</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
@@ -34,6 +38,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Installer|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -49,6 +59,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Installer|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -61,6 +74,13 @@
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Release-windows-x86_64\Ukemochi-Engine\</OutDir>
+    <IntDir>..\bin-int\Release-windows-x86_64\Ukemochi-Engine\</IntDir>
+    <TargetName>Ukemochi-Engine</TargetName>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Installer|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\bin\Release-windows-x86_64\Ukemochi-Engine\</OutDir>
     <IntDir>..\bin-int\Release-windows-x86_64\Ukemochi-Engine\</IntDir>
@@ -105,6 +125,40 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/wd6285 /wd26451 /wd26498 /wd26800 /wd4996 /wd6031 /wd4603 /wd26495 /wd33010 /wd4251 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>fmod_vc.lib;opengl32.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\Fmod\lib;vendor\freetype\lib;vendor\Mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Ukemochi-Engine\Ukemochi-Engine.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\Fmod\lib\fmod.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+IF EXIST ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll\ (xcopy /Q /E /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul) ELSE (xcopy /Q /Y /I ..\Ukemochi-Engine\vendor\freetype\lib\freetype.dll ..\bin\Release-windows-x86_64\Ukemochi-Game &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets
+IF EXIST vendor\Mono\lib\4.5\ (xcopy /Q /E /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul) ELSE (xcopy /Q /Y /I vendor\Mono\lib\4.5 ..\bin\Release-windows-x86_64\Ukemochi-Game\Mono\lib\4.5 &gt; nul)
+xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Installer|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>

@@ -37,6 +37,11 @@ public:
 	GLenum type;
 
 	/*!
+	 * @brief The width and height of the texture.
+	 */
+	int width, height;
+
+	/*!
 	 * @brief Constructor that loads and creates an OpenGL texture from an image file.
 	 * @param image The path to the image file to load as a texture.
 	 * @param texType The type of texture (e.g., GL_TEXTURE_2D).
