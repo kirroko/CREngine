@@ -86,5 +86,7 @@ namespace Ukemochi
          * @brief Release all the MonoGCHandles for the game objects
          */
         void ReleaseAllHandles() const;
+
+        GameObject& CreateEmptyObject(const std::string& name = "EmptyObject", const std::string& tag = "Default");
     };
 }

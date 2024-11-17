@@ -893,25 +893,72 @@ namespace Ukemochi
  */
     void UseImGui::DisplayEntityDetails(GameObject& obj)
     {
-        ImGui::Text("ID: %d", obj.GetInstanceID());
-        ImGui::Text("Name: %s", obj.GetName().c_str());
-        ImGui::Text("Tag: %s", obj.GetTag().c_str());
+        // Basic Entity Info (White)
+        ImGui::Separator();
+        ImGui::Text("Entity Details");
+        ImGui::BulletText("ID: %d", obj.GetInstanceID());
+        ImGui::BulletText("Name: %s", obj.GetName().c_str());
+        ImGui::BulletText("Tag: %s", obj.GetTag().c_str());
+        ImGui::Separator();
 
+        // Display Transform Component (Green)
         if (obj.HasComponent<Transform>())
         {
-            Transform& transform = obj.GetComponent<Transform>();
-            ImGui::Text("Transform Component");
-            ImGui::Text("Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
-            ImGui::Text("Rotation: %.2f", transform.rotation);
-            ImGui::Text("Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+            if (ImGui::CollapsingHeader("Transform Component"))
+            {
+                Transform& transform = obj.GetComponent<Transform>();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Position: (%.2f, %.2f)", transform.position.x, transform.position.y);
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Rotation: %.2f", transform.rotation);
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Scale: (%.2f, %.2f)", transform.scale.x, transform.scale.y);
+            }
         }
 
+        // Display Rigidbody2D Component (Blue)
         if (obj.HasComponent<Rigidbody2D>())
         {
-            Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
-            ImGui::Text("Rigidbody2D Component");
-            ImGui::Text("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
-            ImGui::Text("Mass: %.2f", rb.mass);
+            if (ImGui::CollapsingHeader("Rigidbody2D Component"))
+            {
+                Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Position: (%.2f, %.2f)", rb.position.x, rb.position.y);
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Acceleration: (%.2f, %.2f)", rb.acceleration.x, rb.acceleration.y);
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Force: (%.2f, %.2f)", rb.force.x, rb.force.y);
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Mass: %.2f", rb.mass);
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Use Gravity: %s", rb.use_gravity ? "True" : "False");
+                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Is Kinematic: %s", rb.is_kinematic ? "True" : "False");
+            }
+        }
+
+        // Display BoxCollider2D Component (Orange)
+        if (obj.HasComponent<BoxCollider2D>())
+        {
+            if (ImGui::CollapsingHeader("BoxCollider2D Component"))
+            {
+                BoxCollider2D& collider = obj.GetComponent<BoxCollider2D>();
+                ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "Is Trigger: %s", collider.is_trigger ? "True" : "False");
+            }
+        }
+
+        // Display SpriteRender Component (Purple)
+        if (obj.HasComponent<SpriteRender>())
+        {
+            if (ImGui::CollapsingHeader("SpriteRender Component"))
+            {
+                SpriteRender& sprite = obj.GetComponent<SpriteRender>();
+                ImGui::TextColored(ImVec4(0.6f, 0.4f, 1.0f, 1.0f), "Sprite Path: %s", sprite.texturePath.c_str());
+                ImGui::TextColored(ImVec4(0.6f, 0.4f, 1.0f, 1.0f), "Shape: %d", sprite.shape);
+            }
+        }
+
+        // Display Script Component (Yellow)
+        if (obj.HasComponent<Script>())
+        {
+            if (ImGui::CollapsingHeader("Script Component"))
+            {
+                Script& script = obj.GetComponent<Script>();
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Script Path: %s", script.scriptPath.c_str());
+                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Class Name: %s", script.scriptName.c_str());
+            }
         }
     }
 
@@ -973,6 +1020,119 @@ namespace Ukemochi
         }
     }
 
+    void UseImGui::AddComponentUI(GameObject* selectedObject, bool& modified)
+    {
+        ImGui::Text("Component Management");
+
+        static int selectedComponentIndex = 0;
+        const char* availableComponents[] = {
+            "Transform",
+            "Rigidbody2D",
+            "BoxCollider2D",
+            "SpriteRender",
+            "Script"
+        };
+
+        ImGui::Text("Add Component");
+        ImGui::Combo("##ComponentCombo", &selectedComponentIndex, availableComponents, IM_ARRAYSIZE(availableComponents));
+
+        if (ImGui::Button("Add Selected Component"))
+        {
+            switch (selectedComponentIndex)
+            {
+            case 0: // Transform
+                if (!selectedObject->HasComponent<Transform>())
+                {
+                    selectedObject->AddComponent<Transform>(Transform{}); // Use default or custom parameters
+                    modified = true;
+                }
+                break;
+            case 1: // Rigidbody2D
+                if (!selectedObject->HasComponent<Rigidbody2D>())
+                {
+                    selectedObject->AddComponent<Rigidbody2D>(Rigidbody2D{});
+                    modified = true;
+                }
+                break;
+            case 2: // BoxCollider2D
+                if (!selectedObject->HasComponent<BoxCollider2D>())
+                {
+                    selectedObject->AddComponent<BoxCollider2D>(BoxCollider2D{});
+                    modified = true;
+                }
+                break;
+            case 3: // SpriteRender
+                if (!selectedObject->HasComponent<SpriteRender>())
+                {
+                    selectedObject->AddComponent<SpriteRender>(SpriteRender{});
+                    modified = true;
+                }
+                break;
+            case 4: // Script
+                if (!selectedObject->HasComponent<Script>())
+                {
+                    selectedObject->AddComponent<Script>(Script{});
+                    modified = true;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    void UseImGui::RemoveComponentUI(GameObject* selectedObject, bool& modified)
+    {
+        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Remove Component"); // Change text color
+
+        // Start a collapsible section for remove components
+        if (ImGui::CollapsingHeader("Remove Components"))
+        {
+            // Only show the buttons for components that exist in the selected object
+            if (selectedObject->HasComponent<Rigidbody2D>())
+            {
+                if (ImGui::Button("Remove Rigidbody2D Component"))
+                {
+                    selectedObject->RemoveComponent<Rigidbody2D>();
+                    modified = true;
+                }
+                ImGui::Spacing(); // Add spacing after button for separation
+            }
+
+            if (selectedObject->HasComponent<BoxCollider2D>())
+            {
+                if (ImGui::Button("Remove BoxCollider2D Component"))
+                {
+                    selectedObject->RemoveComponent<BoxCollider2D>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
+            if (selectedObject->HasComponent<SpriteRender>())
+            {
+                if (ImGui::Button("Remove SpriteRender Component"))
+                {
+                    selectedObject->RemoveComponent<SpriteRender>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
+            if (selectedObject->HasComponent<Script>())
+            {
+                if (ImGui::Button("Remove Script Component"))
+                {
+                    selectedObject->RemoveComponent<Script>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+        }
+
+        ImGui::Separator(); // Optional separator after the collapsible section
+    }
+
     /**
  * @brief Displays and edits the properties of the selected `GameObject`.
  *
@@ -987,86 +1147,265 @@ namespace Ukemochi
     {
         if (!selectedObject) return;
 
-        if (ImGui::Button("Add Animation Component"))
+        // Store whether the rename mode is enabled
+        static bool isRenaming = false;
+
+        // Button to enable/disable renaming
+        if (ImGui::Button(isRenaming ? "Confirm Rename" : "Rename Entity Name"))
         {
-            if (selectedObject->HasComponent<Animation>())
+            isRenaming = !isRenaming;  // Toggle renaming mode
+        }
+
+        // Editable name input field, only enabled if renaming is allowed
+        char nameBuffer[256];
+        std::strncpy(nameBuffer, selectedObject->GetName().c_str(), sizeof(nameBuffer));
+        nameBuffer[sizeof(nameBuffer) - 1] = '\0'; // Ensure null termination
+
+        // Disable input field when not renaming
+        if (isRenaming)
+        {
+            if (ImGui::InputText("Object Name", nameBuffer, sizeof(nameBuffer)))
             {
-                UME_ENGINE_WARN("Selected GO already has Animation component");
-            }
-            else
-            {
-                selectedObject->AddComponent<>(Animation{});
+                selectedObject->SetName(std::string(nameBuffer));
+                modified = true;  // Flag as modified
             }
         }
-        
+        else
+        {
+            // Display the name as text if not renaming
+            //ImGui::Text("Object Name: %s", selectedObject->GetName().c_str());
+        }
+
         ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
 
         // Checkbox to toggle between sliders and input fields
         static bool useSliders = true;
         ImGui::Checkbox("Use Sliders", &useSliders);
 
+        ImGui::Separator();
+
+        // Add Components
+        AddComponentUI(selectedObject, modified);
+
+        ImGui::Separator();
+
+        // Remove Components
+        RemoveComponentUI(selectedObject, modified);
+
+        ImGui::Separator();
+
+        // Transform Component
         if (selectedObject->HasComponent<Transform>())
         {
-            Transform& transform = selectedObject->GetComponent<Transform>();
+            if (ImGui::CollapsingHeader("Transform"))
+            {
+                Transform& transform = selectedObject->GetComponent<Transform>();
 
-            // Position
-            ImGui::Text("Position");
-            if (useSliders)
-            {
-                if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f)) modified = true;
-            }
-            else
-            {
-                if (ImGui::InputFloat2("##PositionInput", &transform.position.x)) modified = true;
-            }
+                // Position
+                ImGui::Text("Position");
+                if (useSliders)
+                {
+                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f)) modified = true;
+                }
+                else
+                {
+                    if (ImGui::InputFloat2("##PositionInput", &transform.position.x)) modified = true;
+                }
 
-            // Rotation
-            ImGui::Text("Rotation");
-            if (useSliders)
-            {
-                if (ImGui::SliderFloat("##RotationSlider", &transform.rotation, -180.0f, 180.0f)) modified = true;
-            }
-            else
-            {
-                if (ImGui::InputFloat("##RotationInput", &transform.rotation)) modified = true;
-            }
+                // Rotation
+                ImGui::Text("Rotation");
+                if (useSliders)
+                {
+                    if (ImGui::SliderFloat("##RotationSlider", &transform.rotation, -180.0f, 180.0f)) modified = true;
+                }
+                else
+                {
+                    if (ImGui::InputFloat("##RotationInput", &transform.rotation)) modified = true;
+                }
 
-            // Scale
-            ImGui::Text("Scale");
-            if (useSliders)
-            {
-                if (ImGui::SliderFloat2("##ScaleSlider", &transform.scale.x, 70.f, 250.0f)) modified = true;
-            }
-            else
-            {
-                if (ImGui::InputFloat2("##ScaleInput", &transform.scale.x)) modified = true;
+                // Scale
+                ImGui::Text("Scale");
+                if (useSliders)
+                {
+                    if (ImGui::SliderFloat2("##ScaleSlider", &transform.scale.x, 70.f, 250.0f)) modified = true;
+                }
+                else
+                {
+                    if (ImGui::InputFloat2("##ScaleInput", &transform.scale.x)) modified = true;
+                }
             }
         }
 
+        // Rigidbody2D Component
         if (selectedObject->HasComponent<Rigidbody2D>())
         {
-            Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
+            if (ImGui::CollapsingHeader("Rigidbody2D"))
+            {
+                Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
 
-            // Velocity
-            ImGui::Text("Velocity");
-            if (useSliders)
-            {
-                if (ImGui::SliderFloat2("##VelocitySlider", &rb.velocity.x, -50.0f, 50.0f)) modified = true;
+                // Velocity
+                ImGui::Text("Velocity");
+                if (useSliders)
+                {
+                    if (ImGui::SliderFloat2("##VelocitySlider", &rb.velocity.x, -50.0f, 50.0f)) modified = true;
+                }
+                else
+                {
+                    if (ImGui::InputFloat2("##VelocityInput", &rb.velocity.x)) modified = true;
+                }
+
+                // Mass
+                ImGui::Text("Mass");
+                if (useSliders)
+                {
+                    if (ImGui::SliderFloat("##MassSlider", &rb.mass, 0.1f, 100.0f)) modified = true;
+                }
+                else
+                {
+                    if (ImGui::InputFloat("##MassInput", &rb.mass)) modified = true;
+                }
+
+                // Force
+                ImGui::Text("Force");
+                if (useSliders)
+                {
+                    if (ImGui::SliderFloat("##ForceSlider", &rb.force.x, 0.1f, 100.0f)) modified = true;
+                }
+                else
+                {
+                    if (ImGui::InputFloat("##ForceInput", &rb.force.x)) modified = true;
+                }
+
+                // Use Gravity Checkbox
+                ImGui::Text("Use Gravity");
+                if (ImGui::Checkbox("##UseGravityCheckbox", &rb.use_gravity)) modified = true;
+
+                // Is Kinematic Checkbox
+                ImGui::Text("Is Kinematic");
+                if (ImGui::Checkbox("##IsKinematicCheckbox", &rb.is_kinematic)) modified = true;
             }
-            else
+        }
+
+        // BoxCollider2D Component
+        if (selectedObject->HasComponent<BoxCollider2D>())
+        {
+            if (ImGui::CollapsingHeader("BoxCollider2D"))
             {
-                if (ImGui::InputFloat2("##VelocityInput", &rb.velocity.x)) modified = true;
+                BoxCollider2D& collider = selectedObject->GetComponent<BoxCollider2D>();
+
+                ImGui::Text("Use Collider Box");
+                if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger)) modified = true;
+            }
+        }
+
+        // SpriteRender Component
+        if (selectedObject->HasComponent<SpriteRender>())
+        {
+            if (ImGui::CollapsingHeader("SpriteRender"))
+            {
+                SpriteRender& sprite = selectedObject->GetComponent<SpriteRender>();
+
+                ImGui::Text("Texture Path");
+
+                char texturePathBuffer[256];
+                strncpy(texturePathBuffer, sprite.texturePath.c_str(), sizeof(texturePathBuffer));
+                texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
+
+                ImGui::BeginDisabled(true); // Disable the input box while we use drag-and-drop
+                ImGui::InputText("##TexturePathInput", texturePathBuffer, sizeof(texturePathBuffer));
+                ImGui::EndDisabled();
+
+                // Check for drag-and-drop
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                    {
+                        std::string draggedPath = std::string((const char*)payload->Data);
+                        std::filesystem::path filePath(draggedPath);
+                        std::string extension = filePath.extension().string();
+
+                        if (extension == ".png")
+                        {
+                            // Valid file type, update texture path
+                            strncpy(texturePathBuffer, draggedPath.c_str(), sizeof(texturePathBuffer));
+                            texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
+                            sprite.texturePath = draggedPath;
+                            modified = true;
+                        }
+                        else
+                        {
+                            // Invalid file type, show error feedback
+                            ImGui::OpenPopup("InvalidTextureFileType");
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+
+                // Error Popup for invalid file type
+                if (ImGui::BeginPopup("InvalidTextureFileType"))
+                {
+                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .png files are allowed!");
+                    if (ImGui::Button("OK"))
+                    {
+                        ImGui::CloseCurrentPopup();  // Close the popup when the button is pressed
+                    }
+                    ImGui::EndPopup();
+                }
             }
 
-            // Mass
-            ImGui::Text("Mass");
-            if (useSliders)
+            // Script Component, drag-and-drop for script path
+            if (selectedObject->HasComponent<Script>())
             {
-                if (ImGui::SliderFloat("##MassSlider", &rb.mass, 0.1f, 100.0f)) modified = true;
-            }
-            else
-            {
-                if (ImGui::InputFloat("##MassInput", &rb.mass)) modified = true;
+                if (ImGui::CollapsingHeader("Script"))
+                {
+                    Script& script = selectedObject->GetComponent<Script>();
+                    ImGui::Text("Script Path");
+
+                    char scriptPathBuffer[256];
+                    strncpy(scriptPathBuffer, script.scriptPath.c_str(), sizeof(scriptPathBuffer));
+                    scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+
+                    ImGui::BeginDisabled(true); // Disable the input box while we use drag-and-drop
+                    ImGui::InputText("##ScriptPathInput", scriptPathBuffer, sizeof(scriptPathBuffer));
+                    ImGui::EndDisabled();
+
+                    // Check for drag-and-drop
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                        {
+                            std::string draggedPath = std::string((const char*)payload->Data);
+                            std::filesystem::path filePath(draggedPath);
+                            std::string extension = filePath.extension().string();
+
+                            if (extension == ".cs")
+                            {
+                                // Valid file type, update script path
+                                strncpy(scriptPathBuffer, draggedPath.c_str(), sizeof(scriptPathBuffer));
+                                scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+                                script.scriptPath = draggedPath;
+                                modified = true;
+                            }
+                            else
+                            {
+                                // Invalid file type, show error feedback
+                                ImGui::OpenPopup("InvalidScriptFileType");
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+
+                    // Error Popup for invalid file type
+                    if (ImGui::BeginPopup("InvalidScriptFileType"))
+                    {
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .cs files are allowed!");
+                        if (ImGui::Button("OK"))
+                        {
+                            ImGui::CloseCurrentPopup();  // Close the popup when the button is pressed
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
             }
         }
     }
@@ -1113,7 +1452,6 @@ namespace Ukemochi
 
         if (ImGui::TreeNode("Current GameObjects"))
         {
-            // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
             auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
 
             for (size_t i = 0; i < gameObjects.size(); ++i)
@@ -1131,6 +1469,7 @@ namespace Ukemochi
         ImGui::Text("Entity Management");
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
 
+        // Button to create a new entity from a prefab
         if (ImGui::Button("Create Entity"))
         {
             if (filePath[0] != '\0' && IsJsonFile(filePath))
@@ -1142,11 +1481,9 @@ namespace Ukemochi
                 }
 
                 auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
-                //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
                 if (go.GetTag() == "Player")
                 {
                     ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
-
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
                     // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                     // go.GetComponent<SpriteRender>().animated = true;
@@ -1161,11 +1498,23 @@ namespace Ukemochi
             }
         }
 
+        ImGui::SameLine();
+
+        // Button to create an empty entity
+        if (ImGui::Button("Create Empty Entity"))
+        {
+            auto& emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
+            selectedEntityIndex = static_cast<int>(emptyObject.GetInstanceID());
+            modified = true;
+        }
+
         if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f)
         {
             ImGui::TextColored(ImVec4(1, 0, 0, 1),
-                               "Invalid file type. Only .json files can be used to create an object.");
+                "Invalid file type. Only .json files can be used to create an object.");
         }
+
+        ImGui::Separator();
 
         DisplayEntitySelectionCombo(selectedEntityIndex);
 
@@ -1175,14 +1524,13 @@ namespace Ukemochi
             modified = false;
         }
 
+        ImGui::SameLine();
+
         if (selectedEntityIndex >= 0)
         {
-            // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
             auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
             if (selectedEntityIndex < gameObjects.size())
             {
-                // GameObject* selectedObject = gameObjects[selectedEntityIndex];
-                // EditEntityProperties(*selectedObject);
                 GameObject* selectedObject = gameObjects[selectedEntityIndex];
 
                 EditEntityProperties(selectedObject, modified);
@@ -1194,12 +1542,12 @@ namespace Ukemochi
                     {
                         std::cout << "Entity is Saved";
                         SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
-                        //SaveEntity(selectedObject, filePath);  // Ensure filePath points to the correct location
                         modified = false; // Reset modified flag after saving
                     }
                 }
             }
         }
+
         // End the dockable window
         ImGui::End();
     }
