@@ -88,13 +88,14 @@ namespace Ukemochi
         GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
         imguiInstance.ImGuiInit(glfwWindow);
 
-        fwInstance = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
+        auto fileWatcher = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
+        std::weak_ptr weakFileWatcher = fileWatcher;
 
-        fwInstance->Start([](const std::string& path_to_watch, FileStatus status)
+        fileWatcher->Start([&weakFileWatcher](const std::string& path_to_watch, FileStatus status)
         {
             switch (status)
             {
-                case FileStatus::created:
+            case FileStatus::created:
                 {
                     UME_ENGINE_INFO("File created: {0}", path_to_watch);
                     std::filesystem::path filePath(path_to_watch);
@@ -105,7 +106,7 @@ namespace Ukemochi
                     }
                     break;
                 }
-                case FileStatus::modified:
+            case FileStatus::modified:
                 {
                     UME_ENGINE_INFO("File modified: {0}", path_to_watch);
                     std::filesystem::path filePath(path_to_watch);
@@ -116,7 +117,7 @@ namespace Ukemochi
                     }
                     break;
                 }
-                case FileStatus::erased:
+            case FileStatus::erased:
                 {
                     UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
                     std::filesystem::path filePath(path_to_watch);
@@ -129,7 +130,7 @@ namespace Ukemochi
                 }
             }
         });
-        //fwInstance->Stop();
+        fwInstance = fileWatcher;
     }
 
     Application::~Application()
@@ -138,11 +139,9 @@ namespace Ukemochi
         m_running = false;
 
         // Ensure the thread is joined before exiting to prevent memory leaks
-        if (fwInstance)
-        {
-            fwInstance->Stop(); // Hypothetical method to stop monitoring
-            fwInstance.reset(); // Reset shared pointer
-        }
+        fwInstance->Stop();
+        fwInstance.reset();
+
         ScriptingEngine::GetInstance().ShutDown();
     }
 
@@ -255,7 +254,6 @@ namespace Ukemochi
     {
         //************ Render IMGUI ************
         imguiInstance.NewFrame();
-        imguiInstance.SpriteEditorWindow();
         imguiInstance.DebugWindow();
         imguiInstance.SceneBrowser();
         //imguiInstance.AssetBrowser();
