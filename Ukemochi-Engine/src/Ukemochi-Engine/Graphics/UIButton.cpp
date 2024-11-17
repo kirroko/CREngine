@@ -35,9 +35,9 @@ void UIButtonRenderer::addButton(const UIButton& button) {
  */
 void UIButtonRenderer::renderButtons(const Camera& camera)
 {
-    uiShader->Activate(); 
+    batchRenderer->setActiveShader(uiShader);
     uiShader->setMat4("projection", projectionMatrix); 
-    uiShader->setMat4("view", viewMatrix);
+
     batchRenderer->beginBatch();
 
     for (const UIButton& button : buttons) 

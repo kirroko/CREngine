@@ -666,45 +666,6 @@ void Renderer::render()
 		debug_shader_program->Deactivate();
 	}
 
-	//glm::mat4 uiProjection = glm::ortho(0.0f, static_cast<float>(screen_width), static_cast<float>(screen_height), 0.0f);
-	//UIRenderer->beginBatch();
-	//shaderProgram->Activate();  // Or use a separate UI shader if needed
-	//shaderProgram->setMat4("projection", uiProjection);
-	//shaderProgram->setMat4("view", glm::mat4(1.0f));  // Identity matrix for UI rendering
-
-	//for (auto& entity : m_Entities) {
-	//	GameObject* go = GameObjectManager::GetInstance().GetGO(entity);
-	//	if (go->GetTag() == "Button") {
-	//		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-	//		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
-	//		GLint textureID = -1;
-	//		if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
-	//			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end()) {
-	//			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
-	//		}
-	//		if (textureID < 0) {
-	//			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
-	//			continue;
-	//		}
-
-	//		int mappedTextureUnit = textureIDMap[textureID];
-	//		// Draw the button
-	//		UIRenderer->drawButton(UIButton(
-	//			glm::vec2(transform.position.x, transform.position.y),
-	//			glm::vec2(transform.scale.x, transform.scale.y),
-	//			glm::vec3(1.f, 1.f, 1.f),
-	//			spriteRenderer.texturePath,
-	//			textureID,
-	//			"Play",              // Text
-	//			glm::vec3(1.0f),     // Text color
-	//			"Ukemochi"           // Font name
-	//		));
-	//	}
-	//}
-
-	//UIRenderer->endBatch();
-
 	UIRenderer->renderButtons(*camera);
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();

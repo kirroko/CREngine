@@ -370,11 +370,10 @@ private:
 	 * @brief Enumerates unique identifiers for different VAOs used in rendering.
 	 */
 	enum objectIDs {
-		BOX_VAO = 0,
-		BOX_OUTLINE = 1,
-		CIRCLE_VAO = 2,
-		CIRCLE_OUTLINE = 3,
-		ANIMATION_VAO = 4
+		BOX_OUTLINE = 0,
+		CIRCLE_VAO = 1,
+		CIRCLE_OUTLINE = 2,
+		ANIMATION_VAO = 3
 	};
 
 	/*!
