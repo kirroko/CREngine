@@ -114,3 +114,12 @@ void GameObjectManager::ReleaseAllHandles() const
         }
     }
 }
+
+GameObject& GameObjectManager::CreateEmptyObject(const std::string& name, const std::string& tag)
+{
+    // Use the existing GameObjectFactory to create a new object
+    auto go = std::make_unique<GameObject>(GameObjectFactory::CreateObject(name, tag));
+    auto id = go->GetInstanceID();
+    m_GOs.emplace(id, std::move(go));
+    return *m_GOs[id]; // Return reference to the newly created object
+}

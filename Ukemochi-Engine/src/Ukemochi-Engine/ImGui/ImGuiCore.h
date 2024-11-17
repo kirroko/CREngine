@@ -66,6 +66,10 @@ namespace Ukemochi
 
 		static void DisplayEntitySelectionCombo(int& selectedEntityIndex);
 
+		static void AddComponentUI(GameObject* selectedObject, bool& modified);
+
+		static void RemoveComponentUI(GameObject* selectedObject, bool& modified);
+
 		static void RemoveSelectedEntity(int& selectedEntityIndex);
 
 		static void EditEntityProperties(GameObject* selectedObject, bool& modified);
