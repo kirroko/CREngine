@@ -55,7 +55,7 @@
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Default",
+            "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 450.0],

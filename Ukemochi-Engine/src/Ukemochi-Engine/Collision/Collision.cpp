@@ -436,14 +436,48 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
-		// PLAYER AND TRIGGER
 		if (tag1 == "Player" && box2.is_trigger)
-			Trigger_Response(trans1, tag2, trans2, box2);
-		else
 		{
-			// Skip trigger objects
-			if (box1.is_trigger || box2.is_trigger)
-				return;
+			// Mochi and Door / Other Triggers
+			Trigger_Response(trans1, tag2, trans2, box2);
+		}
+
+		// Skip trigger objects
+		if (box1.is_trigger || box2.is_trigger)
+			return;
+		
+		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile")
+		{
+			// Mochi and Enemy / Enemy's Projectile
+			// Mochi takes damage and knockback
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+		}
+		else if (tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy")
+		{
+			// Mochi's Knife / Mochi's Ability and Enemy
+			// Enemy takes damage and knockback
+		}
+		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
+		{
+			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
+			// Destroy enemy's projectile
+		}
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
+		{
+			// Mochi / Enemy and Environment Objects
+			// Acts as a wall
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+		}
+		else if (tag1 == "Enemy" && tag2 == "Enemy")
+		{
+			// Enemy and Enemy
+			// Block each other
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
