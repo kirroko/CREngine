@@ -25,7 +25,9 @@ namespace Ukemochi
 
 	AssetManager::~AssetManager()
 	{
-
+		texture_order.clear();
+		texture_list.clear();
+		shader_list.clear();
 	}
 
 	void AssetManager::addTexture(std::string file_path)

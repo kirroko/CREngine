@@ -36,7 +36,7 @@ namespace Ukemochi
 		std::unordered_map<std::string, std::shared_ptr<Shader>> shader_list;
 		std::vector<std::shared_ptr<FMOD::Sound>> sound_list;
 		std::string asset_dir{ "../Assets" };
-		//store game object prefab here
+		//try to store game object prefab here
 
 	public:
 		//void addSprite(std::string file_name, std::string file_path /* can add more if need any other arguements */);
