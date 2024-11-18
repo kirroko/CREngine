@@ -457,6 +457,12 @@ namespace Ukemochi
 
         mono_add_internal_call("Ukemochi.EngineInterop::PlayAnimation",
                                (void*)InternalCalls::PlayAnimation);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::GetDeltaTime",
+                               (void*)InternalCalls::GetDeltaTime);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::GetFixedDeltaTime",
+                               (void*)InternalCalls::GetFixedDeltaTime);
     }
 
     bool ScriptingEngine::CheckMonoError(MonoError& error)

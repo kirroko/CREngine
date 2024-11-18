@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Time.cs" />
     <Compile Include="UkemochiEngine\CSharpTest.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Animation.cs" />
     <Compile Include="UkemochiEngine\CoreModule\BaseScript.cs" />

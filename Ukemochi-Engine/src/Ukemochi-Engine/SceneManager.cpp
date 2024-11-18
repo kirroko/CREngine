@@ -124,7 +124,7 @@ namespace Ukemochi
     void SceneManager::SceneMangerLoad()
     {
         //load all assest
-
+		UME_ENGINE_TRACE("Loading Assets...");
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
@@ -145,6 +145,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
+		UME_ENGINE_TRACE("Loading Scenes...");
         UseImGui::LoadScene();
 
         //if fresh start
@@ -178,10 +179,13 @@ namespace Ukemochi
     void SceneManager::SceneMangerInit()
     {
         // Initialize the graphics and collision system
+		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
         ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
-		
+
+		UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();
+		UME_ENGINE_TRACE("Initializing Collision...");
 		ECS::GetInstance().GetSystem<Collision>()->Init();
     }
 
@@ -189,8 +193,6 @@ namespace Ukemochi
     void SceneManager::SceneMangerUpdate()
     {
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
-
-        // ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         SceneManagerDraw();
     }
@@ -364,12 +366,14 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerFree()
     {
+		UME_ENGINE_TRACE("Destroying all game objects...");
         std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
         for (auto& gameobject : list)
         {
             GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
         }
         ECS::GetInstance().GetSystem<LogicSystem>()->End();
+		UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
     }

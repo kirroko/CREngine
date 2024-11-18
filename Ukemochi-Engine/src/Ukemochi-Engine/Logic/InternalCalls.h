@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <mono/metadata/object.h> // for MonoObject
 
 #include "Scripting.h"
+#include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/Input/Input.h"
 
@@ -267,6 +268,16 @@ namespace Ukemochi
             auto* go = GameObjectManager::GetInstance().GetGO(id);
             auto& anim = go->GetComponent<Animation>();
             return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName));
+        }
+
+        EXTERN_C UME_API inline float GetDeltaTime()
+        {
+            return static_cast<float>(g_FrameRateController.GetDeltaTime());
+        }
+
+        EXTERN_C UME_API inline float GetFixedDeltaTime()
+        {
+            return static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
         }
     }
 }

@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Renderer.h"
 #include "../SceneManager.h"
 #include "../Math/Transformation.h"
+#include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
@@ -361,6 +362,61 @@ namespace Ukemochi
             }
         }
 
+        static bool isToggled = true; // This holds the state of the toggle
+        static bool isPlaying = false;
+        static float timeSinceLastFrame = 0.0f;
+        static int currentFrame = 0;
+        static ImVec2 uv0 = ImVec2(0.0f, 1.0f);
+        static ImVec2 uv1 = ImVec2(1.0f, 0.0f);
+        if (isToggled) {
+            if (ImGui::Button("PLAY")) {
+                isToggled = false; // Toggle OFF
+                showGrid = false;
+                isPlaying = true;
+            }
+        } else {
+            if (ImGui::Button("PAUSE")) {
+                isToggled = true; // Toggle ON
+                isPlaying = false;
+            }
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("RESET"))
+        {
+            timeSinceLastFrame = 0.0f;
+            currentFrame = 0;
+            uv0 = ImVec2(0.0f, 1.0f);
+            uv1 = ImVec2(1.0f, 0.0f);
+        }
+
+        if (isPlaying)
+        {
+            timeSinceLastFrame += static_cast<float>(g_FrameRateController.GetDeltaTime());
+            if (timeSinceLastFrame >= frameTime)
+            {
+                currentFrame++;
+                if (currentFrame >= totalFrames)
+                    currentFrame = looping ? 0 : totalFrames - 1;
+                timeSinceLastFrame = 0.0f;
+            }
+
+            // Handle the UV here
+            int col = currentFrame % (textureWidth / pixelSize[0]);
+            int row = currentFrame / (textureWidth / pixelSize[0]);
+
+            float uvX = static_cast<float>(col) * static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth);
+            float uvY = 1.0f - static_cast<float>(1 + row) * static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight);
+            float uvWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth);
+            float uvHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight);
+
+            uv0.x = uvX;
+            uv0.y = uvY + uvHeight;
+            uv1.x = uvX + uvWidth;
+            uv1.y = uvY;
+        }
+
         // Display Image
         // Calculate the aspect ratio of the image
         float aspectRatio = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
@@ -391,7 +447,8 @@ namespace Ukemochi
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
         ImVec2 canvasPos = ImGui::GetCursorScreenPos();
 
-        ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), ImVec2(0, 1), ImVec2(1, 0));
+        
+        ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), uv0, uv1);
 
         // Draw the grid
         if (showGrid)

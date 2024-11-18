@@ -154,5 +154,15 @@ namespace Ukemochi
         public static extern bool PlayAnimation(ulong id, string clipName);
 
         #endregion
+
+        #region Time
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float GetDeltaTime();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float GetFixedDeltaTime();
+
+        #endregion
     }
 }
