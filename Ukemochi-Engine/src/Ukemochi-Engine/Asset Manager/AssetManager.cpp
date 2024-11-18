@@ -126,11 +126,12 @@ namespace Ukemochi
 
 	void AssetManager::loadAssetsFromFolder()
 	{
-		for (const std::filesystem::directory_entry& dir : std::filesystem::recursive_directory_iterator(asset_dir))
+		for (auto const& dir : std::filesystem::recursive_directory_iterator(asset_dir))
 		{
 			if (dir.is_directory())
 			{
-				//check this new directory that is further in
+				//if it is another directory ignore
+				continue;
 			}
 			else
 			{
@@ -146,7 +147,39 @@ namespace Ukemochi
 				}
 				else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
 				{
-					if()
+					std::string file_name = to_load.filename().string();
+					if (to_load.extension() == ".vert")
+					{
+						std::string vertex_shader = to_load.string();
+						std::string frag_shader{};
+						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
+						{
+							std::filesystem::path checker = match_shader.path();
+							std::string check_name = checker.filename().string();
+							if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
+							{
+								frag_shader = checker.string();
+								break;
+							}
+						}
+						addShader(file_name, vertex_shader, frag_shader);
+					}
+					else
+					{
+						std::string vertex_shader{};
+						std::string frag_shader = to_load.string();
+						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
+						{
+							std::filesystem::path checker = match_shader.path();
+							std::string check_name = checker.filename().string();
+							if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
+							{
+								vertex_shader = checker.string();
+								break;
+							}
+						}
+						addShader(file_name, vertex_shader, frag_shader);
+					}
 				}
 			}
 		}
