@@ -144,6 +144,10 @@ namespace Ukemochi
 				{
 					addSound(to_load.string());
 				}
+				else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
+				{
+					if()
+				}
 			}
 		}
 
