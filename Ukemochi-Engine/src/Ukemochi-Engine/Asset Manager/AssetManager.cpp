@@ -124,14 +124,26 @@ namespace Ukemochi
 		}
 	}
 
-	void AssetManager::loadAssetsFromFolder(std::string directory)
+	void AssetManager::loadAssetsFromFolder()
 	{
-		std::filesystem::directory_entry dir_to_watch{ directory };
-		for (std::filesystem::recursive_directory_iterator current(dir_to_watch), end; current != end; current++)
+		for (const std::filesystem::directory_entry& dir : std::filesystem::recursive_directory_iterator(asset_dir))
 		{
-			if (current->is_directory())
+			if (dir.is_directory())
 			{
 				//check this new directory that is further in
+			}
+			else
+			{
+				//file is a folder
+				std::filesystem::path to_load = dir.path();
+				if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
+				{
+					addTexture(to_load.string());
+				}
+				else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
+				{
+					addSound(to_load.string());
+				}
 			}
 		}
 
