@@ -20,8 +20,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h"	 // for game object tag
 #include "Ukemochi-Engine/Logic/Scripting.h" // for invoking OnCollisonEnter2D
 
+#include "../Input/Input.h" // temp
+#include "../Physics/Physics.h" // temp
+
 namespace Ukemochi
 {
+	// temp
+	EntityID player = NULL;
+	EntityID knife = NULL;
+	bool is_facing_right = false;
+	bool is_attacking = false;
+
 	/*!***********************************************************************
 	\brief
 	 Initialize the collision system.
@@ -50,12 +59,58 @@ namespace Ukemochi
 			std::cout << "Convex collided\n";*/
 	}
 
+	void ApplyKnockback(Rigidbody2D& rb, const Transform& enemyTransform, const Transform& playerTransform)
+	{
+		Vec2 knockback_direction{};
+		float knockback_force{ 15000 };
+
+		Vec2Normalize(knockback_direction, (enemyTransform.position - playerTransform.position));
+		//rb.velocity = knockback_direction * knockback_force;
+		knockback_direction *= knockback_force;
+
+		ECS::GetInstance().GetSystem<Physics>()->AddForceX(rb, knockback_direction.x);
+		ECS::GetInstance().GetSystem<Physics>()->AddForceY(rb, knockback_direction.y);
+	}
+
 	/*!***********************************************************************
 	\brief
 	 Check the collisions of all the objects.
 	*************************************************************************/
 	void Collision::CheckCollisions()
 	{
+		// ---------- temp ----------
+		// Find player and knife GO
+		for (auto const& entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+				player = entity;
+			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
+				knife = entity;
+		}
+
+		// Set player direction
+		if (Input::IsKeyPressed(UME_KEY_A))
+			is_facing_right = false;
+		else if (Input::IsKeyPressed(UME_KEY_D))
+			is_facing_right = true;
+
+		// Mochi strikes
+		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
+			is_attacking = true;
+		else
+			is_attacking = false;
+
+		// Set knife position
+		if (knife)
+		{
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(knife);
+
+			float offset_x = is_facing_right ? player_trans.scale.x : -player_trans.scale.x;
+			knife_trans.position = Vec2{ player_trans.position.x + offset_x, player_trans.position.y };
+		}
+		// ---------- temp ----------
+
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
@@ -90,7 +145,8 @@ namespace Ukemochi
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
 					{
-						BoxBox_Response(tag1, trans1, box1, rb1, tag2, trans2, box2, rb2, tLast);
+						BoxBox_Response(entity1, entity2, tLast);
+						//BoxBox_Response(tag1, trans1, box1, rb1, tag2, trans2, box2, rb2, tLast);
 
 						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
 						if (ECS::GetInstance().HasComponent<Script>(entity1))
@@ -107,7 +163,7 @@ namespace Ukemochi
 				}
 
 				// Check collision between box objects and the screen boundaries
-				if (BoxScreen_Intersection(box1))
+				if (!box1.is_trigger && BoxScreen_Intersection(box1))
 				{
 					BoxScreen_Response(tag1, trans1, box1, rb1);
 
@@ -132,29 +188,6 @@ namespace Ukemochi
 					-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 					BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-
-		//// Define the corners of the box
-		//Vec2 corners[4] = {
-		//	{-BOUNDING_BOX_SIZE * trans.scale.x, -BOUNDING_BOX_SIZE * trans.scale.y}, // bottom-left
-		//	{ BOUNDING_BOX_SIZE * trans.scale.x, -BOUNDING_BOX_SIZE * trans.scale.y}, // bottom-right
-		//	{ BOUNDING_BOX_SIZE * trans.scale.x,  BOUNDING_BOX_SIZE * trans.scale.y}, // top-right
-		//	{-BOUNDING_BOX_SIZE * trans.scale.x,  BOUNDING_BOX_SIZE * trans.scale.y}  // top-left
-		//};
-
-		//// Rotate all corners and translate by position
-		//for (int i = 0; i < 4; ++i)
-		//{
-		//	Vec2 rotated = Vec2Rotate(corners[i], trans.rotation);
-		//	corners[i].x = rotated.x + trans.position.x;
-		//	corners[i].y = rotated.y + trans.position.y;
-		//}
-
-		//// Find min and max points
-		//box.min.x = std::min({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
-		//box.min.y = std::min({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
-
-		//box.max.x = std::max({ corners[0].x, corners[1].x, corners[2].x, corners[3].x });
-		//box.max.y = std::max({ corners[0].y, corners[1].y, corners[2].y, corners[3].y });
 	}
 
 	/*!***********************************************************************
@@ -434,26 +467,105 @@ namespace Ukemochi
 	\brief
 	 Collision response between two objects.
 	*************************************************************************/
+	void Collision::BoxBox_Response(const EntityID& entity1, const EntityID& entity2, float firstTimeOfCollision)
+	{
+		// Get the tag of the first entity
+		std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
+
+		// Get references of the first entity components
+		auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity1);
+		auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+		auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
+
+		// Get the tag of the second entity
+		std::string tag2 = GameObjectManager::GetInstance().GetGO(entity2)->GetTag();
+
+		// Get references of the second entity components
+		auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
+		auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
+		auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+
+		if (tag1 == "Player" && box2.is_trigger)
+		{
+			// Mochi and Door / Other Triggers
+			Trigger_Response(trans1, tag2, trans2, box2);
+		}
+		else if ((tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy"))
+		{
+			// Mochi's Knife / Mochi's Ability and Enemy
+			// Enemy takes damage and knockback
+
+			if (!is_attacking)
+				return;
+
+			/*auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
+			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);*/
+
+			ApplyKnockback(rb2, trans2, trans1);
+			std::cout << "enemy hit\n";
+		}
+		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
+		{
+			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
+			// Destroy enemy's projectile
+		}
+
+		// Skip trigger objects
+		if (box1.is_trigger || box2.is_trigger)
+			return;
+
+		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile")
+		{
+			// Mochi and Enemy / Enemy's Projectile
+			// Mochi takes damage and knockback
+
+			auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
+			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
+
+			std::cout << "player hit\n";
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
+			// Play a sound effect on collision
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+		}
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
+		{
+			// Mochi / Enemy and Environment Objects
+			// Acts as a wall
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
+			// Play a sound effect on collision
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+		}
+		else if (tag1 == "Enemy" && tag2 == "Enemy")
+		{
+			// Enemy and Enemy
+			// Block each other
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
+			// Play a sound effect on collision
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+		}
+	}
+
 	void Collision::BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
 		if (tag1 == "Player" && box2.is_trigger)
 		{
 			// Mochi and Door / Other Triggers
 			Trigger_Response(trans1, tag2, trans2, box2);
-		}
-
-		// Skip trigger objects
-		if (box1.is_trigger || box2.is_trigger)
-			return;
-		
-		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile")
-		{
-			// Mochi and Enemy / Enemy's Projectile
-			// Mochi takes damage and knockback
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 		}
 		else if (tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy")
 		{
@@ -465,6 +577,24 @@ namespace Ukemochi
 			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
 			// Destroy enemy's projectile
 		}
+
+		// Skip trigger objects
+		if (box1.is_trigger || box2.is_trigger)
+			return;
+
+		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile")
+		{
+			// Mochi and Enemy / Enemy's Projectile
+			// Mochi takes damage and knockback
+
+			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
+			// Play a sound effect on collision
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+		}
 		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
 		{
 			// Mochi / Enemy and Environment Objects
@@ -473,6 +603,10 @@ namespace Ukemochi
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
+			// Play a sound effect on collision
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
 		else if (tag1 == "Enemy" && tag2 == "Enemy")
 		{
@@ -482,11 +616,11 @@ namespace Ukemochi
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-		}
 
-		// Play a sound effect on collision
-		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+			// Play a sound effect on collision
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+		}
 	}
 
 	/*!***********************************************************************

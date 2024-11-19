@@ -24,7 +24,7 @@ public class Player : BaseScript
 
     // Mochi's Stats
     const float MAX_HEALTH = 100;
-    public float current_health = 100;
+    public float current_health = MAX_HEALTH;
     public bool is_dead = false;
 
     public PlayerCombat player_combat;
@@ -44,13 +44,23 @@ public class Player : BaseScript
             return;
 
         HandleMovement();
-        player_combat.HandleCombat();
+        //player_combat.HandleCombat();
     }
 
     public override void OnCollisionEnter2D()
     {
         //enemy.GetComponent<Enemy>().TakeDamage(10);
         //player_combat.soul_manager.HarvestSoul(enemy.GetComponent<Enemy>().soul_type);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        current_health -= damage;
+
+        if (current_health < 0)
+        {
+            // player died
+        }
     }
 
     private void HandleMovement()

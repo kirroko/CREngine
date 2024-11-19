@@ -6,7 +6,7 @@
                 "Name": "Transform",
                 "Position": [0.0, 0.0],
                 "Rotation": 0.0,
-                "Scale": [100.0, 100.0]
+                "Scale": [75.0, 75.0]
             }, {
                 "Name": "Rigidbody2D",
                 "Position": [0.0, 0.0],
@@ -30,7 +30,11 @@
                 "Min": [0.0, 0.0],
                 "Max": [1.0, 1.0],
                 "Collision Flag": 0,
-                "is_trigger": false
+                "is_trigger": true
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/Moon Floor.png",
+                "Shape": 0
             }]
     }
 }

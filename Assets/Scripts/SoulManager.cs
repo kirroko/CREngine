@@ -17,6 +17,7 @@ public enum SoulType { Empty, Fish, Worm };
 
 public class SoulManager
 {
+    const float MAX_SOUL_BAR = 100;
     const int MAX_SOUL_CHARGES = 3;
 
     public SoulType current_soul_type;
@@ -32,9 +33,15 @@ public class SoulManager
     public void HarvestSoul(SoulType soul_type)
     {
         if (soul_type == SoulType.Fish)
+        {
+            fish_soul_bar += 15;
             ++fish_souls_charges;
+        }
         else if (soul_type == SoulType.Worm)
+        {
+            worm_soul_bar += 15;
             ++worm_souls_charges;
+        }
     }
 
     public void SwitchSouls()

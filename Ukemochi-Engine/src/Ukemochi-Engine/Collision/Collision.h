@@ -160,6 +160,7 @@ namespace Ukemochi
         \param[in] firstTimeOfCollision
          The calculated first time of collision.
         *************************************************************************/
+        void BoxBox_Response(const EntityID& entity1, const EntityID& entity2, float firstTimeOfCollision);
         void BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision);
 
         /*!***********************************************************************

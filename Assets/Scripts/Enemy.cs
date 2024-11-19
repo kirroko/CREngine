@@ -17,7 +17,7 @@ using Ukemochi;
 public class Enemy : BaseScript
 {
     const float MAX_HEALTH = 100;
-    public float current_health = 100;
+    public float current_health = MAX_HEALTH;
 
     public SoulType soul_type;
 
