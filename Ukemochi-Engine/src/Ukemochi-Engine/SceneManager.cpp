@@ -590,17 +590,13 @@ namespace Ukemochi
                 if (tag == "Player")
                 {
                     playerFound = true;
-                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(newObject.GetInstanceID());
 
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(newObject.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
                     ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                 }
                 if (!playerFound)
-                {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = -1;
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-                }
             }
         }
 

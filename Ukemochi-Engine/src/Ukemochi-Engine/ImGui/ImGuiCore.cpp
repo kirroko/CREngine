@@ -1099,17 +1099,12 @@ namespace Ukemochi
             if (filePath[0] != '\0' && IsJsonFile(filePath))
             {
                 if (ECS::GetInstance().GetLivingEntityCount() == 0)
-                {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = -1;
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-                }
 
                 auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
                 //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(go.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
                 if (go.GetTag() == "Player")
                 {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
-
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(go);
                     ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
@@ -1226,16 +1221,12 @@ namespace Ukemochi
                     if (droppedFilePath[0] != '\0' && IsJsonFile(droppedFilePath))
                     {
                         if (ECS::GetInstance().GetLivingEntityCount() == 0)
-                        {
-                            ECS::GetInstance().GetSystem<Transformation>()->player = -1;
                             ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-                        }
 
                         auto& go = GameObjectManager::GetInstance().CreatePrefabObject(droppedFilePath);
                         // You can add additional logic for the entity, like setting up textures, animations, etc.
                         if (go.GetTag() == "Player")
                         {
-                            ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
                             ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
                             ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                             go.GetComponent<SpriteRender>().animated = true;

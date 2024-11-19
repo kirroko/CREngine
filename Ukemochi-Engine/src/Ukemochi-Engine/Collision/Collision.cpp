@@ -106,7 +106,7 @@ namespace Ukemochi
 			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
 			auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(knife);
 
-			float offset_x = is_facing_right ? player_trans.scale.x : -player_trans.scale.x;
+			float offset_x = is_facing_right ? player_trans.scale.x * 0.5f + knife_trans.scale.x * 0.5f : -player_trans.scale.x * 0.5f - knife_trans.scale.x * 0.5f;
 			knife_trans.position = Vec2{ player_trans.position.x + offset_x, player_trans.position.y };
 		}
 		// ---------- temp ----------
