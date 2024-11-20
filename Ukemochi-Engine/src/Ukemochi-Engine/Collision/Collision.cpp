@@ -164,16 +164,7 @@ namespace Ukemochi
 
 				// Check collision between box objects and the screen boundaries
 				if (!box1.is_trigger && BoxScreen_Intersection(box1))
-				{
 					BoxScreen_Response(tag1, trans1, box1, rb1);
-
-					//if(ECS::GetInstance().HasComponent<Script>(entity1))
-					//{
-					//	// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-					//	// auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-					//	// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-					//}
-				}
 			}
 		}
 	}

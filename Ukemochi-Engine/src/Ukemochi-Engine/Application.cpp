@@ -134,6 +134,7 @@ namespace Ukemochi
 
     Application::~Application()
     {
+        UME_ENGINE_TRACE("Shutting down Application...");
         imguiInstance.ImGuiClean();
         m_running = false;
 
@@ -204,6 +205,7 @@ namespace Ukemochi
 
             m_Window->OnUpdate();
         }
+        UME_ENGINE_TRACE("Unloading Scene...");
         sceneManager.SceneManagerUnload();
     }
 

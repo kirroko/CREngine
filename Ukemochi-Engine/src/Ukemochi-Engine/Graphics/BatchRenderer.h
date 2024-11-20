@@ -55,7 +55,7 @@ public:
 	 * @brief Initializes the renderer with a shared shader.
 	 * @param sharedShader Shared pointer to the shader used for rendering.
 	 */
-	void init(std::shared_ptr<Shader> sharedShader); 
+	void init(std::shared_ptr<Shader> sharedShader);
 	/*!
 	* @brief Begins a new batch by clearing the vertex buffer.
 	*/
@@ -79,6 +79,7 @@ public:
 	 */
 	void drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation = 0.0f);
 
+	void setActiveShader(std::shared_ptr<Shader> shader); // Update method signature
 private:
 	/*!
 	 * @brief Creates and configures the Vertex Array Object (VAO) for the batch.
@@ -98,6 +99,7 @@ private:
 
 	int maxSprites = 1000; // Maximum number of sprites per batch
 
+	std::shared_ptr<Shader> activeShader; // Use shared_ptr for the active shader 
 };
 
 #endif // !BATCH_RENDERER_H
