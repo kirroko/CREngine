@@ -89,7 +89,7 @@ void TextRenderer::loadTextFont(const std::string& fontName, const char* font_pa
 
 	std::map <GLchar, Character> Characters;
 	loadCharacters(face, Characters);
-	
+
 	fontFaces[fontName] = face;
 	fontCharacters[fontName] = Characters;
 
@@ -118,7 +118,7 @@ void TextRenderer::setActiveFont(const std::string& font_name)
  * @param face The font face to load characters from.
  * @param characterMap Map to store the loaded characters.
  */
-void TextRenderer::loadCharacters(FT_Face face, std::map<GLchar, Character>& characterMap) 
+void TextRenderer::loadCharacters(FT_Face face, std::map<GLchar, Character>& characterMap)
 {
 	for (GLubyte c = 0; c < 128; c++) {
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
@@ -167,7 +167,7 @@ void TextRenderer::releaseFaces()
  * @param id Identifier for the text object.
  * @param textObj The TextObject to add.
  */
-void TextRenderer::addTextObject(const std::string& id, const TextObject& textObj) 
+void TextRenderer::addTextObject(const std::string& id, const TextObject& textObj)
 {
 	textObjects[id] = textObj;
 }
@@ -177,7 +177,7 @@ void TextRenderer::addTextObject(const std::string& id, const TextObject& textOb
  * @param id Identifier for the text object.
  * @param newText New text content.
  */
-void TextRenderer::updateTextObject(const std::string& id, const std::string& newText) 
+void TextRenderer::updateTextObject(const std::string& id, const std::string& newText)
 {
 	if (textObjects.find(id) != textObjects.end())
 		textObjects[id].text = newText;
@@ -188,17 +188,66 @@ void TextRenderer::updateTextObject(const std::string& id, const std::string& ne
  * @param id Identifier for the text object.
  * @param newPosition New position for the text.
  */
-void TextRenderer::updateTextPosition(const std::string& id, glm::vec2 newPosition) 
+void TextRenderer::updateTextPosition(const std::string& id, glm::vec2 newPosition)
 {
 	if (textObjects.find(id) != textObjects.end()) {
 		textObjects[id].position = newPosition;
 	}
 }
 
+float TextRenderer::getTextWidth(const std::string& text, float scale, const std::string& fontName)
+{
+	auto fontIter = fontCharacters.find(fontName);
+	if (fontIter == fontCharacters.end()) {
+		std::cerr << "Font not found: " << fontName << std::endl;
+		return 0.0f;
+	}
+
+	const auto& characters = fontIter->second;
+	float width = 0.0f;
+
+	for (char c : text) {
+		if (characters.find(c) != characters.end()) {
+			width += (characters.at(c).Advance >> 6) * scale; // Advance is in 1/64th pixels
+		}
+	}
+
+	return width;
+}
+
+float TextRenderer::getTextHeight(const std::string& text, float scale, const std::string& fontName)
+{
+	// Check if the font exists
+	auto fontIter = fontCharacters.find(fontName);
+	if (fontIter == fontCharacters.end()) {
+		std::cerr << "Font not found: " << fontName << std::endl;
+		return 0.0f;
+	}
+
+	const auto& characters = fontIter->second;
+	float maxHeight = 0.0f;
+
+	// Iterate through each character in the text
+	for (char c : text) {
+		// Ensure the character exists in the font's character map
+		if (characters.find(c) != characters.end()) {
+			const Character& ch = characters.at(c);
+			// Update the maxHeight to the largest height encountered
+			float characterHeight = static_cast<float>(ch.Size.y) * scale;
+			if (characterHeight > maxHeight) {
+				maxHeight = characterHeight;
+			}
+		}
+	}
+
+	return maxHeight;
+}
+
+
 /*!
  * @brief Renders all added text objects on the screen.
  */
-void TextRenderer::renderAllText() 
+void TextRenderer::renderAllText()
 {
 	textShaderProgram->Activate();
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screenWidth), 0.0f, static_cast<GLfloat>(screenHeight));
@@ -207,7 +256,7 @@ void TextRenderer::renderAllText()
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(textVAO);
 
-	for (const auto& textPair : textObjects) 
+	for (const auto& textPair : textObjects)
 	{
 		const TextObject& textObj = textPair.second;
 		setActiveFont(textObj.fontName);
@@ -219,7 +268,7 @@ void TextRenderer::renderAllText()
 		float y = textObj.position.y;
 		float scale = textObj.scale;
 
-		for (const auto& c : textObj.text) 
+		for (const auto& c : textObj.text)
 		{
 			const Character& ch = Characters.at(c);
 
@@ -250,3 +299,4 @@ void TextRenderer::renderAllText()
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+

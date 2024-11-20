@@ -2,7 +2,7 @@
 /*!
 \file       Physics.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 6, 2024
+\date       Nov 17, 2024
 \brief      This file contains the definition of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -12,9 +12,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
-#include "Physics.h"            // for forward declaration
-#include "../FrameController.h" // for GetCurrentNumberOfSteps, GetFixedDeltaTime
-#include "../Math/MathUtils.h"  // for abs, clamp
+#include "Physics.h"                      // for forward declaration
+#include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
+#include "../Math/MathUtils.h"            // for abs, clamp
+#include "../Factory/GameObjectManager.h" // for game object tag
 
 namespace Ukemochi
 {
@@ -83,9 +84,11 @@ namespace Ukemochi
         {
             for (auto& entity : m_Entities)
             {
+                // Get the tag of the entity
+                std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
                 // Get references of entity components
                 auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-                auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
                 auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
 
                 // Skip if entity is kinematic (static objects)
@@ -93,10 +96,10 @@ namespace Ukemochi
                     continue;
 
                 // Update the linear physics of the entity
-                UpdateLinearPhysics(trans, box, rb);
+                UpdateLinearPhysics(tag, trans, rb);
 
                 // Update the rotational physics of the entity
-                UpdateRotationalPhysics(trans, box, rb);
+                UpdateRotationalPhysics(tag, trans, rb);
             }
         }
     }
@@ -104,14 +107,14 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Update the linear physics of all the entities.
+    \param[in] tag
+     The tag of the entity.
     \param[in/out] trans
      The transform of the entity.
-    \param[in/out] box
-     The box collider of the entity.
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::UpdateLinearPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb)
+    void Physics::UpdateLinearPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb)
     {
         // Update physics position with the transform position
         rb.position = trans.position;
@@ -143,8 +146,7 @@ namespace Ukemochi
         }
 
         // Apply linear drag to the velocity of the player
-       
-        if (box.tag == "Player")
+        if (tag == "Player")
         {
             rb.velocity.x *= rb.linear_drag;
 
@@ -169,14 +171,14 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Update the rotational physics of all the entities.
+    \param[in] tag
+     The tag of the entity.
     \param[in/out] trans
      The transform of the entity.
-    \param[in/out] box
-     The box collider of the entity.
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::UpdateRotationalPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb)
+    void Physics::UpdateRotationalPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb)
     {
         // Update physics angle with the transform rotation
         rb.angle = trans.rotation;
@@ -191,7 +193,7 @@ namespace Ukemochi
         rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
 
         // Apply angular drag to the angular velocity of the player
-        if (box.tag == "Player")
+        if (tag == "Player")
         {
             rb.angular_velocity *= rb.angular_drag;
 

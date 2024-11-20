@@ -73,6 +73,8 @@ namespace Ukemochi
          */
         const std::string& GetName() const { return m_Name; }
 
+        void SetName(const std::string& name) { m_Name = name; }
+
         /**
          * @brief This function returns the tag of the object, also as a constant reference.
          * @return The tag of the object as a constant reference to a std::string.

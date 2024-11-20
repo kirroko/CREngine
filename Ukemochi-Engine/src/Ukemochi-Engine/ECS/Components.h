@@ -3,7 +3,7 @@
 \file       Components.h
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
-\date       Nov 13, 2024
+\date       Nov 17, 2024
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Matrix4x4.h"  // for Mtx44 struct
 #include "../Math/Vector2D.h"	// for Vec2 struct
 #include "../Audio/Audio.h"		// for Audio class
-//#include "../Graphics/Sprite.h" // for Sprite class
 
 namespace Ukemochi
 {
@@ -75,7 +74,7 @@ namespace Ukemochi
 
 		int collision_flag{};		   // Track the collision flags
 		bool is_trigger{ false };	   // If true, act as a trigger
-		std::string tag{ "Untagged" }; // temp
+		//bool enabled{ true };		   // If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -129,20 +128,139 @@ namespace Ukemochi
 	*************************************************************************/
 	enum class SPRITE_SHAPE { BOX = 0, CIRCLE = 1 }; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
+	struct AnimationClip
+	{
+		std::string keyPath{};
+		std::string name{};			// Name of the animation clip
+		GLuint textureID = 0;		// The texture ID, to be set during runtime
+		int total_frames = 1;				// Total frames in the animation
+		int pixel_width = 64;				// Width of each frame in pixels
+		int pixel_height = 64;				// Height of each frame in pixels
+		int total_width = 64;				// Width of the sprite sheet
+		int total_height = 64;				// Height of the sprite sheet
+		float frame_time = 0.05f;	// Duration of each frame
+		bool looping = true;		// Should the animation loop?
+
+		// AnimationClip();
+		// AnimationClip(std::string name, GLuint textureID, int total_frames, int pixel_width, int pixel_height, int total_width, int total_height, float frameTime, bool looping)
+		// 	: name(std::move(name)), textureID(textureID), total_frames(total_frames), pixel_width(pixel_width), pixel_height(pixel_height), total_width(total_width), total_height(total_height), frame_time(frameTime), looping(looping) {}
+	};
+	
+	/*!
+	 * @struct Animation
+	 * @brief Manages frame-based animations for entities.
+	 */
+	struct Animation
+	{
+		std::unordered_map<std::string, AnimationClip> clips;	// Animation clips
+		std::string currentClip{};								// Name of the active animation.
+		std::string defaultClip{};								// Name of the default animation.
+		int current_frame = 0;									// Current frame index
+		int original_frame = 0;									// Original frame index
+		float time_since_last_frame = 0.0f;						// Time since the last frame
+		float original_frame_time = 0.05f;						// Original frame time
+		bool frame_changed_flag = false;						// Flag to check if the total_frame has changed
+		bool play_Uninterrupted = false;						// Play the animation without interruption
+		bool is_playing = true;									// Is the animation playing?
+		
+		bool SetAnimation(const std::string& name)
+		{
+			if(clips.find(name) != clips.end() && name != currentClip)
+			{
+				currentClip = name;
+				current_frame = 0;
+
+				if (frame_changed_flag)
+				{
+					clips[name].total_frames = original_frame;
+					frame_changed_flag = false;
+				}
+
+				time_since_last_frame = 0.0f;
+
+				return true;
+			}
+			return false;
+		}
+
+		bool SetAnimation(const std::string& name, int startFrame, int endFrame)
+		{
+			if (clips.find(name) != clips.end())
+			{
+				currentClip = name;
+				current_frame = startFrame;
+				if (!frame_changed_flag)
+				{
+					original_frame = clips[name].total_frames;
+					clips[name].total_frames = endFrame;
+					frame_changed_flag = true;
+				}
+				else
+				{
+					clips[name].total_frames = endFrame;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+		
+		void update(float dt)
+		{
+			if(clips.find(currentClip) == clips.end()) // Don't update if the clip doesn't exist
+				return;
+
+			if (!is_playing) // Don't update if the animation is set not to play
+				return;
+
+			AnimationClip& clip = clips[currentClip];
+			time_since_last_frame += dt;
+
+			// Advance new frame
+			if(time_since_last_frame >= clip.frame_time)
+			{
+				current_frame++;
+				// time_since_last_frame -= clip.frame_time;
+				if(current_frame >= clip.total_frames)
+				{
+					current_frame = clip.looping ? 0 : clip.total_frames - 1;
+					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
+				}
+				time_since_last_frame = 0.0f; // Reset time
+			}
+			// Renderer system handles the UV coordinates for us
+		}
+
+		void setCurrentClipDuration(float newDuration)
+		{
+			if(clips.find(currentClip) == clips.end())
+				return;
+			
+			original_frame_time = clips[currentClip].frame_time;
+			clips[currentClip].frame_time = newDuration;
+		}
+
+		void resetCurrentClipDuration()
+		{
+			if (clips.find(currentClip) == clips.end())
+				return;
+
+			clips[currentClip].frame_time = original_frame_time;
+		}
+	};
+	
 	struct SpriteRender
 	{
-		std::string texturePath{};				// Path to the texture file (sprite)
-		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;	// Draw as BOX | Circle
-		unsigned int textureID = 0;
-		bool animated = false;							// Is the object animated?
-
-		int animationIndex = -1;
+		std::string texturePath{};					// The path acting as a key to the texture
+		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX;		// Draw as BOX | Circle
+		GLuint textureID = 0;						// The texture ID, to be set during runtime
+		bool animated = false;						// Is the object animated?
+		
 		bool flipX = false;
 		bool flipY = false;
-		//bool visible = true;							// Is the object visible?
-		//float opacity = 1.0f;							// Opacity of the object
 	};
-
+	
 	/*!***********************************************************************
 	\brief
 	 AudioSource component structure.
@@ -154,6 +272,10 @@ namespace Ukemochi
 		FMOD::ChannelGroup pChannelGroups;
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Script component structure.
+	*************************************************************************/
 	struct Script
 	{
 		std::string scriptPath;

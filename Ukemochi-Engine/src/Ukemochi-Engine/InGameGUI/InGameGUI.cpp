@@ -31,39 +31,38 @@ namespace Ukemochi
 	{
 		//TO DO:: ADD COMPONENT FOR EACH BUTTON E.G. TAG = BUTTON COMPONENT NAME = PAUSE.
 
-
 		// Get the screen width and height
-		Application& app = Application::Get();
-		int screen_width = app.GetWindow().GetWidth();
-		int screen_height = app.GetWindow().GetHeight();
+		//Application& app = Application::Get();
+		//int screen_width = app.GetWindow().GetWidth();
+		//int screen_height = app.GetWindow().GetHeight();
 
 		//Create some test GUI elements
-		CreateImage(Vec2{ screen_width * 0.05f, screen_height * 0.9f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
+		//CreateImage(Vec2{ screen_width * 0.05f, screen_height * 0.9f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
 
-		CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+		//CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
 
-		CreateButton("pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-			Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { UpdateText("text1", "pause button clicked!"); });
+		//CreateButton("pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+		//	Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { UpdateText("text1", "pause button clicked!"); });
 
-		CreateButton("spawn_btn", "Spawn", Vec2{ screen_width * 0.15f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 0.f, 0.f }, "Ukemochi",
-			Vec2{ 150.f, 75.f }, "../Assets/Textures/UI/base.png", [this]()
-			{
-				UpdateText("text1", "spawn button clicked!");
+		//CreateButton("spawn_btn", "Spawn", Vec2{ screen_width * 0.15f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 0.f, 0.f }, "Ukemochi",
+		//	Vec2{ 150.f, 75.f }, "../Assets/Textures/UI/base.png", [this]()
+		//	{
+		//		UpdateText("text1", "spawn button clicked!");
 
-				// Spawn a enemy
-				GameObject enemy = GameObjectManager::GetInstance().CreateObject();
-				enemy.AddComponent(Transform{
-					Mtx44{},
-					Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
-					ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
-					0,
-					Vec2{100.f, 100.f}
-					});
-				enemy.AddComponent(Rigidbody2D{ Vec2{}, Vec2{750.f, 750.f}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
-				enemy.AddComponent(BoxCollider2D());
-				enemy.GetComponent<BoxCollider2D>().tag = "Enemy";
-				enemy.AddComponent(SpriteRender{ "../Assets/Textures/Worm.png", SPRITE_SHAPE::BOX, });
-			});
+		//		// Spawn a enemy
+		//		GameObject enemy = GameObjectManager::GetInstance().CreateObject();
+		//		enemy.AddComponent(Transform{
+		//			Mtx44{},
+		//			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
+		//			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
+		//			0,
+		//			Vec2{100.f, 100.f}
+		//			});
+		//		enemy.AddComponent(Rigidbody2D{ Vec2{}, Vec2{750.f, 750.f}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
+		//		enemy.AddComponent(BoxCollider2D());
+		//		enemy.GetComponent<BoxCollider2D>().tag = "Enemy";
+		//		enemy.AddComponent(SpriteRender{ "../Assets/Textures/Worm.png", SPRITE_SHAPE::BOX, });
+		//	});
 	}
 
 	/*!***********************************************************************

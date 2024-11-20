@@ -3,7 +3,7 @@
 \file       Factory.cpp
 \author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
 \co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
-\date       Oct 19, 2024
+\date       Nov 17, 2024
 \brief      This file is responsible for creating, cloning, destroy game objects.
 			Also, it is responsible for creating prefabs.
 		
@@ -97,8 +97,7 @@ namespace Ukemochi
 						Vec2(comps["Min"][0].GetFloat(), comps["Min"][1].GetFloat()),
 						Vec2(comps["Max"][0].GetFloat(), comps["Max"][1].GetFloat()),
 						comps["Collision Flag"].GetInt(),
-						comps["is_trigger"].GetBool(),
-						comps["Tag"].GetString()
+						comps["is_trigger"].GetBool()
 						});
 				}
 				else if (component == "CircleCollider2D")
@@ -115,7 +114,7 @@ namespace Ukemochi
 				else if (component == "SpriteRender")
 				{
 					std::string TexturePath = std::string(comps["Sprite"].GetString());
-
+			
 					go.AddComponent(SpriteRender{
 						TexturePath,
 						comps["Shape"].GetInt() == 0 ? SPRITE_SHAPE::BOX : SPRITE_SHAPE::CIRCLE
@@ -132,6 +131,30 @@ namespace Ukemochi
 						newScript,
 						ScriptingEngine::CreateGCHandle(newScript)
 						});
+				}
+				else if (component == "Animation")
+				{
+					Animation anim;
+
+					for (auto itr = comps["Clips"].MemberBegin(); itr != comps["Clips"].MemberEnd(); ++itr)
+					{
+						AnimationClip newClip;
+						newClip.keyPath = itr->value[0].GetString();
+						newClip.name = itr->value[1].GetString();
+						newClip.total_frames = itr->value[2].GetInt();
+						newClip.pixel_width = itr->value[3].GetInt();
+						newClip.pixel_height = itr->value[4].GetInt();
+						newClip.total_width = itr->value[5].GetInt();
+						newClip.total_height = itr->value[6].GetInt();
+						newClip.frame_time = itr->value[7].GetFloat();
+						newClip.looping = itr->value[8].GetBool();
+						anim.clips[newClip.name] = newClip;
+					}
+
+					anim.currentClip = comps["CurrentClip"].GetString();
+					anim.defaultClip = anim.currentClip;
+
+					go.AddComponent(std::move(anim));
 				}
 				else if(component == "Button")
 				{

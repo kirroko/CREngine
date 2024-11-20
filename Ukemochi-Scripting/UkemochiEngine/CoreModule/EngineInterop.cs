@@ -23,11 +23,15 @@ namespace Ukemochi
 {
     internal static class EngineInterop
     {
+        #region Objects/Components
+        
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool HasComponent(ulong id, Type componentType);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void GetObjectByTag(string tag, out ulong id);
+        
+        #endregion
 
         #region Input
         
@@ -45,12 +49,16 @@ namespace Ukemochi
         
         #endregion
 
+        #region Logging
+        
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LogMessage(string message);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LogWarning(string message);
 
+        #endregion
+        
         #region Transform
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -133,13 +141,37 @@ namespace Ukemochi
         #region SpriteRenderer
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetSpriteRenderFlipX(ulong getInstanceId, bool isFacingRight);
+        public static extern void SetSpriteRenderFlipX(ulong id, bool isFacingRight);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetSpriteRenderFlipY(ulong getInstanceId, bool flipY);
+        public static extern void SetSpriteRenderFlipY(ulong id, bool flipY);
+
+        #endregion
+        
+        #region Animation
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool PlayAnimation(ulong id, string clipName);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool PlayAnimationWithFrame(ulong id, string clipName, int startFrame, int endFrame);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool PlayQueuedAnimation(ulong id, string clipName);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool IsAnimationPlaying(ulong id);
 
         #endregion
 
+        #region Time
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float GetDeltaTime();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float GetFixedDeltaTime();
+
+        #endregion
     }
 }
