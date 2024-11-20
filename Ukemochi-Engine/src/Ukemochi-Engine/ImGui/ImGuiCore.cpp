@@ -239,6 +239,7 @@ namespace Ukemochi
                         // std::copy(temp.begin(), temp.end(), clipName);
                         // std::string temp = object["KeyPath"].GetString();
                         std::string temp = object["ClipName"].GetString();
+                        std::fill(std::begin(clipName), std::end(clipName), 0);
                         std::copy(temp.begin(),temp.end(), clipName);
                         totalFrames = object["TotalFrames"].GetInt();
                         pixelSize[0] = object["PixelWidth"].GetInt();
@@ -391,6 +392,7 @@ namespace Ukemochi
             uv1 = ImVec2(1.0f, 0.0f);
         }
 
+        // Animation
         if (isPlaying)
         {
             timeSinceLastFrame += static_cast<float>(g_FrameRateController.GetDeltaTime());

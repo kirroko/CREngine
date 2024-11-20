@@ -132,6 +132,30 @@ namespace Ukemochi
 						ScriptingEngine::CreateGCHandle(newScript)
 						});
 				}
+				else if (component == "Animation")
+				{
+					Animation anim;
+
+					for (auto itr = comps["Clips"].MemberBegin(); itr != comps["Clips"].MemberEnd(); ++itr)
+					{
+						AnimationClip newClip;
+						newClip.keyPath = itr->value[0].GetString();
+						newClip.name = itr->value[1].GetString();
+						newClip.total_frames = itr->value[2].GetInt();
+						newClip.pixel_width = itr->value[3].GetInt();
+						newClip.pixel_height = itr->value[4].GetInt();
+						newClip.total_width = itr->value[5].GetInt();
+						newClip.total_height = itr->value[6].GetInt();
+						newClip.frame_time = itr->value[7].GetFloat();
+						newClip.looping = itr->value[8].GetBool();
+						anim.clips[newClip.name] = newClip;
+					}
+
+					anim.currentClip = comps["CurrentClip"].GetString();
+					anim.defaultClip = anim.currentClip;
+
+					go.AddComponent(std::move(anim));
+				}
 				else if(component == "Button")
 				{
 					go.AddComponent(Button{});

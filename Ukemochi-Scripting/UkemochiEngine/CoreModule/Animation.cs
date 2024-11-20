@@ -23,5 +23,20 @@ namespace Ukemochi
         {
             return EngineInterop.PlayAnimation(GetInstanceID(), clipName);
         }
+
+        public bool Play(string clipName, int startFrame, int endFrame)
+        {
+            return EngineInterop.PlayAnimationWithFrame(GetInstanceID(), clipName, startFrame, endFrame);
+        }
+        
+        public bool PlayQueued(string clipName)
+        {
+            return EngineInterop.PlayQueuedAnimation(GetInstanceID(), clipName);
+        }
+        
+        public bool IsPlaying()
+        {
+            return EngineInterop.IsAnimationPlaying(GetInstanceID());
+        }
     }
 }

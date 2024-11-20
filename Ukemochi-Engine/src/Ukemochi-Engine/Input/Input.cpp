@@ -83,7 +83,8 @@ namespace Ukemochi {
 			keyPressedMap[Keycode] = true;
 			return true;  // Mouse button triggered for the first time
 		}
-		else if (state == GLFW_RELEASE)
+		
+		if (state == GLFW_RELEASE)
 		{
 			keyPressedMap[Keycode] = false;
 		}
