@@ -452,5 +452,22 @@ private:
 	std::shared_ptr<Shader> UI_shader_program;
 
 
+// Object Picking
+private:
+	GLuint pickingFBO;
+	GLuint pickingColorBuffer;
+	GLuint pickingDepthBuffer;
+	std::shared_ptr<Shader> pickingShader;
+	std::unique_ptr<Shader> debugShader;
+
+	void setupPickingFramebuffer(int width, int height);
+	glm::vec3 encodeIDToColor(int id);
+	int decodeEntityID(unsigned char* colorData);
+	int getEntityAtMouse(int mouseX, int mouseY);
+
+public:
+	void handlePicking(int mouseX, int mouseY);
+	void debugRenderPickingFramebuffer();
+	void renderForPicking();
 };
 #endif

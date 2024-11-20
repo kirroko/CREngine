@@ -250,6 +250,12 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
 
+        /*if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handlePicking(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }*/
+
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
@@ -353,8 +359,12 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerDraw()
     {
-        //Draw
+        
         ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+        if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+            ECS::GetInstance().GetSystem<Renderer>()->handlePicking(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        
     }
 
     void SceneManager::SceneManagerFree()

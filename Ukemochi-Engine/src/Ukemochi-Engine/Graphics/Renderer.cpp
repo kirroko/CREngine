@@ -77,6 +77,8 @@ void Renderer::init()
 	setupFramebuffer();
 	initScreenQuad();
 
+	setupPickingFramebuffer(screen_width, screen_height);
+
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
 	textRenderer = new TextRenderer(screen_width, screen_height);
@@ -483,6 +485,10 @@ void Renderer::setUpShaders()
 	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
 
 	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+
+	pickingShader = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+
+	debugShader = std::make_unique<Shader>("../Assets/Shaders/debug_object_picking.vert", "../Assets/Shaders/debug_object_picking.frag");
 }
 
 /*!
@@ -564,7 +570,7 @@ void Renderer::render()
 
 		// Set up the model matrix
 		glm::mat4 model{};
-
+		
 		// Copy elements from custom matrix4x4 to glm::mat4
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
@@ -1022,5 +1028,138 @@ void Renderer::animationKeyInput()
 			}
 			break;
 		}
+	}
+}
+
+void Renderer::setupPickingFramebuffer(int width, int height) 
+{
+	glGenFramebuffers(1, &pickingFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, pickingFBO);
+
+	// Create a color attachment texture
+	glGenTextures(1, &pickingColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, pickingColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pickingColorBuffer, 0);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) 
+	{
+		std::cerr << "ERROR: Picking framebuffer is not complete!" << std::endl;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::renderForPicking() 
+{
+	// Bind the picking framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, pickingFBO);
+	glClearColor(0, 0, 0, 1); // Clear to black (no object)
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Activate the picking shader
+	pickingShader->Activate();
+
+	GLfloat defaultUV[8] = {
+	0.0f, 0.0f,  // Bottom-left
+	1.0f, 0.0f,  // Bottom-right
+	1.0f, 1.0f,  // Top-right
+	0.0f, 1.0f   // Top-left
+	};
+
+	// Get the camera's view and projection matrices
+	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
+
+	pickingShader->setMat4("view", view);
+	pickingShader->setMat4("projection", projection);
+
+	// Loop through all entities
+	for (auto& entity : m_Entities) 
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+
+		// Create the model matrix
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
+		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
+
+		// Set the model matrix in the shader
+		pickingShader->setMat4("model", model);
+
+		// Encode the entity ID as a color
+		glm::vec3 idColor = encodeIDToColor(static_cast<int>(entity));
+		std::cout << "Entity ID: " << entity << " Color: " << idColor.r << ", " << idColor.g << ", " << idColor.b << std::endl;
+		pickingShader->setVec3("idColor", idColor);
+
+		// Use drawSprite to render the entity
+		batchRenderer->setActiveShader(pickingShader); // Use the picking shader
+		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y),
+			glm::vec2(transform.scale.x, transform.scale.y),
+			idColor, 0, defaultUV, glm::radians(transform.rotation));
+	}
+	batchRenderer->flush();
+	// Reset to the default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+glm::vec3 Renderer::encodeIDToColor(int id) 
+{
+	return glm::vec3(
+		(id & 0xFF) / 255.0f,          // Red
+		((id >> 8) & 0xFF) / 255.0f,  // Green
+		((id >> 16) & 0xFF) / 255.0f  // Blue
+	);
+}
+
+int Renderer::decodeEntityID(unsigned char* colorData) 
+{
+	int entityID = colorData[0] | (colorData[1] << 8) | (colorData[2] << 16);
+	return entityID;
+}
+
+int Renderer::getEntityAtMouse(int mouseX, int mouseY) 
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, pickingFBO);
+
+	unsigned char data[3];
+	glReadPixels(mouseX, screen_height - mouseY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, data);
+	std::cout << "Picked Color: " << (int)data[0] << ", " << (int)data[1] << ", " << (int)data[2] << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Decode the color back to an entity ID
+	int id = (data[0]) | (data[1] << 8) | (data[2] << 16);
+	return id;
+}
+
+void Renderer::handlePicking(int mouseX, int mouseY) 
+{
+	// Render the picking pass
+	renderForPicking();
+
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR) 
+	{
+		std::cerr << "OpenGL Error after renderForPicking: " << error << std::endl;
+	}
+
+	// Retrieve the entity at the mouse position
+	int pickedEntityID = getEntityAtMouse(mouseX, mouseY);
+
+	// Immediately restore normal rendering after picking
+	renderToFramebuffer();
+
+	// Process the picked entity
+	if (pickedEntityID >= 0) 
+	{
+		std::cout << "Picked entity ID: " << pickedEntityID << std::endl;
+		// Additional logic to handle the picked entity
+	}
+	else 
+	{
+		std::cout << "No entity picked." << std::endl;
 	}
 }
