@@ -43,6 +43,7 @@ namespace Ukemochi
 		}
 
 		// Load and store the texture with the determined format
+		UME_ENGINE_TRACE("Creating texture of {0}", std::filesystem::path(file_path).stem().string(), order_index);
 		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(order_index), file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);

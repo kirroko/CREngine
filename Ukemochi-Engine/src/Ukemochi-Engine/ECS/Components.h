@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Matrix4x4.h"  // for Mtx44 struct
 #include "../Math/Vector2D.h"	// for Vec2 struct
 #include "../Audio/Audio.h"		// for Audio class
-//#include "../Graphics/Sprite.h" // for Sprite class
 
 namespace Ukemochi
 {
@@ -155,28 +154,65 @@ namespace Ukemochi
 	{
 		std::unordered_map<std::string, AnimationClip> clips;	// Animation clips
 		std::string currentClip{};								// Name of the active animation.
+		std::string defaultClip{};								// Name of the default animation.
 		int current_frame = 0;									// Current frame index
+		int original_frame = 0;									// Original frame index
 		float time_since_last_frame = 0.0f;						// Time since the last frame
 		float original_frame_time = 0.05f;						// Original frame time
-
+		bool frame_changed_flag = false;						// Flag to check if the total_frame has changed
+		bool play_Uninterrupted = false;						// Play the animation without interruption
+		bool is_playing = true;									// Is the animation playing?
+		
 		bool SetAnimation(const std::string& name)
 		{
 			if(clips.find(name) != clips.end() && name != currentClip)
 			{
 				currentClip = name;
 				current_frame = 0;
+
+				if (frame_changed_flag)
+				{
+					clips[name].total_frames = original_frame;
+					frame_changed_flag = false;
+				}
+
 				time_since_last_frame = 0.0f;
 
 				return true;
 			}
 			return false;
 		}
+
+		bool SetAnimation(const std::string& name, int startFrame, int endFrame)
+		{
+			if (clips.find(name) != clips.end())
+			{
+				currentClip = name;
+				current_frame = startFrame;
+				if (!frame_changed_flag)
+				{
+					original_frame = clips[name].total_frames;
+					clips[name].total_frames = endFrame;
+					frame_changed_flag = true;
+				}
+				else
+				{
+					clips[name].total_frames = endFrame;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
 		
 		void update(float dt)
 		{
-			if(clips.find(currentClip) == clips.end())
+			if(clips.find(currentClip) == clips.end()) // Don't update if the clip doesn't exist
 				return;
-			
+
+			if (!is_playing) // Don't update if the animation is set not to play
+				return;
 
 			AnimationClip& clip = clips[currentClip];
 			time_since_last_frame += dt;
@@ -187,10 +223,12 @@ namespace Ukemochi
 				current_frame++;
 				// time_since_last_frame -= clip.frame_time;
 				if(current_frame >= clip.total_frames)
+				{
 					current_frame = clip.looping ? 0 : clip.total_frames - 1;
+					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
+				}
 				time_since_last_frame = 0.0f; // Reset time
 			}
-
 			// Renderer system handles the UV coordinates for us
 		}
 

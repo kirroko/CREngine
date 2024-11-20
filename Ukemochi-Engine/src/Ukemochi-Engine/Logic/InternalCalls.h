@@ -270,6 +270,13 @@ namespace Ukemochi
             return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName));
         }
 
+        EXTERN_C UME_API inline bool PlayAnimationWithFrame(uint64_t id, MonoString* clipName, int32_t startFrame, int32_t endFrame)
+        {
+            auto* go = GameObjectManager::GetInstance().GetGO(id);
+            auto& anim = go->GetComponent<Animation>();
+            return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName), startFrame, endFrame);
+        }
+
         EXTERN_C UME_API inline float GetDeltaTime()
         {
             return static_cast<float>(g_FrameRateController.GetDeltaTime());

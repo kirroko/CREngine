@@ -152,6 +152,15 @@ namespace Ukemochi
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool PlayAnimation(ulong id, string clipName);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool PlayAnimationWithFrame(ulong id, string clipName, int startFrame, int endFrame);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool PlayQueuedAnimation(ulong id, string clipName);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool IsAnimationPlaying(ulong id);
 
         #endregion
 
