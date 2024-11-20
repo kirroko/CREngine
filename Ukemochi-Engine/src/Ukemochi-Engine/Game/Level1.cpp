@@ -249,9 +249,6 @@ namespace Ukemochi
 
 		// Set the player object in the Renderer
 		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
-
-		// Set the player object in the Transformation
-		ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
 		
 		// Initialize the in game GUI system
 		ECS::GetInstance().GetSystem<InGameGUI>()->Init();

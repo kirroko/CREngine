@@ -569,7 +569,7 @@ namespace Ukemochi
         // Add FPS display inside ControlPanel
         ImGui::Text("FPS: %.2f", fps); // Show FPS with 2 decimal places
 
-        ImGui::PlotLines("FPS History", fpsHistory.data(), fpsHistory.size(), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
+        ImGui::PlotLines("FPS History", fpsHistory.data(), static_cast<int>(fpsHistory.size()), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
 
         // Add controls such as buttons, sliders, or entity selectors here
         ImGui::Text("Control Panel Contents");
@@ -906,7 +906,6 @@ namespace Ukemochi
  */
     void UseImGui::DisplayEntityDetails(GameObject& obj)
     {
-        // Basic Entity Info (White)
         ImGui::Separator();
         ImGui::Text("Entity Details");
         ImGui::BulletText("ID: %d", obj.GetInstanceID());
@@ -917,69 +916,99 @@ namespace Ukemochi
         // Display Transform Component (Green)
         if (obj.HasComponent<Transform>())
         {
-            if (ImGui::CollapsingHeader("Transform Component"))
+            // Set background color for the tree node
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 1.0f, 0.0f, 0.2f));  // Light green background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 1.0f, 0.0f, 0.4f));  // Darker green when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.0f, 0.6f));  // Even darker green when active
+
+            // TreeNode with custom background color and padding
+            if (ImGui::TreeNodeEx("Transform Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                Transform& transform = obj.GetComponent<Transform>();
-                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Position: (%.2f, %.2f)", transform.position.x,
-                                   transform.position.y);
-                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Rotation: %.2f", transform.rotation);
-                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Scale: (%.2f, %.2f)", transform.scale.x,
-                                   transform.scale.y);
+                // Display transform component details with some padding
+                ImGui::Text("Position: (%.2f, %.2f)", obj.GetComponent<Transform>().position.x, obj.GetComponent<Transform>().position.y);
+                ImGui::Text("Rotation: %.2f", obj.GetComponent<Transform>().rotation);
+                ImGui::Text("Scale: (%.2f, %.2f)", obj.GetComponent<Transform>().scale.x, obj.GetComponent<Transform>().scale.y);
+
+                ImGui::TreePop();
             }
+
+            ImGui::PopStyleColor(3);
         }
 
         // Display Rigidbody2D Component (Blue)
         if (obj.HasComponent<Rigidbody2D>())
         {
-            if (ImGui::CollapsingHeader("Rigidbody2D Component"))
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.5f, 1.0f, 0.2f));  // Light blue background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.5f, 1.0f, 0.4f));  // Darker blue when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 0.5f, 1.0f, 0.6f));  // Even darker blue when active
+
+            if (ImGui::TreeNodeEx("Rigidbody2D Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
                 Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Position: (%.2f, %.2f)", rb.position.x,
-                                   rb.position.y);
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Velocity: (%.2f, %.2f)", rb.velocity.x,
-                                   rb.velocity.y);
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Acceleration: (%.2f, %.2f)", rb.acceleration.x,
-                                   rb.acceleration.y);
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Force: (%.2f, %.2f)", rb.force.x, rb.force.y);
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Mass: %.2f", rb.mass);
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Use Gravity: %s",
-                                   rb.use_gravity ? "True" : "False");
-                ImGui::TextColored(ImVec4(0.0f, 0.5f, 1.0f, 1.0f), "Is Kinematic: %s",
-                                   rb.is_kinematic ? "True" : "False");
+                ImGui::Text("Position: (%.2f, %.2f)", rb.position.x, rb.position.y);
+                ImGui::Text("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
+                ImGui::Text("Acceleration: (%.2f, %.2f)", rb.acceleration.x, rb.acceleration.y);
+
+                ImGui::TreePop();
             }
+
+            ImGui::PopStyleColor(3);
         }
 
         // Display BoxCollider2D Component (Orange)
         if (obj.HasComponent<BoxCollider2D>())
         {
-            if (ImGui::CollapsingHeader("BoxCollider2D Component"))
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 0.5f, 0.0f, 0.2f));  // Light orange background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 0.5f, 0.0f, 0.4f));  // Darker orange when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 0.5f, 0.0f, 0.6f));  // Even darker orange when active
+
+            if (ImGui::TreeNodeEx("BoxCollider2D Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
                 BoxCollider2D& collider = obj.GetComponent<BoxCollider2D>();
-                ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "Is Trigger: %s",
-                                   collider.is_trigger ? "True" : "False");
+                ImGui::Text("Is Trigger: %s", collider.is_trigger ? "True" : "False");
+
+                ImGui::TreePop();
             }
+
+            ImGui::PopStyleColor(3);
         }
 
         // Display SpriteRender Component (Purple)
         if (obj.HasComponent<SpriteRender>())
         {
-            if (ImGui::CollapsingHeader("SpriteRender Component"))
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.6f, 0.4f, 1.0f, 0.2f));  // Light purple background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.6f, 0.4f, 1.0f, 0.4f));  // Darker purple when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.6f, 0.4f, 1.0f, 0.6f));  // Even darker purple when active
+
+            if (ImGui::TreeNodeEx("SpriteRender Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
                 SpriteRender& sprite = obj.GetComponent<SpriteRender>();
-                ImGui::TextColored(ImVec4(0.6f, 0.4f, 1.0f, 1.0f), "Sprite Path: %s", sprite.texturePath.c_str());
-                ImGui::TextColored(ImVec4(0.6f, 0.4f, 1.0f, 1.0f), "Shape: %d", sprite.shape);
+                ImGui::Text("Sprite Path: %s", sprite.texturePath.c_str());
+                ImGui::Text("Shape: %d", sprite.shape);
+
+                ImGui::TreePop();
             }
+
+            ImGui::PopStyleColor(3);
         }
 
         // Display Script Component (Yellow)
         if (obj.HasComponent<Script>())
         {
-            if (ImGui::CollapsingHeader("Script Component"))
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 1.0f, 0.0f, 0.2f));  // Light yellow background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 0.0f, 0.4f));  // Darker yellow when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 1.0f, 0.0f, 0.6f));  // Even darker yellow when active
+
+            if (ImGui::TreeNodeEx("Script Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
                 Script& script = obj.GetComponent<Script>();
-                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Script Path: %s", script.scriptPath.c_str());
-                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Class Name: %s", script.scriptName.c_str());
+                ImGui::Text("Script Path: %s", script.scriptPath.c_str());
+                ImGui::Text("Class Name: %s", script.scriptName.c_str());
+
+                ImGui::TreePop();
             }
+
+            ImGui::PopStyleColor(3);
         }
     }
 
@@ -1104,6 +1133,7 @@ namespace Ukemochi
                     selectedObject->AddComponent<Animation>(Animation{});
                     modified = true;
                 }
+                break;
             default:
                 break;
             }
@@ -1528,8 +1558,8 @@ namespace Ukemochi
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
         static char filePath[256] = "../Assets/Prefabs/Player.json";
-        static int selectedEntityIndex = -1;
-        m_global_selected = selectedEntityIndex;
+        static int selectedEntityID = -1; // Store the ID of the selected entity instead of an index
+        m_global_selected = selectedEntityID;
         static bool showError = false;
         static double errorDisplayTime = 0.0f;
 
@@ -1546,10 +1576,24 @@ namespace Ukemochi
             for (size_t i = 0; i < gameObjects.size(); ++i)
             {
                 auto& obj = gameObjects[i];
-                if (ImGui::TreeNode((std::to_string(obj->GetInstanceID()) + ": " + obj->GetName()).c_str()))
+                Ukemochi::EntityID instanceID = obj->GetInstanceID();
+
+                // Display each object in the TreeNode
+                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), selectedEntityID == instanceID))
                 {
-                    DisplayEntityDetails(*obj);
-                    ImGui::TreePop();
+                    selectedEntityID = static_cast<int>(instanceID); // Set selected entity by ID
+                    modified = false; // Reset modification flag when a new entity is selected
+                }
+
+                // Display entity details in a collapsible tree node below the selectable
+                if (selectedEntityID == instanceID)
+                {
+                    // Show the entity details for the selected object
+                    if (ImGui::TreeNode(("Details##" + std::to_string(instanceID)).c_str()))
+                    {
+                        DisplayEntityDetails(*obj); // Show the entity details
+                        ImGui::TreePop();
+                    }
                 }
             }
             ImGui::TreePop();
@@ -1564,19 +1608,12 @@ namespace Ukemochi
             if (filePath[0] != '\0' && IsJsonFile(filePath))
             {
                 if (ECS::GetInstance().GetLivingEntityCount() == 0)
-                {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = -1;
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-                }
 
                 auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
                 if (go.GetTag() == "Player")
                 {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.GetInstanceID());
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
-                    // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
-                    // go.GetComponent<SpriteRender>().animated = true;
-                    //go.GetComponent<SpriteRender>().animationIndex = 1;
                 }
                 showError = false; // Reset error
             }
@@ -1593,35 +1630,37 @@ namespace Ukemochi
         if (ImGui::Button("Create Empty Entity"))
         {
             auto& emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
-            selectedEntityIndex = static_cast<int>(emptyObject.GetInstanceID());
+            selectedEntityID = static_cast<int>(emptyObject.GetInstanceID());
             modified = true;
         }
 
         if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f)
         {
             ImGui::TextColored(ImVec4(1, 0, 0, 1),
-                               "Invalid file type. Only .json files can be used to create an object.");
+                "Invalid file type. Only .json files can be used to create an object.");
         }
 
         ImGui::Separator();
 
-        DisplayEntitySelectionCombo(selectedEntityIndex);
-
-        if (ImGui::Button("Remove Entity"))
-        {
-            RemoveSelectedEntity(selectedEntityIndex);
-            modified = false;
-        }
-
-        ImGui::SameLine();
-
-        if (selectedEntityIndex >= 0)
+        // Handle editing of the selected entity
+        if (selectedEntityID >= 0)
         {
             auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
-            if (selectedEntityIndex < gameObjects.size())
-            {
-                GameObject* selectedObject = gameObjects[selectedEntityIndex];
+            GameObject* selectedObject = nullptr;
 
+            // Find the selected object by ID
+            for (auto& obj : gameObjects)
+            {
+                if (obj->GetInstanceID() == selectedEntityID)
+                {
+                    selectedObject = obj;
+                    break;
+                }
+            }
+
+            if (selectedObject)
+            {
+                // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
 
                 // Show the Save button if modifications were made
@@ -1633,6 +1672,14 @@ namespace Ukemochi
                         SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
                         modified = false; // Reset modified flag after saving
                     }
+                }
+
+                // Remove Entity button
+                if (ImGui::Button("Remove Entity"))
+                {
+                    RemoveSelectedEntity(selectedEntityID);
+                    selectedEntityID = -1; // Reset selection after removal
+                    modified = false;
                 }
             }
         }
@@ -1738,17 +1785,12 @@ namespace Ukemochi
                     if (droppedFilePath[0] != '\0' && IsJsonFile(droppedFilePath))
                     {
                         if (ECS::GetInstance().GetLivingEntityCount() == 0)
-                        {
-                            ECS::GetInstance().GetSystem<Transformation>()->player = -1;
                             ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-                        }
 
                         auto& go = GameObjectManager::GetInstance().CreatePrefabObject(droppedFilePath);
                         // You can add additional logic for the entity, like setting up textures, animations, etc.
                         if (go.GetTag() == "Player")
                         {
-                            ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(go.
-                                GetInstanceID());
                             ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
                             ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                             go.GetComponent<SpriteRender>().animated = true;

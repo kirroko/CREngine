@@ -3,7 +3,7 @@
 \file       Factory.cpp
 \author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
 \co-authors Wong Jun Yu, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
-\date       Oct 19, 2024
+\date       Nov 17, 2024
 \brief      This file is responsible for creating, cloning, destroy game objects.
 			Also, it is responsible for creating prefabs.
 		
@@ -97,8 +97,7 @@ namespace Ukemochi
 						Vec2(comps["Min"][0].GetFloat(), comps["Min"][1].GetFloat()),
 						Vec2(comps["Max"][0].GetFloat(), comps["Max"][1].GetFloat()),
 						comps["Collision Flag"].GetInt(),
-						comps["is_trigger"].GetBool(),
-						comps["Tag"].GetString()
+						comps["is_trigger"].GetBool()
 						});
 				}
 				else if (component == "CircleCollider2D")

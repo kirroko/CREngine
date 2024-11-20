@@ -30,8 +30,7 @@
                 "Min": [0.0, 0.0],
                 "Max": [1.0, 1.0],
                 "Collision Flag": 0,
-                "is_trigger": false,
-                "Tag": "Player"
+                "is_trigger": false
             }, {
                 "Name": "SpriteRender",
                 "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
@@ -43,8 +42,8 @@
             }, {
                 "Name": "Animation",
                 "Clips": {
-                    "Idle": ["Idle", 37, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                    "Running": ["Running", 13, 461, 428, 2048, 2048, 0.05000000074505806, true]
+                    "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 442, 448, 4096, 4096, 0.05000000074505806, true],
+                    "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 461, 428, 2048, 2048, 0.05000000074505806, true]
                 },
                 "CurrentClip": "Idle"
             }]
