@@ -1157,6 +1157,16 @@ namespace Ukemochi
                 }
                 ImGui::Spacing();
             }
+
+            if (selectedObject->HasComponent<Animation>())
+            {
+                if (ImGui::Button("Remove Animation Component"))
+                {
+                    selectedObject->RemoveComponent<Animation>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
         }
 
         ImGui::Separator(); // Optional separator after the collapsible section
