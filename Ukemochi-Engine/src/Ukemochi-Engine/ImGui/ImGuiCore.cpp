@@ -206,6 +206,7 @@ namespace Ukemochi
         static int textureHeight = 0;
         static int totalFrames = 1;
         static int pixelSize[2] = {64, 64};
+        // static int pixelPerUnit = 100;
         static float frameTime = 0.05f;
         static bool looping = true;
 
@@ -312,6 +313,9 @@ namespace Ukemochi
         pixelSize[0] = std::max(1, pixelSize[0]);
         pixelSize[1] = std::max(1, pixelSize[1]);
 
+        // ImGui::InputInt("Pixel Per Unit", &pixelPerUnit);
+        // pixelPerUnit = std::max(1, pixelPerUnit);
+
         // Input for frame time
         ImGui::InputFloat("Frame Time", &frameTime, 0, 0, "%.2f");
         frameTime = std::max(0.01f, frameTime); // max 0.01s
@@ -337,6 +341,7 @@ namespace Ukemochi
             textureMetaData.AddMember("TextureHeight", textureHeight, allocator);
             textureMetaData.AddMember("FrameTime", frameTime, allocator);
             textureMetaData.AddMember("Looping", looping, allocator);
+            // textureMetaData.AddMember("PixelPerUnit", pixelPerUnit, allocator);
 
             document.AddMember("TextureMeta", textureMetaData, allocator);
             // Serialize the texture
@@ -405,6 +410,8 @@ namespace Ukemochi
             }
 
             // Handle the UV here
+            UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
+                              "Pixel size is larger than texture size");
             int col = currentFrame % (textureWidth / pixelSize[0]);
             int row = currentFrame / (textureWidth / pixelSize[0]);
 
@@ -1199,7 +1206,7 @@ namespace Ukemochi
             }
         }
 
-        ImGui::Separator(); // Optional separator after the collapsible section
+        // ImGui::Separator(); // Optional separator after the collapsible section
     }
 
     /**
@@ -1218,11 +1225,19 @@ namespace Ukemochi
 
         // Store whether the rename mode is enabled
         static bool isRenaming = false;
+        static bool isTagRenaming = false;
 
         // Button to enable/disable renaming
-        if (ImGui::Button(isRenaming ? "Confirm Rename" : "Rename Entity Name"))
+        if (ImGui::Button(isRenaming ? "Confirm Rename" : "Rename Entity Name") && !isTagRenaming)
         {
             isRenaming = !isRenaming; // Toggle renaming mode
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button(isTagRenaming ? "Confirm Rename Tag" : "Rename Entity Tag") && !isRenaming)
+        {
+            isTagRenaming = !isTagRenaming; // Toggle renaming mode
         }
 
         // Editable name input field, only enabled if renaming is allowed
@@ -1230,8 +1245,22 @@ namespace Ukemochi
         std::strncpy(nameBuffer, selectedObject->GetName().c_str(), sizeof(nameBuffer));
         nameBuffer[sizeof(nameBuffer) - 1] = '\0'; // Ensure null termination
 
+        char tagBuffer[256];
+        std::strncpy(tagBuffer, selectedObject->GetTag().c_str(), sizeof(tagBuffer));
+        tagBuffer[sizeof(tagBuffer) - 1] = '\0'; // Ensure null termination
+
+        // Disable input filed when not tag renaming
+        if (isTagRenaming && !isRenaming)
+        {
+            if (ImGui::InputText("Tag name", tagBuffer, sizeof(tagBuffer)))
+            {
+                selectedObject->SetTag(std::string(tagBuffer));
+                modified = true; // Flag as modified
+            }
+        }
+
         // Disable input field when not renaming
-        if (isRenaming)
+        if (isRenaming && !isTagRenaming)
         {
             if (ImGui::InputText("Object Name", nameBuffer, sizeof(nameBuffer)))
             {
@@ -1497,13 +1526,17 @@ namespace Ukemochi
                 {
                     for (auto& clip : animation.clips)
                     {
-                        if (ImGui::TreeNode(clip.second.name.c_str()))
+                        if (ImGui::Selectable(clip.second.name.c_str()))
                         {
-                            ImGui::Text("Total_Frame: %d", clip.second.total_frames);
-                            ImGui::Text("Frame_Rate: %f", clip.second.frame_time);
-                            ImGui::Text("Loop: %s", clip.second.looping ? "True" : "False");
-                            ImGui::TreePop();
+                            animation.currentClip = clip.second.name;
                         }
+                        // if (ImGui::TreeNode(clip.second.name.c_str()))
+                        // {
+                        //     ImGui::Text("Total_Frame: %d", clip.second.total_frames);
+                        //     ImGui::Text("Frame_Rate: %f", clip.second.frame_time);
+                        //     ImGui::Text("Loop: %s", clip.second.looping ? "True" : "False");
+                        //     ImGui::TreePop();
+                        // }
                     }
                     ImGui::TreePop();
                 }
@@ -1513,13 +1546,6 @@ namespace Ukemochi
                 ImGui::InputText("CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
                 ImGui::EndDisabled();
                 
-                static char changeClipBuffer[256] = "";
-                ImGui::InputTextWithHint("Default Clip", "Enter Clip Name", changeClipBuffer, IM_ARRAYSIZE(changeClipBuffer));
-                if (ImGui::Button("Set Current Clip"))
-                {
-                    animation.currentClip = changeClipBuffer;
-                }
-                ImGui::SameLine();
                 if (ImGui::Button("Clear all Clips"))
                 {
                     animation.clips.clear();
@@ -1662,6 +1688,8 @@ namespace Ukemochi
             {
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
+
+                ImGui::Separator();
 
                 // Show the Save button if modifications were made
                 if (modified)

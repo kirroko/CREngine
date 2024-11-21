@@ -159,23 +159,15 @@ namespace Ukemochi
 		int original_frame = 0;									// Original frame index
 		float time_since_last_frame = 0.0f;						// Time since the last frame
 		float original_frame_time = 0.05f;						// Original frame time
-		bool frame_changed_flag = false;						// Flag to check if the total_frame has changed
-		bool play_Uninterrupted = false;						// Play the animation without interruption
 		bool is_playing = true;									// Is the animation playing?
+		bool doNotInterrupt = false;								// Do not interrupt the current animation
 		
 		bool SetAnimation(const std::string& name)
 		{
-			if(clips.find(name) != clips.end() && name != currentClip)
+			if(clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt)
 			{
 				currentClip = name;
 				current_frame = 0;
-
-				if (frame_changed_flag)
-				{
-					clips[name].total_frames = original_frame;
-					frame_changed_flag = false;
-				}
-
 				time_since_last_frame = 0.0f;
 
 				return true;
@@ -183,26 +175,24 @@ namespace Ukemochi
 			return false;
 		}
 
-		bool SetAnimation(const std::string& name, int startFrame, int endFrame)
+		bool SetAnimationImmediately(const std::string& name)
 		{
-			if (clips.find(name) != clips.end())
+			doNotInterrupt = false;
+			return SetAnimation(name);
+		}
+		
+		bool SetAnimationUninterrupted(const std::string& name)
+		{
+			if (clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt)
 			{
 				currentClip = name;
-				current_frame = startFrame;
-				if (!frame_changed_flag)
-				{
-					original_frame = clips[name].total_frames;
-					clips[name].total_frames = endFrame;
-					frame_changed_flag = true;
-				}
-				else
-				{
-					clips[name].total_frames = endFrame;
-				}
+				current_frame = 0;
+				time_since_last_frame = 0.0f;
+
+				doNotInterrupt = true;
 
 				return true;
 			}
-
 			return false;
 		}
 		
@@ -225,6 +215,7 @@ namespace Ukemochi
 				if(current_frame >= clip.total_frames)
 				{
 					current_frame = clip.looping ? 0 : clip.total_frames - 1;
+					doNotInterrupt = false;
 					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
 				}
 				time_since_last_frame = 0.0f; // Reset time
