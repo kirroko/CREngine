@@ -1411,6 +1411,7 @@ namespace Ukemochi
             }
         }
 
+        //comments
         // Script Component, drag-and-drop for script path (always editable)
         if (selectedObject->HasComponent<Script>())
         {
