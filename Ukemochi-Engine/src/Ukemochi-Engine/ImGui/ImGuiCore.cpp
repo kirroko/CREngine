@@ -1441,10 +1441,17 @@ namespace Ukemochi
                             // Validate the file type (assuming only .cs scripts are allowed)
                             if (extension == ".cs")
                             {
-                                // Update script path if valid
+                                // Valid file type, update script path
                                 strncpy(scriptPathBuffer, draggedScript.c_str(), sizeof(scriptPathBuffer));
                                 scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
                                 script.scriptPath = draggedScript;
+                                script.scriptName = filePath.stem().string();
+                                MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
+                                    script.scriptName);
+                                EntityID newScriptID = selectedObject->GetInstanceID();
+                                ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
+                                script.instance = newScript;
+                                script.handle = ScriptingEngine::CreateGCHandle(newScript);
                                 modified = true;
                             }
                             else
