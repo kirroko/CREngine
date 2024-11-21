@@ -101,15 +101,15 @@ void Renderer::init()
 	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	// Add buttons
-	UIRenderer->addButton(UIButton("pauseButton",
-		glm::vec2(100.0f, 700.0f),
-		glm::vec2(150.0f, 100.0f),
-		5,  // Replace with actual texture ID
-		"hi",
-		glm::vec3(1.0f, 0.f, 0.f),
-		"Exo2",
-		1.0f
-	));
+	//UIRenderer->addButton(UIButton("pauseButton",
+	//	glm::vec2(100.0f, 700.0f),
+	//	glm::vec2(150.0f, 100.0f),
+	//	5,  // Replace with actual texture ID
+	//	"hi",
+	//	glm::vec3(1.0f, 0.f, 0.f),
+	//	"Exo2",
+	//	1.0f
+	//));
 }
 
 /*!
@@ -936,6 +936,13 @@ void Renderer::CreateTextObject(const std::string& id, const std::string& label,
  * @param newText The new text content.
  */
 void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+
+void Renderer::CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
+{
+	UIRenderer->addButton(UIButton(id, glm::vec2(position.x, position.y), glm::vec2(size.x, size.y), GLuint(textureID), text, glm::vec3(textColor.x, textColor.y, textColor.z), fontName, textScale, alignment, interactable, on_click));
+}
+
+std::vector<UIButton>& Renderer::GetButtonObjects() { return UIRenderer->GetButtons(); }
 
 /*!
  * @brief Initializes animation entities, creating idle and running animations for the player entity.

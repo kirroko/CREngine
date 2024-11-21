@@ -113,14 +113,14 @@ namespace Ukemochi
 	\brief
 	 GUI Button component structure.
 	*************************************************************************/
-	struct Button
-	{
-		std::function<void()> on_click; // The event to trigger on click
-		bool interactable{ true };		// Is the button interactable
-		
-		//std::string label{};			// The text on the button
-		//Vec2 initial_pos{};				// The initial position of the button
-	};
+	//struct Button
+	//{
+	//	//std::function<void()> on_click; // The event to trigger on click
+	//	//bool interactable{ true };		// Is the button interactable
+	//	
+	//	//std::string label{};			// The text on the button
+	//	//Vec2 initial_pos{};				// The initial position of the button
+	//};
 
 	/*!***********************************************************************
 	\brief

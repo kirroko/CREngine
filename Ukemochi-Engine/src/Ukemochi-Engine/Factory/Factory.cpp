@@ -156,10 +156,10 @@ namespace Ukemochi
 
 					go.AddComponent(std::move(anim));
 				}
-				else if(component == "Button")
-				{
-					go.AddComponent(Button{});
-				}
+				//else if(component == "Button")
+				//{
+				//	go.AddComponent(Button{});
+				//}
 				else
 				{
 					UME_ENGINE_ASSERT(false, "Unknown Component in json file: {1}",component)

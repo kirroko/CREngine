@@ -70,3 +70,8 @@ void UIButtonRenderer::clearButtons()
 {
     buttons.clear();
 }
+
+std::vector<UIButton>& UIButtonRenderer::GetButtons()
+{
+    return buttons;
+}
