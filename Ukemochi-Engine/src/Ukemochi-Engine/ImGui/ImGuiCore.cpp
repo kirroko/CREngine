@@ -1476,6 +1476,48 @@ namespace Ukemochi
                 }
             }
         }
+
+        // Animation Component
+        if (selectedObject->HasComponent<Animation>())
+        {
+            // TODO: Drag and drop texture to animation should pull the metadata
+            if (ImGui::CollapsingHeader("Animation"))
+            {
+                auto& animation = selectedObject->GetComponent<Animation>();
+                if (ImGui::TreeNode("Clips"))
+                {
+                    for (auto& clip : animation.clips)
+                    {
+                        if (ImGui::TreeNode(clip.second.name.c_str()))
+                        {
+                            ImGui::Text("Total_Frame: %d", clip.second.total_frames);
+                            ImGui::Text("Frame_Rate: %f", clip.second.frame_time);
+                            ImGui::Text("Loop: %s", clip.second.looping ? "True" : "False");
+                            ImGui::TreePop();
+                        }
+                    }
+                    ImGui::TreePop();
+                }
+                static char currentClipBuffer[256] = "";
+                strncpy(currentClipBuffer, animation.currentClip.c_str(), sizeof(currentClipBuffer));
+                ImGui::BeginDisabled(true);
+                ImGui::InputText("CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
+                ImGui::EndDisabled();
+
+                static char changeClipBuffer[256] = "";
+                ImGui::InputTextWithHint("Default Clip", "Enter Clip Name", changeClipBuffer, IM_ARRAYSIZE(changeClipBuffer));
+                if (ImGui::Button("Set Current Clip"))
+                {
+                    animation.currentClip = changeClipBuffer;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Clear all Clips"))
+                {
+                    animation.clips.clear();
+                    animation.currentClip = "";
+                }
+            }
+        }
     }
 
     /**
