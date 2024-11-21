@@ -1062,7 +1062,7 @@ namespace Ukemochi
     {
         // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
         auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
-        if (static_cast<size_t>(selectedEntityIndex >= 0 && selectedEntityIndex) < gameObjects.size())
+        if (selectedEntityIndex >= 0 && static_cast<size_t>(selectedEntityIndex) < gameObjects.size())
         {
             auto& entityToDelete = gameObjects[selectedEntityIndex];
             GameObjectManager::GetInstance().DestroyObject(entityToDelete->GetInstanceID());
@@ -1597,7 +1597,10 @@ namespace Ukemochi
         // Button to create a new entity from a prefab
         if (ImGui::Button("Create Entity"))
         {
-            if (filePath[0] != '\0' && IsJsonFile(filePath))
+            const std::string prefabDirectory = "../Assets/Prefabs/";
+            std::string filePathStr = filePath;
+
+            if (filePathStr.rfind(prefabDirectory, 0) == 0 && IsJsonFile(filePath))
             {
                 if (ECS::GetInstance().GetLivingEntityCount() == 0)
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
@@ -1630,7 +1633,7 @@ namespace Ukemochi
         if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f)
         {
             ImGui::TextColored(ImVec4(1, 0, 0, 1),
-                "Invalid file type. Only .json files can be used to create an object.");
+                "Invalid file type. Only .json files in ../Assets/Prefabs/ can be used to create an object.");
         }
 
         ImGui::Separator();
