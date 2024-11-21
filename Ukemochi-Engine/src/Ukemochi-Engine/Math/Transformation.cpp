@@ -27,11 +27,6 @@ namespace Ukemochi
 	{
 		for (auto& entity : m_Entities)
 		{
-			// Compute the depth scale of the dynamic entities
-			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
-				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
-				ComputeObjectScale(entity, OBJECT_SCALING);
-
 			// Set up the entity matrix using the transform's position, rotation and scale
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 
@@ -45,6 +40,11 @@ namespace Ukemochi
 				scale.m2[0][0] = isFacingRight ? -scale.m2[0][0] : scale.m2[0][0]; // Adjust X-axis scale to flip direction if not facing right
 
 			transform.transform_matrix = trans * rot * scale;
+
+			// Compute the depth scale of the dynamic entities
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
+				ComputeObjectScale(entity, OBJECT_SCALING);
 		}
 	}
 
