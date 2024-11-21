@@ -1,0 +1,40 @@
+{
+    "GameObject": {
+        "Name": "Box1",
+        "Tag": "Environment",
+        "Components": [{
+                "Name": "Transform",
+                "Position": [0.0, 0.0],
+                "Rotation": 0.0,
+                "Scale": [311.0, 400.0]
+            }, {
+                "Name": "Rigidbody2D",
+                "Position": [0.0, 0.0],
+                "Velocity": [0.0, 0.0],
+                "Acceleration": [0.0, 0.0],
+                "Force": [0.0, 0.0],
+                "Mass": 1.0,
+                "Inverse Mass": 1.0,
+                "Linear Drag": 0.9,
+                "Angle": 0.0,
+                "Angular Velocity": 0.0,
+                "Angular Acceleration": 0.0,
+                "Torque": 0.0,
+                "Inertia Mass": 1.0,
+                "Inverse Inertia Mass": 1.0,
+                "Angular Drag": 0.9,
+                "use_gravity": false,
+                "is_kinematic": true
+            }, {
+                "Name": "BoxCollider2D",
+                "Min": [0.0, 0.0],
+                "Max": [1.0, 1.0],
+                "Collision Flag": 0,
+                "is_trigger": false
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
+                "Shape": 0
+            }]
+    }
+}

@@ -816,7 +816,7 @@ namespace Ukemochi
 	{
 		// PLAYER AND DOORS
 		// To simulate moving between rooms
-		if (trigger_tag == "Left Door")
+		if (trigger_tag == "LeftDoor")
 		{
 			// If the player is colliding with the top or btm of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_TOP)
@@ -826,7 +826,7 @@ namespace Ukemochi
 			else // Player entered the left door
 				player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
 		}
-		else if (trigger_tag == "Right Door")
+		else if (trigger_tag == "RightDoor")
 		{
 			// If the player is colliding with the top or btm of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_TOP)
@@ -836,7 +836,7 @@ namespace Ukemochi
 			else // Player entered the right door
 				player_trans.position.x = trigger_trans.scale.x + player_trans.scale.x * 0.5f;
 		}
-		else if (trigger_tag == "Top Door")
+		else if (trigger_tag == "TopDoor")
 		{
 			// If the player is colliding with the left or right of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_LEFT)
@@ -846,7 +846,7 @@ namespace Ukemochi
 			else // Player entered the top door
 				player_trans.position.y = screen_height - trigger_trans.scale.y - player_trans.scale.y * 0.5f;
 		}
-		else if (trigger_tag == "Btm Door")
+		else if (trigger_tag == "BtmDoor")
 		{
 			// If the player is colliding with the left or right of the door, act as a wall
 			if (trigger_box.collision_flag & COLLISION_LEFT)
