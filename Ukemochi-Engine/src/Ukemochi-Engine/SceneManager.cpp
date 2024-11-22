@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
 #include "Graphics/Animation.h"
+#include "Game/DungeonManager.h"
 
 namespace Ukemochi
 {
@@ -74,6 +75,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
+        ECS::GetInstance().RegisterSystem<DungeonManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -292,6 +294,8 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
+
+            ECS::GetInstance().GetSystem<DungeonManager>()->InitDungeon();
 		}
 		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 		{
@@ -318,6 +322,9 @@ namespace Ukemochi
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+
+        ECS::GetInstance().GetSystem<DungeonManager>()->Update();
+
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 	    
