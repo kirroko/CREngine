@@ -142,8 +142,6 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
 
-        ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
-
         //Get Scenelist
 		UME_ENGINE_TRACE("Loading Scenes...");
         UseImGui::LoadScene();
@@ -178,10 +176,11 @@ namespace Ukemochi
 
     void SceneManager::SceneMangerInit()
     {
+        ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
-        ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+        //ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
 		UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();

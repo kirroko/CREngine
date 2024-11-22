@@ -67,7 +67,8 @@ namespace Ukemochi
 		std::string uniformName = "textures[" + std::to_string(texture_index) + "]";
 		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(texture_index));
 
-		texture_list[file_path] = texture;
+		//texture_list[file_path] = texture;
+		texture_list.emplace(std::make_pair(file_path, texture));
 		texture_order.push_back(file_path);
 		texture_index++;
 	}
@@ -94,7 +95,8 @@ namespace Ukemochi
 
 		std::shared_ptr<Shader> shader(new Shader(vert_path.c_str(), frag_path.c_str()));
 
-		shader_list[file_name] = shader;
+		//shader_list[file_name] = shader;
+		shader_list.emplace(std::make_pair(file_name, shader));
 	}
 
 	std::shared_ptr<Shader> AssetManager::getShader(std::string key_name)
@@ -173,30 +175,42 @@ namespace Ukemochi
 			}
 			else
 			{
-				//file is a folder
+				//file is a file
 				std::filesystem::path to_load = dir.path();
+				std::string visualize = to_load.generic_string();
 				if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
 				{
-					addTexture(to_load.generic_string());
+					std::string file_path = to_load.generic_string();
+					std::replace(file_path.begin(), file_path.end(), '\\', '/');
+					addTexture(file_path);
 				}
 				else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
 				{
-					addSound(to_load.generic_string());
+					std::string file_path = to_load.generic_string();
+					std::replace(file_path.begin(), file_path.end(), '\\', '/');
+					addSound(file_path);
 				}
 				else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
 				{
-					std::string file_name = to_load.filename().generic_string();
+					std::string holder = to_load.filename().generic_string();
+					std::string file_name = holder.substr(0, holder.find_first_of("."));
+
 					if (to_load.extension() == ".vert")
 					{
 						std::string vertex_shader = to_load.generic_string();
+						std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
 						std::string frag_shader{};
 						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
 						{
 							std::filesystem::path checker = match_shader.path();
-							std::string check_name = checker.filename().generic_string();
+							std::string holder2 = checker.filename().generic_string();
+							std::string check_name = holder2.substr(0, holder.find_first_of("."));
+
+							check_name;
 							if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
 							{
 								frag_shader = checker.generic_string();
+								std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
 								break;
 							}
 						}
@@ -204,15 +218,21 @@ namespace Ukemochi
 					}
 					else
 					{
-						std::string vertex_shader{};
 						std::string frag_shader = to_load.generic_string();
+						std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
+						std::string vertex_shader{};
+
 						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
 						{
 							std::filesystem::path checker = match_shader.path();
-							std::string check_name = checker.filename().generic_string();
+							std::string holder2 = checker.filename().generic_string();
+							std::string check_name = holder2.substr(0, holder.find_first_of("."));
+
+							check_name;
 							if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
 							{
 								vertex_shader = checker.generic_string();
+								std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
 								break;
 							}
 						}

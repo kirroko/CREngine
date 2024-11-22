@@ -484,14 +484,17 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 
 /*!
  * @brief Sets up and compiles shaders used by the renderer.
+ * Gerald Edit: Tried to use AssetManager to access shader
  */
 void Renderer::setUpShaders()
 {
-	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	//shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	shaderProgram = ECS::GetInstance().GetSystem<AssetManager>()->getShader("default");
 
 	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
 
-	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+	//UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+	UI_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("UI");
 }
 
 /*!
