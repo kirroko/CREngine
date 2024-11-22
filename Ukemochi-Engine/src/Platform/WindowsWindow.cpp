@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
+#include "Ukemochi-Engine/Input/Input.h"
 
 #include <glad/glad.h>
 
@@ -60,6 +61,10 @@ namespace Ukemochi {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
+		m_Data.IsFullScreen = false;
+		m_Data.PrevWidth = props.Width;
+		m_Data.PrevHeight = props.Height;
+
 		UME_ENGINE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
 		// Initialize GLFW if not already done
@@ -76,11 +81,11 @@ namespace Ukemochi {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
 		// Create GLFW window
-		//m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		//m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
+		if(m_Data.IsFullScreen)
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
+		else
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 
 		// Load OpenGL function pointers
@@ -201,12 +206,44 @@ namespace Ukemochi {
 		glfwDestroyWindow(m_Window);
 	}
 	/*!
+	\brief Toggle the screen between fullscreen and window modes.
+	*/
+	void WindowsWindow::ToggleFullscreen()
+	{
+		// Press F11 to toggle screen modes
+		if (Input::IsKeyTriggered(UME_KEY_F11))
+		{
+			// Switch to fullscreen mode
+			if (!m_Data.IsFullScreen)
+			{
+				// Save the current window position and size
+				glfwGetWindowPos(m_Window, &m_Data.PrevX, &m_Data.PrevY);
+				glfwGetWindowSize(m_Window, &m_Data.PrevWidth, &m_Data.PrevHeight);
+
+				// Get the primary monitor
+				GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+				const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+				glfwSetWindowMonitor(m_Window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+				m_Data.IsFullScreen = true;
+			}
+			else // Switch to windowed mode
+			{
+				glfwSetWindowMonitor(m_Window, nullptr, m_Data.PrevX, m_Data.PrevY, m_Data.PrevWidth, m_Data.PrevHeight, 0);
+				m_Data.IsFullScreen = false;
+			}
+		}
+	}
+
+	/*!
 	\brief Updates the window by polling events and swapping buffers.
 	*/
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
+		
+		ToggleFullscreen();
 	}
 	/*!
 	\brief Sets vertical synchronization for the window.

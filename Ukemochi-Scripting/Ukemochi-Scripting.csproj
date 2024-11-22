@@ -49,16 +49,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Installer|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Installer\</OutputPath>
-    <DefineConstants>UME_Release</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>portable</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
@@ -68,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UkemochiEngine\CSharpTest.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Animation.cs" />
     <Compile Include="UkemochiEngine\CoreModule\BaseScript.cs" />
     <Compile Include="UkemochiEngine\CoreModule\BoxCollider2D.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Component.cs" />
@@ -79,6 +70,7 @@
     <Compile Include="UkemochiEngine\CoreModule\Object.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Rigidbody2D.cs" />
     <Compile Include="UkemochiEngine\CoreModule\SpriteRender.cs" />
+    <Compile Include="UkemochiEngine\CoreModule\Time.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Transform.cs" />
     <Compile Include="UkemochiEngine\CoreModule\Vector2.cs" />
   </ItemGroup>

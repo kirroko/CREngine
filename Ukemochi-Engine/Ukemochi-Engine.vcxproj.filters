@@ -128,6 +128,12 @@
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\EnemyClass.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\EnemyManager.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
@@ -137,11 +143,8 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Game\Level2.h">
-      <Filter>Ukemochi-Engine\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Game\MainMenu.h">
-      <Filter>Ukemochi-Engine\Game</Filter>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\Animation.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
@@ -159,6 +162,9 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Texture.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButton.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h">
@@ -230,7 +236,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -276,17 +281,20 @@
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\EnemyClass.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\EnemyManager.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp">
-      <Filter>Ukemochi-Engine\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Game\MainMenu.cpp">
-      <Filter>Ukemochi-Engine\Game</Filter>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\Animation.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
@@ -304,6 +312,9 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\UIButton.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp">
@@ -366,7 +377,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\UIButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

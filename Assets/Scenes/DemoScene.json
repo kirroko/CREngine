@@ -6,7 +6,7 @@
                     "Name": "Transform",
                     "Position": [300.0, 675.0],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [118.75, 118.75]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [300.0, 675.0],
@@ -30,8 +30,7 @@
                     "Min": [250.0, 625.0],
                     "Max": [350.0, 725.0],
                     "Collision Flag": 0,
-                    "is_trigger": false,
-                    "Tag": "Player"
+                    "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
@@ -40,13 +39,20 @@
                     "Name": "Script",
                     "Path": "../Assets/Scripts/Player.cs",
                     "ClassName": "Player"
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 442, 448, 4096, 4096, 0.05000000074505806, true],
+                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 461, 428, 2048, 2048, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Idle"
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Default",
+            "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [800.0, 450.0],
+                    "Position": [773.864013671875, 450.0],
                     "Rotation": 0.0,
                     "Scale": [150.0, 150.0]
                 }, {
@@ -72,8 +78,7 @@
                     "Min": [725.0, 375.0],
                     "Max": [875.0, 525.0],
                     "Collision Flag": 0,
-                    "is_trigger": false,
-                    "Tag": "Untagged"
+                    "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Moon Floor.png",
@@ -86,7 +91,7 @@
                     "Name": "Transform",
                     "Position": [1161.092529296875, 652.0107421875],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [118.30876159667969, 118.30876159667969]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1161.092529296875, 652.0107421875],
@@ -110,8 +115,7 @@
                     "Min": [1111.092529296875, 602.0107421875],
                     "Max": [1211.092529296875, 702.0107421875],
                     "Collision Flag": 0,
-                    "is_trigger": false,
-                    "Tag": "Enemy"
+                    "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm.png",
@@ -128,7 +132,7 @@
                     "Name": "Transform",
                     "Position": [445.83148193359375, 646.9933471679688],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [127.37271881103516, 127.37271881103516]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [445.83148193359375, 646.9933471679688],
@@ -152,8 +156,7 @@
                     "Min": [395.83148193359375, 596.9933471679688],
                     "Max": [495.83148193359375, 696.9933471679688],
                     "Collision Flag": 0,
-                    "is_trigger": false,
-                    "Tag": "Enemy"
+                    "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm.png",
@@ -170,7 +173,7 @@
                     "Name": "Transform",
                     "Position": [212.03492736816406, 555.0661010742188],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [127.37201690673828, 127.37201690673828]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [212.03492736816406, 555.0661010742188],
@@ -194,8 +197,7 @@
                     "Min": [162.03492736816406, 505.06610107421875],
                     "Max": [262.034912109375, 605.0661010742188],
                     "Collision Flag": 0,
-                    "is_trigger": false,
-                    "Tag": "Enemy"
+                    "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm.png",
@@ -207,7 +209,7 @@
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Default",
+            "Tag": "Left Door",
             "Components": [{
                     "Name": "Transform",
                     "Position": [12.5, 450.0],
@@ -236,8 +238,7 @@
                     "Min": [0.0, 362.5],
                     "Max": [25.0, 537.5],
                     "Collision Flag": 0,
-                    "is_trigger": true,
-                    "Tag": "Left Door"
+                    "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Moon Floor.png",
@@ -245,7 +246,7 @@
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Default",
+            "Tag": "Right Door",
             "Components": [{
                     "Name": "Transform",
                     "Position": [1587.5, 450.0],
@@ -274,8 +275,7 @@
                     "Min": [1575.0, 362.5],
                     "Max": [1600.0, 537.5],
                     "Collision Flag": 0,
-                    "is_trigger": true,
-                    "Tag": "Right Door"
+                    "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Moon Floor.png",
@@ -283,7 +283,7 @@
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Default",
+            "Tag": "Top Door",
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 12.5],
@@ -312,8 +312,7 @@
                     "Min": [712.5, 0.0],
                     "Max": [887.5, 25.0],
                     "Collision Flag": 0,
-                    "is_trigger": true,
-                    "Tag": "Top Door"
+                    "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Moon Floor.png",
@@ -321,7 +320,7 @@
                 }]
         }, {
             "Name": "GameObject",
-            "Tag": "Default",
+            "Tag": "Btm Door",
             "Components": [{
                     "Name": "Transform",
                     "Position": [800.0, 887.5],
@@ -350,8 +349,7 @@
                     "Min": [712.5, 875.0],
                     "Max": [887.5, 900.0],
                     "Collision Flag": 0,
-                    "is_trigger": true,
-                    "Tag": "Btm Door"
+                    "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Moon Floor.png",

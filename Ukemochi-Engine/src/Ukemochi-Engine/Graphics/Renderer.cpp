@@ -89,11 +89,15 @@ void Renderer::init()
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
-	initAnimationEntities();
+	// Add text objects
+	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
+	// initAnimationEntities();
+	
 	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 
-	batchRenderer = std::make_shared<BatchRenderer2D>();
+	batchRenderer = std::make_unique<BatchRenderer2D>();
 	// Load shaders and create shared pointer
 
 	batchRenderer->init(shaderProgram);
@@ -101,15 +105,15 @@ void Renderer::init()
 	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	// Add buttons
-	UIRenderer->addButton(UIButton("pauseButton",
-		glm::vec2(100.0f, 700.0f),
-		glm::vec2(150.0f, 100.0f),
-		5,  // Replace with actual texture ID
-		"hi",
-		glm::vec3(1.0f, 0.f, 0.f),
-		"Exo2",
-		1.0f
-	));
+	//UIRenderer->addButton(UIButton("pauseButton",
+	//	glm::vec2(100.0f, 700.0f),
+	//	glm::vec2(150.0f, 100.0f),
+	//	5,  // Replace with actual texture ID
+	//	"hi",
+	//	glm::vec3(1.0f, 0.f, 0.f),
+	//	"Exo2",
+	//	1.0f
+	//));
 }
 
 /*!
@@ -151,17 +155,22 @@ void Renderer::setupFramebuffer()
  * @param width The new width for the framebuffer.
  * @param height The new height for the framebuffer.
  */
-void Renderer::resizeFramebuffer(int width, int height) {
+void Renderer::resizeFramebuffer(unsigned int width, unsigned int height) const
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	
 	// Resize color texture
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int>(width), static_cast<int>(height), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 	// Resize renderbuffer
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, static_cast<int>(width), static_cast<int>(height));
 
-	//screen_width = width;
-	//screen_height = height;
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+
+	// May as well update viewport?
+	glViewport(0,0,width,height);
 }
 
 /*!
@@ -558,8 +567,7 @@ void Renderer::render()
 
 	// Render entities
 	batchRenderer->beginBatch();
-	int entity_count = 0;
-
+	
 	for (auto& entity : m_Entities)
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
@@ -579,28 +587,44 @@ void Renderer::render()
 
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
-
-		// Check for animation
-		if (spriteRenderer.animated && es_current == ENGINE_STATES::ES_PLAY)
+		GLint textureID = -1;
+		
+		// Check for an Animator component
+		if(ECS::GetInstance().HasComponent<Animation>(entity))
 		{
-			// Fetch the current animation and frame data
-			Animation& currentAnimation = entity_animations[entity][spriteRenderer.animationIndex];
-			currentAnimation.update(deltaTime);  // Advance frame if needed
-
-			// Update UV coordinates for the current animation frame
-			updateAnimationFrame(currentAnimation.currentFrame,
-				currentAnimation.frameWidth,
-				currentAnimation.frameHeight,
-				currentAnimation.totalWidth,
-				currentAnimation.totalHeight,
-				uvCoordinates);
-			// Flip UVs horizontally if the player is facing left
-			if (entity == GetPlayer() && isFacingRight) {
-				// Swap left and right UV coordinates
+			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
+			if (ani.clips.find(ani.currentClip) == ani.clips.end())
+			{
+				UME_ENGINE_WARN("Clip not found for {0}, using default UV for now.", ani.currentClip);
+				// Use default full texture UVs for static sprites
+				uvCoordinates[0] = 0.0f; uvCoordinates[1] = 0.0f;  // Bottom-left
+				uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
+				uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
+				uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
+			}
+			else
+			{
+				auto& clip = ani.clips[ani.currentClip];
+				spriteRenderer.texturePath = clip.keyPath;
+				updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
+			}
+			
+			if(spriteRenderer.flipX)
+			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
 				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
+			}
+
+			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			{
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			}
+			if (textureID < 0) {
+				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
+				continue;
 			}
 		}
 		else
@@ -610,35 +634,31 @@ void Renderer::render()
 			uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
 			uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
 			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
-
-			// Flip UVs for static sprites if the player is facing left
-			if (entity == GetPlayer() && isFacingRight) {
-				// Swap left and right UV coordinates
+		
+			// Flip UVs for static sprites
+			if(spriteRenderer.flipX)
+			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
 				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
-		}
 
-
-		GLint textureID = -1;
-		if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
-			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
-			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end()) {
-			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			{
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			}
+			if (textureID < 0) {
+				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
+				continue;
+			}
 		}
-		if (textureID < 0) {
-			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
-			continue;
-		}
-
+		
 		int mappedTextureUnit = textureIDMap[textureID];
 
 		// Draw the sprite using the batch renderer, passing the updated UV coordinates
 		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
-
-		entity_count++;
 	}
 
 
@@ -899,19 +919,26 @@ void Renderer::CreateTextObject(const std::string& id, const std::string& label,
  */
 void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
+void Renderer::CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
+{
+	UIRenderer->addButton(UIButton(id, glm::vec2(position.x, position.y), glm::vec2(size.x, size.y), GLuint(textureID), text, glm::vec3(textColor.x, textColor.y, textColor.z), fontName, textScale, alignment, interactable, on_click));
+}
+
+std::vector<UIButton>& Renderer::GetButtonObjects() { return UIRenderer->GetButtons(); }
+
 /*!
  * @brief Initializes animation entities, creating idle and running animations for the player entity.
  */
 void Renderer::initAnimationEntities()
 {
-	size_t playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
-
-	// Create animations for the player
-	Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true);
-	Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true);
-
-	// Add multiple animations for the player entity (idle and running animations)
-	entity_animations[playerEntityID] = { idleAnimation, runAnimation };
+	// size_t playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
+	//
+	// // Create animations for the player
+	// Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
+	// Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
+	//
+	// // Add multiple animations for the player entity (idle and running animations)
+	// entity_animations[playerEntityID] = { idleAnimation, runAnimation };
 
 }
 
@@ -930,19 +957,19 @@ void Renderer::toggleSlowMotion()
 		if (spriteRenderer.animated)
 		{
 			// Get the animations associated with this entity
-			auto& animations = entity_animations[entity];
-			for (auto& animation : animations)
-			{
-				// Adjust the frame duration based on slow-motion state
-				if (isSlowMotion)
-				{
-					animation.setFrameDuration(animation.originalFrameDuration * slowMotionFactor);
-				}
-				else
-				{
-					animation.resetFrameDuration(); // Reset to original duration
-				}
-			}
+			// auto& animations = entity_animations[entity];
+			// for (auto& animation : animations)
+			// {
+			// 	// // Adjust the frame duration based on slow-motion state
+			// 	// if (isSlowMotion)
+			// 	// {
+			// 	// 	animation.setFrameDuration(animation.originalFrameDuration * slowMotionFactor);
+			// 	// }
+			// 	// else
+			// 	// {
+			// 	// 	animation.resetFrameDuration(); // Reset to original duration
+			// 	// }
+			// }
 		}
 	}
 }
@@ -961,47 +988,47 @@ void Renderer::animationKeyInput()
 	{
 		if (GetPlayer() == GameObject->GetInstanceID())
 		{
-			auto& playerSprite = GameObject->GetComponent<SpriteRender>();
+			// auto& playerSprite = GameObject->GetComponent<SpriteRender>();
 
 			// File paths for the textures
 			std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
 			std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
 
-			if (Input::IsKeyPressed(GLFW_KEY_A)) {
-				isFacingRight = false; // Moving left
-			}
-			else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-				isFacingRight = true; // Moving right
-			}
+			// if (Input::IsKeyPressed(GLFW_KEY_A)) {
+			// 	isFacingRight = false; // Moving left
+			// }
+			// else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+			// 	isFacingRight = true; // Moving right
+			// }
 
 			// Check if any movement keys are pressed
-			if (Input::IsKeyPressed(GLFW_KEY_W) ||
-				Input::IsKeyPressed(GLFW_KEY_A) ||
-				Input::IsKeyPressed(GLFW_KEY_S) ||
-				Input::IsKeyPressed(GLFW_KEY_D))
-			{
-				// If we are not already in the running state, switch to the running texture
-				if (playerSprite.animationIndex != 1)
-				{
-					playerSprite.animationIndex = 1;
-					playerSprite.texturePath = runningTexturePath;
-
-					// Set the animation index and texture path to indicate running state
-					std::cout << "Switching to running animation.\n";
-				}
-			}
-			else
-			{
-				// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-				if (playerSprite.animationIndex != 0)
-				{
-					playerSprite.animationIndex = 0;
-					playerSprite.texturePath = idleTexturePath;
-
-					// Set the animation index and texture path to indicate idle state
-					std::cout << "Switching to idle animation.\n";
-				}
-			}
+			// if (Input::IsKeyPressed(GLFW_KEY_W) ||
+			// 	Input::IsKeyPressed(GLFW_KEY_A) ||
+			// 	Input::IsKeyPressed(GLFW_KEY_S) ||
+			// 	Input::IsKeyPressed(GLFW_KEY_D))
+			// {
+			// 	// If we are not already in the running state, switch to the running texture
+			// 	if (playerSprite.animationIndex != 1)
+			// 	{
+			// 		playerSprite.animationIndex = 1;
+			// 		playerSprite.texturePath = runningTexturePath;
+			//
+			// 		// Set the animation index and texture path to indicate running state
+			// 		std::cout << "Switching to running animation.\n";
+			// 	}
+			// }
+			// else
+			// {
+			// 	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+			// 	if (playerSprite.animationIndex != 0)
+			// 	{
+			// 		playerSprite.animationIndex = 0;
+			// 		playerSprite.texturePath = idleTexturePath;
+			//
+			// 		// Set the animation index and texture path to indicate idle state
+			// 		std::cout << "Switching to idle animation.\n";
+			// 	}
+			// }
 			break;
 		}
 	}

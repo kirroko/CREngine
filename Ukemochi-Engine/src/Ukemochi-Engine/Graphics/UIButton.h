@@ -25,14 +25,16 @@ enum class TextAlignment {
 class UIButton {
 public:
     std::string id;
-    glm::vec2 position;    // Screen position
-    glm::vec2 size;        // Size of the button
-    GLuint textureID;      // Texture for the button background
-    std::string text;      // Button label
-    glm::vec3 textColor;   // Label color
-    std::string fontName;  // Font for the label
-    float textScale;       // Text scale
-    TextAlignment textAlignment;
+    glm::vec2 position;             // Screen position
+    glm::vec2 size;                 // Size of the button
+    GLuint textureID;               // Texture for the button background
+    std::string text;               // Button label
+    glm::vec3 textColor;            // Label color
+    std::string fontName;           // Font for the label
+    float textScale;                // Text scale
+    TextAlignment textAlignment;    // Text alignment
+    bool interactable;		        // Is the button interactable
+    std::function<void()> on_click; // The event to trigger on click
 
     /*!
      * @brief Constructs a UIButton object with the given parameters.
@@ -45,8 +47,8 @@ public:
      * @param fontName Font used for the label text.
      * @param textScale Scale of the label text.
      */
-    UIButton(const std::string& id, glm::vec2 position, glm::vec2 size, GLuint textureID, const std::string& text, glm::vec3 textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center)
-        : id(id), position(position), size(size), textureID(textureID), text(text), textColor(textColor), fontName(fontName), textScale(textScale), textAlignment(alignment) {}
+    UIButton(const std::string& id, glm::vec2 position, glm::vec2 size, GLuint textureID, const std::string& text, glm::vec3 textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr)
+        : id(id), position(position), size(size), textureID(textureID), text(text), textColor(textColor), fontName(fontName), textScale(textScale), textAlignment(alignment), interactable(interactable), on_click(on_click) {}
 };
 
 /*!
@@ -82,6 +84,8 @@ public:
     void removeButton(const std::string& id);
 
     void clearButtons();
+
+    std::vector<UIButton>& GetButtons();
 };
 
 #endif // UI_BUTTON_H
