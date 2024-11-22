@@ -4,12 +4,12 @@
         "ClipName": "Attack1",
         "PivotX": 0.5,
         "PivotY": 0.5,
-        "TotalFrames": 20,
+        "TotalFrames": 19,
         "PixelWidth": 678,
         "PixelHeight": 579,
         "TextureWidth": 4096,
         "TextureHeight": 2797,
-        "FrameTime": 0.05000000074505806,
+        "FrameTime": 0.03999999910593033,
         "Looping": true
     }
 }

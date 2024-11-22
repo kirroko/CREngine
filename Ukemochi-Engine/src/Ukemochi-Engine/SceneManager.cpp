@@ -64,7 +64,6 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
-        ECS::GetInstance().RegisterComponent<Button>();
 		ECS::GetInstance().RegisterComponent<Player>();
 
         // TODO: Register your systems, No limit for systems

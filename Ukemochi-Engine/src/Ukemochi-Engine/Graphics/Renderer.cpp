@@ -563,6 +563,9 @@ void Renderer::render()
 	
 	for (auto& entity : m_Entities)
 	{
+		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+			continue;
+		
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 		//auto& GameObject

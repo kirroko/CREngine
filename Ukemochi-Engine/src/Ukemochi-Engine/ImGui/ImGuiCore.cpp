@@ -32,6 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../SceneManager.h"
 #include "../Math/Transformation.h"
 #include "Ukemochi-Engine/FrameController.h"
+#include "Ukemochi-Engine/Collision/Collision.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
@@ -652,6 +653,7 @@ namespace Ukemochi
         // Example: Add a button
         if (ImGui::Button("Play"))
         {
+            ECS::GetInstance().GetSystem<Collision>()->Init();
             // Recompile scripts and display popup that its compiling. Remove popup when done
             if (ScriptingEngine::GetInstance().compile_flag)
             {
@@ -1203,12 +1205,13 @@ namespace Ukemochi
                     modified = true;
                 }
                 break;
-            case 6: // Player
+            case 5: // Player
                 if (!selectedObject->HasComponent<Player>())
                 {
                     selectedObject->AddComponent<Player>(Player{});
                     modified = true;
                 }
+                break;
             default:
                 break;
             }

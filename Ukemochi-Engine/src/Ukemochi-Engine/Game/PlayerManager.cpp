@@ -86,37 +86,39 @@ namespace Ukemochi
             {
                 data.attackTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
                 data.canAttack = true;
+                data.isAttacking = false;
             }
             else
             {
                 data.currentComboHits = 0;
                 data.canAttack = false;
+                data.isAttacking = false;
                 data.attackTimer = 0.0f;
+
+                anim.isAttacking = false;
             }
 
-            if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
+            if (Input::IsKeyTriggered(UME_KEY_J))
             {
                 // Combat logic happens?
                 if (data.currentComboHits == 0 || data.canAttack)
                 {
                     data.currentComboHits++;
-                    switch (data.currentComboHits)
+                    switch (data.currentComboHits % 4)
                     {
                     case 1:
                         anim.SetAnimationImmediately("Attack1");
                         break;
                     case 2:
                         anim.SetAnimationImmediately("Attack2");
-                        
                         break;
                     case 3:
                         anim.SetAnimationImmediately("Attack3");
                         break;
-                    default:
-                        anim.SetAnimationImmediately("Idle");
-                        break;
                     }
                     anim.isAttacking = true;
+
+                    data.isAttacking = true;
                     data.canAttack = false; // Prevent immediate chaining of attacks
                     data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[anim.currentClip].frame_time;
                     // data.attackTimer = data.attackCooldown;
@@ -136,6 +138,9 @@ namespace Ukemochi
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
 
             anim.SetAnimationUninterrupted("Hurt");
+            data.currentComboHits = 0;
+            data.canAttack = false;
+            data.attackTimer = 0.0f;
         }
     }
 }

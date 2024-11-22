@@ -294,5 +294,6 @@ namespace Ukemochi
 		float playerForce = 1500.0f;
 		bool isDead = false;
 		bool canAttack = true;
+		bool isAttacking = false;
 	};
 }

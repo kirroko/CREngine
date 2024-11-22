@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Physics/Physics.h" // temp
 #include "../Graphics/Camera2D.h" // temp
 #include "Ukemochi-Engine/Game/PlayerManager.h"
+#include "Ukemochi-Engine/Graphics/Renderer.h"
 
 namespace Ukemochi
 {
@@ -32,7 +33,6 @@ namespace Ukemochi
 	EntityID player = NULL;
 	EntityID knife = NULL;
 	bool is_facing_right = false;
-	bool is_attacking = false;
 
 	/*!***********************************************************************
 	\brief
@@ -44,6 +44,15 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
+
+		// Find player and knife GO
+		for (auto const& entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+				player = entity;
+			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
+				knife = entity;
+		}
 
 		// Convex Testing
 		/*ConvexCollider2D convex1;
@@ -82,26 +91,11 @@ namespace Ukemochi
 	void Collision::CheckCollisions()
 	{
 		// ---------- temp ----------
-		// Find player and knife GO
-		for (auto const& entity : m_Entities)
-		{
-			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
-				player = entity;
-			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
-				knife = entity;
-		}
-
 		// Set player direction
 		if (Input::IsKeyPressed(UME_KEY_A))
 			is_facing_right = false;
 		else if (Input::IsKeyPressed(UME_KEY_D))
 			is_facing_right = true;
-
-		// Mochi strikes
-		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-			is_attacking = true;
-		else
-			is_attacking = false;
 
 		// Set knife position
 		if (knife)
@@ -119,6 +113,9 @@ namespace Ukemochi
 		{
 			for (auto const& entity1 : m_Entities)
 			{
+				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
+					continue;
+				
 				// Get the tag of the first entity
 				std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
 
@@ -488,10 +485,12 @@ namespace Ukemochi
 		{
 			// Mochi's Knife / Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
+			
+			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
 
-			if (!is_attacking)
+			if (!playerData.isAttacking)
 				return;
-
+			
 			/*auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
 			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);*/
 
