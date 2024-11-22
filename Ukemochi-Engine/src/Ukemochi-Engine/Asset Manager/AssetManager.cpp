@@ -126,6 +126,26 @@ namespace Ukemochi
 		}
 	}
 
+	bool AssetManager::ifTextureExists(std::string key_name)
+	{
+		return (texture_list.find(key_name) != texture_list.end());
+	}
+
+	size_t AssetManager::getTextureOrder()
+	{
+		return texture_order.size();
+	}
+
+	std::string& AssetManager::getOrderAtIndex(int index)
+	{
+		return texture_order[index];
+	}
+
+	const size_t AssetManager::getTextureIndex() const
+	{
+		return texture_index;
+	}
+
 	void AssetManager::loadAssetsFromFolder()
 	{
 		for (auto const& dir : std::filesystem::recursive_directory_iterator(asset_dir))

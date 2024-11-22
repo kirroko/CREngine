@@ -117,20 +117,22 @@ namespace Ukemochi
     {
         //load all assest
 
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+      /*  ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");*/
 
         //load Asset Manager Texture
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		/*ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
+
+        ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
 
         //Get Scenelist
         UseImGui::LoadScene();
@@ -559,7 +561,7 @@ namespace Ukemochi
                     // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
                     //     newObject.GetComponent<SpriteRender>().texturePath,
                     //     ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
-                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
 					if (tag == "Player")
 					{
 						newObject.GetComponent<SpriteRender>().animated = true;

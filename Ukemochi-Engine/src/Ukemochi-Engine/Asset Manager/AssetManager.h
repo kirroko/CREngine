@@ -57,6 +57,14 @@ namespace Ukemochi
 		//addPrefab
 		//getPrefab
 
+		bool ifTextureExists(std::string key_name);
+
+		size_t getTextureOrder();
+
+		const size_t getTextureIndex() const;
+
+		std::string& getOrderAtIndex(int index);
+
 		void loadAssetsFromFolder();
 		
 		static AssetManager& initASM()

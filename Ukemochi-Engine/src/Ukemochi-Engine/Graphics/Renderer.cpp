@@ -461,7 +461,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
 	// Set textureCount based on the number of unique textures, limited to 32
 	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
-	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->texture_order.size());
+	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrder());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
 
@@ -470,7 +470,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		/*const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getOrderAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		if (texture->ID == 0) {
@@ -501,9 +501,9 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->order_index; i++)
+	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureIndex(); i++)
 	{
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getOrderAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -658,9 +658,8 @@ void Renderer::render()
 
 		GLint textureID = -1;
 		if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
-			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
-			ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end()) {
-			textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+			ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath)) {
+			textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 		}
 		if (textureID < 0) {
 			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
