@@ -1,0 +1,16 @@
+{
+    "GameObject": {
+        "Name": "LeftBlock",
+        "Tag": "LeftBlock",
+        "Components": [{
+                "Name": "Transform",
+                "Position": [0.0, 0.0],
+                "Rotation": 0.0,
+                "Scale": [386.0, 316.0]
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
+                "Shape": 0
+            }]
+    }
+}

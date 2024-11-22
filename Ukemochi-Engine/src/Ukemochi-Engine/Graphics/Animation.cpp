@@ -3,6 +3,7 @@
 
 #include "GLFW/glfw3.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi
 {
@@ -19,6 +20,9 @@ namespace Ukemochi
     {
         for(auto& entity : m_Entities)
         {
+            if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                continue;
+            
             auto& animation = ECS::GetInstance().GetComponent<Animation>(entity);
 
             GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());

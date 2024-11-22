@@ -26,8 +26,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGui/ImGuiCore.h"
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
+#include "Game/PlayerManager.h"
 #include "Graphics/Animation.h"
 #include "Game/EnemyManager.h"
+#include "Game/DungeonManager.h"
 
 namespace Ukemochi
 {
@@ -54,7 +56,7 @@ namespace Ukemochi
 		// Set up ECS
 		ECS::GetInstance().Init();
 
-        // TODO: Register your components
+        // TODO: Register your components, the limit is 32 components
         ECS::GetInstance().RegisterComponent<Transform>();
         ECS::GetInstance().RegisterComponent<Rigidbody2D>();
         ECS::GetInstance().RegisterComponent<BoxCollider2D>();
@@ -64,8 +66,9 @@ namespace Ukemochi
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
         ECS::GetInstance().RegisterComponent<Enemy>();
+		ECS::GetInstance().RegisterComponent<Player>();
 
-        // TODO: Register your systems
+        // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
         ECS::GetInstance().RegisterSystem<Collision>();
         ECS::GetInstance().RegisterSystem<Transformation>();
@@ -78,6 +81,8 @@ namespace Ukemochi
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
         ECS::GetInstance().RegisterSystem<EnemyManager>();
 
+		ECS::GetInstance().RegisterSystem<PlayerManager>();
+        ECS::GetInstance().RegisterSystem<DungeonManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -119,6 +124,10 @@ namespace Ukemochi
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Enemy>());
         ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
+		// For Player system
+		sig.reset();
+		sig.set(ECS::GetInstance().GetComponentType<Player>());
+		ECS::GetInstance().SetSystemSignature<PlayerManager>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);
@@ -144,7 +153,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi Complete Base Sprite-Base-Attack 1_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_2.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -210,64 +221,6 @@ namespace Ukemochi
     void SceneManager::SceneMangerRunSystems()
     {
         loop_start = std::chrono::steady_clock::now();
-        /* Level 1 Stuff For Ref, will be removed
-
-		// if (ECS::GetInstance().GetSystem<Transformation>()->player != -1)
-		// {
-		// 	GameObject* playerObj = &GameObjectManager::GetInstance().GetGO(ECS::GetInstance().GetSystem<Transformation>()->player);
-		// 	// --- HANDLE USER INPUTS ---
-		//
-		// // Player Inputs for movement
-		// 	auto& player_rb = playerObj->GetComponent<Rigidbody2D>();
-		// 	// Press 'W' or up key to move the player up
-		// 	if (Input::IsKeyPressed(UME_KEY_W))
-		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, PLAYER_FORCE);
-		// 	// Press 'S' or down key to move the player down
-		// 	else if (Input::IsKeyPressed(UME_KEY_S))
-		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceY(player_rb, -PLAYER_FORCE);
-		// 	else
-		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceY(player_rb); // Stop moving the player in the y axis
-		//
-		// 	// Press 'A' or left key to move the player left
-		// 	if (Input::IsKeyPressed(UME_KEY_A))
-		// 	{
-		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
-		// 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
-		// 	}
-		// 	// Press 'D' or right key to move the player to the right
-		// 	else if (Input::IsKeyPressed(UME_KEY_D))
-		// 	{
-		// 		ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
-		// 		ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
-		// 	}
-		// 	else
-		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
-		//
-		// 	// Input for rotation, to test rotate physics
-		// 	if (Input::IsKeyPressed(UME_KEY_R))
-		// 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, -PLAYER_FORCE);
-		// 	else if (Input::IsKeyPressed(UME_KEY_T))
-		// 		ECS::GetInstance().GetSystem<Physics>()->AddTorque(player_rb, PLAYER_FORCE);
-		// 	else
-		// 		ECS::GetInstance().GetSystem<Physics>()->RemoveTorque(player_rb);
-		//
-		// 	// Input for scaling, to test scaling of the player
-		// 	auto& player_trans = playerObj->GetComponent<Transform>();
-		// 	if (Input::IsKeyPressed(UME_KEY_F))
-		// 		ECS::GetInstance().GetSystem<Transformation>()->IncreaseScale(player_trans);
-		// 	else if (Input::IsKeyPressed(UME_KEY_G))
-		// 		ECS::GetInstance().GetSystem<Transformation>()->DecreaseScale(player_trans);
-		// }
-		
-
-        // Renderer Inputs
-        if (UME::Input::IsKeyTriggered(GLFW_KEY_T))
-        if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_T))
-            ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForScale();
-        else if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_Y))
-            ECS::GetInstance().GetSystem<Renderer>()->ToggleInputsForRotation();
-        else
-        */
 
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
@@ -301,6 +254,8 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
+
+            ECS::GetInstance().GetSystem<DungeonManager>()->InitDungeon();
 		}
 		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 		{
@@ -328,6 +283,10 @@ namespace Ukemochi
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+
+        ECS::GetInstance().GetSystem<DungeonManager>()->Update();
+
+		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 	    
@@ -474,6 +433,7 @@ namespace Ukemochi
             GameObject& newObject = GameObjectManager::GetInstance().CreateObject(name, tag);
             //GameObject newObject = GameObject(entity,name, tag);
 
+        	// TODO: Encapsulate this into factory during refactoring
             // Iterate through components and add them based on their type
             for (const auto& componentData : gameObjectData["Components"].GetArray())
             {
@@ -613,12 +573,14 @@ namespace Ukemochi
             				newClip.keyPath = itr->value[0].GetString();
 							newClip.name = itr->value[1].GetString();
 							newClip.total_frames = itr->value[2].GetInt();
-							newClip.pixel_width = itr->value[3].GetInt();
-							newClip.pixel_height = itr->value[4].GetInt();
-							newClip.total_width = itr->value[5].GetInt();
-							newClip.total_height = itr->value[6].GetInt();
-							newClip.frame_time = itr->value[7].GetFloat();
-							newClip.looping = itr->value[8].GetBool();
+            				newClip.pivot.x = itr->value[3].GetFloat();
+            				newClip.pivot.y = itr->value[4].GetFloat();
+							newClip.pixel_width = itr->value[5].GetInt();
+							newClip.pixel_height = itr->value[6].GetInt();
+							newClip.total_width = itr->value[7].GetInt();
+							newClip.total_height = itr->value[8].GetInt();
+							newClip.frame_time = itr->value[9].GetFloat();
+							newClip.looping = itr->value[10].GetBool();
 							anim.clips[newClip.name] = newClip;
 						}
 
@@ -638,6 +600,26 @@ namespace Ukemochi
                             componentData["Position"][1].GetFloat(),static_cast<Enemy::EnemyTypes>(type),newObject.GetInstanceID() });
                     }
                 }
+            	else if (componentName == "Player")
+            	{
+            		if (!newObject.HasComponent<Player>())
+            		{
+            			Player player;
+            			player.maxHealth = componentData["MaxHealth"].GetInt();
+            			player.currentHealth = componentData["CurrentHealth"].GetInt();
+            			player.maxComboHits = componentData["MaxComboHits"].GetInt();
+            			player.currentComboHits = componentData["CurrentComboHits"].GetInt();
+            			player.comboDamage = componentData["ComboDamage"].GetInt();
+            			player.attackCooldown = componentData["AttackCooldown"].GetFloat();
+            			player.attackTimer = componentData["AttackTimer"].GetFloat();
+            			player.playerForce = componentData["PlayerForce"].GetFloat();
+            			player.isDead = componentData["IsDead"].GetBool();
+            			player.canAttack = componentData["CanAttack"].GetBool();
+            			// TODO: is there a better way to do this? type.id()?
+
+            			newObject.AddComponent(std::move(player));
+            		}
+            	}
                 else
                 {
                     UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
@@ -666,7 +648,6 @@ namespace Ukemochi
 
     void SceneManager::SaveScene(const std::string& file_name)
     {
-        // TODO: Some day we will encapsulate all this into Serialization class...
         //get file name to save
         Document document;
         document.SetObject();
@@ -675,6 +656,7 @@ namespace Ukemochi
         // Create a JSON array to hold game object data
         Value gameObjectsArray(rapidjson::kArrayType);
 
+		// TODO: Should Encapsulate this into factory? or Serialization? 
         std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
         for (auto& gameobject : list)
         {
@@ -828,7 +810,10 @@ namespace Ukemochi
         			Value clipData(kArrayType);
         			clipData.PushBack(Value(value.keyPath.c_str(),allocator), allocator);
         			clipData.PushBack(Value(key.c_str(),allocator), allocator);
+
         			clipData.PushBack(value.total_frames, allocator);
+        			clipData.PushBack(value.pivot.x, allocator);
+        			clipData.PushBack(value.pivot.y, allocator);
         			clipData.PushBack(value.pixel_width, allocator);
         			clipData.PushBack(value.pixel_height,allocator);
         			clipData.PushBack(value.total_width, allocator);
@@ -858,6 +843,26 @@ namespace Ukemochi
 
                 componentsArray.PushBack(enemyComponent, allocator);
             }
+
+        	if (gameobject->HasComponent<Player>())
+        	{
+        		Value playerComponent(rapidjson::kObjectType);
+        		playerComponent.AddMember("Name", "Player", allocator);
+
+        		const auto&player = gameobject->GetComponent<Player>();
+        		playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
+        		playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
+        		playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
+        		playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+        		playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
+        		playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
+        		playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+        		playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
+        		playerComponent.AddMember("IsDead", player.isDead, allocator);
+        		playerComponent.AddMember("CanAttack", player.canAttack, allocator);
+
+        		componentsArray.PushBack(playerComponent, allocator);
+        	}
 
             gameObjectData.AddMember("Components", componentsArray, allocator);
 
@@ -1048,7 +1053,11 @@ namespace Ukemochi
 	        {
 	            Value clip(key.c_str(),allocator);
 	        	Value clipData(kArrayType);
+	        	clipData.PushBack(Value(value.keyPath.c_str(),allocator), allocator);
 	        	clipData.PushBack(Value(key.c_str(),allocator), allocator);
+	        	
+	        	clipData.PushBack(value.pivot.x, allocator);
+	        	clipData.PushBack(value.pivot.y, allocator);
 	        	clipData.PushBack(value.total_frames, allocator);
 	        	clipData.PushBack(value.pixel_width, allocator);
 	        	clipData.PushBack(value.pixel_height,allocator);
