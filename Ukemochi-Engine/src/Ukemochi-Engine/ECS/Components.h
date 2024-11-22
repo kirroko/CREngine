@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Vector2D.h"	// for Vec2 struct
 #include "../Audio/Audio.h"		// for Audio class
 
+//for enemy
+#include "../FrameController.h"
+
 namespace Ukemochi
 {
 	/*!***********************************************************************
@@ -283,5 +286,239 @@ namespace Ukemochi
 		void* instance = nullptr; // MonoObject from client script
 		void* handle = nullptr; // MonoGCHandle from client script
 		void* methodInstance = nullptr; // MonoMethod from client script
+	};
+
+	/*!***********************************************************************
+	\brief
+	 Enemy component structure.
+	*************************************************************************/
+	struct Enemy
+	{
+		enum EnemyStates
+		{
+			ROAM,
+			CHASE,
+			ATTACK,
+			DEAD,
+		};
+
+		enum EnemyTypes
+		{
+			FISH,
+			WORM,
+			DEFAULT,
+		};
+
+		EntityID ID;
+		EnemyStates state;
+		EnemyTypes type;
+		float posX, posY;
+		float targetX, targetY;
+		float health;
+		float attackPower;
+		float attackRange;
+		float speed;
+		int nearestObj;
+		mutable int prevObject;
+		bool isCollide;
+
+		// Check if two points are within a threshold distance
+		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const {
+			float dx = x1 - x2;
+			float dy = y1 - y2;
+			return (dx * dx + dy * dy) <= (threshold * threshold);
+		}
+
+		EnemyStates GetEnemyState() const
+		{
+			return state;
+		}
+
+		void SetEnemyState(EnemyStates newState)
+		{
+			state = newState;
+		}
+
+		bool IsCollide() const
+		{
+			return isCollide;
+		}
+
+		void SetIsCollide(bool b)
+		{
+			isCollide = b;
+		}
+		Enemy() = default;
+		// Constructor
+		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
+			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), isCollide(false)
+		{
+			nearestObj = -1;
+			switch (type)
+			{
+			case Enemy::FISH:
+				health = 120.f;
+				attackPower = 20.f;
+				attackRange = 0.5f;
+				speed = 150.f;
+				break;
+			case Enemy::WORM:
+				health = 100.f;
+				attackPower = 10.f;
+				attackRange = 5.f;
+				speed = 150.f;
+				break;
+			case Enemy::DEFAULT:
+				break;
+			default:
+				break;
+			}
+		}
+
+
+		void RoamState(Transform& self,std::vector<EntityID>& environmentObjects ,Transform& nearestObjTransform, int playerID, Transform& playerTransform)
+		{
+			float targetX = nearestObjTransform.position.x;
+			float targetY = nearestObjTransform.position.y;
+
+			// Move to the nearest object
+			MoveToTarget(self,targetX, targetY, g_FrameRateController.GetDeltaTime(), speed);
+
+			//when target reach find next obj
+			if (ReachedTarget(GetPosition().first, GetPosition().second, targetX, targetY, 0.f) == true)
+			{
+				nearestObj = -1;
+			}
+
+			if (playerID == -1)
+			{
+				return;
+			}
+
+			if (ReachedTarget(GetPosition().first, GetPosition().second,
+				playerTransform.position.x,
+				playerTransform.position.y, 250.f) == true)
+			{
+				state = CHASE;
+				return;
+			}
+
+		}
+
+		void ChaseState(Transform& self,Transform& player)
+		{
+			SetTarget(player);
+
+			MoveToTarget(self,player.position.x,
+				player.position.y, g_FrameRateController.GetDeltaTime(), speed);
+
+			if (ReachedTarget(GetPosition().first, GetPosition().second,
+				player.position.x,
+				player.position.y, 250.f) == false)
+			{
+				state = ROAM;
+				return;
+			}
+
+			//in attack range
+			if (IsPlayerInRange(player))
+			{
+				state = ATTACK;
+				return;
+			}
+		}
+
+		void AttackState()
+		{
+			static float timer = 0.0f;
+
+			timer -= g_FrameRateController.GetDeltaTime();
+
+			if (timer <= 0.0f)
+			{
+				//AttackPlayer(GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Collision>());
+				timer = 3.0f;
+			}
+		}
+
+		void SetTarget(Transform& target)
+		{
+			this->targetX = target.position.x;
+			this->targetY = target.position.y;
+		}
+
+		// Set the target destination
+		void SetTarget(float targetX, float targetY) {
+			this->targetX = targetX;
+			this->targetY = targetY;
+		}
+
+		//GET TRANSFORM TO MOVE
+		void MoveToTarget(Transform& self,float targetX, float targetY, float deltaTime, float speed)
+		{
+			// Check if already at the target
+			if (ReachedTarget(self.position.x, self.position.y, targetX, targetY, 0.1f))
+			{
+				std::cout << "Enemy already at the target position.\n";
+				return;
+			}
+
+			float dx = targetX - self.position.x;
+			float dy = targetY - self.position.y;
+			float distance = std::sqrt(dx * dx + dy * dy);
+
+			// Normalize direction
+			if (distance > 0.0f) {
+				dx /= distance;
+				dy /= distance;
+			}
+
+			// Move the enemy
+			self.position.x += dx * speed * deltaTime;
+			self.position.y += dy * speed * deltaTime;
+			posX = self.position.x;
+			posY = self.position.y;
+			// Print position for debugging
+			std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
+		}
+
+
+		// Check if the enemy can attack the player
+		bool IsPlayerInRange(Transform& player) const {
+			float playerX = player.position.x;
+			float playerY = player.position.y;
+			float dx = playerX - posX;
+			float dy = playerY - posY;
+			float distance = std::sqrt(dx * dx + dy * dy);
+			return distance <= attackRange;
+		}
+
+		// Attack the player (reduces player's health)
+		void AttackPlayer(float& playerHealth) {
+			if (playerHealth > 0.0f) {
+				playerHealth -= attackPower;
+				if (playerHealth < 0.0f) {
+					playerHealth = 0.0f; // Ensure health does not go negative
+				}
+			}
+		}
+
+		// Get the current position of the enemy
+		std::pair<float, float> GetPosition() const {
+			return { posX, posY };
+		}
+
+		// Get the current health of the enemy
+		float GetHealth() const {
+			return health;
+		}
+
+		// Reduce the enemy's health when taking damage
+		void TakeDamage(float damage) {
+			health -= damage;
+			if (health < 0.0f) {
+				health = 0.0f; // Ensure health does not go negative
+			}
+		}
 	};
 }

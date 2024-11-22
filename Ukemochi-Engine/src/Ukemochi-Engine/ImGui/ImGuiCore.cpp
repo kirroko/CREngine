@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Transformation.h"
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+#include "../Game/EnemyManager.h"
 
 namespace Ukemochi
 {
@@ -576,6 +577,9 @@ namespace Ukemochi
         // Example: Add a button
         if (ImGui::Button("Play"))
         {
+            //enemy
+            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+
             // Recompile scripts and display popup that its compiling. Remove popup when done
             if (ScriptingEngine::GetInstance().compile_flag)
             {
@@ -1748,17 +1752,26 @@ namespace Ukemochi
 
             // Get the mouse position in screen coordinates
             ImVec2 mousePos = ImGui::GetMousePos();
+            ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 
+            ImVec2 panelSizehere = ImGui::GetContentRegionAvail();
+
+            //static_cast<float>(Application::Get().GetWindow().GetWidth());
+            // 
             // Calculate mouse position relative to the "Player Loader" window
-            float relativeX = mousePos.x - windowPos.x;
-            float relativeY = windowSize.y - (mousePos.y - windowPos.y);
+            float relativeX =  (mousePos.x- cursorPos.x)*1600/ panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
+            
+            const GLFWvidmode* videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
+            // Get mouse position relative to the play window
+            float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
 
 
             // Check if the mouse is within the bounds of the window
-            if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
+           // if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
             {
                 // Optional: Handle the mouse position within the window here
-                //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
+                std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
             // Handle the drop target (accept file drops here)

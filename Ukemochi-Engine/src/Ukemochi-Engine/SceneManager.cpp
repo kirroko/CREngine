@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
 #include "Graphics/Animation.h"
+#include "Game/EnemyManager.h"
 
 namespace Ukemochi
 {
@@ -62,6 +63,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
+        ECS::GetInstance().RegisterComponent<Enemy>();
 
         // TODO: Register your systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -74,6 +76,8 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
+        ECS::GetInstance().RegisterSystem<EnemyManager>();
+
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -110,6 +114,11 @@ namespace Ukemochi
 	    sig.reset();
 	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
 	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
+
+        //For Enemy
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
+        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);
@@ -309,6 +318,7 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
 		}
 
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 
 		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
@@ -617,6 +627,17 @@ namespace Ukemochi
             			newObject.AddComponent(std::move(anim));
             		}
             	}
+                else if (componentName == "EnemyComponent")
+                {
+                    if (!newObject.HasComponent<Enemy>())
+                    {
+                        // Deserialize Enemy component
+                        int type = componentData["Type"].GetInt();
+
+                        newObject.AddComponent<Enemy>({ componentData["Position"][0].GetFloat(),
+                            componentData["Position"][1].GetFloat(),static_cast<Enemy::EnemyTypes>(type),newObject.GetInstanceID() });
+                    }
+                }
                 else
                 {
                     UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
@@ -629,6 +650,10 @@ namespace Ukemochi
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(newObject.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
                     // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                }
+                if (tag == "Enemy")
+                {
+
                 }
                 if (!playerFound)
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
@@ -816,6 +841,23 @@ namespace Ukemochi
         		animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
         		componentsArray.PushBack(animationComponent, allocator);
         	}
+            if (gameobject->HasComponent<Enemy>())
+            {
+                Value enemyComponent(rapidjson::kObjectType);
+
+                enemyComponent.AddMember("Name", Value("EnemyComponent", allocator), allocator);
+
+                const auto& enemy = gameobject->GetComponent<Enemy>();
+
+                Value position(rapidjson::kArrayType);
+                position.PushBack(enemy.GetPosition().first, allocator);
+                position.PushBack(enemy.GetPosition().second, allocator);
+                enemyComponent.AddMember("Position", position, allocator);
+
+                enemyComponent.AddMember("Type", enemy.type, allocator);
+
+                componentsArray.PushBack(enemyComponent, allocator);
+            }
 
             gameObjectData.AddMember("Components", componentsArray, allocator);
 

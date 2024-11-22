@@ -510,9 +510,13 @@ namespace Ukemochi
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
 
-			auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
+			if (ECS::GetInstance().HasComponent<Script>(entity1))
+			{
+				auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
+				ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
 
+			}
+			
 			std::cout << "player hit\n";
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
