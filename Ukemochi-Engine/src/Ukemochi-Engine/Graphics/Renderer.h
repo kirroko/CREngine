@@ -465,6 +465,7 @@ private:
 	std::shared_ptr<Shader> object_picking_shader_program;
 	GLuint colorPickingBuffer = 0;
 	GLuint objectPickingFrameBuffer = 0;
+	GLuint object_picking_rbo = 0;
 	std::unique_ptr<VAO> objectPickingVAO;
 	std::unique_ptr<VBO> objectPickingVBO;
 	std::unique_ptr<EBO> objectPickingEBO;
@@ -477,6 +478,7 @@ public:
 	size_t getEntityFromMouseClick(int mouseX, int mouseY);
 	void renderForObjectPicking();
 	GLuint getObjectPickingColorBuffer() const;
+	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
 	glm::vec3 encodeIDToColor(int id);
 };
 #endif

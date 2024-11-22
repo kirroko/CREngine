@@ -1696,6 +1696,20 @@ namespace Ukemochi
         }
     }
 
+    void UseImGui::UpdateObjectPickingFramebufferSize(ImVec2 panelSize)
+    {
+        unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
+        unsigned int newHeight = static_cast<unsigned int>(panelSize.y);
+
+        if (newWidth != m_currentPanelWidth || newHeight != m_currentPanelHeight)
+        {
+            m_currentPanelWidth = newWidth;
+            m_currentPanelHeight = newHeight;
+
+            ECS::GetInstance().GetSystem<Renderer>()->resizeObjectPickingFramebuffer(m_currentPanelWidth, m_currentPanelHeight);
+        }
+    }
+
     /**
  * @brief Renders the game scene within an ImGui window and handles mouse interaction.
  *
@@ -1719,8 +1733,9 @@ namespace Ukemochi
             ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
-            UpdateFramebufferSize(panelSize);
-            
+            //UpdateFramebufferSize(panelSize);
+            UpdateObjectPickingFramebufferSize(panelSize);
+
             float targetAspect = 16.0f / 9.0f;
             float panelAspect = panelSize.x / panelSize.y;
             float displayWidth, displayHeight;
@@ -1772,7 +1787,7 @@ namespace Ukemochi
            // if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
             {
                 // Optional: Handle the mouse position within the window here
-                std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
+                //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
             // Handle the drop target (accept file drops here)

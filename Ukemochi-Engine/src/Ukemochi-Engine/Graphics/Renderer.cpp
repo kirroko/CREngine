@@ -764,6 +764,16 @@ void Renderer::cleanUp()
 		textRenderer = nullptr;
 	}
 
+	if (objectPickingFrameBuffer)
+		glDeleteFramebuffers(1, &objectPickingFrameBuffer);
+	objectPickingFrameBuffer = 0;
+
+	if (colorPickingBuffer)
+		glDeleteTextures(1, &colorPickingBuffer);
+	colorPickingBuffer = 0;
+
+	if (object_picking_rbo)
+		glDeleteRenderbuffers(1, &object_picking_rbo);
 }
 
 /*!
@@ -1210,4 +1220,22 @@ void Renderer::drawBox()
 GLuint Renderer::getObjectPickingColorBuffer() const
 {
 	return colorPickingBuffer;  // this is framebuffer's color texture
+}
+
+void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+
+	// Resize color texture
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<int>(width), static_cast<int>(height), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	// Resize renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, object_picking_rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, static_cast<int>(width), static_cast<int>(height));
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// May as well update viewport?
+	glViewport(0, 0, width, height);
 }
