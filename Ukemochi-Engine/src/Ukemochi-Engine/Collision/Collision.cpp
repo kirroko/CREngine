@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Input/Input.h" // temp
 #include "../Physics/Physics.h" // temp
 #include "../Graphics/Camera2D.h" // temp
+#include "Ukemochi-Engine/Game/PlayerManager.h"
 
 namespace Ukemochi
 {
@@ -151,16 +152,16 @@ namespace Ukemochi
 						//BoxBox_Response(tag1, trans1, box1, rb1, tag2, trans2, box2, rb2, tLast);
 
 						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						if (ECS::GetInstance().HasComponent<Script>(entity1))
-						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						}
-						if (ECS::GetInstance().HasComponent<Script>(entity2))
-						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
-							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						}
+						// if (ECS::GetInstance().HasComponent<Script>(entity1))
+						// {
+						// 	auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
+						// 	ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+						// }
+						// if (ECS::GetInstance().HasComponent<Script>(entity2))
+						// {
+						// 	auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
+						// 	ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+						// }
 					}
 				}
 
@@ -512,8 +513,11 @@ namespace Ukemochi
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
 
-			auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
+			// auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
+			// ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
+
+			// Temp
+			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
 
 			std::cout << "player hit\n";
 

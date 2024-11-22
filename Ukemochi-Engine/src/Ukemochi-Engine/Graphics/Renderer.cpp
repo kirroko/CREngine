@@ -586,21 +586,10 @@ void Renderer::render()
 		if(ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
-			if (ani.clips.find(ani.currentClip) == ani.clips.end())
-			{
-				UME_ENGINE_WARN("Clip not found for {0}, using default UV for now.", ani.currentClip);
-				// Use default full texture UVs for static sprites
-				uvCoordinates[0] = 0.0f; uvCoordinates[1] = 0.0f;  // Bottom-left
-				uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
-				uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
-				uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
-			}
-			else
-			{
-				auto& clip = ani.clips[ani.currentClip];
-				spriteRenderer.texturePath = clip.keyPath;
-				updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
-			}
+			auto& clip = ani.clips[ani.currentClip];
+			spriteRenderer.texturePath = clip.keyPath;
+			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
+			
 			
 			if(spriteRenderer.flipX)
 			{
@@ -619,6 +608,16 @@ void Renderer::render()
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
 			}
+
+			int mappedTextureUnit = textureIDMap[textureID];
+
+			// Draw the sprite using the batch renderer, passing the updated UV coordinates
+			// glm::vec2 pivotOffset = glm::vec2(0.5f - clip.pivot.x, 0.5f - clip.pivot.y); // We render center
+			// glm::vec2 renderPos = glm::vec2(static_cast<float>(clip.pixel_width) * pivotOffset.x,
+			//                                 static_cast<float>(clip.pixel_height) * pivotOffset.y);
+			// glm::vec2 pos = glm::vec2(transform.position.x - renderPos.x, transform.position.y - renderPos.y);
+			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
+			batchRenderer->drawSprite(pos, glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 		else
 		{
@@ -646,12 +645,12 @@ void Renderer::render()
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
 			}
-		}
-		
-		int mappedTextureUnit = textureIDMap[textureID];
+			
+			int mappedTextureUnit = textureIDMap[textureID];
 
-		// Draw the sprite using the batch renderer, passing the updated UV coordinates
-		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+			// Draw the sprite using the batch renderer, passing the updated UV coordinates
+			batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+		}
 	}
 
 

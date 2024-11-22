@@ -33,6 +33,11 @@ namespace Ukemochi
         {
             return EngineInterop.PlayQueuedAnimation(GetInstanceID(), clipName);
         }
+
+        public bool PlayImmediate(string clipName)
+        {
+            return EngineInterop.PlayImmediately(GetInstanceID(), clipName);
+        }
         
         public bool IsPlaying()
         {
