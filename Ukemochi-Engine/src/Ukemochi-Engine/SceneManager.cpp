@@ -250,11 +250,11 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
 
-        /*if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handlePicking(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+            ECS::GetInstance().GetSystem<Renderer>()->getEntityFromMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                 SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
-        }*/
+        }
 
         /*
         // Audio Inputs
@@ -360,10 +360,8 @@ namespace Ukemochi
     void SceneManager::SceneManagerDraw()
     {
         
-        ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
-        if(Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-            ECS::GetInstance().GetSystem<Renderer>()->handlePicking(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+        ECS::GetInstance().GetSystem<Renderer>()->renderForObjectPicking();
         
     }
 

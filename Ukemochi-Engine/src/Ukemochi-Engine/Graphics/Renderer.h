@@ -452,22 +452,23 @@ private:
 	std::shared_ptr<Shader> UI_shader_program;
 
 
-// Object Picking
+	// Object picking
 private:
-	GLuint pickingFBO;
-	GLuint pickingColorBuffer;
-	GLuint pickingDepthBuffer;
-	std::shared_ptr<Shader> pickingShader;
-	std::unique_ptr<Shader> debugShader;
-
-	void setupPickingFramebuffer(int width, int height);
-	glm::vec3 encodeIDToColor(int id);
-	int decodeEntityID(unsigned char* colorData);
-	int getEntityAtMouse(int mouseX, int mouseY);
+	std::shared_ptr<Shader> object_picking_shader_program;
+	GLuint colorPickingBuffer = 0;
+	GLuint objectPickingFrameBuffer = 0;
+	std::unique_ptr<VAO> objectPickingVAO;
+	std::unique_ptr<VBO> objectPickingVBO;
+	std::unique_ptr<EBO> objectPickingEBO;
+	std::unordered_map<size_t, glm::vec3> entityColors; // Map from entity ID to unique color
+	void assignUniqueColorsToEntities();
+	void setupColorPickingFramebuffer();
+	void setUpObjectPickingBuffer();
 
 public:
-	void handlePicking(int mouseX, int mouseY);
-	void debugRenderPickingFramebuffer();
-	void renderForPicking();
+	size_t getEntityFromMouseClick(int mouseX, int mouseY);
+	void renderForObjectPicking();
+	GLuint getObjectPickingColorBuffer() const;
+	glm::vec3 encodeIDToColor(int id);
 };
 #endif

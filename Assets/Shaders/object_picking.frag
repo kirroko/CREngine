@@ -1,9 +1,10 @@
 #version 450 core
+
 out vec4 FragColor;
 
-uniform vec3 idColor; // Encoded object ID color
+uniform vec3 objectColor; // Unique color for each object
 
-void main() 
+void main()
 {
-    FragColor = vec4(idColor, 1.0); // Write unique ID color
+    FragColor = vec4(objectColor, 1.0);
 }

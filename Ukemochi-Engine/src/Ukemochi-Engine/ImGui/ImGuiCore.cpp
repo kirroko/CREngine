@@ -1183,7 +1183,8 @@ namespace Ukemochi
         static bool showGameView = true;
         Application& app = Application::Get();
         //GLuint texture = renderer.getTextureColorBuffer();
-        GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
+        //GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
+        GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
 
         if (showGameView)
         {

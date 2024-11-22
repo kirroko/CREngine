@@ -77,7 +77,9 @@ void Renderer::init()
 	setupFramebuffer();
 	initScreenQuad();
 
-	setupPickingFramebuffer(screen_width, screen_height);
+	setUpObjectPickingBuffer();
+	setupColorPickingFramebuffer();
+	assignUniqueColorsToEntities();
 
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
@@ -486,9 +488,8 @@ void Renderer::setUpShaders()
 
 	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
 
-	pickingShader = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
 
-	debugShader = std::make_unique<Shader>("../Assets/Shaders/debug_object_picking.vert", "../Assets/Shaders/debug_object_picking.frag");
 }
 
 /*!
@@ -743,31 +744,6 @@ void Renderer::cleanUp()
 		textRenderer = nullptr;
 	}
 
-}
-
-/*!
- * @brief Draws a 2D box with the given position, dimensions, and texture,
-		  starting position is the top left of screen. It starts from the
-		  center of the box.
- * @param x The x-coordinate of the center of the box (in screen space).
- * @param y The y-coordinate of the center of the box (in screen space).
- * @param width The width of the box (in screen space).
- * @param height The height of the box (in screen space).
- * @param texturePath The file path to the texture for the box.
- */
-void Renderer::drawBox()
-{
-	// Bind the VAO[0] for the box
-	vaos[0]->Bind();
-
-	// Set the object color (if necessary)
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
-
-	// Issue the draw call using the pre-setup buffers
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	// Unbind the VAO[0] after drawing
-	vaos[0]->Unbind();
 }
 
 /*!
@@ -1031,135 +1007,180 @@ void Renderer::animationKeyInput()
 	}
 }
 
-void Renderer::setupPickingFramebuffer(int width, int height) 
+void Renderer::assignUniqueColorsToEntities()
 {
-	glGenFramebuffers(1, &pickingFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, pickingFBO);
-
-	// Create a color attachment texture
-	glGenTextures(1, &pickingColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, pickingColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pickingColorBuffer, 0);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) 
+	size_t entityID = 0; // Starting ID
+	for (auto& entity : m_Entities)
 	{
-		std::cerr << "ERROR: Picking framebuffer is not complete!" << std::endl;
-	}
+		float r = ((entityID & 0xFF) / 255.0f);               // Red from least significant byte
+		float g = (((entityID >> 8) & 0xFF) / 255.0f);        // Green from next byte
+		float b = (((entityID >> 16) & 0xFF) / 255.0f);       // Blue from next byte
+		entityColors[entity] = glm::vec3(r, g, b);
+		entityID++;
 
+	}
+}
+
+glm::vec3 Renderer::encodeIDToColor(int id)
+{
+	//// Increase spread by scaling and biasing the channels
+	//float r = ((id % 255) + 50) / 305.0f;                // Add a bias to red
+	//float g = (((id / 255) % 255) + 50) / 305.0f;        // Add a bias to green
+	//float b = (((id / (255 * 255)) % 255) + 50) / 305.0f; // Add a bias to blue
+
+	//// Clamp to [0, 1] to ensure valid color values
+	//return glm::clamp(glm::vec3(r, g, b), 0.0f, 1.0f);
+
+	float r = ((id >> 16) & 0xFF) / 255.0f;
+	float g = ((id >> 8) & 0xFF) / 255.0f;
+	float b = (id & 0xFF) / 255.0f;
+	return glm::vec3(r, g, b);
+
+}
+
+void Renderer::setupColorPickingFramebuffer()
+{
+	glGenFramebuffers(1, &objectPickingFrameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+
+	glGenTextures(1, &colorPickingBuffer);
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen_width, screen_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorPickingBuffer, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cerr << "ERROR: Framebuffer is not complete for color picking." << std::endl;
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Renderer::renderForPicking() 
+void Renderer::renderForObjectPicking()
 {
-	// Bind the picking framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, pickingFBO);
-	glClearColor(0, 0, 0, 1); // Clear to black (no object)
+
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+	glClearColor(1.f, 1.f, 1.f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Activate the picking shader
-	pickingShader->Activate();
-
-	GLfloat defaultUV[8] = {
-	0.0f, 0.0f,  // Bottom-left
-	1.0f, 0.0f,  // Bottom-right
-	1.0f, 1.0f,  // Top-right
-	0.0f, 1.0f   // Top-left
-	};
 
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
 	glm::mat4 view = camera->getCameraViewMatrix();
 	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
-	pickingShader->setMat4("view", view);
-	pickingShader->setMat4("projection", projection);
+	// Set the projection and view matrices in the shader
+	object_picking_shader_program->Activate();
+	object_picking_shader_program->setMat4("view", view);
+	object_picking_shader_program->setMat4("projection", projection);
 
-	// Loop through all entities
-	for (auto& entity : m_Entities) 
+	for (auto& entity : m_Entities)
 	{
-		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+		//std::cout << entity << std::endl;
 
-		// Create the model matrix
+		//glm::vec3 color = entityColors[entity];
+		glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
+
+		object_picking_shader_program->setVec3("objectColor", color);
+
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
 		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
+		object_picking_shader_program->setMat4("model", model);
 
-		// Set the model matrix in the shader
-		pickingShader->setMat4("model", model);
+		drawBox();
 
-		// Encode the entity ID as a color
-		glm::vec3 idColor = encodeIDToColor(static_cast<int>(entity));
-		std::cout << "Entity ID: " << entity << " Color: " << idColor.r << ", " << idColor.g << ", " << idColor.b << std::endl;
-		pickingShader->setVec3("idColor", idColor);
 
-		// Use drawSprite to render the entity
-		batchRenderer->setActiveShader(pickingShader); // Use the picking shader
-		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y),
-			glm::vec2(transform.scale.x, transform.scale.y),
-			idColor, 0, defaultUV, glm::radians(transform.rotation));
 	}
-	batchRenderer->flush();
-	// Reset to the default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Now render the framebuffer texture to the screen
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-glm::vec3 Renderer::encodeIDToColor(int id) 
+size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 {
-	return glm::vec3(
-		(id & 0xFF) / 255.0f,          // Red
-		((id >> 8) & 0xFF) / 255.0f,  // Green
-		((id >> 16) & 0xFF) / 255.0f  // Blue
-	);
-}
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
 
-int Renderer::decodeEntityID(unsigned char* colorData) 
-{
-	int entityID = colorData[0] | (colorData[1] << 8) | (colorData[2] << 16);
+	unsigned char pixel[3];
+	glReadPixels(mouseX, screen_height - mouseY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	size_t entityID = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+
+	// Log or return the ID
+	std::cout << "Entity ID at (" << mouseX << ", " << mouseY << ") is: " << entityID << std::endl;
+	std::cout << "Pixel RGB: [" << (int)pixel[0] << ", " << (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
 	return entityID;
 }
 
-int Renderer::getEntityAtMouse(int mouseX, int mouseY) 
+void Renderer::setUpObjectPickingBuffer()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, pickingFBO);
+	float quadVertices[] = {
+	-0.5f,  0.5f, 0.0f, // Top-left
+	-0.5f, -0.5f, 0.0f, // Bottom-left
+	 0.5f, -0.5f, 0.0f, // Bottom-right
+	 0.5f,  0.5f, 0.0f  // Top-right
+	};
 
-	unsigned char data[3];
-	glReadPixels(mouseX, screen_height - mouseY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, data);
-	std::cout << "Picked Color: " << (int)data[0] << ", " << (int)data[1] << ", " << (int)data[2] << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GLuint indices[] = {
+		0, 1, 2, // First triangle
+		0, 2, 3  // Second triangle
+	};
 
-	// Decode the color back to an entity ID
-	int id = (data[0]) | (data[1] << 8) | (data[2] << 16);
-	return id;
+	objectPickingVAO = std::make_unique<VAO>();
+	objectPickingVBO = std::make_unique<VBO>(quadVertices, sizeof(quadVertices));
+	objectPickingEBO = std::make_unique<EBO>(indices, sizeof(indices));
+
+	objectPickingVAO->Bind();
+	objectPickingVBO->Bind();
+	objectPickingEBO->Bind(); // Bind the EBO here
+	objectPickingVAO->LinkAttrib(*objectPickingVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+
+	// Create a shader for rendering the framebuffer texture
+	//framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+
+	// Unbind to clean up
+	objectPickingVAO->Unbind();
+	objectPickingVBO->Unbind();
+	objectPickingEBO->Unbind();
+
+	ECS::GetInstance().GetSystem<AssetManager>()->addShader("objectPickingFramebuffer", "../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("objectPickingFramebuffer");
 }
 
-void Renderer::handlePicking(int mouseX, int mouseY) 
+/*!
+ * @brief Draws a 2D box with the given position, dimensions, and texture,
+		  starting position is the top left of screen. It starts from the
+		  center of the box.
+ * @param x The x-coordinate of the center of the box (in screen space).
+ * @param y The y-coordinate of the center of the box (in screen space).
+ * @param width The width of the box (in screen space).
+ * @param height The height of the box (in screen space).
+ * @param texturePath The file path to the texture for the box.
+ */
+void Renderer::drawBox()
 {
-	// Render the picking pass
-	renderForPicking();
+	//object_picking_shader_program->Activate();
 
-	GLenum error;
-	while ((error = glGetError()) != GL_NO_ERROR) 
-	{
-		std::cerr << "OpenGL Error after renderForPicking: " << error << std::endl;
-	}
+	objectPickingVAO->Bind();
 
-	// Retrieve the entity at the mouse position
-	int pickedEntityID = getEntityAtMouse(mouseX, mouseY);
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	// Issue the draw call using the pre-setup buffers
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
+	// Unbind the VAO[0] after drawing
+	objectPickingVAO->Unbind();
+}
 
-	// Immediately restore normal rendering after picking
-	renderToFramebuffer();
-
-	// Process the picked entity
-	if (pickedEntityID >= 0) 
-	{
-		std::cout << "Picked entity ID: " << pickedEntityID << std::endl;
-		// Additional logic to handle the picked entity
-	}
-	else 
-	{
-		std::cout << "No entity picked." << std::endl;
-	}
+GLuint Renderer::getObjectPickingColorBuffer() const
+{
+	return colorPickingBuffer;  // this is framebuffer's color texture
 }
