@@ -35,6 +35,7 @@ namespace Ukemochi
 		std::unordered_map<std::string, std::shared_ptr<Texture>> texture_list;
 		std::unordered_map<std::string, std::shared_ptr<Shader>> shader_list;
 		std::vector<std::shared_ptr<FMOD::Sound>> sound_list;
+		std::vector<std::string> sound_name_list;
 		std::string asset_dir{ "../Assets" };
 		//try to store game object prefab here
 

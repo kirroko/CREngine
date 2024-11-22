@@ -21,6 +21,8 @@ namespace Ukemochi
 		texture_order.clear();
 		texture_list.clear();
 		shader_list.clear();
+		sound_list.clear();
+		sound_name_list.clear();
 	}
 
 	AssetManager::~AssetManager()
@@ -28,6 +30,8 @@ namespace Ukemochi
 		texture_order.clear();
 		texture_list.clear();
 		shader_list.clear();
+		sound_list.clear();
+		sound_name_list.clear();
 	}
 
 	void AssetManager::addTexture(std::string file_path)
@@ -82,6 +86,12 @@ namespace Ukemochi
 
 	void AssetManager::addShader(std::string file_name, std::string vert_path, std::string frag_path)
 	{
+		if (shader_list.find(file_name) != shader_list.end())
+		{
+			UME_ENGINE_INFO("Shader {0} already exists in list", file_name);
+			return;
+		}
+
 		std::shared_ptr<Shader> shader(new Shader(vert_path.c_str(), frag_path.c_str()));
 
 		shader_list[file_name] = shader;
@@ -101,6 +111,11 @@ namespace Ukemochi
 
 	void AssetManager::addSound(std::string file_path)
 	{
+		if (std::find(sound_name_list.begin(), sound_name_list.end(), file_path) != sound_name_list.end())
+		{
+			UME_ENGINE_INFO("Sound {0} already exists in list", file_path);
+			return;
+		}
 		FMOD::Sound* sound{};
 		FMOD::System* sys = ECS::GetInstance().GetSystem<Audio>()->accessSys();
 
@@ -111,6 +126,7 @@ namespace Ukemochi
 		}
 
 		sound_list.push_back(std::shared_ptr<FMOD::Sound>(sound));
+		sound_name_list.push_back(file_path);
 		sound_count++;
 	}
 

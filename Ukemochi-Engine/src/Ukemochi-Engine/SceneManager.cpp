@@ -562,11 +562,11 @@ namespace Ukemochi
                     //     newObject.GetComponent<SpriteRender>().texturePath,
                     //     ECS::GetInstance().GetSystem<Renderer>()->current_texture_index);
                     ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
-					if (tag == "Player")
+					/*if (tag == "Player")
 					{
 						newObject.GetComponent<SpriteRender>().animated = true;
 						newObject.GetComponent<SpriteRender>().animationIndex = 1;
-					}
+					}*/
 				}
 				else if (componentName == "Script")
 				{
