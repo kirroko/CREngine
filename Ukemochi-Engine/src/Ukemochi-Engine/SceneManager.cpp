@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
 #include "Graphics/Animation.h"
+#include "Game/DungeonManager.h"
 
 namespace Ukemochi
 {
@@ -62,7 +63,6 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
-        ECS::GetInstance().RegisterComponent<Button>();
 
         // TODO: Register your systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -75,6 +75,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
+        ECS::GetInstance().RegisterSystem<DungeonManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -105,7 +106,6 @@ namespace Ukemochi
         // For in game GUI system
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
-        sig.set(ECS::GetInstance().GetComponentType<Button>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
 
 	    // For Animation System
@@ -187,6 +187,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
 		UME_ENGINE_TRACE("Initializing Collision...");
 		ECS::GetInstance().GetSystem<Collision>()->Init();
+
+        ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
 
      //When in game Engine State
@@ -292,6 +294,8 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
+
+            ECS::GetInstance().GetSystem<DungeonManager>()->InitDungeon();
 		}
 		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 		{
@@ -318,6 +322,9 @@ namespace Ukemochi
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+
+        ECS::GetInstance().GetSystem<DungeonManager>()->Update();
+
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 	    
@@ -431,33 +438,33 @@ namespace Ukemochi
             std::string name = gameObjectData["Name"].GetString();
             std::string tag = gameObjectData["Tag"].GetString();
 
-            if (tag == "Button")
-            {
-                // Get the screen width and height
-                Application& app = Application::Get();
-                int screen_width = app.GetWindow().GetWidth();
-                int screen_height = app.GetWindow().GetHeight();
+            //if (tag == "Button")
+            //{
+            //    // Get the screen width and height
+            //    Application& app = Application::Get();
+            //    int screen_width = app.GetWindow().GetWidth();
+            //    int screen_height = app.GetWindow().GetHeight();
 
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-                                                                      Vec2{screen_width * 0.1f, screen_height * 0.9f},
-                                                                      1.f, Vec3{1.f, 1.f, 1.f}, "Ukemochi");
+            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
+            //                                                          Vec2{screen_width * 0.1f, screen_height * 0.9f},
+            //                                                          1.f, Vec3{1.f, 1.f, 1.f}, "Ukemochi");
 
-                Button buttonComponent;
-                buttonComponent.on_click = []()
-                {
-                    std::cout << "PRESSED" << std::endl;
-                    ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
-                };
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(
-                    name, tag, "pause_btn", "", Vec2{screen_width * 0.05f, screen_height * 0.8f}, 1.f,
-                    Vec3{1.f, 1.f, 1.f}, "Ukemochi",
-                    Vec2{75.f, 75.f}, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
-                continue;
-                //newObject.AddComponent(buttonComponent);
-                //newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
-                //ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-                //Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
-            }
+            //    Button buttonComponent;
+            //    buttonComponent.on_click = []()
+            //    {
+            //        std::cout << "PRESSED" << std::endl;
+            //        ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
+            //    };
+            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(
+            //        name, tag, "pause_btn", "", Vec2{screen_width * 0.05f, screen_height * 0.8f}, 1.f,
+            //        Vec3{1.f, 1.f, 1.f}, "Ukemochi",
+            //        Vec2{75.f, 75.f}, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
+            //    continue;
+            //    //newObject.AddComponent(buttonComponent);
+            //    //newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
+            //    //ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+            //    //Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
+            //}
 
             // Create a new GameObject and add it to the scene
 

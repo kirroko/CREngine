@@ -198,6 +198,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\FileWatcher.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\DungeonManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
@@ -253,6 +254,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FileWatcher.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\DungeonManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\Level2.cpp" />

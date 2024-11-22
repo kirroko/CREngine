@@ -29,40 +29,14 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::Init()
 	{
-		//TO DO:: ADD COMPONENT FOR EACH BUTTON E.G. TAG = BUTTON COMPONENT NAME = PAUSE.
-
-		// Get the screen width and height
-		//Application& app = Application::Get();
-		//int screen_width = app.GetWindow().GetWidth();
-		//int screen_height = app.GetWindow().GetHeight();
-
 		//Create some test GUI elements
-		//CreateImage(Vec2{ screen_width * 0.05f, screen_height * 0.9f }, Vec2{ 75.f, 150.f }, "../Assets/Textures/UI/game_logo.png");
+		CreateImage("gameLogo", Vec2{ 75.f, 850.f }, Vec2{ 75.f, 150.f }, 11);
 
-		//CreateText("text1", "pls click a button", Vec2{ screen_width * 0.1f, screen_height * 0.9f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
-
-		//CreateButton("pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-		//	Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [this]() { UpdateText("text1", "pause button clicked!"); });
-
-		//CreateButton("spawn_btn", "Spawn", Vec2{ screen_width * 0.15f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 0.f, 0.f }, "Ukemochi",
-		//	Vec2{ 150.f, 75.f }, "../Assets/Textures/UI/base.png", [this]()
-		//	{
-		//		UpdateText("text1", "spawn button clicked!");
-
-		//		// Spawn a enemy
-		//		GameObject enemy = GameObjectManager::GetInstance().CreateObject();
-		//		enemy.AddComponent(Transform{
-		//			Mtx44{},
-		//			Vec2{ECS::GetInstance().GetSystem<Renderer>()->screen_width * 0.75f,
-		//			ECS::GetInstance().GetSystem<Renderer>()->screen_height * 0.75f},
-		//			0,
-		//			Vec2{100.f, 100.f}
-		//			});
-		//		enemy.AddComponent(Rigidbody2D{ Vec2{}, Vec2{750.f, 750.f}, Vec2{}, Vec2{},1.f, 1.f, 0.9f, 0.f,0.f,0.f,0.f,1.f, 1.f, 0.9f, false, false });
-		//		enemy.AddComponent(BoxCollider2D());
-		//		enemy.GetComponent<BoxCollider2D>().tag = "Enemy";
-		//		enemy.AddComponent(SpriteRender{ "../Assets/Textures/Worm.png", SPRITE_SHAPE::BOX, });
-		//	});
+		CreateButton("pauseButton", Vec2{ 100.f, 700.f }, Vec2{ 125.f, 75.f }, 10, "Pause", Vec3{ 1.f, 0.f, 0.f }, "Exo2", 0.75f, TextAlignment::Center, true,
+			[]() {
+				std::cout << "PAUSE PRESSED\n";
+				ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
+			});
 	}
 
 	/*!***********************************************************************
@@ -73,15 +47,6 @@ namespace Ukemochi
 	{
 		// Handle button inputs
 		HandleButtonInput();
-
-		/*for (auto const& entity : m_Entities)
-		{
-			auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-			auto& button = ECS::GetInstance().GetComponent<Button>(entity);
-			auto& camera = ECS::GetInstance().GetSystem<Camera>();
-
-			trans.position = Vec2{ button.initial_pos.x + camera->position.x, button.initial_pos.y + camera->position.y };
-		}*/
 	}
 
 	/*!***********************************************************************
@@ -106,41 +71,31 @@ namespace Ukemochi
 	\brief
 	 Create a GUI image object.
 	*************************************************************************/
-	void InGameGUI::CreateImage(const Vec2& pos, const Vec2& scale, const std::string& texture_path)
+	void InGameGUI::CreateImage(const std::string& id, const Vec2& position, const Vec2& size, int textureID)
 	{
-		GameObject image = GameObjectManager::GetInstance().CreateObject();
-		// GameObject image = GameObjectManager::GetInstance().CreateObject("Image");
-		image.AddComponent(Transform{ Mtx44{}, pos, 0, scale });
-		image.AddComponent(SpriteRender{ texture_path });
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, position, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Exo2", 1.f, TextAlignment::Center, false, nullptr);
 	}
 
 	/*!***********************************************************************
 	\brief
 	 Create a GUI button object.
 	*************************************************************************/
-	void InGameGUI::CreateButton(const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
+	void InGameGUI::CreateButton(const std::string& id, const Vec2& position, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
 	{
-		GameObject button = GameObjectManager::GetInstance().CreateObject();
-		button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
-		button.AddComponent(SpriteRender{ texture_path });
-		button.AddComponent(Button{ on_click });
-
-		// Offset the text position to make it left and middle aligned
-		Vec2 text_pos = Vec2{ pos.x - button_scale.x * 0.4f, pos.y - button_scale.y * 0.25f };
-		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, position, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
 	}
 
-	void InGameGUI::CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
-	{
-		GameObject button = GameObjectManager::GetInstance().CreateObject(btn,btntag);
-		button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
-		button.AddComponent(SpriteRender{ texture_path });
-		button.AddComponent(Button{ on_click });
+	//void InGameGUI::CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
+	//{
+	//	//GameObject button = GameObjectManager::GetInstance().CreateObject(btn,btntag);
+	//	//button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
+	//	//button.AddComponent(SpriteRender{ texture_path });
+	//	//button.AddComponent(Button{ on_click });
 
-		// Offset the text position to make it left and middle aligned
-		Vec2 text_pos = Vec2{ pos.x - button_scale.x * 0.4f, pos.y - button_scale.y * 0.25f };
-		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
-	}
+	//	//// Offset the text position to make it left and middle aligned
+	//	//Vec2 text_pos = Vec2{ pos.x - button_scale.x * 0.4f, pos.y - button_scale.y * 0.25f };
+	//	//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
+	//}
 
 	/*!***********************************************************************
 	\brief
@@ -151,19 +106,15 @@ namespace Ukemochi
 		// Check for mouse left click
 		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
 		{
-			//std::cout << mouse_x << " : " << mouse_y << std::endl;
-			for (auto const& entity : m_Entities)
+			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
 			{
-				auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-				auto& button = ECS::GetInstance().GetComponent<Button>(entity);
-
 				// Skip if the button is not interactable
 				if (!button.interactable)
 					continue;
 
 				// Check if the mouse is within the button boundaries
-				if (IsInside(trans))
-					button.on_click();
+				if (IsInside(Vec2{ button.position.x, button.position.y }, Vec2{ button.size.x, button.size.y }))
+					button.on_click(); // Invoke the mouse on click event
 			}
 		}
 	}
@@ -172,7 +123,7 @@ namespace Ukemochi
 	\brief
 	 Check if the mouse is within the GUI object boundaries.
 	*************************************************************************/
-	bool InGameGUI::IsInside(const Transform& trans)
+	bool InGameGUI::IsInside(const Vec2& position, const Vec2& size)
 	{
 		// Get current mouse position in screen coordinates
 		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
@@ -182,14 +133,17 @@ namespace Ukemochi
 		// Flip the mouse position in the y-axis
 		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
-		// Offset mouse position
-		//mouse_x += trans.scale.x *0.5f;
-		//mouse_y += trans.scale.y;
-		//std::cout << "mouse_Y" << " : " << trans.position.y << std::endl;
+		//std::cout << "button" << " : " << position.x << ", " << position.y << std::endl;
+		//std::cout << "mouse" << " : " << mouse_x << ", " << mouse_y << std::endl;
 
-		return mouse_y <= trans.position.y - 20.f
-			&& mouse_y >= trans.position.y - trans.scale.y - 20.f
-			&& mouse_x >= trans.position.x - trans.scale.x * 0.5f
-			&& mouse_x <= trans.position.x + trans.scale.x * 0.5f;
+		return mouse_x >= position.x - size.x * 0.5f
+			&& mouse_x <= position.x + size.x
+			&& mouse_y >= position.y - size.y * 0.5f + 300.f
+			&& mouse_y <= position.y + size.y + 300.f;
+
+		/*return mouse_y <= position.y - 20.f
+			&& mouse_y >= position.y - size.y - 20.f
+			&& mouse_x >= position.x - size.x
+			&& mouse_x <= position.x + size.x;*/
 	}
 }

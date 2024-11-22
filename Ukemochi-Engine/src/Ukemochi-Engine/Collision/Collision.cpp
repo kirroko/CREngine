@@ -19,9 +19,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Application.h"					 // for screen size
 #include "../Factory/GameObjectManager.h"	 // for game object tag
 #include "Ukemochi-Engine/Logic/Scripting.h" // for invoking OnCollisonEnter2D
+#include "../Game/DungeonManager.h"			 // for room size and current room ID
 
 #include "../Input/Input.h" // temp
 #include "../Physics/Physics.h" // temp
+#include "../Graphics/Camera2D.h" // temp
 
 namespace Ukemochi
 {
@@ -154,7 +156,7 @@ namespace Ukemochi
 							auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
 							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
 						}
-						if(ECS::GetInstance().HasComponent<Script>(entity2))
+						if (ECS::GetInstance().HasComponent<Script>(entity2))
 						{
 							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
 							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
@@ -163,8 +165,8 @@ namespace Ukemochi
 				}
 
 				// Check collision between box objects and the screen boundaries
-				if (!box1.is_trigger && BoxScreen_Intersection(box1))
-					BoxScreen_Response(tag1, trans1, box1, rb1);
+				//if (!box1.is_trigger && BoxScreen_Intersection(box1))
+				//	BoxScreen_Response(tag1, trans1, box1, rb1);
 			}
 		}
 	}
@@ -523,9 +525,10 @@ namespace Ukemochi
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment"
+			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
 		{
-			// Mochi / Enemy and Environment Objects
+			// Mochi / Enemy and Environment Objects / Boundaries
 			// Acts as a wall
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
@@ -586,7 +589,8 @@ namespace Ukemochi
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment"
+			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
 		{
 			// Mochi / Enemy and Environment Objects
 			// Acts as a wall
@@ -816,45 +820,53 @@ namespace Ukemochi
 	{
 		// PLAYER AND DOORS
 		// To simulate moving between rooms
-		if (trigger_tag == "Left Door")
+		if (trigger_tag == "LeftDoor")
 		{
-			// If the player is colliding with the top or btm of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_TOP)
-				player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_BOTTOM)
-				player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			else // Player entered the left door
-				player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
+			// Move to left room
+			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1);
+			player_trans.position.x -= trigger_trans.scale.x * 3.f;
+
+			//// If the player is colliding with the top or btm of the door, act as a wall
+			//if (trigger_box.collision_flag & COLLISION_TOP)
+			//	player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
+			//else if (trigger_box.collision_flag & COLLISION_BOTTOM)
+			//	player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
+			//else // Player entered the left door
+			//	player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
 		}
-		else if (trigger_tag == "Right Door")
+		else if (trigger_tag == "RightDoor")
 		{
-			// If the player is colliding with the top or btm of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_TOP)
-				player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_BOTTOM)
-				player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			else // Player entered the right door
-				player_trans.position.x = trigger_trans.scale.x + player_trans.scale.x * 0.5f;
+			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(1);
+			player_trans.position.x += trigger_trans.scale.x * 3.f;
+
+			//// If the player is colliding with the top or btm of the door, act as a wall
+			//if (trigger_box.collision_flag & COLLISION_TOP)
+			//	player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
+			//else if (trigger_box.collision_flag & COLLISION_BOTTOM)
+			//	player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
+			//else // Player entered the right door
 		}
-		else if (trigger_tag == "Top Door")
+		else if (trigger_tag == "TopDoor")
 		{
-			// If the player is colliding with the left or right of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_LEFT)
-				player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_RIGHT)
-				player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			else // Player entered the top door
-				player_trans.position.y = screen_height - trigger_trans.scale.y - player_trans.scale.y * 0.5f;
+			player_trans.position.y -= trigger_trans.scale.y * 3.f;
+
+			//// If the player is colliding with the left or right of the door, act as a wall
+			//if (trigger_box.collision_flag & COLLISION_LEFT)
+			//	player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
+			//else if (trigger_box.collision_flag & COLLISION_RIGHT)
+			//	player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
+			//else // Player entered the top door
 		}
-		else if (trigger_tag == "Btm Door")
+		else if (trigger_tag == "BtmDoor")
 		{
-			// If the player is colliding with the left or right of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_LEFT)
-				player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_RIGHT)
-				player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			else // Player entered the bottom door
-				player_trans.position.y = trigger_trans.scale.y + player_trans.scale.y * 0.5f;
+			player_trans.position.y += trigger_trans.scale.y * 3.f;
+
+			//// If the player is colliding with the left or right of the door, act as a wall
+			//if (trigger_box.collision_flag & COLLISION_LEFT)
+			//	player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
+			//else if (trigger_box.collision_flag & COLLISION_RIGHT)
+			//	player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
+			//else // Player entered the bottom door
 		}
 
 		// PLAYER AND OTHER TRIGGERS (coins, checkpoints, etc..)

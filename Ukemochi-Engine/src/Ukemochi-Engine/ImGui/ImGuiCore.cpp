@@ -1076,7 +1076,6 @@ namespace Ukemochi
 
         static int selectedComponentIndex = 0;
         const char* availableComponents[] = {
-            "Transform",
             "Rigidbody2D",
             "BoxCollider2D",
             "SpriteRender",
@@ -1092,42 +1091,35 @@ namespace Ukemochi
         {
             switch (selectedComponentIndex)
             {
-            case 0: // Transform
-                if (!selectedObject->HasComponent<Transform>())
-                {
-                    selectedObject->AddComponent<Transform>(Transform{}); // Use default or custom parameters
-                    modified = true;
-                }
-                break;
-            case 1: // Rigidbody2D
+            case 0: // Rigidbody2D
                 if (!selectedObject->HasComponent<Rigidbody2D>())
                 {
                     selectedObject->AddComponent<Rigidbody2D>(Rigidbody2D{});
                     modified = true;
                 }
                 break;
-            case 2: // BoxCollider2D
+            case 1: // BoxCollider2D
                 if (!selectedObject->HasComponent<BoxCollider2D>())
                 {
                     selectedObject->AddComponent<BoxCollider2D>(BoxCollider2D{});
                     modified = true;
                 }
                 break;
-            case 3: // SpriteRender
+            case 2: // SpriteRender
                 if (!selectedObject->HasComponent<SpriteRender>())
                 {
                     selectedObject->AddComponent<SpriteRender>(SpriteRender{});
                     modified = true;
                 }
                 break;
-            case 4: // Script
+            case 3: // Script
                 if (!selectedObject->HasComponent<Script>())
                 {
                     selectedObject->AddComponent<Script>(Script{});
                     modified = true;
                 }
                 break;
-            case 5: // Animation
+            case 4: // Animation
                 if (!selectedObject->HasComponent<Animation>())
                 {
                     selectedObject->AddComponent<Animation>(Animation{});
@@ -1232,7 +1224,7 @@ namespace Ukemochi
         else
         {
             // Display the name as text if not renaming
-            //ImGui::Text("Object Name: %s", selectedObject->GetName().c_str());
+            // ImGui::Text("Object Name: %s", selectedObject->GetName().c_str());
         }
 
         ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
@@ -1243,17 +1235,23 @@ namespace Ukemochi
 
         ImGui::Separator();
 
-        // Add Components
-        AddComponentUI(selectedObject, modified);
+        // Allow adding components if not in Play mode
+        if (es_current != ENGINE_STATES::ES_PLAY)
+        {
+            AddComponentUI(selectedObject, modified);
+        }
 
         ImGui::Separator();
 
-        // Remove Components
-        RemoveComponentUI(selectedObject, modified);
+        // Allow removing components if not in Play mode
+        if (es_current != ENGINE_STATES::ES_PLAY)
+        {
+            RemoveComponentUI(selectedObject, modified);
+        }
 
         ImGui::Separator();
 
-        // Transform Component
+        // Transform Component (always editable)
         if (selectedObject->HasComponent<Transform>())
         {
             if (ImGui::CollapsingHeader("Transform"))
@@ -1264,8 +1262,7 @@ namespace Ukemochi
                 ImGui::Text("Position");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f)) modified =
-                        true;
+                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f)) modified = true;
                 }
                 else
                 {
@@ -1296,7 +1293,7 @@ namespace Ukemochi
             }
         }
 
-        // Rigidbody2D Component
+        // Rigidbody2D Component (always editable)
         if (selectedObject->HasComponent<Rigidbody2D>())
         {
             if (ImGui::CollapsingHeader("Rigidbody2D"))
@@ -1346,7 +1343,7 @@ namespace Ukemochi
             }
         }
 
-        // BoxCollider2D Component
+        // BoxCollider2D Component (always editable)
         if (selectedObject->HasComponent<BoxCollider2D>())
         {
             if (ImGui::CollapsingHeader("BoxCollider2D"))
@@ -1358,7 +1355,7 @@ namespace Ukemochi
             }
         }
 
-        // SpriteRender Component
+        // SpriteRender Component (always editable)
         if (selectedObject->HasComponent<SpriteRender>())
         {
             if (ImGui::CollapsingHeader("SpriteRender"))
@@ -1414,7 +1411,8 @@ namespace Ukemochi
             }
         }
 
-        // Script Component, drag-and-drop for script path
+        //comments
+        // Script Component, drag-and-drop for script path (always editable)
         if (selectedObject->HasComponent<Script>())
         {
             if (ImGui::CollapsingHeader("Script"))
@@ -1426,52 +1424,56 @@ namespace Ukemochi
                 strncpy(scriptPathBuffer, script.scriptPath.c_str(), sizeof(scriptPathBuffer));
                 scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
 
-                ImGui::BeginDisabled(true); // Disable the input box while we use drag-and-drop
+                ImGui::BeginDisabled(true); // Disable input field while using drag-and-drop
                 ImGui::InputText("##ScriptPathInput", scriptPathBuffer, sizeof(scriptPathBuffer));
                 ImGui::EndDisabled();
 
-                // Check for drag-and-drop
-                if (ImGui::BeginDragDropTarget())
+                if (es_current != ENGINE_STATES::ES_PLAY)
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                    // Check for drag-and-drop
+                    if (ImGui::BeginDragDropTarget())
                     {
-                        std::string draggedPath = std::string((const char*)payload->Data);
-                        std::filesystem::path filePath(draggedPath);
-                        std::string extension = filePath.extension().string();
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                        {
+                            std::string draggedScript = std::string((const char*)payload->Data);
+                            std::filesystem::path filePath(draggedScript);
+                            std::string extension = filePath.extension().string();
 
-                        if (extension == ".cs")
-                        {
-                            // Valid file type, update script path
-                            strncpy(scriptPathBuffer, draggedPath.c_str(), sizeof(scriptPathBuffer));
-                            scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
-                            script.scriptPath = draggedPath;
-                            script.scriptName = filePath.stem().string();
-                            MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
-                                script.scriptName);
-                            EntityID newScriptID = selectedObject->GetInstanceID();
-                            ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
-                            script.instance = newScript;
-                            script.handle = ScriptingEngine::CreateGCHandle(newScript);
-                            modified = true;
+                            // Validate the file type (assuming only .cs scripts are allowed)
+                            if (extension == ".cs")
+                            {
+                                // Valid file type, update script path
+                                strncpy(scriptPathBuffer, draggedScript.c_str(), sizeof(scriptPathBuffer));
+                                scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+                                script.scriptPath = draggedScript;
+                                script.scriptName = filePath.stem().string();
+                                MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
+                                    script.scriptName);
+                                EntityID newScriptID = selectedObject->GetInstanceID();
+                                ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
+                                script.instance = newScript;
+                                script.handle = ScriptingEngine::CreateGCHandle(newScript);
+                                modified = true;
+                            }
+                            else
+                            {
+                                // Invalid file type, show error feedback
+                                ImGui::OpenPopup("InvalidScriptFileType");
+                            }
                         }
-                        else
-                        {
-                            // Invalid file type, show error feedback
-                            ImGui::OpenPopup("InvalidScriptFileType");
-                        }
+                        ImGui::EndDragDropTarget();
                     }
-                    ImGui::EndDragDropTarget();
-                }
 
-                // Error Popup for invalid file type
-                if (ImGui::BeginPopup("InvalidScriptFileType"))
-                {
-                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .cs files are allowed!");
-                    if (ImGui::Button("OK"))
+                    // Error Popup for invalid file type
+                    if (ImGui::BeginPopup("InvalidScriptFileType"))
                     {
-                        ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .cs files are allowed!");
+                        if (ImGui::Button("OK"))
+                        {
+                            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                        }
+                        ImGui::EndPopup();
                     }
-                    ImGui::EndPopup();
                 }
             }
         }
@@ -1502,7 +1504,7 @@ namespace Ukemochi
                 ImGui::BeginDisabled(true);
                 ImGui::InputText("CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
                 ImGui::EndDisabled();
-                
+
                 static char changeClipBuffer[256] = "";
                 ImGui::InputTextWithHint("Default Clip", "Enter Clip Name", changeClipBuffer, IM_ARRAYSIZE(changeClipBuffer));
                 if (ImGui::Button("Set Current Clip"))
@@ -1621,6 +1623,7 @@ namespace Ukemochi
         {
             auto& emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
             selectedEntityID = static_cast<int>(emptyObject.GetInstanceID());
+            emptyObject.AddComponent<Transform>(Transform{});
             modified = true;
         }
 
@@ -1761,37 +1764,6 @@ namespace Ukemochi
                 //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
-            // Handle the drop target (accept file drops here)
-            if (ImGui::BeginDragDropTarget())
-            {
-                const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH");
-                if (payload)
-                {
-                    // The payload data is the file path
-                    const char* droppedFilePath = static_cast<const char*>(payload->Data);
-                    std::cout << "Dropped File: " << droppedFilePath << std::endl;
-
-                    // Create an entity based on the dropped file
-                    if (droppedFilePath[0] != '\0' && IsJsonFile(droppedFilePath))
-                    {
-                        if (ECS::GetInstance().GetLivingEntityCount() == 0)
-                            ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-
-                        auto& go = GameObjectManager::GetInstance().CreatePrefabObject(droppedFilePath);
-                        // You can add additional logic for the entity, like setting up textures, animations, etc.
-                        if (go.GetTag() == "Player")
-                        {
-                            ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
-                            ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
-                            go.GetComponent<SpriteRender>().animated = true;
-                        }
-                    }
-                    else
-                    {
-                    }
-                }
-                ImGui::EndDragDropTarget();
-            }
             ImGui::End();
         }
     }

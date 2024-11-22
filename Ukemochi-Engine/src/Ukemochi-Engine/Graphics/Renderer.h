@@ -42,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "BatchRenderer.h"
 
 #include "../Asset Manager/AssetManager.h"
+#include "UIButton.h"
 
 // Forward
 class TextRenderer;
@@ -156,6 +157,13 @@ public:
 	* @brief Update a text object in the text renderer.
 	*/
 	void UpdateTextObject(const std::string& id, const std::string& newText);
+
+	/*!
+	* @brief Create a button object in the UI renderer.
+	*/
+	void CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
+
+	std::vector<UIButton>& GetButtonObjects();
 
 	void setupFramebuffer();
 
