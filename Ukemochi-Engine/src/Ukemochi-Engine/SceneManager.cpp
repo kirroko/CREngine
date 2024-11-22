@@ -176,6 +176,7 @@ namespace Ukemochi
 
     void SceneManager::SceneMangerInit()
     {
+        UME_ENGINE_TRACE("Loading Assets ...");
         ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
