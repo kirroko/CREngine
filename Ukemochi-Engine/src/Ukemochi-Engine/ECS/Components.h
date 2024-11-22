@@ -132,7 +132,8 @@ namespace Ukemochi
 	{
 		std::string keyPath{};
 		std::string name{};			// Name of the animation clip
-		GLuint textureID = 0;		// The texture ID, to be set during runtime
+		Vec2 pivot = Vec2{ 32.0f, 32.0f };	// Pivot point of the sprite
+		// GLuint textureID = 0;		// The texture ID, to be set during runtime
 		int total_frames = 1;				// Total frames in the animation
 		int pixel_width = 64;				// Width of each frame in pixels
 		int pixel_height = 64;				// Height of each frame in pixels
@@ -160,11 +161,14 @@ namespace Ukemochi
 		float time_since_last_frame = 0.0f;						// Time since the last frame
 		float original_frame_time = 0.05f;						// Original frame time
 		bool is_playing = true;									// Is the animation playing?
-		bool doNotInterrupt = false;								// Do not interrupt the current animation
+		bool doNotInterrupt = false;							// Do not interrupt the current animation
+
+		bool isAttacking = false;
+		bool attackAnimationFinished = false;
 		
 		bool SetAnimation(const std::string& name)
 		{
-			if(clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt)
+			if(clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt && !isAttacking)
 			{
 				currentClip = name;
 				current_frame = 0;
@@ -178,6 +182,7 @@ namespace Ukemochi
 		bool SetAnimationImmediately(const std::string& name)
 		{
 			doNotInterrupt = false;
+			isAttacking = false;
 			return SetAnimation(name);
 		}
 		
@@ -216,6 +221,7 @@ namespace Ukemochi
 				{
 					current_frame = clip.looping ? 0 : clip.total_frames - 1;
 					doNotInterrupt = false;
+					isAttacking = false;
 					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
 				}
 				time_since_last_frame = 0.0f; // Reset time
@@ -274,5 +280,19 @@ namespace Ukemochi
 		void* instance = nullptr; // MonoObject from client script
 		void* handle = nullptr; // MonoGCHandle from client script
 		void* methodInstance = nullptr; // MonoMethod from client script
+	};
+
+	struct Player
+	{
+		int maxHealth = 100;
+		int currentHealth = 100;
+		int maxComboHits = 3;
+		int currentComboHits = 0;
+		int comboDamage = 10;
+		float attackCooldown = 0.5f;
+		float attackTimer = 0.0f;
+		float playerForce = 1500.0f;
+		bool isDead = false;
+		bool canAttack = true;
 	};
 }

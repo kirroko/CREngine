@@ -17,12 +17,12 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [300.0, 675.0],
+                    "Position": [562.6951293945313, 451.0],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [137.4166717529297, 137.4166717529297]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [300.0, 675.0],
+                    "Position": [562.6951293945313, 621.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
@@ -40,8 +40,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [250.0, 625.0],
-                    "Max": [350.0, 725.0],
+                    "Min": [501.07012939453125, 559.375],
+                    "Max": [624.3201293945313, 682.625],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
@@ -49,16 +49,28 @@
                     "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Player.cs",
-                    "ClassName": "Player"
-                }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 461, 428, 2048, 2048, 0.05000000074505806, true]
+                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.20000000298023224, 0.0, 442, 448, 4096, 4096, 0.05000000074505806, true],
+                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 92.20000457763672, 0.0, 461, 428, 2048, 2048, 0.05000000074505806, true],
+                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 20, 332.2200012207031, 150.5399932861328, 678, 579, 4096, 2797, 0.05000000074505806, true],
+                        "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 109.0, 0.0, 545, 420, 2048, 1024, 0.05000000074505806, true],
+                        "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.5, 0.5, 716, 467, 3708, 1569, 0.05000000074505806, true],
+                        "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5, 0.5, 543, 484, 3900, 2597, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
+                }, {
+                    "Name": "Player",
+                    "MaxHealth": 100,
+                    "CurrentHealth": 100,
+                    "MaxComboHits": 3,
+                    "CurrentComboHits": 1,
+                    "ComboDamage": 10,
+                    "AttackCooldown": 0.5,
+                    "AttackTimer": 0.3993028700351715,
+                    "PlayerForce": 1500.0,
+                    "IsDead": false,
+                    "CanAttack": true
                 }]
         }, {
             "Name": "GameObject",
@@ -71,7 +83,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
+                    "Velocity": [-0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -102,13 +114,13 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1546.481201171875, 680.294921875],
+                    "Position": [1279.7099609375, 511.9327697753906],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [132.33892822265625, 132.33892822265625]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [1546.481201171875, 680.294921875],
-                    "Velocity": [212.13201904296875, -212.13201904296875],
+                    "Position": [1096.755859375, 511.9327697753906],
+                    "Velocity": [212.13201904296875, 212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -125,8 +137,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1496.481201171875, 630.294921875],
-                    "Max": [1596.481201171875, 730.294921875],
+                    "Min": [1030.291748046875, 445.46868896484375],
+                    "Max": [1163.219970703125, 578.3968505859375],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
@@ -143,13 +155,13 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [600.7991333007813, 571.5274047851563],
+                    "Position": [416.7730407714844, 451.0],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [137.4166717529297, 137.4166717529297]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [600.7991333007813, 571.5274047851563],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
+                    "Position": [416.7730407714844, 640.440185546875],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -166,8 +178,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [550.7991333007813, 521.5274047851563],
-                    "Max": [650.7991333007813, 621.5274047851563],
+                    "Min": [355.9580383300781, 579.6251831054688],
+                    "Max": [477.5880432128906, 701.2551879882813],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
@@ -184,13 +196,13 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1500.3048095703125, 571.5357666015625],
+                    "Position": [750.7163696289063, 122.75370788574219],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [164.77052307128906, 164.77052307128906]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
+                    "Position": [750.7163696289063, 122.75370788574219],
+                    "Velocity": [-212.13201904296875, -212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -207,8 +219,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1450.3048095703125, 521.5357666015625],
-                    "Max": [1550.3048095703125, 621.5357666015625],
+                    "Min": [668.625732421875, 40.66307067871094],
+                    "Max": [832.8070068359375, 204.84434509277344],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
