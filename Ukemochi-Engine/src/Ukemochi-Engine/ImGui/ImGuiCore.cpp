@@ -133,6 +133,11 @@ namespace Ukemochi
         if (ImGui::BeginMenu("Options"))
         {
             ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
+
+            if (ImGui::MenuItem("Quit"))
+            {
+                es_current = ENGINE_STATES::ES_QUIT;
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -1199,12 +1204,12 @@ namespace Ukemochi
         if (!selectedObject) return;
 
         // Store whether the rename mode is enabled
-        static bool isRenaming = false;
+        static bool isRenamingName = false;
 
         // Button to enable/disable renaming
-        if (ImGui::Button(isRenaming ? "Confirm Rename" : "Rename Entity Name"))
+        if (ImGui::Button(isRenamingName ? "Confirm Rename" : "Rename Entity Name"))
         {
-            isRenaming = !isRenaming; // Toggle renaming mode
+            isRenamingName = !isRenamingName; // Toggle renaming mode
         }
 
         // Editable name input field, only enabled if renaming is allowed
@@ -1213,7 +1218,7 @@ namespace Ukemochi
         nameBuffer[sizeof(nameBuffer) - 1] = '\0'; // Ensure null termination
 
         // Disable input field when not renaming
-        if (isRenaming)
+        if (isRenamingName)
         {
             if (ImGui::InputText("Object Name", nameBuffer, sizeof(nameBuffer)))
             {
@@ -1350,7 +1355,7 @@ namespace Ukemochi
             {
                 BoxCollider2D& collider = selectedObject->GetComponent<BoxCollider2D>();
 
-                ImGui::Text("Use Collider Box");
+                ImGui::Text("Is Trigger Collider Box");
                 if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger)) modified = true;
             }
         }
