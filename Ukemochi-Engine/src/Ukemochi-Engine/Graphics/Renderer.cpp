@@ -560,7 +560,7 @@ void Renderer::render()
 
 	// Render entities
 	batchRenderer->beginBatch();
-	
+
 	for (auto& entity : m_Entities)
 	{
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
@@ -581,9 +581,9 @@ void Renderer::render()
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
 		GLint textureID = -1;
-		
+
 		// Check for an Animator component
-		if(ECS::GetInstance().HasComponent<Animation>(entity))
+		if (ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
 			if (ani.clips.find(ani.currentClip) == ani.clips.end())
@@ -601,8 +601,8 @@ void Renderer::render()
 				spriteRenderer.texturePath = clip.keyPath;
 				updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
 			}
-			
-			if(spriteRenderer.flipX)
+
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -610,10 +610,9 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
-				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
-				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
@@ -627,9 +626,9 @@ void Renderer::render()
 			uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
 			uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
 			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
-		
+
 			// Flip UVs for static sprites
-			if(spriteRenderer.flipX)
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -638,59 +637,59 @@ void Renderer::render()
 			}
 
 
-		GLint textureID = -1;
-		if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
-			ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath)) {
-			textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
+			GLint textureID = -1;
+			if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
+				ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath)) {
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
+			}
+			if (textureID < 0) {
+				std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
+				continue;
+			}
+
+			int mappedTextureUnit = textureIDMap[textureID];
+
+			// Draw the sprite using the batch renderer, passing the updated UV coordinates
+			batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
-		if (textureID < 0) {
-			std::cerr << "Warning: Texture ID not found for " << spriteRenderer.texturePath << std::endl;
-			continue;
-		}
-
-		int mappedTextureUnit = textureIDMap[textureID];
-
-		// Draw the sprite using the batch renderer, passing the updated UV coordinates
-		batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
-	}
 
 
-	batchRenderer->endBatch();
+		batchRenderer->endBatch();
 
-	UIRenderer->renderButtons(*camera);
-	// Render debug wireframes if debug mode is enabled
-	if (debug_mode_enabled)
-	{
-		debug_shader_program->Activate();
-		debug_shader_program->setMat4("view", view);
-		debug_shader_program->setMat4("projection", projection);
-
-		for (auto& entity : m_Entities)
+		UIRenderer->renderButtons(*camera);
+		// Render debug wireframes if debug mode is enabled
+		if (debug_mode_enabled)
 		{
-			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+			debug_shader_program->Activate();
+			debug_shader_program->setMat4("view", view);
+			debug_shader_program->setMat4("projection", projection);
 
-			// Set up model matrix for the debug outline
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-			model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
-			debug_shader_program->setMat4("model", model);
+			for (auto& entity : m_Entities)
+			{
+				auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+				auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-			// Draw box or circle outline depending on the entity shape
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) {
-				drawBoxOutline();  // This function uses GL_LINE_LOOP to draw the outline
+				// Set up model matrix for the debug outline
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
+				model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+				model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
+				debug_shader_program->setMat4("model", model);
+
+				// Draw box or circle outline depending on the entity shape
+				if (spriteRenderer.shape == SPRITE_SHAPE::BOX) {
+					drawBoxOutline();  // This function uses GL_LINE_LOOP to draw the outline
+				}
+				else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE) {
+					drawCircleOutline();  // Assuming you have a similar function for circles
+				}
 			}
-			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE) {
-				drawCircleOutline();  // Assuming you have a similar function for circles
-			}
+			debug_shader_program->Deactivate();
 		}
-		debug_shader_program->Deactivate();
+
+		// Render text, UI, or additional overlays if needed
+		textRenderer->renderAllText();
 	}
-
-	// Render text, UI, or additional overlays if needed
-	textRenderer->renderAllText();
 }
-
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).

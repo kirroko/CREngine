@@ -217,14 +217,13 @@ namespace Ukemochi
         if (m_SpriteFlag)
         {
             // Set up the texture details
-            if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(m_SpritePath) !=
-                ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+            if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(m_SpritePath))
             {
                 std::filesystem::path filePath;
                 showGrid = true;
-                texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
-                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->width;
-                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->height;
+                texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->ID;
+                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->width;
+                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->height;
                 filePath = m_SpritePath;
                 fileName = filePath.stem().string();
                 filePath.replace_extension(".json");

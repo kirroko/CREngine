@@ -177,26 +177,26 @@ namespace Ukemochi
 				std::filesystem::path to_load = dir.path();
 				if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
 				{
-					addTexture(to_load.string());
+					addTexture(to_load.generic_string());
 				}
 				else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
 				{
-					addSound(to_load.string());
+					addSound(to_load.generic_string());
 				}
 				else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
 				{
-					std::string file_name = to_load.filename().string();
+					std::string file_name = to_load.filename().generic_string();
 					if (to_load.extension() == ".vert")
 					{
-						std::string vertex_shader = to_load.string();
+						std::string vertex_shader = to_load.generic_string();
 						std::string frag_shader{};
 						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
 						{
 							std::filesystem::path checker = match_shader.path();
-							std::string check_name = checker.filename().string();
+							std::string check_name = checker.filename().generic_string();
 							if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
 							{
-								frag_shader = checker.string();
+								frag_shader = checker.generic_string();
 								break;
 							}
 						}
@@ -205,14 +205,14 @@ namespace Ukemochi
 					else
 					{
 						std::string vertex_shader{};
-						std::string frag_shader = to_load.string();
+						std::string frag_shader = to_load.generic_string();
 						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
 						{
 							std::filesystem::path checker = match_shader.path();
-							std::string check_name = checker.filename().string();
+							std::string check_name = checker.filename().generic_string();
 							if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
 							{
-								vertex_shader = checker.string();
+								vertex_shader = checker.generic_string();
 								break;
 							}
 						}
