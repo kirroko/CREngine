@@ -419,7 +419,7 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
  * @brief Binds textures to OpenGL texture units and sets them up in the shader.
  * @param shader The shader program to bind textures to.
  */
-void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
+void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader) //************** Look at it **************
 {
 	// Set textureCount based on the number of unique textures, limited to 32
 	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
