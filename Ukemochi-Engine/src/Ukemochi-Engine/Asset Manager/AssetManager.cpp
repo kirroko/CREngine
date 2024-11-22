@@ -110,7 +110,7 @@ namespace Ukemochi
 			return;
 		}
 
-		sound_list.push_back(std::make_shared<FMOD::Sound>(sound));
+		sound_list.push_back(std::shared_ptr<FMOD::Sound>(sound));
 		sound_count++;
 	}
 
