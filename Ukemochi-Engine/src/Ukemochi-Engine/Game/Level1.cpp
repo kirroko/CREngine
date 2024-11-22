@@ -106,7 +106,6 @@ namespace Ukemochi
 		player_obj = GameObjectManager::GetInstance().CreatePrefabObject(player_data);
 		auto& p_spriteRender = player_obj.GetComponent<SpriteRender>();
 		
-		p_spriteRender.textureID = ECS::GetInstance().GetSystem<Renderer>()->current_texture_index;
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(p_spriteRender.texturePath, ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		p_spriteRender.animated = true;
 
@@ -250,12 +249,6 @@ namespace Ukemochi
 
 		// Set the player object in the Renderer
 		ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(player_obj);
-
-		// Set the player object in the Transformation
-		ECS::GetInstance().GetSystem<Transformation>()->playerObject = &player_obj;
-		
-		// Initialize the in game GUI system
-		ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 	}
 
 	void Level1_Update()//Level1 game runtime

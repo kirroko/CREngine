@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../ECS/ECS.h" // for ECS system and components
 #include "../Factory/GameObject.h"
+#include "../Graphics/UIButton.h" // for TextAlignment
 
 namespace Ukemochi
 {
@@ -49,15 +50,15 @@ namespace Ukemochi
 		\brief
 		 Create a GUI image object.
 		*************************************************************************/
-		void CreateImage(const Vec2& pos, const Vec2& scale, const std::string& texture_path);
+		void CreateImage(const std::string& id, const Vec2& position, const Vec2& size, int textureID);
 
 		/*!***********************************************************************
 		\brief
 		 Create a GUI button object.
 		*************************************************************************/
-		void CreateButton(const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click);
+		void CreateButton(const std::string& id, const Vec2& position, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
 
-		void CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click);
+		//void CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click);
 
 	private:
 		/*!***********************************************************************
@@ -70,6 +71,6 @@ namespace Ukemochi
 		\brief
 		 Check if the mouse is within the GUI object boundaries.
 		*************************************************************************/
-		bool IsInside(const Transform& trans);
+		bool IsInside(const Vec2& position, const Vec2& size);
 	};
 }

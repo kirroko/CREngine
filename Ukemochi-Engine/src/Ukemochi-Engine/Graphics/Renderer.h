@@ -42,10 +42,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "BatchRenderer.h"
 
 #include "../Asset Manager/AssetManager.h"
+#include "UIButton.h"
 
 // Forward
 class TextRenderer;
 class ParticleSystem;
+class UIButton;
+class UIButtonRenderer;
 
 struct SpriteData {
 	glm::vec3 position;
@@ -56,10 +59,10 @@ struct SpriteData {
 };
 
 using namespace Ukemochi;
- /*!
-  * @class Renderer
-  * @brief A class that manages OpenGL rendering, shader setup, texture handling, and rendering 2D objects like boxes and circles.
-  */
+/*!
+ * @class Renderer
+ * @brief A class that manages OpenGL rendering, shader setup, texture handling, and rendering 2D objects like boxes and circles.
+ */
 class Renderer : public Ukemochi::System
 {
 public:
@@ -154,7 +157,14 @@ public:
 	* @brief Update a text object in the text renderer.
 	*/
 	void UpdateTextObject(const std::string& id, const std::string& newText);
-	
+
+	/*!
+	* @brief Create a button object in the UI renderer.
+	*/
+	void CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
+
+	std::vector<UIButton>& GetButtonObjects();
+
 	void setupFramebuffer();
 
 	void beginFramebufferRender();
@@ -165,7 +175,7 @@ public:
 
 	GLuint getTextureColorBuffer() const;
 
-	void resizeFramebuffer(int width, int height);
+	void resizeFramebuffer(unsigned int width, unsigned int height) const;
 
 private:
 	/*!
@@ -265,62 +275,62 @@ private:
 	 * @struct Animation
 	 * @brief Manages frame-based animations for entities.
 	 */
-	struct Animation {
-		int totalFrames;
-		int currentFrame;
-		float frameDuration;
-		float originalFrameDuration; // Store the original duration
-		float elapsedTime;
-		int frameWidth, frameHeight, totalWidth, totalHeight;
-		bool loop;
-
-		/*!
-		 * @brief Constructs an Animation object with specified parameters.
-		 * @param totalFrames Total frames in the animation.
-		 * @param frameWidth Width of each frame.
-		 * @param frameHeight Height of each frame.
-		 * @param totalWidth Width of the sprite sheet.
-		 * @param totalHeight Height of the sprite sheet.
-		 * @param frameDuration Duration for each frame.
-		 * @param loop Whether the animation should loop (default is true).
-		 */
-		Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
-			: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
-			elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
-
-		/*!
-		 * @brief Updates the animation frame based on elapsed time.
-		 * @param deltaTime Time passed since the last update.
-		 */
-		void update(float deltaTime)
-		{
-			elapsedTime += deltaTime;
-			if (elapsedTime >= frameDuration) {
-
-				currentFrame++;
-				if (currentFrame >= totalFrames) 
-				{
-					currentFrame = 0; // Loop back to the first frame
-				}
-				elapsedTime = 0.0f; // Reset elapsed time
-			}
-		}
-		/*!
-		 * @brief Sets a new duration for each frame.
-		 * @param newDuration New frame duration (in seconds).
-		 */
-		void setFrameDuration(float newDuration) 
-		{
-			frameDuration = newDuration;
-		}
-		/*!
-		 * @brief Resets the frame duration to its original value.
-		 */
-		void resetFrameDuration() 
-		{
-			frameDuration = originalFrameDuration;
-		}
-	};
+	// struct Animation {
+	// 	int totalFrames;
+	// 	int currentFrame;
+	// 	float frameDuration;
+	// 	float originalFrameDuration; // Store the original duration
+	// 	float elapsedTime;
+	// 	int frameWidth, frameHeight, totalWidth, totalHeight;
+	// 	bool loop;
+	//
+	// 	/*!
+	// 	 * @brief Constructs an Animation object with specified parameters.
+	// 	 * @param totalFrames Total frames in the animation.
+	// 	 * @param frameWidth Width of each frame.
+	// 	 * @param frameHeight Height of each frame.
+	// 	 * @param totalWidth Width of the sprite sheet.
+	// 	 * @param totalHeight Height of the sprite sheet.
+	// 	 * @param frameDuration Duration for each frame.
+	// 	 * @param loop Whether the animation should loop (default is true).
+	// 	 */
+	// 	Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
+	// 		: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
+	// 		elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
+	//
+	// 	/*!
+	// 	 * @brief Updates the animation frame based on elapsed time.
+	// 	 * @param deltaTime Time passed since the last update.
+	// 	 */
+	// 	void update(float deltaTime)
+	// 	{
+	// 		elapsedTime += deltaTime;
+	// 		if (elapsedTime >= frameDuration) {
+	//
+	// 			currentFrame++;
+	// 			if (currentFrame >= totalFrames) 
+	// 			{
+	// 				currentFrame = 0; // Loop back to the first frame
+	// 			}
+	// 			elapsedTime = 0.0f; // Reset elapsed time
+	// 		}
+	// 	}
+	// 	/*!
+	// 	 * @brief Sets a new duration for each frame.
+	// 	 * @param newDuration New frame duration (in seconds).
+	// 	 */
+	// 	void setFrameDuration(float newDuration) 
+	// 	{
+	// 		frameDuration = newDuration;
+	// 	}
+	// 	/*!
+	// 	 * @brief Resets the frame duration to its original value.
+	// 	 */
+	// 	void resetFrameDuration() 
+	// 	{
+	// 		frameDuration = originalFrameDuration;
+	// 	}
+	// };
 	/*!
 	 * @brief Stores animations for each entity by entity ID.
 	 */
@@ -347,11 +357,6 @@ public:
 private:
 
 	/*!
-	 * @brief Initializes buffers for rendering boxes.
-	 */
-	void initBoxBuffers();
-
-	/*!
 	 * @brief Initializes buffers for rendering box wireframes (debug view).
 	 */
 	void initDebugBoxBuffers();
@@ -369,20 +374,14 @@ private:
 	void initCircleOutlineBuffers(GLuint segments = 1000);
 
 	/*!
-	 * @brief Initializes buffers required for animation rendering.
-	 */
-	void initAnimationBuffers();
-
-	/*!
 	 * @enum objectIDs
 	 * @brief Enumerates unique identifiers for different VAOs used in rendering.
 	 */
 	enum objectIDs {
-		BOX_VAO = 0,
-		BOX_OUTLINE = 1,
-		CIRCLE_VAO = 2,
-		CIRCLE_OUTLINE = 3,
-		ANIMATION_VAO = 4
+		BOX_OUTLINE = 0,
+		CIRCLE_VAO = 1,
+		CIRCLE_OUTLINE = 2,
+		ANIMATION_VAO = 3
 	};
 
 	/*!
@@ -425,19 +424,21 @@ private:
 	 * @brief Renders the screen quad, typically used for post-processing effects.
 	 */
 	void renderScreenQuad();
-	
+
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
 	int Player = -1;
 
-	std::unique_ptr<BatchRenderer2D> batchRenderer;
+	std::shared_ptr<BatchRenderer2D> batchRenderer;
+
+	std::unique_ptr<UIButtonRenderer> UIRenderer;
 
 public:
 	// Setter method to set the player object
-	void SetPlayerObject(GameObject& player) 
+	void SetPlayerObject(GameObject& player)
 	{
-			playerObject = &player;
+		playerObject = &player;
 	}
 
 	int GetPlayer()
@@ -454,5 +455,10 @@ public:
 	Shader* particleShader;
 
 	std::unique_ptr<Shader> debug_shader_program;
+
+private:
+	std::shared_ptr<Shader> UI_shader_program;
+
+
 };
 #endif

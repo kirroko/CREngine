@@ -2,7 +2,7 @@
 /*!
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 6, 2024
+\date       Nov 17, 2024
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -102,25 +102,25 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Update the linear physics of all the entities.
+        \param[in] tag
+         The tag of the entity.
         \param[in/out] trans
          The transform of the entity.
-        \param[in/out] box
-         The box collider of the entity.
         \param[in/out] rb
          The rigidbody of the entity.
         *************************************************************************/
-        void UpdateLinearPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb);
+        void UpdateLinearPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb);
 
         /*!***********************************************************************
         \brief
          Update the rotational physics of all the entities.
+        \param[in] tag
+         The tag of the entity.
         \param[in/out] trans
          The transform of the entity.
-        \param[in/out] box
-         The box collider of the entity.
         \param[in/out] rb
          The rigidbody of the entity.
         *************************************************************************/
-        void UpdateRotationalPhysics(Transform& trans, BoxCollider2D& box, Rigidbody2D& rb);
+        void UpdateRotationalPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb);
     };
 }

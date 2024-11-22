@@ -55,7 +55,7 @@ namespace Ukemochi
 		auto convexCollider = m_ComponentManager->GetComponentType<ConvexCollider2D>();
 		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
 		auto script = m_ComponentManager->GetComponentType<Script>();
-		auto button = m_ComponentManager->GetComponentType<Button>();
+		//auto button = m_ComponentManager->GetComponentType<Button>();
 
 		// Iterate through all possible components
 		for (ComponentTypeID i = 0; i < MAX_COMPONENTS; ++i)
@@ -98,11 +98,11 @@ namespace Ukemochi
 					Script originalComponent = m_ComponentManager->GetComponent<Script>(entity);
 					AddComponent<Script>(newEntity, originalComponent);
 				}
-				else if(i == button)
-				{
-					Button originalComponent = m_ComponentManager->GetComponent<Button>(entity);
-					AddComponent<Button>(newEntity, originalComponent);
-				}
+				//else if(i == button)
+				//{
+				//	//Button originalComponent = m_ComponentManager->GetComponent<Button>(entity);
+				//	//AddComponent<Button>(newEntity, originalComponent);
+				//}
 				else
 				{
 					UME_ENGINE_WARN("Missing component type in CloneEntity");

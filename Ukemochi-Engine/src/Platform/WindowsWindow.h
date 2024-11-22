@@ -101,6 +101,11 @@ namespace Ukemochi {
 
 		std::string m_FilePath;
 
+		const std::string& GetFilePath() const { return m_FilePath; }
+		void ClearFilePath() { m_FilePath.clear(); }
+
+		bool fileDropped = false;
+
 	private:
 		/*!
 		\brief Initializes the window with the specified properties.
@@ -111,6 +116,10 @@ namespace Ukemochi {
 		\brief Shuts down the window and releases resources.
 		*/
 		void Shutdown();
+		/*!
+		\brief Toggle the screen between fullscreen and window modes.
+		*/
+		void ToggleFullscreen();
 
 		GLFWwindow* m_Window; //!< Pointer to the GLFW window.
 
@@ -122,6 +131,10 @@ namespace Ukemochi {
 			std::string Title{0};
 			unsigned int Width{0}, Height{0};
 			bool VSync{};
+
+			bool IsFullScreen{};
+			int PrevX{0}, PrevY{0};
+			int PrevWidth{0}, PrevHeight{0};
 
 			std::function<void(Event&)> EventCallback; //!< Callback for handling events.
 		};

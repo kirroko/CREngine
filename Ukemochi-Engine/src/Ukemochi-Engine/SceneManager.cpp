@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGui/ImGuiCore.h"
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
+#include "Graphics/Animation.h"
 
 namespace Ukemochi
 {
@@ -59,8 +60,8 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<CircleCollider2D>();
         ECS::GetInstance().RegisterComponent<ConvexCollider2D>();
         ECS::GetInstance().RegisterComponent<SpriteRender>();
+	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
-        ECS::GetInstance().RegisterComponent<Button>();
 
         // TODO: Register your systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -72,6 +73,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<InGameGUI>();
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
+	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -102,8 +104,12 @@ namespace Ukemochi
         // For in game GUI system
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
-        sig.set(ECS::GetInstance().GetComponentType<Button>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
+
+	    // For Animation System
+	    sig.reset();
+	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
+	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);
@@ -128,6 +134,10 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi Complete Base Sprite-Base-Attack 1_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
@@ -135,6 +145,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
 
         //Get Scenelist
+		UME_ENGINE_TRACE("Loading Scenes...");
         UseImGui::LoadScene();
 
         //if fresh start
@@ -168,19 +179,22 @@ namespace Ukemochi
     void SceneManager::SceneMangerInit()
     {
         // Initialize the graphics and collision system
+		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
         ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
-		
+
+		UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();
+		UME_ENGINE_TRACE("Initializing Collision...");
 		ECS::GetInstance().GetSystem<Collision>()->Init();
+
+        ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
 
      //When in game Engine State
     void SceneManager::SceneMangerUpdate()
     {
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
-
-        ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         SceneManagerDraw();
     }
@@ -301,7 +315,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
         ECS::GetInstance().GetSystem<InGameGUI>()->Update();
-        ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+        // ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
 
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
@@ -327,9 +341,10 @@ namespace Ukemochi
         // Compute the entities transformations
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
-        // --- DATA SYNC UPDATE ---
-        // ECS::GetInstance().GetSystem<DataSyncSystem>()->SyncData();
+	    // --- ANIMATION UPDATE ---
+	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
 
+	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
 		SceneManagerDraw();
 		sys_end = std::chrono::steady_clock::now();
@@ -337,14 +352,6 @@ namespace Ukemochi
 
 		loop_end = std::chrono::steady_clock::now();
 		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
-
-		//toggle console output for performance
-		// if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_EQUAL))
-		// {
-		// 	//func_toggle = (func_toggle + 1) % 2;
-		// 	print_performance(loop_time, collision_time, physics_time, graphics_time);
-		// 	//UME_ENGINE_INFO("PLEASE TELL ME THAT THIS IS TRIGGERING");
-		// }
 	}
 
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
@@ -361,12 +368,14 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerFree()
     {
+		UME_ENGINE_TRACE("Destroying all game objects...");
         std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
         for (auto& gameobject : list)
         {
             GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
         }
         ECS::GetInstance().GetSystem<LogicSystem>()->End();
+		UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
     }
@@ -424,33 +433,33 @@ namespace Ukemochi
             std::string name = gameObjectData["Name"].GetString();
             std::string tag = gameObjectData["Tag"].GetString();
 
-            if (tag == "Button")
-            {
-                // Get the screen width and height
-                Application& app = Application::Get();
-                int screen_width = app.GetWindow().GetWidth();
-                int screen_height = app.GetWindow().GetHeight();
+            //if (tag == "Button")
+            //{
+            //    // Get the screen width and height
+            //    Application& app = Application::Get();
+            //    int screen_width = app.GetWindow().GetWidth();
+            //    int screen_height = app.GetWindow().GetHeight();
 
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-                                                                      Vec2{screen_width * 0.1f, screen_height * 0.9f},
-                                                                      1.f, Vec3{1.f, 1.f, 1.f}, "Ukemochi");
+            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
+            //                                                          Vec2{screen_width * 0.1f, screen_height * 0.9f},
+            //                                                          1.f, Vec3{1.f, 1.f, 1.f}, "Ukemochi");
 
-                Button buttonComponent;
-                buttonComponent.on_click = []()
-                {
-                    std::cout << "PRESSED" << std::endl;
-                    ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
-                };
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(
-                    name, tag, "pause_btn", "", Vec2{screen_width * 0.05f, screen_height * 0.8f}, 1.f,
-                    Vec3{1.f, 1.f, 1.f}, "Ukemochi",
-                    Vec2{75.f, 75.f}, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
-                continue;
-                //newObject.AddComponent(buttonComponent);
-                //newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
-                //ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-                //Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
-            }
+            //    Button buttonComponent;
+            //    buttonComponent.on_click = []()
+            //    {
+            //        std::cout << "PRESSED" << std::endl;
+            //        ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
+            //    };
+            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(
+            //        name, tag, "pause_btn", "", Vec2{screen_width * 0.05f, screen_height * 0.8f}, 1.f,
+            //        Vec3{1.f, 1.f, 1.f}, "Ukemochi",
+            //        Vec2{75.f, 75.f}, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
+            //    continue;
+            //    //newObject.AddComponent(buttonComponent);
+            //    //newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
+            //    //ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
+            //    //Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
+            //}
 
             // Create a new GameObject and add it to the scene
 
@@ -530,10 +539,10 @@ namespace Ukemochi
                     );
                     int collisionFlag = componentData["Collision Flag"].GetInt();
                     bool isTrigger = componentData["is_trigger"].GetBool();
-                    std::string collisionTag = componentData["Tag"].GetString();
+                    //std::string collisionTag = componentData["Tag"].GetString();
                     if (!newObject.HasComponent<BoxCollider2D>())
                     {
-                        newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger, collisionTag});
+                        newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger});
                     }
                 }
                 else if (componentName == "CircleCollider2D")
@@ -556,7 +565,8 @@ namespace Ukemochi
                                              : SPRITE_SHAPE::CIRCLE;
                     if (!newObject.HasComponent<SpriteRender>())
                     {
-                        newObject.AddComponent<SpriteRender>({texturePath, shape});
+                        SpriteRender sr = {texturePath, shape};
+                        newObject.AddComponent<SpriteRender>(sr);
                     }
                     // //ECS::GetInstance().GetSystem<Renderer>()->setUpTextures(
                     //     newObject.GetComponent<SpriteRender>().texturePath,
@@ -584,25 +594,48 @@ namespace Ukemochi
                         });
                     }
                 }
+            	else if (componentName == "Animation")
+            	{
+            		if(!newObject.HasComponent<Animation>())
+            		{
+            			// Get clips and put them in map of Animation
+            			Animation anim;
+            			
+            			for (auto itr = componentData["Clips"].MemberBegin(); itr != componentData["Clips"].MemberEnd(); ++itr)
+						{
+							AnimationClip newClip;
+            				newClip.keyPath = itr->value[0].GetString();
+							newClip.name = itr->value[1].GetString();
+							newClip.total_frames = itr->value[2].GetInt();
+							newClip.pixel_width = itr->value[3].GetInt();
+							newClip.pixel_height = itr->value[4].GetInt();
+							newClip.total_width = itr->value[5].GetInt();
+							newClip.total_height = itr->value[6].GetInt();
+							newClip.frame_time = itr->value[7].GetFloat();
+							newClip.looping = itr->value[8].GetBool();
+							anim.clips[newClip.name] = newClip;
+						}
+
+            			anim.currentClip = componentData["CurrentClip"].GetString();
+
+            			newObject.AddComponent(std::move(anim));
+            		}
+            	}
                 else
                 {
-                    UME_ENGINE_ERROR("Unkown component type: {0}", componentName);
+                    UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
                 }
 
                 if (tag == "Player")
                 {
                     playerFound = true;
-                    ECS::GetInstance().GetSystem<Transformation>()->player = static_cast<int>(newObject.GetInstanceID());
 
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(newObject.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
-                    ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                    // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
                 }
                 if (!playerFound)
-                {
-                    ECS::GetInstance().GetSystem<Transformation>()->player = -1;
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
-                }
             }
         }
 
@@ -716,7 +749,7 @@ namespace Ukemochi
                 boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
 
                 boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-                boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
+                //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
                 componentsArray.PushBack(boxColliderComponent, allocator);
             }
@@ -760,6 +793,33 @@ namespace Ukemochi
 
                 componentsArray.PushBack(scriptComponent, allocator);
             }
+
+        	if(gameobject->HasComponent<Animation>())
+        	{
+        		Value animationComponent(rapidjson::kObjectType);
+        		animationComponent.AddMember("Name", "Animation", allocator);
+
+        		Value clipsList(kObjectType);
+        		const auto& animation = gameobject->GetComponent<Animation>();
+        		for(const auto& [key,value] : animation.clips)
+        		{
+        			Value clip(key.c_str(),allocator);
+        			Value clipData(kArrayType);
+        			clipData.PushBack(Value(value.keyPath.c_str(),allocator), allocator);
+        			clipData.PushBack(Value(key.c_str(),allocator), allocator);
+        			clipData.PushBack(value.total_frames, allocator);
+        			clipData.PushBack(value.pixel_width, allocator);
+        			clipData.PushBack(value.pixel_height,allocator);
+        			clipData.PushBack(value.total_width, allocator);
+        			clipData.PushBack(value.total_height, allocator);
+        			clipData.PushBack(value.frame_time, allocator);
+        			clipData.PushBack(value.looping, allocator);
+        			clipsList.AddMember(clip, clipData, allocator);
+        		}
+        		animationComponent.AddMember("Clips", clipsList, allocator);
+        		animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
+        		componentsArray.PushBack(animationComponent, allocator);
+        	}
 
             gameObjectData.AddMember("Components", componentsArray, allocator);
 
@@ -895,7 +955,7 @@ namespace Ukemochi
             boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
 
             boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-            boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
+            //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
             componentsArray.PushBack(boxColliderComponent, allocator);
         }
@@ -938,6 +998,32 @@ namespace Ukemochi
 
             componentsArray.PushBack(scriptComponent, allocator);
         }
+
+	    if(prefabObj->HasComponent<Animation>())
+	    {
+	        Value animationComponent(rapidjson::kObjectType);
+	        animationComponent.AddMember("Name", "Animation", allocator);
+
+	    	Value clipsList(kObjectType);
+	        const auto& animation = prefabObj->GetComponent<Animation>();
+	        for(const auto& [key,value] : animation.clips)
+	        {
+	            Value clip(key.c_str(),allocator);
+	        	Value clipData(kArrayType);
+	        	clipData.PushBack(Value(key.c_str(),allocator), allocator);
+	        	clipData.PushBack(value.total_frames, allocator);
+	        	clipData.PushBack(value.pixel_width, allocator);
+	        	clipData.PushBack(value.pixel_height,allocator);
+	        	clipData.PushBack(value.total_width, allocator);
+	        	clipData.PushBack(value.total_height, allocator);
+	        	clipData.PushBack(value.frame_time, allocator);
+	        	clipData.PushBack(value.looping, allocator);
+	        	clipsList.AddMember(clip, clipData, allocator);
+	        }
+			animationComponent.AddMember("Clips", clipsList, allocator);
+	    	animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
+	    	componentsArray.PushBack(animationComponent, allocator);
+	    }
 
         gameObjectData.AddMember("Components", componentsArray, allocator);
 

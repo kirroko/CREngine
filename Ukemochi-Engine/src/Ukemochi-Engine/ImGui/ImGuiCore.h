@@ -15,6 +15,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #pragma once
 #include <../vendor/GLFW/include/GLFW/glfw3.h>
+
+#include "imgui.h"
 #include "Ukemochi-Engine/Events/ApplicationEvent.h"
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
@@ -36,6 +38,8 @@ namespace Ukemochi
 		\brief Prepares a new ImGui frame.
 		*/
 		static void NewFrame();
+		
+		static void SpriteEditorWindow();
 
 		static void Begin();
 		/*!
@@ -57,16 +61,24 @@ namespace Ukemochi
 		static void LoadScene();
 
 		static void DisplayEntityDetails(GameObject& obj);
+
+		static void CheckAndHandleFileDrop();
 		
 		static void DebugWindow();
 
 		static void DisplayEntitySelectionCombo(int& selectedEntityIndex);
+
+		static void AddComponentUI(GameObject* selectedObject, bool& modified);
+
+		static void RemoveComponentUI(GameObject* selectedObject, bool& modified);
 
 		static void RemoveSelectedEntity(int& selectedEntityIndex);
 
 		static void EditEntityProperties(GameObject* selectedObject, bool& modified);
 
 		static void ShowEntityManagementUI();
+		
+		static void UpdateFramebufferSize(ImVec2 panelSize);
 
 		static void ContentBrowser(char* filePath);
 
@@ -94,11 +106,18 @@ namespace Ukemochi
 		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
 		static std::vector<std::string> assetFiles;
+		static std::vector<std::string> folderNames;
 
+		static std::vector<std::string> textureFiles;
 		static std::vector<std::string> sceneFiles;
-		static void LoadContents(); // Function to load assets
+		static std::string m_SpritePath;
+		static void LoadContents(const std::string& directory); // Function to load assets
 		static float m_Time; //!< Time since the last frame for delta time calculation.
+		static int m_global_selected;
+		static unsigned int m_currentPanelWidth;
+		static unsigned int m_currentPanelHeight;
 		static bool m_CompileError;
+		static bool m_SpriteFlag;
 		static bool m_Compiling;
 	};
 }

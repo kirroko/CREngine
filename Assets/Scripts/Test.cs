@@ -1,6 +1,7 @@
 ﻿using System;
+using Ukemochi;
 
-public class Test
+public class Test : BaseScript
 {
     
 }

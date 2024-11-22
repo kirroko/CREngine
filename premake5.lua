@@ -168,7 +168,8 @@ project "Ukemochi-Game"
 	{
 		"Ukemochi-Engine/vendor/spdlog/include",
 		"Ukemochi-Engine/src",
-		"Ukemochi-Engine/vendor/Mono/include"
+		"Ukemochi-Engine/vendor/Mono/include",
+		"Ukemochi-Engine/vendor/imgui"
 	}
 
 	links
