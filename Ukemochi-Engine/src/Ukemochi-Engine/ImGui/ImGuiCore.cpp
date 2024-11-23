@@ -1781,6 +1781,7 @@ namespace Ukemochi
             //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
             // Get mouse position relative to the play window
             float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
+          
 
 
             // Check if the mouse is within the bounds of the window
@@ -1821,6 +1822,12 @@ namespace Ukemochi
                 }
                 ImGui::EndDragDropTarget();
             }
+            ImGui::End();
+
+            // Add the object picking debug window
+            ImGui::Begin("Object Picking Debug View");
+            ImGui::Image((ImTextureID)(intptr_t)ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer(),
+                ImVec2(300, 300), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::End();
         }
     }

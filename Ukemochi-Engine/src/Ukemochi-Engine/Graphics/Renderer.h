@@ -473,12 +473,13 @@ private:
 	void assignUniqueColorsToEntities();
 	void setupColorPickingFramebuffer();
 	void setUpObjectPickingBuffer();
-
+	std::unique_ptr<Shader> pointShader;
 public:
 	size_t getEntityFromMouseClick(int mouseX, int mouseY);
 	void renderForObjectPicking();
 	GLuint getObjectPickingColorBuffer() const;
 	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
+	void drawPoint(float x, float y, glm::vec3 color);
 	glm::vec3 encodeIDToColor(int id);
 };
 #endif

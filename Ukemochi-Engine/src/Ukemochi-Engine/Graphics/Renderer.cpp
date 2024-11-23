@@ -499,6 +499,7 @@ void Renderer::setUpShaders()
 
 	object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
 
+	pointShader = std::make_unique<Shader>("../Assets/Shaders/point.vert", "../Assets/Shaders/point.frag");
 }
 
 /*!
@@ -1118,7 +1119,10 @@ void Renderer::renderForObjectPicking()
 
 		//glm::vec3 color = entityColors[entity];
 		glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
-
+		std::cout << "Entity ID: " << entity << ", Encoded Color: ("
+			<< (int)(color.r * 255) << ", "
+			<< (int)(color.g * 255) << ", "
+			<< (int)(color.b * 255) << ")" << std::endl;
 		object_picking_shader_program->setVec3("objectColor", color);
 
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
@@ -1133,6 +1137,12 @@ void Renderer::renderForObjectPicking()
 
 
 	}
+	// Get mouse world position
+	Vec2 mouse = SceneManager::GetInstance().GetPlayScreen();
+
+	// Visualize the mouse position as a red point
+	drawPoint(mouse.x, mouse.y, glm::vec3(1.0f, 0.0f, 0.0f));
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Now render the framebuffer texture to the screen
@@ -1146,7 +1156,7 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 
 	unsigned char pixel[3];
-	glReadPixels(mouseX, screen_height - mouseY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel);
+	glReadPixels(mouseX, mouseY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -1238,4 +1248,45 @@ void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int h
 
 	// May as well update viewport?
 	glViewport(0, 0, width, height);
+}
+
+void Renderer::drawPoint(float x, float y, glm::vec3 color)
+{
+	// Activate the point shader
+	pointShader->Activate();
+
+	// Set the color of the point
+	pointShader->setVec3("pointColor", color);
+
+	// Get the current camera projection and view matrices
+	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
+	glm::mat4 view = camera->getCameraViewMatrix();
+
+	// Pass matrices to the shader
+	pointShader->setMat4("projection", projection);
+	pointShader->setMat4("view", view);
+
+	// Create a VAO and VBO for the point
+	GLuint pointVAO, pointVBO;
+	glGenVertexArrays(1, &pointVAO);
+	glGenBuffers(1, &pointVBO);
+
+	// Define the point position
+	float pointVertices[] = { x, y };
+
+	// Bind and configure the VAO/VBO
+	glBindVertexArray(pointVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pointVertices), pointVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Draw the point
+	glPointSize(10.0f); // Adjust the size of the point
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	// Clean up
+	glDeleteVertexArrays(1, &pointVAO);
+	glDeleteBuffers(1, &pointVBO);
 }
