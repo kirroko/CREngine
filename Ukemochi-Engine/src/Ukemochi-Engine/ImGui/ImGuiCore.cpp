@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
+#include "ImGuizmo.h"
+
 #include "../Application.h"
 
 #include "../Logic/Logic.h"
@@ -198,6 +200,37 @@ namespace Ukemochi
     //        ImGui::End();
     //    }
     //}
+
+    void UseImGui::RenderGizmo2d()
+    {
+        ImGui::Begin("GizmoExample");
+
+        // Get the current ImGui window dimensions
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+
+        // Set up 2D camera view and projection matrices
+        glm::mat4 viewMatrix = glm::mat4(1.0f); // Identity matrix for 2D view
+        glm::mat4 projectionMatrix = glm::ortho(0.0f, windowSize.x, windowSize.y, 0.0f, -1.0f, 1.0f);
+
+        // Example transform matrix for a 2D object
+        glm::mat4 objectMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(windowSize.x / 2, windowSize.y / 2, 0));
+
+        // Manipulate objectMatrix with ImGuizmo
+        ImGuizmo::SetOrthographic(true);  // Use orthographic mode for 2D
+        ImGuizmo::SetDrawlist();
+
+        // Set the rectangle area in which the gizmo will draw (whole window)
+        ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
+
+        // ImGuizmo operation mode: Translate (move)
+        ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
+            ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(objectMatrix));
+
+        // Now, use `objectMatrix` to update your 2D object transform
+
+        ImGui::End();
+    }
 
     void UseImGui::SpriteEditorWindow()
     {

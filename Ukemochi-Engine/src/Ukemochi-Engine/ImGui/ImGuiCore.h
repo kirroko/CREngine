@@ -56,6 +56,8 @@ namespace Ukemochi
 
 		static void ControlPanel(float fps);
 		
+		static void RenderGizmo2d();
+
 		static void ShowErrorPopup(const std::string& errorMessage);
 
 		static void LoadScene();
