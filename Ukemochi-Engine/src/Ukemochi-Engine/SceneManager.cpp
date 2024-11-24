@@ -280,7 +280,7 @@ namespace Ukemochi
            /* ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                 SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
 
-           ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+           ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
