@@ -25,7 +25,7 @@ namespace Ukemochi
 	void DungeonManager::Init()
 	{
 		current_room_id = 2;
-		player = -1;
+		player = static_cast<EntityID>(-1);
 
 		InitDungeon();
 	}
@@ -64,7 +64,7 @@ namespace Ukemochi
 	void DungeonManager::SwitchToRoom(int next_room_id)
 	{
 		// Deactivate current room
-		//ActivateRoom(current_room_id, false);
+		ActivateRoom(current_room_id, false);
 
 		// Update current room ID
 		current_room_id += next_room_id;
@@ -88,7 +88,7 @@ namespace Ukemochi
 		}
 
 		// Activate next room
-		//ActivateRoom(current_room_id, true);
+		ActivateRoom(current_room_id, true);
 	}
 
 	/*!***********************************************************************
@@ -140,8 +140,13 @@ namespace Ukemochi
 					}
 				}
 			}
+
+			// Deactivate all rooms except the current room
+			if (room_id != current_room_id)
+				ActivateRoom(room_id, false);
 		}
 
+		// Set the camera initial position
 		ECS::GetInstance().GetSystem<Camera>()->position = {};
 	}
 
@@ -155,10 +160,8 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::ActivateRoom(int room_id, bool activate)
 	{
-		//for (auto& entity : rooms[room_id].entities)
-		//{
-		//	GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
-		//}
+		for (auto& entity : rooms[room_id].entities)
+			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 	}
 
 	/*!***********************************************************************
@@ -167,21 +170,21 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::UnlockRoom()
 	{
-		//std::string str_id = std::to_string(current_room_id);
+		std::string str_id = std::to_string(current_room_id);
 
-		//// Enable doors and disable blocks in the room
-		//for (auto const& entity : rooms[current_room_id].entities)
-		//{
-		//	std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
-		//	std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+		// Enable doors and disable blocks in the room
+		for (auto const& entity : rooms[current_room_id].entities)
+		{
+			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
+			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
-		//	// Enable doors
-		//	if (tag == "LeftDoor" || tag == "RightDoor")
-		//		GameObjectManager::GetInstance().GetGO(entity).SetActive(true);
+			// Enable doors
+			if (tag == "LeftDoor" || tag == "RightDoor")
+				GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
 
-		//	// Disable blocks
-		//	if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
-		//		GameObjectManager::GetInstance().GetGO(entity).SetActive(false);
-		//}
+			// Disable blocks
+			if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
+				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+		}
 	}
 }

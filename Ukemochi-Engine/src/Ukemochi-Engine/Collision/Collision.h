@@ -213,13 +213,11 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Collision response between an object and the screen boundaries.
-        \param[in] tag
-         The tag of the collided object.
         \param[out] trans
          The Transform component attached to the collided object.
         \param[in] box
          The BoxCollider2D component attached to the collided object.
         *************************************************************************/
-        void BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box);
+        void BoxScreen_Response(Transform& trans, const BoxCollider2D& box);
     };
 }

@@ -20,12 +20,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h"	 // for game object tag
 #include "Ukemochi-Engine/Logic/Scripting.h" // for invoking OnCollisonEnter2D
 #include "../Game/DungeonManager.h"			 // for room size and current room ID
+#include "../Physics/Physics.h"				 // for knockback effect
+#include "Ukemochi-Engine/Game/PlayerManager.h"
 
 #include "../Input/Input.h" // temp
-#include "../Physics/Physics.h" // temp
-#include "../Graphics/Camera2D.h" // temp
-#include "Ukemochi-Engine/Game/PlayerManager.h"
-#include "Ukemochi-Engine/Graphics/Renderer.h"
 
 namespace Ukemochi
 {
@@ -53,19 +51,6 @@ namespace Ukemochi
 			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
 				knife = entity;
 		}
-	}
-
-	void ApplyKnockback(Rigidbody2D& rb, const Transform& enemyTransform, const Transform& playerTransform)
-	{
-		Vec2 knockback_direction{};
-		float knockback_force{ 15000 };
-
-		Vec2Normalize(knockback_direction, (enemyTransform.position - playerTransform.position));
-		//rb.velocity = knockback_direction * knockback_force;
-		knockback_direction *= knockback_force;
-
-		ECS::GetInstance().GetSystem<Physics>()->AddForceX(rb, knockback_direction.x);
-		ECS::GetInstance().GetSystem<Physics>()->AddForceY(rb, knockback_direction.y);
 	}
 
 	/*!***********************************************************************
@@ -97,9 +82,10 @@ namespace Ukemochi
 		{
 			for (auto const& entity1 : m_Entities)
 			{
+				// Skip if the first entity is not active
 				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
 					continue;
-				
+
 				// Get the tag of the first entity
 				std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
 
@@ -117,32 +103,22 @@ namespace Ukemochi
 					if (entity1 == entity2)
 						continue;
 
+					// Skip if the second entity is not active
+					if (!GameObjectManager::GetInstance().GetGO(entity2)->GetActive())
+						continue;
+
 					// Get the tag of the second entity
 					std::string tag2 = GameObjectManager::GetInstance().GetGO(entity2)->GetTag();
 
 					// Get references of the second entity components
-					auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
+					//auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
 					// Check collision between two box objects
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
-					{
 						BoxBox_Response(entity1, entity2, tLast);
-
-						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						// if (ECS::GetInstance().HasComponent<Script>(entity1))
-						// {
-						// 	auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-						// 	ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						// }
-						// if (ECS::GetInstance().HasComponent<Script>(entity2))
-						// {
-						// 	auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
-						// 	ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						// }
-					}
 				}
 			}
 		}
@@ -470,7 +446,8 @@ namespace Ukemochi
 			if (!playerData.isAttacking)
 				return;
 
-			ApplyKnockback(rb2, trans2, trans1);
+			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+
 			std::cout << "enemy hit\n";
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
@@ -757,7 +734,7 @@ namespace Ukemochi
 	\brief
 	 Collision response between an object and the screen boundaries.
 	*************************************************************************/
-	void Collision::BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box)
+	void Collision::BoxScreen_Response(Transform& trans, const BoxCollider2D& box)
 	{
 		// Colliding with the left screen boundary
 		if (box.collision_flag & COLLISION_LEFT)
