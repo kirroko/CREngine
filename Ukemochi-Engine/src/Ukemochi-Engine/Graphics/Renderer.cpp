@@ -1326,8 +1326,20 @@ void Renderer::drawPoint(float x, float y, glm::vec3 color)
 
 void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 {
+	//size_t entityID = getEntityFromMouseClick(mouseX, mouseY);
+	//if (entityID != -1)
+	//{
+	//	selectedEntityID = entityID;
+	//	isDragging = true;
+
+	//	// Calculate the drag offset
+	//	auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+	//	dragOffset.x = transform.position.x - mouseX;
+	//	dragOffset.y = transform.position.y - mouseY;
+	//}
+
 	size_t entityID = getEntityFromMouseClick(mouseX, mouseY);
-	if (entityID != -1)
+	if (entityID != -1 && ECS::GetInstance().HasComponent<Transform>(entityID))
 	{
 		selectedEntityID = entityID;
 		isDragging = true;
@@ -1336,19 +1348,51 @@ void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 		dragOffset.x = transform.position.x - mouseX;
 		dragOffset.y = transform.position.y - mouseY;
+
+		std::cout << "Selected entity ID: " << selectedEntityID << std::endl;
+	}
+	else
+	{
+		selectedEntityID = -1; // No valid entity selected
+		isDragging = false;
+		std::cout << "No valid entity at mouse click position." << std::endl;
 	}
 }
 
 void Renderer::handleMouseDrag(int mouseX, int mouseY)
 {
+	//if (isDragging && selectedEntityID != -1)
+	//{
+	//	// Get the selected entity's transform
+	//	auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+	//	// Update position based on mouse position and drag offset
+	//	transform.position.x = mouseX + dragOffset.x;
+	//	transform.position.y = mouseY + dragOffset.y;
+	//}
+
 	if (isDragging && selectedEntityID != -1)
 	{
-		// Get the selected entity's transform
-		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		// Ensure the entity exists and has the required Transform component
+		if (ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+		{
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 
-		// Update position based on mouse position and drag offset
-		transform.position.x = mouseX + dragOffset.x;
-		transform.position.y = mouseY + dragOffset.y;
+			// Update position based on mouse and drag offset
+			transform.position.x = mouseX + dragOffset.x;
+			transform.position.y = mouseY + dragOffset.y;
+
+			// Optional: Debug output to monitor dragging behavior
+			std::cout << "Dragging entity " << selectedEntityID
+				<< " to position (" << transform.position.x
+				<< ", " << transform.position.y << ")" << std::endl;
+		}
+		else
+		{
+			std::cerr << "Error: Entity " << selectedEntityID
+				<< " does not have a Transform component." << std::endl;
+			isDragging = false;
+		}
 	}
 }
 
