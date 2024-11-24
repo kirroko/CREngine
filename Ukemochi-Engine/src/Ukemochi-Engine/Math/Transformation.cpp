@@ -43,6 +43,7 @@ namespace Ukemochi
 
 			// Compute the depth scale of the dynamic entities
 			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 		}
@@ -74,7 +75,14 @@ namespace Ukemochi
 		float new_scale = scaling.min_scale + flip_t * (scaling.max_scale - scaling.min_scale);
 
 		// Set the new scale
-		transform.scale = { new_scale, new_scale };
+		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Enemy"/*"Worm"*/)
+			transform.scale = { new_scale, new_scale * 1.75f };
+		/*else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Fish")
+			transform.scale = { new_scale * 1.75f, new_scale };*/
+		else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
+			transform.scale = { new_scale * 0.75f, new_scale * 0.75f };
+		else
+			transform.scale = { new_scale, new_scale };
 	}
 
 	void Transformation::IncreaseScale(Transform& trans)

@@ -2,7 +2,7 @@
 /*!
 \file       DungeonManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 21, 2024
+\date       Nov 24, 2024
 \brief      This file contains the definition of the DungeonManager which handles the game dungeon.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -12,50 +12,132 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
-#include "DungeonManager.h" // for forward declaration
-#include "../Graphics/Camera2D.h"
-#include "../Factory/GameObjectManager.h"
+#include "DungeonManager.h"				  // for forward declaration
+#include "../Graphics/Camera2D.h"		  // for camera position
+#include "../Factory/GameObjectManager.h" // for game object name and tag
 
 namespace Ukemochi
 {
+	/*!***********************************************************************
+	\brief
+	 Initialize the DungeonManager.
+	*************************************************************************/
+	void DungeonManager::Init()
+	{
+		current_room_id = 2;
+		player = -1;
+
+		InitDungeon();
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Offset the position of a specific room and its entities.
+	\param[in] room_id
+	 The ID of the room to offset.
+	\param[in] offset
+	 The amount to offset the room by.
+	*************************************************************************/
+	void DungeonManager::OffsetRoom(const int room_id, const int offset)
+	{
+		std::string str_id = std::to_string(room_id);
+
+		// Offset the room and its entity positions
+		for (auto& entity : rooms[room_id].entities)
+		{
+			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+
+			transform.position.x += offset;
+
+			if (name == str_id + "_Background")
+				rooms[room_id].position = transform.position;
+		}
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Switch the active room to the next room.
+	\param[in] next_room_id
+	 The ID of the room to switch to.
+	*************************************************************************/
+	void DungeonManager::SwitchToRoom(int next_room_id)
+	{
+		// Deactivate current room
+		//ActivateRoom(current_room_id, false);
+
+		// Update current room ID
+		current_room_id += next_room_id;
+
+		// Perform camera and player transition
+		if (next_room_id == -1)
+		{
+			//ECS::GetInstance().GetSystem<Camera>()->position.x -= ROOM_WIDTH;
+			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
+
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
+			transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
+		}
+		else
+		{
+			//ECS::GetInstance().GetSystem<Camera>()->position.x += ROOM_WIDTH;
+			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
+
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
+			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
+		}
+
+		// Activate next room
+		//ActivateRoom(current_room_id, true);
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Update the room's progress, such as unlocking doors upon completion.
+	*************************************************************************/
+	void DungeonManager::UpdateRoomProgress()
+	{
+		// Check if all enemies in the room is gone
+		//if (rooms[current_room_id].enemies.size() <= 0)
+		//	UnlockRoom();
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Initialize the rooms in the dungeon.
+	*************************************************************************/
 	void DungeonManager::InitDungeon()
 	{
-		current_room_id = 1;
-
 		for (int room_id = 1; room_id <= NUM_OF_ROOMS; ++room_id)
 		{
-			// Store the entities in its own room
+			std::string str_id = std::to_string(room_id);
+
 			for (auto const& entity : m_Entities)
 			{
 				std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
-				//std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+				std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
-				std::string str_id = std::to_string(room_id);
-				if (name == "Room" + str_id
-					|| name == "TopBound" + str_id || name == "BtmBound" + str_id || name == "LeftBound" + str_id || name == "RightBound" + str_id
-					|| name == "LeftDoor" + str_id || name == "RightDoor" + str_id || name == "Box" + str_id || name == "Enemy" + str_id)
+				// Get the player entity
+				if (player == -1 && tag == "Player")
+					player = entity;
+
+				// Store the entities in its own room
+				if (name[0] == str_id[0])
 				{
+					// Store all entities of the same room in the room entity list
 					rooms[room_id].entities.push_back(entity);
 
-					if (name == "Enemy" + str_id)
+					if (tag == "Enemy")
+					{
+						// Store all enemies of the same room in the room enemy list
 						rooms[room_id].enemies.push_back(entity);
-				}
-			}
-
-			// Offset the room positions
-			for (auto const& entity : rooms[room_id].entities)
-			{
-				std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
-				std::string str_id = std::to_string(room_id);
-
-				auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-
-				transform.position.x += ROOM_WIDTH * (room_id - 1);
-
-				if (name == "Room" + str_id)
-				{
-					auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-					rooms[room_id].position = transform.position;
+					}
+					else if (tag == "Room")
+					{
+						// Store the position of the room
+						auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+						rooms[room_id].position = transform.position;
+					}
 				}
 			}
 		}
@@ -63,54 +145,43 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Camera>()->position = {};
 	}
 
-	void DungeonManager::Update()
-	{
-
-	}
-
-	void DungeonManager::SwitchToRoom(int next_room_id)
-	{
-		//if (rooms.find(next_room_id) == rooms.end())
-		//	return;
-
-		// Deactivate current room
-		ActivateRoom(current_room_id, false);
-
-		// Update current room ID
-		current_room_id += next_room_id;
-
-		// Perform camera transition
-		if (next_room_id == -1)
-			ECS::GetInstance().GetSystem<Camera>()->position.x -= ROOM_WIDTH;
-		else
-			ECS::GetInstance().GetSystem<Camera>()->position.x += ROOM_WIDTH;
-
-		//for (auto const& entity : m_Entities)
-		//{
-		//	if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
-		//	{
-
-		//	}
-		//}
-
-		//ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH;
-
-		// Activate next room
-		ActivateRoom(current_room_id, true);
-	}
-
+	/*!***********************************************************************
+	\brief
+	 Activate or deactivate all entities in a room.
+	\param[in] room_id
+	 The ID of the room to activate or deactivate.
+	\param[in] activate
+	 True to activate the room, false to deactivate it.
+	*************************************************************************/
 	void DungeonManager::ActivateRoom(int room_id, bool activate)
 	{
-		//auto& room = rooms[room_id];
-		//room.is_active = activate;
-
-		//for (auto& entity : room.entities)
+		//for (auto& entity : rooms[room_id].entities)
 		//{
-		//	//auto& entityCollider = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
-		//	//entityCollider.is_active = activate;
+		//	GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
+		//}
+	}
 
-		//	//auto& entityRenderer = ECS::GetInstance().GetComponent<Renderer>(entity);
-		//	//entityRenderer.is_visible = activate;
+	/*!***********************************************************************
+	\brief
+	 Unlock the room by enabling doors and disabling blocks.
+	*************************************************************************/
+	void DungeonManager::UnlockRoom()
+	{
+		//std::string str_id = std::to_string(current_room_id);
+
+		//// Enable doors and disable blocks in the room
+		//for (auto const& entity : rooms[current_room_id].entities)
+		//{
+		//	std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
+		//	std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
+		//	// Enable doors
+		//	if (tag == "LeftDoor" || tag == "RightDoor")
+		//		GameObjectManager::GetInstance().GetGO(entity).SetActive(true);
+
+		//	// Disable blocks
+		//	if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
+		//		GameObjectManager::GetInstance().GetGO(entity).SetActive(false);
 		//}
 	}
 }

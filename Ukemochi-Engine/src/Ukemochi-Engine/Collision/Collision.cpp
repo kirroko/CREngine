@@ -43,22 +43,6 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
-
-		// Convex Testing
-		/*ConvexCollider2D convex1;
-		convex1.vertices.push_back(Vec2{ 0,0 });
-		convex1.vertices.push_back(Vec2{ 1,0 });
-		convex1.vertices.push_back(Vec2{ 1,1 });
-		convex1.vertices.push_back(Vec2{ 0,1 });
-
-		ConvexCollider2D convex2;
-		convex2.vertices.push_back(Vec2{ 0.5f,0.5f });
-		convex2.vertices.push_back(Vec2{ 1.5f,0.5f });
-		convex2.vertices.push_back(Vec2{ 1.5f,1.5f });
-		convex2.vertices.push_back(Vec2{ 0.5f,1.5f });
-
-		if (ConvexConvex_Intersection(convex1, convex2))
-			std::cout << "Convex collided\n";*/
 	}
 
 	void ApplyKnockback(Rigidbody2D& rb, const Transform& enemyTransform, const Transform& playerTransform)
@@ -96,19 +80,13 @@ namespace Ukemochi
 		else if (Input::IsKeyPressed(UME_KEY_D))
 			is_facing_right = true;
 
-		// Mochi strikes
-		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-			is_attacking = true;
-		else
-			is_attacking = false;
-
 		// Set knife position
 		if (knife)
 		{
 			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
 			auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(knife);
 
-			float offset_x = is_facing_right ? player_trans.scale.x * 0.5f + knife_trans.scale.x * 0.5f : -player_trans.scale.x * 0.5f - knife_trans.scale.x * 0.5f;
+			float offset_x = is_facing_right ? player_trans.scale.x : -player_trans.scale.x;
 			knife_trans.position = Vec2{ player_trans.position.x + offset_x, player_trans.position.y };
 		}
 		// ---------- temp ----------
@@ -148,7 +126,6 @@ namespace Ukemochi
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
 					{
 						BoxBox_Response(entity1, entity2, tLast);
-						//BoxBox_Response(tag1, trans1, box1, rb1, tag2, trans2, box2, rb2, tLast);
 
 						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
 						if (ECS::GetInstance().HasComponent<Script>(entity1))
@@ -163,10 +140,6 @@ namespace Ukemochi
 						}
 					}
 				}
-
-				// Check collision between box objects and the screen boundaries
-				//if (!box1.is_trigger && BoxScreen_Intersection(box1))
-				//	BoxScreen_Response(tag1, trans1, box1, rb1);
 			}
 		}
 	}
@@ -481,7 +454,7 @@ namespace Ukemochi
 		if (tag1 == "Player" && box2.is_trigger)
 		{
 			// Mochi and Door / Other Triggers
-			Trigger_Response(trans1, tag2, trans2, box2);
+			Trigger_Response(tag2);
 		}
 		else if ((tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy"))
 		{
@@ -490,9 +463,6 @@ namespace Ukemochi
 
 			if (!is_attacking)
 				return;
-
-			/*auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
-			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);*/
 
 			ApplyKnockback(rb2, trans2, trans1);
 			std::cout << "enemy hit\n";
@@ -512,9 +482,6 @@ namespace Ukemochi
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
 
-			auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
-
 			std::cout << "player hit\n";
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
@@ -529,70 +496,6 @@ namespace Ukemochi
 			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
 		{
 			// Mochi / Enemy and Environment Objects / Boundaries
-			// Acts as a wall
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-		else if (tag1 == "Enemy" && tag2 == "Enemy")
-		{
-			// Enemy and Enemy
-			// Block each other
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-	}
-
-	void Collision::BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
-	{
-		if (tag1 == "Player" && box2.is_trigger)
-		{
-			// Mochi and Door / Other Triggers
-			Trigger_Response(trans1, tag2, trans2, box2);
-		}
-		else if (tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy")
-		{
-			// Mochi's Knife / Mochi's Ability and Enemy
-			// Enemy takes damage and knockback
-		}
-		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
-		{
-			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
-			// Destroy enemy's projectile
-		}
-
-		// Skip trigger objects
-		if (box1.is_trigger || box2.is_trigger)
-			return;
-
-		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile")
-		{
-			// Mochi and Enemy / Enemy's Projectile
-			// Mochi takes damage and knockback
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment"
-			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
-		{
-			// Mochi / Enemy and Environment Objects
 			// Acts as a wall
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
@@ -816,58 +719,27 @@ namespace Ukemochi
 	\brief
 	 Collision response between the player and a trigger object.
 	*************************************************************************/
-	void Collision::Trigger_Response(Transform& player_trans, const std::string& trigger_tag, const Transform& trigger_trans, const BoxCollider2D& trigger_box)
+	void Collision::Trigger_Response(const std::string& trigger_tag)
 	{
 		// PLAYER AND DOORS
-		// To simulate moving between rooms
 		if (trigger_tag == "LeftDoor")
 		{
-			// Move to left room
+			// Move to the left room
 			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1);
-			player_trans.position.x -= trigger_trans.scale.x * 3.f;
-
-			//// If the player is colliding with the top or btm of the door, act as a wall
-			//if (trigger_box.collision_flag & COLLISION_TOP)
-			//	player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			//else if (trigger_box.collision_flag & COLLISION_BOTTOM)
-			//	player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			//else // Player entered the left door
-			//	player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
 		}
 		else if (trigger_tag == "RightDoor")
 		{
+			// Move to the right room
 			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(1);
-			player_trans.position.x += trigger_trans.scale.x * 3.f;
-
-			//// If the player is colliding with the top or btm of the door, act as a wall
-			//if (trigger_box.collision_flag & COLLISION_TOP)
-			//	player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			//else if (trigger_box.collision_flag & COLLISION_BOTTOM)
-			//	player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			//else // Player entered the right door
 		}
-		else if (trigger_tag == "TopDoor")
-		{
-			player_trans.position.y -= trigger_trans.scale.y * 3.f;
-
-			//// If the player is colliding with the left or right of the door, act as a wall
-			//if (trigger_box.collision_flag & COLLISION_LEFT)
-			//	player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			//else if (trigger_box.collision_flag & COLLISION_RIGHT)
-			//	player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			//else // Player entered the top door
-		}
-		else if (trigger_tag == "BtmDoor")
-		{
-			player_trans.position.y += trigger_trans.scale.y * 3.f;
-
-			//// If the player is colliding with the left or right of the door, act as a wall
-			//if (trigger_box.collision_flag & COLLISION_LEFT)
-			//	player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			//else if (trigger_box.collision_flag & COLLISION_RIGHT)
-			//	player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			//else // Player entered the bottom door
-		}
+		//else if (trigger_tag == "TopDoor")
+		//{
+		//	// Move to the top room
+		//}
+		//else if (trigger_tag == "BtmDoor")
+		//{
+		//	// Move to the bottom room
+		//}
 
 		// PLAYER AND OTHER TRIGGERS (coins, checkpoints, etc..)
 	}
@@ -876,42 +748,30 @@ namespace Ukemochi
 	\brief
 	 Collision response between an object and the screen boundaries.
 	*************************************************************************/
-	void Collision::BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb)
+	void Collision::BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box)
 	{
-		// Colliding with left screen boundary
+		// Colliding with the left screen boundary
 		if (box.collision_flag & COLLISION_LEFT)
 		{
 			trans.position.x = trans.scale.x * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.x = -rb.velocity.x;
 		}
 
-		// Colliding with right screen boundary
+		// Colliding with the right screen boundary
 		if (box.collision_flag & COLLISION_RIGHT)
 		{
 			trans.position.x = screen_width - trans.scale.x * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.x = -rb.velocity.x;
 		}
 
-		// Colliding with top screen boundary
+		// Colliding with the top screen boundary
 		if (box.collision_flag & COLLISION_TOP)
 		{
 			trans.position.y = trans.scale.y * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.y = -rb.velocity.y;
 		}
 
-		// Colliding with bottom screen boundary
+		// Colliding with the bottom screen boundary
 		if (box.collision_flag & COLLISION_BOTTOM)
 		{
 			trans.position.y = screen_height - trans.scale.y * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.y = -rb.velocity.y;
 		}
 	}
 }

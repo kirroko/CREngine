@@ -36,8 +36,8 @@ namespace Ukemochi
         \brief
          Minimum and maximum scale constant for all entities.
         *************************************************************************/
-        const float MIN_Y_POS = 0.0f, MAX_Y_POS = 900.0f;
-        const float MIN_SCALE = 100.0f, MAX_SCALE = 175.0f;
+        const float MIN_Y_POS = 100.0f, MAX_Y_POS = 800.0f;
+        const float MIN_SCALE = 150.0f, MAX_SCALE = 200.0f;
         const float SCALE_FACTOR = 100.f;
 
         const DepthScaling OBJECT_SCALING = { MIN_Y_POS, MAX_Y_POS, MIN_SCALE, MAX_SCALE };
