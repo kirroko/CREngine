@@ -95,6 +95,11 @@ namespace Ukemochi
                 if (rb.is_kinematic)
                     continue;
 
+                auto* go = GameObjectManager::GetInstance().GetGO(entity);
+             
+                if (!go->GetActive())
+                 continue;
+
                 // Update the linear physics of the entity
                 UpdateLinearPhysics(tag, trans, rb);
 

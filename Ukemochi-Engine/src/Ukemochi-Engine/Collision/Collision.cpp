@@ -24,6 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Input/Input.h" // temp
 #include "../Physics/Physics.h" // temp
 #include "../Graphics/Camera2D.h" // temp
+#include "Ukemochi-Engine/Game/PlayerManager.h"
+#include "Ukemochi-Engine/Graphics/Renderer.h"
 
 namespace Ukemochi
 {
@@ -31,7 +33,6 @@ namespace Ukemochi
 	EntityID player = NULL;
 	EntityID knife = NULL;
 	bool is_facing_right = false;
-	bool is_attacking = false;
 
 	/*!***********************************************************************
 	\brief
@@ -43,6 +44,15 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
+
+		// Find player and knife GO
+		for (auto const& entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+				player = entity;
+			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
+				knife = entity;
+		}
 	}
 
 	void ApplyKnockback(Rigidbody2D& rb, const Transform& enemyTransform, const Transform& playerTransform)
@@ -65,15 +75,6 @@ namespace Ukemochi
 	void Collision::CheckCollisions()
 	{
 		// ---------- temp ----------
-		// Find player and knife GO
-		for (auto const& entity : m_Entities)
-		{
-			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
-				player = entity;
-			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
-				knife = entity;
-		}
-
 		// Set player direction
 		if (Input::IsKeyPressed(UME_KEY_A))
 			is_facing_right = false;
@@ -96,6 +97,9 @@ namespace Ukemochi
 		{
 			for (auto const& entity1 : m_Entities)
 			{
+				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
+					continue;
+				
 				// Get the tag of the first entity
 				std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
 
@@ -128,16 +132,16 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 
 						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						if (ECS::GetInstance().HasComponent<Script>(entity1))
-						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						}
-						if (ECS::GetInstance().HasComponent<Script>(entity2))
-						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
-							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						}
+						// if (ECS::GetInstance().HasComponent<Script>(entity1))
+						// {
+						// 	auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
+						// 	ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+						// }
+						// if (ECS::GetInstance().HasComponent<Script>(entity2))
+						// {
+						// 	auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
+						// 	ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
+						// }
 					}
 				}
 			}
@@ -460,8 +464,10 @@ namespace Ukemochi
 		{
 			// Mochi's Knife / Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
+			
+			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
 
-			if (!is_attacking)
+			if (!playerData.isAttacking)
 				return;
 
 			ApplyKnockback(rb2, trans2, trans1);
@@ -481,6 +487,9 @@ namespace Ukemochi
 		{
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
+			
+			// Temp
+			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
 
 			std::cout << "player hit\n";
 

@@ -457,9 +457,12 @@ namespace Ukemochi
 
         mono_add_internal_call("Ukemochi.EngineInterop::PlayAnimation",
                                (void*)InternalCalls::PlayAnimation);
-        
-        mono_add_internal_call("Ukemochi.EngineInterop::PlayAnimationWithFrame",
-                               (void*)InternalCalls::PlayAnimationWithFrame);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::PlayQueuedAnimation",
+                               (void*)InternalCalls::PlayQueuedAnimation);
+
+        mono_add_internal_call("Ukemochi.EngineInterop::PlayImmediately",
+                               (void*)InternalCalls::PlayImmediately);
 
         mono_add_internal_call("Ukemochi.EngineInterop::GetDeltaTime",
                                (void*)InternalCalls::GetDeltaTime);
