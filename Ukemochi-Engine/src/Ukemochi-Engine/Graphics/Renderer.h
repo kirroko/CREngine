@@ -89,6 +89,8 @@ public:
 	 */
 	void render();
 
+	void handleMouseClick(int mouseX, int mouseY);
+
 	/*!
 	 * @brief Cleans up and releases all OpenGL resources (e.g., VAOs, VBOs, EBOs, textures, shaders).
 	 */

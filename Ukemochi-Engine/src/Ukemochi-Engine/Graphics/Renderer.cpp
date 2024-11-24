@@ -699,6 +699,29 @@ void Renderer::render()
 	textRenderer->renderAllText();
 }
 
+void Renderer::handleMouseClick(int mouseX, int mouseY) 
+{
+
+	for (auto& entity : m_Entities) 
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+		glm::vec2 entityPos(transform.position.x, transform.position.y);
+		glm::vec2 entitySize(transform.scale.x, transform.scale.y);
+
+		// Check if the mouse is within the entity's bounding box
+		if ((mouseX >= entityPos.x - (entitySize.x / 2)) && (mouseX <= entityPos.x + (entitySize.x / 2)) &&
+			(mouseY <= entityPos.y + (entitySize.y / 2)) && (mouseY >= entityPos.y - (entitySize.y / 2)) ) 
+		{
+			std::cout << "Clicked on entity ID: " << entity << std::endl;
+
+			// Perform any additional logic here (e.g., highlight or select the entity)
+			break;
+		}
+	}
+}
+
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).

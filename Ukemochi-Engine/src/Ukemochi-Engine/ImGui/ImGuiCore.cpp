@@ -1725,16 +1725,16 @@ namespace Ukemochi
         static bool showGameView = true;
         // Application& app = Application::Get();
         //GLuint texture = renderer.getTextureColorBuffer();
-        //GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
-        GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
+        GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
+        //GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
 
         if (showGameView)
         {
             ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
-            //UpdateFramebufferSize(panelSize);
-            UpdateObjectPickingFramebufferSize(panelSize);
+            UpdateFramebufferSize(panelSize);
+            //UpdateObjectPickingFramebufferSize(panelSize);
 
             float targetAspect = 16.0f / 9.0f;
             float panelAspect = panelSize.x / panelSize.y;
