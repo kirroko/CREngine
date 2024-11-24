@@ -417,42 +417,5 @@
                     "IsDead": false,
                     "CanAttack": true
                 }]
-        }, {
-            "Name": "EmptyObject",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [758.8889770507813, 530.7670288085938],
-                    "Rotation": 0.0,
-                    "Scale": [96.0, 111.53800201416016]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
-                }]
         }]
 }

@@ -76,10 +76,8 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
 
 		// load textures
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
@@ -99,7 +97,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
 		});
-		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
+		level_background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
 
 		// PLAYER OBJECT
 		// player_obj = GameObjectFactory::CreateObject(player_data);

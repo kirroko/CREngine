@@ -1276,12 +1276,12 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0000610351563, 540.0],
+                    "Position": [960.0, 540.0],
                     "Rotation": 0.0,
                     "Scale": [168.57142639160156, 168.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [960.0277709960938, 540.0],
+                    "Position": [960.0, 540.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
@@ -1305,19 +1305,31 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
+                    "Sprite": "../Assets/Textures/Mochi_Attack_1.png",
                     "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Player.cs",
-                    "ClassName": "Player"
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 461, 428, 2048, 2048, 0.05000000074505806, true]
+                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.0, 0.0, 442, 448, 4096, 4096, 0.05000000074505806, true],
+                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.5, 0.5, 678, 579, 4096, 2797, 0.03999999910593033, true],
+                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.0, 0.0, 461, 428, 2048, 2048, 0.05000000074505806, true],
+                        "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5, 0.5, 545, 420, 2048, 1024, 0.05000000074505806, true],
+                        "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.5, 0.5, 716, 467, 3708, 1569, 0.05000000074505806, true],
+                        "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5, 0.5, 543, 484, 3900, 2597, 0.03999999910593033, true]
                     },
-                    "CurrentClip": "Idle"
+                    "CurrentClip": "Attack1"
+                }, {
+                    "Name": "Player",
+                    "MaxHealth": 100,
+                    "CurrentHealth": 100,
+                    "MaxComboHits": 3,
+                    "CurrentComboHits": 0,
+                    "ComboDamage": 10,
+                    "AttackCooldown": 0.5,
+                    "AttackTimer": 0.0,
+                    "PlayerForce": 1500.0,
+                    "IsDead": false,
+                    "CanAttack": true
                 }]
         }, {
             "Name": "Knife",
