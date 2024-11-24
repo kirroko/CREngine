@@ -275,10 +275,15 @@ namespace Ukemochi
 
         if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-           /* ECS::GetInstance().GetSystem<Renderer>()->getEntityFromMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+           ECS::GetInstance().GetSystem<Renderer>()->getEntityFromMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                 SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+           /* ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
+
+           ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+               SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+           ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+               SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
         }
 
         /*

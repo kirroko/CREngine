@@ -476,6 +476,11 @@ private:
 	void setupColorPickingFramebuffer();
 	void setUpObjectPickingBuffer();
 	std::unique_ptr<Shader> pointShader;
+
+	size_t selectedEntityID = -1; // Sentinel value for no selection
+	bool isDragging = false; // Flag to check if dragging is active
+	glm::vec2 dragOffset = glm::vec2(0.0f, 0.0f); // Offset between mouse position and entity center
+
 public:
 	size_t getEntityFromMouseClick(int mouseX, int mouseY);
 	void renderForObjectPicking();
@@ -483,5 +488,7 @@ public:
 	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
 	void drawPoint(float x, float y, glm::vec3 color);
 	glm::vec3 encodeIDToColor(int id);
+	void handleMouseDrag(int mouseX, int mouseY);
+	void handleMouseClickOP(int mouseX, int mouseY); 
 };
 #endif

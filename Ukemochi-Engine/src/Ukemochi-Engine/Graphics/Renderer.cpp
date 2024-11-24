@@ -237,7 +237,7 @@ void Renderer::renderScreenQuad()
  */
 void Renderer::renderToFramebuffer()
 {
-	beginFramebufferRender();
+	//beginFramebufferRender();
 
 	// Add debug information
 	//std::cout << "Begin framebuffer render" << std::endl;
@@ -541,6 +541,8 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
+	renderForObjectPicking();
+
 	debug_shader_program->Deactivate();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -550,9 +552,11 @@ void Renderer::render()
 	deltaTime = currentFrameTime - lastFrame;
 	lastFrame = currentFrameTime;
 
+	beginFramebufferRender();
 	// Clear the screen
+	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
 
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
@@ -1071,32 +1075,26 @@ void Renderer::animationKeyInput()
 void Renderer::assignUniqueColorsToEntities()
 {
 	size_t entityID = 0; // Starting ID
-	for (auto& entity : m_Entities)
-	{
-		float r = ((entityID & 0xFF) / 255.0f);               // Red from least significant byte
-		float g = (((entityID >> 8) & 0xFF) / 255.0f);        // Green from next byte
-		float b = (((entityID >> 16) & 0xFF) / 255.0f);       // Blue from next byte
-		entityColors[entity] = glm::vec3(r, g, b);
-		entityID++;
-
-	}
+    for (auto& entity : m_Entities)
+    {
+        float r = ((entityID >> 16) & 0xFF) / 255.0f;  // Extract red
+        float g = ((entityID >> 8) & 0xFF) / 255.0f;   // Extract green
+        float b = (entityID & 0xFF) / 255.0f;          // Extract blue
+        entityColors[entity] = glm::vec3(r, g, b);
+        entityID++;
+    }
 }
 
 glm::vec3 Renderer::encodeIDToColor(int id)
 {
-	//// Increase spread by scaling and biasing the channels
-	//float r = ((id % 255) + 50) / 305.0f;                // Add a bias to red
-	//float g = (((id / 255) % 255) + 50) / 305.0f;        // Add a bias to green
-	//float b = (((id / (255 * 255)) % 255) + 50) / 305.0f; // Add a bias to blue
-
-	//// Clamp to [0, 1] to ensure valid color values
-	//return glm::clamp(glm::vec3(r, g, b), 0.0f, 1.0f);
-
 	float r = ((id >> 16) & 0xFF) / 255.0f;
 	float g = ((id >> 8) & 0xFF) / 255.0f;
 	float b = (id & 0xFF) / 255.0f;
-	return glm::vec3(r, g, b);
 
+	// Clamp the values to ensure they stay in the range [0.0, 1.0]
+	return glm::vec3(glm::clamp(r, 0.0f, 1.0f),
+		glm::clamp(g, 0.0f, 1.0f),
+		glm::clamp(b, 0.0f, 1.0f));
 }
 
 void Renderer::setupColorPickingFramebuffer()
@@ -1123,7 +1121,10 @@ void Renderer::renderForObjectPicking()
 {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
 	glClearColor(1.f, 1.f, 1.f, 1.0f);
+	glDisable(GL_BLEND); 
+	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Get the camera's view and projection matrices
@@ -1142,11 +1143,9 @@ void Renderer::renderForObjectPicking()
 
 		//glm::vec3 color = entityColors[entity];
 		glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
-		std::cout << "Entity ID: " << entity << ", Encoded Color: ("
-			<< (int)(color.r * 255) << ", "
-			<< (int)(color.g * 255) << ", "
-			<< (int)(color.b * 255) << ")" << std::endl;
-		object_picking_shader_program->setVec3("objectColor", color);
+		//std::cout << "Encoded Color: (" << (int)(color.r * 255) << ", " << (int)(color.g * 255) << ", " << (int)(color.b * 255) << ")" << std::endl;
+
+		object_picking_shader_program->setVec3("objectColor", encodeIDToColor(static_cast<int>(entity)));
 
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
@@ -1164,7 +1163,7 @@ void Renderer::renderForObjectPicking()
 	Vec2 mouse = SceneManager::GetInstance().GetPlayScreen();
 
 	// Visualize the mouse position as a red point
-	drawPoint(mouse.x, mouse.y, glm::vec3(1.0f, 0.0f, 0.0f));
+	//drawPoint(mouse.x, mouse.y, glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -1183,11 +1182,20 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	// Check if the color is the clear color
+	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) {
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return -1; // Sentinel for no entity
+	}
+
 	size_t entityID = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
 
-	// Log or return the ID
-	std::cout << "Entity ID at (" << mouseX << ", " << mouseY << ") is: " << entityID << std::endl;
-	std::cout << "Pixel RGB: [" << (int)pixel[0] << ", " << (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
+	// Debug output
+	std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
+		<< ") " << std::endl;
+	std::cout << "Pixel RGB: [" << (int)pixel[0] << ", "
+		<< (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
+	std::cout << "Decoded Entity ID: " << entityID << std::endl;
 	return entityID;
 }
 
@@ -1267,6 +1275,8 @@ void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int h
 	glBindRenderbuffer(GL_RENDERBUFFER, object_picking_rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, static_cast<int>(width), static_cast<int>(height));
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// May as well update viewport?
@@ -1313,3 +1323,32 @@ void Renderer::drawPoint(float x, float y, glm::vec3 color)
 	glDeleteVertexArrays(1, &pointVAO);
 	glDeleteBuffers(1, &pointVBO);
 }
+
+void Renderer::handleMouseClickOP(int mouseX, int mouseY)
+{
+	size_t entityID = getEntityFromMouseClick(mouseX, mouseY);
+	if (entityID != -1)
+	{
+		selectedEntityID = entityID;
+		isDragging = true;
+
+		// Calculate the drag offset
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		dragOffset.x = transform.position.x - mouseX;
+		dragOffset.y = transform.position.y - mouseY;
+	}
+}
+
+void Renderer::handleMouseDrag(int mouseX, int mouseY)
+{
+	if (isDragging && selectedEntityID != -1)
+	{
+		// Get the selected entity's transform
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+		// Update position based on mouse position and drag offset
+		transform.position.x = mouseX + dragOffset.x;
+		transform.position.y = mouseY + dragOffset.y;
+	}
+}
+

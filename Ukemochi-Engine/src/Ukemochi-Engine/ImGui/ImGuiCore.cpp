@@ -1733,7 +1733,7 @@ namespace Ukemochi
             ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
-            UpdateFramebufferSize(panelSize);
+            //UpdateFramebufferSize(panelSize);
             //UpdateObjectPickingFramebufferSize(panelSize);
 
             float targetAspect = 16.0f / 9.0f;
