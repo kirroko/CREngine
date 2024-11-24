@@ -268,13 +268,11 @@ namespace Ukemochi
 		if (Input::IsKeyPressed(UME_KEY_A))
 		{
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
-			ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
 		}
 		// Press 'D' or right key to move the player to the right
 		else if (Input::IsKeyPressed(UME_KEY_D))
 		{
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
-			ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
 		}
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis

@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 19, 2024
+\date       Nov 24, 2024
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -34,10 +34,6 @@ namespace Ukemochi
 			Mtx44Translate(trans, transform.position.x, transform.position.y, 0);
 			Mtx44RotZRad(rot, radian(transform.rotation));
 			Mtx44Scale(scale, transform.scale.x, transform.scale.y, 0);
-
-			// If the entity is the player, adjust based on the direction and scaling factor
-			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
-				scale.m2[0][0] = isFacingRight ? -scale.m2[0][0] : scale.m2[0][0]; // Adjust X-axis scale to flip direction if not facing right
 
 			transform.transform_matrix = trans * rot * scale;
 
@@ -80,11 +76,17 @@ namespace Ukemochi
 		/*else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Fish")
 			transform.scale = { new_scale * 1.75f, new_scale };*/
 		else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
-			transform.scale = { new_scale * 0.75f, new_scale * 0.75f };
+			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
 		else
 			transform.scale = { new_scale, new_scale };
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Increase the scale of the object.
+	\param[out] trans
+	 The transform component to scale.
+	*************************************************************************/
 	void Transformation::IncreaseScale(Transform& trans)
 	{
 		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
@@ -92,6 +94,12 @@ namespace Ukemochi
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Decrease the scale of the object.
+	\param[out] trans
+	 The transform component to scale.
+	*************************************************************************/
 	void Transformation::DecreaseScale(Transform& trans)
 	{
 		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());

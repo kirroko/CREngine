@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 17, 2024
+\date       Nov 24, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -12,26 +12,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
-#include "Collision.h"						 // for forward declaration
-#include "../Math/MathUtils.h"				 // for min, max, abs
-#include "../FrameController.h"				 // for GetFixedDeltaTime
-#include "../Audio/Audio.h"					 // for Audio sound effects
-#include "../Application.h"					 // for screen size
-#include "../Factory/GameObjectManager.h"	 // for game object tag
-#include "Ukemochi-Engine/Logic/Scripting.h" // for invoking OnCollisonEnter2D
-#include "../Game/DungeonManager.h"			 // for room size and current room ID
-#include "../Physics/Physics.h"				 // for knockback effect
-#include "Ukemochi-Engine/Game/PlayerManager.h"
-
-#include "../Input/Input.h" // temp
+#include "Collision.h"							// for forward declaration
+#include "../Math/MathUtils.h"					// for min, max, abs
+#include "../FrameController.h"					// for GetFixedDeltaTime
+#include "../Audio/Audio.h"						// for Audio sound effects
+#include "../Application.h"						// for screen size
+#include "../Factory/GameObjectManager.h"		// for game object tag
+#include "Ukemochi-Engine/Logic/Scripting.h"	// for invoking OnCollisonEnter2D
+#include "../Game/DungeonManager.h"				// for room size and current room ID
+#include "../Physics/Physics.h"					// for knockback effect
+#include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
 
 namespace Ukemochi
 {
-	// temp
-	EntityID player = NULL;
-	EntityID knife = NULL;
-	bool is_facing_right = false;
-
 	/*!***********************************************************************
 	\brief
 	 Initialize the collision system.
@@ -43,13 +36,14 @@ namespace Ukemochi
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 
-		// Find player and knife GO
+		// Find the player entity
 		for (auto const& entity : m_Entities)
 		{
 			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+			{
 				player = entity;
-			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
-				knife = entity;
+				break;
+			}
 		}
 	}
 
@@ -59,24 +53,6 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::CheckCollisions()
 	{
-		// ---------- temp ----------
-		// Set player direction
-		if (Input::IsKeyPressed(UME_KEY_A))
-			is_facing_right = false;
-		else if (Input::IsKeyPressed(UME_KEY_D))
-			is_facing_right = true;
-
-		// Set knife position
-		if (knife)
-		{
-			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
-			auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(knife);
-
-			float offset_x = is_facing_right ? player_trans.scale.x : -player_trans.scale.x;
-			knife_trans.position = Vec2{ player_trans.position.x + offset_x, player_trans.position.y };
-		}
-		// ---------- temp ----------
-
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{

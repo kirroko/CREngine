@@ -41,6 +41,8 @@ namespace Ukemochi
                 UME_ENGINE_WARN("Entity {0} doesn't have SpriteRender component", entity);
                 return;
             }
+
+            auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
             auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
             auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
@@ -123,6 +125,18 @@ namespace Ukemochi
                     data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[anim.currentClip].frame_time;
                     // data.attackTimer = data.attackCooldown;
                 }
+            }
+
+            // Update knife position
+            if (sr.flipX)
+            {
+                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                knife_trans.position = Vec2{ trans.position.x + trans.scale.x, trans.position.y };
+            }
+            else
+            {
+                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                knife_trans.position = Vec2{ trans.position.x - trans.scale.x, trans.position.y };
             }
         }
     }

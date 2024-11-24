@@ -2,7 +2,7 @@
 /*!
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 17, 2024
+\date       Nov 24, 2024
 \brief      This file contains the declaration of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -26,7 +26,10 @@ namespace Ukemochi
         *************************************************************************/
         const float BOUNDING_BOX_SIZE = 0.5f;
 
-        // Collision flags
+        /*!***********************************************************************
+        \brief
+         Collision flags for left, right, top and bottom.
+        *************************************************************************/
         const unsigned int COLLISION_LEFT = 0x00000001;   //0001
         const unsigned int COLLISION_RIGHT = 0x00000002;  //0010
         const unsigned int COLLISION_TOP = 0x00000004;    //0100
@@ -35,6 +38,7 @@ namespace Ukemochi
         const float MIN_OFFSET = 0.001f;
 
         int screen_width{}, screen_height{};
+        EntityID player = static_cast<EntityID>(-1);
 
     public:
         /*!***********************************************************************
