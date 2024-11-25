@@ -56,6 +56,8 @@ namespace Ukemochi
 
 		static void ControlPanel(float fps);
 		
+		static void RenderGizmo2d();
+
 		static void ShowErrorPopup(const std::string& errorMessage);
 
 		static void LoadScene();
@@ -79,6 +81,8 @@ namespace Ukemochi
 		static void ShowEntityManagementUI();
 		
 		static void UpdateFramebufferSize(ImVec2 panelSize);
+
+		static void UpdateObjectPickingFramebufferSize(ImVec2 panelSize);
 
 		static void ContentBrowser(char* filePath);
 

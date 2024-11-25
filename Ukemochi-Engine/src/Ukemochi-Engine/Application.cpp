@@ -35,7 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "SceneManager.h"
 #include "Logic/Scripting.h"
 #include "FileWatcher.h"
-
+#include "Logic/Logic.h"
 #include <crtdbg.h> // To check for memory leaks
 
 namespace Ukemochi
@@ -165,6 +165,44 @@ namespace Ukemochi
         return true;
     }
 
+    void Application::StartGame()
+    {
+        // Recompile scripts if needed
+        if (ScriptingEngine::GetInstance().compile_flag)
+        {
+            UME_ENGINE_INFO("Begin Script reloading");
+            ScriptingEngine::GetInstance().compile_flag = false;
+            ScriptingEngine::GetInstance().Reload();
+        }
+
+        // Only start if there are no script errors
+        if (!ScriptingEngine::ScriptHasError)
+        {
+            // Save the current scene state
+            //SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+            //m_CompileError = false;
+            es_current = ENGINE_STATES::ES_PLAY;
+            UME_ENGINE_INFO("Simulation (Game is playing) started");
+
+            // Initialize ECS systems for game mode
+            ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+        }
+        else
+        {
+            //m_CompileError = true;
+        }
+    }
+
+    void Application::StopGame()
+    {
+        // Load the saved scene state to reset to the editor mode
+        SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
+
+        // Switch back to editor mode
+        es_current = ENGINE_STATES::ES_ENGINE;
+        UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
+    }
+
     void Application::GameLoop() // run
     {
         // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -180,6 +218,15 @@ namespace Ukemochi
             glClear(GL_COLOR_BUFFER_BIT);
 
             UpdateFPS();
+            
+            // --- SWAP TO THIS FOR GAME BUILD ---
+            //StartGame();
+            //if (Input::IsKeyPressed(UME_KEY_L))
+            //    StartGame();
+            //else if (Input::IsKeyPressed(UME_KEY_K))
+            //    StopGame();
+            // -----------------------------------
+
             if (sceneManager.GetOnIMGUI() == false)
             {
                 sceneManager.SceneMangerUpdateCamera(deltaTime);
@@ -199,7 +246,9 @@ namespace Ukemochi
                 sceneManager.SceneMangerRunSystems();
                 //************ Update & Draw ************
             }
+            // --- COMMENT THIS FOR GAME BUILD ---
             UpdateIMGUI();
+            // -----------------------------------
 
             DrawFPS();
 
@@ -264,6 +313,7 @@ namespace Ukemochi
         imguiInstance.SceneRender();
         imguiInstance.ShowEntityManagementUI();
         // imguiInstance.Begin();
+        imguiInstance.RenderGizmo2d();
         imguiInstance.ImGuiUpdate(); // Render ImGui elements
         //************ Render IMGUI ************
     }

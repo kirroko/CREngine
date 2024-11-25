@@ -147,10 +147,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
         //load Asset Manager Texture
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -158,7 +156,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
@@ -177,9 +175,6 @@ namespace Ukemochi
             LoadSaveFile(UseImGui::GetStartScene());
         }
 
-        // Initialize the in game GUI system
-        //ECS::GetInstance().GetSystem<InGameGUI>()->Init();
-
         Application& app = Application::Get();
         int screen_width = app.GetWindow().GetWidth();
         int screen_height = app.GetWindow().GetHeight();
@@ -192,6 +187,10 @@ namespace Ukemochi
             Vec2{ screen_width * 0.5f, screen_height * 0.9f },
             1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
 
+        UME_ENGINE_TRACE("Initializing Collision...");
+        ECS::GetInstance().GetSystem<Collision>()->Init();
+        UME_ENGINE_TRACE("Initializing dungeon manager...");
+        ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
 
     void SceneManager::SceneMangerInit()
@@ -203,9 +202,7 @@ namespace Ukemochi
 
 		UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();
-		UME_ENGINE_TRACE("Initializing Collision...");
-		ECS::GetInstance().GetSystem<Collision>()->Init();
-
+        UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
 
@@ -215,6 +212,32 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
         SceneManagerDraw();
+
+        if (Input::IsKeyTriggered(UME_KEY_U))
+            ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
+                GetSystem<Renderer>()->debug_mode_enabled);
+
+        // On mouse button press, start dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse movement, continue dragging if active
+        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse button release, stop dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+        }
+
     }
 
     //When engine is Running the scene
@@ -225,6 +248,41 @@ namespace Ukemochi
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
+
+        //if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        //{
+        //   ECS::GetInstance().GetSystem<Renderer>()->getEntityFromMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //   /* ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
+
+        //   /*ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //       SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //   ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //       SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
+        //}
+ 
+       
+        // On mouse button press, start dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse movement, continue dragging if active
+        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse button release, stop dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+        }
 
         /*
         // Audio Inputs
@@ -254,8 +312,6 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
-
-            ECS::GetInstance().GetSystem<DungeonManager>()->InitDungeon();
 		}
 		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 		{
@@ -283,9 +339,6 @@ namespace Ukemochi
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
-
-        ECS::GetInstance().GetSystem<DungeonManager>()->Update();
-
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
@@ -329,8 +382,12 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerDraw()
     {
-        //Draw
         ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+        //ECS::GetInstance().GetSystem<Renderer>()->renderForObjectPicking();
+        
+        // --- SWAP TO THIS FOR GAME BUILD ---
+        //ECS::GetInstance().GetSystem<Renderer>()->render();
+        // -----------------------------------
     }
 
     void SceneManager::SceneManagerFree()
@@ -575,12 +632,13 @@ namespace Ukemochi
 							newClip.total_frames = itr->value[2].GetInt();
             				newClip.pivot.x = itr->value[3].GetFloat();
             				newClip.pivot.y = itr->value[4].GetFloat();
-							newClip.pixel_width = itr->value[5].GetInt();
-							newClip.pixel_height = itr->value[6].GetInt();
-							newClip.total_width = itr->value[7].GetInt();
-							newClip.total_height = itr->value[8].GetInt();
-							newClip.frame_time = itr->value[9].GetFloat();
-							newClip.looping = itr->value[10].GetBool();
+            				newClip.pixelsPerUnit = itr->value[5].GetInt();
+							newClip.pixel_width = itr->value[6].GetInt();
+							newClip.pixel_height = itr->value[7].GetInt();
+							newClip.total_width = itr->value[8].GetInt();
+							newClip.total_height = itr->value[9].GetInt();
+							newClip.frame_time = itr->value[10].GetFloat();
+							newClip.looping = itr->value[11].GetBool();
 							anim.clips[newClip.name] = newClip;
 						}
 
@@ -814,6 +872,7 @@ namespace Ukemochi
         			clipData.PushBack(value.total_frames, allocator);
         			clipData.PushBack(value.pivot.x, allocator);
         			clipData.PushBack(value.pivot.y, allocator);
+        			clipData.PushBack(value.pixelsPerUnit, allocator);
         			clipData.PushBack(value.pixel_width, allocator);
         			clipData.PushBack(value.pixel_height,allocator);
         			clipData.PushBack(value.total_width, allocator);
@@ -1058,6 +1117,7 @@ namespace Ukemochi
 	        	
 	        	clipData.PushBack(value.pivot.x, allocator);
 	        	clipData.PushBack(value.pivot.y, allocator);
+	        	clipData.PushBack(value.pixelsPerUnit, allocator);
 	        	clipData.PushBack(value.total_frames, allocator);
 	        	clipData.PushBack(value.pixel_width, allocator);
 	        	clipData.PushBack(value.pixel_height,allocator);

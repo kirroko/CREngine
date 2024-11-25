@@ -85,5 +85,7 @@ namespace Ukemochi
         void SetTag(const std::string& tag) { m_Tag = tag; }
 
         bool GetActive() const;
+
+        void SetActive(const bool active) { m_isActive = active; }
     };
 };

@@ -142,6 +142,7 @@ namespace Ukemochi
 		std::string name{};				 // Name of the animation clip
 		Vec2 pivot = Vec2{32.0f, 32.0f}; // Pivot point of the sprite
 		// GLuint textureID = 0;		// The texture ID, to be set during runtime
+		int pixelsPerUnit = 100;        // Pixels per unit
 		int total_frames = 1;	  // Total frames in the animation
 		int pixel_width = 64;	  // Width of each frame in pixels
 		int pixel_height = 64;	  // Height of each frame in pixels

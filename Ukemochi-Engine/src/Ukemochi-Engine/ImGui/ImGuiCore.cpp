@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
+#include "ImGuizmo.h"
+
 #include "../Application.h"
 
 #include "../Logic/Logic.h"
@@ -135,6 +137,11 @@ namespace Ukemochi
         if (ImGui::BeginMenu("Options"))
         {
             ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
+
+            if (ImGui::MenuItem("Quit"))
+            {
+                es_current = ENGINE_STATES::ES_QUIT;
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -196,6 +203,37 @@ namespace Ukemochi
     //    }
     //}
 
+    void UseImGui::RenderGizmo2d()
+    {
+        ImGui::Begin("GizmoExample");
+
+        // Get the current ImGui window dimensions
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+
+        // Set up 2D camera view and projection matrices
+        glm::mat4 viewMatrix = glm::mat4(1.0f); // Identity matrix for 2D view
+        glm::mat4 projectionMatrix = glm::ortho(0.0f, windowSize.x, windowSize.y, 0.0f, -1.0f, 1.0f);
+
+        // Example transform matrix for a 2D object
+        glm::mat4 objectMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(windowSize.x / 2, windowSize.y / 2, 0));
+
+        // Manipulate objectMatrix with ImGuizmo
+        ImGuizmo::SetOrthographic(true);  // Use orthographic mode for 2D
+        ImGuizmo::SetDrawlist();
+
+        // Set the rectangle area in which the gizmo will draw (whole window)
+        ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
+
+        // ImGuizmo operation mode: Translate (move)
+        ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
+            ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(objectMatrix));
+
+        // Now, use `objectMatrix` to update your 2D object transform
+
+        ImGui::End();
+    }
+
     void UseImGui::SpriteEditorWindow()
     {
         ImGui::Begin("Sprite Editor");
@@ -245,6 +283,7 @@ namespace Ukemochi
                         std::string temp = object["ClipName"].GetString();
                         std::fill(std::begin(clipName), std::end(clipName), 0);
                         std::copy(temp.begin(),temp.end(), clipName);
+                        pixelPerUnit = object["PixelsPerUnit"].GetInt();
                         totalFrames = object["TotalFrames"].GetInt();
                         pixelSize[0] = object["PixelWidth"].GetInt();
                         pixelSize[1] = object["PixelHeight"].GetInt();
@@ -262,6 +301,7 @@ namespace Ukemochi
                 {
                     UME_ENGINE_WARN("No metadata found");
                     std::fill(std::begin(clipName), std::end(clipName), 0);
+                    pixelPerUnit = 100;
                     totalFrames = 1;
                     pixelSize[0] = 64;
                     pixelSize[1] = 64;
@@ -284,6 +324,7 @@ namespace Ukemochi
                 textureHeight = 0;
                 texture = 0;
                 std::fill(std::begin(clipName), std::end(clipName), 0);
+                pixelPerUnit = 100;
                 totalFrames = 1;
                 pixelSize[0] = 64;
                 pixelSize[1] = 64;
@@ -324,7 +365,7 @@ namespace Ukemochi
 
         // Input for PPU
         ImGui::InputInt("Pixel Per Unit", &pixelPerUnit);
-        pixelPerUnit = std::max(1, pixelPerUnit);
+        pixelPerUnit = std::max(10, pixelPerUnit);
 
         // Input for pivot
         ImGui::InputFloat2("Pivot", pivot); // Pivot point normalized
@@ -359,6 +400,7 @@ namespace Ukemochi
                 textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
                 textureMetaData.AddMember("PivotX", pivot[0], allocator);
                 textureMetaData.AddMember("PivotY", pivot[1], allocator);
+                textureMetaData.AddMember("PixelsPerUnit", pixelPerUnit, allocator);
                 textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
                 textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
                 textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
@@ -398,7 +440,7 @@ namespace Ukemochi
                 {
                     auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
                     anim.clips[sClipName] = AnimationClip{
-                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , pixelPerUnit ,totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
                         looping
                     };
                     anim.SetAnimation(clipName);
@@ -1144,7 +1186,7 @@ namespace Ukemochi
     {
         // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
         auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
-        if (static_cast<size_t>(selectedEntityIndex >= 0 && selectedEntityIndex) < gameObjects.size())
+        if (selectedEntityIndex >= 0 && static_cast<size_t>(selectedEntityIndex) < gameObjects.size())
         {
             auto& entityToDelete = gameObjects[selectedEntityIndex];
             GameObjectManager::GetInstance().DestroyObject(entityToDelete->GetInstanceID());
@@ -1482,7 +1524,7 @@ namespace Ukemochi
             {
                 BoxCollider2D& collider = selectedObject->GetComponent<BoxCollider2D>();
 
-                ImGui::Text("Use Collider Box");
+                ImGui::Text("Is Trigger Collider Box");
                 if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger)) modified = true;
             }
         }
@@ -1742,7 +1784,10 @@ namespace Ukemochi
         // Button to create a new entity from a prefab
         if (ImGui::Button("Create Entity"))
         {
-            if (filePath[0] != '\0' && IsJsonFile(filePath))
+            const std::string prefabDirectory = "../Assets/Prefabs/";
+            std::string filePathStr = filePath;
+
+            if (filePathStr.rfind(prefabDirectory, 0) == 0 && IsJsonFile(filePath))
             {
                 if (ECS::GetInstance().GetLivingEntityCount() == 0)
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
@@ -1775,7 +1820,7 @@ namespace Ukemochi
         if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f)
         {
             ImGui::TextColored(ImVec4(1, 0, 0, 1),
-                "Invalid file type. Only .json files can be used to create an object.");
+                "Invalid file type. Only .json files in ../Assets/Prefabs/ can be used to create an object.");
         }
 
         ImGui::Separator();
@@ -1842,6 +1887,20 @@ namespace Ukemochi
         }
     }
 
+    void UseImGui::UpdateObjectPickingFramebufferSize(ImVec2 panelSize)
+    {
+        unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
+        unsigned int newHeight = static_cast<unsigned int>(panelSize.y);
+
+        if (newWidth != m_currentPanelWidth || newHeight != m_currentPanelHeight)
+        {
+            m_currentPanelWidth = newWidth;
+            m_currentPanelHeight = newHeight;
+
+            ECS::GetInstance().GetSystem<Renderer>()->resizeObjectPickingFramebuffer(m_currentPanelWidth, m_currentPanelHeight);
+        }
+    }
+
     /**
  * @brief Renders the game scene within an ImGui window and handles mouse interaction.
  *
@@ -1858,14 +1917,16 @@ namespace Ukemochi
         // Application& app = Application::Get();
         //GLuint texture = renderer.getTextureColorBuffer();
         GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
+        //GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
 
         if (showGameView)
         {
             ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
-            UpdateFramebufferSize(panelSize);
-            
+            //UpdateFramebufferSize(panelSize);
+            //UpdateObjectPickingFramebufferSize(panelSize);
+
             float targetAspect = 16.0f / 9.0f;
             float panelAspect = panelSize.x / panelSize.y;
             float displayWidth, displayHeight;
@@ -1911,6 +1972,7 @@ namespace Ukemochi
             //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
             // Get mouse position relative to the play window
             float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
+          
 
 
             // Check if the mouse is within the bounds of the window
@@ -1920,6 +1982,12 @@ namespace Ukemochi
                 //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
+            ImGui::End();
+
+            // Add the object picking debug window
+            ImGui::Begin("Object Picking Debug View");
+            ImGui::Image((ImTextureID)(intptr_t)ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer(),
+                ImVec2(300, 300), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::End();
         }
     }

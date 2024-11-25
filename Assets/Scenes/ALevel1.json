@@ -1,23 +1,47 @@
 {
     "GameObjects": [{
-            "Name": "Room1",
-            "Tag": "Room",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [960.0, 540.0],
-                    "Rotation": 0.0,
-                    "Scale": [1920.0, 1080.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_bg.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "TopBound1",
+            "Name": "1_TopBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 1080.0],
+                    "Position": [-960.0, 955.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 250.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-1920.0, 830.0],
+                    "Max": [0.0, 1080.0],
+                    "Collision Flag": 2,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_BtmBound",
+            "Tag": "Boundary",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-960.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 10.0]
                 }, {
@@ -40,23 +64,23 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [-1920.0, -5.0],
+                    "Max": [0.0, 5.0],
+                    "Collision Flag": 8,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "BtmBound1",
+            "Name": "1_LeftBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 0.0],
+                    "Position": [-1920.0, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 10.0]
+                    "Scale": [10.0, 1080.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -77,17 +101,17 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [-1925.0, 0.0],
+                    "Max": [-1915.0, 1080.0],
+                    "Collision Flag": 4,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "LeftBound1",
+            "Name": "1_RightBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
@@ -114,97 +138,23 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [-5.0, 0.0],
+                    "Max": [5.0, 1080.0],
+                    "Collision Flag": 4,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "RightBound1",
-            "Tag": "Boundary",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1920.0, 540.0],
-                    "Rotation": 0.0,
-                    "Scale": [10.0, 1080.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "LeftDoor1",
-            "Tag": "LeftDoor",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [120.0, 540.0],
-                    "Rotation": 0.0,
-                    "Scale": [225.0, 500.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 362.5],
-                    "Max": [25.0, 537.5],
-                    "Collision Flag": 0,
-                    "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "RightDoor1",
+            "Name": "1_RightDoor",
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1800.0, 540.0],
+                    "Position": [-25.0, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [225.0, 500.0]
+                    "Scale": [50.0, 500.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -225,23 +175,114 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1575.0, 362.5],
-                    "Max": [1600.0, 537.5],
-                    "Collision Flag": 0,
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 4,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "Box1",
+            "Name": "1_Background",
+            "Tag": "Room",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-960.0, 365.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 731.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_bg.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_FrontWall",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-960.0, 875.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 412.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Spotlight",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-745.0, 380.0],
+                    "Rotation": 0.0,
+                    "Scale": [732.0, 262.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_spotlight_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_CaveDrawings",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-893.0, 935.0],
+                    "Rotation": 0.0,
+                    "Scale": [334.0, 209.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_cave-drawings.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Vine4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1585.0, 905.0],
+                    "Rotation": 0.0,
+                    "Scale": [-611.0, 349.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_4.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Vine2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-286.0, 982.0],
+                    "Rotation": 0.0,
+                    "Scale": [572.0, 196.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_2.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Vine1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-375.0, 872.0],
+                    "Rotation": 0.0,
+                    "Scale": [510.0, 417.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Box2",
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1300.0, 450.0],
+                    "Position": [-1200.0, 750.0],
                     "Rotation": 0.0,
-                    "Scale": [150.0, 150.0]
+                    "Scale": [138.0, 285.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -262,9 +303,46 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [725.0, 375.0],
-                    "Max": [875.0, 525.0],
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
                     "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_box_2.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Box1",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1000.0, 660.0],
+                    "Rotation": 0.0,
+                    "Scale": [156.0, 200.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-1378.0, 320.0],
+                    "Max": [-1222.0, 520.0],
+                    "Collision Flag": 8,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -272,149 +350,39 @@
                     "Shape": 0
                 }]
         }, {
-            "Name": "Enemy1",
-            "Tag": "Enemy",
+            "Name": "1_RightWallBack",
+            "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1546.481201171875, 680.294921875],
+                    "Position": [-155.0, 862.0],
                     "Rotation": 0.0,
-                    "Scale": [118.30876159667969, 118.30876159667969]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1546.481201171875, 680.294921875],
-                    "Velocity": [212.13201904296875, -212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1496.481201171875, 630.294921875],
-                    "Max": [1596.481201171875, 730.294921875],
-                    "Collision Flag": 0,
-                    "is_trigger": false
+                    "Scale": [236.0, 436.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Enemy1",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [600.7991333007813, 571.5274047851563],
-                    "Rotation": 0.0,
-                    "Scale": [127.37271881103516, 127.37271881103516]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [600.7991333007813, 571.5274047851563],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [550.7991333007813, 521.5274047851563],
-                    "Max": [650.7991333007813, 621.5274047851563],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Enemy1",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Rotation": 0.0,
-                    "Scale": [127.37201690673828, 127.37201690673828]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1450.3048095703125, 521.5357666015625],
-                    "Max": [1550.3048095703125, 621.5357666015625],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Room2",
-            "Tag": "Room",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [960.0, 540.0],
-                    "Rotation": 0.0,
-                    "Scale": [1920.0, 1080.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_bg.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "TopBound2",
+            "Name": "1_LeftWallBack",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1740.0, 796.0],
+                    "Rotation": 0.0,
+                    "Scale": [226.0, 568.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_TopBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 1080.0],
+                    "Position": [960.0, 955.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 10.0]
+                    "Scale": [1920.0, 250.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -435,17 +403,13 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [0.0, 830.0],
+                    "Max": [1920.0, 1080.0],
+                    "Collision Flag": 1,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
-            "Name": "BtmBound2",
+            "Name": "2_BtmBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
@@ -472,17 +436,13 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [0.0, -5.0],
+                    "Max": [1920.0, 5.0],
+                    "Collision Flag": 8,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
-            "Name": "LeftBound2",
+            "Name": "2_LeftBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
@@ -509,17 +469,13 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [-5.0, 0.0],
+                    "Max": [5.0, 1080.0],
+                    "Collision Flag": 8,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
-            "Name": "RightBound2",
+            "Name": "2_RightBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
@@ -546,23 +502,19 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 4,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
-            "Name": "LeftDoor2",
+            "Name": "2_LeftDoor",
             "Tag": "LeftDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [120.0, 540.0],
+                    "Position": [25.0, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [225.0, 500.0]
+                    "Scale": [50.0, 500.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -583,23 +535,23 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 362.5],
-                    "Max": [25.0, 537.5],
-                    "Collision Flag": 0,
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 4,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "RightDoor2",
+            "Name": "2_RightDoor",
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1800.0, 540.0],
+                    "Position": [1895.0, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [225.0, 500.0]
+                    "Scale": [50.0, 500.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -620,272 +572,249 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1575.0, 362.5],
-                    "Max": [1600.0, 537.5],
-                    "Collision Flag": 0,
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 4,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1300.0, 450.0],
-                    "Rotation": 0.0,
-                    "Scale": [150.0, 150.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [725.0, 375.0],
-                    "Max": [875.0, 525.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [400.0, 450.0],
-                    "Rotation": 0.0,
-                    "Scale": [150.0, 150.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [725.0, 375.0],
-                    "Max": [875.0, 525.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "Enemy2",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1546.481201171875, 680.294921875],
-                    "Rotation": 0.0,
-                    "Scale": [118.30876159667969, 118.30876159667969]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1546.481201171875, 680.294921875],
-                    "Velocity": [212.13201904296875, -212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1496.481201171875, 630.294921875],
-                    "Max": [1596.481201171875, 730.294921875],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Enemy2",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [600.7991333007813, 571.5274047851563],
-                    "Rotation": 0.0,
-                    "Scale": [127.37271881103516, 127.37271881103516]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [600.7991333007813, 571.5274047851563],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [550.7991333007813, 521.5274047851563],
-                    "Max": [650.7991333007813, 621.5274047851563],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Enemy2",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Rotation": 0.0,
-                    "Scale": [127.37201690673828, 127.37201690673828]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1450.3048095703125, 521.5357666015625],
-                    "Max": [1550.3048095703125, 621.5357666015625],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Enemy2",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [300.3048095703125, 250.0],
-                    "Rotation": 0.0,
-                    "Scale": [154.16665649414063, 154.16665649414063]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1450.3048095703125, 521.5357666015625],
-                    "Max": [1550.3048095703125, 621.5357666015625],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Room3",
+            "Name": "2_Background",
             "Tag": "Room",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 540.0],
+                    "Position": [960.0, 365.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 1080.0]
+                    "Scale": [1920.0, 731.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_bg.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "TopBound3",
+            "Name": "2_FrontWall",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [960.0, 875.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 412.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Spotlight",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1175.0, 380.0],
+                    "Rotation": 0.0,
+                    "Scale": [732.0, 262.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_spotlight_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_CaveDrawings",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1027.0, 935.0],
+                    "Rotation": 0.0,
+                    "Scale": [334.0, 209.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_cave-drawings.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Vine4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [335.0, 905.0],
+                    "Rotation": 0.0,
+                    "Scale": [-611.0, 349.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_4.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Vine2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1634.0, 982.0],
+                    "Rotation": 0.0,
+                    "Scale": [572.0, 196.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_2.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Vine1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1545.0, 872.0],
+                    "Rotation": 0.0,
+                    "Scale": [510.0, 417.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Box2",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1430.0, 510.0],
+                    "Rotation": 0.0,
+                    "Scale": [138.0, 285.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [-0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1361.0, 367.5],
+                    "Max": [1499.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_box_2.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Box1",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1258.0, 420.0],
+                    "Rotation": 0.0,
+                    "Scale": [156.0, 200.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, -0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1180.0, 320.0],
+                    "Max": [1336.0, 520.0],
+                    "Collision Flag": 8,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_RightWallBack",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1765.0, 862.0],
+                    "Rotation": 0.0,
+                    "Scale": [236.0, 436.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_LeftWallBack",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [180.0, 796.0],
+                    "Rotation": 0.0,
+                    "Scale": [226.0, 568.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_TopBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 1080.0],
+                    "Position": [2880.0, 955.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 250.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [0.0, 830.0],
+                    "Max": [1920.0, 1080.0],
+                    "Collision Flag": 1,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_BtmBound",
+            "Tag": "Boundary",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2880.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 10.0]
                 }, {
@@ -908,91 +837,17 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
+                    "Min": [0.0, -5.0],
+                    "Max": [1920.0, 5.0],
+                    "Collision Flag": 8,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "BtmBound3",
-            "Tag": "Boundary",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [960.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [1920.0, 10.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "LeftBound3",
-            "Tag": "Boundary",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [0.0, 540.0],
-                    "Rotation": 0.0,
-                    "Scale": [10.0, 1080.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "RightBound3",
+            "Name": "3_LeftBound",
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
@@ -1019,27 +874,229 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
+                    "Min": [-5.0, 0.0],
+                    "Max": [5.0, 1080.0],
+                    "Collision Flag": 8,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_RightBound",
+            "Tag": "Boundary",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3840.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [10.0, 1080.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 4,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_LeftDoor",
+            "Tag": "LeftDoor",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1945.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 500.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 4,
+                    "is_trigger": true
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Background",
+            "Tag": "Room",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2880.0, 365.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 731.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_bg.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_FrontWall",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2880.0, 875.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 412.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Spotlight",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3095.0, 380.0],
+                    "Rotation": 0.0,
+                    "Scale": [732.0, 262.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_spotlight_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_CaveDrawings",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2947.0, 935.0],
+                    "Rotation": 0.0,
+                    "Scale": [334.0, 209.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_cave-drawings.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Vine4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2255.0, 905.0],
+                    "Rotation": 0.0,
+                    "Scale": [-611.0, 349.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_4.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Vine2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3554.0, 982.0],
+                    "Rotation": 0.0,
+                    "Scale": [572.0, 196.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_2.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Vine1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3465.0, 872.0],
+                    "Rotation": 0.0,
+                    "Scale": [510.0, 417.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Box2",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3150.0, 510.0],
+                    "Rotation": 0.0,
+                    "Scale": [138.0, 285.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [-0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1361.0, 367.5],
+                    "Max": [1499.0, 652.5],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_box_2.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "LeftDoor3",
-            "Tag": "LeftDoor",
+            "Name": "3_Box1",
+            "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [120.0, 540.0],
+                    "Position": [3650.0, 180.0],
                     "Rotation": 0.0,
-                    "Scale": [225.0, 500.0]
+                    "Scale": [156.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
+                    "Velocity": [0.0, -0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1056,138 +1113,53 @@
                     "is_kinematic": true
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [0.0, 362.5],
-                    "Max": [25.0, 537.5],
-                    "Collision Flag": 0,
-                    "is_trigger": true
+                    "Min": [1180.0, 320.0],
+                    "Max": [1336.0, 520.0],
+                    "Collision Flag": 8,
+                    "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "RightDoor3",
-            "Tag": "RightDoor",
+            "Name": "3_RightWallBack",
+            "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1800.0, 540.0],
+                    "Position": [3685.0, 862.0],
                     "Rotation": 0.0,
-                    "Scale": [225.0, 500.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1575.0, 362.5],
-                    "Max": [1600.0, 537.5],
-                    "Collision Flag": 0,
-                    "is_trigger": true
+                    "Scale": [236.0, 436.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "Box3",
-            "Tag": "Environment",
+            "Name": "3_LeftWallBack",
+            "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1300.0, 450.0],
+                    "Position": [2100.0, 796.0],
                     "Rotation": 0.0,
-                    "Scale": [150.0, 150.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [725.0, 375.0],
-                    "Max": [875.0, 525.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
+                    "Scale": [226.0, 568.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
                     "Shape": 0
                 }]
         }, {
-            "Name": "Box3",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [400.0, 450.0],
-                    "Rotation": 0.0,
-                    "Scale": [150.0, 150.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [725.0, 375.0],
-                    "Max": [875.0, 525.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "Enemy3",
+            "Name": "2_EnemyWorm1",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1546.481201171875, 680.294921875],
+                    "Position": [1100.0, 676.6694946289063],
                     "Rotation": 0.0,
-                    "Scale": [118.30876159667969, 118.30876159667969]
+                    "Scale": [158.809326171875, 277.91632080078125]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [1546.481201171875, 680.294921875],
-                    "Velocity": [212.13201904296875, -212.13201904296875],
+                    "Position": [1163.6776123046875, 676.6694946289063],
+                    "Velocity": [-28.176761627197266, -18.90791130065918],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1204,8 +1176,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1496.481201171875, 630.294921875],
-                    "Max": [1596.481201171875, 730.294921875],
+                    "Min": [1084.2841796875, 537.7310180664063],
+                    "Max": [1243.071044921875, 815.6079711914063],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
@@ -1218,17 +1190,17 @@
                     "ClassName": "Enemy"
                 }]
         }, {
-            "Name": "Enemy3",
+            "Name": "2_EnemyWorm2",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [600.7991333007813, 571.5274047851563],
+                    "Position": [500.0, 567.8617553710938],
                     "Rotation": 0.0,
-                    "Scale": [127.37271881103516, 127.37271881103516]
+                    "Scale": [166.581298828125, 291.51727294921875]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [600.7991333007813, 571.5274047851563],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
+                    "Position": [260.0066833496094, 567.8617553710938],
+                    "Velocity": [-212.13201904296875, -212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1245,8 +1217,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [550.7991333007813, 521.5274047851563],
-                    "Max": [650.7991333007813, 621.5274047851563],
+                    "Min": [176.84230041503906, 422.3240966796875],
+                    "Max": [343.17108154296875, 713.3994140625],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
@@ -1259,17 +1231,17 @@
                     "ClassName": "Enemy"
                 }]
         }, {
-            "Name": "Enemy3",
+            "Name": "2_EnemyWorm3",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1500.3048095703125, 571.5357666015625],
+                    "Position": [1600.0, 350.0],
                     "Rotation": 0.0,
-                    "Scale": [127.37201690673828, 127.37201690673828]
+                    "Scale": [182.14285278320313, 318.75]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
+                    "Position": [1796.7720947265625, 512.1513061523438],
+                    "Velocity": [212.13201904296875, 212.13201904296875],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1286,8 +1258,8 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1450.3048095703125, 521.5357666015625],
-                    "Max": [1550.3048095703125, 621.5357666015625],
+                    "Min": [1711.365478515625, 362.6897888183594],
+                    "Max": [1882.1787109375, 661.61279296875],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
@@ -1298,84 +1270,6 @@
                     "Name": "Script",
                     "Path": "../Assets/Scripts/Enemy.cs",
                     "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Enemy3",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [300.3048095703125, 250.0],
-                    "Rotation": 0.0,
-                    "Scale": [154.16665649414063, 154.16665649414063]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1500.3048095703125, 571.5357666015625],
-                    "Velocity": [-212.13201904296875, 212.13201904296875],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1450.3048095703125, 521.5357666015625],
-                    "Max": [1550.3048095703125, 621.5357666015625],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
-                }]
-        }, {
-            "Name": "Knife",
-            "Tag": "Knife",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [0.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [75.0, 75.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [1.0, 1.0],
-                    "Collision Flag": 0,
-                    "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "Player",
@@ -1384,10 +1278,10 @@
                     "Name": "Transform",
                     "Position": [960.0, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [130.0, 130.0]
+                    "Scale": [168.57142639160156, 168.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [300.0, 675.0],
+                    "Position": [960.0, 540.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
@@ -1405,25 +1299,334 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [250.0, 625.0],
-                    "Max": [350.0, 725.0],
-                    "Collision Flag": 0,
+                    "Min": [875.7420654296875, 455.71429443359375],
+                    "Max": [1044.3134765625, 624.2857055664063],
+                    "Collision Flag": 1,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
+                    "Sprite": "../Assets/Textures/Mochi_Attack_1.png",
                     "Shape": 0
-                }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Player.cs",
-                    "ClassName": "Player"
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 461, 428, 2048, 2048, 0.05000000074505806, true]
+                        "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.5, 0.5099999904632568, 100, 442, 448, 4096, 4096, 0.05000000074505806, true],
+                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.4699999988079071, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
+                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 100, 461, 428, 2048, 2048, 0.05000000074505806, true],
+                        "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5, 0.5, 100, 545, 420, 2048, 1024, 0.05000000074505806, true],
+                        "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5299999713897705, 115, 716, 467, 3708, 1569, 0.05000000074505806, true],
+                        "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5, 0.5099999904632568, 115, 543, 484, 3900, 2597, 0.03999999910593033, true]
                     },
-                    "CurrentClip": "Idle"
+                    "CurrentClip": "Attack1"
+                }, {
+                    "Name": "Player",
+                    "MaxHealth": 100,
+                    "CurrentHealth": 100,
+                    "MaxComboHits": 3,
+                    "CurrentComboHits": 0,
+                    "ComboDamage": 10,
+                    "AttackCooldown": 0.5,
+                    "AttackTimer": 0.0,
+                    "PlayerForce": 1500.0,
+                    "IsDead": false,
+                    "CanAttack": true
+                }]
+        }, {
+            "Name": "Knife",
+            "Tag": "Knife",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [791.4563598632813, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [84.28571319580078, 126.42857360839844]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [707.170654296875, 455.71429443359375],
+                    "Max": [875.7420654296875, 624.2857055664063],
+                    "Collision Flag": 2,
+                    "is_trigger": true
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_RightWallFront",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-60.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [122.0, 1080.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_LeftWallFront",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1846.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [148.0, 1080.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Bush4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1732.0, 152.0],
+                    "Rotation": 0.0,
+                    "Scale": [377.0, 304.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_bush_4.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Rock9",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1000.0, 30.0],
+                    "Rotation": 0.0,
+                    "Scale": [366.0, 260.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_rock_9.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Rock8",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1670.0, 70.0],
+                    "Rotation": 0.0,
+                    "Scale": [564.0, 198.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_rock_8.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_Vine5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-273.0, 100.0],
+                    "Rotation": 0.0,
+                    "Scale": [547.0, 205.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_5.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "1_LeftBlock",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1785.0, 740.0],
+                    "Rotation": 0.0,
+                    "Scale": [193.0, 158.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_RightWallFront",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1860.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [122.0, 1080.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_LeftWallFront",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [74.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [148.0, 1080.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Bush4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [188.0, 152.0],
+                    "Rotation": 0.0,
+                    "Scale": [377.0, 304.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_bush_4.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Rock9",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [830.0, 20.0],
+                    "Rotation": 0.0,
+                    "Scale": [366.0, 260.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_rock_9.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Rock8",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [250.0, 70.0],
+                    "Rotation": 0.0,
+                    "Scale": [564.0, 198.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_rock_8.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_Vine5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1647.0, 100.0],
+                    "Rotation": 0.0,
+                    "Scale": [547.0, 205.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_5.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_RightWallFront",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3780.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [122.0, 1080.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_LeftWallFront",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1994.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [148.0, 1080.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Bush4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2108.0, 152.0],
+                    "Rotation": 0.0,
+                    "Scale": [377.0, 304.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_bush_4.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Rock9",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3100.0, 20.0],
+                    "Rotation": 0.0,
+                    "Scale": [366.0, 260.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_rock_9.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Rock8",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2170.0, 70.0],
+                    "Rotation": 0.0,
+                    "Scale": [564.0, 198.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_rock_8.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_Vine5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3567.0, 100.0],
+                    "Rotation": 0.0,
+                    "Scale": [547.0, 205.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_5.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "3_RightBlock",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3720.0, 770.0],
+                    "Rotation": 0.0,
+                    "Scale": [218.0, 243.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
+                    "Shape": 0
                 }]
         }]
 }
