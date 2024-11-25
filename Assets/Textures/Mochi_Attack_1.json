@@ -1,0 +1,15 @@
+{
+    "TextureMeta": {
+        "KeyPath": "../Assets/Textures/Mochi_Attack_1.png",
+        "ClipName": "Attack1",
+        "PivotX": 0.5,
+        "PivotY": 0.5,
+        "TotalFrames": 19,
+        "PixelWidth": 678,
+        "PixelHeight": 579,
+        "TextureWidth": 4096,
+        "TextureHeight": 2797,
+        "FrameTime": 0.03999999910593033,
+        "Looping": true
+    }
+}
