@@ -554,6 +554,11 @@ void Renderer::render()
 	// Clear the screen
 	beginFramebufferRender();
 
+	// --- SWAP TO THIS FOR GAME BUILD ---
+	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// -----------------------------------
+
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
 	glm::mat4 view = camera->getCameraViewMatrix();

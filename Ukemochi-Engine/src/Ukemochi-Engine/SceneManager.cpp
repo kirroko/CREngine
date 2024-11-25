@@ -385,8 +385,9 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
         //ECS::GetInstance().GetSystem<Renderer>()->renderForObjectPicking();
         
-        // Uncomment this for game build
+        // --- SWAP TO THIS FOR GAME BUILD ---
         //ECS::GetInstance().GetSystem<Renderer>()->render();
+        // -----------------------------------
     }
 
     void SceneManager::SceneManagerFree()
