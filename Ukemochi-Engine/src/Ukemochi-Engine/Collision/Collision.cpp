@@ -485,6 +485,8 @@ namespace Ukemochi
 		{
 			// Mochi's Knife / Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
+
+			
 			
 			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
 
