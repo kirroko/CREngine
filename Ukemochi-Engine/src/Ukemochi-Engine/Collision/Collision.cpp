@@ -443,7 +443,7 @@ namespace Ukemochi
 			
 			// Temp
 			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
-
+			
 			std::cout << "player hit\n";
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC

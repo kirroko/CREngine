@@ -28,6 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Application.h"
 #include "Game/PlayerManager.h"
 #include "Graphics/Animation.h"
+#include "Game/EnemyManager.h"
 #include "Game/DungeonManager.h"
 
 namespace Ukemochi
@@ -64,6 +65,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
+        ECS::GetInstance().RegisterComponent<Enemy>();
 		ECS::GetInstance().RegisterComponent<Player>();
 
         // TODO: Register your systems, No limit for systems
@@ -77,6 +79,8 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
+        ECS::GetInstance().RegisterSystem<EnemyManager>();
+
 		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<DungeonManager>();
 
@@ -116,6 +120,10 @@ namespace Ukemochi
 	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
 	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
 
+        //For Enemy
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
+        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 		// For Player system
 		sig.reset();
 		sig.set(ECS::GetInstance().GetComponentType<Player>());
@@ -204,6 +212,32 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
         SceneManagerDraw();
+
+        if (Input::IsKeyTriggered(UME_KEY_U))
+            ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
+                GetSystem<Renderer>()->debug_mode_enabled);
+
+        // On mouse button press, start dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse movement, continue dragging if active
+        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse button release, stop dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+        }
+
     }
 
     //When engine is Running the scene
@@ -214,6 +248,41 @@ namespace Ukemochi
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
+
+        //if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        //{
+        //   ECS::GetInstance().GetSystem<Renderer>()->getEntityFromMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //   /* ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
+
+        //   /*ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //       SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //   ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //       SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
+        //}
+ 
+       
+        // On mouse button press, start dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse movement, continue dragging if active
+        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        }
+
+        // On mouse button release, stop dragging
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+        }
 
         /*
         // Audio Inputs
@@ -259,6 +328,8 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
 		}
+
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 
 		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
@@ -311,8 +382,10 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerDraw()
     {
-        //Draw
+        
         ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
+        //ECS::GetInstance().GetSystem<Renderer>()->renderForObjectPicking();
+        
     }
 
     void SceneManager::SceneManagerFree()
@@ -571,6 +644,17 @@ namespace Ukemochi
             			newObject.AddComponent(std::move(anim));
             		}
             	}
+                else if (componentName == "EnemyComponent")
+                {
+                    if (!newObject.HasComponent<Enemy>())
+                    {
+                        // Deserialize Enemy component
+                        int type = componentData["Type"].GetInt();
+
+                        newObject.AddComponent<Enemy>({ componentData["Position"][0].GetFloat(),
+                            componentData["Position"][1].GetFloat(),static_cast<Enemy::EnemyTypes>(type),newObject.GetInstanceID() });
+                    }
+                }
             	else if (componentName == "Player")
             	{
             		if (!newObject.HasComponent<Player>())
@@ -603,6 +687,10 @@ namespace Ukemochi
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(newObject.GetInstanceID()));
                     //ECS::GetInstance().GetSystem<Renderer>()->SetPlayerObject(newObject);
                     // ECS::GetInstance().GetSystem<Renderer>()->initAnimationEntities();
+                }
+                if (tag == "Enemy")
+                {
+
                 }
                 if (!playerFound)
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
@@ -793,6 +881,23 @@ namespace Ukemochi
         		animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
         		componentsArray.PushBack(animationComponent, allocator);
         	}
+            if (gameobject->HasComponent<Enemy>())
+            {
+                Value enemyComponent(rapidjson::kObjectType);
+
+                enemyComponent.AddMember("Name", Value("EnemyComponent", allocator), allocator);
+
+                const auto& enemy = gameobject->GetComponent<Enemy>();
+
+                Value position(rapidjson::kArrayType);
+                position.PushBack(enemy.GetPosition().first, allocator);
+                position.PushBack(enemy.GetPosition().second, allocator);
+                enemyComponent.AddMember("Position", position, allocator);
+
+                enemyComponent.AddMember("Type", enemy.type, allocator);
+
+                componentsArray.PushBack(enemyComponent, allocator);
+            }
 
         	if (gameobject->HasComponent<Player>())
         	{

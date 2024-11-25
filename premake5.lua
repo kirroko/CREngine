@@ -20,6 +20,7 @@ IncludeDir ["Glad"] = "Ukemochi-Engine/vendor/Glad/include"
 IncludeDir ["Fmod"] = "Ukemochi-Engine/vendor/Fmod/inc"
 IncludeDir ["Mono"] = "Ukemochi-Engine/vendor/Mono/include"
 IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
+IncludeDir["ImGuizmo"] = "Ukemochi-Engine/vendor/ImGuizmo"
 IncludeDir ["Freetype"] = "Ukemochi-Engine/vendor/freetype/include" 
 
 LibraryDir = {}
@@ -34,6 +35,7 @@ include "Ukemochi-Engine/vendor/Fmod"
 include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
 include "Ukemochi-Engine/vendor/imgui"
+include "Ukemochi-Engine/vendor/ImGuizmo"
 
 project "Ukemochi-Engine"
 	location "Ukemochi-Engine"
@@ -63,7 +65,8 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.Fmod}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Freetype}",
-		"%{IncludeDir.Mono}"
+		"%{IncludeDir.Mono}",
+		"%{IncludeDir.ImGuizmo}"
 
 	}
 	
@@ -80,6 +83,7 @@ project "Ukemochi-Engine"
 		"Glad",
 		"fmod_vc",
 		"ImGui",
+		"ImGuizmo",
 		"opengl32.lib",
 		"freetype",
 		"mono-2.0-sgen.lib"
