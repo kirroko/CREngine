@@ -1353,7 +1353,7 @@ namespace Ukemochi
         // Button to enable/disable renaming
         if (ImGui::Button(isRenaming ? "Confirm Rename" : "Rename Entity Name") && !isTagRenaming)
         {
-            isRenamingName = !isRenamingName; // Toggle renaming mode
+            isRenaming = !isRenaming; // Toggle renaming mode
         }
 
         ImGui::SameLine();
