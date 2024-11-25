@@ -147,10 +147,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
         //load Asset Manager Texture
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -158,7 +156,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
@@ -177,9 +175,6 @@ namespace Ukemochi
             LoadSaveFile(UseImGui::GetStartScene());
         }
 
-        // Initialize the in game GUI system
-        //ECS::GetInstance().GetSystem<InGameGUI>()->Init();
-
         Application& app = Application::Get();
         int screen_width = app.GetWindow().GetWidth();
         int screen_height = app.GetWindow().GetHeight();
@@ -192,6 +187,8 @@ namespace Ukemochi
             Vec2{ screen_width * 0.5f, screen_height * 0.9f },
             1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
 
+        UME_ENGINE_TRACE("Initializing dungeon manager...");
+        ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
 
     void SceneManager::SceneMangerInit()
@@ -205,7 +202,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
 		UME_ENGINE_TRACE("Initializing Collision...");
 		ECS::GetInstance().GetSystem<Collision>()->Init();
-
+        UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
 
@@ -315,8 +312,6 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
-
-            ECS::GetInstance().GetSystem<DungeonManager>()->InitDungeon();
 		}
 		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 		{
@@ -344,9 +339,6 @@ namespace Ukemochi
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
-
-        ECS::GetInstance().GetSystem<DungeonManager>()->Update();
-
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
