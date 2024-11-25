@@ -52,11 +52,17 @@ public class Player : BaseScript
             return;
 
         HandleMovement();
+        if(Input.GetMouseButtonDown(KeyCode.Mouse0))
+        {
+            ani.PlayQueued("Attack");
+        }
         //player_combat.HandleCombat();
     }
 
     public override void OnCollisionEnter2D()
     {
+        Debug.Log("Player got hit!");
+        ani.PlayQueued("Hurt");
         //enemy.GetComponent<Enemy>().TakeDamage(10);
         //player_combat.soul_manager.HarvestSoul(enemy.GetComponent<Enemy>().soul_type);
     }

@@ -82,6 +82,8 @@ namespace Ukemochi
 		
 		static void UpdateFramebufferSize(ImVec2 panelSize);
 
+		static void UpdateObjectPickingFramebufferSize(ImVec2 panelSize);
+
 		static void ContentBrowser(char* filePath);
 
 		static void SceneBrowser();

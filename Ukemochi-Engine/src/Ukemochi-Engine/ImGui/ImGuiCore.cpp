@@ -34,7 +34,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../SceneManager.h"
 #include "../Math/Transformation.h"
 #include "Ukemochi-Engine/FrameController.h"
+#include "Ukemochi-Engine/Collision/Collision.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+#include "../Game/EnemyManager.h"
 
 namespace Ukemochi
 {
@@ -49,7 +51,7 @@ namespace Ukemochi
     bool UseImGui::m_Compiling = false;
     bool UseImGui::m_SpriteFlag = false;
     std::string UseImGui::m_SpritePath;
-    int UseImGui::m_global_selected = 0;
+    int UseImGui::m_global_selected = -1;
     unsigned int UseImGui::m_currentPanelWidth = 1600;
     unsigned int UseImGui::m_currentPanelHeight = 900;
 
@@ -244,6 +246,8 @@ namespace Ukemochi
         static int textureHeight = 0;
         static int totalFrames = 1;
         static int pixelSize[2] = {64, 64};
+        static float pivot[2] = { 0.5f, 0.5f }; // center pivot by default
+        static int pixelPerUnit = 100;
         static float frameTime = 0.05f;
         static bool looping = true;
 
@@ -282,6 +286,8 @@ namespace Ukemochi
                         totalFrames = object["TotalFrames"].GetInt();
                         pixelSize[0] = object["PixelWidth"].GetInt();
                         pixelSize[1] = object["PixelHeight"].GetInt();
+                        pivot[0] = object["PivotX"].GetFloat();
+                        pivot[1] = object["PivotY"].GetFloat();
                         frameTime = object["FrameTime"].GetFloat();
                         looping = object["Looping"].GetBool();
                     }
@@ -297,6 +303,8 @@ namespace Ukemochi
                     totalFrames = 1;
                     pixelSize[0] = 64;
                     pixelSize[1] = 64;
+                    pivot[0] = 0.5f;
+                    pivot[1] = 0.5f;
                     frameTime = 0.05f;
                     looping = true;
                     m_SpriteFlag = false;
@@ -317,6 +325,8 @@ namespace Ukemochi
                 totalFrames = 1;
                 pixelSize[0] = 64;
                 pixelSize[1] = 64;
+                pivot[0] = 0.5f;
+                pivot[1] = 0.5f;
                 frameTime = 0.05f;
                 looping = true;
                 m_SpriteFlag = false;
@@ -350,6 +360,15 @@ namespace Ukemochi
         pixelSize[0] = std::max(1, pixelSize[0]);
         pixelSize[1] = std::max(1, pixelSize[1]);
 
+        // Input for PPU
+        ImGui::InputInt("Pixel Per Unit", &pixelPerUnit);
+        pixelPerUnit = std::max(1, pixelPerUnit);
+
+        // Input for pivot
+        ImGui::InputFloat2("Pivot", pivot); // Pivot point normalized
+        pivot[0] = std::max(0.0f, std::min(1.0f, pivot[0]));
+        pivot[1] = std::max(0.0f, std::min(1.0f, pivot[1]));
+
         // Input for frame time
         ImGui::InputFloat("Frame Time", &frameTime, 0, 0, "%.2f");
         frameTime = std::max(0.01f, frameTime); // max 0.01s
@@ -359,29 +378,41 @@ namespace Ukemochi
 
         if (ImGui::Button("Export Clip"))
         {
-            // Get file name to save
-            rapidjson::Document document;
-            document.SetObject();
-            rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
-
-            rapidjson::Value textureMetaData(rapidjson::kObjectType);
-            std::string tempStr = clipName;
-            textureMetaData.AddMember("KeyPath", rapidjson::Value(m_SpritePath.c_str(), allocator), allocator);
-            textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
-            textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
-            textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
-            textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
-            textureMetaData.AddMember("TextureWidth", textureWidth, allocator);
-            textureMetaData.AddMember("TextureHeight", textureHeight, allocator);
-            textureMetaData.AddMember("FrameTime", frameTime, allocator);
-            textureMetaData.AddMember("Looping", looping, allocator);
-
-            document.AddMember("TextureMeta", textureMetaData, allocator);
-            // Serialize the texture
-            std::string path = "../Assets/Textures/" + fileName + ".json";
-            if (!Serialization::PushJSON(path, document))
+            std::string sClipName = clipName;
+            if (sClipName.empty())
             {
-                UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path);
+                ImGui::OpenPopup("Missing Clip Name");
+            }
+            else
+            {
+                // Save the metadata to a file
+                // Get file name to save
+                rapidjson::Document document;
+                document.SetObject();
+                rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+
+                rapidjson::Value textureMetaData(rapidjson::kObjectType);
+                std::string tempStr = clipName;
+                textureMetaData.AddMember("KeyPath", rapidjson::Value(m_SpritePath.c_str(), allocator), allocator);
+                textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
+                textureMetaData.AddMember("PivotX", pivot[0], allocator);
+                textureMetaData.AddMember("PivotY", pivot[1], allocator);
+                textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
+                textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
+                textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
+                textureMetaData.AddMember("TextureWidth", textureWidth, allocator);
+                textureMetaData.AddMember("TextureHeight", textureHeight, allocator);
+                textureMetaData.AddMember("FrameTime", frameTime, allocator);
+                textureMetaData.AddMember("Looping", looping, allocator);
+                // textureMetaData.AddMember("PixelPerUnit", pixelPerUnit, allocator);
+
+                document.AddMember("TextureMeta", textureMetaData, allocator);
+                // Serialize the texture
+                std::string path = "../Assets/Textures/" + fileName + ".json";
+                if (!Serialization::PushJSON(path, document))
+                {
+                    UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path);
+                }
             }
         }
 
@@ -389,16 +420,49 @@ namespace Ukemochi
 
         if (ImGui::Button("Add Clip to GO"))
         {
-            auto GOs = GameObjectManager::GetInstance().GetAllGOs();
-            if (GOs[m_global_selected]->HasComponent<Animation>())
+            std::string sClipName = clipName;
+            if (sClipName.empty())
             {
-                auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
-                anim.clips[clipName] = AnimationClip{
-                    m_SpritePath, clipName, texture, totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
-                    looping
-                };
-                anim.SetAnimation(clipName);
+                ImGui::OpenPopup("Missing Clip Name");
             }
+            else if (m_global_selected < 0)
+            {
+                ImGui::OpenPopup("NeverSelectObject");
+            }
+            else
+            {
+                auto GOs = GameObjectManager::GetInstance().GetAllGOs();
+                if (GOs[m_global_selected]->HasComponent<Animation>())
+                {
+                    auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
+                    anim.clips[sClipName] = AnimationClip{
+                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                        looping
+                    };
+                    anim.SetAnimation(clipName);
+                    
+                }
+            }
+        }
+
+        if (ImGui::BeginPopup("NeverSelectObject"))
+        {
+            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Select an object first!");
+            if (ImGui::Button("OK"))
+            {
+                ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+            }
+            ImGui::EndPopup();
+        }
+
+        if (ImGui::BeginPopup("Missing Clip Name"))
+        {
+            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Missing Clip Name, please enter a name");
+            if (ImGui::Button("OK"))
+            {
+                ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+            }
+            ImGui::EndPopup();
         }
 
         static bool isToggled = true; // This holds the state of the toggle
@@ -428,6 +492,9 @@ namespace Ukemochi
             currentFrame = 0;
             uv0 = ImVec2(0.0f, 1.0f);
             uv1 = ImVec2(1.0f, 0.0f);
+            showGrid = true;
+            isToggled = true;
+            isPlaying = false;
         }
 
         // Animation
@@ -443,6 +510,8 @@ namespace Ukemochi
             }
 
             // Handle the UV here
+            UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
+                              "Pixel size is larger than texture size");
             int col = currentFrame % (textureWidth / pixelSize[0]);
             int row = currentFrame / (textureWidth / pixelSize[0]);
 
@@ -500,6 +569,9 @@ namespace Ukemochi
             float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight) *
                 displayHeight;
 
+            UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
+                  "Pixel size is larger than texture size");
+
             int colums = textureWidth / pixelSize[0];
             //            int rows = textureHeight / pixelSize[1];
             int maxRows = (totalFrames + colums - 1) / colums;
@@ -509,12 +581,18 @@ namespace Ukemochi
                 int col = i % colums;
                 int row = i / colums;
                 if (row >= maxRows) break;
-
+                
                 drawList->AddRect(ImVec2(canvasPos.x + static_cast<float>(col) * scaledCellWidth, canvasPos.y +
                                          static_cast<float>(row) * scaledCellHeight),
                                   ImVec2(canvasPos.x + static_cast<float>(col + 1) * scaledCellWidth, canvasPos.y +
                                          static_cast<float>(row + 1) * scaledCellHeight),
                                   IM_COL32(255, 255, 255, 255));
+
+                ImVec2 drawPivot = ImVec2{(canvasPos.x + static_cast<float>(col) * scaledCellWidth) + scaledCellWidth * pivot[0],
+                                      (canvasPos.y + static_cast<float>(row) * scaledCellHeight) + scaledCellHeight * (1.0f - pivot[1])};
+
+                float pivotMarkerSize = 4.0f;
+                drawList->AddCircleFilled(drawPivot, pivotMarkerSize, IM_COL32(58, 143, 248, 255));
             }
         }
         ImGui::End();
@@ -614,6 +692,10 @@ namespace Ukemochi
         // Example: Add a button
         if (ImGui::Button("Play"))
         {
+            //enemy
+            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+
+            ECS::GetInstance().GetSystem<Collision>()->Init();
             // Recompile scripts and display popup that its compiling. Remove popup when done
             if (ScriptingEngine::GetInstance().compile_flag)
             {
@@ -1118,7 +1200,8 @@ namespace Ukemochi
             "BoxCollider2D",
             "SpriteRender",
             "Script",
-            "Animation"
+            "Animation",
+            "PlayerController"
         };
 
         ImGui::Text("Add Component");
@@ -1161,6 +1244,13 @@ namespace Ukemochi
                 if (!selectedObject->HasComponent<Animation>())
                 {
                     selectedObject->AddComponent<Animation>(Animation{});
+                    modified = true;
+                }
+                break;
+            case 5: // Player
+                if (!selectedObject->HasComponent<Player>())
+                {
+                    selectedObject->AddComponent<Player>(Player{});
                     modified = true;
                 }
                 break;
@@ -1217,9 +1307,29 @@ namespace Ukemochi
                 }
                 ImGui::Spacing();
             }
+
+            if (selectedObject->HasComponent<Animation>())
+            {
+                if (ImGui::Button("Remove Animation Component"))
+                {
+                    selectedObject->RemoveComponent<Animation>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
+            if (selectedObject->HasComponent<Player>())
+            {
+                if (ImGui::Button("Remove Player Component"))
+                {
+                    selectedObject->RemoveComponent<Player>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
         }
 
-        ImGui::Separator(); // Optional separator after the collapsible section
+        // ImGui::Separator(); // Optional separator after the collapsible section
     }
 
     /**
@@ -1237,12 +1347,20 @@ namespace Ukemochi
         if (!selectedObject) return;
 
         // Store whether the rename mode is enabled
-        static bool isRenamingName = false;
+        static bool isRenaming = false;
+        static bool isTagRenaming = false;
 
         // Button to enable/disable renaming
-        if (ImGui::Button(isRenamingName ? "Confirm Rename" : "Rename Entity Name"))
+        if (ImGui::Button(isRenaming ? "Confirm Rename" : "Rename Entity Name") && !isTagRenaming)
         {
             isRenamingName = !isRenamingName; // Toggle renaming mode
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button(isTagRenaming ? "Confirm Rename Tag" : "Rename Entity Tag") && !isRenaming)
+        {
+            isTagRenaming = !isTagRenaming; // Toggle renaming mode
         }
 
         // Editable name input field, only enabled if renaming is allowed
@@ -1250,8 +1368,22 @@ namespace Ukemochi
         std::strncpy(nameBuffer, selectedObject->GetName().c_str(), sizeof(nameBuffer));
         nameBuffer[sizeof(nameBuffer) - 1] = '\0'; // Ensure null termination
 
+        char tagBuffer[256];
+        std::strncpy(tagBuffer, selectedObject->GetTag().c_str(), sizeof(tagBuffer));
+        tagBuffer[sizeof(tagBuffer) - 1] = '\0'; // Ensure null termination
+
+        // Disable input filed when not tag renaming
+        if (isTagRenaming && !isRenaming)
+        {
+            if (ImGui::InputText("Tag name", tagBuffer, sizeof(tagBuffer)))
+            {
+                selectedObject->SetTag(std::string(tagBuffer));
+                modified = true; // Flag as modified
+            }
+        }
+
         // Disable input field when not renaming
-        if (isRenamingName)
+        if (isRenaming && !isTagRenaming)
         {
             if (ImGui::InputText("Object Name", nameBuffer, sizeof(nameBuffer)))
             {
@@ -1523,19 +1655,26 @@ namespace Ukemochi
             if (ImGui::CollapsingHeader("Animation"))
             {
                 auto& animation = selectedObject->GetComponent<Animation>();
-                if (ImGui::TreeNode("Clips"))
+                if (!animation.clips.empty())
                 {
-                    for (auto& clip : animation.clips)
+                    if (ImGui::TreeNode("Clips"))
                     {
-                        if (ImGui::TreeNode(clip.second.name.c_str()))
+                        for (auto& clip : animation.clips)
                         {
-                            ImGui::Text("Total_Frame: %d", clip.second.total_frames);
-                            ImGui::Text("Frame_Rate: %f", clip.second.frame_time);
-                            ImGui::Text("Loop: %s", clip.second.looping ? "True" : "False");
-                            ImGui::TreePop();
+                            if (ImGui::Selectable(clip.second.name.c_str()))
+                            {
+                                animation.currentClip = clip.second.name;
+                            }
+                            // if (ImGui::TreeNode(clip.second.name.c_str()))
+                            // {
+                            //     ImGui::Text("Total_Frame: %d", clip.second.total_frames);
+                            //     ImGui::Text("Frame_Rate: %f", clip.second.frame_time);
+                            //     ImGui::Text("Loop: %s", clip.second.looping ? "True" : "False");
+                            //     ImGui::TreePop();
+                            // }
                         }
+                        ImGui::TreePop();
                     }
-                    ImGui::TreePop();
                 }
                 static char currentClipBuffer[256] = "";
                 strncpy(currentClipBuffer, animation.currentClip.c_str(), sizeof(currentClipBuffer));
@@ -1543,18 +1682,24 @@ namespace Ukemochi
                 ImGui::InputText("CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
                 ImGui::EndDisabled();
 
-                static char changeClipBuffer[256] = "";
-                ImGui::InputTextWithHint("Default Clip", "Enter Clip Name", changeClipBuffer, IM_ARRAYSIZE(changeClipBuffer));
-                if (ImGui::Button("Set Current Clip"))
-                {
-                    animation.currentClip = changeClipBuffer;
-                }
-                ImGui::SameLine();
+                
                 if (ImGui::Button("Clear all Clips"))
                 {
                     animation.clips.clear();
                     animation.currentClip = "";
                 }
+                ImGui::Checkbox("Looping", &animation.clips[animation.currentClip].looping);
+            }
+        }
+
+        if (selectedObject->HasComponent<Player>())
+        {
+            if (ImGui::CollapsingHeader("Player"))
+            {
+                auto& player = selectedObject->GetComponent<Player>();
+                ImGui::Text("Player Component");
+                ImGui::InputInt("Current Health", &player.currentHealth);
+                ImGui::InputInt("Combo Damage", &player.comboDamage);
             }
         }
     }
@@ -1697,6 +1842,8 @@ namespace Ukemochi
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
 
+                ImGui::Separator();
+
                 // Show the Save button if modifications were made
                 if (modified)
                 {
@@ -1736,6 +1883,20 @@ namespace Ukemochi
         }
     }
 
+    void UseImGui::UpdateObjectPickingFramebufferSize(ImVec2 panelSize)
+    {
+        unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
+        unsigned int newHeight = static_cast<unsigned int>(panelSize.y);
+
+        if (newWidth != m_currentPanelWidth || newHeight != m_currentPanelHeight)
+        {
+            m_currentPanelWidth = newWidth;
+            m_currentPanelHeight = newHeight;
+
+            ECS::GetInstance().GetSystem<Renderer>()->resizeObjectPickingFramebuffer(m_currentPanelWidth, m_currentPanelHeight);
+        }
+    }
+
     /**
  * @brief Renders the game scene within an ImGui window and handles mouse interaction.
  *
@@ -1752,14 +1913,16 @@ namespace Ukemochi
         // Application& app = Application::Get();
         //GLuint texture = renderer.getTextureColorBuffer();
         GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
+        //GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
 
         if (showGameView)
         {
             ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
-            UpdateFramebufferSize(panelSize);
-            
+            //UpdateFramebufferSize(panelSize);
+            //UpdateObjectPickingFramebufferSize(panelSize);
+
             float targetAspect = 16.0f / 9.0f;
             float panelAspect = panelSize.x / panelSize.y;
             float displayWidth, displayHeight;
@@ -1792,19 +1955,35 @@ namespace Ukemochi
 
             // Get the mouse position in screen coordinates
             ImVec2 mousePos = ImGui::GetMousePos();
+            ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 
+            ImVec2 panelSizehere = ImGui::GetContentRegionAvail();
+
+            //static_cast<float>(Application::Get().GetWindow().GetWidth());
+            // 
             // Calculate mouse position relative to the "Player Loader" window
-            float relativeX = mousePos.x - windowPos.x;
-            float relativeY = windowSize.y - (mousePos.y - windowPos.y);
+            float relativeX =  (mousePos.x- cursorPos.x)*1600/ panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
+            
+            const GLFWvidmode* videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
+            // Get mouse position relative to the play window
+            float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
+          
 
 
             // Check if the mouse is within the bounds of the window
-            if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
+           // if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
             {
                 // Optional: Handle the mouse position within the window here
                 //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
+            ImGui::End();
+
+            // Add the object picking debug window
+            ImGui::Begin("Object Picking Debug View");
+            ImGui::Image((ImTextureID)(intptr_t)ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer(),
+                ImVec2(300, 300), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::End();
         }
     }

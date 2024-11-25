@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 19, 2024
+\date       Nov 24, 2024
 \brief      This file contains the declaration of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -30,25 +30,27 @@ namespace Ukemochi
     };
 
     class Transformation : public System
-	{
-	public:
+    {
+    public:
         /*!***********************************************************************
         \brief
          Minimum and maximum scale constant for all entities.
         *************************************************************************/
-        const float MIN_Y_POS = 0.0f, MAX_Y_POS = 900.0f;
-        const float MIN_SCALE = 100.0f, MAX_SCALE = 175.0f;
+        const float MIN_Y_POS = 100.0f, MAX_Y_POS = 800.0f;
+        const float MIN_SCALE = 150.0f, MAX_SCALE = 200.0f;
         const float SCALE_FACTOR = 100.f;
 
+        /*!***********************************************************************
+        \brief
+         Object scaling constant for the depth effect.
+        *************************************************************************/
         const DepthScaling OBJECT_SCALING = { MIN_Y_POS, MAX_Y_POS, MIN_SCALE, MAX_SCALE };
-
-        bool isFacingRight{ false };
 
         /*!***********************************************************************
         \brief
          Compute the transformations of all the entities.
         *************************************************************************/
-		void ComputeTransformations();
+        void ComputeTransformations();
 
         /*!***********************************************************************
         \brief
@@ -60,7 +62,20 @@ namespace Ukemochi
         *************************************************************************/
         void ComputeObjectScale(EntityID object, const DepthScaling& scaling);
 
-        void IncreaseScale(Transform& trans); // Increase the scale of the object
-        void DecreaseScale(Transform& trans); // Decrease the scale of the object
-	};
+        /*!***********************************************************************
+        \brief
+         Increase the scale of the object.
+        \param[out] trans
+         The transform component to scale.
+        *************************************************************************/
+        void IncreaseScale(Transform& trans);
+
+        /*!***********************************************************************
+        \brief
+         Decrease the scale of the object.
+        \param[out] trans
+         The transform component to scale.
+        *************************************************************************/
+        void DecreaseScale(Transform& trans);
+    };
 }

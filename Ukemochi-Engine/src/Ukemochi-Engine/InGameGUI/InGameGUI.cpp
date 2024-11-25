@@ -134,7 +134,7 @@ namespace Ukemochi
 		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
 		//std::cout << "button" << " : " << position.x << ", " << position.y << std::endl;
-		//std::cout << "mouse" << " : " << mouse_x << ", " << mouse_y << std::endl;
+		std::cout << "mouse" << " : " << mouse_x << ", " << mouse_y << std::endl;
 
 		return mouse_x >= position.x - size.x * 0.5f
 			&& mouse_x <= position.x + size.x
