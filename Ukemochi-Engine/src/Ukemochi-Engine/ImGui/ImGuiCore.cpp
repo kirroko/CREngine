@@ -1733,12 +1733,19 @@ namespace Ukemochi
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
         static char filePath[256] = "../Assets/Prefabs/Player.json";
-        static int selectedEntityID = -1; // Store the ID of the selected entity instead of an index
+        // Sync the selectedEntityID with the Renderer's picked entity
+        static int selectedEntityID = -1;
+        auto& renderer = *ECS::GetInstance().GetSystem<Renderer>();
+
+        // Update the selected entity from object picking
+        size_t pickedEntity = renderer.getSelectedEntityID();
+        if (pickedEntity != static_cast<size_t>(-1)) {
+            selectedEntityID = static_cast<int>(pickedEntity);
+        }
+
         m_global_selected = selectedEntityID;
         static bool showError = false;
         static double errorDisplayTime = 0.0f;
-
-        // Persistent flag to track if the selected entity was modified
         static bool modified = false;
 
         // Display the Asset Browser
@@ -1753,20 +1760,32 @@ namespace Ukemochi
                 auto& obj = gameObjects[i];
                 Ukemochi::EntityID instanceID = obj->GetInstanceID();
 
-                // Display each object in the TreeNode
-                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), selectedEntityID == instanceID))
-                {
-                    selectedEntityID = static_cast<int>(instanceID); // Set selected entity by ID
-                    modified = false; // Reset modification flag when a new entity is selected
+                // Highlight the selected entity (picked or clicked in UI)
+                bool isSelected = selectedEntityID == instanceID;
+
+                // Use different colors for picked vs regular selection
+                ImVec4 normalColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+                ImVec4 selectedColor = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow for picked objects
+
+                if (isSelected) {
+                    ImGui::PushStyleColor(ImGuiCol_Text, selectedColor);
                 }
 
-                // Display entity details in a collapsible tree node below the selectable
-                if (selectedEntityID == instanceID)
+                // Display each object in the TreeNode
+                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), isSelected))
                 {
-                    // Show the entity details for the selected object
+                    selectedEntityID = static_cast<int>(instanceID);
+                    modified = false;
+                }
+
+                if (isSelected) {
+                    ImGui::PopStyleColor();
+
+                    // Auto-expand details for picked objects
+                    ImGui::SetNextItemOpen(true);
                     if (ImGui::TreeNode(("Details##" + std::to_string(instanceID)).c_str()))
                     {
-                        DisplayEntityDetails(*obj); // Show the entity details
+                        DisplayEntityDetails(*obj);
                         ImGui::TreePop();
                     }
                 }
@@ -1774,10 +1793,10 @@ namespace Ukemochi
             ImGui::TreePop();
         }
 
+        // Rest of your existing code for entity creation and management...
         ImGui::Text("Entity Management");
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
 
-        // Button to create a new entity from a prefab
         if (ImGui::Button("Create Entity"))
         {
             const std::string prefabDirectory = "../Assets/Prefabs/";
@@ -1804,7 +1823,6 @@ namespace Ukemochi
 
         ImGui::SameLine();
 
-        // Button to create an empty entity
         if (ImGui::Button("Create Empty Entity"))
         {
             auto& emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
@@ -1839,34 +1857,55 @@ namespace Ukemochi
 
             if (selectedObject)
             {
+                // Add visual feedback for picked objects
+                if (selectedEntityID == static_cast<int>(renderer.getSelectedEntityID())) {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Selected via Object Picking");
+                }
+
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
 
                 ImGui::Separator();
 
-                // Show the Save button if modifications were made
                 if (modified)
                 {
                     if (ImGui::Button("Save Entity"))
                     {
                         std::cout << "Entity is Saved";
                         SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
-                        modified = false; // Reset modified flag after saving
+                        modified = false;
                     }
                 }
 
-                // Remove Entity button
+                if (Input::IsKeyTriggered(UME_KEY_DELETE) && selectedEntityID >= 0)
+                {
+                    // Check if the entity exists
+                    if (selectedObject)
+                    {
+                        std::cout << "Deleting Entity with ID: " << selectedEntityID << std::endl;
+                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                        selectedEntityID = -1; // Reset the selected entity ID after deletion
+                        modified = false; // Reset any modification flags
+                    }
+                    else
+                    {
+                        std::cout << "Invalid Entity ID: " << selectedEntityID << " - Cannot delete" << std::endl;
+                    }
+                }
+
                 if (ImGui::Button("Remove Entity"))
                 {
-                    RemoveSelectedEntity(selectedEntityID);
-                    selectedEntityID = -1; // Reset selection after removal
-                    modified = false;
+                    if (selectedEntityID != -1) {
+                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                        selectedEntityID = -1;
+                        modified = false;
+                    }
                 }
             }
         }
 
-        // End the dockable window
         ImGui::End();
+
     }
 
     void UseImGui::UpdateFramebufferSize(ImVec2 panelSize)
