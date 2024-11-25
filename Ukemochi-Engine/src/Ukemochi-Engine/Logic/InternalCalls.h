@@ -270,12 +270,26 @@ namespace Ukemochi
             return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName));
         }
 
-        EXTERN_C UME_API inline bool PlayAnimationWithFrame(uint64_t id, MonoString* clipName, int32_t startFrame, int32_t endFrame)
+        EXTERN_C UME_API inline bool PlayQueuedAnimation(uint64_t id,MonoString* clipName)
         {
             auto* go = GameObjectManager::GetInstance().GetGO(id);
             auto& anim = go->GetComponent<Animation>();
-            return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName), startFrame, endFrame);
+            return anim.SetAnimationUninterrupted(ScriptingEngine::MonoStringToUTF8(clipName));
         }
+
+        EXTERN_C UME_API inline bool PlayImmediately(uint64_t id, MonoString* clipName)
+        {
+            auto* go = GameObjectManager::GetInstance().GetGO(id);
+            auto& anim = go->GetComponent<Animation>();
+            return anim.SetAnimationImmediately(ScriptingEngine::MonoStringToUTF8(clipName));
+        }
+
+        // EXTERN_C UME_API inline bool PlayAnimationWithFrame(uint64_t id, MonoString* clipName, int32_t startFrame, int32_t endFrame)
+        // {
+        //     auto* go = GameObjectManager::GetInstance().GetGO(id);
+        //     auto& anim = go->GetComponent<Animation>();
+        //     return anim.SetAnimation(ScriptingEngine::MonoStringToUTF8(clipName), startFrame, endFrame);
+        // }
 
         EXTERN_C UME_API inline float GetDeltaTime()
         {

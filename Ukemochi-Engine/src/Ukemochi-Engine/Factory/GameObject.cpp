@@ -41,3 +41,8 @@ EntityID GameObject::GetInstanceID() const
 {
     return m_InstanceID;
 }
+
+bool GameObject::GetActive() const
+{
+    return m_isActive;
+}

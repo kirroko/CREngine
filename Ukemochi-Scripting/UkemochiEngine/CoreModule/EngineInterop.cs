@@ -158,6 +158,9 @@ namespace Ukemochi
         
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool PlayQueuedAnimation(ulong id, string clipName);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool PlayImmediately(ulong id, string clipName);
         
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool IsAnimationPlaying(ulong id);
@@ -173,5 +176,7 @@ namespace Ukemochi
         public static extern float GetFixedDeltaTime();
 
         #endregion
+
+
     }
 }

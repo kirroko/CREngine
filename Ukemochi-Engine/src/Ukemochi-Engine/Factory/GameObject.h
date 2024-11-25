@@ -29,7 +29,8 @@ namespace Ukemochi
         std::string m_Tag;
 
         EntityID m_InstanceID{};
-
+        
+        bool m_isActive = true;
     public:
         GameObject() = default;
 
@@ -80,5 +81,11 @@ namespace Ukemochi
          * @return The tag of the object as a constant reference to a std::string.
          */
         const std::string& GetTag() const { return m_Tag; }
+
+        void SetTag(const std::string& tag) { m_Tag = tag; }
+
+        bool GetActive() const;
+
+        void SetActive(const bool active) { m_isActive = active; }
     };
 };

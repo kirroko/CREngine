@@ -75,6 +75,31 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
+     Apply a knockback effect to a target based on the direction and force of the source.
+    \param[in] source_trans
+     The transform of the source entity.
+    \param[in] source_force
+     The amount of force to apply to the target entity.
+    \param[in] target_trans
+     The transform of the target entity.
+    \param[out] target_rb
+     The rigidbody of the target entity.
+    *************************************************************************/
+    void Physics::ApplyKnockback(const Transform& source_trans, const float source_force, const Transform& target_trans, Rigidbody2D& target_rb)
+    {
+        Vec2 knockback_direction{};
+
+        // Get the knockback direction
+        Vec2Normalize(knockback_direction, (target_trans.position - source_trans.position));
+        knockback_direction *= source_force;
+
+        // Apply the knockback force
+        AddForceX(target_rb, knockback_direction.x);
+        AddForceY(target_rb, knockback_direction.y);
+    }
+
+    /*!***********************************************************************
+    \brief
      Update the physics of all the entities.
     *************************************************************************/
     void Physics::UpdatePhysics()
@@ -84,8 +109,9 @@ namespace Ukemochi
         {
             for (auto& entity : m_Entities)
             {
-                // Get the tag of the entity
-                std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+                // Skip if the entity is not active
+                if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                    continue;
 
                 // Get references of entity components
                 auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
@@ -94,6 +120,9 @@ namespace Ukemochi
                 // Skip if entity is kinematic (static objects)
                 if (rb.is_kinematic)
                     continue;
+
+                // Get the tag of the entity
+                std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
                 // Update the linear physics of the entity
                 UpdateLinearPhysics(tag, trans, rb);
