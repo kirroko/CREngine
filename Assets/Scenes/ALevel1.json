@@ -664,7 +664,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1545.0, 872.0],
+                    "Position": [1595.0, 872.0],
                     "Rotation": 0.0,
                     "Scale": [510.0, 417.0]
                 }, {
@@ -753,7 +753,7 @@
                     "Name": "Transform",
                     "Position": [1765.0, 862.0],
                     "Rotation": 0.0,
-                    "Scale": [236.0, 436.0]
+                    "Scale": [-236.0, 436.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
@@ -1438,7 +1438,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-273.0, 108.0],
+                    "Position": [-273.0, 100.0],
                     "Rotation": 0.0,
                     "Scale": [547.0, 205.0]
                 }, {
@@ -1464,7 +1464,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1860.0, 540.0],
+                    "Position": [1860.0, 575.0],
                     "Rotation": 0.0,
                     "Scale": [122.0, 1080.0]
                 }, {
@@ -1529,7 +1529,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1647.0, 108.0],
+                    "Position": [1647.0, 100.0],
                     "Rotation": 0.0,
                     "Scale": [547.0, 205.0]
                 }, {
@@ -1607,7 +1607,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3567.0, 108.0],
+                    "Position": [3567.0, 100.0],
                     "Rotation": 0.0,
                     "Scale": [547.0, 205.0]
                 }, {

@@ -179,7 +179,7 @@ namespace Ukemochi
         if (!ScriptingEngine::ScriptHasError)
         {
             // Save the current scene state
-            SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+            //SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
             //m_CompileError = false;
             es_current = ENGINE_STATES::ES_PLAY;
             UME_ENGINE_INFO("Simulation (Game is playing) started");
