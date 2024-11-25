@@ -267,7 +267,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-345.0, 872.0],
+                    "Position": [-375.0, 872.0],
                     "Rotation": 0.0,
                     "Scale": [510.0, 417.0]
                 }, {
@@ -354,12 +354,12 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-175.0, 862.0],
+                    "Position": [-155.0, 862.0],
                     "Rotation": 0.0,
-                    "Scale": [-236.0, 436.0]
+                    "Scale": [236.0, 436.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
                     "Shape": 0
                 }]
         }, {
@@ -664,7 +664,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1595.0, 872.0],
+                    "Position": [1545.0, 872.0],
                     "Rotation": 0.0,
                     "Scale": [510.0, 417.0]
                 }, {
@@ -753,10 +753,10 @@
                     "Name": "Transform",
                     "Position": [1765.0, 862.0],
                     "Rotation": 0.0,
-                    "Scale": [-236.0, 436.0]
+                    "Scale": [236.0, 436.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_back.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_back.png",
                     "Shape": 0
                 }]
         }, {
@@ -1311,8 +1311,8 @@
                     "Name": "Animation",
                     "Clips": {
                         "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.5, 0.5099999904632568, 100, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 100, 461, 428, 2048, 2048, 0.05000000074505806, true],
                         "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.4699999988079071, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
+                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 100, 461, 428, 2048, 2048, 0.05000000074505806, true],
                         "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5, 0.5, 100, 545, 420, 2048, 1024, 0.05000000074505806, true],
                         "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5299999713897705, 115, 716, 467, 3708, 1569, 0.05000000074505806, true],
                         "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5, 0.5099999904632568, 115, 543, 484, 3900, 2597, 0.03999999910593033, true]
@@ -1373,12 +1373,12 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-60.0, 560.0],
+                    "Position": [-60.0, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [-122.0, 1080.0]
+                    "Scale": [122.0, 1080.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
                     "Shape": 0
                 }]
         }, {
@@ -1464,7 +1464,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1860.0, 575.0],
+                    "Position": [1860.0, 540.0],
                     "Rotation": 0.0,
                     "Scale": [122.0, 1080.0]
                 }, {
