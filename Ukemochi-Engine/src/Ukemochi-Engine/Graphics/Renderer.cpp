@@ -570,8 +570,8 @@ void Renderer::render()
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 		//auto& GameObject
 		GameObject* go = GameObjectManager::GetInstance().GetGO(entity);
-		if (go->GetTag() == "Button")
-			std::cout << "Button" << std::endl;
+		//if (go->GetTag() == "Button")
+			//std::cout << "Button" << std::endl;
 
 		// Set up the model matrix
 		glm::mat4 model{};

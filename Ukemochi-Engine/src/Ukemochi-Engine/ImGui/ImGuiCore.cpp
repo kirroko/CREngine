@@ -1917,7 +1917,7 @@ namespace Ukemochi
            // if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
             {
                 // Optional: Handle the mouse position within the window here
-                std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
+                //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
             ImGui::End();

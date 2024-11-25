@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h" // temp
 #include "Ukemochi-Engine/Game/PlayerManager.h"
 #include "Ukemochi-Engine/Graphics/Renderer.h"
+#include "../Game/EnemyManager.h"
 
 namespace Ukemochi
 {
@@ -533,10 +534,10 @@ namespace Ukemochi
 		{
 			// Mochi / Enemy and Environment Objects / Boundaries
 			// Acts as a wall
-
+			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
@@ -597,7 +598,6 @@ namespace Ukemochi
 		{
 			// Mochi / Enemy and Environment Objects
 			// Acts as a wall
-
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);

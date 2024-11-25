@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 // for enemy
 #include "../FrameController.h"
 
+
 namespace Ukemochi
 {
 	/*!***********************************************************************
@@ -331,25 +332,6 @@ namespace Ukemochi
 			return (dx * dx + dy * dy) <= (threshold * threshold);
 		}
 
-		EnemyStates GetEnemyState() const
-		{
-			return state;
-		}
-
-		void SetEnemyState(EnemyStates newState)
-		{
-			state = newState;
-		}
-
-		bool IsCollide() const
-		{
-			return isCollide;
-		}
-
-		void SetIsCollide(bool b)
-		{
-			isCollide = b;
-		}
 		Enemy() = default;
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
@@ -379,17 +361,17 @@ namespace Ukemochi
 
 		void RoamState(Transform &self, std::vector<EntityID> &environmentObjects, Transform &nearestObjTransform, int playerID, Transform &playerTransform)
 		{
-			float targetX = nearestObjTransform.position.x;
-			float targetY = nearestObjTransform.position.y;
+			//float targetX = nearestObjTransform.position.x;
+			//float targetY = nearestObjTransform.position.y;
 
 			// Move to the nearest object
 			MoveToTarget(self, targetX, targetY, g_FrameRateController.GetDeltaTime(), speed);
 
 			// when target reach find next obj
-			if (ReachedTarget(GetPosition().first, GetPosition().second, targetX, targetY, 0.f) == true)
-			{
-				nearestObj = -1;
-			}
+			//if (ReachedTarget(GetPosition().first, GetPosition().second, targetX, targetY, 0.f) == true)
+			//{
+			//	nearestObj = -1;
+			//}
 
 			if (playerID == -1)
 			{
@@ -454,8 +436,13 @@ namespace Ukemochi
 			this->targetY = targetY;
 		}
 
+		template <typename T>
+		T Lerp(T a, T b, float t)
+		{
+			return a + t * (b - a);
+		}
 		// GET TRANSFORM TO MOVE
-		void MoveToTarget(Transform &self, float targetX, float targetY, float deltaTime, float speed)
+		void MoveToTarget(Transform&self, float targetX, float targetY, float deltaTime, float speed)
 		{
 			// Check if already at the target
 			if (ReachedTarget(self.position.x, self.position.y, targetX, targetY, 0.1f))
@@ -481,7 +468,7 @@ namespace Ukemochi
 			posX = self.position.x;
 			posY = self.position.y;
 			// Print position for debugging
-			std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
+			//std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
 		}
 
 		// Check if the enemy can attack the player
@@ -494,6 +481,47 @@ namespace Ukemochi
 			float distance = std::sqrt(dx * dx + dy * dy);
 			return distance <= attackRange;
 		}
+
+		void WrapToTarget(Transform& enemyTransform, float targetX, float targetY, float deltaTime, float speed)
+		{
+			// Calculate the direction vector from the enemy to the target
+			float dx = targetX - enemyTransform.position.x;
+			float dy = targetY - enemyTransform.position.y;
+
+			// Calculate the current angle to the target
+			float currentAngle = std::atan2(dy, dx); // Initialize angle based on initial direction
+
+			// Calculate the current radius (distance to the target)
+			float radius = std::sqrt(dx * dx + dy * dy);
+
+			// If close enough to the target, snap to it and stop wrapping
+			if (radius < 100.f) // Threshold for "reaching" the target
+			{
+				//enemyTransform.position.x = targetX;
+				//enemyTransform.position.y = targetY;
+				isCollide = false;
+				nearestObj = -1;
+				return;
+			}
+
+			// Reduce the radius over time to spiral inwards
+			float shrinkRate = speed * deltaTime * 0.5f; // Adjust shrink rate for smooth spiraling
+			radius = std::max(radius - shrinkRate, 0.1f); // Ensure the radius doesn't go negative
+
+			// Increment the angle dynamically for circular motion
+			float angularVelocity = speed / (radius + 0.1f); // Adjust angular speed based on the shrinking radius
+			currentAngle += angularVelocity * deltaTime;
+
+			// Calculate the new position along the circular path
+			float newX = targetX - radius * std::cos(currentAngle);
+			float newY = targetY - radius * std::sin(currentAngle);
+
+			// Smoothly move the enemy's position toward the new point
+			enemyTransform.position.x = Lerp(enemyTransform.position.x, newX, deltaTime * speed);
+			enemyTransform.position.y = Lerp(enemyTransform.position.y, newY, deltaTime * speed);
+		}
+
+
 
 		// Attack the player (reduces player's health)
 		void AttackPlayer(float &playerHealth)
