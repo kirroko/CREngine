@@ -245,45 +245,17 @@ namespace Ukemochi
     {
         loop_start = std::chrono::steady_clock::now();
 
+        // Debug mode
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
 
-        //if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-        //{
-        //   ECS::GetInstance().GetSystem<Renderer>()->getEntityFromMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
-        //   /* ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
-
-        //   /*ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-        //       SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
-        //   ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-        //       SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);*/
-        //}
- 
-       
-        // On mouse button press, start dragging
+        // Select entity
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
             ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                 SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
         }
-
-        // On mouse movement, continue dragging if active
-        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-        {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
-        }
-
-        // On mouse button release, stop dragging
-        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
-        {
-            ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
-            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
-        }
-
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))

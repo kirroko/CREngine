@@ -1,3 +1,32 @@
+/*!***********************************************************************
+\file       DebugModeBatchRendering.cpp
+\author     Tan Shun Zhi Tomy, t.shunzhitomy@digipen.edu
+\date       26/11/2024
+\brief
+This file contains the implementation of the `DebugBatchRenderer2D`
+class, which facilitates batch rendering of debug wireframe boxes
+using OpenGL.
+
+The renderer is optimized for visualizing debug wireframes by batching
+vertices for multiple boxes and rendering them in a single draw call.
+It uses `GL_LINES` for drawing individual edges, and supports
+rotation and scaling of each debug box.
+
+\details
+- The `init` function sets up the VAO and VBO for managing vertex data.
+- The `drawDebugBox` function adds the vertices for a single box into
+  the current batch.
+- The `flush` function renders the batch of debug boxes in the buffer
+  and resets the batch for the next set of debug boxes.
+
+This renderer is primarily used in debug modes to visualize bounding
+boxes, collision shapes, or other debug information.
+
+\copyright
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*************************************************************************/
 #include "PreCompile.h"
 #include "DebugModeBatchRendering.h"
 #include "shaderClass.h"
@@ -10,6 +39,11 @@ DebugBatchRenderer2D::DebugBatchRenderer2D()
 {
 }
 
+/*!***********************************************************************
+\brief
+Destructor for the `DebugBatchRenderer2D` object. Cleans up resources
+such as VAO, VBO, and clears the vertex buffer.
+*************************************************************************/
 DebugBatchRenderer2D::~DebugBatchRenderer2D()
 {
     if (debug_vao) debug_vao->Delete();
@@ -17,6 +51,14 @@ DebugBatchRenderer2D::~DebugBatchRenderer2D()
     vertices.clear();
 }
 
+/*!***********************************************************************
+\brief
+Initializes the batch renderer with a shader and sets up the necessary
+vertex buffer and vertex array object (VAO).
+
+\param debugShader
+The shader to be used for rendering debug wireframes.
+*************************************************************************/
 void DebugBatchRenderer2D::init(std::shared_ptr<Shader> debugShader)
 {
     vertices.reserve(maxShapes * 4);
@@ -37,11 +79,30 @@ void DebugBatchRenderer2D::init(std::shared_ptr<Shader> debugShader)
     shader = debugShader;  // Assign the debug shader
 }
 
+/*!***********************************************************************
+\brief
+Clears the vertex buffer and prepares for a new batch of debug wireframe
+boxes.
+*************************************************************************/
 void DebugBatchRenderer2D::beginBatch()
 {
     vertices.clear();
 }
 
+/*!***********************************************************************
+\brief
+Adds a debug wireframe box to the batch. The box is defined by its
+position, size, and rotation.
+
+\param position
+The position of the box center in world coordinates.
+
+\param size
+The size (width and height) of the box.
+
+\param rotation
+The rotation angle of the box, in radians.
+*************************************************************************/
 void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::vec2& size, float rotation)
 {
 
@@ -88,11 +149,20 @@ void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::ve
     vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f) });
 }
 
+/*!***********************************************************************
+\brief
+Ends the current batch by rendering all the vertices in the buffer.
+*************************************************************************/
 void DebugBatchRenderer2D::endBatch()
 {
     flush();
 }
 
+/*!***********************************************************************
+\brief
+Flushes the current batch, rendering all the debug wireframe boxes in
+the vertex buffer using the bound shader.
+*************************************************************************/
 void DebugBatchRenderer2D::flush()
 {
     if (vertices.empty()) return;

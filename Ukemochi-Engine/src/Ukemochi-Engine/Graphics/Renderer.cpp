@@ -1062,6 +1062,11 @@ void Renderer::animationKeyInput()
 	}
 }
 
+/*!***********************************************************************
+\brief
+Assigns unique colors to each entity in the scene for object picking.
+Each entity is assigned a color based on its unique ID.
+*************************************************************************/
 void Renderer::assignUniqueColorsToEntities()
 {
 	size_t entityID = 0; // Starting ID
@@ -1075,6 +1080,16 @@ void Renderer::assignUniqueColorsToEntities()
     }
 }
 
+/*!***********************************************************************
+\brief
+Encodes an entity ID into an RGB color vector.
+
+\param id
+The entity ID to encode.
+
+\return
+A glm::vec3 representing the RGB color corresponding to the ID.
+*************************************************************************/
 glm::vec3 Renderer::encodeIDToColor(int id)
 {
 	float r = ((id >> 16) & 0xFF) / 255.0f;
@@ -1087,6 +1102,10 @@ glm::vec3 Renderer::encodeIDToColor(int id)
 		glm::clamp(b, 0.0f, 1.0f));
 }
 
+/*!***********************************************************************
+\brief
+Sets up the framebuffer and associated textures for object picking.
+*************************************************************************/
 void Renderer::setupColorPickingFramebuffer()
 {
 	glGenFramebuffers(1, &objectPickingFrameBuffer);
@@ -1107,46 +1126,13 @@ void Renderer::setupColorPickingFramebuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+/*!***********************************************************************
+\brief
+Renders the scene to the object picking framebuffer using unique colors
+for each entity.
+*************************************************************************/
 void Renderer::renderForObjectPicking()
 {
-	//glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
-	//glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
-	//glClearColor(1.f, 1.f, 1.f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//// Get the camera's view and projection matrices
-	//const auto& camera = ECS::GetInstance().GetSystem<Camera>();
-	//glm::mat4 view = camera->getCameraViewMatrix();
-	//glm::mat4 projection = camera->getCameraProjectionMatrix();
-
-	//// Set the projection and view matrices in the shader
-	//object_picking_shader_program->Activate();
-	//object_picking_shader_program->setMat4("view", view);
-	//object_picking_shader_program->setMat4("projection", projection);
-
-	//for (auto& entity : m_Entities)
-	//{
-	//	glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
-
-	//	object_picking_shader_program->setVec3("objectColor", encodeIDToColor(static_cast<int>(entity)));
-
-	//	auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-	//	auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
-	//	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
-	//	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	//	model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
-	//	object_picking_shader_program->setMat4("model", model);
-
-	//	drawBox();
-	//}
-
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	//// Now render the framebuffer texture to the screen
-	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//object_picking_shader_program->Deactivate();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
 	glClearColor(1.f, 1.f, 1.f, 1.0f);
@@ -1181,6 +1167,20 @@ void Renderer::renderForObjectPicking()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+/*!***********************************************************************
+\brief
+Retrieves the entity ID corresponding to a mouse click position by
+reading the color from the object picking framebuffer.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+
+\return
+The entity ID at the mouse click position, or -1 if no entity is found.
+*************************************************************************/
 size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
@@ -1208,6 +1208,10 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	return entityID;
 }
 
+/*!***********************************************************************
+\brief
+Sets up the VAO, VBO, and EBO for rendering the object picking framebuffer.
+*************************************************************************/
 void Renderer::setUpObjectPickingBuffer()
 {
 	float quadVertices[] = {
@@ -1267,11 +1271,29 @@ void Renderer::drawBox()
 	objectPickingVAO->Unbind();
 }
 
+/*!***********************************************************************
+\brief
+Retrieves the color buffer used for object picking.
+
+\return
+The OpenGL texture ID of the color buffer used for object picking.
+*************************************************************************/
 GLuint Renderer::getObjectPickingColorBuffer() const
 {
 	return colorPickingBuffer;  // this is framebuffer's color texture
 }
 
+/*!***********************************************************************
+\brief
+Resizes the object picking framebuffer and its associated textures
+based on the new dimensions.
+
+\param width
+The new width of the framebuffer.
+
+\param height
+The new height of the framebuffer.
+*************************************************************************/
 void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
@@ -1333,6 +1355,17 @@ void Renderer::drawPoint(float x, float y, glm::vec3 color)
 	glDeleteBuffers(1, &pointVBO);
 }
 
+/*!***********************************************************************
+\brief
+Handles a mouse click event for object picking and selects the entity
+under the mouse cursor, if any.
+
+\param mouseX
+The x-coordinate of the mouse cursor in screen space.
+
+\param mouseY
+The y-coordinate of the mouse cursor in screen space.
+*************************************************************************/
 void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 {
 	size_t entityID = getEntityFromMouseClick(mouseX, mouseY);
@@ -1356,6 +1389,17 @@ void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 	}
 }
 
+/*!***********************************************************************
+\brief
+Handles dragging of the selected entity by updating its position based
+on mouse movement.
+
+\param mouseX
+The x-coordinate of the mouse cursor in screen space.
+
+\param mouseY
+The y-coordinate of the mouse cursor in screen space.
+*************************************************************************/
 void Renderer::handleMouseDrag(int mouseX, int mouseY)
 {
 
