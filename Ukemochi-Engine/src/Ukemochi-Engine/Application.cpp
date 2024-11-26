@@ -313,7 +313,7 @@ namespace Ukemochi
         imguiInstance.SceneRender();
         imguiInstance.ShowEntityManagementUI();
         // imguiInstance.Begin();
-        imguiInstance.RenderGizmo2d();
+        //imguiInstance.RenderGizmo2d();
         imguiInstance.ImGuiUpdate(); // Render ImGui elements
         //************ Render IMGUI ************
     }
