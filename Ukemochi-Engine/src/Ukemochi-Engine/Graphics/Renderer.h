@@ -492,6 +492,7 @@ public:
 	void handleMouseDrag(int mouseX, int mouseY);
 	void handleMouseClickOP(int mouseX, int mouseY); 
 	size_t selectedEntityID = -1; // Sentinel value for no selection
+	size_t getSelectedEntityID() { return selectedEntityID; }
 	bool isDragging = false; // Flag to check if dragging is active
 	void renderImGuizmo();
 private:

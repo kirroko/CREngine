@@ -31,10 +31,6 @@
                 "Max": [1.0, 1.0],
                 "Collision Flag": 0,
                 "is_trigger": true
-            }, {
-                "Name": "SpriteRender",
-                "Sprite": "../Assets/Textures/Moon Floor.png",
-                "Shape": 0
             }]
     }
 }

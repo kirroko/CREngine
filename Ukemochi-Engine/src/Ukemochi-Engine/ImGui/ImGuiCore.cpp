@@ -327,6 +327,7 @@ namespace Ukemochi
                         std::string temp = object["ClipName"].GetString();
                         std::fill(std::begin(clipName), std::end(clipName), 0);
                         std::copy(temp.begin(),temp.end(), clipName);
+                        pixelPerUnit = object["PixelsPerUnit"].GetInt();
                         totalFrames = object["TotalFrames"].GetInt();
                         pixelSize[0] = object["PixelWidth"].GetInt();
                         pixelSize[1] = object["PixelHeight"].GetInt();
@@ -344,6 +345,7 @@ namespace Ukemochi
                 {
                     UME_ENGINE_WARN("No metadata found");
                     std::fill(std::begin(clipName), std::end(clipName), 0);
+                    pixelPerUnit = 100;
                     totalFrames = 1;
                     pixelSize[0] = 64;
                     pixelSize[1] = 64;
@@ -366,6 +368,7 @@ namespace Ukemochi
                 textureHeight = 0;
                 texture = 0;
                 std::fill(std::begin(clipName), std::end(clipName), 0);
+                pixelPerUnit = 100;
                 totalFrames = 1;
                 pixelSize[0] = 64;
                 pixelSize[1] = 64;
@@ -406,7 +409,7 @@ namespace Ukemochi
 
         // Input for PPU
         ImGui::InputInt("Pixel Per Unit", &pixelPerUnit);
-        pixelPerUnit = std::max(1, pixelPerUnit);
+        pixelPerUnit = std::max(10, pixelPerUnit);
 
         // Input for pivot
         ImGui::InputFloat2("Pivot", pivot); // Pivot point normalized
@@ -441,6 +444,7 @@ namespace Ukemochi
                 textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
                 textureMetaData.AddMember("PivotX", pivot[0], allocator);
                 textureMetaData.AddMember("PivotY", pivot[1], allocator);
+                textureMetaData.AddMember("PixelsPerUnit", pixelPerUnit, allocator);
                 textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
                 textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
                 textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
@@ -480,7 +484,7 @@ namespace Ukemochi
                 {
                     auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
                     anim.clips[sClipName] = AnimationClip{
-                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , pixelPerUnit ,totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
                         looping
                     };
                     anim.SetAnimation(clipName);
@@ -713,69 +717,57 @@ namespace Ukemochi
     void UseImGui::ControlPanel(float fps)
     {
         static std::vector<float> fpsHistory;
-        static const int maxHistorySize = 144; // Maximum number of FPS values to store
-
-
+        static const int maxHistorySize = 144;
         fpsHistory.push_back(fps);
-
-        // If the history size exceeds the maximum, remove the oldest value
         if (fpsHistory.size() > maxHistorySize)
         {
             fpsHistory.erase(fpsHistory.begin());
         }
 
-        ImGui::Begin("Control Panel"); // Create a new window titled "Control Panel"
-
-        // Add FPS display inside ControlPanel
-        ImGui::Text("FPS: %.2f", fps); // Show FPS with 2 decimal places
-
+        ImGui::Begin("Control Panel");
+        ImGui::Text("FPS: %.2f", fps);
         ImGui::PlotLines("FPS History", fpsHistory.data(), static_cast<int>(fpsHistory.size()), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
-
-        // Add controls such as buttons, sliders, or entity selectors here
         ImGui::Text("Control Panel Contents");
-        // Example: Add a button
-        if (ImGui::Button("Play"))
+
+        // Only show Play button when not in play mode
+        if (es_current != ENGINE_STATES::ES_PLAY)
         {
-            //enemy
-            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+            if (ImGui::Button("Play"))
+            {
+                ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+                ECS::GetInstance().GetSystem<Collision>()->Init();
 
-            ECS::GetInstance().GetSystem<Collision>()->Init();
-            // Recompile scripts and display popup that its compiling. Remove popup when done
-            if (ScriptingEngine::GetInstance().compile_flag)
-            {
-                UME_ENGINE_INFO("Begin Script reloading");
-                ScriptingEngine::GetInstance().compile_flag = false;
-                ScriptingEngine::GetInstance().Reload();
-                // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
-            }
+                if (ScriptingEngine::GetInstance().compile_flag)
+                {
+                    UME_ENGINE_INFO("Begin Script reloading");
+                    ScriptingEngine::GetInstance().compile_flag = false;
+                    ScriptingEngine::GetInstance().Reload();
+                }
 
-            // Perform some action when button is clicked
-            if (!ScriptingEngine::ScriptHasError)
-            {
-                // save
-                SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-                m_CompileError = false;
-                es_current = ENGINE_STATES::ES_PLAY;
-                UME_ENGINE_INFO("Simulation (Game is playing) started");
-                ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                if (!ScriptingEngine::ScriptHasError)
+                {
+                    SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+                    m_CompileError = false;
+                    es_current = ENGINE_STATES::ES_PLAY;
+                    UME_ENGINE_INFO("Simulation (Game is playing) started");
+                    ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                }
+                else
+                {
+                    m_CompileError = true;
+                }
             }
-            else
-            {
-                m_CompileError = true;
-            }
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
+
         if (ImGui::Button("Stop"))
         {
-            // free
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
-
-            // Implement functionality to stop the game (e.g., switch to editor mode)
             es_current = ENGINE_STATES::ES_ENGINE;
             UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
         }
 
-        ImGui::End(); // End the control panel window
+        ImGui::End();
     }
 
     void UseImGui::ShowErrorPopup(const std::string& errorMessage)
@@ -1304,6 +1296,19 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+     Removes components from a selected game object. Provides a UI for removing specific components
+     that exist in the selected game object.
+
+    \param[in] selectedObject
+     A pointer to the selected GameObject from which components may be removed.
+
+    \param[in/out] modified
+     A boolean reference indicating if the GameObject was modified.
+     It is set to true if a component was removed, otherwise remains unchanged.
+
+    *************************************************************************/
     void UseImGui::RemoveComponentUI(GameObject* selectedObject, bool& modified)
     {
         ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Remove Component"); // Change text color
@@ -1441,7 +1446,9 @@ namespace Ukemochi
             // ImGui::Text("Object Name: %s", selectedObject->GetName().c_str());
         }
 
-        ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
+        ImGui::Text("Editing properties of: ");
+        ImGui::SameLine();
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
 
         // Checkbox to toggle between sliders and input fields
         static bool useSliders = true;
@@ -1777,12 +1784,19 @@ namespace Ukemochi
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
         static char filePath[256] = "../Assets/Prefabs/Player.json";
-        static int selectedEntityID = -1; // Store the ID of the selected entity instead of an index
+        // Sync the selectedEntityID with the Renderer's picked entity
+        static int selectedEntityID = -1;
+        auto& renderer = *ECS::GetInstance().GetSystem<Renderer>();
+
+        // Update the selected entity from object picking
+        size_t pickedEntity = renderer.getSelectedEntityID();
+        if (pickedEntity != static_cast<size_t>(-1)) {
+            selectedEntityID = static_cast<int>(pickedEntity);
+        }
+
         m_global_selected = selectedEntityID;
         static bool showError = false;
         static double errorDisplayTime = 0.0f;
-
-        // Persistent flag to track if the selected entity was modified
         static bool modified = false;
 
         // Display the Asset Browser
@@ -1797,20 +1811,32 @@ namespace Ukemochi
                 auto& obj = gameObjects[i];
                 Ukemochi::EntityID instanceID = obj->GetInstanceID();
 
-                // Display each object in the TreeNode
-                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), selectedEntityID == instanceID))
-                {
-                    selectedEntityID = static_cast<int>(instanceID); // Set selected entity by ID
-                    modified = false; // Reset modification flag when a new entity is selected
+                // Highlight the selected entity (picked or clicked in UI)
+                bool isSelected = selectedEntityID == instanceID;
+
+                // Use different colors for picked vs regular selection
+                ImVec4 normalColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+                ImVec4 selectedColor = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow for picked objects
+
+                if (isSelected) {
+                    ImGui::PushStyleColor(ImGuiCol_Text, selectedColor);
                 }
 
-                // Display entity details in a collapsible tree node below the selectable
-                if (selectedEntityID == instanceID)
+                // Display each object in the TreeNode
+                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), isSelected))
                 {
-                    // Show the entity details for the selected object
+                    selectedEntityID = static_cast<int>(instanceID);
+                    modified = false;
+                }
+
+                if (isSelected) {
+                    ImGui::PopStyleColor();
+
+                    // Auto-expand details for picked objects
+                    ImGui::SetNextItemOpen(true);
                     if (ImGui::TreeNode(("Details##" + std::to_string(instanceID)).c_str()))
                     {
-                        DisplayEntityDetails(*obj); // Show the entity details
+                        DisplayEntityDetails(*obj);
                         ImGui::TreePop();
                     }
                 }
@@ -1818,10 +1844,10 @@ namespace Ukemochi
             ImGui::TreePop();
         }
 
+        // Rest of your existing code for entity creation and management...
         ImGui::Text("Entity Management");
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
 
-        // Button to create a new entity from a prefab
         if (ImGui::Button("Create Entity"))
         {
             const std::string prefabDirectory = "../Assets/Prefabs/";
@@ -1848,7 +1874,6 @@ namespace Ukemochi
 
         ImGui::SameLine();
 
-        // Button to create an empty entity
         if (ImGui::Button("Create Empty Entity"))
         {
             auto& emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
@@ -1883,36 +1908,66 @@ namespace Ukemochi
 
             if (selectedObject)
             {
+                // Add visual feedback for picked objects
+                if (selectedEntityID == static_cast<int>(renderer.getSelectedEntityID())) {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Selected via Object Picking");
+                }
+
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
 
                 ImGui::Separator();
 
-                // Show the Save button if modifications were made
                 if (modified)
                 {
                     if (ImGui::Button("Save Entity"))
                     {
                         std::cout << "Entity is Saved";
                         SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
-                        modified = false; // Reset modified flag after saving
+                        modified = false;
                     }
                 }
 
-                // Remove Entity button
+                if (Input::IsKeyTriggered(UME_KEY_DELETE) && selectedEntityID >= 0 && !(es_current == ENGINE_STATES::ES_PLAY) )
+                {
+                    // Check if the entity exists
+                    if (selectedObject)
+                    {
+                        std::cout << "Deleting Entity with ID: " << selectedEntityID << std::endl;
+                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                        selectedEntityID = -1; // Reset the selected entity ID after deletion
+                        modified = false; // Reset any modification flags
+                    }
+                    else
+                    {
+                        std::cout << "Invalid Entity ID: " << selectedEntityID << " - Cannot delete" << std::endl;
+                    }
+                }
+
                 if (ImGui::Button("Remove Entity"))
                 {
-                    RemoveSelectedEntity(selectedEntityID);
-                    selectedEntityID = -1; // Reset selection after removal
-                    modified = false;
+                    if (selectedEntityID != -1) {
+                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                        selectedEntityID = -1;
+                        modified = false;
+                    }
                 }
             }
         }
 
-        // End the dockable window
         ImGui::End();
+
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the framebuffer size based on the provided ImGui panel size. If the panel
+     size changes, the framebuffer is resized accordingly.
+
+    \param[in] panelSize
+     The new size of the ImGui panel as an ImVec2 structure containing width (x) and height (y).
+
+    *************************************************************************/
     void UseImGui::UpdateFramebufferSize(ImVec2 panelSize)
     {
         unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
@@ -1927,6 +1982,15 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the object picking framebuffer size based on the provided ImGui panel size.
+     If the panel size changes, the object picking framebuffer is resized accordingly.
+
+    \param[in] panelSize
+     The new size of the ImGui panel as an ImVec2 structure containing width (x) and height (y).
+
+    *************************************************************************/
     void UseImGui::UpdateObjectPickingFramebufferSize(ImVec2 panelSize)
     {
         unsigned int newWidth = static_cast<unsigned int>(panelSize.x);

@@ -92,8 +92,8 @@ void Renderer::init()
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
 	// Add text objects
-	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	//textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
 	// initAnimationEntities();
 	
@@ -552,7 +552,14 @@ void Renderer::render()
 	lastFrame = currentFrameTime;
 
 	// Clear the screen
+#ifdef _DEBUG
 	beginFramebufferRender();
+#endif // _DEBUG
+
+#ifndef _DEBUG
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif // !_DEBUG
 
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
@@ -597,14 +604,21 @@ void Renderer::render()
 			spriteRenderer.texturePath = clip.keyPath;
 			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
 			
-			
+			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
+			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
+			glm::vec2 renderPos = pos;
 			if(spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
 				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
+
+				renderPos.x += offset.x;
+				renderPos.y -= offset.y;
 			}
+			else
+				renderPos -= offset;
 
 			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
 				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
@@ -618,13 +632,15 @@ void Renderer::render()
 
 			int mappedTextureUnit = textureIDMap[textureID];
 
-			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			// glm::vec2 pivotOffset = glm::vec2(0.5f - clip.pivot.x, 0.5f - clip.pivot.y); // We render center
-			// glm::vec2 renderPos = glm::vec2(static_cast<float>(clip.pixel_width) * pivotOffset.x,
-			//                                 static_cast<float>(clip.pixel_height) * pivotOffset.y);
-			// glm::vec2 pos = glm::vec2(transform.position.x - renderPos.x, transform.position.y - renderPos.y);
-			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
-			batchRenderer->drawSprite(pos, glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+			static constexpr int TARGET_SCALE_FACTOR = 5;
+			
+			float aspectRatio = static_cast<float>(clip.pixel_width) / static_cast<float>(clip.pixel_height);
+			glm::vec2 spriteWorldSize = glm::vec2(static_cast<float>(clip.pixel_width), static_cast<float>(clip.pixel_height)) / glm::vec2(
+				static_cast<float>(clip.pixelsPerUnit));
+			float scaleFactor = TARGET_SCALE_FACTOR / spriteWorldSize.y;
+			glm::vec2 finalScale = glm::vec2(transform.scale.x, transform.scale.y) * scaleFactor;
+			finalScale.x = finalScale.y * aspectRatio;
+			batchRenderer->drawSprite(renderPos, finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 		else
 		{
