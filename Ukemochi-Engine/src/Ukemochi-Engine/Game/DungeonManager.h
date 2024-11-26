@@ -39,11 +39,12 @@ namespace Ukemochi
 	class DungeonManager : public System
 	{
 	private:
-		std::unordered_map<int, Room> rooms; // Map of room IDs to room data
 		EntityID player;					 // ID of the player entity
-		int current_room_id;				 // ID of the current active room
 
 	public:
+		std::unordered_map<int, Room> rooms; // Map of room IDs to room data
+		int current_room_id;				 // ID of the current active room
+
 		/*!***********************************************************************
 		\brief
 		 Initialize the DungeonManager.

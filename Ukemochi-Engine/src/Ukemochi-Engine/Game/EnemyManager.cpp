@@ -2,14 +2,16 @@
 #include "EnemyManager.h"
 #include "../Factory/GameObjectManager.h"
 #include "../FrameController.h"
+#include "DungeonManager.h"
 
 namespace Ukemochi
 {
 	void EnemyManager::UpdateEnemyList()
 	{
         enemyObjects.clear();
-		for (GameObject* object : GameObjectManager::GetInstance().GetAllGOs())
+		for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
 		{
+            GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
 			if (object->HasComponent<Enemy>())
 			{
 				enemyObjects.push_back(object->GetInstanceID());
@@ -19,6 +21,8 @@ namespace Ukemochi
                 environmentObjects.push_back(object->GetInstanceID());
             }
 		}
+
+        GameObject* playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
 	}
 
     void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
@@ -36,6 +40,10 @@ namespace Ukemochi
         {
             enemyComponent.prevObject = objID;
             enemyComponent.nearestObj = FindNearestObject(enemy);
+        }
+        if (enemyComponent.nearestObj == -1)
+        {
+            return;
         }
         enemyComponent.isCollide = true;
 
@@ -131,6 +139,7 @@ namespace Ukemochi
     bool EnemyManager::IsClearPathToPosition(GameObject* enemy, float newX, float newY)
     {
         // Check if moving the enemy to the new position (newX, newY) is clear of obstacles
+
         for (EntityID objectID : environmentObjects)
         {
             GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
@@ -167,8 +176,8 @@ namespace Ukemochi
 
         for (EntityID objectID : environmentObjects) {
             GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
-            float dx = enemy->GetComponent<Enemy>().GetPosition().first - object->GetComponent<Transform>().position.x;
-            float dy = enemy->GetComponent<Enemy>().GetPosition().first - object->GetComponent<Transform>().position.y;
+            float dx = enemy->GetComponent<Enemy>().posX - object->GetComponent<Transform>().position.x;
+            float dy = enemy->GetComponent<Enemy>().posY - object->GetComponent<Transform>().position.y;
             float distance = std::sqrt(dx * dx + dy * dy);
 
             if (enemy->GetComponent<Enemy>().prevObject != object->GetInstanceID() && distance < minDistance) {
@@ -196,7 +205,7 @@ namespace Ukemochi
 
             //std::cout << object->GetComponent<Enemy>().prevObject << std::endl;
 
-            if (object->GetComponent<Enemy>().GetHealth() <= 0.f)
+            if (object->GetComponent<Enemy>().health <= 0.f)
             {
                 object->GetComponent<Enemy>().state = Enemy::DEAD;
             }
@@ -234,8 +243,15 @@ namespace Ukemochi
                 {
                     object->GetComponent<Enemy>().nearestObj = FindNearestObject(object);
                 }
-                object->GetComponent<Enemy>().RoamState(object->GetComponent<Transform>(),environmentObjects, GameObjectManager::GetInstance().GetGO(object->GetComponent<Enemy>().nearestObj)->GetComponent<Transform>()
-                , GameObjectManager::GetInstance().GetGOByTag("Player")->GetInstanceID(), GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Transform>());
+
+                if (playerObj == nullptr)
+                {
+                    object->GetComponent<Enemy>().MoveToTarget(object->GetComponent<Transform>(), object->GetComponent<Enemy>().targetX, object->GetComponent<Enemy>().targetY, g_FrameRateController.GetDeltaTime(), object->GetComponent<Enemy>().speed);
+                }
+
+                //object->GetComponent<Enemy>().RoamState(object->GetComponent<Transform>(),environmentObjects, GameObjectManager::GetInstance().GetGO(object->GetComponent<Enemy>().nearestObj)->GetComponent<Transform>()
+               // , GameObjectManager::GetInstance().GetGOByTag("Player")->GetInstanceID(), GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Transform>());
+                
                 break;
             case Enemy::CHASE:
                 object->GetComponent<Enemy>().ChaseState(object->GetComponent<Transform>(),GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Transform>());

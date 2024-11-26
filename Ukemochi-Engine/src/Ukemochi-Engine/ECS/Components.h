@@ -374,12 +374,7 @@ namespace Ukemochi
 			//	nearestObj = -1;
 			//}
 
-			if (playerID == -1)
-			{
-				return;
-			}
-
-			if (ReachedTarget(GetPosition().first, GetPosition().second,
+			if (ReachedTarget(posX, posY,
 							  playerTransform.position.x,
 							  playerTransform.position.y, 250.f) == true)
 			{
@@ -395,7 +390,7 @@ namespace Ukemochi
 			MoveToTarget(self, player.position.x,
 						 player.position.y, g_FrameRateController.GetDeltaTime(), speed);
 
-			if (ReachedTarget(GetPosition().first, GetPosition().second,
+			if (ReachedTarget(posX, posY,
 							  player.position.x,
 							  player.position.y, 250.f) == false)
 			{
@@ -535,18 +530,6 @@ namespace Ukemochi
 					playerHealth = 0.0f; // Ensure health does not go negative
 				}
 			}
-		}
-
-		// Get the current position of the enemy
-		std::pair<float, float> GetPosition() const
-		{
-			return {posX, posY};
-		}
-
-		// Get the current health of the enemy
-		float GetHealth() const
-		{
-			return health;
 		}
 
 		// Reduce the enemy's health when taking damage

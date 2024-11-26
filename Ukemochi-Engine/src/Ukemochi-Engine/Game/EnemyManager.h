@@ -22,6 +22,7 @@ namespace Ukemochi
 
         void ClearEnemies();
     private:
+        GameObject* playerObj;
         std::vector<EntityID> enemyObjects;
         std::vector<EntityID> environmentObjects;
         int nearestID = -1;

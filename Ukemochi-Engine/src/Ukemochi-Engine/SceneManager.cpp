@@ -894,8 +894,8 @@ namespace Ukemochi
                 const auto& enemy = gameobject->GetComponent<Enemy>();
 
                 Value position(rapidjson::kArrayType);
-                position.PushBack(enemy.GetPosition().first, allocator);
-                position.PushBack(enemy.GetPosition().second, allocator);
+                position.PushBack(enemy.posX, allocator);
+                position.PushBack(enemy.posY, allocator);
                 enemyComponent.AddMember("Position", position, allocator);
 
                 enemyComponent.AddMember("Type", enemy.type, allocator);
