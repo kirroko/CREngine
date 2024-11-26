@@ -156,9 +156,10 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		
+        // Load UI textures
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        //ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
 		UME_ENGINE_TRACE("Loading Scenes...");
@@ -382,12 +383,14 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerDraw()
     {
+#ifdef _DEBUG
         ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
         //ECS::GetInstance().GetSystem<Renderer>()->renderForObjectPicking();
-        
-        // --- SWAP TO THIS FOR GAME BUILD ---
-        //ECS::GetInstance().GetSystem<Renderer>()->render();
-        // -----------------------------------
+#endif // _DEBUG
+
+#ifndef _DEBUG
+        ECS::GetInstance().GetSystem<Renderer>()->render();
+#endif // !_DEBUG
     }
 
     void SceneManager::SceneManagerFree()

@@ -552,12 +552,14 @@ void Renderer::render()
 	lastFrame = currentFrameTime;
 
 	// Clear the screen
+#ifdef _DEBUG
 	beginFramebufferRender();
+#endif // _DEBUG
 
-	// --- SWAP TO THIS FOR GAME BUILD ---
-	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// -----------------------------------
+#ifndef _DEBUG
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif // !_DEBUG
 
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
