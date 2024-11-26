@@ -90,8 +90,8 @@ void Renderer::init()
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
 	// Add text objects
-	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	//textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
 	// initAnimationEntities();
 	
@@ -552,12 +552,14 @@ void Renderer::render()
 	lastFrame = currentFrameTime;
 
 	// Clear the screen
+#ifdef _DEBUG
 	beginFramebufferRender();
+#endif // _DEBUG
 
-	// --- SWAP TO THIS FOR GAME BUILD ---
-	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// -----------------------------------
+#ifndef _DEBUG
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif // !_DEBUG
 
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
