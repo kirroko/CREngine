@@ -1398,7 +1398,9 @@ namespace Ukemochi
             // ImGui::Text("Object Name: %s", selectedObject->GetName().c_str());
         }
 
-        ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
+        ImGui::Text("Editing properties of: ");
+        ImGui::SameLine();
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
 
         // Checkbox to toggle between sliders and input fields
         static bool useSliders = true;
