@@ -669,69 +669,57 @@ namespace Ukemochi
     void UseImGui::ControlPanel(float fps)
     {
         static std::vector<float> fpsHistory;
-        static const int maxHistorySize = 144; // Maximum number of FPS values to store
-
-
+        static const int maxHistorySize = 144;
         fpsHistory.push_back(fps);
-
-        // If the history size exceeds the maximum, remove the oldest value
         if (fpsHistory.size() > maxHistorySize)
         {
             fpsHistory.erase(fpsHistory.begin());
         }
 
-        ImGui::Begin("Control Panel"); // Create a new window titled "Control Panel"
-
-        // Add FPS display inside ControlPanel
-        ImGui::Text("FPS: %.2f", fps); // Show FPS with 2 decimal places
-
+        ImGui::Begin("Control Panel");
+        ImGui::Text("FPS: %.2f", fps);
         ImGui::PlotLines("FPS History", fpsHistory.data(), static_cast<int>(fpsHistory.size()), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
-
-        // Add controls such as buttons, sliders, or entity selectors here
         ImGui::Text("Control Panel Contents");
-        // Example: Add a button
-        if (ImGui::Button("Play"))
+
+        // Only show Play button when not in play mode
+        if (es_current != ENGINE_STATES::ES_PLAY)
         {
-            //enemy
-            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+            if (ImGui::Button("Play"))
+            {
+                ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+                ECS::GetInstance().GetSystem<Collision>()->Init();
 
-            ECS::GetInstance().GetSystem<Collision>()->Init();
-            // Recompile scripts and display popup that its compiling. Remove popup when done
-            if (ScriptingEngine::GetInstance().compile_flag)
-            {
-                UME_ENGINE_INFO("Begin Script reloading");
-                ScriptingEngine::GetInstance().compile_flag = false;
-                ScriptingEngine::GetInstance().Reload();
-                // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
-            }
+                if (ScriptingEngine::GetInstance().compile_flag)
+                {
+                    UME_ENGINE_INFO("Begin Script reloading");
+                    ScriptingEngine::GetInstance().compile_flag = false;
+                    ScriptingEngine::GetInstance().Reload();
+                }
 
-            // Perform some action when button is clicked
-            if (!ScriptingEngine::ScriptHasError)
-            {
-                // save
-                SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-                m_CompileError = false;
-                es_current = ENGINE_STATES::ES_PLAY;
-                UME_ENGINE_INFO("Simulation (Game is playing) started");
-                ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                if (!ScriptingEngine::ScriptHasError)
+                {
+                    SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+                    m_CompileError = false;
+                    es_current = ENGINE_STATES::ES_PLAY;
+                    UME_ENGINE_INFO("Simulation (Game is playing) started");
+                    ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                }
+                else
+                {
+                    m_CompileError = true;
+                }
             }
-            else
-            {
-                m_CompileError = true;
-            }
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
+
         if (ImGui::Button("Stop"))
         {
-            // free
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
-
-            // Implement functionality to stop the game (e.g., switch to editor mode)
             es_current = ENGINE_STATES::ES_ENGINE;
             UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
         }
 
-        ImGui::End(); // End the control panel window
+        ImGui::End();
     }
 
     void UseImGui::ShowErrorPopup(const std::string& errorMessage)
@@ -1260,6 +1248,19 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+     Removes components from a selected game object. Provides a UI for removing specific components
+     that exist in the selected game object.
+
+    \param[in] selectedObject
+     A pointer to the selected GameObject from which components may be removed.
+
+    \param[in/out] modified
+     A boolean reference indicating if the GameObject was modified.
+     It is set to true if a component was removed, otherwise remains unchanged.
+
+    *************************************************************************/
     void UseImGui::RemoveComponentUI(GameObject* selectedObject, bool& modified)
     {
         ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Remove Component"); // Change text color
@@ -1877,7 +1878,7 @@ namespace Ukemochi
                     }
                 }
 
-                if (Input::IsKeyTriggered(UME_KEY_DELETE) && selectedEntityID >= 0)
+                if (Input::IsKeyTriggered(UME_KEY_DELETE) && selectedEntityID >= 0 && !(es_current == ENGINE_STATES::ES_PLAY) )
                 {
                     // Check if the entity exists
                     if (selectedObject)
@@ -1908,6 +1909,15 @@ namespace Ukemochi
 
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the framebuffer size based on the provided ImGui panel size. If the panel
+     size changes, the framebuffer is resized accordingly.
+
+    \param[in] panelSize
+     The new size of the ImGui panel as an ImVec2 structure containing width (x) and height (y).
+
+    *************************************************************************/
     void UseImGui::UpdateFramebufferSize(ImVec2 panelSize)
     {
         unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
@@ -1922,6 +1932,15 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the object picking framebuffer size based on the provided ImGui panel size.
+     If the panel size changes, the object picking framebuffer is resized accordingly.
+
+    \param[in] panelSize
+     The new size of the ImGui panel as an ImVec2 structure containing width (x) and height (y).
+
+    *************************************************************************/
     void UseImGui::UpdateObjectPickingFramebufferSize(ImVec2 panelSize)
     {
         unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
