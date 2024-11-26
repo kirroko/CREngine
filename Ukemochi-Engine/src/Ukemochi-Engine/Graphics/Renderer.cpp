@@ -637,6 +637,7 @@ void Renderer::render()
 				static_cast<float>(clip.pixelsPerUnit));
 			float scaleFactor = TARGET_SCALE_FACTOR / spriteWorldSize.y;
 			glm::vec2 finalScale = glm::vec2(transform.scale.x, transform.scale.y) * scaleFactor;
+			finalScale.x = finalScale.y * aspectRatio;
 			batchRenderer->drawSprite(renderPos, finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 		else
