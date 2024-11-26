@@ -1135,11 +1135,7 @@ void Renderer::renderForObjectPicking()
 
 	for (auto& entity : m_Entities)
 	{
-		//std::cout << entity << std::endl;
-
-		//glm::vec3 color = entityColors[entity];
 		glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
-		//std::cout << "Encoded Color: (" << (int)(color.r * 255) << ", " << (int)(color.g * 255) << ", " << (int)(color.b * 255) << ")" << std::endl;
 
 		object_picking_shader_program->setVec3("objectColor", encodeIDToColor(static_cast<int>(entity)));
 
@@ -1371,66 +1367,3 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 		}
 	}
 }
-
-void Renderer::renderImGuizmo()
-{
-	if (selectedEntityID == -1) // No entity is selected
-		return;
-
-	// Set ImGuizmo context
-	ImGuizmo::BeginFrame();
-	ImGuizmo::SetOrthographic(true);  // True for ortho view
-	ImGuizmo::SetDrawlist();           // Use default ImGui draw list
-	ImGuizmo::SetRect(0, 0, screen_width, screen_height);
-
-	// Get camera matrices
-	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
-	glm::mat4 viewMatrix = camera->getCameraViewMatrix();
-	glm::mat4 projectionMatrix = camera->getCameraProjectionMatrix();
-
-	// Get the selected entity's transform
-	Transform& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
-
-	// Construct position, scale, and rotation from individual components
-	glm::vec3 position(transform.position.x, transform.position.y, 0.f);
-	glm::vec3 scale(transform.scale.x, transform.scale.y, 1.f);
-
-	// Build model matrix
-	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), position) *
-		glm::rotate(glm::mat4(1.0f), glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f)) *
-		glm::scale(glm::mat4(1.0f), scale);
-
-	// Use ImGuizmo to edit the transform
-	static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE; // Default to translate
-	if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE))
-		operation = ImGuizmo::TRANSLATE;
-	if (ImGui::RadioButton("Rotate", operation == ImGuizmo::ROTATE))
-		operation = ImGuizmo::ROTATE;
-	if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE))
-		operation = ImGuizmo::SCALE;
-
-	// Manipulate the matrix
-	if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
-		operation, ImGuizmo::LOCAL, glm::value_ptr(modelMatrix)))
-	{
-		// Decompose modelMatrix back into position, rotation, and scale
-		glm::vec3 translation, newScale;
-		glm::quat rotation;
-		ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(modelMatrix),
-			glm::value_ptr(translation),
-			glm::value_ptr(rotation),
-			glm::value_ptr(newScale));
-
-		// Update entity's transform
-		transform.position.x = translation.x;
-		transform.position.y = translation.y;
-
-
-		transform.rotation = glm::degrees(glm::eulerAngles(rotation).z); // Z-axis rotation in degrees
-
-		transform.scale.x = newScale.x;
-		transform.scale.y = newScale.y;
-
-	}
-}
-
