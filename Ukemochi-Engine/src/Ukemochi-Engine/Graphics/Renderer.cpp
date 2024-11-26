@@ -109,6 +109,9 @@ void Renderer::init()
 	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
 	debugBatchRenderer->init(debug_shader_program);
 
+	colorBufferBatchRenderer = std::make_unique<ColorBufferBatchRenderer2D>();
+	colorBufferBatchRenderer->init(object_picking_shader_program);
+
 	// Add buttons
 	//UIRenderer->addButton(UIButton("pauseButton",
 	//	glm::vec2(100.0f, 700.0f),
@@ -244,24 +247,15 @@ void Renderer::renderToFramebuffer()
 {
 	//beginFramebufferRender();
 
-	// Add debug information
-	//std::cout << "Begin framebuffer render" << std::endl;
-	//std::cout << "Number of entities: " << m_Entities.size() << std::endl;
-
 	// Perform your regular rendering here
 	render();
 
-	//renderImGuizmo();
-	//std::cout << "End framebuffer render" << std::endl;
 
 	endFramebufferRender();
 
 	// Now render the framebuffer texture to the screen
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	//renderScreenQuad();
-	//glEnable(GL_DEPTH_TEST);
 }
 
 /*!
@@ -1115,54 +1109,76 @@ void Renderer::setupColorPickingFramebuffer()
 
 void Renderer::renderForObjectPicking()
 {
+	//glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+	//glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	//glClearColor(1.f, 1.f, 1.f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//// Get the camera's view and projection matrices
+	//const auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	//glm::mat4 view = camera->getCameraViewMatrix();
+	//glm::mat4 projection = camera->getCameraProjectionMatrix();
+
+	//// Set the projection and view matrices in the shader
+	//object_picking_shader_program->Activate();
+	//object_picking_shader_program->setMat4("view", view);
+	//object_picking_shader_program->setMat4("projection", projection);
+
+	//for (auto& entity : m_Entities)
+	//{
+	//	glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
+
+	//	object_picking_shader_program->setVec3("objectColor", encodeIDToColor(static_cast<int>(entity)));
+
+	//	auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+	//	auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+	//	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
+	//	model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	//	model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
+	//	object_picking_shader_program->setMat4("model", model);
+
+	//	drawBox();
+	//}
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//// Now render the framebuffer texture to the screen
+	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//object_picking_shader_program->Deactivate();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
-	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
 	glClearColor(1.f, 1.f, 1.f, 1.0f);
-	glDisable(GL_BLEND); 
-	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Get the camera's view and projection matrices
+	// Get camera matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
 	glm::mat4 view = camera->getCameraViewMatrix();
 	glm::mat4 projection = camera->getCameraProjectionMatrix();
 
-	// Set the projection and view matrices in the shader
 	object_picking_shader_program->Activate();
 	object_picking_shader_program->setMat4("view", view);
 	object_picking_shader_program->setMat4("projection", projection);
 
-	for (auto& entity : m_Entities)
+	colorBufferBatchRenderer->beginBatch();
+
+	for (auto& entity : m_Entities) 
 	{
 		glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
-
-		object_picking_shader_program->setVec3("objectColor", encodeIDToColor(static_cast<int>(entity)));
-
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
-		model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
-		object_picking_shader_program->setMat4("model", model);
-
-		drawBox();
-
-
+		colorBufferBatchRenderer->drawDebugBox(
+			glm::vec2(transform.position.x, transform.position.y),
+			glm::vec2(transform.scale.x, transform.scale.y),
+			color,
+			glm::radians(transform.rotation)
+		);
 	}
-	// Get mouse world position
-	Vec2 mouse = SceneManager::GetInstance().GetPlayScreen();
 
-	// Visualize the mouse position as a red point
-	//drawPoint(mouse.x, mouse.y, glm::vec3(1.0f, 0.0f, 0.0f));
+	colorBufferBatchRenderer->endBatch();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// Now render the framebuffer texture to the screen
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	object_picking_shader_program->Deactivate();
 }
 
 size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)

@@ -44,6 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Asset Manager/AssetManager.h"
 #include "UIButton.h"
 #include "DebugModeBatchRendering.h"
+#include "ColorBufferBatchRendering.h"
 
 // Forward
 class TextRenderer;
@@ -496,5 +497,7 @@ public:
 private:
 	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
 	std::shared_ptr<Shader> debug_shader_program;
+	
+	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
 };
 #endif
