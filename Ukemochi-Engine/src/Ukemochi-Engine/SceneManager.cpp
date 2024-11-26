@@ -187,6 +187,8 @@ namespace Ukemochi
             Vec2{ screen_width * 0.5f, screen_height * 0.9f },
             1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
 
+        UME_ENGINE_TRACE("Initializing Collision...");
+        ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
@@ -200,8 +202,6 @@ namespace Ukemochi
 
 		UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();
-		UME_ENGINE_TRACE("Initializing Collision...");
-		ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
@@ -382,10 +382,12 @@ namespace Ukemochi
 
     void SceneManager::SceneManagerDraw()
     {
-        
         ECS::GetInstance().GetSystem<Renderer>()->renderToFramebuffer();
         //ECS::GetInstance().GetSystem<Renderer>()->renderForObjectPicking();
         
+        // --- SWAP TO THIS FOR GAME BUILD ---
+        //ECS::GetInstance().GetSystem<Renderer>()->render();
+        // -----------------------------------
     }
 
     void SceneManager::SceneManagerFree()
@@ -630,12 +632,13 @@ namespace Ukemochi
 							newClip.total_frames = itr->value[2].GetInt();
             				newClip.pivot.x = itr->value[3].GetFloat();
             				newClip.pivot.y = itr->value[4].GetFloat();
-							newClip.pixel_width = itr->value[5].GetInt();
-							newClip.pixel_height = itr->value[6].GetInt();
-							newClip.total_width = itr->value[7].GetInt();
-							newClip.total_height = itr->value[8].GetInt();
-							newClip.frame_time = itr->value[9].GetFloat();
-							newClip.looping = itr->value[10].GetBool();
+            				newClip.pixelsPerUnit = itr->value[5].GetInt();
+							newClip.pixel_width = itr->value[6].GetInt();
+							newClip.pixel_height = itr->value[7].GetInt();
+							newClip.total_width = itr->value[8].GetInt();
+							newClip.total_height = itr->value[9].GetInt();
+							newClip.frame_time = itr->value[10].GetFloat();
+							newClip.looping = itr->value[11].GetBool();
 							anim.clips[newClip.name] = newClip;
 						}
 
@@ -869,6 +872,7 @@ namespace Ukemochi
         			clipData.PushBack(value.total_frames, allocator);
         			clipData.PushBack(value.pivot.x, allocator);
         			clipData.PushBack(value.pivot.y, allocator);
+        			clipData.PushBack(value.pixelsPerUnit, allocator);
         			clipData.PushBack(value.pixel_width, allocator);
         			clipData.PushBack(value.pixel_height,allocator);
         			clipData.PushBack(value.total_width, allocator);
@@ -1113,6 +1117,7 @@ namespace Ukemochi
 	        	
 	        	clipData.PushBack(value.pivot.x, allocator);
 	        	clipData.PushBack(value.pivot.y, allocator);
+	        	clipData.PushBack(value.pixelsPerUnit, allocator);
 	        	clipData.PushBack(value.total_frames, allocator);
 	        	clipData.PushBack(value.pixel_width, allocator);
 	        	clipData.PushBack(value.pixel_height,allocator);

@@ -4,6 +4,7 @@
         "ClipName": "Hurt",
         "PivotX": 0.5,
         "PivotY": 0.5,
+        "PixelsPerUnit": 100,
         "TotalFrames": 4,
         "PixelWidth": 545,
         "PixelHeight": 420,

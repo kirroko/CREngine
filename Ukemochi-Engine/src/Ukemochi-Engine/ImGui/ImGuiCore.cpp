@@ -283,6 +283,7 @@ namespace Ukemochi
                         std::string temp = object["ClipName"].GetString();
                         std::fill(std::begin(clipName), std::end(clipName), 0);
                         std::copy(temp.begin(),temp.end(), clipName);
+                        pixelPerUnit = object["PixelsPerUnit"].GetInt();
                         totalFrames = object["TotalFrames"].GetInt();
                         pixelSize[0] = object["PixelWidth"].GetInt();
                         pixelSize[1] = object["PixelHeight"].GetInt();
@@ -300,6 +301,7 @@ namespace Ukemochi
                 {
                     UME_ENGINE_WARN("No metadata found");
                     std::fill(std::begin(clipName), std::end(clipName), 0);
+                    pixelPerUnit = 100;
                     totalFrames = 1;
                     pixelSize[0] = 64;
                     pixelSize[1] = 64;
@@ -322,6 +324,7 @@ namespace Ukemochi
                 textureHeight = 0;
                 texture = 0;
                 std::fill(std::begin(clipName), std::end(clipName), 0);
+                pixelPerUnit = 100;
                 totalFrames = 1;
                 pixelSize[0] = 64;
                 pixelSize[1] = 64;
@@ -362,7 +365,7 @@ namespace Ukemochi
 
         // Input for PPU
         ImGui::InputInt("Pixel Per Unit", &pixelPerUnit);
-        pixelPerUnit = std::max(1, pixelPerUnit);
+        pixelPerUnit = std::max(10, pixelPerUnit);
 
         // Input for pivot
         ImGui::InputFloat2("Pivot", pivot); // Pivot point normalized
@@ -397,6 +400,7 @@ namespace Ukemochi
                 textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
                 textureMetaData.AddMember("PivotX", pivot[0], allocator);
                 textureMetaData.AddMember("PivotY", pivot[1], allocator);
+                textureMetaData.AddMember("PixelsPerUnit", pixelPerUnit, allocator);
                 textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
                 textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
                 textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
@@ -436,7 +440,7 @@ namespace Ukemochi
                 {
                     auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
                     anim.clips[sClipName] = AnimationClip{
-                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , pixelPerUnit ,totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
                         looping
                     };
                     anim.SetAnimation(clipName);

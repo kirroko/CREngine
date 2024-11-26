@@ -2,8 +2,9 @@
     "TextureMeta": {
         "KeyPath": "../Assets/Textures/running_player_sprite_sheet.png",
         "ClipName": "Running",
-        "PivotX": 0.20000000298023224,
-        "PivotY": 0.0,
+        "PivotX": 0.5,
+        "PivotY": 0.5,
+        "PixelsPerUnit": 100,
         "TotalFrames": 13,
         "PixelWidth": 461,
         "PixelHeight": 428,

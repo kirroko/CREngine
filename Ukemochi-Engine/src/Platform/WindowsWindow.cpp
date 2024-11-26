@@ -61,7 +61,7 @@ namespace Ukemochi {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		m_Data.IsFullScreen = false;
+		m_Data.IsFullScreen = false; // --- SWAP TO TRUE FOR GAME BUILD ---
 		m_Data.PrevWidth = props.Width;
 		m_Data.PrevHeight = props.Height;
 
