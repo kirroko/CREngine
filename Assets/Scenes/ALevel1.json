@@ -1153,9 +1153,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1100.0, 676.6694946289063],
+                    "Position": [1103.0, 709.6694946289063],
                     "Rotation": 0.0,
-                    "Scale": [158.809326171875, 277.91632080078125]
+                    "Scale": [156.45217895507813, 273.79132080078125]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
@@ -1276,9 +1276,9 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 540.0],
+                    "Position": [931.0, 512.0],
                     "Rotation": 0.0,
-                    "Scale": [168.57142639160156, 168.57142639160156]
+                    "Scale": [170.57142639160156, 170.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [960.0, 540.0],
@@ -1311,8 +1311,8 @@
                     "Name": "Animation",
                     "Clips": {
                         "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.0, 0.0, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.5, 0.5, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.0, 0.0, 461, 428, 2048, 2048, 0.05000000074505806, true],
+                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.5, 0.5, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5, 0.5, 545, 420, 2048, 1024, 0.05000000074505806, true],
                         "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.5, 0.5, 716, 467, 3708, 1569, 0.05000000074505806, true],
                         "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5, 0.5, 543, 484, 3900, 2597, 0.03999999910593033, true]
@@ -1338,7 +1338,7 @@
                     "Name": "Transform",
                     "Position": [791.4563598632813, 540.0],
                     "Rotation": 0.0,
-                    "Scale": [126.42857360839844, 126.42857360839844]
+                    "Scale": [84.28571319580078, 126.42857360839844]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -1516,7 +1516,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [250.0, 70.0],
+                    "Position": [250.0, 71.0],
                     "Rotation": 0.0,
                     "Scale": [564.0, 198.0]
                 }, {

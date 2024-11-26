@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/SceneManager.h"
 #include "UIButton.h"
+#include "imgui.h"
+#include "ImGuizmo.h"
 
 using namespace Ukemochi;
 
@@ -103,6 +105,9 @@ void Renderer::init()
 	batchRenderer->init(shaderProgram);
 
 	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
+
+	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
+	debugBatchRenderer->init(debug_shader_program);
 
 	// Add buttons
 	//UIRenderer->addButton(UIButton("pauseButton",
@@ -246,6 +251,7 @@ void Renderer::renderToFramebuffer()
 	// Perform your regular rendering here
 	render();
 
+	//renderImGuizmo();
 	//std::cout << "End framebuffer render" << std::endl;
 
 	endFramebufferRender();
@@ -493,7 +499,7 @@ void Renderer::setUpShaders()
 {
 	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 
-	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+	debug_shader_program = std::make_shared<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
 
 	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
 
@@ -664,35 +670,31 @@ void Renderer::render()
 	batchRenderer->endBatch();
 
 	UIRenderer->renderButtons(*camera);
+
 	// Render debug wireframes if debug mode is enabled
-	if (debug_mode_enabled)
+	if (debug_mode_enabled) 
 	{
 		debug_shader_program->Activate();
 		debug_shader_program->setMat4("view", view);
 		debug_shader_program->setMat4("projection", projection);
 
-		for (auto& entity : m_Entities)
+		debugBatchRenderer->beginBatch();
+
+		for (auto& entity : m_Entities) 
 		{
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-			// Set up model matrix for the debug outline
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
-			model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-			model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
-			debug_shader_program->setMat4("model", model);
-
-			// Draw box or circle outline depending on the entity shape
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) {
-				drawBoxOutline();  // This function uses GL_LINE_LOOP to draw the outline
-			}
-			else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE) {
-				drawCircleOutline();  // Assuming you have a similar function for circles
+			// Draw box outlines for box shapes only
+			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) 
+			{
+				debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
 			}
 		}
+
+		debugBatchRenderer->endBatch();
 		debug_shader_program->Deactivate();
 	}
-
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
@@ -1344,6 +1346,7 @@ void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 
 void Renderer::handleMouseDrag(int mouseX, int mouseY)
 {
+
 	if (isDragging && selectedEntityID != -1)
 	{
 		// Ensure the entity exists and has the required Transform component
@@ -1366,6 +1369,68 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 				<< " does not have a Transform component." << std::endl;
 			isDragging = false;
 		}
+	}
+}
+
+void Renderer::renderImGuizmo()
+{
+	if (selectedEntityID == -1) // No entity is selected
+		return;
+
+	// Set ImGuizmo context
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetOrthographic(true);  // True for ortho view
+	ImGuizmo::SetDrawlist();           // Use default ImGui draw list
+	ImGuizmo::SetRect(0, 0, screen_width, screen_height);
+
+	// Get camera matrices
+	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 viewMatrix = camera->getCameraViewMatrix();
+	glm::mat4 projectionMatrix = camera->getCameraProjectionMatrix();
+
+	// Get the selected entity's transform
+	Transform& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+	// Construct position, scale, and rotation from individual components
+	glm::vec3 position(transform.position.x, transform.position.y, 0.f);
+	glm::vec3 scale(transform.scale.x, transform.scale.y, 1.f);
+
+	// Build model matrix
+	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), position) *
+		glm::rotate(glm::mat4(1.0f), glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f)) *
+		glm::scale(glm::mat4(1.0f), scale);
+
+	// Use ImGuizmo to edit the transform
+	static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE; // Default to translate
+	if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE))
+		operation = ImGuizmo::TRANSLATE;
+	if (ImGui::RadioButton("Rotate", operation == ImGuizmo::ROTATE))
+		operation = ImGuizmo::ROTATE;
+	if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE))
+		operation = ImGuizmo::SCALE;
+
+	// Manipulate the matrix
+	if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
+		operation, ImGuizmo::LOCAL, glm::value_ptr(modelMatrix)))
+	{
+		// Decompose modelMatrix back into position, rotation, and scale
+		glm::vec3 translation, newScale;
+		glm::quat rotation;
+		ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(modelMatrix),
+			glm::value_ptr(translation),
+			glm::value_ptr(rotation),
+			glm::value_ptr(newScale));
+
+		// Update entity's transform
+		transform.position.x = translation.x;
+		transform.position.y = translation.y;
+
+
+		transform.rotation = glm::degrees(glm::eulerAngles(rotation).z); // Z-axis rotation in degrees
+
+		transform.scale.x = newScale.x;
+		transform.scale.y = newScale.y;
+
 	}
 }
 

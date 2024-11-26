@@ -37,6 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Collision/Collision.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "../Game/EnemyManager.h"
+#include <../vendor/glm/glm/gtx/matrix_decompose.hpp>
 
 namespace Ukemochi
 {
@@ -54,7 +55,9 @@ namespace Ukemochi
     int UseImGui::m_global_selected = -1;
     unsigned int UseImGui::m_currentPanelWidth = 1600;
     unsigned int UseImGui::m_currentPanelHeight = 900;
+    ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
 
+    ImVec2 playerLoaderTopLeft;
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
     \param window Pointer to the GLFW window (unused in this implementation).
@@ -205,33 +208,74 @@ namespace Ukemochi
 
     void UseImGui::RenderGizmo2d()
     {
-        ImGui::Begin("GizmoExample");
+        // Ensure a valid entity is selected
+        auto& selectedEntityID = ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID;
 
-        // Get the current ImGui window dimensions
-        ImVec2 windowPos = ImGui::GetWindowPos();
-        ImVec2 windowSize = ImGui::GetWindowSize();
+        if (selectedEntityID == -1) 
+        {
+            return;
+        }
+        if (selectedEntityID >= 0)
+        {
+            std::cout << "Entity " << selectedEntityID << " selected for Gizmo." << std::endl;
+        }
 
-        // Set up 2D camera view and projection matrices
-        glm::mat4 viewMatrix = glm::mat4(1.0f); // Identity matrix for 2D view
-        glm::mat4 projectionMatrix = glm::ortho(0.0f, windowSize.x, windowSize.y, 0.0f, -1.0f, 1.0f);
+        Transform& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 
-        // Example transform matrix for a 2D object
-        glm::mat4 objectMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(windowSize.x / 2, windowSize.y / 2, 0));
+        auto& camera = ECS::GetInstance().GetSystem<Camera>();
 
-        // Manipulate objectMatrix with ImGuizmo
-        ImGuizmo::SetOrthographic(true);  // Use orthographic mode for 2D
+        // Use the camera's view and projection matrices
+        glm::mat4 viewMatrix = camera->getCameraViewMatrix();
+        glm::mat4 projectionMatrix = camera->getCameraProjectionMatrix();
+
+
+        // Create the entity's transformation matrix
+        glm::mat4 objectMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0));
+        objectMatrix = glm::rotate(objectMatrix, glm::radians(transform.rotation), glm::vec3(0, 0, 1));
+        objectMatrix = glm::scale(objectMatrix, glm::vec3(transform.scale.x, transform.scale.y, 1));
+
+        // Set the Gizmo to the main scene's viewport
+        ImGuizmo::SetOrthographic(true); // Use perspective if your camera is perspective
         ImGuizmo::SetDrawlist();
+        // Set Gizmo to the rendering viewport or fallback to window size
+        ImVec2 panelSize = ImGui::GetContentRegionAvail();
+        ImGuizmo::SetRect(playerLoaderTopLeft.x, playerLoaderTopLeft.y, panelSize.x, panelSize.y);
+       
 
-        // Set the rectangle area in which the gizmo will draw (whole window)
-        ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
 
-        // ImGuizmo operation mode: Translate (move)
-        ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
-            ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(objectMatrix));
+        // Check for user input to change the mode
+        if (ImGui::IsKeyPressed(ImGuiKey_8)) 
+        {
+            currentGizmoOperation = ImGuizmo::TRANSLATE;
+        }
+        if (ImGui::IsKeyPressed(ImGuiKey_9))
+        {
+            currentGizmoOperation = ImGuizmo::ROTATE;
+        }
+        if (ImGui::IsKeyPressed(ImGuiKey_0))
+        {
+            currentGizmoOperation = ImGuizmo::SCALE;
+        }
+        if (ImGuizmo::IsUsing())
+            std::cout << "Gizmo is being interacted with." << std::endl;
 
-        // Now, use `objectMatrix` to update your 2D object transform
+        // Manipulate the Gizmo and update the entity transform
+        if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
+            currentGizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(objectMatrix)))
+        {
+            glm::vec3 translation, scale, skew; 
+            glm::quat rotation; 
+            glm::vec4 perspective; 
 
-        ImGui::End();
+            if (glm::decompose(objectMatrix, scale, rotation, translation, skew, perspective)) 
+            {
+                transform.position.x = translation.x; 
+                transform.position.y = translation.y; 
+                transform.scale.x = scale.x; 
+                transform.scale.y = scale.y; 
+                transform.rotation = glm::degrees(glm::eulerAngles(rotation).z);
+            }
+        }
     }
 
     void UseImGui::SpriteEditorWindow()
@@ -1952,7 +1996,7 @@ namespace Ukemochi
             // Get the position of the ImGui window
             ImVec2 windowPos = ImGui::GetWindowPos(); // Top-left position of the window
             ImVec2 windowSize = ImGui::GetWindowSize(); // Size of the window
-
+            playerLoaderTopLeft = windowPos;
             // Get the mouse position in screen coordinates
             ImVec2 mousePos = ImGui::GetMousePos();
             ImVec2 cursorPos = ImGui::GetCursorScreenPos();
