@@ -218,14 +218,14 @@ namespace Ukemochi
             glClear(GL_COLOR_BUFFER_BIT);
 
             UpdateFPS();
-            
-            // --- SWAP TO THIS FOR GAME BUILD ---
-            //StartGame();
+
+#ifndef _DEBUG
+            StartGame();
             //if (Input::IsKeyPressed(UME_KEY_L))
             //    StartGame();
             //else if (Input::IsKeyPressed(UME_KEY_K))
             //    StopGame();
-            // -----------------------------------
+#endif // !_DEBUG
 
             if (sceneManager.GetOnIMGUI() == false)
             {
@@ -246,9 +246,10 @@ namespace Ukemochi
                 sceneManager.SceneMangerRunSystems();
                 //************ Update & Draw ************
             }
-            // --- COMMENT THIS FOR GAME BUILD ---
+
+#ifdef _DEBUG
             UpdateIMGUI();
-            // -----------------------------------
+#endif // _DEBUG
 
             DrawFPS();
 

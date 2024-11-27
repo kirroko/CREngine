@@ -43,6 +43,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../Asset Manager/AssetManager.h"
 #include "UIButton.h"
+#include "DebugModeBatchRendering.h"
+#include "ColorBufferBatchRendering.h"
 
 // Forward
 class TextRenderer;
@@ -456,7 +458,7 @@ public:
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
-	std::unique_ptr<Shader> debug_shader_program;
+	
 
 private:
 	std::shared_ptr<Shader> UI_shader_program;
@@ -492,5 +494,11 @@ public:
 	size_t selectedEntityID = -1; // Sentinel value for no selection
 	size_t getSelectedEntityID() { return selectedEntityID; }
 	bool isDragging = false; // Flag to check if dragging is active
+	void renderImGuizmo();
+private:
+	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
+	std::shared_ptr<Shader> debug_shader_program;
+	
+	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
 };
 #endif

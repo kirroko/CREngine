@@ -4,7 +4,7 @@
             "Tag": "Room",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 540.0],
+                    "Position": [-620.0, 497.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 1080.0]
                 }, {
@@ -243,9 +243,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [600.7991333007813, 571.5274047851563],
+                    "Position": [675.7991333007813, 374.52740478515625],
                     "Rotation": 0.0,
-                    "Scale": [166.31947326660156, 291.05908203125]
+                    "Scale": [180.39089965820313, 315.68408203125]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [600.7991333007813, 571.5274047851563],
@@ -387,7 +387,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [150.0, 150.0]
+                    "Scale": [100.0, 150.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
