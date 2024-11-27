@@ -62,7 +62,7 @@ namespace Ukemochi
         \param[in] trans
          The Transform component attached to the object.
         *************************************************************************/
-        void UpdateBoundingBox(BoxCollider2D& box, const Transform& trans);
+        void UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, std::string tag);
 
         /*!***********************************************************************
         \brief

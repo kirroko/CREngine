@@ -12,13 +12,13 @@ namespace Ukemochi
     public:
         void UpdateEnemyList();
 
+        void UpdateEnemies();
+
         void EnemyCollisionResponse(EntityID enemyID, EntityID objID);
 
         bool IsClearPathToPosition(GameObject* enemy, float newX, float newY);
 
         int FindNearestObject(GameObject* enemy) const;
-
-        void UpdateEnemies();
 
         void ClearEnemies();
     private:

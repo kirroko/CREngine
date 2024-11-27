@@ -3,6 +3,7 @@
 #include "../Factory/GameObjectManager.h"
 #include "../FrameController.h"
 #include "DungeonManager.h"
+#include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
 
 namespace Ukemochi
 {
@@ -16,14 +17,142 @@ namespace Ukemochi
 			{
 				enemyObjects.push_back(object->GetInstanceID());
 			}
+		}
+        for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
+        {
+            GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
             if (object->GetTag() == "Environment")
             {
                 environmentObjects.push_back(object->GetInstanceID());
             }
-		}
+        }
 
-        GameObject* playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
+        playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
 	}
+
+    void EnemyManager::UpdateEnemies()
+    {
+        // Iterate through the enemyObjects list
+        for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
+        {
+            GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
+
+            auto& enemycomponent = object->GetComponent<Enemy>();
+
+            //std::cout << object->GetComponent<Enemy>().prevObject << std::endl;
+
+            if (enemycomponent.health <= 0.f)
+            {
+                enemycomponent.state = Enemy::DEAD;
+            }
+
+            // If the enemy is in DEAD state, remove it from the list after processing DeadState
+            if (enemycomponent.state == Enemy::DEAD)
+            {
+                GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
+                it = enemyObjects.erase(it); // Remove the enemy from the list
+                continue; // Skip further processing for this enemy
+            }
+
+            if (playerObj != nullptr && enemycomponent.state != Enemy::ATTACK)
+            {
+                if (enemycomponent.ReachedTarget(enemycomponent.posX, enemycomponent.posY,
+                    playerObj->GetComponent<Transform>().position.x,
+                    playerObj->GetComponent<Transform>().position.y, 250.f) == true)
+                {
+                    enemycomponent.isCollide = false;
+                    enemycomponent.state = enemycomponent.CHASE;
+                }
+            }
+
+
+            // Skip collision handling for dead enemies
+            if (enemycomponent.isCollide)
+            {
+                enemycomponent.WrapToTarget(object->GetComponent<Transform>(), enemycomponent.targetX, enemycomponent.targetY, g_FrameRateController.GetDeltaTime(), enemycomponent.speed);
+                
+                if (enemycomponent.ReachedTarget(
+                    enemycomponent.posX,
+                    enemycomponent.posY,
+                    enemycomponent.targetX,
+                    enemycomponent.targetY, 0.2f))
+                {
+                    enemycomponent.isCollide = false;
+                }
+                ++it;
+                continue;
+            }
+
+
+            // Handle other states
+            switch (enemycomponent.state)
+            {
+            case Enemy::ROAM:
+                //if there no nearest obj, find neareast obj
+                if (enemycomponent.nearestObj == -1)
+                {
+                    enemycomponent.nearestObj = FindNearestObject(object);
+                }
+
+                //enemycomponent.SetTarget(GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj)->GetComponent<Transform>());
+                enemycomponent.MoveToTarget(object->GetComponent<Transform>(), enemycomponent.targetX, enemycomponent.targetY, g_FrameRateController.GetDeltaTime(), enemycomponent.speed);
+
+                break;
+
+            case Enemy::CHASE:
+
+                enemycomponent.MoveToTarget(object->GetComponent<Transform>(), playerObj->GetComponent<Transform>().position.x,
+                    playerObj->GetComponent<Transform>().position.y, g_FrameRateController.GetDeltaTime(), enemycomponent.speed);
+
+                if (enemycomponent.ReachedTarget(enemycomponent.posX, enemycomponent.posY,
+                    playerObj->GetComponent<Transform>().position.x,
+                    playerObj->GetComponent<Transform>().position.y, 250.f) == false)
+                {
+                    enemycomponent.state = enemycomponent.ROAM;
+                    return;
+                }
+
+                // in attack range
+                if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>()))
+                {
+                    enemycomponent.state = enemycomponent.ATTACK;
+                    break;
+                }
+                break;
+
+            case Enemy::ATTACK:
+
+                if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>()) == false)
+                {
+                    enemycomponent.state = enemycomponent.CHASE;
+                    break;
+                }
+                enemycomponent.atktimer -= g_FrameRateController.GetDeltaTime();
+
+                if (enemycomponent.atktimer <= 0.0f)
+                {
+                    //Charge attack for fish
+                    //shoot for worm
+
+                    //temp
+                    if (playerObj != nullptr)
+                    {
+                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                    }
+
+                    std::cout << "player hit\n";
+                    enemycomponent.atktimer = 3.0f;
+                }
+                break;
+
+            default:
+                break;
+            }
+
+            ++it; // Move to the next enemy
+        }
+    }
 
     void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
     {
@@ -149,7 +278,7 @@ namespace Ukemochi
             float dx = newX - objectTransform.position.x;
             float dy = newY - objectTransform.position.y;
             float distance = std::sqrt(dx * dx + dy * dy);
-            if (newX < enemy->GetComponent<Transform>().scale.x || newX > 1600 || newY <0 ||newY > 900)
+            if (newX < enemy->GetComponent<Transform>().scale.x || newX > 1600 || newY < 0 || newY > 900)
             {
                 return false;
             }
@@ -194,77 +323,6 @@ namespace Ukemochi
         }
 
         return nearestObject->GetInstanceID();
-    }
-
-    void EnemyManager::UpdateEnemies()
-    {
-        // Iterate through the enemyObjects list
-        for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
-        {
-            GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
-
-            //std::cout << object->GetComponent<Enemy>().prevObject << std::endl;
-
-            if (object->GetComponent<Enemy>().health <= 0.f)
-            {
-                object->GetComponent<Enemy>().state = Enemy::DEAD;
-            }
-
-            // If the enemy is in DEAD state, remove it from the list after processing DeadState
-            if (object->GetComponent<Enemy>().state == Enemy::DEAD)
-            {
-                GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
-                it = enemyObjects.erase(it); // Remove the enemy from the list
-                continue; // Skip further processing for this enemy
-            }
-
-            // Skip collision handling for dead enemies
-            if (object->GetComponent<Enemy>().isCollide)
-            {
-                object->GetComponent<Enemy>().WrapToTarget(object->GetComponent<Transform>(), object->GetComponent<Enemy>().targetX, object->GetComponent<Enemy>().targetY, g_FrameRateController.GetDeltaTime(), object->GetComponent<Enemy>().speed);
-                
-                if (object->GetComponent<Enemy>().ReachedTarget(
-                    object->GetComponent<Enemy>().posX,
-                    object->GetComponent<Enemy>().posY,
-                    object->GetComponent<Enemy>().targetX,
-                    object->GetComponent<Enemy>().targetY, 0.2f))
-                {
-                    object->GetComponent<Enemy>().isCollide = false;
-                }
-                ++it;
-                continue;
-            }
-
-            // Handle other states
-            switch (object->GetComponent<Enemy>().state)
-            {
-            case Enemy::ROAM:
-                if (object->GetComponent<Enemy>().nearestObj == -1)
-                {
-                    object->GetComponent<Enemy>().nearestObj = FindNearestObject(object);
-                }
-
-                if (playerObj == nullptr)
-                {
-                    object->GetComponent<Enemy>().MoveToTarget(object->GetComponent<Transform>(), object->GetComponent<Enemy>().targetX, object->GetComponent<Enemy>().targetY, g_FrameRateController.GetDeltaTime(), object->GetComponent<Enemy>().speed);
-                }
-
-                //object->GetComponent<Enemy>().RoamState(object->GetComponent<Transform>(),environmentObjects, GameObjectManager::GetInstance().GetGO(object->GetComponent<Enemy>().nearestObj)->GetComponent<Transform>()
-               // , GameObjectManager::GetInstance().GetGOByTag("Player")->GetInstanceID(), GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Transform>());
-                
-                break;
-            case Enemy::CHASE:
-                object->GetComponent<Enemy>().ChaseState(object->GetComponent<Transform>(),GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Transform>());
-                break;
-            case Enemy::ATTACK:
-                object->GetComponent<Enemy>().AttackState();
-                break;
-            default:
-                break;
-            }
-
-            ++it; // Move to the next enemy
-        }
     }
 
     void EnemyManager::ClearEnemies()

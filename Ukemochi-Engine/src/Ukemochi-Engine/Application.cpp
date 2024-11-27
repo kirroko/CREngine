@@ -227,13 +227,13 @@ namespace Ukemochi
             //    StopGame();
             // -----------------------------------
 
-            if (sceneManager.GetOnIMGUI() == false)
-            {
-                sceneManager.SceneMangerUpdateCamera(deltaTime);
-            }
             // engine
             if (es_current == ENGINE_STATES::ES_ENGINE)
             {
+                if (sceneManager.GetOnIMGUI() == false)
+                {
+                    sceneManager.SceneMangerUpdateCamera(deltaTime);
+                }
                 //************ Update & Draw ************
                 sceneManager.SceneMangerUpdate();
                 //************ Update & Draw ************

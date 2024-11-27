@@ -274,7 +274,6 @@ namespace Ukemochi
 	struct AudioSource
 	{
 		FMOD::Sound pSounds;
-		FMOD::Channel pChannels;
 		FMOD::ChannelGroup pChannelGroups;
 	};
 
@@ -291,10 +290,25 @@ namespace Ukemochi
 		void *methodInstance = nullptr; // MonoMethod from client script
 	};
 
+	struct Player
+	{
+		int maxHealth = 100;
+		int currentHealth = 100;
+		int maxComboHits = 3;
+		int currentComboHits = 0;
+		int comboDamage = 10;
+		float attackCooldown = 0.5f;
+		float attackTimer = 0.0f;
+		float playerForce = 1500.0f;
+		bool isDead = false;
+		bool canAttack = true;
+		bool isAttacking = false;
+	};
+
 	/*!***********************************************************************
-	\brief
-	 Enemy component structure.
-	*************************************************************************/
+\brief
+ Enemy component structure.
+*************************************************************************/
 	struct Enemy
 	{
 		enum EnemyStates
@@ -324,6 +338,7 @@ namespace Ukemochi
 		int nearestObj;
 		mutable int prevObject;
 		bool isCollide;
+		float atktimer = 0.0f;
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
@@ -342,16 +357,16 @@ namespace Ukemochi
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 120.f;
+				health = 20.f;
 				attackPower = 20.f;
-				attackRange = 0.5f;
-				speed = 150.f;
+				attackRange = 300.f;
+				speed = 100.f;
 				break;
 			case Enemy::WORM:
-				health = 100.f;
+				health = 20.f;
 				attackPower = 10.f;
-				attackRange = 5.f;
-				speed = 150.f;
+				attackRange = 300.f;
+				speed = 100.f;
 				break;
 			case Enemy::DEFAULT:
 				break;
@@ -360,66 +375,7 @@ namespace Ukemochi
 			}
 		}
 
-		void RoamState(Transform &self, std::vector<EntityID> &environmentObjects, Transform &nearestObjTransform, int playerID, Transform &playerTransform)
-		{
-			//float targetX = nearestObjTransform.position.x;
-			//float targetY = nearestObjTransform.position.y;
-
-			// Move to the nearest object
-			MoveToTarget(self, targetX, targetY, g_FrameRateController.GetDeltaTime(), speed);
-
-			// when target reach find next obj
-			//if (ReachedTarget(GetPosition().first, GetPosition().second, targetX, targetY, 0.f) == true)
-			//{
-			//	nearestObj = -1;
-			//}
-
-			if (ReachedTarget(posX, posY,
-							  playerTransform.position.x,
-							  playerTransform.position.y, 250.f) == true)
-			{
-				state = CHASE;
-				return;
-			}
-		}
-
-		void ChaseState(Transform &self, Transform &player)
-		{
-			SetTarget(player);
-
-			MoveToTarget(self, player.position.x,
-						 player.position.y, g_FrameRateController.GetDeltaTime(), speed);
-
-			if (ReachedTarget(posX, posY,
-							  player.position.x,
-							  player.position.y, 250.f) == false)
-			{
-				state = ROAM;
-				return;
-			}
-
-			// in attack range
-			if (IsPlayerInRange(player))
-			{
-				state = ATTACK;
-				return;
-			}
-		}
-
-		void AttackState()
-		{
-			static float timer = 0.0f;
-
-			timer -= g_FrameRateController.GetDeltaTime();
-
-			if (timer <= 0.0f)
-			{
-				// AttackPlayer(GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Collision>());
-				timer = 3.0f;
-			}
-		}
-
-		void SetTarget(Transform &target)
+		void SetTarget(Transform& target)
 		{
 			this->targetX = target.position.x;
 			this->targetY = target.position.y;
@@ -438,11 +394,15 @@ namespace Ukemochi
 			return a + t * (b - a);
 		}
 		// GET TRANSFORM TO MOVE
-		void MoveToTarget(Transform&self, float targetX, float targetY, float deltaTime, float speed)
+		void MoveToTarget(Transform& self, float targetX, float targetY, float deltaTime, float speed)
 		{
 			// Check if already at the target
 			if (ReachedTarget(self.position.x, self.position.y, targetX, targetY, 0.1f))
 			{
+				if (!isCollide)
+				{
+					nearestObj = -1;
+				}
 				std::cout << "Enemy already at the target position.\n";
 				return;
 			}
@@ -468,7 +428,7 @@ namespace Ukemochi
 		}
 
 		// Check if the enemy can attack the player
-		bool IsPlayerInRange(Transform &player) const
+		bool IsPlayerInRange(Transform& player) const
 		{
 			float playerX = player.position.x;
 			float playerY = player.position.y;
@@ -520,11 +480,12 @@ namespace Ukemochi
 
 
 		// Attack the player (reduces player's health)
-		void AttackPlayer(float &playerHealth)
+		void AttackPlayer(int& playerHealth)
 		{
 			if (playerHealth > 0.0f)
 			{
 				playerHealth -= attackPower;
+
 				if (playerHealth < 0.0f)
 				{
 					playerHealth = 0.0f; // Ensure health does not go negative
@@ -541,20 +502,5 @@ namespace Ukemochi
 				health = 0.0f; // Ensure health does not go negative
 			}
 		}
-	};
-
-	struct Player
-	{
-		int maxHealth = 100;
-		int currentHealth = 100;
-		int maxComboHits = 3;
-		int currentComboHits = 0;
-		int comboDamage = 10;
-		float attackCooldown = 0.5f;
-		float attackTimer = 0.0f;
-		float playerForce = 1500.0f;
-		bool isDead = false;
-		bool canAttack = true;
-		bool isAttacking = false;
 	};
 }
