@@ -4,7 +4,7 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-960.0, 955.0],
+                    "Position": [-958.0, 957.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 250.0]
                 }, {
@@ -1159,7 +1159,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
-                    "Velocity": [0, 0],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1200,7 +1200,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938],
-                    "Velocity": [0, 0],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1241,7 +1241,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438],
-                    "Velocity": [0, 0],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1311,8 +1311,8 @@
                     "Name": "Animation",
                     "Clips": {
                         "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.5, 0.5099999904632568, 100, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.4699999988079071, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 100, 461, 428, 2048, 2048, 0.05000000074505806, true],
+                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.4699999988079071, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5, 0.5, 100, 545, 420, 2048, 1024, 0.05000000074505806, true],
                         "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5299999713897705, 115, 716, 467, 3708, 1569, 0.05000000074505806, true],
                         "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5, 0.5099999904632568, 115, 543, 484, 3900, 2597, 0.03999999910593033, true]
@@ -1626,6 +1626,58 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint1",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [388.0, 593.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint2",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1527.0, 639.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint3",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [274.0, 156.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint4",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1514.0, 65.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
                     "Shape": 0
                 }]
         }]

@@ -320,6 +320,8 @@ namespace Ukemochi
 		EnemyStates state;
 		EnemyTypes type;
 		float posX, posY;
+		float dirX, dirY;
+		float magnitude;
 		float targetX, targetY;
 		float health;
 		float attackPower;
@@ -391,6 +393,7 @@ namespace Ukemochi
 			{
 				if (!isCollide)
 				{
+					prevObject = nearestObj;
 					nearestObj = -1;
 				}
 				std::cout << "Enemy already at the target position.\n";
@@ -418,14 +421,13 @@ namespace Ukemochi
 		}
 
 		// Check if the enemy can attack the player
-		bool IsPlayerInRange(Transform& player) const
+		bool IsPlayerInRange(Transform& player, Transform& enemy) const
 		{
-			float playerX = player.position.x;
-			float playerY = player.position.y;
-			float dx = playerX - posX;
-			float dy = playerY - posY;
-			float distance = std::sqrt(dx * dx + dy * dy);
-			return distance <= attackRange;
+			float dx = player.position.x - enemy.position.x;
+			float dy = player.position.y - enemy.position.y;
+			float distance = dx * dx + dy * dy;
+
+			return distance <= attackRange * attackRange;
 		}
 
 		void WrapToTarget(Transform& enemyTransform, float targetX, float targetY, float deltaTime, float speed)

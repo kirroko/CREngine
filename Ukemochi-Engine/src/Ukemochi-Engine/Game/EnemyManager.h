@@ -20,6 +20,8 @@ namespace Ukemochi
 
         int FindNearestObject(GameObject* enemy) const;
 
+        bool IsEnemyAwayFromObject(GameObject* enemy, GameObject* targetObject, float minDistanceThreshold) const;
+
         void ClearEnemies();
     private:
         GameObject* playerObj;

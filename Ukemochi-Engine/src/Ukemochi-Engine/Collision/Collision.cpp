@@ -481,6 +481,7 @@ namespace Ukemochi
 			if (tag1 == "Enemy")
 			{
 				ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
+				StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 			}
 			else
 			{
@@ -496,12 +497,13 @@ namespace Ukemochi
 		}
 		else if (tag1 == "Enemy" && tag2 == "Enemy")
 		{
+			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			// Enemy and Enemy
 			// Block each other
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
