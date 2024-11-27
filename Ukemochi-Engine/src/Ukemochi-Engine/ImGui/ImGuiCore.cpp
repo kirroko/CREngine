@@ -1825,6 +1825,7 @@ namespace Ukemochi
 
                 if (es_current != ENGINE_STATES::ES_PLAY)
                 {
+
                     // Check for drag-and-drop
                     if (ImGui::BeginDragDropTarget())
                     {
@@ -1853,6 +1854,21 @@ namespace Ukemochi
                             }
                         }
                         ImGui::EndDragDropTarget();
+                    }
+                    // Play and Stop buttons
+                    if (!audio.audioPath.empty())
+                    {
+                        if (ImGui::Button("Play Audio"))
+                        {
+                            //PlayAudio(audio.audioPath); // Function to handle playback
+                        }
+
+                        ImGui::SameLine();
+
+                        if (ImGui::Button("Stop Audio"))
+                        {
+                            //StopAudio(); // Function to stop playback
+                        }
                     }
 
                     // Error Popup for invalid file type
