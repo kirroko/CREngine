@@ -33,6 +33,7 @@ class Texture;
 *************************************************************************/
 struct debugVertex {
 	glm::vec3 position;
+	glm::vec3 color;
 };
 
 /*!***********************************************************************
@@ -100,7 +101,7 @@ public:
 	\param[in]  rotation
 				The rotation angle of the box in radians.
 	*************************************************************************/
-	void drawDebugBox(const glm::vec2& position, const glm::vec2& size, float rotation);
+	void drawDebugBox(const glm::vec2& position, const glm::vec2& size, glm::vec3 color, float rotation);
 
 	/*!***********************************************************************
 	\brief      Ends the current batch by rendering all the shapes in the
