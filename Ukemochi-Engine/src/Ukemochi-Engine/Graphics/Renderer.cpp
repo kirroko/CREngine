@@ -695,10 +695,14 @@ void Renderer::render()
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-			// Draw box outlines for box shapes only
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) 
+			// Check if the entity has a BoxCollider2D component
+			if (ECS::GetInstance().HasComponent<BoxCollider2D>(entity))
 			{
-				debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
+				// Draw box outlines for box shapes only
+				if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+				{
+					debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
+				}
 			}
 		}
 
