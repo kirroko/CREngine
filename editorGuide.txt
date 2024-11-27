@@ -16,6 +16,6 @@ For the Sprite Editor, first select the gameobject you wish to add animation, th
 The Debug Window display the time taken for Collision, Physics, Graphics and Logic.
 
 The Entity Management window is where user can find all the Current GameObjects, Create Entity, Add/Remove components. There are 2 methods of interacting with the Entity Management.
-Firstly, click on the Entity that you want to edit in the Scene Loader, the editor will then display what entity you have clicked. Afterwards, you can click on the different components that you want to edit.
+Firstly, click on the Entity that you want to edit in the Scene Loader, the editor will then display what entity you have clicked. Afterwards, you can click on the different components that you want to edit. User can also press "delete" button to delete it.
 The Second method is to directly interact with the Entity Management Window and pick the GameObject that needs to be edited.
 After editing, user have the options to choose if they wish to Save it. There are also options to rename the Entity Name and Tag. User can also choose to use between sliders or manually typing using the Use Sliders checker box.
