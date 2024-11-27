@@ -500,6 +500,8 @@ namespace Ukemochi
 	*************************************************************************/
 	struct AudioSource
 	{
+		std::string audioPath;
+		std::string audioName;
 		FMOD::Sound* sound;
 		int pChannelGroups;
 	};
