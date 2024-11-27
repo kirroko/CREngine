@@ -159,7 +159,7 @@ namespace Ukemochi
 		
         // Load UI textures
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        //ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
 		UME_ENGINE_TRACE("Loading Scenes...");
@@ -175,18 +175,6 @@ namespace Ukemochi
             //load first scene
             LoadSaveFile(UseImGui::GetStartScene());
         }
-
-        Application& app = Application::Get();
-        int screen_width = app.GetWindow().GetWidth();
-        int screen_height = app.GetWindow().GetHeight();
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-            Vec2{ screen_width * 0.1f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text2", "Hi",
-            Vec2{ screen_width * 0.5f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
 
         UME_ENGINE_TRACE("Initializing Collision...");
         ECS::GetInstance().GetSystem<Collision>()->Init();
