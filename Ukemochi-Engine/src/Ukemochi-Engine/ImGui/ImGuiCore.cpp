@@ -53,8 +53,8 @@ namespace Ukemochi
     bool UseImGui::m_SpriteFlag = false;
     std::string UseImGui::m_SpritePath;
     int UseImGui::m_global_selected = -1;
-    unsigned int UseImGui::m_currentPanelWidth = 1600;
-    unsigned int UseImGui::m_currentPanelHeight = 900;
+    unsigned int UseImGui::m_currentPanelWidth = 1920;
+    unsigned int UseImGui::m_currentPanelHeight = 1080;
     ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
 
     ImVec2 playerLoaderTopLeft;
@@ -1448,7 +1448,7 @@ namespace Ukemochi
 
         ImGui::Text("Editing properties of: ");
         ImGui::SameLine();
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
 
         // Checkbox to toggle between sliders and input fields
         static bool useSliders = true;
@@ -1912,6 +1912,9 @@ namespace Ukemochi
                 if (selectedEntityID == static_cast<int>(renderer.getSelectedEntityID())) {
                     ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Selected via Object Picking");
                 }
+                else {
+                    ImGui::Dummy(ImVec2(0.0f, ImGui::GetTextLineHeight()));
+                }
 
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
@@ -1944,6 +1947,10 @@ namespace Ukemochi
                     }
                 }
 
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+
                 if (ImGui::Button("Remove Entity"))
                 {
                     if (selectedEntityID != -1) {
@@ -1952,6 +1959,7 @@ namespace Ukemochi
                         modified = false;
                     }
                 }
+                ImGui::PopStyleColor(3);
             }
         }
 
@@ -2025,7 +2033,7 @@ namespace Ukemochi
 
         if (showGameView)
         {
-            ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
+            ImGui::Begin("Scene Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
             //UpdateFramebufferSize(panelSize);
@@ -2068,14 +2076,14 @@ namespace Ukemochi
             ImVec2 panelSizehere = ImGui::GetContentRegionAvail();
 
             //static_cast<float>(Application::Get().GetWindow().GetWidth());
-            // 
+
             // Calculate mouse position relative to the "Player Loader" window
-            float relativeX =  (mousePos.x- cursorPos.x)*1600/ panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
+            float relativeX = (mousePos.x - cursorPos.x) * 1920 / panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
             
             const GLFWvidmode* videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
             // Get mouse position relative to the play window
-            float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
+            float relativeY = -1 * (mousePos.y - cursorPos.y + 5) * 1080 / displayHeight;
           
 
 

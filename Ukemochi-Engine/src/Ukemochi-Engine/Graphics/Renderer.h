@@ -105,8 +105,8 @@ public:
 	 */
 	void setUpTextures(const std::string& texturePath, int& textureIndex);
 	int current_texture_index = 0;
-	static int const screen_width = 1600;
-	static int const screen_height = 900;
+	static int const screen_width = 1920;
+	static int const screen_height = 1080;
 
 	/*!
 

@@ -75,9 +75,9 @@ namespace Ukemochi
         }
         else
         {
-            win_title = "DEFAULT";
-            win_height = 900;
-            win_width = 1600;
+            win_title = "Ukemochi";
+            win_width = 1920;
+            win_height = 1080;
         }
         WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
         m_Window = std::make_unique<WindowsWindow>(props);

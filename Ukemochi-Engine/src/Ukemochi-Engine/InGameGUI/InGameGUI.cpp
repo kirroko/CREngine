@@ -2,8 +2,9 @@
 /*!
 \file       InGameGUI.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 2, 2024
-\brief      This file contains the definition of the in game GUI system.
+\date       Nov 27, 2024
+\brief      This file contains the definition of the in game GUI system which handles GUI
+			elements such as text, images and buttons within the game.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
@@ -12,14 +13,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
-#include "InGameGUI.h"				// for forward declaration
-#include "../Input/Input.h"			// for mouse and key inputs
-#include "../Application.h"			// for screen size
-#include "../Factory/Factory.h"		// for game objects
-#include "../Graphics/Camera2D.h"	// for camera viewport
-#include "../Graphics/Renderer.h"	// for text objects
-#include "Ukemochi-Engine/Factory/GameObjectManager.h"
-#include "../SceneManager.h"
+#include "InGameGUI.h"			  // for forward declaration
+#include "../Input/Input.h"		  // for mouse and key inputs
+#include "../Application.h"		  // for screen size
+#include "../Graphics/Camera2D.h" // for camera viewport
+#include "../Graphics/Renderer.h" // for text objects
 
 namespace Ukemochi
 {
@@ -29,14 +27,26 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::Init()
 	{
-		//Create some test GUI elements
-		CreateImage("gameUI", Vec2{ 960.f, 540.f }, Vec2{ 1920.f, 1080.f }, 9);
+		// Get the screen width and height
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
 
-		//CreateButton("pauseButton", Vec2{ 100.f, 700.f }, Vec2{ 125.f, 75.f }, 12, "Pause", Vec3{ 1.f, 0.f, 0.f }, "Exo2", 0.75f, TextAlignment::Center, true,
-		//	[]() {
-		//		std::cout << "PAUSE PRESSED\n";
-		//		ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
-		//	});
+		//Create the game UI, elements are combined temporary
+		CreateImage("gameUI", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 9);
+
+		//CreateText("text1", "sample text",
+		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },
+		//	1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+
+		//CreateButton("pauseButton", Vec2{ 1840.f, 1010.f }, Vec2{ 75.f, 75.f }, 10, "P", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+		//	[this]() { UpdateText("text1", "pause clicked!"); });
+
+		//CreateButton("abilityButton", Vec2{ 1700.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "F", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+		//	[this]() { UpdateText("text1", "ability clicked!"); });
+
+		//CreateButton("swapButton", Vec2{ 1840.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "Q", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+		//	[this]() { UpdateText("text1", "swap clicked!"); });
 	}
 
 	/*!***********************************************************************
@@ -52,6 +62,16 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Create a GUI text object.
+	\param[in] id
+	 The ID for the text object.
+	\param[in] label
+	 The text to be displayed.
+	\param[in] pos
+	 The position of the text.
+	\param[in] color
+	 The color of the text (RGB format).
+	\param[in] font_name
+	 The font to be used for rendering the text.
 	*************************************************************************/
 	void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
 	{
@@ -60,7 +80,11 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Update a GUI text object label value.
+	 Update the label of an existing GUI text object.
+	\param[in] id
+	 The ID of the text object to update.
+	\param[in] new_label
+	 The new text to set as the label.
 	*************************************************************************/
 	void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
 	{
@@ -70,32 +94,50 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Create a GUI image object.
+	\param[in] id
+	 The ID for the image object.
+	\param[in] pos
+	 The position of the image.
+	\param[in] size
+	 The size of the image.
+	\param[in] textureID
+	 The ID for the image texture.
 	*************************************************************************/
-	void InGameGUI::CreateImage(const std::string& id, const Vec2& position, const Vec2& size, int textureID)
+	void InGameGUI::CreateImage(const std::string& id, const Vec2& pos, const Vec2& size, int textureID)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, position, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Exo2", 1.f, TextAlignment::Center, false, nullptr);
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Exo2", 1.f, TextAlignment::Center, false, nullptr);
 	}
 
 	/*!***********************************************************************
 	\brief
 	 Create a GUI button object.
+	\param[in] id
+	 The ID for the button object.
+	\param[in] pos
+	 The position of the button.
+	\param[in] size
+	 The size of the button.
+	\param[in] textureID
+	 The ID for the button texture.
+	\param[in] text
+	 The label text displayed on the button.
+	\param[in] textColor
+	 The color of the label text (RGB format).
+	\param[in] fontName
+	 The font to be used for the label text.
+	\param[in] textScale
+	 The scale of the label text.
+	\param[in] alignment
+	 The alignment of the text within the button.
+	\param[in] interactable
+	 Whether the button can be interacted with.
+	\param[in] on_click
+	 A callback function triggered on button click.
 	*************************************************************************/
-	void InGameGUI::CreateButton(const std::string& id, const Vec2& position, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
+	void InGameGUI::CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, position, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
 	}
-
-	//void InGameGUI::CreateButtonOBJ(const std::string& btn, const std::string& btntag, const std::string& id, const std::string& label, const Vec2& pos, const float label_scale, const Vec3& color, const std::string& font_name, const Vec2& button_scale, const std::string& texture_path, std::function<void()> on_click)
-	//{
-	//	//GameObject button = GameObjectManager::GetInstance().CreateObject(btn,btntag);
-	//	//button.AddComponent(Transform{ Mtx44{}, pos, 0, button_scale });
-	//	//button.AddComponent(SpriteRender{ texture_path });
-	//	//button.AddComponent(Button{ on_click });
-
-	//	//// Offset the text position to make it left and middle aligned
-	//	//Vec2 text_pos = Vec2{ pos.x - button_scale.x * 0.4f, pos.y - button_scale.y * 0.25f };
-	//	//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, text_pos, label_scale, color, font_name);
-	//}
 
 	/*!***********************************************************************
 	\brief
@@ -104,7 +146,7 @@ namespace Ukemochi
 	void InGameGUI::HandleButtonInput()
 	{
 		// Check for mouse left click
-		if (Input::IsMouseButtonTriggered(UME_MOUSE_BUTTON_1))
+		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
 		{
 			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
 			{
@@ -122,28 +164,24 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Check if the mouse is within the GUI object boundaries.
+	\param[in] pos
+	 The position of the GUI object.
+	\param[in] size
+	 The size of the GUI object.
+	\return
+	 True if the mouse is within the object's boundaries, false otherwise.
 	*************************************************************************/
-	bool InGameGUI::IsInside(const Vec2& position, const Vec2& size)
+	bool InGameGUI::IsInside(const Vec2& pos, const Vec2& size)
 	{
-		// Get current mouse position in screen coordinates
-		float mouse_x = SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x;
-		float mouse_y = SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y;
-		//auto [mouse_x, mouse_y] = SceneManager::GetInstance().GetPlayScreen();//Input::GetMousePosition();
+		// Get current mouse position
+		auto [mouse_x, mouse_y] = Input::GetMousePosition();
 
 		// Flip the mouse position in the y-axis
-		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
+		mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
-		//std::cout << "button" << " : " << position.x << ", " << position.y << std::endl;
-		std::cout << "mouse" << " : " << mouse_x << ", " << mouse_y << std::endl;
-
-		return mouse_x >= position.x - size.x * 0.5f
-			&& mouse_x <= position.x + size.x
-			&& mouse_y >= position.y - size.y * 0.5f + 300.f
-			&& mouse_y <= position.y + size.y + 300.f;
-
-		/*return mouse_y <= position.y - 20.f
-			&& mouse_y >= position.y - size.y - 20.f
-			&& mouse_x >= position.x - size.x
-			&& mouse_x <= position.x + size.x;*/
+		return mouse_x >= pos.x - size.x * 0.5f
+			&& mouse_x <= pos.x + size.x * 0.5f
+			&& mouse_y >= pos.y - size.y * 0.5f
+			&& mouse_y <= pos.y + size.y * 0.5f;
 	}
 }
