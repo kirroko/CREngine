@@ -65,8 +65,8 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
+        ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<Enemy>();
-		ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<AudioSource>();
 
         // TODO: Register your systems, No limit for systems
@@ -121,14 +121,15 @@ namespace Ukemochi
 	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
 	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
 
-        //For Enemy
-        sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
-        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 		// For Player system
 		sig.reset();
 		sig.set(ECS::GetInstance().GetComponentType<Player>());
 		ECS::GetInstance().SetSystemSignature<PlayerManager>(sig);
+
+        //For Enemy
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
+        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 
         // For Player system
         sig.reset();

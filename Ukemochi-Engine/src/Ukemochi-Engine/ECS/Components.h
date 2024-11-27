@@ -269,16 +269,6 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 AudioSource component structure.
-	*************************************************************************/
-	struct AudioSource
-	{
-		FMOD::Sound pSounds;
-		FMOD::ChannelGroup pChannelGroups;
-	};
-
-	/*!***********************************************************************
-	\brief
 	 Script component structure.
 	*************************************************************************/
 	struct Script
@@ -502,5 +492,15 @@ namespace Ukemochi
 				health = 0.0f; // Ensure health does not go negative
 			}
 		}
+	};
+
+	/*!***********************************************************************
+	\brief
+	 AudioSource component structure.
+	*************************************************************************/
+	struct AudioSource
+	{
+		FMOD::Sound* sound;
+		int pChannelGroups;
 	};
 }
