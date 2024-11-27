@@ -1404,7 +1404,7 @@ namespace Ukemochi
 
         ImGui::Text("Editing properties of: ");
         ImGui::SameLine();
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
 
         // Checkbox to toggle between sliders and input fields
         static bool useSliders = true;
@@ -1868,6 +1868,9 @@ namespace Ukemochi
                 if (selectedEntityID == static_cast<int>(renderer.getSelectedEntityID())) {
                     ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Selected via Object Picking");
                 }
+                else {
+                    ImGui::Dummy(ImVec2(0.0f, ImGui::GetTextLineHeight()));
+                }
 
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
@@ -1900,6 +1903,10 @@ namespace Ukemochi
                     }
                 }
 
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+
                 if (ImGui::Button("Remove Entity"))
                 {
                     if (selectedEntityID != -1) {
@@ -1908,6 +1915,7 @@ namespace Ukemochi
                         modified = false;
                     }
                 }
+                ImGui::PopStyleColor(3);
             }
         }
 
@@ -1981,7 +1989,7 @@ namespace Ukemochi
 
         if (showGameView)
         {
-            ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
+            ImGui::Begin("Scene Loader", &showGameView); // Create a window called "Another Window"
             
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
             //UpdateFramebufferSize(panelSize);
