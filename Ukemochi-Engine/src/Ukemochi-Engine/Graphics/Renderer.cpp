@@ -496,11 +496,14 @@ void Renderer::setUpShaders()
 	//shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 	shaderProgram = ECS::GetInstance().GetSystem<AssetManager>()->getShader("default");
 
-	debug_shader_program = std::make_shared<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+	//debug_shader_program = std::make_shared<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+	debug_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("debug");
 
-	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+	//UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+	UI_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("UI");;
 
-	object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	//object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("object_picking");;
 
 	pointShader = std::make_unique<Shader>("../Assets/Shaders/point.vert", "../Assets/Shaders/point.frag");
 }
@@ -583,13 +586,13 @@ void Renderer::render()
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
 			continue;
-		
+
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
 		// Set up the model matrix
 		glm::mat4 model{};
-		
+
 		// Copy elements from custom matrix4x4 to glm::mat4
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
@@ -606,11 +609,11 @@ void Renderer::render()
 			auto& clip = ani.clips[ani.currentClip];
 			spriteRenderer.texturePath = clip.keyPath;
 			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
-			
+
 			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
 			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
 			glm::vec2 renderPos = pos;
-			if(spriteRenderer.flipX)
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -635,7 +638,7 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			static constexpr int TARGET_SCALE_FACTOR = 5;
-			
+
 			float aspectRatio = static_cast<float>(clip.pixel_width) / static_cast<float>(clip.pixel_height);
 			glm::vec2 spriteWorldSize = glm::vec2(static_cast<float>(clip.pixel_width), static_cast<float>(clip.pixel_height)) / glm::vec2(
 				static_cast<float>(clip.pixelsPerUnit));
@@ -681,34 +684,35 @@ void Renderer::render()
 
 		batchRenderer->endBatch();
 
-	UIRenderer->renderButtons(*camera);
+		UIRenderer->renderButtons(*camera);
 
-	// Render debug wireframes if debug mode is enabled
-	if (debug_mode_enabled) 
-	{
-		debug_shader_program->Activate();
-		debug_shader_program->setMat4("view", view);
-		debug_shader_program->setMat4("projection", projection);
-
-		debugBatchRenderer->beginBatch();
-
-		for (auto& entity : m_Entities) 
+		// Render debug wireframes if debug mode is enabled
+		if (debug_mode_enabled)
 		{
-			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+			debug_shader_program->Activate();
+			debug_shader_program->setMat4("view", view);
+			debug_shader_program->setMat4("projection", projection);
 
-			// Draw box outlines for box shapes only
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) 
+			debugBatchRenderer->beginBatch();
+
+			for (auto& entity : m_Entities)
 			{
-				debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
-			}
-		}
+				auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+				auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		debugBatchRenderer->endBatch();
-		debug_shader_program->Deactivate();
+				// Draw box outlines for box shapes only
+				if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+				{
+					debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
+				}
+			}
+
+			debugBatchRenderer->endBatch();
+			debug_shader_program->Deactivate();
+		}
+		// Render text, UI, or additional overlays if needed
+		textRenderer->renderAllText();
 	}
-	// Render text, UI, or additional overlays if needed
-	textRenderer->renderAllText();
 }
 
 void Renderer::handleMouseClick(int mouseX, int mouseY) 
