@@ -159,7 +159,6 @@ namespace Ukemochi
 		
         // Load UI textures
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
 		UME_ENGINE_TRACE("Loading Scenes...");
