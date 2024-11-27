@@ -427,7 +427,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader) //***********
 {
 	// Set textureCount based on the number of unique textures, limited to 32
 	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
-	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrder());
+	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
 
@@ -436,7 +436,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader) //***********
 		/*const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getOrderAtIndex(i);
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 
@@ -468,9 +468,9 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader) //***********
 		const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureIndex(); i++)
+	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureListSize(); i++)
 	{
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getOrderAtIndex(i);
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		glActiveTexture(GL_TEXTURE0 + i);

@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {	
-	AssetManager::AssetManager() : texture_index(0), sound_count(0)
+	AssetManager::AssetManager() : texture_list_size(0), sound_count(0)
 	{
 		texture_order.clear();
 		texture_list.clear();
@@ -61,16 +61,17 @@ namespace Ukemochi
 		}
 
 		// Load and store the texture with the determined format
-		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(texture_index), file_render, GL_UNSIGNED_BYTE));
+		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(texture_list_size), file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		std::string uniformName = "textures[" + std::to_string(texture_index) + "]";
-		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(texture_index));
+		std::string uniformName = "textures[" + std::to_string(texture_list_size) + "]";
+		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(texture_list_size));
 
 		//texture_list[file_path] = texture;
 		texture_list.emplace(std::make_pair(file_path, texture));
 		texture_order.push_back(file_path);
-		texture_index++;
+		texture_list_size++;
+		UME_ENGINE_INFO("Texture {0} added successfully", file_path);
 	}
 
 	std::shared_ptr<Texture> AssetManager::getTexture(std::string key_name)
@@ -97,6 +98,7 @@ namespace Ukemochi
 
 		//shader_list[file_name] = shader;
 		shader_list.emplace(std::make_pair(file_name, shader));
+		UME_ENGINE_INFO("shader {0} added successfully", file_name);
 	}
 
 	std::shared_ptr<Shader> AssetManager::getShader(std::string key_name)
@@ -130,6 +132,7 @@ namespace Ukemochi
 		sound_list.push_back(std::shared_ptr<FMOD::Sound>(sound));
 		sound_name_list.push_back(file_path);
 		sound_count++;
+		UME_ENGINE_INFO("Sound {0} added successfully", file_path);
 	}
 
 	std::shared_ptr<FMOD::Sound> AssetManager::getSound(int key)
@@ -149,19 +152,19 @@ namespace Ukemochi
 		return (texture_list.find(key_name) != texture_list.end());
 	}
 
-	size_t AssetManager::getTextureOrder()
+	size_t AssetManager::getTextureOrderSize()
 	{
 		return texture_order.size();
 	}
 
-	std::string& AssetManager::getOrderAtIndex(int index)
+	std::string& AssetManager::getTextureAtIndex(int index)
 	{
 		return texture_order[index];
 	}
 
-	const size_t AssetManager::getTextureIndex() const
+	const size_t AssetManager::getTextureListSize() const
 	{
-		return texture_index;
+		return texture_list_size;
 	}
 
 	void AssetManager::loadAssetsFromFolder()

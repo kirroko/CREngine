@@ -29,7 +29,7 @@ namespace Ukemochi
 		//std::map<std::string, std::shared_ptr<SpriteRender>> sprite_list;
 		//std::map<std::string, std::shared_ptr<FMOD::Sound>> audio_list;
 
-		size_t texture_index;
+		size_t texture_list_size;
 		int sound_count;
 		std::vector<std::string> texture_order;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> texture_list;
@@ -60,11 +60,11 @@ namespace Ukemochi
 
 		bool ifTextureExists(std::string key_name);
 
-		size_t getTextureOrder();
+		size_t getTextureOrderSize();
 
-		const size_t getTextureIndex() const;
+		const size_t getTextureListSize() const;
 
-		std::string& getOrderAtIndex(int index);
+		std::string& getTextureAtIndex(int index);
 
 		void loadAssetsFromFolder();
 		
