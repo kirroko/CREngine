@@ -1153,9 +1153,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1100.0, 676.6694946289063],
+                    "Position": [1103.0, 709.6694946289063],
                     "Rotation": 0.0,
-                    "Scale": [158.809326171875, 277.91632080078125]
+                    "Scale": [156.45217895507813, 273.79132080078125]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
@@ -1276,9 +1276,9 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 540.0],
+                    "Position": [931.0, 512.0],
                     "Rotation": 0.0,
-                    "Scale": [168.57142639160156, 168.57142639160156]
+                    "Scale": [170.57142639160156, 170.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [960.0, 540.0],
@@ -1516,7 +1516,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [250.0, 70.0],
+                    "Position": [250.0, 71.0],
                     "Rotation": 0.0,
                     "Scale": [564.0, 198.0]
                 }, {
