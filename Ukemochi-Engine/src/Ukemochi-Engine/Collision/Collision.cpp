@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 17, 2024
+\date       Nov 24, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -12,25 +12,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
-#include "Collision.h"						 // for forward declaration
-#include "../Math/MathUtils.h"				 // for min, max, abs
-#include "../FrameController.h"				 // for GetFixedDeltaTime
-#include "../Audio/Audio.h"					 // for Audio sound effects
-#include "../Application.h"					 // for screen size
-#include "../Factory/GameObjectManager.h"	 // for game object tag
-#include "Ukemochi-Engine/Logic/Scripting.h" // for invoking OnCollisonEnter2D
-
-#include "../Input/Input.h" // temp
-#include "../Physics/Physics.h" // temp
+#include "Collision.h"							// for forward declaration
+#include "../Math/MathUtils.h"					// for min, max, abs
+#include "../FrameController.h"					// for GetFixedDeltaTime
+#include "../Audio/Audio.h"						// for Audio sound effects
+#include "../Application.h"						// for screen size
+#include "../Factory/GameObjectManager.h"		// for game object tag
+#include "Ukemochi-Engine/Logic/Scripting.h"	// for invoking OnCollisonEnter2D
+#include "../Game/DungeonManager.h"				// for room size and current room ID
+#include "../Physics/Physics.h"					// for knockback effect
+#include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
 
 namespace Ukemochi
 {
-	// temp
-	EntityID player = NULL;
-	EntityID knife = NULL;
-	bool is_facing_right = false;
-	bool is_attacking = false;
-
 	/*!***********************************************************************
 	\brief
 	 Initialize the collision system.
@@ -42,34 +36,15 @@ namespace Ukemochi
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 
-		// Convex Testing
-		/*ConvexCollider2D convex1;
-		convex1.vertices.push_back(Vec2{ 0,0 });
-		convex1.vertices.push_back(Vec2{ 1,0 });
-		convex1.vertices.push_back(Vec2{ 1,1 });
-		convex1.vertices.push_back(Vec2{ 0,1 });
-
-		ConvexCollider2D convex2;
-		convex2.vertices.push_back(Vec2{ 0.5f,0.5f });
-		convex2.vertices.push_back(Vec2{ 1.5f,0.5f });
-		convex2.vertices.push_back(Vec2{ 1.5f,1.5f });
-		convex2.vertices.push_back(Vec2{ 0.5f,1.5f });
-
-		if (ConvexConvex_Intersection(convex1, convex2))
-			std::cout << "Convex collided\n";*/
-	}
-
-	void ApplyKnockback(Rigidbody2D& rb, const Transform& enemyTransform, const Transform& playerTransform)
-	{
-		Vec2 knockback_direction{};
-		float knockback_force{ 15000 };
-
-		Vec2Normalize(knockback_direction, (enemyTransform.position - playerTransform.position));
-		//rb.velocity = knockback_direction * knockback_force;
-		knockback_direction *= knockback_force;
-
-		ECS::GetInstance().GetSystem<Physics>()->AddForceX(rb, knockback_direction.x);
-		ECS::GetInstance().GetSystem<Physics>()->AddForceY(rb, knockback_direction.y);
+		// Find the player entity
+		for (auto const& entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+			{
+				player = entity;
+				break;
+			}
+		}
 	}
 
 	/*!***********************************************************************
@@ -78,44 +53,15 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::CheckCollisions()
 	{
-		// ---------- temp ----------
-		// Find player and knife GO
-		for (auto const& entity : m_Entities)
-		{
-			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
-				player = entity;
-			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife")
-				knife = entity;
-		}
-
-		// Set player direction
-		if (Input::IsKeyPressed(UME_KEY_A))
-			is_facing_right = false;
-		else if (Input::IsKeyPressed(UME_KEY_D))
-			is_facing_right = true;
-
-		// Mochi strikes
-		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-			is_attacking = true;
-		else
-			is_attacking = false;
-
-		// Set knife position
-		if (knife)
-		{
-			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
-			auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(knife);
-
-			float offset_x = is_facing_right ? player_trans.scale.x * 0.5f + knife_trans.scale.x * 0.5f : -player_trans.scale.x * 0.5f - knife_trans.scale.x * 0.5f;
-			knife_trans.position = Vec2{ player_trans.position.x + offset_x, player_trans.position.y };
-		}
-		// ---------- temp ----------
-
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
 			for (auto const& entity1 : m_Entities)
 			{
+				// Skip if the first entity is not active
+				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
+					continue;
+
 				// Get the tag of the first entity
 				std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
 
@@ -133,38 +79,23 @@ namespace Ukemochi
 					if (entity1 == entity2)
 						continue;
 
+					// Skip if the second entity is not active
+					if (!GameObjectManager::GetInstance().GetGO(entity2)->GetActive())
+						continue;
+
 					// Get the tag of the second entity
 					std::string tag2 = GameObjectManager::GetInstance().GetGO(entity2)->GetTag();
 
 					// Get references of the second entity components
-					auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
+					//auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
 					// Check collision between two box objects
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
-					{
 						BoxBox_Response(entity1, entity2, tLast);
-						//BoxBox_Response(tag1, trans1, box1, rb1, tag2, trans2, box2, rb2, tLast);
-
-						// Call OnCollisonEnter2D function, no worries if the script doesn't have it, basescript has
-						if (ECS::GetInstance().HasComponent<Script>(entity1))
-						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						}
-						if(ECS::GetInstance().HasComponent<Script>(entity2))
-						{
-							auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
-							ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "OnCollisionEnter2D", true);
-						}
-					}
 				}
-
-				// Check collision between box objects and the screen boundaries
-				if (!box1.is_trigger && BoxScreen_Intersection(box1))
-					BoxScreen_Response(tag1, trans1, box1, rb1);
 			}
 		}
 	}
@@ -479,20 +410,22 @@ namespace Ukemochi
 		if (tag1 == "Player" && box2.is_trigger)
 		{
 			// Mochi and Door / Other Triggers
-			Trigger_Response(trans1, tag2, trans2, box2);
+			Trigger_Response(tag2);
 		}
 		else if ((tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy"))
 		{
 			// Mochi's Knife / Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
 
-			if (!is_attacking)
+			
+			
+			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
+
+			if (!playerData.isAttacking)
 				return;
 
-			/*auto& script = ECS::GetInstance().GetComponent<Script>(entity2);
-			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);*/
+			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 
-			ApplyKnockback(rb2, trans2, trans1);
 			std::cout << "enemy hit\n";
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
@@ -509,10 +442,10 @@ namespace Ukemochi
 		{
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
-
-			auto& script = ECS::GetInstance().GetComponent<Script>(entity1);
-			ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(script.handle), "TakeDamage", 20);
-
+			
+			// Temp
+			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
+			
 			std::cout << "player hit\n";
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
@@ -523,72 +456,10 @@ namespace Ukemochi
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
 				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment"
+			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
 		{
-			// Mochi / Enemy and Environment Objects
-			// Acts as a wall
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-		else if (tag1 == "Enemy" && tag2 == "Enemy")
-		{
-			// Enemy and Enemy
-			// Block each other
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-	}
-
-	void Collision::BoxBox_Response(const std::string& tag1, Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, const std::string& tag2, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
-	{
-		if (tag1 == "Player" && box2.is_trigger)
-		{
-			// Mochi and Door / Other Triggers
-			Trigger_Response(trans1, tag2, trans2, box2);
-		}
-		else if (tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy")
-		{
-			// Mochi's Knife / Mochi's Ability and Enemy
-			// Enemy takes damage and knockback
-		}
-		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
-		{
-			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
-			// Destroy enemy's projectile
-		}
-
-		// Skip trigger objects
-		if (box1.is_trigger || box2.is_trigger)
-			return;
-
-		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile")
-		{
-			// Mochi and Enemy / Enemy's Projectile
-			// Mochi takes damage and knockback
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment")
-		{
-			// Mochi / Enemy and Environment Objects
+			// Mochi / Enemy and Environment Objects / Boundaries
 			// Acts as a wall
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
@@ -812,50 +683,27 @@ namespace Ukemochi
 	\brief
 	 Collision response between the player and a trigger object.
 	*************************************************************************/
-	void Collision::Trigger_Response(Transform& player_trans, const std::string& trigger_tag, const Transform& trigger_trans, const BoxCollider2D& trigger_box)
+	void Collision::Trigger_Response(const std::string& trigger_tag)
 	{
 		// PLAYER AND DOORS
-		// To simulate moving between rooms
-		if (trigger_tag == "Left Door")
+		if (trigger_tag == "LeftDoor")
 		{
-			// If the player is colliding with the top or btm of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_TOP)
-				player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_BOTTOM)
-				player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			else // Player entered the left door
-				player_trans.position.x = screen_width - trigger_trans.scale.x - player_trans.scale.x * 0.5f;
+			// Move to the left room
+			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1);
 		}
-		else if (trigger_tag == "Right Door")
+		else if (trigger_tag == "RightDoor")
 		{
-			// If the player is colliding with the top or btm of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_TOP)
-				player_trans.position.y = trigger_box.min.y - player_trans.scale.y * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_BOTTOM)
-				player_trans.position.y = trigger_box.max.y + player_trans.scale.y * 0.5f + MIN_OFFSET;
-			else // Player entered the right door
-				player_trans.position.x = trigger_trans.scale.x + player_trans.scale.x * 0.5f;
+			// Move to the right room
+			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(1);
 		}
-		else if (trigger_tag == "Top Door")
-		{
-			// If the player is colliding with the left or right of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_LEFT)
-				player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_RIGHT)
-				player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			else // Player entered the top door
-				player_trans.position.y = screen_height - trigger_trans.scale.y - player_trans.scale.y * 0.5f;
-		}
-		else if (trigger_tag == "Btm Door")
-		{
-			// If the player is colliding with the left or right of the door, act as a wall
-			if (trigger_box.collision_flag & COLLISION_LEFT)
-				player_trans.position.x = trigger_box.min.x - player_trans.scale.x * 0.5f - MIN_OFFSET;
-			else if (trigger_box.collision_flag & COLLISION_RIGHT)
-				player_trans.position.x = trigger_box.max.x + player_trans.scale.x * 0.5f + MIN_OFFSET;
-			else // Player entered the bottom door
-				player_trans.position.y = trigger_trans.scale.y + player_trans.scale.y * 0.5f;
-		}
+		//else if (trigger_tag == "TopDoor")
+		//{
+		//	// Move to the top room
+		//}
+		//else if (trigger_tag == "BtmDoor")
+		//{
+		//	// Move to the bottom room
+		//}
 
 		// PLAYER AND OTHER TRIGGERS (coins, checkpoints, etc..)
 	}
@@ -864,42 +712,30 @@ namespace Ukemochi
 	\brief
 	 Collision response between an object and the screen boundaries.
 	*************************************************************************/
-	void Collision::BoxScreen_Response(const std::string& tag, Transform& trans, const BoxCollider2D& box, Rigidbody2D& rb)
+	void Collision::BoxScreen_Response(Transform& trans, const BoxCollider2D& box)
 	{
-		// Colliding with left screen boundary
+		// Colliding with the left screen boundary
 		if (box.collision_flag & COLLISION_LEFT)
 		{
 			trans.position.x = trans.scale.x * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.x = -rb.velocity.x;
 		}
 
-		// Colliding with right screen boundary
+		// Colliding with the right screen boundary
 		if (box.collision_flag & COLLISION_RIGHT)
 		{
 			trans.position.x = screen_width - trans.scale.x * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.x = -rb.velocity.x;
 		}
 
-		// Colliding with top screen boundary
+		// Colliding with the top screen boundary
 		if (box.collision_flag & COLLISION_TOP)
 		{
 			trans.position.y = trans.scale.y * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.y = -rb.velocity.y;
 		}
 
-		// Colliding with bottom screen boundary
+		// Colliding with the bottom screen boundary
 		if (box.collision_flag & COLLISION_BOTTOM)
 		{
 			trans.position.y = screen_height - trans.scale.y * 0.5f;
-
-			if (tag == "Enemy")
-				rb.velocity.y = -rb.velocity.y;
 		}
 	}
 }

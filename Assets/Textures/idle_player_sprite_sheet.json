@@ -2,6 +2,9 @@
     "TextureMeta": {
         "KeyPath": "../Assets/Textures/idle_player_sprite_sheet.png",
         "ClipName": "Idle",
+        "PivotX": 0.5,
+        "PivotY": 0.5099999904632568,
+        "PixelsPerUnit": 100,
         "TotalFrames": 37,
         "PixelWidth": 442,
         "PixelHeight": 448,

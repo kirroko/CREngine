@@ -94,6 +94,20 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
+         Apply a knockback effect to a target based on the direction and force of the source.
+        \param[in] source_trans
+         The transform of the source entity.
+        \param[in] source_force
+         The amount of force to apply to the target entity.
+        \param[in] target_trans
+         The transform of the target entity.
+        \param[out] target_rb
+         The rigidbody of the target entity.
+        *************************************************************************/
+        void ApplyKnockback(const Transform& source_trans, const float source_force, const Transform& target_trans, Rigidbody2D& target_rb);
+
+        /*!***********************************************************************
+        \brief
          Update the physics of all the entities.
         *************************************************************************/
         void UpdatePhysics();

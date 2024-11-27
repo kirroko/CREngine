@@ -17,12 +17,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
  /*!
   * @brief Default constructor initializing the camera at origin with default zoom and viewport size.
   */
-Camera::Camera() : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) {}
+Camera::Camera() : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1920.f, 1080.f) {}
 /*!
  * @brief Constructs a Camera object with a specified viewport size.
  * @param viewportSize Initial size of the viewport.
  */
-Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) 
+Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1920.f, 1080.f) 
 {
 	(void)viewportSize;
 }

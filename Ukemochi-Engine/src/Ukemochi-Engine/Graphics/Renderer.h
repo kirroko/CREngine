@@ -43,6 +43,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../Asset Manager/AssetManager.h"
 #include "UIButton.h"
+#include "DebugModeBatchRendering.h"
+#include "ColorBufferBatchRendering.h"
 
 // Forward
 class TextRenderer;
@@ -88,6 +90,8 @@ public:
 	 * This function is responsible for drawing each VAO and applying its corresponding texture.
 	 */
 	void render();
+
+	void handleMouseClick(int mouseX, int mouseY);
 
 	/*!
 	 * @brief Cleans up and releases all OpenGL resources (e.g., VAOs, VBOs, EBOs, textures, shaders).
@@ -454,11 +458,47 @@ public:
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
-	std::unique_ptr<Shader> debug_shader_program;
+	
 
 private:
 	std::shared_ptr<Shader> UI_shader_program;
 
 
+	// Object picking
+private:
+	std::shared_ptr<Shader> object_picking_shader_program;
+	GLuint colorPickingBuffer = 0;
+	GLuint objectPickingFrameBuffer = 0;
+	GLuint object_picking_rbo = 0;
+	std::unique_ptr<VAO> objectPickingVAO;
+	std::unique_ptr<VBO> objectPickingVBO;
+	std::unique_ptr<EBO> objectPickingEBO;
+	std::unordered_map<size_t, glm::vec3> entityColors; // Map from entity ID to unique color
+	void assignUniqueColorsToEntities();
+	void setupColorPickingFramebuffer();
+	void setUpObjectPickingBuffer();
+	std::unique_ptr<Shader> pointShader;
+
+	
+	glm::vec2 dragOffset = glm::vec2(0.0f, 0.0f); // Offset between mouse position and entity center
+
+public:
+	size_t getEntityFromMouseClick(int mouseX, int mouseY);
+	void renderForObjectPicking();
+	GLuint getObjectPickingColorBuffer() const;
+	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
+	void drawPoint(float x, float y, glm::vec3 color);
+	glm::vec3 encodeIDToColor(int id);
+	void handleMouseDrag(int mouseX, int mouseY);
+	void handleMouseClickOP(int mouseX, int mouseY); 
+	size_t selectedEntityID = -1; // Sentinel value for no selection
+	size_t getSelectedEntityID() { return selectedEntityID; }
+	bool isDragging = false; // Flag to check if dragging is active
+	void renderImGuizmo();
+private:
+	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
+	std::shared_ptr<Shader> debug_shader_program;
+	
+	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
 };
 #endif

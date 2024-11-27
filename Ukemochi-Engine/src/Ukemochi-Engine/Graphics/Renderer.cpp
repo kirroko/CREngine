@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/SceneManager.h"
 #include "UIButton.h"
+#include "imgui.h"
+#include "ImGuizmo.h"
 
 using namespace Ukemochi;
 
@@ -77,6 +79,10 @@ void Renderer::init()
 	setupFramebuffer();
 	initScreenQuad();
 
+	setUpObjectPickingBuffer();
+	setupColorPickingFramebuffer();
+	assignUniqueColorsToEntities();
+
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
 	textRenderer = new TextRenderer(screen_width, screen_height);
@@ -86,8 +92,8 @@ void Renderer::init()
 	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
 
 	// Add text objects
-	textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
+	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
+	//textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
 
 	// initAnimationEntities();
 	
@@ -99,6 +105,12 @@ void Renderer::init()
 	batchRenderer->init(shaderProgram);
 
 	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
+
+	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
+	debugBatchRenderer->init(debug_shader_program);
+
+	colorBufferBatchRenderer = std::make_unique<ColorBufferBatchRenderer2D>();
+	colorBufferBatchRenderer->init(object_picking_shader_program);
 
 	// Add buttons
 	//UIRenderer->addButton(UIButton("pauseButton",
@@ -233,25 +245,17 @@ void Renderer::renderScreenQuad()
  */
 void Renderer::renderToFramebuffer()
 {
-	beginFramebufferRender();
-
-	// Add debug information
-	//std::cout << "Begin framebuffer render" << std::endl;
-	//std::cout << "Number of entities: " << m_Entities.size() << std::endl;
+	//beginFramebufferRender();
 
 	// Perform your regular rendering here
 	render();
 
-	//std::cout << "End framebuffer render" << std::endl;
 
 	endFramebufferRender();
 
 	// Now render the framebuffer texture to the screen
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	//renderScreenQuad();
-	//glEnable(GL_DEPTH_TEST);
 }
 
 /*!
@@ -492,10 +496,13 @@ void Renderer::setUpShaders()
 	//shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
 	shaderProgram = ECS::GetInstance().GetSystem<AssetManager>()->getShader("default");
 
-	debug_shader_program = std::make_unique<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+	debug_shader_program = std::make_shared<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
 
-	//UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
-	UI_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("UI");
+	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+
+	object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+
+	pointShader = std::make_unique<Shader>("../Assets/Shaders/point.vert", "../Assets/Shaders/point.frag");
 }
 
 /*!
@@ -537,7 +544,8 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
-	debug_shader_program->Deactivate();
+	renderForObjectPicking();
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -547,8 +555,14 @@ void Renderer::render()
 	lastFrame = currentFrameTime;
 
 	// Clear the screen
-	glClearColor(0.07f, 0.13f, 0.17f, 1.f);
+#ifdef _DEBUG
+	beginFramebufferRender();
+#endif // _DEBUG
+
+#ifndef _DEBUG
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif // !_DEBUG
 
 	// Get the camera's view and projection matrices
 	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
@@ -567,16 +581,15 @@ void Renderer::render()
 
 	for (auto& entity : m_Entities)
 	{
+		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+			continue;
+		
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-		//auto& GameObject
-		GameObject* go = GameObjectManager::GetInstance().GetGO(entity);
-		if (go->GetTag() == "Button")
-			std::cout << "Button" << std::endl;
 
 		// Set up the model matrix
 		glm::mat4 model{};
-
+		
 		// Copy elements from custom matrix4x4 to glm::mat4
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
@@ -590,29 +603,25 @@ void Renderer::render()
 		if (ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
-			if (ani.clips.find(ani.currentClip) == ani.clips.end())
-			{
-				UME_ENGINE_WARN("Clip not found for {0}, using default UV for now.", ani.currentClip);
-				// Use default full texture UVs for static sprites
-				uvCoordinates[0] = 0.0f; uvCoordinates[1] = 0.0f;  // Bottom-left
-				uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
-				uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
-				uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
-			}
-			else
-			{
-				auto& clip = ani.clips[ani.currentClip];
-				spriteRenderer.texturePath = clip.keyPath;
-				updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
-			}
-
-			if (spriteRenderer.flipX)
+			auto& clip = ani.clips[ani.currentClip];
+			spriteRenderer.texturePath = clip.keyPath;
+			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
+			
+			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
+			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
+			glm::vec2 renderPos = pos;
+			if(spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
 				std::swap(uvCoordinates[4], uvCoordinates[6]); // Top-right <-> Top-left
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
+
+				renderPos.x += offset.x;
+				renderPos.y -= offset.y;
 			}
+			else
+				renderPos -= offset;
 
 			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
@@ -622,6 +631,18 @@ void Renderer::render()
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
 			}
+
+			int mappedTextureUnit = textureIDMap[textureID];
+
+			static constexpr int TARGET_SCALE_FACTOR = 5;
+			
+			float aspectRatio = static_cast<float>(clip.pixel_width) / static_cast<float>(clip.pixel_height);
+			glm::vec2 spriteWorldSize = glm::vec2(static_cast<float>(clip.pixel_width), static_cast<float>(clip.pixel_height)) / glm::vec2(
+				static_cast<float>(clip.pixelsPerUnit));
+			float scaleFactor = TARGET_SCALE_FACTOR / spriteWorldSize.y;
+			glm::vec2 finalScale = glm::vec2(transform.scale.x, transform.scale.y) * scaleFactor;
+			finalScale.x = finalScale.y * aspectRatio;
+			batchRenderer->drawSprite(renderPos, finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 		else
 		{
@@ -660,40 +681,59 @@ void Renderer::render()
 
 		batchRenderer->endBatch();
 
-		UIRenderer->renderButtons(*camera);
-		// Render debug wireframes if debug mode is enabled
-		if (debug_mode_enabled)
+	UIRenderer->renderButtons(*camera);
+
+	// Render debug wireframes if debug mode is enabled
+	if (debug_mode_enabled) 
+	{
+		debug_shader_program->Activate();
+		debug_shader_program->setMat4("view", view);
+		debug_shader_program->setMat4("projection", projection);
+
+		debugBatchRenderer->beginBatch();
+
+		for (auto& entity : m_Entities) 
 		{
-			debug_shader_program->Activate();
-			debug_shader_program->setMat4("view", view);
-			debug_shader_program->setMat4("projection", projection);
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-			for (auto& entity : m_Entities)
+			// Draw box outlines for box shapes only
+			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) 
 			{
-				auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-				auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
-				// Set up model matrix for the debug outline
-				glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0.0f));
-				model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.0f));
-				debug_shader_program->setMat4("model", model);
-
-				// Draw box or circle outline depending on the entity shape
-				if (spriteRenderer.shape == SPRITE_SHAPE::BOX) {
-					drawBoxOutline();  // This function uses GL_LINE_LOOP to draw the outline
-				}
-				else if (spriteRenderer.shape == SPRITE_SHAPE::CIRCLE) {
-					drawCircleOutline();  // Assuming you have a similar function for circles
-				}
+				debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
 			}
-			debug_shader_program->Deactivate();
 		}
 
-		// Render text, UI, or additional overlays if needed
-		textRenderer->renderAllText();
+		debugBatchRenderer->endBatch();
+		debug_shader_program->Deactivate();
+	}
+	// Render text, UI, or additional overlays if needed
+	textRenderer->renderAllText();
+}
+
+void Renderer::handleMouseClick(int mouseX, int mouseY) 
+{
+
+	for (auto& entity : m_Entities) 
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+		glm::vec2 entityPos(transform.position.x, transform.position.y);
+		glm::vec2 entitySize(transform.scale.x, transform.scale.y);
+
+		// Check if the mouse is within the entity's bounding box
+		if ((mouseX >= entityPos.x - (entitySize.x / 2)) && (mouseX <= entityPos.x + (entitySize.x / 2)) &&
+			(mouseY <= entityPos.y + (entitySize.y / 2)) && (mouseY >= entityPos.y - (entitySize.y / 2)) ) 
+		{
+			std::cout << "Clicked on entity ID: " << entity << std::endl;
+
+			// Perform any additional logic here (e.g., highlight or select the entity)
+			break;
+		}
 	}
 }
+
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).
@@ -760,31 +800,16 @@ void Renderer::cleanUp()
 		textRenderer = nullptr;
 	}
 
-}
+	if (objectPickingFrameBuffer)
+		glDeleteFramebuffers(1, &objectPickingFrameBuffer);
+	objectPickingFrameBuffer = 0;
 
-/*!
- * @brief Draws a 2D box with the given position, dimensions, and texture,
-		  starting position is the top left of screen. It starts from the
-		  center of the box.
- * @param x The x-coordinate of the center of the box (in screen space).
- * @param y The y-coordinate of the center of the box (in screen space).
- * @param width The width of the box (in screen space).
- * @param height The height of the box (in screen space).
- * @param texturePath The file path to the texture for the box.
- */
-void Renderer::drawBox()
-{
-	// Bind the VAO[0] for the box
-	vaos[0]->Bind();
+	if (colorPickingBuffer)
+		glDeleteTextures(1, &colorPickingBuffer);
+	colorPickingBuffer = 0;
 
-	// Set the object color (if necessary)
-	shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));  // White color
-
-	// Issue the draw call using the pre-setup buffers
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	// Unbind the VAO[0] after drawing
-	vaos[0]->Unbind();
+	if (object_picking_rbo)
+		glDeleteRenderbuffers(1, &object_picking_rbo);
 }
 
 /*!
@@ -1051,6 +1076,372 @@ void Renderer::animationKeyInput()
 			// 	}
 			// }
 			break;
+		}
+	}
+}
+
+/*!***********************************************************************
+\brief
+Assigns unique colors to each entity in the scene for object picking.
+Each entity is assigned a color based on its unique ID.
+*************************************************************************/
+void Renderer::assignUniqueColorsToEntities()
+{
+	size_t entityID = 0; // Starting ID
+    for (auto& entity : m_Entities)
+    {
+        float r = ((entityID >> 16) & 0xFF) / 255.0f;  // Extract red
+        float g = ((entityID >> 8) & 0xFF) / 255.0f;   // Extract green
+        float b = (entityID & 0xFF) / 255.0f;          // Extract blue
+        entityColors[entity] = glm::vec3(r, g, b);
+        entityID++;
+    }
+}
+
+/*!***********************************************************************
+\brief
+Encodes an entity ID into an RGB color vector.
+
+\param id
+The entity ID to encode.
+
+\return
+A glm::vec3 representing the RGB color corresponding to the ID.
+*************************************************************************/
+glm::vec3 Renderer::encodeIDToColor(int id)
+{
+	float r = ((id >> 16) & 0xFF) / 255.0f;
+	float g = ((id >> 8) & 0xFF) / 255.0f;
+	float b = (id & 0xFF) / 255.0f;
+
+	// Clamp the values to ensure they stay in the range [0.0, 1.0]
+	return glm::vec3(glm::clamp(r, 0.0f, 1.0f),
+		glm::clamp(g, 0.0f, 1.0f),
+		glm::clamp(b, 0.0f, 1.0f));
+}
+
+/*!***********************************************************************
+\brief
+Sets up the framebuffer and associated textures for object picking.
+*************************************************************************/
+void Renderer::setupColorPickingFramebuffer()
+{
+	glGenFramebuffers(1, &objectPickingFrameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+
+	glGenTextures(1, &colorPickingBuffer);
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screen_width, screen_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorPickingBuffer, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cerr << "ERROR: Framebuffer is not complete for color picking." << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+/*!***********************************************************************
+\brief
+Renders the scene to the object picking framebuffer using unique colors
+for each entity.
+*************************************************************************/
+void Renderer::renderForObjectPicking()
+{
+
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+	glClearColor(1.f, 1.f, 1.f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// Get camera matrices
+	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 view = camera->getCameraViewMatrix();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
+
+	object_picking_shader_program->Activate();
+	object_picking_shader_program->setMat4("view", view);
+	object_picking_shader_program->setMat4("projection", projection);
+
+	colorBufferBatchRenderer->beginBatch();
+
+	for (auto& entity : m_Entities) 
+	{
+		glm::vec3 color = encodeIDToColor(static_cast<int>(entity));
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
+
+		colorBufferBatchRenderer->drawDebugBox(
+			glm::vec2(transform.position.x, transform.position.y),
+			glm::vec2(transform.scale.x, transform.scale.y),
+			color,
+			glm::radians(transform.rotation)
+		);
+	}
+
+	colorBufferBatchRenderer->endBatch();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+/*!***********************************************************************
+\brief
+Retrieves the entity ID corresponding to a mouse click position by
+reading the color from the object picking framebuffer.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+
+\return
+The entity ID at the mouse click position, or -1 if no entity is found.
+*************************************************************************/
+size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+	unsigned char pixel[3];
+	glReadPixels(mouseX, mouseY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Check if the color is the clear color
+	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) {
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return -1; // Sentinel for no entity
+	}
+
+	size_t entityID = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+
+	// Debug output
+	std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
+		<< ") " << std::endl;
+	std::cout << "Pixel RGB: [" << (int)pixel[0] << ", "
+		<< (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
+	std::cout << "Decoded Entity ID: " << entityID << std::endl;
+	return entityID;
+}
+
+/*!***********************************************************************
+\brief
+Sets up the VAO, VBO, and EBO for rendering the object picking framebuffer.
+*************************************************************************/
+void Renderer::setUpObjectPickingBuffer()
+{
+	float quadVertices[] = {
+	-0.5f,  0.5f, 0.0f, // Top-left
+	-0.5f, -0.5f, 0.0f, // Bottom-left
+	 0.5f, -0.5f, 0.0f, // Bottom-right
+	 0.5f,  0.5f, 0.0f  // Top-right
+	};
+
+	GLuint indices[] = {
+		0, 1, 2, // First triangle
+		0, 2, 3  // Second triangle
+	};
+
+	objectPickingVAO = std::make_unique<VAO>();
+	objectPickingVBO = std::make_unique<VBO>(quadVertices, sizeof(quadVertices));
+	objectPickingEBO = std::make_unique<EBO>(indices, sizeof(indices));
+
+	objectPickingVAO->Bind();
+	objectPickingVBO->Bind();
+	objectPickingEBO->Bind(); // Bind the EBO here
+	objectPickingVAO->LinkAttrib(*objectPickingVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+
+	// Create a shader for rendering the framebuffer texture
+	//framebufferShader = std::make_unique<Shader>("../Assets/Shaders/framebuffer.vert", "../Assets/Shaders/framebuffer.frag");
+
+	// Unbind to clean up
+	objectPickingVAO->Unbind();
+	objectPickingVBO->Unbind();
+	objectPickingEBO->Unbind();
+
+	ECS::GetInstance().GetSystem<AssetManager>()->addShader("objectPickingFramebuffer", "../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("objectPickingFramebuffer");
+}
+
+/*!
+ * @brief Draws a 2D box with the given position, dimensions, and texture,
+		  starting position is the top left of screen. It starts from the
+		  center of the box.
+ * @param x The x-coordinate of the center of the box (in screen space).
+ * @param y The y-coordinate of the center of the box (in screen space).
+ * @param width The width of the box (in screen space).
+ * @param height The height of the box (in screen space).
+ * @param texturePath The file path to the texture for the box.
+ */
+void Renderer::drawBox()
+{
+	//object_picking_shader_program->Activate();
+
+	objectPickingVAO->Bind();
+
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	// Issue the draw call using the pre-setup buffers
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
+	// Unbind the VAO[0] after drawing
+	objectPickingVAO->Unbind();
+}
+
+/*!***********************************************************************
+\brief
+Retrieves the color buffer used for object picking.
+
+\return
+The OpenGL texture ID of the color buffer used for object picking.
+*************************************************************************/
+GLuint Renderer::getObjectPickingColorBuffer() const
+{
+	return colorPickingBuffer;  // this is framebuffer's color texture
+}
+
+/*!***********************************************************************
+\brief
+Resizes the object picking framebuffer and its associated textures
+based on the new dimensions.
+
+\param width
+The new width of the framebuffer.
+
+\param height
+The new height of the framebuffer.
+*************************************************************************/
+void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, objectPickingFrameBuffer);
+
+	// Resize color texture
+	glBindTexture(GL_TEXTURE_2D, colorPickingBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<int>(width), static_cast<int>(height), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	// Resize renderbuffer
+	glBindRenderbuffer(GL_RENDERBUFFER, object_picking_rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, static_cast<int>(width), static_cast<int>(height));
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// May as well update viewport?
+	glViewport(0, 0, width, height);
+}
+
+void Renderer::drawPoint(float x, float y, glm::vec3 color)
+{
+	// Activate the point shader
+	pointShader->Activate();
+
+	// Set the color of the point
+	pointShader->setVec3("pointColor", color);
+
+	// Get the current camera projection and view matrices
+	const auto& camera = ECS::GetInstance().GetSystem<Camera>();
+	glm::mat4 projection = camera->getCameraProjectionMatrix();
+	glm::mat4 view = camera->getCameraViewMatrix();
+
+	// Pass matrices to the shader
+	pointShader->setMat4("projection", projection);
+	pointShader->setMat4("view", view);
+
+	// Create a VAO and VBO for the point
+	GLuint pointVAO, pointVBO;
+	glGenVertexArrays(1, &pointVAO);
+	glGenBuffers(1, &pointVBO);
+
+	// Define the point position
+	float pointVertices[] = { x, y };
+
+	// Bind and configure the VAO/VBO
+	glBindVertexArray(pointVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pointVertices), pointVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Draw the point
+	glPointSize(10.0f); // Adjust the size of the point
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	// Clean up
+	glDeleteVertexArrays(1, &pointVAO);
+	glDeleteBuffers(1, &pointVBO);
+}
+
+/*!***********************************************************************
+\brief
+Handles a mouse click event for object picking and selects the entity
+under the mouse cursor, if any.
+
+\param mouseX
+The x-coordinate of the mouse cursor in screen space.
+
+\param mouseY
+The y-coordinate of the mouse cursor in screen space.
+*************************************************************************/
+void Renderer::handleMouseClickOP(int mouseX, int mouseY)
+{
+	size_t entityID = getEntityFromMouseClick(mouseX, mouseY);
+	if (entityID != -1 && ECS::GetInstance().HasComponent<Transform>(entityID))
+	{
+		selectedEntityID = entityID;
+		isDragging = true;
+
+		// Calculate the drag offset
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		dragOffset.x = transform.position.x - mouseX;
+		dragOffset.y = transform.position.y - mouseY;
+
+		std::cout << "Selected entity ID: " << selectedEntityID << std::endl;
+	}
+	else
+	{
+		selectedEntityID = -1; // No valid entity selected
+		isDragging = false;
+		std::cout << "No valid entity at mouse click position." << std::endl;
+	}
+}
+
+/*!***********************************************************************
+\brief
+Handles dragging of the selected entity by updating its position based
+on mouse movement.
+
+\param mouseX
+The x-coordinate of the mouse cursor in screen space.
+
+\param mouseY
+The y-coordinate of the mouse cursor in screen space.
+*************************************************************************/
+void Renderer::handleMouseDrag(int mouseX, int mouseY)
+{
+
+	if (isDragging && selectedEntityID != -1)
+	{
+		// Ensure the entity exists and has the required Transform component
+		if (ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+		{
+			auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+			// Update position based on mouse and drag offset
+			transform.position.x = mouseX + dragOffset.x;
+			transform.position.y = mouseY + dragOffset.y;
+
+			// Optional: Debug output to monitor dragging behavior
+			std::cout << "Dragging entity " << selectedEntityID
+				<< " to position (" << transform.position.x
+				<< ", " << transform.position.y << ")" << std::endl;
+		}
+		else
+		{
+			std::cerr << "Error: Entity " << selectedEntityID
+				<< " does not have a Transform component." << std::endl;
+			isDragging = false;
 		}
 	}
 }

@@ -30,13 +30,13 @@ namespace Ukemochi
 	void InGameGUI::Init()
 	{
 		//Create some test GUI elements
-		CreateImage("gameLogo", Vec2{ 75.f, 850.f }, Vec2{ 75.f, 150.f }, 11);
+		CreateImage("gameUI", Vec2{ 960.f, 540.f }, Vec2{ 1920.f, 1080.f }, 9);
 
-		CreateButton("pauseButton", Vec2{ 100.f, 700.f }, Vec2{ 125.f, 75.f }, 10, "Pause", Vec3{ 1.f, 0.f, 0.f }, "Exo2", 0.75f, TextAlignment::Center, true,
-			[]() {
-				std::cout << "PAUSE PRESSED\n";
-				ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
-			});
+		//CreateButton("pauseButton", Vec2{ 100.f, 700.f }, Vec2{ 125.f, 75.f }, 12, "Pause", Vec3{ 1.f, 0.f, 0.f }, "Exo2", 0.75f, TextAlignment::Center, true,
+		//	[]() {
+		//		std::cout << "PAUSE PRESSED\n";
+		//		ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
+		//	});
 	}
 
 	/*!***********************************************************************
@@ -134,7 +134,7 @@ namespace Ukemochi
 		//mouse_y = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouse_y;
 
 		//std::cout << "button" << " : " << position.x << ", " << position.y << std::endl;
-		//std::cout << "mouse" << " : " << mouse_x << ", " << mouse_y << std::endl;
+		std::cout << "mouse" << " : " << mouse_x << ", " << mouse_y << std::endl;
 
 		return mouse_x >= position.x - size.x * 0.5f
 			&& mouse_x <= position.x + size.x

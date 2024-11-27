@@ -39,7 +39,8 @@ namespace Ukemochi {
 		void UpdateFPS();
 		void DrawFPS();
 		void UpdateIMGUI();
-
+		void StartGame();
+		void StopGame();
 		void EventIsOn(Event& e);
 
 		static Application& Get() { return *s_Instance; }

@@ -76,14 +76,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
 
 		// load textures
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/terrain.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/Bunny_Right_Sprite.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/pause.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/base.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
-		ECS::GetInstance().GetSystem<Renderer>()->setUpTextures("../Assets/Textures/UI/game_logo.png", ECS::GetInstance().GetSystem<Renderer>()->current_texture_index); // load texture
 
 		// Initialize the renderer and collision systems
 		ECS::GetInstance().GetSystem<Renderer>()->init();
@@ -99,7 +94,7 @@ namespace Ukemochi
 			0,
 			Vec2{SPRITE_SCALE * 16.f, SPRITE_SCALE * 9.f}
 		});
-		level_background.AddComponent(SpriteRender{ "../Assets/Textures/terrain.png" });
+		level_background.AddComponent(SpriteRender{ "../Assets/Textures/Moon Floor.png" });
 
 		// PLAYER OBJECT
 		// player_obj = GameObjectFactory::CreateObject(player_data);
@@ -270,13 +265,11 @@ namespace Ukemochi
 		if (Input::IsKeyPressed(UME_KEY_A))
 		{
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, -PLAYER_FORCE);
-			ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = false;
 		}
 		// Press 'D' or right key to move the player to the right
 		else if (Input::IsKeyPressed(UME_KEY_D))
 		{
 			ECS::GetInstance().GetSystem<Physics>()->AddForceX(player_rb, PLAYER_FORCE);
-			ECS::GetInstance().GetSystem<Transformation>()->isFacingRight = true;
 		}
 		else
 			ECS::GetInstance().GetSystem<Physics>()->RemoveForceX(player_rb); // Stop moving the player in the x axis
