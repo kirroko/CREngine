@@ -435,6 +435,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader) //***********
 		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getOrderAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
+
 		if (texture->ID == 0) {
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
 			continue;
@@ -641,8 +642,8 @@ void Renderer::render()
 
 
 			GLint textureID = -1;
-			if (/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
-				ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath)) {
+			/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
+			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath)) {
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
