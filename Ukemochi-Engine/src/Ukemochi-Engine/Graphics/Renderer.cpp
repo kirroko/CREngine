@@ -664,8 +664,6 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-
-			GLint textureID = -1;
 			/*textureCache.find(spriteRenderer.texturePath) != textureCache.end()*/
 			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath)) {
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
