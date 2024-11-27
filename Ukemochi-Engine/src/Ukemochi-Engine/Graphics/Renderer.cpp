@@ -584,13 +584,13 @@ void Renderer::render()
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-		// Set up the model matrix
-		glm::mat4 model{};
-		
-		// Copy elements from custom matrix4x4 to glm::mat4
-		for (int i = 0; i < 4; ++i)
-			for (int j = 0; j < 4; ++j)
-				model[i][j] = transform.transform_matrix.m2[j][i];
+		//// Set up the model matrix
+		//glm::mat4 model{};
+		//
+		//// Copy elements from custom matrix4x4 to glm::mat4
+		//for (int i = 0; i < 4; ++i)
+		//	for (int j = 0; j < 4; ++j)
+		//		model[i][j] = transform.transform_matrix.m2[j][i];
 
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
@@ -695,10 +695,18 @@ void Renderer::render()
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-			// Draw box outlines for box shapes only
-			if (spriteRenderer.shape == SPRITE_SHAPE::BOX) 
+			// Check if the entity has a BoxCollider2D component
+			if (ECS::GetInstance().HasComponent<BoxCollider2D>(entity))
 			{
-				debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::radians(transform.rotation));
+				auto& boxCollider = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+				// Draw box outlines for box shapes only
+				if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
+				{
+					if(boxCollider.collision_flag > 0)
+						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.f, 0.f, 0.f), glm::radians(transform.rotation));
+					else
+						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(0.f, 1.f, 0.f), glm::radians(transform.rotation));
+				}
 			}
 		}
 

@@ -71,7 +71,7 @@ void DebugBatchRenderer2D::init(std::shared_ptr<Shader> debugShader)
 
     // Link vertex attributes (position)
     debug_vao->LinkAttrib(*debug_vbo, 0, 3, GL_FLOAT, sizeof(debugVertex), (void*)offsetof(debugVertex, position));
-
+    debug_vao->LinkAttrib(*debug_vbo, 1, 3, GL_FLOAT, sizeof(debugVertex), (void*)offsetof(debugVertex, color));
     // No EBO is needed for GL_LINE_LOOP, but you can still use one for polygons
     debug_vao->Unbind();
     debug_vbo->Unbind();
@@ -103,7 +103,7 @@ The size (width and height) of the box.
 \param rotation
 The rotation angle of the box, in radians.
 *************************************************************************/
-void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::vec2& size, float rotation)
+void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::vec2& size, glm::vec3 color, float rotation)
 {
 
     if (vertices.size() >= maxShapes * 4) {
@@ -136,17 +136,17 @@ void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::ve
 
     // Push vertices to the batch
     // Add vertices for GL_LINES (2 vertices per line)
-    vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f) }); // Bottom-left -> Bottom-right
-    vertices.push_back({ glm::vec3(rotatedCorners[1], 0.0f) });
+    vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f), color}); // Bottom-left -> Bottom-right
+    vertices.push_back({ glm::vec3(rotatedCorners[1], 0.0f), color });
 
-    vertices.push_back({ glm::vec3(rotatedCorners[1], 0.0f) }); // Bottom-right -> Top-right
-    vertices.push_back({ glm::vec3(rotatedCorners[2], 0.0f) });
+    vertices.push_back({ glm::vec3(rotatedCorners[1], 0.0f), color }); // Bottom-right -> Top-right
+    vertices.push_back({ glm::vec3(rotatedCorners[2], 0.0f), color });
 
-    vertices.push_back({ glm::vec3(rotatedCorners[2], 0.0f) }); // Top-right -> Top-left
-    vertices.push_back({ glm::vec3(rotatedCorners[3], 0.0f) });
+    vertices.push_back({ glm::vec3(rotatedCorners[2], 0.0f), color }); // Top-right -> Top-left
+    vertices.push_back({ glm::vec3(rotatedCorners[3], 0.0f), color });
 
-    vertices.push_back({ glm::vec3(rotatedCorners[3], 0.0f) }); // Top-left -> Bottom-left
-    vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f) });
+    vertices.push_back({ glm::vec3(rotatedCorners[3], 0.0f), color }); // Top-left -> Bottom-left
+    vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f), color });
 }
 
 /*!***********************************************************************
@@ -177,7 +177,7 @@ void DebugBatchRenderer2D::flush()
 
     glLineWidth(2.0f);
 
-    shader->setVec3("color", glm::vec3(1.f, 0.f, 0.f));
+    //shader->setVec3("color", glm::vec3(1.f, 0.f, 0.f));
 
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertices.size()));
 
