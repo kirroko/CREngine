@@ -29,7 +29,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [-1920.0, 830.0],
                     "Max": [0.0, 1080.0],
-                    "Collision Flag": 2,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -66,7 +66,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [-1920.0, -5.0],
                     "Max": [0.0, 5.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -103,7 +103,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [-1925.0, 0.0],
                     "Max": [-1915.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -140,7 +140,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [-5.0, 0.0],
                     "Max": [5.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -177,7 +177,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1915.0, 0.0],
                     "Max": [1925.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
@@ -342,7 +342,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [-1378.0, 320.0],
                     "Max": [-1222.0, 520.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -405,8 +405,12 @@
                     "Name": "BoxCollider2D",
                     "Min": [0.0, 830.0],
                     "Max": [1920.0, 1080.0],
-                    "Collision Flag": 1,
+                    "Collision Flag": 0,
                     "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
                 }]
         }, {
             "Name": "2_BtmBound",
@@ -438,8 +442,12 @@
                     "Name": "BoxCollider2D",
                     "Min": [0.0, -5.0],
                     "Max": [1920.0, 5.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
                 }]
         }, {
             "Name": "2_LeftBound",
@@ -471,8 +479,12 @@
                     "Name": "BoxCollider2D",
                     "Min": [-5.0, 0.0],
                     "Max": [5.0, 1080.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
                 }]
         }, {
             "Name": "2_RightBound",
@@ -504,8 +516,12 @@
                     "Name": "BoxCollider2D",
                     "Min": [1915.0, 0.0],
                     "Max": [1925.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
+                    "Shape": 0
                 }]
         }, {
             "Name": "2_LeftDoor",
@@ -537,7 +553,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1915.0, 0.0],
                     "Max": [1925.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
@@ -574,7 +590,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1915.0, 0.0],
                     "Max": [1925.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
@@ -739,7 +755,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1180.0, 320.0],
                     "Max": [1336.0, 520.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -802,7 +818,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [0.0, 830.0],
                     "Max": [1920.0, 1080.0],
-                    "Collision Flag": 1,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -839,7 +855,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [0.0, -5.0],
                     "Max": [1920.0, 5.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -876,7 +892,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [-5.0, 0.0],
                     "Max": [5.0, 1080.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -913,7 +929,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1915.0, 0.0],
                     "Max": [1925.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -950,7 +966,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1915.0, 0.0],
                     "Max": [1925.0, 1080.0],
-                    "Collision Flag": 4,
+                    "Collision Flag": 0,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
@@ -1115,7 +1131,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [1180.0, 320.0],
                     "Max": [1336.0, 520.0],
-                    "Collision Flag": 8,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -1301,7 +1317,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [875.7420654296875, 455.71429443359375],
                     "Max": [1044.3134765625, 624.2857055664063],
-                    "Collision Flag": 1,
+                    "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
@@ -1361,7 +1377,7 @@
                     "Name": "BoxCollider2D",
                     "Min": [707.170654296875, 455.71429443359375],
                     "Max": [875.7420654296875, 624.2857055664063],
-                    "Collision Flag": 2,
+                    "Collision Flag": 0,
                     "is_trigger": true
                 }, {
                     "Name": "SpriteRender",
