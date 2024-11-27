@@ -38,6 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "../Game/EnemyManager.h"
 #include <../vendor/glm/glm/gtx/matrix_decompose.hpp>
+#include "../Game/DungeonManager.h"
 
 namespace Ukemochi
 {
@@ -737,12 +738,22 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 ECS::GetInstance().GetSystem<Collision>()->Init();
 
-                if (ScriptingEngine::GetInstance().compile_flag)
-                {
-                    UME_ENGINE_INFO("Begin Script reloading");
-                    ScriptingEngine::GetInstance().compile_flag = false;
-                    ScriptingEngine::GetInstance().Reload();
-                }
+
+
+            UME_ENGINE_TRACE("Initializing Collision...");
+            ECS::GetInstance().GetSystem<Collision>()->Init();
+            UME_ENGINE_TRACE("Initializing dungeon manager...");
+            ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+            //enemy
+            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+            // Recompile scripts and display popup that its compiling. Remove popup when done
+            if (ScriptingEngine::GetInstance().compile_flag)
+            {
+                UME_ENGINE_INFO("Begin Script reloading");
+                ScriptingEngine::GetInstance().compile_flag = false;
+                ScriptingEngine::GetInstance().Reload();
+                // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
+            }
 
                 if (!ScriptingEngine::ScriptHasError)
                 {

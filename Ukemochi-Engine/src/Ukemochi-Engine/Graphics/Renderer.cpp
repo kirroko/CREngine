@@ -291,6 +291,27 @@ void Renderer::initDebugBoxBuffers()
 
 	// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
 	indices_count.push_back(4); // 4 lines with 2 vertices each
+
+	// Define vertices for a box below the origin (centered horizontally around origin)
+	//GLfloat vertices_box[] = {
+	//-0.5f,  0.0f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Top-left
+	//-0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-left
+	// 0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-right
+	// 0.5f,  0.0f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f    // Top-right
+	//};
+
+
+	//// Define indices for drawing the outline of the box using GL_LINES
+	//GLuint indices_box[] = {
+	//	0, 1, // Top-left to Bottom-left
+	//	2, 3 // Top-right to Top-left
+	//};
+
+	//// Set up the buffers once, and bind the VAO/VBO/EBO
+	//setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	//// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
+	//indices_count.push_back(4); // 4 lines with 2 vertices each
 }
 
 /*!

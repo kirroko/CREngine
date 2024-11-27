@@ -65,8 +65,9 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
+        ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<Enemy>();
-		ECS::GetInstance().RegisterComponent<Player>();
+        ECS::GetInstance().RegisterComponent<AudioSource>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -120,14 +121,20 @@ namespace Ukemochi
 	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
 	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
 
-        //For Enemy
-        sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
-        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 		// For Player system
 		sig.reset();
 		sig.set(ECS::GetInstance().GetComponentType<Player>());
 		ECS::GetInstance().SetSystemSignature<PlayerManager>(sig);
+
+        //For Enemy
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
+        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
+
+        // For Player system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<AudioSource>());
+        ECS::GetInstance().SetSystemSignature<Audio>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);
@@ -179,6 +186,22 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+        Application& app = Application::Get();
+        int screen_width = app.GetWindow().GetWidth();
+        int screen_height = app.GetWindow().GetHeight();
+
+        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
+            Vec2{ screen_width * 0.1f, screen_height * 0.9f },
+            1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+
+        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text2", "Hi",
+            Vec2{ screen_width * 0.5f, screen_height * 0.9f },
+            1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
+
+        //UME_ENGINE_TRACE("Initializing Collision...");
+        //ECS::GetInstance().GetSystem<Collision>()->Init();
+        //UME_ENGINE_TRACE("Initializing dungeon manager...");
+        //ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
 
     void SceneManager::SceneMangerInit()
@@ -856,8 +879,8 @@ namespace Ukemochi
                 const auto& enemy = gameobject->GetComponent<Enemy>();
 
                 Value position(rapidjson::kArrayType);
-                position.PushBack(enemy.GetPosition().first, allocator);
-                position.PushBack(enemy.GetPosition().second, allocator);
+                position.PushBack(enemy.posX, allocator);
+                position.PushBack(enemy.posY, allocator);
                 enemyComponent.AddMember("Position", position, allocator);
 
                 enemyComponent.AddMember("Type", enemy.type, allocator);

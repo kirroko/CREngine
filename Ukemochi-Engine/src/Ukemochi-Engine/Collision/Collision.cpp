@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/DungeonManager.h"				// for room size and current room ID
 #include "../Physics/Physics.h"					// for knockback effect
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
+#include "../Game/EnemyManager.h"				// for enemy data
 
 namespace Ukemochi
 {
@@ -72,7 +73,7 @@ namespace Ukemochi
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
 
 				// Update the bounding box size
-				UpdateBoundingBox(box1, trans1);
+				UpdateBoundingBox(box1, trans1, GameObjectManager::GetInstance().GetGO(entity1)->GetTag());
 
 				for (auto const& entity2 : m_Entities)
 				{
@@ -105,12 +106,24 @@ namespace Ukemochi
 	\brief
 	 Update the bounding box of the object.
 	*************************************************************************/
-	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans)
+	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, std::string tag)
 	{
-		box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-					-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-		box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-					BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+		if (tag == "Player" || tag == "Enemy" || tag == "Environment")
+		{
+			// Lower half of the object (legs or bottom part)
+			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 2 };  // Min Y is halfway down the object
+			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						trans.position.y };  // Max Y stops at the object's center
+		}
+		else
+		{
+			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+		}
+
 	}
 
 	/*!***********************************************************************
@@ -419,13 +432,16 @@ namespace Ukemochi
 			// Enemy takes damage and knockback
 
 			
-			
 			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
 
 			if (!playerData.isAttacking)
 				return;
 
-			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
+
+			enemy.TakeDamage(playerData.comboDamage);
+
+			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 
 			std::cout << "enemy hit\n";
 		}
@@ -445,9 +461,10 @@ namespace Ukemochi
 			// Mochi takes damage and knockback
 			
 			// Temp
-			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
-			
-			std::cout << "player hit\n";
+
+			//ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
+			//
+			//std::cout << "player hit\n";
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
@@ -462,14 +479,21 @@ namespace Ukemochi
 		{
 			// Mochi / Enemy and Environment Objects / Boundaries
 			// Acts as a wall
+			if (tag1 == "Enemy")
+			{
+				ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
+			}
+			else
+			{
+				// Play a sound effect on collision
+				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+					ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 
+			}
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
-			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
 		else if (tag1 == "Enemy" && tag2 == "Enemy")
 		{
@@ -558,23 +582,25 @@ namespace Ukemochi
 		}
 
 		// Box 1 top and box 2 bottom collision response
-		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
-		{
-			// To simulate wall collision
-			if (!rb1.is_kinematic)
-				trans1.position.y = box2.max.y + trans1.scale.y * 0.5f + MIN_OFFSET; // Move box1 to the bottom
-			if (!rb2.is_kinematic)
-				trans2.position.y = box1.min.y - trans2.scale.y * 0.5f - MIN_OFFSET; // Move box2 to the top
+		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM) {
+			float overlap = box2.max.y - box1.min.y; // Calculate overlap depth
+			if (!rb1.is_kinematic) {
+				trans1.position.y += overlap + MIN_OFFSET; // Move box1 out of the collision
+			}
+			if (!rb2.is_kinematic) {
+				trans2.position.y -= overlap + MIN_OFFSET; // Move box2 out of the collision
+			}
 		}
 
 		// Box 1 bottom and box 2 top collision response
-		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
-		{
-			// To simulate wall collision
-			if (!rb1.is_kinematic)
-				trans1.position.y = box2.min.y - trans1.scale.y * 0.5f - MIN_OFFSET; // Move box1 to the top
-			if (!rb2.is_kinematic)
-				trans2.position.y = box1.max.y + trans2.scale.y * 0.5f + MIN_OFFSET; // Move box2 to the bottom
+		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP) {
+			float overlap = box1.max.y - box2.min.y; // Calculate overlap depth
+			if (!rb1.is_kinematic) {
+				trans1.position.y -= overlap + MIN_OFFSET; // Move box1 out of the collision
+			}
+			if (!rb2.is_kinematic) {
+				trans2.position.y += overlap + MIN_OFFSET; // Move box2 out of the collision
+			}
 		}
 	}
 

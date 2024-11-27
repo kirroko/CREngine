@@ -1159,7 +1159,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
-                    "Velocity": [-28.176761627197266, -18.90791130065918],
+                    "Velocity": [0, 0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1185,9 +1185,9 @@
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
                 }]
         }, {
             "Name": "2_EnemyWorm2",
@@ -1200,7 +1200,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938],
-                    "Velocity": [-212.13201904296875, -212.13201904296875],
+                    "Velocity": [0, 0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1226,9 +1226,9 @@
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
                 }]
         }, {
             "Name": "2_EnemyWorm3",
@@ -1241,7 +1241,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438],
-                    "Velocity": [212.13201904296875, 212.13201904296875],
+                    "Velocity": [0, 0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1267,9 +1267,9 @@
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
                 }]
         }, {
             "Name": "Player",
