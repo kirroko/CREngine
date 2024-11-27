@@ -52,8 +52,8 @@ namespace Ukemochi
     bool UseImGui::m_SpriteFlag = false;
     std::string UseImGui::m_SpritePath;
     int UseImGui::m_global_selected = -1;
-    unsigned int UseImGui::m_currentPanelWidth = 1600;
-    unsigned int UseImGui::m_currentPanelHeight = 900;
+    unsigned int UseImGui::m_currentPanelWidth = 1920;
+    unsigned int UseImGui::m_currentPanelHeight = 1080;
 
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
@@ -2024,14 +2024,14 @@ namespace Ukemochi
             ImVec2 panelSizehere = ImGui::GetContentRegionAvail();
 
             //static_cast<float>(Application::Get().GetWindow().GetWidth());
-            // 
+
             // Calculate mouse position relative to the "Player Loader" window
-            float relativeX =  (mousePos.x- cursorPos.x)*1600/ panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
+            float relativeX = (mousePos.x - cursorPos.x) * 1920 / panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
             
             const GLFWvidmode* videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
             // Get mouse position relative to the play window
-            float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
+            float relativeY = -1 * (mousePos.y - cursorPos.y + 5) * 1080 / displayHeight;
           
 
 
