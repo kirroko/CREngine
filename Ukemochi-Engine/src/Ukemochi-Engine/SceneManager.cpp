@@ -67,6 +67,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Script>();
         ECS::GetInstance().RegisterComponent<Enemy>();
 		ECS::GetInstance().RegisterComponent<Player>();
+        ECS::GetInstance().RegisterComponent<AudioSource>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
