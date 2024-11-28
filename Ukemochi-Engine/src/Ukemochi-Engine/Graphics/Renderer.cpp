@@ -1241,6 +1241,10 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
 		return -1; // Sentinel for no entity
 	}
+	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0) {
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return -1; // Sentinel for no entity
+	}
 
 	size_t entityID = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
 
