@@ -4,7 +4,7 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-960.0, 955.0],
+                    "Position": [-961.0, 959.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 250.0]
                 }, {
@@ -1175,7 +1175,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
-                    "Velocity": [-28.176761627197266, -18.90791130065918],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1201,9 +1201,9 @@
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
                 }]
         }, {
             "Name": "2_EnemyWorm2",
@@ -1216,7 +1216,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938],
-                    "Velocity": [-212.13201904296875, -212.13201904296875],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1242,9 +1242,9 @@
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
                 }]
         }, {
             "Name": "2_EnemyWorm3",
@@ -1257,7 +1257,7 @@
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438],
-                    "Velocity": [212.13201904296875, 212.13201904296875],
+                    "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
                     "Mass": 1.0,
@@ -1283,9 +1283,9 @@
                     "Sprite": "../Assets/Textures/Worm.png",
                     "Shape": 0
                 }, {
-                    "Name": "Script",
-                    "Path": "../Assets/Scripts/Enemy.cs",
-                    "ClassName": "Enemy"
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
                 }]
         }, {
             "Name": "Player",
@@ -1642,6 +1642,71 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint1",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [388.0, 593.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint2",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1527.0, 639.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint3",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [274.0, 156.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "2_waypoint4",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1514.0, 65.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "EmptyObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1297.0, 183.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
                     "Shape": 0
                 }]
         }]

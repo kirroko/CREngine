@@ -290,6 +290,27 @@ void Renderer::initDebugBoxBuffers()
 
 	// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
 	indices_count.push_back(4); // 4 lines with 2 vertices each
+
+	// Define vertices for a box below the origin (centered horizontally around origin)
+	//GLfloat vertices_box[] = {
+	//-0.5f,  0.0f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Top-left
+	//-0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-left
+	// 0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-right
+	// 0.5f,  0.0f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f    // Top-right
+	//};
+
+
+	//// Define indices for drawing the outline of the box using GL_LINES
+	//GLuint indices_box[] = {
+	//	0, 1, // Top-left to Bottom-left
+	//	2, 3 // Top-right to Top-left
+	//};
+
+	//// Set up the buffers once, and bind the VAO/VBO/EBO
+	//setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	//// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
+	//indices_count.push_back(4); // 4 lines with 2 vertices each
 }
 
 /*!
@@ -1200,6 +1221,10 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	// Check if the color is the clear color
 	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) 
 	{
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return -1; // Sentinel for no entity
+	}
+	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0) {
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
 		return -1; // Sentinel for no entity
 	}
