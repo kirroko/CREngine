@@ -4,7 +4,7 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-958.0, 957.0],
+                    "Position": [-961.0, 959.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 250.0]
                 }, {
@@ -1689,6 +1689,19 @@
             "Components": [{
                     "Name": "Transform",
                     "Position": [1514.0, 65.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Shape": 0
+                }]
+        }, {
+            "Name": "EmptyObject",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1297.0, 183.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }, {
