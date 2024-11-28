@@ -17,12 +17,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
  /*!
   * @brief Default constructor initializing the camera at origin with default zoom and viewport size.
   */
-Camera::Camera() : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) {}
+Camera::Camera() : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1920.f, 1080.f) {}
 /*!
  * @brief Constructs a Camera object with a specified viewport size.
  * @param viewportSize Initial size of the viewport.
  */
-Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1600.f, 900.f) 
+Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewport_size(1920.f, 1080.f) 
 {
 	(void)viewportSize;
 }
@@ -71,24 +71,25 @@ void Camera::processCameraInput(GLfloat delta_time)
 {
 	GLfloat speed = camera_speed * delta_time;
 
-	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_UP))
+#ifdef _DEBUG
+	// Handle zooming in and out with keyboard keys Q and E
+	if (Ukemochi::Input::IsKeyPressed(UME_KEY_UP))
 		position.y += speed;
-	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_DOWN))
+	if (Ukemochi::Input::IsKeyPressed(UME_KEY_DOWN))
 		position.y -= speed;
-	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_LEFT))
+	if (Ukemochi::Input::IsKeyPressed(UME_KEY_LEFT))
 		position.x -= speed;
-	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_RIGHT))
+	if (Ukemochi::Input::IsKeyPressed(UME_KEY_RIGHT))
 		position.x += speed;
 
-	// Handle zooming in and out with keyboard keys Q and E
-	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_Q))  // Zoom in
+	if (Ukemochi::Input::IsKeyPressed(UME_KEY_Q))  // Zoom in
 		zoom += zoom * delta_time;
-	if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_E))  // Zoom out
+	if (Ukemochi::Input::IsKeyPressed(UME_KEY_E))  // Zoom out
 		zoom -= zoom * delta_time;
+#endif // _DEBUG
 
 	// Restrict zoom level to avoid flipping or extreme values
 	zoom = glm::clamp(zoom, 0.1f, 3.0f); // Adjust as necessary
-
 }
 
 /*!

@@ -80,6 +80,8 @@ public:
 	void drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation = 0.0f);
 
 	void setActiveShader(std::shared_ptr<Shader> shader); // Update method signature
+
+	std::vector<Vertex>& getVertices() { return vertices; } // Getter for vertices
 private:
 	/*!
 	 * @brief Creates and configures the Vertex Array Object (VAO) for the batch.

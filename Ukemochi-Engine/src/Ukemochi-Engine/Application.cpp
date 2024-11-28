@@ -75,9 +75,9 @@ namespace Ukemochi
         }
         else
         {
-            win_title = "DEFAULT";
-            win_height = 900;
-            win_width = 1600;
+            win_title = "Ukemochi";
+            win_width = 1920;
+            win_height = 1080;
         }
         WindowProps props(win_title, win_width, win_height); // You can customize these properties if needed
         m_Window = std::make_unique<WindowsWindow>(props);
@@ -179,7 +179,7 @@ namespace Ukemochi
         if (!ScriptingEngine::ScriptHasError)
         {
             // Save the current scene state
-            SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+            //SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
             //m_CompileError = false;
             es_current = ENGINE_STATES::ES_PLAY;
             UME_ENGINE_INFO("Simulation (Game is playing) started");
@@ -218,14 +218,14 @@ namespace Ukemochi
             glClear(GL_COLOR_BUFFER_BIT);
 
             UpdateFPS();
-            if (Input::IsKeyPressed(UME_KEY_L))
-            {
-                StartGame();
-            }
-            else if (Input::IsKeyPressed(UME_KEY_K))
-            {
-                StopGame();
-            }
+
+#ifndef _DEBUG
+            StartGame();
+            //if (Input::IsKeyPressed(UME_KEY_L))
+            //    StartGame();
+            //else if (Input::IsKeyPressed(UME_KEY_K))
+            //    StopGame();
+#endif // !_DEBUG
 
             if (sceneManager.GetOnIMGUI() == false)
             {
@@ -246,7 +246,10 @@ namespace Ukemochi
                 sceneManager.SceneMangerRunSystems();
                 //************ Update & Draw ************
             }
-            //UpdateIMGUI();
+
+#ifdef _DEBUG
+            UpdateIMGUI();
+#endif // _DEBUG
 
             DrawFPS();
 
@@ -311,7 +314,7 @@ namespace Ukemochi
         imguiInstance.SceneRender();
         imguiInstance.ShowEntityManagementUI();
         // imguiInstance.Begin();
-        imguiInstance.RenderGizmo2d();
+        //imguiInstance.RenderGizmo2d();
         imguiInstance.ImGuiUpdate(); // Render ImGui elements
         //************ Render IMGUI ************
     }

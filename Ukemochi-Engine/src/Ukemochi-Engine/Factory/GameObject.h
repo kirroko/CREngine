@@ -74,6 +74,14 @@ namespace Ukemochi
          */
         const std::string& GetName() const { return m_Name; }
 
+        /*!***********************************************************************
+        \brief
+         Sets the name of the object.
+
+        \param[in] name
+         A constant reference to a std::string representing the new name to be assigned to the object.
+
+        *************************************************************************/
         void SetName(const std::string& name) { m_Name = name; }
 
         /**

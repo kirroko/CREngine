@@ -19,7 +19,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 extern Ukemochi::Application* Ukemochi::CreateApplication();
 
+#ifdef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:CONSOLE")
 int main()
+#endif // _DEBUG
+
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS")
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+#endif // !_DEBUG
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 

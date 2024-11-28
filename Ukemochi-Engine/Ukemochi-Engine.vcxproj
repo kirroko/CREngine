@@ -208,6 +208,8 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Animation.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\BatchRenderer.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Particle.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Renderer.h" />
@@ -264,6 +266,8 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Animation.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\BatchRenderer.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Particle.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Renderer.cpp" />
