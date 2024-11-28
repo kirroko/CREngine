@@ -1171,7 +1171,7 @@ namespace Ukemochi
         }
 
         // Display Audio Component
-        if (obj.HasComponent<AudioSource>())
+        if (obj.HasComponent<AudioManager>())
         {
             ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.5f, 0.5f, 0.2f));  
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.5f, 0.5f, 0.4f)); 
@@ -1179,9 +1179,19 @@ namespace Ukemochi
 
             if (ImGui::TreeNodeEx("Audio Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                AudioSource& audio = obj.GetComponent<AudioSource>();
-                ImGui::Text("Audio Path: %s", audio.audioPath.c_str());
-                ImGui::Text("Audio Name: %s", audio.audioName.c_str());
+                AudioManager& audio = obj.GetComponent<AudioManager>();
+                for (auto& music : audio.music)
+                {
+                    ImGui::Text("Music Name: %s", music.audioName.c_str());
+                    ImGui::Text("Music Path: %s", music.audioPath.c_str());
+                }
+                for (auto& sfx : audio.sfx)
+                {
+                    ImGui::Text("SFX Name: %s", sfx.audioName.c_str());
+                    ImGui::Text("SFX Path: %s", sfx.audioPath.c_str());
+                }
+                //ImGui::Text("Audio Path: %s", audio.audioPath.c_str());
+                //ImGui::Text("Audio Name: %s", audio.audioName.c_str());
 
                 ImGui::TreePop();
             }
@@ -1314,9 +1324,9 @@ namespace Ukemochi
                 }
                 break;
             case 6: // Audio
-                if (!selectedObject->HasComponent<AudioSource>())
+                if (!selectedObject->HasComponent<AudioManager>())
                 {
-                    selectedObject->AddComponent<AudioSource>(AudioSource{});
+                    selectedObject->AddComponent<AudioManager>(AudioManager{});
                     modified = true;
                 }
                 break;
@@ -1397,6 +1407,16 @@ namespace Ukemochi
                 ImGui::Spacing();
             }
 
+            if (selectedObject->HasComponent<Enemy>())
+            {
+                if (ImGui::Button("Remove Enemy Component"))
+                {
+                    selectedObject->RemoveComponent<Enemy>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
             if (selectedObject->HasComponent<Player>())
             {
                 if (ImGui::Button("Remove Player Component"))
@@ -1407,11 +1427,11 @@ namespace Ukemochi
                 ImGui::Spacing();
             }
 
-            if (selectedObject->HasComponent<AudioSource>())
+            if (selectedObject->HasComponent<AudioManager>())
             {
                 if (ImGui::Button("Remove Audio Component"))
                 {
-                    selectedObject->RemoveComponent<AudioSource>();
+                    selectedObject->RemoveComponent<AudioManager>();
                     modified = true;
                 }
                 ImGui::Spacing();
@@ -1813,91 +1833,91 @@ namespace Ukemochi
             }
         }
 
-        if (selectedObject->HasComponent<AudioSource>())
+        if (selectedObject->HasComponent<AudioManager>())
         {
             if (ImGui::CollapsingHeader("Audio"))
             {
-                AudioSource& audio = selectedObject->GetComponent<AudioSource>();
+                AudioManager& audio = selectedObject->GetComponent<AudioManager>();
                 ImGui::Text("Audio");
 
-                std::string filename = std::filesystem::path(audio.audioPath).filename().string();
+                //std::string filename = std::filesystem::path(audio.audioPath).filename().string();
 
-                char audioPathBuffer[256];
-                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
-                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                //char audioPathBuffer[256];
+                //strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
+                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
 
-                ImGui::BeginDisabled(true); // Disable input field while using drag-and-drop
-                ImGui::InputText("##AudioPathInput", audioPathBuffer, sizeof(audioPathBuffer));
-                ImGui::EndDisabled();
+                //ImGui::BeginDisabled(true); // Disable input field while using drag-and-drop
+                //ImGui::InputText("##AudioPathInput", audioPathBuffer, sizeof(audioPathBuffer));
+                //ImGui::EndDisabled();
 
-                if (es_current != ENGINE_STATES::ES_PLAY)
-                {
+                //if (es_current != ENGINE_STATES::ES_PLAY)
+                //{
 
-                    // Check for drag-and-drop
-                    if (ImGui::BeginDragDropTarget())
-                    {
-                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
-                        {
-                            std::string draggedAudio = std::string((const char*)payload->Data);
-                            std::filesystem::path filePath(draggedAudio);
-                            std::string extension = filePath.extension().string();
+                //    // Check for drag-and-drop
+                //    if (ImGui::BeginDragDropTarget())
+                //    {
+                //        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                //        {
+                //            std::string draggedAudio = std::string((const char*)payload->Data);
+                //            std::filesystem::path filePath(draggedAudio);
+                //            std::string extension = filePath.extension().string();
 
-                            // Validate the file type (assuming only .wav, .mp3 , .ogg are allowed)
-                            if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
-                            {
-                                // Valid file type, update script path
-                                //strncpy(audioPathBuffer, draggedAudio.c_str(), sizeof(audioPathBuffer));
-                                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
-                                audio.audioPath = draggedAudio;
-                                filename = filePath.filename().string(); // Update displayed filename
-                                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
-                                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
-                                modified = true;
-                            }
-                            else
-                            {
-                                // Invalid file type, show error feedback
-                                ImGui::OpenPopup("InvalidAudioFileType");
-                            }
-                        }
-                        ImGui::EndDragDropTarget();
-                    }
-                    // Play and Stop buttons
-                    if (!audio.audioPath.empty())
-                    {
-                        if (ImGui::Button("Play Audio"))
-                        {
-                            //PlayAudio(audio.audioPath); // Function to handle playback
-                        }
+                //            // Validate the file type (assuming only .wav, .mp3 , .ogg are allowed)
+                //            if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+                //            {
+                //                // Valid file type, update script path
+                //                //strncpy(audioPathBuffer, draggedAudio.c_str(), sizeof(audioPathBuffer));
+                //                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                //                audio.audioPath = draggedAudio;
+                //                filename = filePath.filename().string(); // Update displayed filename
+                //                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
+                //                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                //                modified = true;
+                //            }
+                //            else
+                //            {
+                //                // Invalid file type, show error feedback
+                //                ImGui::OpenPopup("InvalidAudioFileType");
+                //            }
+                //        }
+                //        ImGui::EndDragDropTarget();
+                //    }
+                //    // Play and Stop buttons
+                //    if (!audio.audioPath.empty())
+                //    {
+                //        if (ImGui::Button("Play Audio"))
+                //        {
+                //            //PlayAudio(audio.audioPath); // Function to handle playback
+                //        }
 
-                        ImGui::SameLine();
+                //        ImGui::SameLine();
 
-                        if (ImGui::Button("Stop Audio"))
-                        {
-                            //StopAudio(); // Function to stop playback
-                        }
-                    }
+                //        if (ImGui::Button("Stop Audio"))
+                //        {
+                //            //StopAudio(); // Function to stop playback
+                //        }
+                //    }
 
-                    // Error Popup for invalid file type
-                    if (ImGui::BeginPopup("InvalidAudioFileType"))
-                    {
-                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
-                        if (ImGui::Button("OK"))
-                        {
-                            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
-                        }
-                        ImGui::EndPopup();
-                    }
+                //    // Error Popup for invalid file type
+                //    if (ImGui::BeginPopup("InvalidAudioFileType"))
+                //    {
+                //        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
+                //        if (ImGui::Button("OK"))
+                //        {
+                //            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                //        }
+                //        ImGui::EndPopup();
+                //    }
 
-                    // Add input for channelGroups
-                    ImGui::InputInt("Channel Groups", &audio.pChannelGroups); // Allow the user to specify the number of channel groups
+                //    // Add input for channelGroups
+                //    ImGui::InputInt("Channel Groups", &audio.pChannelGroups); // Allow the user to specify the number of channel groups
 
-                    // Optionally, validate that the number of channel groups is a positive number
-                    if (audio.pChannelGroups < 1)
-                    {
-                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Channel Groups must be at least 1.");
-                    }
-                }
+                //    // Optionally, validate that the number of channel groups is a positive number
+                //    if (audio.pChannelGroups < 1)
+                //    {
+                //        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Channel Groups must be at least 1.");
+                //    }
+                //}
             }
         }
     }

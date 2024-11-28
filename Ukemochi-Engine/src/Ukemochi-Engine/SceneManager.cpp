@@ -67,7 +67,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Script>();
         ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<Enemy>();
-        ECS::GetInstance().RegisterComponent<AudioSource>();
+        ECS::GetInstance().RegisterComponent<AudioManager>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -133,7 +133,7 @@ namespace Ukemochi
 
         // For Player system
         sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<AudioSource>());
+        sig.set(ECS::GetInstance().GetComponentType<AudioManager>());
         ECS::GetInstance().SetSystemSignature<Audio>(sig);
 
         //init GSM
@@ -659,6 +659,17 @@ namespace Ukemochi
             			newObject.AddComponent(std::move(player));
             		}
             	}
+                else if (componentName == "Audio")
+                {
+                    if (!newObject.HasComponent<AudioManager>())
+                    {
+                        AudioManager audio;
+
+                        //audio.audioPath = componentData["AudioPath"].GetString();
+                        //audio.pChannelGroups = componentData["Channel"].GetInt();
+                        //newObject.AddComponent(std::move(audio));
+                    }
+                }
                 else
                 {
                     UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
@@ -903,6 +914,19 @@ namespace Ukemochi
 
         		componentsArray.PushBack(playerComponent, allocator);
         	}
+            if (gameobject->HasComponent<AudioManager>())
+            {
+                Value audioComponent(rapidjson::kObjectType);
+                audioComponent.AddMember("Name", "Audio", allocator);
+
+                const auto& audio = gameobject->GetComponent<AudioManager>();
+                //audioComponent.AddMember("AudioSource", Value(audio.audioName.c_str(), allocator), allocator);
+                
+                //audioComponent.AddMember("AudioPath", Value(audio.audioPath.c_str(), allocator), allocator);
+                //audioComponent.AddMember("Channel", audio.pChannelGroups, allocator);
+
+                componentsArray.PushBack(audioComponent, allocator);
+            }
 
             gameObjectData.AddMember("Components", componentsArray, allocator);
 
@@ -1112,6 +1136,56 @@ namespace Ukemochi
 	    	animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
 	    	componentsArray.PushBack(animationComponent, allocator);
 	    }
+        if (prefabObj->HasComponent<Enemy>())
+        {
+            Value enemyComponent(rapidjson::kObjectType);
+
+            enemyComponent.AddMember("Name", Value("EnemyComponent", allocator), allocator);
+
+            const auto& enemy = prefabObj->GetComponent<Enemy>();
+
+            Value position(rapidjson::kArrayType);
+            position.PushBack(enemy.posX, allocator);
+            position.PushBack(enemy.posY, allocator);
+            enemyComponent.AddMember("Position", position, allocator);
+
+            enemyComponent.AddMember("Type", enemy.type, allocator);
+
+            componentsArray.PushBack(enemyComponent, allocator);
+        }
+
+        if (prefabObj->HasComponent<Player>())
+        {
+            Value playerComponent(rapidjson::kObjectType);
+            playerComponent.AddMember("Name", "Player", allocator);
+
+            const auto& player = prefabObj->GetComponent<Player>();
+            playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
+            playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
+            playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
+            playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+            playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
+            playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
+            playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+            playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
+            playerComponent.AddMember("IsDead", player.isDead, allocator);
+            playerComponent.AddMember("CanAttack", player.canAttack, allocator);
+
+            componentsArray.PushBack(playerComponent, allocator);
+        }
+        if (prefabObj->HasComponent<AudioManager>())
+        {
+            Value audioComponent(rapidjson::kObjectType);
+            audioComponent.AddMember("Name", "Audio", allocator);
+
+            const auto& audio = prefabObj->GetComponent<AudioManager>();
+            //audioComponent.AddMember("AudioSource", Value(audio.audioName.c_str(), allocator), allocator);
+            
+            //audioComponent.AddMember("AudioPath", Value(audio.audioPath.c_str(), allocator), allocator);
+            //audioComponent.AddMember("Channel", audio.pChannelGroups, allocator);
+
+            componentsArray.PushBack(audioComponent, allocator);
+        }
 
         gameObjectData.AddMember("Components", componentsArray, allocator);
 

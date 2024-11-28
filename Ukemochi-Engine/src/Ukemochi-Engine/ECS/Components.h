@@ -500,11 +500,30 @@ namespace Ukemochi
 	\brief
 	 AudioSource component structure.
 	*************************************************************************/
-	struct AudioSource
+	struct AudioManager 
 	{
-		std::string audioPath;
-		std::string audioName;
-		FMOD::Sound* sound;
-		int pChannelGroups;
+		struct AudioSource
+		{
+			std::string audioPath;
+			std::string audioName;
+
+			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) {};
+
+			//FMOD::Sound* sound;
+			//int pChannelGroups;
+		};
+
+		std::vector<AudioSource> music; // Music category
+		std::vector<AudioSource> sfx;   // Sfx category
+
+		AudioManager() = default;
+		// Add sound to the appropriate category
+		void AddSoundToMusic(const std::string& name, const std::string& path) {
+			music.emplace_back(path, name);
+		}
+
+		void AddSoundToSfx(const std::string& name, const std::string& path) {
+			sfx.emplace_back(path, name);
+		}
 	};
 }
