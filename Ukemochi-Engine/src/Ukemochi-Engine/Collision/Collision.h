@@ -38,7 +38,7 @@ namespace Ukemochi
         const float MIN_OFFSET = 0.001f;
 
         int screen_width{}, screen_height{};
-        EntityID player = static_cast<EntityID>(-1);
+        EntityID player;
 
     public:
         /*!***********************************************************************

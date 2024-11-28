@@ -38,6 +38,7 @@ namespace Ukemochi
 		screen_height = app.GetWindow().GetHeight();
 
 		// Find the player entity
+		player = static_cast<EntityID>(-1);
 		for (auto const& entity : m_Entities)
 		{
 			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")

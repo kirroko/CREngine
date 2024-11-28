@@ -5,7 +5,7 @@
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (%)
 \date       Sept 25, 2024
 \brief      This file contains the implementation of the UseImGui class,
-            which manages the initialization, rendering, and event handling 
+            which manages the initialization, rendering, and event handling
             for ImGui within the engine.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -38,6 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "../Game/EnemyManager.h"
 #include "../Game/DungeonManager.h"
+#include <../vendor/glm/glm/gtx/matrix_decompose.hpp>
 
 namespace Ukemochi
 {
@@ -53,53 +54,55 @@ namespace Ukemochi
     bool UseImGui::m_SpriteFlag = false;
     std::string UseImGui::m_SpritePath;
     int UseImGui::m_global_selected = -1;
-    unsigned int UseImGui::m_currentPanelWidth = 1600;
-    unsigned int UseImGui::m_currentPanelHeight = 900;
+    unsigned int UseImGui::m_currentPanelWidth = 1920;
+    unsigned int UseImGui::m_currentPanelHeight = 1080;
+    ImGuizmo::OPERATION currentGizmoOperation = ImGuizmo::TRANSLATE;
 
+    ImVec2 playerLoaderTopLeft;
     /*!
     \brief Initializes the ImGui context and sets up OpenGL.
     \param window Pointer to the GLFW window (unused in this implementation).
     */
-    void UseImGui::ImGuiInit(GLFWwindow* /*window*/)
+    void UseImGui::ImGuiInit(GLFWwindow * /*window*/)
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO &io = ImGui::GetIO();
         (void)io;
 
         io.FontGlobalScale = 1.5f; // Increase font size by 50% (adjust as needed)
 
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
-        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
+        // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
+        // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-        //ImGui::LoadIniSettingsFromDisk("imgui_layout.ini");
+        // ImGui::LoadIniSettingsFromDisk("imgui_layout.ini");
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
-        ImGuiStyle& style = ImGui::GetStyle();
-        style.Alpha = 1.0f; // Set the overall alpha of the UI
-        style.WindowRounding = 5.0f; // Round corners of windows
-        style.FrameRounding = 3.0f; // Round corners of frames
-        style.ItemSpacing = ImVec2(10, 10); // Spacing between items
-        style.WindowBorderSize = 0.0f; // No border for windows
+        ImGuiStyle &style = ImGui::GetStyle();
+        style.Alpha = 1.0f;                        // Set the overall alpha of the UI
+        style.WindowRounding = 5.0f;               // Round corners of windows
+        style.FrameRounding = 3.0f;                // Round corners of frames
+        style.ItemSpacing = ImVec2(10, 10);        // Spacing between items
+        style.WindowBorderSize = 0.0f;             // No border for windows
         style.WindowPadding = ImVec2(0.0f, -1.5f); // Padding for windows
 
-        //ImGuiStyle& style = ImGui::GetStyle();
+        // ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             style.WindowRounding = 5.0f;
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        Application& app = Application::Get();
-        GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+        Application &app = Application::Get();
+        GLFWwindow *window = static_cast<GLFWwindow *>(app.GetWindow().GetNativeWindow());
 
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init("#version 410");
-        //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
+        // ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
 
     /*!
@@ -114,26 +117,25 @@ namespace Ukemochi
 
         // Update DeltaTime
         float currentTime = static_cast<float>(glfwGetTime()); // Get the current time in seconds
-        float deltaTime = currentTime - m_Time; // Calculate time since last frame
-        m_Time = currentTime; // Update the time for the next frame
+        float deltaTime = currentTime - m_Time;                // Calculate time since last frame
+        m_Time = currentTime;                                  // Update the time for the next frame
 
         float fps = 1.0f / deltaTime;
 
-
-        ImGuiIO& io = ImGui::GetIO();
-        Application& app = Application::Get();
+        ImGuiIO &io = ImGui::GetIO();
+        Application &app = Application::Get();
         io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
                                 static_cast<float>(app.GetWindow().GetHeight()));
 
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGuiViewport *viewport = ImGui::GetMainViewport();
 
         // Toggle to enable or disable docking
         static bool enableDocking = true;
 
-        //if (io.KeyCtrl && Input::IsKeyTriggered(UME_KEY_D))
+        // if (io.KeyCtrl && Input::IsKeyTriggered(UME_KEY_D))
         //{
-        //    enableDocking = !enableDocking;
-        //}
+        //     enableDocking = !enableDocking;
+        // }
         ImGui::BeginMainMenuBar();
         if (ImGui::BeginMenu("Options"))
         {
@@ -156,9 +158,9 @@ namespace Ukemochi
 
         // Configure window flags for a fullscreen dockspace
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+                                        ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                                        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+                                        ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
         // Begin the main dockspace window
         ImGui::Begin("DockSpace Demo", nullptr, window_flags);
@@ -173,7 +175,6 @@ namespace Ukemochi
 
         ControlPanel(fps);
 
-
         ImGui::End(); // End the dockspace window
 
         if (m_CompileError)
@@ -183,13 +184,13 @@ namespace Ukemochi
         }
         ShowErrorPopup("A compile error has occurred. Please check the console for more information.");
 
-        //ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
+        // ImGui::SaveIniSettingsToDisk("imgui_layout.ini");
     }
 
-    //void UseImGui::CheckAndHandleFileDrop()
+    // void UseImGui::CheckAndHandleFileDrop()
     //{
-    //    Application& app = Application::Get();
-    //    WindowsWindow& win = (WindowsWindow&)app.GetWindow();
+    //     Application& app = Application::Get();
+    //     WindowsWindow& win = (WindowsWindow&)app.GetWindow();
 
     //    if (win.fileDropped) {
     //        std::cout << "File drop detected!" << std::endl;
@@ -206,33 +207,71 @@ namespace Ukemochi
 
     void UseImGui::RenderGizmo2d()
     {
-        ImGui::Begin("GizmoExample");
+        // Ensure a valid entity is selected
+        auto &selectedEntityID = ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID;
 
-        // Get the current ImGui window dimensions
-        ImVec2 windowPos = ImGui::GetWindowPos();
-        ImVec2 windowSize = ImGui::GetWindowSize();
+        if (selectedEntityID == -1)
+        {
+            return;
+        }
+        if (selectedEntityID >= 0)
+        {
+            std::cout << "Entity " << selectedEntityID << " selected for Gizmo." << std::endl;
+        }
 
-        // Set up 2D camera view and projection matrices
-        glm::mat4 viewMatrix = glm::mat4(1.0f); // Identity matrix for 2D view
-        glm::mat4 projectionMatrix = glm::ortho(0.0f, windowSize.x, windowSize.y, 0.0f, -1.0f, 1.0f);
+        Transform &transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 
-        // Example transform matrix for a 2D object
-        glm::mat4 objectMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(windowSize.x / 2, windowSize.y / 2, 0));
+        auto &camera = ECS::GetInstance().GetSystem<Camera>();
 
-        // Manipulate objectMatrix with ImGuizmo
-        ImGuizmo::SetOrthographic(true);  // Use orthographic mode for 2D
+        // Use the camera's view and projection matrices
+        glm::mat4 viewMatrix = camera->getCameraViewMatrix();
+        glm::mat4 projectionMatrix = camera->getCameraProjectionMatrix();
+
+        // Create the entity's transformation matrix
+        glm::mat4 objectMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(transform.position.x, transform.position.y, 0));
+        objectMatrix = glm::rotate(objectMatrix, glm::radians(transform.rotation), glm::vec3(0, 0, 1));
+        objectMatrix = glm::scale(objectMatrix, glm::vec3(transform.scale.x, transform.scale.y, 1));
+
+        // Set the Gizmo to the main scene's viewport
+        ImGuizmo::SetOrthographic(true); // Use perspective if your camera is perspective
         ImGuizmo::SetDrawlist();
+        // Set Gizmo to the rendering viewport or fallback to window size
+        ImVec2 panelSize = ImGui::GetContentRegionAvail();
+        ImGuizmo::SetRect(playerLoaderTopLeft.x, playerLoaderTopLeft.y, panelSize.x, panelSize.y);
 
-        // Set the rectangle area in which the gizmo will draw (whole window)
-        ImGuizmo::SetRect(windowPos.x, windowPos.y, windowSize.x, windowSize.y);
+        // Check for user input to change the mode
+        if (ImGui::IsKeyPressed(ImGuiKey_8))
+        {
+            currentGizmoOperation = ImGuizmo::TRANSLATE;
+        }
+        if (ImGui::IsKeyPressed(ImGuiKey_9))
+        {
+            currentGizmoOperation = ImGuizmo::ROTATE;
+        }
+        if (ImGui::IsKeyPressed(ImGuiKey_0))
+        {
+            currentGizmoOperation = ImGuizmo::SCALE;
+        }
+        if (ImGuizmo::IsUsing())
+            std::cout << "Gizmo is being interacted with." << std::endl;
 
-        // ImGuizmo operation mode: Translate (move)
-        ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
-            ImGuizmo::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(objectMatrix));
+        // Manipulate the Gizmo and update the entity transform
+        if (ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix),
+                                 currentGizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(objectMatrix)))
+        {
+            glm::vec3 translation, scale, skew;
+            glm::quat rotation;
+            glm::vec4 perspective;
 
-        // Now, use `objectMatrix` to update your 2D object transform
-
-        ImGui::End();
+            if (glm::decompose(objectMatrix, scale, rotation, translation, skew, perspective))
+            {
+                transform.position.x = translation.x;
+                transform.position.y = translation.y;
+                transform.scale.x = scale.x;
+                transform.scale.y = scale.y;
+                transform.rotation = glm::degrees(glm::eulerAngles(rotation).z);
+            }
+        }
     }
 
     void UseImGui::SpriteEditorWindow()
@@ -247,7 +286,7 @@ namespace Ukemochi
         static int textureHeight = 0;
         static int totalFrames = 1;
         static int pixelSize[2] = {64, 64};
-        static float pivot[2] = { 0.5f, 0.5f }; // center pivot by default
+        static float pivot[2] = {0.5f, 0.5f}; // center pivot by default
         static int pixelPerUnit = 100;
         static float frameTime = 0.05f;
         static bool looping = true;
@@ -274,7 +313,7 @@ namespace Ukemochi
                 rapidjson::Document document;
                 if (Serialization::LoadJSON(filePath.string(), document))
                 {
-                    const rapidjson::Value& object = document["TextureMeta"];
+                    const rapidjson::Value &object = document["TextureMeta"];
                     if (object.HasMember("KeyPath") && object.HasMember("ClipName") && object.HasMember("TotalFrames") &&
                         object.HasMember("PixelWidth") && object.HasMember("PixelHeight") &&
                         object.HasMember("FrameTime") && object.HasMember("Looping"))
@@ -283,7 +322,7 @@ namespace Ukemochi
                         // std::string temp = object["KeyPath"].GetString();
                         std::string temp = object["ClipName"].GetString();
                         std::fill(std::begin(clipName), std::end(clipName), 0);
-                        std::copy(temp.begin(),temp.end(), clipName);
+                        std::copy(temp.begin(), temp.end(), clipName);
                         pixelPerUnit = object["PixelsPerUnit"].GetInt();
                         totalFrames = object["TotalFrames"].GetInt();
                         pixelSize[0] = object["PixelWidth"].GetInt();
@@ -393,7 +432,7 @@ namespace Ukemochi
                 // Get file name to save
                 rapidjson::Document document;
                 document.SetObject();
-                rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+                rapidjson::Document::AllocatorType &allocator = document.GetAllocator();
 
                 rapidjson::Value textureMetaData(rapidjson::kObjectType);
                 std::string tempStr = clipName;
@@ -439,13 +478,11 @@ namespace Ukemochi
                 auto GOs = GameObjectManager::GetInstance().GetAllGOs();
                 if (GOs[m_global_selected]->HasComponent<Animation>())
                 {
-                    auto& anim = GOs[m_global_selected]->GetComponent<Animation>();
+                    auto &anim = GOs[m_global_selected]->GetComponent<Animation>();
                     anim.clips[sClipName] = AnimationClip{
-                        m_SpritePath, sClipName, Vec2(pivot[0],pivot[1]) , pixelPerUnit ,totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
-                        looping
-                    };
+                        m_SpritePath, sClipName, Vec2(pivot[0], pivot[1]), pixelPerUnit, totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                        looping};
                     anim.SetAnimation(clipName);
-                    
                 }
             }
         }
@@ -476,14 +513,19 @@ namespace Ukemochi
         static int currentFrame = 0;
         static ImVec2 uv0 = ImVec2(0.0f, 1.0f);
         static ImVec2 uv1 = ImVec2(1.0f, 0.0f);
-        if (isToggled) {
-            if (ImGui::Button("PLAY")) {
+        if (isToggled)
+        {
+            if (ImGui::Button("PLAY"))
+            {
                 isToggled = false; // Toggle OFF
                 showGrid = false;
                 isPlaying = true;
             }
-        } else {
-            if (ImGui::Button("PAUSE")) {
+        }
+        else
+        {
+            if (ImGui::Button("PAUSE"))
+            {
                 isToggled = true; // Toggle ON
                 isPlaying = false;
             }
@@ -561,21 +603,20 @@ namespace Ukemochi
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
         ImVec2 canvasPos = ImGui::GetCursorScreenPos();
 
-        
         ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), uv0, uv1);
 
         // Draw the grid
         if (showGrid)
         {
-            ImDrawList* drawList = ImGui::GetWindowDrawList();
+            ImDrawList *drawList = ImGui::GetWindowDrawList();
 
             // scale the grid to match the resized image
             float scaledCellWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth) * displayWidth;
             float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight) *
-                displayHeight;
+                                     displayHeight;
 
             UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
-                  "Pixel size is larger than texture size");
+                              "Pixel size is larger than texture size");
 
             int colums = textureWidth / pixelSize[0];
             //            int rows = textureHeight / pixelSize[1];
@@ -585,16 +626,17 @@ namespace Ukemochi
             {
                 int col = i % colums;
                 int row = i / colums;
-                if (row >= maxRows) break;
-                
+                if (row >= maxRows)
+                    break;
+
                 drawList->AddRect(ImVec2(canvasPos.x + static_cast<float>(col) * scaledCellWidth, canvasPos.y +
-                                         static_cast<float>(row) * scaledCellHeight),
+                                                                                                      static_cast<float>(row) * scaledCellHeight),
                                   ImVec2(canvasPos.x + static_cast<float>(col + 1) * scaledCellWidth, canvasPos.y +
-                                         static_cast<float>(row + 1) * scaledCellHeight),
+                                                                                                          static_cast<float>(row + 1) * scaledCellHeight),
                                   IM_COL32(255, 255, 255, 255));
 
                 ImVec2 drawPivot = ImVec2{(canvasPos.x + static_cast<float>(col) * scaledCellWidth) + scaledCellWidth * pivot[0],
-                                      (canvasPos.y + static_cast<float>(row) * scaledCellHeight) + scaledCellHeight * (1.0f - pivot[1])};
+                                          (canvasPos.y + static_cast<float>(row) * scaledCellHeight) + scaledCellHeight * (1.0f - pivot[1])};
 
                 float pivotMarkerSize = 4.0f;
                 drawList->AddCircleFilled(drawPivot, pivotMarkerSize, IM_COL32(58, 143, 248, 255));
@@ -655,95 +697,84 @@ namespace Ukemochi
     }
 
     /**
- * @brief Displays the control panel in the ImGui interface, showing FPS and various control options.
- *
- * This function creates a control panel window in ImGui where information such as FPS is displayed,
- * and controls for interacting with the engine, like starting and stopping the game, are provided.
- * It provides options to play and stop the game, updating the game state accordingly.
- *
- * @param fps The current frames per second (FPS) value, displayed to the user for performance insights.
- *
- * @details
- * The control panel includes:
- * - **FPS Display**: Shows the current FPS with two decimal precision.
- * - **Play Button**: On click, saves the current scene, updates the engine state to `ES_PLAY`, and
- *   initializes the `LogicSystem` to begin game execution.
- * - **Stop Button**: On click, reloads the current scene from a saved file, updates the engine state to `ES_ENGINE`,
- *   and halts the game to allow further editing.
- */
+     * @brief Displays the control panel in the ImGui interface, showing FPS and various control options.
+     *
+     * This function creates a control panel window in ImGui where information such as FPS is displayed,
+     * and controls for interacting with the engine, like starting and stopping the game, are provided.
+     * It provides options to play and stop the game, updating the game state accordingly.
+     *
+     * @param fps The current frames per second (FPS) value, displayed to the user for performance insights.
+     *
+     * @details
+     * The control panel includes:
+     * - **FPS Display**: Shows the current FPS with two decimal precision.
+     * - **Play Button**: On click, saves the current scene, updates the engine state to `ES_PLAY`, and
+     *   initializes the `LogicSystem` to begin game execution.
+     * - **Stop Button**: On click, reloads the current scene from a saved file, updates the engine state to `ES_ENGINE`,
+     *   and halts the game to allow further editing.
+     */
     void UseImGui::ControlPanel(float fps)
     {
         static std::vector<float> fpsHistory;
-        static const int maxHistorySize = 144; // Maximum number of FPS values to store
-
-
+        static const int maxHistorySize = 144;
         fpsHistory.push_back(fps);
-
-        // If the history size exceeds the maximum, remove the oldest value
         if (fpsHistory.size() > maxHistorySize)
         {
             fpsHistory.erase(fpsHistory.begin());
         }
 
-        ImGui::Begin("Control Panel"); // Create a new window titled "Control Panel"
-
-        // Add FPS display inside ControlPanel
-        ImGui::Text("FPS: %.2f", fps); // Show FPS with 2 decimal places
-
+        ImGui::Begin("Control Panel");
+        ImGui::Text("FPS: %.2f", fps);
         ImGui::PlotLines("FPS History", fpsHistory.data(), static_cast<int>(fpsHistory.size()), 0, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
-
-        // Add controls such as buttons, sliders, or entity selectors here
         ImGui::Text("Control Panel Contents");
-        // Example: Add a button
-        if (ImGui::Button("Play"))
+
+        // Only show Play button when not in play mode
+        if (es_current != ENGINE_STATES::ES_PLAY)
         {
-
-
-            UME_ENGINE_TRACE("Initializing Collision...");
-            ECS::GetInstance().GetSystem<Collision>()->Init();
-            UME_ENGINE_TRACE("Initializing dungeon manager...");
-            ECS::GetInstance().GetSystem<DungeonManager>()->Init();
-            //enemy
-            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
-            // Recompile scripts and display popup that its compiling. Remove popup when done
-            if (ScriptingEngine::GetInstance().compile_flag)
+            if (ImGui::Button("Play"))
             {
-                UME_ENGINE_INFO("Begin Script reloading");
-                ScriptingEngine::GetInstance().compile_flag = false;
-                ScriptingEngine::GetInstance().Reload();
-                // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
-            }
+                UME_ENGINE_TRACE("Initializing Collision...");
+                ECS::GetInstance().GetSystem<Collision>()->Init();
+                UME_ENGINE_TRACE("Initializing dungeon manager...");
+                ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+                // enemy
+                ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+                // Recompile scripts and display popup that its compiling. Remove popup when done
+                if (ScriptingEngine::GetInstance().compile_flag)
+                {
+                    UME_ENGINE_INFO("Begin Script reloading");
+                    ScriptingEngine::GetInstance().compile_flag = false;
+                    ScriptingEngine::GetInstance().Reload();
+                    // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
+                }
 
-            // Perform some action when button is clicked
-            if (!ScriptingEngine::ScriptHasError)
-            {
-                // save
-                SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-                m_CompileError = false;
-                es_current = ENGINE_STATES::ES_PLAY;
-                UME_ENGINE_INFO("Simulation (Game is playing) started");
-                ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                if (!ScriptingEngine::ScriptHasError)
+                {
+                    SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+                    m_CompileError = false;
+                    es_current = ENGINE_STATES::ES_PLAY;
+                    UME_ENGINE_INFO("Simulation (Game is playing) started");
+                    ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                }
+                else
+                {
+                    m_CompileError = true;
+                }
             }
-            else
-            {
-                m_CompileError = true;
-            }
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
+
         if (ImGui::Button("Stop"))
         {
-            // free
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
-
-            // Implement functionality to stop the game (e.g., switch to editor mode)
             es_current = ENGINE_STATES::ES_ENGINE;
             UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
         }
 
-        ImGui::End(); // End the control panel window
+        ImGui::End();
     }
 
-    void UseImGui::ShowErrorPopup(const std::string& errorMessage)
+    void UseImGui::ShowErrorPopup(const std::string &errorMessage)
     {
         // ImGui::OpenPopupOnItemClick()
 
@@ -760,19 +791,19 @@ namespace Ukemochi
     }
 
     /**
- * @brief Loads asset filenames from the `../Assets/Prefabs` directory into `assetFiles`.
- *
- * Clears `assetFiles`, then populates it with names of regular files in the `Prefabs` folder.
- * This updates the asset list dynamically for display in the ImGui interface.
- */
-    void UseImGui::LoadContents(const std::string& directory)
+     * @brief Loads asset filenames from the `../Assets/Prefabs` directory into `assetFiles`.
+     *
+     * Clears `assetFiles`, then populates it with names of regular files in the `Prefabs` folder.
+     * This updates the asset list dynamically for display in the ImGui interface.
+     */
+    void UseImGui::LoadContents(const std::string &directory)
     {
         // Clear the previous asset list
         assetFiles.clear();
         folderNames.clear();
 
         // Load assets from the specified directory
-        for (const auto& entry : std::filesystem::directory_iterator(directory))
+        for (const auto &entry : std::filesystem::directory_iterator(directory))
         {
             if (entry.is_directory())
             {
@@ -785,7 +816,7 @@ namespace Ukemochi
         }
     }
 
-    void UseImGui::ContentBrowser(char* filePath)
+    void UseImGui::ContentBrowser(char *filePath)
     {
         static std::string currentDirectory = "../Assets";
         ImGui::Begin("Content Browser");
@@ -848,13 +879,13 @@ namespace Ukemochi
     }
 
     /**
- * @brief Displays a content browser window in ImGui for selecting assets.
- *
- * Lists assets loaded in `assetFiles` with selectable options. Allows users to refresh the list
- * and select an asset, updating `filePath` with the full path of the selected item.
- *
- * @param filePath A character array to store the path of the selected asset.
- */
+     * @brief Displays a content browser window in ImGui for selecting assets.
+     *
+     * Lists assets loaded in `assetFiles` with selectable options. Allows users to refresh the list
+     * and select an asset, updating `filePath` with the full path of the selected item.
+     *
+     * @param filePath A character array to store the path of the selected asset.
+     */
     void UseImGui::LoadScene()
     {
         // Clear the previous asset list
@@ -862,7 +893,7 @@ namespace Ukemochi
 
         // Load assets from the Assets directory
         std::string scenesDir = "../Assets/Scenes";
-        for (const auto& entry : std::filesystem::directory_iterator(scenesDir))
+        for (const auto &entry : std::filesystem::directory_iterator(scenesDir))
         {
             if (entry.is_regular_file())
             {
@@ -872,15 +903,15 @@ namespace Ukemochi
     }
 
     /**
- * @brief Displays a Scene Browser in ImGui for viewing, saving, and creating scenes.
- *
- * - **Automatic Scene Refresh**: Updates the scene list every second.
- * - **Scene Selection**: Lists available scenes. Selecting a scene saves the current scene and loads the selected one.
- * - **Save Scene**: Toggles an input field to specify a name for saving the current scene.
- * - **Create Scene**: Toggles an input field to name and create a new scene, automatically suggesting a unique name.
- *
- * This function enables scene management directly through the ImGui interface.
- */
+     * @brief Displays a Scene Browser in ImGui for viewing, saving, and creating scenes.
+     *
+     * - **Automatic Scene Refresh**: Updates the scene list every second.
+     * - **Scene Selection**: Lists available scenes. Selecting a scene saves the current scene and loads the selected one.
+     * - **Save Scene**: Toggles an input field to specify a name for saving the current scene.
+     * - **Create Scene**: Toggles an input field to name and create a new scene, automatically suggesting a unique name.
+     *
+     * This function enables scene management directly through the ImGui interface.
+     */
     void UseImGui::SceneBrowser()
     {
         // Get the current time
@@ -919,7 +950,6 @@ namespace Ukemochi
                 std::cout << "Selected scene: " << sceneFiles[selectedSceneIndex] << std::endl;
             }
         }
-
 
         // Add a button to save the scene
         if (ImGui::Button("Save Scene"))
@@ -966,8 +996,8 @@ namespace Ukemochi
         int maxIndex = 0;
         std::string newName = "";
 
-        //find the next sceneName
-        for (const auto& scene : sceneFiles)
+        // find the next sceneName
+        for (const auto &scene : sceneFiles)
         {
             if (scene.rfind("NewScene", 0) == 0)
             {
@@ -1005,7 +1035,7 @@ namespace Ukemochi
                 // Hide the input field after creating
                 showCreateInputField = false;
                 // Optionally, reset the new scene name for the next creation
-                //newSceneName[0] = '\0'; // Clear the input field
+                // newSceneName[0] = '\0'; // Clear the input field
                 SceneManager::GetInstance().GetOnIMGUI() = showCreateInputField;
             }
         }
@@ -1014,26 +1044,26 @@ namespace Ukemochi
     }
 
     /**
- * @brief Returns the number of scenes in the scene list.
- *
- * This function provides the size of the `sceneFiles` list, representing the total number of scenes available.
- *
- * @return The number of scenes in the `sceneFiles` list.
- */
+     * @brief Returns the number of scenes in the scene list.
+     *
+     * This function provides the size of the `sceneFiles` list, representing the total number of scenes available.
+     *
+     * @return The number of scenes in the `sceneFiles` list.
+     */
     size_t UseImGui::GetSceneSize()
     {
         return sceneFiles.size();
     }
 
     /**
- * @brief Displays detailed information of a `GameObject` in the ImGui interface.
- *
- * This function shows the `GameObject`'s ID, name, and tag, and conditionally displays details for any
- * components attached to the object, such as `Transform` and `Rigidbody2D`.
- *
- * @param obj The `GameObject` whose details are displayed.
- */
-    void UseImGui::DisplayEntityDetails(GameObject& obj)
+     * @brief Displays detailed information of a `GameObject` in the ImGui interface.
+     *
+     * This function shows the `GameObject`'s ID, name, and tag, and conditionally displays details for any
+     * components attached to the object, such as `Transform` and `Rigidbody2D`.
+     *
+     * @param obj The `GameObject` whose details are displayed.
+     */
+    void UseImGui::DisplayEntityDetails(GameObject &obj)
     {
         ImGui::Separator();
         ImGui::Text("Entity Details");
@@ -1046,8 +1076,8 @@ namespace Ukemochi
         if (obj.HasComponent<Transform>())
         {
             // Set background color for the tree node
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 1.0f, 0.0f, 0.2f));  // Light green background
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 1.0f, 0.0f, 0.4f));  // Darker green when hovered
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 1.0f, 0.0f, 0.2f));        // Light green background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 1.0f, 0.0f, 0.4f)); // Darker green when hovered
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.0f, 0.6f));  // Even darker green when active
 
             // TreeNode with custom background color and padding
@@ -1067,13 +1097,13 @@ namespace Ukemochi
         // Display Rigidbody2D Component (Blue)
         if (obj.HasComponent<Rigidbody2D>())
         {
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.5f, 1.0f, 0.2f));  // Light blue background
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.5f, 1.0f, 0.4f));  // Darker blue when hovered
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.5f, 1.0f, 0.2f));        // Light blue background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.5f, 1.0f, 0.4f)); // Darker blue when hovered
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 0.5f, 1.0f, 0.6f));  // Even darker blue when active
 
             if (ImGui::TreeNodeEx("Rigidbody2D Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                Rigidbody2D& rb = obj.GetComponent<Rigidbody2D>();
+                Rigidbody2D &rb = obj.GetComponent<Rigidbody2D>();
                 ImGui::Text("Position: (%.2f, %.2f)", rb.position.x, rb.position.y);
                 ImGui::Text("Velocity: (%.2f, %.2f)", rb.velocity.x, rb.velocity.y);
                 ImGui::Text("Acceleration: (%.2f, %.2f)", rb.acceleration.x, rb.acceleration.y);
@@ -1087,13 +1117,13 @@ namespace Ukemochi
         // Display BoxCollider2D Component (Orange)
         if (obj.HasComponent<BoxCollider2D>())
         {
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 0.5f, 0.0f, 0.2f));  // Light orange background
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 0.5f, 0.0f, 0.4f));  // Darker orange when hovered
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 0.5f, 0.0f, 0.2f));        // Light orange background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 0.5f, 0.0f, 0.4f)); // Darker orange when hovered
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 0.5f, 0.0f, 0.6f));  // Even darker orange when active
 
             if (ImGui::TreeNodeEx("BoxCollider2D Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                BoxCollider2D& collider = obj.GetComponent<BoxCollider2D>();
+                BoxCollider2D &collider = obj.GetComponent<BoxCollider2D>();
                 ImGui::Text("Is Trigger: %s", collider.is_trigger ? "True" : "False");
 
                 ImGui::TreePop();
@@ -1105,13 +1135,13 @@ namespace Ukemochi
         // Display SpriteRender Component (Purple)
         if (obj.HasComponent<SpriteRender>())
         {
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.6f, 0.4f, 1.0f, 0.2f));  // Light purple background
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.6f, 0.4f, 1.0f, 0.4f));  // Darker purple when hovered
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.6f, 0.4f, 1.0f, 0.2f));        // Light purple background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.6f, 0.4f, 1.0f, 0.4f)); // Darker purple when hovered
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.6f, 0.4f, 1.0f, 0.6f));  // Even darker purple when active
 
             if (ImGui::TreeNodeEx("SpriteRender Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                SpriteRender& sprite = obj.GetComponent<SpriteRender>();
+                SpriteRender &sprite = obj.GetComponent<SpriteRender>();
                 ImGui::Text("Sprite Path: %s", sprite.texturePath.c_str());
                 ImGui::Text("Shape: %d", sprite.shape);
 
@@ -1124,13 +1154,13 @@ namespace Ukemochi
         // Display Script Component (Yellow)
         if (obj.HasComponent<Script>())
         {
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 1.0f, 0.0f, 0.2f));  // Light yellow background
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 0.0f, 0.4f));  // Darker yellow when hovered
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 1.0f, 0.0f, 0.2f));        // Light yellow background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 0.0f, 0.4f)); // Darker yellow when hovered
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 1.0f, 0.0f, 0.6f));  // Even darker yellow when active
 
             if (ImGui::TreeNodeEx("Script Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                Script& script = obj.GetComponent<Script>();
+                Script &script = obj.GetComponent<Script>();
                 ImGui::Text("Script Path: %s", script.scriptPath.c_str());
                 ImGui::Text("Class Name: %s", script.scriptName.c_str());
 
@@ -1142,21 +1172,21 @@ namespace Ukemochi
     }
 
     /**
- * @brief Displays a combo box for selecting a `GameObject` from the current level.
- *
- * This function populates a combo box with the names and IDs of all game objects in the current level.
- * It allows the user to select an entity by index, updating `selectedEntityIndex` based on the selection.
- *
- * @param selectedEntityIndex The index of the currently selected entity, which will be updated upon selection.
- */
-    void UseImGui::DisplayEntitySelectionCombo(int& selectedEntityIndex)
+     * @brief Displays a combo box for selecting a `GameObject` from the current level.
+     *
+     * This function populates a combo box with the names and IDs of all game objects in the current level.
+     * It allows the user to select an entity by index, updating `selectedEntityIndex` based on the selection.
+     *
+     * @param selectedEntityIndex The index of the currently selected entity, which will be updated upon selection.
+     */
+    void UseImGui::DisplayEntitySelectionCombo(int &selectedEntityIndex)
     {
         // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
         auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
 
         // Store the names of entities in a vector of strings to keep them in memory
         std::vector<std::string> entityNames;
-        for (const auto& obj : gameObjects)
+        for (const auto &obj : gameObjects)
         {
             entityNames.push_back(std::to_string(obj->GetInstanceID()) + ": " + obj->GetName());
         }
@@ -1168,8 +1198,8 @@ namespace Ukemochi
         }
 
         // Create a vector of const char* pointers to each name in entityNames
-        std::vector<const char*> entityNamePointers;
-        for (const auto& name : entityNames)
+        std::vector<const char *> entityNamePointers;
+        for (const auto &name : entityNames)
         {
             entityNamePointers.push_back(name.c_str());
         }
@@ -1180,38 +1210,37 @@ namespace Ukemochi
     }
 
     /**
- * @brief Removes the selected `GameObject` from the game world.
- *
- * This function destroys the `GameObject` at the index specified by `selectedEntityIndex`
- * and resets the selection index to -1.
- *
- * @param selectedEntityIndex The index of the selected entity to be removed.
- */
-    void UseImGui::RemoveSelectedEntity(int& selectedEntityIndex)
+     * @brief Removes the selected `GameObject` from the game world.
+     *
+     * This function destroys the `GameObject` at the index specified by `selectedEntityIndex`
+     * and resets the selection index to -1.
+     *
+     * @param selectedEntityIndex The index of the selected entity to be removed.
+     */
+    void UseImGui::RemoveSelectedEntity(int &selectedEntityIndex)
     {
         // auto gameObjects = GameObjectFactory::GetAllObjectsInCurrentLevel();
         auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
         if (selectedEntityIndex >= 0 && static_cast<size_t>(selectedEntityIndex) < gameObjects.size())
         {
-            auto& entityToDelete = gameObjects[selectedEntityIndex];
+            auto &entityToDelete = gameObjects[selectedEntityIndex];
             GameObjectManager::GetInstance().DestroyObject(entityToDelete->GetInstanceID());
             selectedEntityIndex = -1;
         }
     }
 
-    void UseImGui::AddComponentUI(GameObject* selectedObject, bool& modified)
+    void UseImGui::AddComponentUI(GameObject *selectedObject, bool &modified)
     {
         ImGui::Text("Component Management");
 
         static int selectedComponentIndex = 0;
-        const char* availableComponents[] = {
+        const char *availableComponents[] = {
             "Rigidbody2D",
             "BoxCollider2D",
             "SpriteRender",
             "Script",
             "Animation",
-            "PlayerController"
-        };
+            "PlayerController"};
 
         ImGui::Text("Add Component");
         ImGui::Combo("##ComponentCombo", &selectedComponentIndex, availableComponents,
@@ -1269,7 +1298,20 @@ namespace Ukemochi
         }
     }
 
-    void UseImGui::RemoveComponentUI(GameObject* selectedObject, bool& modified)
+    /*!***********************************************************************
+    \brief
+     Removes components from a selected game object. Provides a UI for removing specific components
+     that exist in the selected game object.
+
+    \param[in] selectedObject
+     A pointer to the selected GameObject from which components may be removed.
+
+    \param[in/out] modified
+     A boolean reference indicating if the GameObject was modified.
+     It is set to true if a component was removed, otherwise remains unchanged.
+
+    *************************************************************************/
+    void UseImGui::RemoveComponentUI(GameObject *selectedObject, bool &modified)
     {
         ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Remove Component"); // Change text color
 
@@ -1342,18 +1384,19 @@ namespace Ukemochi
     }
 
     /**
- * @brief Displays and edits the properties of the selected `GameObject`.
- *
- * This function allows editing of the `Transform` and `Rigidbody2D` components
- * of the `GameObject` using either sliders or input fields. The `modified` flag is set
- * to `true` whenever a property is changed.
- *
- * @param selectedObject The `GameObject` whose properties are being edited.
- * @param modified A reference to a boolean that is set to `true` when any property is modified.
- */
-    void UseImGui::EditEntityProperties(GameObject* selectedObject, bool& modified)
+     * @brief Displays and edits the properties of the selected `GameObject`.
+     *
+     * This function allows editing of the `Transform` and `Rigidbody2D` components
+     * of the `GameObject` using either sliders or input fields. The `modified` flag is set
+     * to `true` whenever a property is changed.
+     *
+     * @param selectedObject The `GameObject` whose properties are being edited.
+     * @param modified A reference to a boolean that is set to `true` when any property is modified.
+     */
+    void UseImGui::EditEntityProperties(GameObject *selectedObject, bool &modified)
     {
-        if (!selectedObject) return;
+        if (!selectedObject)
+            return;
 
         // Store whether the rename mode is enabled
         static bool isRenaming = false;
@@ -1406,7 +1449,9 @@ namespace Ukemochi
             // ImGui::Text("Object Name: %s", selectedObject->GetName().c_str());
         }
 
-        ImGui::Text("Editing properties of: %s", selectedObject->GetName().c_str());
+        ImGui::Text("Editing properties of: ");
+        ImGui::SameLine();
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", selectedObject->GetName().c_str());
 
         // Checkbox to toggle between sliders and input fields
         static bool useSliders = true;
@@ -1435,39 +1480,45 @@ namespace Ukemochi
         {
             if (ImGui::CollapsingHeader("Transform"))
             {
-                Transform& transform = selectedObject->GetComponent<Transform>();
+                Transform &transform = selectedObject->GetComponent<Transform>();
 
                 // Position
                 ImGui::Text("Position");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f)) modified = true;
+                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                        modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat2("##PositionInput", &transform.position.x)) modified = true;
+                    if (ImGui::InputFloat2("##PositionInput", &transform.position.x))
+                        modified = true;
                 }
 
                 // Rotation
                 ImGui::Text("Rotation");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat("##RotationSlider", &transform.rotation, -180.0f, 180.0f)) modified = true;
+                    if (ImGui::SliderFloat("##RotationSlider", &transform.rotation, -180.0f, 180.0f))
+                        modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat("##RotationInput", &transform.rotation)) modified = true;
+                    if (ImGui::InputFloat("##RotationInput", &transform.rotation))
+                        modified = true;
                 }
 
                 // Scale
                 ImGui::Text("Scale");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##ScaleSlider", &transform.scale.x, 70.f, 250.0f)) modified = true;
+                    if (ImGui::SliderFloat2("##ScaleSlider", &transform.scale.x, 70.f, 250.0f))
+                        modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat2("##ScaleInput", &transform.scale.x)) modified = true;
+                    if (ImGui::InputFloat2("##ScaleInput", &transform.scale.x))
+                        modified = true;
                 }
             }
         }
@@ -1477,48 +1528,56 @@ namespace Ukemochi
         {
             if (ImGui::CollapsingHeader("Rigidbody2D"))
             {
-                Rigidbody2D& rb = selectedObject->GetComponent<Rigidbody2D>();
+                Rigidbody2D &rb = selectedObject->GetComponent<Rigidbody2D>();
 
                 // Velocity
                 ImGui::Text("Velocity");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##VelocitySlider", &rb.velocity.x, -50.0f, 50.0f)) modified = true;
+                    if (ImGui::SliderFloat2("##VelocitySlider", &rb.velocity.x, -50.0f, 50.0f))
+                        modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat2("##VelocityInput", &rb.velocity.x)) modified = true;
+                    if (ImGui::InputFloat2("##VelocityInput", &rb.velocity.x))
+                        modified = true;
                 }
 
                 // Mass
                 ImGui::Text("Mass");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat("##MassSlider", &rb.mass, 0.1f, 100.0f)) modified = true;
+                    if (ImGui::SliderFloat("##MassSlider", &rb.mass, 0.1f, 100.0f))
+                        modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat("##MassInput", &rb.mass)) modified = true;
+                    if (ImGui::InputFloat("##MassInput", &rb.mass))
+                        modified = true;
                 }
 
                 // Force
                 ImGui::Text("Force");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat("##ForceSlider", &rb.force.x, 0.1f, 100.0f)) modified = true;
+                    if (ImGui::SliderFloat("##ForceSlider", &rb.force.x, 0.1f, 100.0f))
+                        modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat("##ForceInput", &rb.force.x)) modified = true;
+                    if (ImGui::InputFloat("##ForceInput", &rb.force.x))
+                        modified = true;
                 }
 
                 // Use Gravity Checkbox
                 ImGui::Text("Use Gravity");
-                if (ImGui::Checkbox("##UseGravityCheckbox", &rb.use_gravity)) modified = true;
+                if (ImGui::Checkbox("##UseGravityCheckbox", &rb.use_gravity))
+                    modified = true;
 
                 // Is Kinematic Checkbox
                 ImGui::Text("Is Kinematic");
-                if (ImGui::Checkbox("##IsKinematicCheckbox", &rb.is_kinematic)) modified = true;
+                if (ImGui::Checkbox("##IsKinematicCheckbox", &rb.is_kinematic))
+                    modified = true;
             }
         }
 
@@ -1527,10 +1586,11 @@ namespace Ukemochi
         {
             if (ImGui::CollapsingHeader("BoxCollider2D"))
             {
-                BoxCollider2D& collider = selectedObject->GetComponent<BoxCollider2D>();
+                BoxCollider2D &collider = selectedObject->GetComponent<BoxCollider2D>();
 
                 ImGui::Text("Is Trigger Collider Box");
-                if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger)) modified = true;
+                if (ImGui::Checkbox("##UseColliderCheckbox", &collider.is_trigger))
+                    modified = true;
             }
         }
 
@@ -1539,7 +1599,7 @@ namespace Ukemochi
         {
             if (ImGui::CollapsingHeader("SpriteRender"))
             {
-                SpriteRender& sprite = selectedObject->GetComponent<SpriteRender>();
+                SpriteRender &sprite = selectedObject->GetComponent<SpriteRender>();
 
                 ImGui::Text("Texture Path");
 
@@ -1554,9 +1614,9 @@ namespace Ukemochi
                 // Check for drag-and-drop
                 if (ImGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                    if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
                     {
-                        std::string draggedPath = std::string((const char*)payload->Data);
+                        std::string draggedPath = std::string((const char *)payload->Data);
                         std::filesystem::path filePath(draggedPath);
                         std::string extension = filePath.extension().string();
 
@@ -1590,13 +1650,13 @@ namespace Ukemochi
             }
         }
 
-        //comments
-        // Script Component, drag-and-drop for script path (always editable)
+        // comments
+        //  Script Component, drag-and-drop for script path (always editable)
         if (selectedObject->HasComponent<Script>())
         {
             if (ImGui::CollapsingHeader("Script"))
             {
-                Script& script = selectedObject->GetComponent<Script>();
+                Script &script = selectedObject->GetComponent<Script>();
                 ImGui::Text("Script Path");
 
                 char scriptPathBuffer[256];
@@ -1612,9 +1672,9 @@ namespace Ukemochi
                     // Check for drag-and-drop
                     if (ImGui::BeginDragDropTarget())
                     {
-                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                        if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
                         {
-                            std::string draggedScript = std::string((const char*)payload->Data);
+                            std::string draggedScript = std::string((const char *)payload->Data);
                             std::filesystem::path filePath(draggedScript);
                             std::string extension = filePath.extension().string();
 
@@ -1626,7 +1686,7 @@ namespace Ukemochi
                                 scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
                                 script.scriptPath = draggedScript;
                                 script.scriptName = filePath.stem().string();
-                                MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
+                                MonoObject *newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
                                     script.scriptName);
                                 EntityID newScriptID = selectedObject->GetInstanceID();
                                 ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
@@ -1663,12 +1723,12 @@ namespace Ukemochi
             // TODO: Drag and drop texture to animation should pull the metadata
             if (ImGui::CollapsingHeader("Animation"))
             {
-                auto& animation = selectedObject->GetComponent<Animation>();
+                auto &animation = selectedObject->GetComponent<Animation>();
                 if (!animation.clips.empty())
                 {
                     if (ImGui::TreeNode("Clips"))
                     {
-                        for (auto& clip : animation.clips)
+                        for (auto &clip : animation.clips)
                         {
                             if (ImGui::Selectable(clip.second.name.c_str()))
                             {
@@ -1691,7 +1751,6 @@ namespace Ukemochi
                 ImGui::InputText("CurrentClip", currentClipBuffer, IM_ARRAYSIZE(currentClipBuffer));
                 ImGui::EndDisabled();
 
-                
                 if (ImGui::Button("Clear all Clips"))
                 {
                     animation.clips.clear();
@@ -1705,7 +1764,7 @@ namespace Ukemochi
         {
             if (ImGui::CollapsingHeader("Player"))
             {
-                auto& player = selectedObject->GetComponent<Player>();
+                auto &player = selectedObject->GetComponent<Player>();
                 ImGui::Text("Player Component");
                 ImGui::InputInt("Current Health", &player.currentHealth);
                 ImGui::InputInt("Combo Damage", &player.comboDamage);
@@ -1714,40 +1773,47 @@ namespace Ukemochi
     }
 
     /**
- * @brief Checks if the given file path corresponds to a JSON file.
- *
- * This function verifies if the provided file path ends with the `.json` extension.
- *
- * @param filePath The path of the file to check.
- * @return `true` if the file is a JSON file, otherwise `false`.
- */
-    bool IsJsonFile(const std::string& filePath)
+     * @brief Checks if the given file path corresponds to a JSON file.
+     *
+     * This function verifies if the provided file path ends with the `.json` extension.
+     *
+     * @param filePath The path of the file to check.
+     * @return `true` if the file is a JSON file, otherwise `false`.
+     */
+    bool IsJsonFile(const std::string &filePath)
     {
         return filePath.size() >= 5 && filePath.substr(filePath.size() - 5) == ".json";
     }
 
-
     /**
- * @brief Displays an ImGui interface for managing game entities.
- *
- * This function allows users to create, select, edit, and remove game entities.
- * It validates file paths for entity creation, shows error messages for invalid files,
- * and lets users modify entity properties such as position, rotation, and scale.
- *
- * @return None
- */
+     * @brief Displays an ImGui interface for managing game entities.
+     *
+     * This function allows users to create, select, edit, and remove game entities.
+     * It validates file paths for entity creation, shows error messages for invalid files,
+     * and lets users modify entity properties such as position, rotation, and scale.
+     *
+     * @return None
+     */
     void UseImGui::ShowEntityManagementUI()
     {
         // Begin a dockable window
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
         static char filePath[256] = "../Assets/Prefabs/Player.json";
-        static int selectedEntityID = -1; // Store the ID of the selected entity instead of an index
+        // Sync the selectedEntityID with the Renderer's picked entity
+        static int selectedEntityID = -1;
+        auto &renderer = *ECS::GetInstance().GetSystem<Renderer>();
+
+        // Update the selected entity from object picking
+        size_t pickedEntity = renderer.getSelectedEntityID();
+        if (pickedEntity != static_cast<size_t>(-1))
+        {
+            selectedEntityID = static_cast<int>(pickedEntity);
+        }
+
         m_global_selected = selectedEntityID;
         static bool showError = false;
         static double errorDisplayTime = 0.0f;
-
-        // Persistent flag to track if the selected entity was modified
         static bool modified = false;
 
         // Display the Asset Browser
@@ -1759,23 +1825,37 @@ namespace Ukemochi
 
             for (size_t i = 0; i < gameObjects.size(); ++i)
             {
-                auto& obj = gameObjects[i];
+                auto &obj = gameObjects[i];
                 Ukemochi::EntityID instanceID = obj->GetInstanceID();
 
-                // Display each object in the TreeNode
-                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), selectedEntityID == instanceID))
+                // Highlight the selected entity (picked or clicked in UI)
+                bool isSelected = selectedEntityID == instanceID;
+
+                // Use different colors for picked vs regular selection
+                ImVec4 normalColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+                ImVec4 selectedColor = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow for picked objects
+
+                if (isSelected)
                 {
-                    selectedEntityID = static_cast<int>(instanceID); // Set selected entity by ID
-                    modified = false; // Reset modification flag when a new entity is selected
+                    ImGui::PushStyleColor(ImGuiCol_Text, selectedColor);
                 }
 
-                // Display entity details in a collapsible tree node below the selectable
-                if (selectedEntityID == instanceID)
+                // Display each object in the TreeNode
+                if (ImGui::Selectable((std::to_string(instanceID) + ": " + obj->GetName()).c_str(), isSelected))
                 {
-                    // Show the entity details for the selected object
+                    selectedEntityID = static_cast<int>(instanceID);
+                    modified = false;
+                }
+
+                if (isSelected)
+                {
+                    ImGui::PopStyleColor();
+
+                    // Auto-expand details for picked objects
+                    ImGui::SetNextItemOpen(true);
                     if (ImGui::TreeNode(("Details##" + std::to_string(instanceID)).c_str()))
                     {
-                        DisplayEntityDetails(*obj); // Show the entity details
+                        DisplayEntityDetails(*obj);
                         ImGui::TreePop();
                     }
                 }
@@ -1783,10 +1863,10 @@ namespace Ukemochi
             ImGui::TreePop();
         }
 
+        // Rest of your existing code for entity creation and management...
         ImGui::Text("Entity Management");
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
 
-        // Button to create a new entity from a prefab
         if (ImGui::Button("Create Entity"))
         {
             const std::string prefabDirectory = "../Assets/Prefabs/";
@@ -1797,7 +1877,7 @@ namespace Ukemochi
                 if (ECS::GetInstance().GetLivingEntityCount() == 0)
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(-1);
 
-                auto& go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
+                auto &go = GameObjectManager::GetInstance().CreatePrefabObject(filePath);
                 if (go.GetTag() == "Player")
                 {
                     ECS::GetInstance().GetSystem<Renderer>()->SetPlayer(static_cast<int>(go.GetInstanceID()));
@@ -1813,10 +1893,9 @@ namespace Ukemochi
 
         ImGui::SameLine();
 
-        // Button to create an empty entity
         if (ImGui::Button("Create Empty Entity"))
         {
-            auto& emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
+            auto &emptyObject = GameObjectManager::GetInstance().CreateEmptyObject();
             selectedEntityID = static_cast<int>(emptyObject.GetInstanceID());
             emptyObject.AddComponent<Transform>(Transform{});
             modified = true;
@@ -1825,7 +1904,7 @@ namespace Ukemochi
         if (showError && ImGui::GetTime() - errorDisplayTime < 2.0f)
         {
             ImGui::TextColored(ImVec4(1, 0, 0, 1),
-                "Invalid file type. Only .json files in ../Assets/Prefabs/ can be used to create an object.");
+                               "Invalid file type. Only .json files in ../Assets/Prefabs/ can be used to create an object.");
         }
 
         ImGui::Separator();
@@ -1834,10 +1913,10 @@ namespace Ukemochi
         if (selectedEntityID >= 0)
         {
             auto gameObjects = GameObjectManager::GetInstance().GetAllGOs();
-            GameObject* selectedObject = nullptr;
+            GameObject *selectedObject = nullptr;
 
             // Find the selected object by ID
-            for (auto& obj : gameObjects)
+            for (auto &obj : gameObjects)
             {
                 if (obj->GetInstanceID() == selectedEntityID)
                 {
@@ -1848,36 +1927,76 @@ namespace Ukemochi
 
             if (selectedObject)
             {
+                // Add visual feedback for picked objects
+                if (selectedEntityID == static_cast<int>(renderer.getSelectedEntityID()))
+                {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Selected via Object Picking");
+                }
+                else
+                {
+                    ImGui::Dummy(ImVec2(0.0f, ImGui::GetTextLineHeight()));
+                }
+
                 // Edit the properties of the selected object
                 EditEntityProperties(selectedObject, modified);
 
                 ImGui::Separator();
 
-                // Show the Save button if modifications were made
                 if (modified)
                 {
                     if (ImGui::Button("Save Entity"))
                     {
                         std::cout << "Entity is Saved";
                         SceneManager::GetInstance().SavePrefab(selectedObject, selectedObject->GetName());
-                        modified = false; // Reset modified flag after saving
+                        modified = false;
                     }
                 }
 
-                // Remove Entity button
+                if (Input::IsKeyTriggered(UME_KEY_DELETE) && selectedEntityID >= 0 && !(es_current == ENGINE_STATES::ES_PLAY))
+                {
+                    // Check if the entity exists
+                    if (selectedObject)
+                    {
+                        std::cout << "Deleting Entity with ID: " << selectedEntityID << std::endl;
+                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                        selectedEntityID = -1; // Reset the selected entity ID after deletion
+                        modified = false;      // Reset any modification flags
+                    }
+                    else
+                    {
+                        std::cout << "Invalid Entity ID: " << selectedEntityID << " - Cannot delete" << std::endl;
+                    }
+                }
+
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
+
                 if (ImGui::Button("Remove Entity"))
                 {
-                    RemoveSelectedEntity(selectedEntityID);
-                    selectedEntityID = -1; // Reset selection after removal
-                    modified = false;
+                    if (selectedEntityID != -1)
+                    {
+                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                        selectedEntityID = -1;
+                        modified = false;
+                    }
                 }
+                ImGui::PopStyleColor(3);
             }
         }
 
-        // End the dockable window
         ImGui::End();
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the framebuffer size based on the provided ImGui panel size. If the panel
+     size changes, the framebuffer is resized accordingly.
+
+    \param[in] panelSize
+     The new size of the ImGui panel as an ImVec2 structure containing width (x) and height (y).
+
+    *************************************************************************/
     void UseImGui::UpdateFramebufferSize(ImVec2 panelSize)
     {
         unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
@@ -1888,10 +2007,19 @@ namespace Ukemochi
             m_currentPanelWidth = newWidth;
             m_currentPanelHeight = newHeight;
 
-            ECS::GetInstance().GetSystem<Renderer>()->resizeFramebuffer(m_currentPanelWidth,m_currentPanelHeight);
+            ECS::GetInstance().GetSystem<Renderer>()->resizeFramebuffer(m_currentPanelWidth, m_currentPanelHeight);
         }
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the object picking framebuffer size based on the provided ImGui panel size.
+     If the panel size changes, the object picking framebuffer is resized accordingly.
+
+    \param[in] panelSize
+     The new size of the ImGui panel as an ImVec2 structure containing width (x) and height (y).
+
+    *************************************************************************/
     void UseImGui::UpdateObjectPickingFramebufferSize(ImVec2 panelSize)
     {
         unsigned int newWidth = static_cast<unsigned int>(panelSize.x);
@@ -1907,30 +2035,30 @@ namespace Ukemochi
     }
 
     /**
- * @brief Renders the game scene within an ImGui window and handles mouse interaction.
- *
- * This function displays the game scene in a "Player Loader" window using a texture from the renderer system.
- * It also calculates the mouse position relative to the window and updates the play screen with the mouse's
- * position for interaction. The scene is displayed using ImGui's `Image` widget, and the mouse position
- * within the window is used to set the play screen coordinates.
- *
- * @return None
- */
+     * @brief Renders the game scene within an ImGui window and handles mouse interaction.
+     *
+     * This function displays the game scene in a "Player Loader" window using a texture from the renderer system.
+     * It also calculates the mouse position relative to the window and updates the play screen with the mouse's
+     * position for interaction. The scene is displayed using ImGui's `Image` widget, and the mouse position
+     * within the window is used to set the play screen coordinates.
+     *
+     * @return None
+     */
     void UseImGui::SceneRender()
     {
         static bool showGameView = true;
         // Application& app = Application::Get();
-        //GLuint texture = renderer.getTextureColorBuffer();
+        // GLuint texture = renderer.getTextureColorBuffer();
         GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getTextureColorBuffer();
-        //GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
+        // GLuint texture = ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer();
 
         if (showGameView)
         {
-            ImGui::Begin("Player Loader", &showGameView); // Create a window called "Another Window"
-            
+            ImGui::Begin("Scene Loader", &showGameView); // Create a window called "Another Window"
+
             ImVec2 panelSize = ImGui::GetContentRegionAvail();
-            //UpdateFramebufferSize(panelSize);
-            //UpdateObjectPickingFramebufferSize(panelSize);
+            // UpdateFramebufferSize(panelSize);
+            // UpdateObjectPickingFramebufferSize(panelSize);
 
             float targetAspect = 16.0f / 9.0f;
             float panelAspect = panelSize.x / panelSize.y;
@@ -1950,41 +2078,37 @@ namespace Ukemochi
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offsetY);
 
-            
-            ImGui::Image((ImTextureID)(intptr_t)texture,{displayWidth,displayHeight},
-                {0, 1}, {1, 0});
+            ImGui::Image((ImTextureID)(intptr_t)texture, {displayWidth, displayHeight},
+                         {0, 1}, {1, 0});
             // ImGui::Image((ImTextureID)(intptr_t)texture,
             //              ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
             //                     static_cast<float>(app.GetWindow().GetHeight())), {0, 1}, {1, 0});
 
-
             // Get the position of the ImGui window
-            ImVec2 windowPos = ImGui::GetWindowPos(); // Top-left position of the window
+            ImVec2 windowPos = ImGui::GetWindowPos();   // Top-left position of the window
             ImVec2 windowSize = ImGui::GetWindowSize(); // Size of the window
-
+            playerLoaderTopLeft = windowPos;
             // Get the mouse position in screen coordinates
             ImVec2 mousePos = ImGui::GetMousePos();
             ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 
             ImVec2 panelSizehere = ImGui::GetContentRegionAvail();
 
-            //static_cast<float>(Application::Get().GetWindow().GetWidth());
-            // 
-            // Calculate mouse position relative to the "Player Loader" window
-            float relativeX =  (mousePos.x- cursorPos.x)*1600/ panelSizehere.x;//mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
-            
-            const GLFWvidmode* videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-            //float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
-            // Get mouse position relative to the play window
-            float relativeY = -1*(mousePos.y - cursorPos.y+5) * 900/displayHeight;
-          
+            // static_cast<float>(Application::Get().GetWindow().GetWidth());
 
+            // Calculate mouse position relative to the "Player Loader" window
+            float relativeX = (mousePos.x - cursorPos.x) * 1920 / panelSizehere.x; // mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
+
+            const GLFWvidmode *videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            // float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
+            //  Get mouse position relative to the play window
+            float relativeY = -1 * (mousePos.y - cursorPos.y + 5) * 1080 / displayHeight;
 
             // Check if the mouse is within the bounds of the window
-           // if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
+            // if (relativeX >= 0 && relativeX <= windowSize.x && relativeY >= 0 && relativeY <= windowSize.y)
             {
                 // Optional: Handle the mouse position within the window here
-                //std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
+                // std::cout << "Mouse relative position in 'Player Loader' window: (" << relativeX << ", " << relativeY << ")\n";
             }
             SceneManager::GetInstance().SetPlayScreen(Vec2(relativeX, relativeY));
             ImGui::End();
@@ -1992,7 +2116,7 @@ namespace Ukemochi
             // Add the object picking debug window
             ImGui::Begin("Object Picking Debug View");
             ImGui::Image((ImTextureID)(intptr_t)ECS::GetInstance().GetSystem<Renderer>()->getObjectPickingColorBuffer(),
-                ImVec2(300, 300), ImVec2(0, 1), ImVec2(1, 0));
+                         ImVec2(300, 300), ImVec2(0, 1), ImVec2(1, 0));
             ImGui::End();
         }
     }
@@ -2013,20 +2137,19 @@ namespace Ukemochi
     */
     void UseImGui::ImGuiUpdate()
     {
-        ImGuiIO& io = ImGui::GetIO();
-        Application& app = Application::Get();
+        ImGuiIO &io = ImGui::GetIO();
+        Application &app = Application::Get();
         io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()),
                                 static_cast<float>(app.GetWindow().GetHeight()));
 
-
         // Call the combined function to check and handle file drops
-        //CheckAndHandleFileDrop();
+        // CheckAndHandleFileDrop();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            GLFWwindow *backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
