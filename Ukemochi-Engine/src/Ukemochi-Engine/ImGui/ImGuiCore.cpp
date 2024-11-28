@@ -1169,6 +1169,25 @@ namespace Ukemochi
 
             ImGui::PopStyleColor(3);
         }
+
+        // Display Audio Component
+        if (obj.HasComponent<AudioSource>())
+        {
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.5f, 0.5f, 0.2f));  
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.5f, 0.5f, 0.4f)); 
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 0.5f, 0.5f, 0.6f));
+
+            if (ImGui::TreeNodeEx("Audio Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
+            {
+                AudioSource& audio = obj.GetComponent<AudioSource>();
+                ImGui::Text("Audio Path: %s", audio.audioPath.c_str());
+                ImGui::Text("Audio Name: %s", audio.audioName.c_str());
+
+                ImGui::TreePop();
+            }
+
+            ImGui::PopStyleColor(3);
+        }
     }
 
     /**
@@ -1240,7 +1259,9 @@ namespace Ukemochi
             "SpriteRender",
             "Script",
             "Animation",
-            "PlayerController"};
+            "PlayerController",
+            "Audio"
+        };
 
         ImGui::Text("Add Component");
         ImGui::Combo("##ComponentCombo", &selectedComponentIndex, availableComponents,
@@ -1289,6 +1310,13 @@ namespace Ukemochi
                 if (!selectedObject->HasComponent<Player>())
                 {
                     selectedObject->AddComponent<Player>(Player{});
+                    modified = true;
+                }
+                break;
+            case 6: // Audio
+                if (!selectedObject->HasComponent<AudioSource>())
+                {
+                    selectedObject->AddComponent<AudioSource>(AudioSource{});
                     modified = true;
                 }
                 break;
@@ -1374,6 +1402,16 @@ namespace Ukemochi
                 if (ImGui::Button("Remove Player Component"))
                 {
                     selectedObject->RemoveComponent<Player>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
+            if (selectedObject->HasComponent<AudioSource>())
+            {
+                if (ImGui::Button("Remove Audio Component"))
+                {
+                    selectedObject->RemoveComponent<AudioSource>();
                     modified = true;
                 }
                 ImGui::Spacing();
@@ -1603,8 +1641,11 @@ namespace Ukemochi
 
                 ImGui::Text("Texture Path");
 
+                // Extract the filename from the full path
+                std::string filename = std::filesystem::path(sprite.texturePath).filename().string();
+
                 char texturePathBuffer[256];
-                strncpy(texturePathBuffer, sprite.texturePath.c_str(), sizeof(texturePathBuffer));
+                strncpy(texturePathBuffer, filename.c_str(), sizeof(texturePathBuffer));
                 texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
 
                 ImGui::BeginDisabled(true); // Disable the input box while we use drag-and-drop
@@ -1623,9 +1664,10 @@ namespace Ukemochi
                         if (extension == ".png")
                         {
                             // Valid file type, update texture path
-                            strncpy(texturePathBuffer, draggedPath.c_str(), sizeof(texturePathBuffer));
+                            sprite.texturePath = draggedPath; // Store full path
+                            filename = filePath.filename().string(); // Update displayed filename
+                            strncpy(texturePathBuffer, filename.c_str(), sizeof(texturePathBuffer));
                             texturePathBuffer[sizeof(texturePathBuffer) - 1] = '\0'; // Ensure null termination
-                            sprite.texturePath = draggedPath;
                             modified = true;
                         }
                         else
@@ -1770,6 +1812,85 @@ namespace Ukemochi
                 ImGui::InputInt("Combo Damage", &player.comboDamage);
             }
         }
+
+        if (selectedObject->HasComponent<AudioSource>())
+        {
+            if (ImGui::CollapsingHeader("Audio"))
+            {
+                AudioSource& audio = selectedObject->GetComponent<AudioSource>();
+                ImGui::Text("Audio");
+
+                std::string filename = std::filesystem::path(audio.audioPath).filename().string();
+
+                char audioPathBuffer[256];
+                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
+                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+
+                ImGui::BeginDisabled(true); // Disable input field while using drag-and-drop
+                ImGui::InputText("##AudioPathInput", audioPathBuffer, sizeof(audioPathBuffer));
+                ImGui::EndDisabled();
+
+                if (es_current != ENGINE_STATES::ES_PLAY)
+                {
+
+                    // Check for drag-and-drop
+                    if (ImGui::BeginDragDropTarget())
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                        {
+                            std::string draggedAudio = std::string((const char*)payload->Data);
+                            std::filesystem::path filePath(draggedAudio);
+                            std::string extension = filePath.extension().string();
+
+                            // Validate the file type (assuming only .wav, .mp3 , .ogg are allowed)
+                            if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+                            {
+                                // Valid file type, update script path
+                                //strncpy(audioPathBuffer, draggedAudio.c_str(), sizeof(audioPathBuffer));
+                                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                                audio.audioPath = draggedAudio;
+                                filename = filePath.filename().string(); // Update displayed filename
+                                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
+                                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                                modified = true;
+                            }
+                            else
+                            {
+                                // Invalid file type, show error feedback
+                                ImGui::OpenPopup("InvalidAudioFileType");
+                            }
+                        }
+                        ImGui::EndDragDropTarget();
+                    }
+                    // Play and Stop buttons
+                    if (!audio.audioPath.empty())
+                    {
+                        if (ImGui::Button("Play Audio"))
+                        {
+                            //PlayAudio(audio.audioPath); // Function to handle playback
+                        }
+
+                        ImGui::SameLine();
+
+                        if (ImGui::Button("Stop Audio"))
+                        {
+                            //StopAudio(); // Function to stop playback
+                        }
+                    }
+
+                    // Error Popup for invalid file type
+                    if (ImGui::BeginPopup("InvalidAudioFileType"))
+                    {
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
+                        if (ImGui::Button("OK"))
+                        {
+                            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1852,7 +1973,7 @@ namespace Ukemochi
                     ImGui::PopStyleColor();
 
                     // Auto-expand details for picked objects
-                    ImGui::SetNextItemOpen(true);
+                    //ImGui::SetNextItemOpen(true);
                     if (ImGui::TreeNode(("Details##" + std::to_string(instanceID)).c_str()))
                     {
                         DisplayEntityDetails(*obj);
