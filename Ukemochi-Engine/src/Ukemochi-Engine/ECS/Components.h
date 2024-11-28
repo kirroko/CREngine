@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 // for enemy
 #include "../FrameController.h"
 
+
 namespace Ukemochi
 {
 	/*!***********************************************************************
@@ -268,17 +269,6 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 AudioSource component structure.
-	*************************************************************************/
-	struct AudioSource
-	{
-		FMOD::Sound pSounds;
-		FMOD::Channel pChannels;
-		FMOD::ChannelGroup pChannelGroups;
-	};
-
-	/*!***********************************************************************
-	\brief
 	 Script component structure.
 	*************************************************************************/
 	struct Script
@@ -290,10 +280,25 @@ namespace Ukemochi
 		void *methodInstance = nullptr; // MonoMethod from client script
 	};
 
+	struct Player
+	{
+		int maxHealth = 100;
+		int currentHealth = 100;
+		int maxComboHits = 3;
+		int currentComboHits = 0;
+		int comboDamage = 10;
+		float attackCooldown = 0.5f;
+		float attackTimer = 0.0f;
+		float playerForce = 1500.0f;
+		bool isDead = false;
+		bool canAttack = true;
+		bool isAttacking = false;
+	};
+
 	/*!***********************************************************************
-	\brief
-	 Enemy component structure.
-	*************************************************************************/
+\brief
+ Enemy component structure.
+*************************************************************************/
 	struct Enemy
 	{
 		enum EnemyStates
@@ -315,6 +320,8 @@ namespace Ukemochi
 		EnemyStates state;
 		EnemyTypes type;
 		float posX, posY;
+		float dirX, dirY;
+		float magnitude;
 		float targetX, targetY;
 		float health;
 		float attackPower;
@@ -323,6 +330,7 @@ namespace Ukemochi
 		int nearestObj;
 		mutable int prevObject;
 		bool isCollide;
+		float atktimer = 0.0f;
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
@@ -332,25 +340,6 @@ namespace Ukemochi
 			return (dx * dx + dy * dy) <= (threshold * threshold);
 		}
 
-		EnemyStates GetEnemyState() const
-		{
-			return state;
-		}
-
-		void SetEnemyState(EnemyStates newState)
-		{
-			state = newState;
-		}
-
-		bool IsCollide() const
-		{
-			return isCollide;
-		}
-
-		void SetIsCollide(bool b)
-		{
-			isCollide = b;
-		}
 		Enemy() = default;
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
@@ -360,16 +349,16 @@ namespace Ukemochi
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 120.f;
+				health = 20.f;
 				attackPower = 20.f;
-				attackRange = 0.5f;
-				speed = 150.f;
+				attackRange = 300.f;
+				speed = 100.f;
 				break;
 			case Enemy::WORM:
-				health = 100.f;
+				health = 20.f;
 				attackPower = 10.f;
-				attackRange = 5.f;
-				speed = 150.f;
+				attackRange = 300.f;
+				speed = 100.f;
 				break;
 			case Enemy::DEFAULT:
 				break;
@@ -378,71 +367,7 @@ namespace Ukemochi
 			}
 		}
 
-		void RoamState(Transform &self, std::vector<EntityID> &environmentObjects, Transform &nearestObjTransform, int playerID, Transform &playerTransform)
-		{
-			float targetX = nearestObjTransform.position.x;
-			float targetY = nearestObjTransform.position.y;
-
-			// Move to the nearest object
-			MoveToTarget(self, targetX, targetY, g_FrameRateController.GetDeltaTime(), speed);
-
-			// when target reach find next obj
-			if (ReachedTarget(GetPosition().first, GetPosition().second, targetX, targetY, 0.f) == true)
-			{
-				nearestObj = -1;
-			}
-
-			if (playerID == -1)
-			{
-				return;
-			}
-
-			if (ReachedTarget(GetPosition().first, GetPosition().second,
-							  playerTransform.position.x,
-							  playerTransform.position.y, 250.f) == true)
-			{
-				state = CHASE;
-				return;
-			}
-		}
-
-		void ChaseState(Transform &self, Transform &player)
-		{
-			SetTarget(player);
-
-			MoveToTarget(self, player.position.x,
-						 player.position.y, g_FrameRateController.GetDeltaTime(), speed);
-
-			if (ReachedTarget(GetPosition().first, GetPosition().second,
-							  player.position.x,
-							  player.position.y, 250.f) == false)
-			{
-				state = ROAM;
-				return;
-			}
-
-			// in attack range
-			if (IsPlayerInRange(player))
-			{
-				state = ATTACK;
-				return;
-			}
-		}
-
-		void AttackState()
-		{
-			static float timer = 0.0f;
-
-			timer -= g_FrameRateController.GetDeltaTime();
-
-			if (timer <= 0.0f)
-			{
-				// AttackPlayer(GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Collision>());
-				timer = 3.0f;
-			}
-		}
-
-		void SetTarget(Transform &target)
+		void SetTarget(Transform& target)
 		{
 			this->targetX = target.position.x;
 			this->targetY = target.position.y;
@@ -455,12 +380,22 @@ namespace Ukemochi
 			this->targetY = targetY;
 		}
 
+		template <typename T>
+		T Lerp(T a, T b, float t)
+		{
+			return a + t * (b - a);
+		}
 		// GET TRANSFORM TO MOVE
-		void MoveToTarget(Transform &self, float targetX, float targetY, float deltaTime, float speed)
+		void MoveToTarget(Transform& self, float targetX, float targetY, float deltaTime, float speed)
 		{
 			// Check if already at the target
 			if (ReachedTarget(self.position.x, self.position.y, targetX, targetY, 0.1f))
 			{
+				if (!isCollide)
+				{
+					prevObject = nearestObj;
+					nearestObj = -1;
+				}
 				std::cout << "Enemy already at the target position.\n";
 				return;
 			}
@@ -482,43 +417,72 @@ namespace Ukemochi
 			posX = self.position.x;
 			posY = self.position.y;
 			// Print position for debugging
-			std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
+			//std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
 		}
 
 		// Check if the enemy can attack the player
-		bool IsPlayerInRange(Transform &player) const
+		bool IsPlayerInRange(Transform& player, Transform& enemy) const
 		{
-			float playerX = player.position.x;
-			float playerY = player.position.y;
-			float dx = playerX - posX;
-			float dy = playerY - posY;
-			float distance = std::sqrt(dx * dx + dy * dy);
-			return distance <= attackRange;
+			float dx = player.position.x - enemy.position.x;
+			float dy = player.position.y - enemy.position.y;
+			float distance = dx * dx + dy * dy;
+
+			return distance <= attackRange * attackRange;
 		}
 
+		void WrapToTarget(Transform& enemyTransform, float targetX, float targetY, float deltaTime, float speed)
+		{
+			// Calculate the direction vector from the enemy to the target
+			float dx = targetX - enemyTransform.position.x;
+			float dy = targetY - enemyTransform.position.y;
+
+			// Calculate the current angle to the target
+			float currentAngle = std::atan2(dy, dx); // Initialize angle based on initial direction
+
+			// Calculate the current radius (distance to the target)
+			float radius = std::sqrt(dx * dx + dy * dy);
+
+			// If close enough to the target, snap to it and stop wrapping
+			if (radius < 100.f) // Threshold for "reaching" the target
+			{
+				//enemyTransform.position.x = targetX;
+				//enemyTransform.position.y = targetY;
+				isCollide = false;
+				nearestObj = -1;
+				return;
+			}
+
+			// Reduce the radius over time to spiral inwards
+			float shrinkRate = speed * deltaTime * 0.5f; // Adjust shrink rate for smooth spiraling
+			radius = std::max(radius - shrinkRate, 0.1f); // Ensure the radius doesn't go negative
+
+			// Increment the angle dynamically for circular motion
+			float angularVelocity = speed / (radius + 0.1f); // Adjust angular speed based on the shrinking radius
+			currentAngle += angularVelocity * deltaTime;
+
+			// Calculate the new position along the circular path
+			float newX = targetX - radius * std::cos(currentAngle);
+			float newY = targetY - radius * std::sin(currentAngle);
+
+			// Smoothly move the enemy's position toward the new point
+			enemyTransform.position.x = Lerp(enemyTransform.position.x, newX, deltaTime * speed);
+			enemyTransform.position.y = Lerp(enemyTransform.position.y, newY, deltaTime * speed);
+		}
+
+
+
 		// Attack the player (reduces player's health)
-		void AttackPlayer(float &playerHealth)
+		void AttackPlayer(int& playerHealth)
 		{
 			if (playerHealth > 0.0f)
 			{
 				playerHealth -= attackPower;
+
 				if (playerHealth < 0.0f)
 				{
 					playerHealth = 0.0f; // Ensure health does not go negative
 				}
 			}
-		}
-
-		// Get the current position of the enemy
-		std::pair<float, float> GetPosition() const
-		{
-			return {posX, posY};
-		}
-
-		// Get the current health of the enemy
-		float GetHealth() const
-		{
-			return health;
 		}
 
 		// Reduce the enemy's health when taking damage
@@ -532,18 +496,15 @@ namespace Ukemochi
 		}
 	};
 
-	struct Player
+	/*!***********************************************************************
+	\brief
+	 AudioSource component structure.
+	*************************************************************************/
+	struct AudioSource
 	{
-		int maxHealth = 100;
-		int currentHealth = 100;
-		int maxComboHits = 3;
-		int currentComboHits = 0;
-		int comboDamage = 10;
-		float attackCooldown = 0.5f;
-		float attackTimer = 0.0f;
-		float playerForce = 1500.0f;
-		bool isDead = false;
-		bool canAttack = true;
-		bool isAttacking = false;
+		std::string audioPath;
+		std::string audioName;
+		FMOD::Sound* sound;
+		int pChannelGroups;
 	};
 }

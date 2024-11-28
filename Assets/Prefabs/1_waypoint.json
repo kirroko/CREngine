@@ -1,0 +1,16 @@
+{
+    "GameObject": {
+        "Name": "1_waypoint",
+        "Tag": "WayPoint",
+        "Components": [{
+                "Name": "Transform",
+                "Position": [305.0, 676.0],
+                "Rotation": 0.0,
+                "Scale": [50.0, 50.0]
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/Moon Floor.png",
+                "Shape": 0
+            }]
+    }
+}

@@ -135,12 +135,13 @@ namespace Ukemochi
         *************************************************************************/
         bool IsPlaying(int soundIndex);
 
-    private:
-        FMOD::System* pSystem;  // Pointer to the FMOD system, which manages all sound operations
-
         std::vector<FMOD::ChannelGroup*> pChannelGroups;  // A list of channel groups for managing groups of sounds
 
         std::vector<FMOD::Sound*> pSounds;  // A list of loaded sounds
+    private:
+        FMOD::System* pSystem;  // Pointer to the FMOD system, which manages all sound operations
+
+
 
         std::vector<FMOD::Channel*> pChannels;  // A list of channels playing individual sounds
 
