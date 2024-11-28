@@ -493,6 +493,7 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			isCollide = false;
 		}
 	};
 
