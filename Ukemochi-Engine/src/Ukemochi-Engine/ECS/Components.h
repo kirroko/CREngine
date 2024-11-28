@@ -525,5 +525,18 @@ namespace Ukemochi
 		void AddSoundToSfx(const std::string& name, const std::string& path) {
 			sfx.emplace_back(path, name);
 		}
+
+		// Remove sound by index from the Music category
+		void RemoveSoundFromMusic(size_t index) {
+			if (index < music.size())
+				music.erase(music.begin() + index);
+		}
+
+		// Remove sound by index from the SFX category
+		void RemoveSoundFromSfx(size_t index) {
+			if (index < sfx.size())
+				sfx.erase(sfx.begin() + index);
+		}
+
 	};
 }
