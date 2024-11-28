@@ -130,6 +130,15 @@ namespace Ukemochi
                     // Scale the normalized direction by the enemy's speed
                     enemyphysic.velocity.x = enemycomponent.dirX * enemycomponent.speed;
                     enemyphysic.velocity.y = enemycomponent.dirY * enemycomponent.speed;
+
+                    if (enemycomponent.ReachedTarget(enemyphysic.position.x, enemyphysic.position.y, enemycomponent.targetX, enemycomponent.targetY,20.f))
+                    {
+                        enemyphysic.velocity.x = 0.0f;
+                        enemyphysic.velocity.y = 0.0f;
+
+                        enemycomponent.prevObject = enemycomponent.nearestObj;
+                        enemycomponent.nearestObj = -1;
+                    }
                 }
                 else
                 {
