@@ -1888,6 +1888,15 @@ namespace Ukemochi
                         }
                         ImGui::EndPopup();
                     }
+
+                    // Add input for channelGroups
+                    ImGui::InputInt("Channel Groups", &audio.pChannelGroups); // Allow the user to specify the number of channel groups
+
+                    // Optionally, validate that the number of channel groups is a positive number
+                    if (audio.pChannelGroups < 1)
+                    {
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Channel Groups must be at least 1.");
+                    }
                 }
             }
         }
