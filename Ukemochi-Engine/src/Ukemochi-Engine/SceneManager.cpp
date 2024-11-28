@@ -148,10 +148,10 @@ namespace Ukemochi
     {
         //load all assest
 		UME_ENGINE_TRACE("Loading Assets...");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
+        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
+        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
         //load Asset Manager Texture
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -217,6 +217,8 @@ namespace Ukemochi
     void SceneManager::SceneMangerUpdate()
     {
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
         SceneManagerDraw();
 
@@ -287,7 +289,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlayAllSoundsInGroup(LEVEL1);
         }
 
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
+		/*if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
@@ -306,7 +308,7 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
-		}
+		}*/
 
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 
@@ -665,11 +667,30 @@ namespace Ukemochi
                     {
                         AudioManager audio;
 
-                        //audio.audioPath = componentData["AudioPath"].GetString();
-                        //audio.pChannelGroups = componentData["Channel"].GetInt();
-                        //newObject.AddComponent(std::move(audio));
+                        // Load Music List
+                        const auto& musicArray = componentData["Music"].GetArray();
+                        for (const auto& musicObject : musicArray)
+                        {
+                            std::string name = musicObject["Name"].GetString();
+                            std::string path = musicObject["Path"].GetString();
+                            audio.music.emplace_back(name, path);
+                            audio.AddSoundToMusic(name, path);
+                        }
+
+                        // Load SFX List
+                        const auto& sfxArray = componentData["SFX"].GetArray();
+                        for (const auto& sfxObject : sfxArray)
+                        {
+                            std::string name = sfxObject["Name"].GetString();
+                            std::string path = sfxObject["Path"].GetString();
+                            audio.sfx.emplace_back(name, path);
+                            audio.AddSoundToSfx(name, path);
+                        }
+
+                        // Add the AudioManager component to the object
+                        newObject.AddComponent(std::move(audio));
                     }
-                }
+                    }
                 else
                 {
                     UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
@@ -914,17 +935,41 @@ namespace Ukemochi
 
         		componentsArray.PushBack(playerComponent, allocator);
         	}
-            if (gameobject->HasComponent<AudioManager>())
-            {
+            if (gameobject->HasComponent<AudioManager>()) {
                 Value audioComponent(rapidjson::kObjectType);
                 audioComponent.AddMember("Name", "Audio", allocator);
 
-                const auto& audio = gameobject->GetComponent<AudioManager>();
-                //audioComponent.AddMember("AudioSource", Value(audio.audioName.c_str(), allocator), allocator);
-                
-                //audioComponent.AddMember("AudioPath", Value(audio.audioPath.c_str(), allocator), allocator);
-                //audioComponent.AddMember("Channel", audio.pChannelGroups, allocator);
+                const auto& audioManager = gameobject->GetComponent<AudioManager>();
 
+                // Save Music List
+                Value musicArray(rapidjson::kArrayType);
+                for (const auto& music : audioManager.music) {
+                    Value musicObject(rapidjson::kObjectType);
+
+                    // Add name and path for each music entry
+                    musicObject.AddMember("Name", Value(music.audioName.c_str(), allocator), allocator);
+                    musicObject.AddMember("Path", Value(music.audioPath.c_str(), allocator), allocator);
+
+                    // Add to the music array
+                    musicArray.PushBack(musicObject, allocator);
+                }
+                audioComponent.AddMember("Music", musicArray, allocator);
+
+                // Save SFX List
+                Value sfxArray(rapidjson::kArrayType);
+                for (const auto& sfx : audioManager.sfx) {
+                    Value sfxObject(rapidjson::kObjectType);
+
+                    // Add name and path for each SFX entry
+                    sfxObject.AddMember("Name", Value(sfx.audioName.c_str(), allocator), allocator);
+                    sfxObject.AddMember("Path", Value(sfx.audioPath.c_str(), allocator), allocator);
+
+                    // Add to the SFX array
+                    sfxArray.PushBack(sfxObject, allocator);
+                }
+                audioComponent.AddMember("SFX", sfxArray, allocator);
+
+                // Add the audio component to the components array
                 componentsArray.PushBack(audioComponent, allocator);
             }
 
@@ -1173,17 +1218,41 @@ namespace Ukemochi
 
             componentsArray.PushBack(playerComponent, allocator);
         }
-        if (prefabObj->HasComponent<AudioManager>())
-        {
+        if (prefabObj->HasComponent<AudioManager>()) {
             Value audioComponent(rapidjson::kObjectType);
             audioComponent.AddMember("Name", "Audio", allocator);
 
-            const auto& audio = prefabObj->GetComponent<AudioManager>();
-            //audioComponent.AddMember("AudioSource", Value(audio.audioName.c_str(), allocator), allocator);
-            
-            //audioComponent.AddMember("AudioPath", Value(audio.audioPath.c_str(), allocator), allocator);
-            //audioComponent.AddMember("Channel", audio.pChannelGroups, allocator);
+            const auto& audioManager = prefabObj->GetComponent<AudioManager>();
 
+            // Save Music List
+            Value musicArray(rapidjson::kArrayType);
+            for (const auto& music : audioManager.music) {
+                Value musicObject(rapidjson::kObjectType);
+
+                // Add name and path for each music entry
+                musicObject.AddMember("Name", Value(music.audioName.c_str(), allocator), allocator);
+                musicObject.AddMember("Path", Value(music.audioPath.c_str(), allocator), allocator);
+
+                // Add to the music array
+                musicArray.PushBack(musicObject, allocator);
+            }
+            audioComponent.AddMember("Music", musicArray, allocator);
+
+            // Save SFX List
+            Value sfxArray(rapidjson::kArrayType);
+            for (const auto& sfx : audioManager.sfx) {
+                Value sfxObject(rapidjson::kObjectType);
+
+                // Add name and path for each SFX entry
+                sfxObject.AddMember("Name", Value(sfx.audioName.c_str(), allocator), allocator);
+                sfxObject.AddMember("Path", Value(sfx.audioPath.c_str(), allocator), allocator);
+
+                // Add to the SFX array
+                sfxArray.PushBack(sfxObject, allocator);
+            }
+            audioComponent.AddMember("SFX", sfxArray, allocator);
+
+            // Add the audio component to the components array
             componentsArray.PushBack(audioComponent, allocator);
         }
 

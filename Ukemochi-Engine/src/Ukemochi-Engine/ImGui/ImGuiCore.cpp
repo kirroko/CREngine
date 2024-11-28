@@ -1899,6 +1899,7 @@ namespace Ukemochi
                                     {
                                         // Update the path of the current music entry
                                         audio.music[i].audioPath = draggedAudio;
+                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(i,audio.music[i].audioPath.c_str(), "Music");
                                     }
                                     else
                                     {
@@ -1910,8 +1911,9 @@ namespace Ukemochi
 
                             // Add Play and Stop buttons
                             if (ImGui::Button("Play")) {
+
                                 // Call the audio manager to start playing the music
-                                //audio.PlayMusic(i); this one example
+                                audio.PlayMusic(i); //this one example
                             }
 
                             ImGui::SameLine();
@@ -1919,6 +1921,7 @@ namespace Ukemochi
                             if (ImGui::Button("Stop")) {
                                 // Call the audio manager to stop playing the music
                                   // Assuming StopMusic takes an index or path as argument
+                                audio.StopMusic(i);
                             }
 
                             ImGui::SameLine();
@@ -1979,6 +1982,7 @@ namespace Ukemochi
                                     if (extension == ".wav" || extension == ".mp3" || extension == ".ogg") {
                                         // Update the path of the current SFX entry
                                         audio.sfx[i].audioPath = draggedAudio;
+                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(i, audio.sfx[i].audioPath.c_str(), "SFX");
                                     }
                                     else {
                                         ImGui::OpenPopup("InvalidAudioFileType");
@@ -1989,6 +1993,7 @@ namespace Ukemochi
 
                             // Add Play and Stop buttons for SFX
                             if (ImGui::Button("Play")) {
+                                audio.PlaySFX(i);
                                 // Call the audio manager to start playing the SFX
                                 //audio.PlaySFX(i);  // Assuming PlaySFX takes an index or path as argument
                             }
@@ -1996,6 +2001,7 @@ namespace Ukemochi
                             ImGui::SameLine();
 
                             if (ImGui::Button("Stop")) {
+                                audio.StopSFX(i);
                                 // Call the audio manager to stop playing the SFX
                                 // Assuming StopSFX takes an index or path as argument
                                 //audio.StopSFX(i);
@@ -2005,8 +2011,9 @@ namespace Ukemochi
 
                             // Delete SFX Button
                             if (ImGui::Button("Delete SFX")) {
+                                
                                 // Remove SFX from the list
-                                //audio.RemoveSoundFromSFX(i);
+                                audio.RemoveSoundFromSfx(i);
                             }
 
                             ImGui::TreePop();
