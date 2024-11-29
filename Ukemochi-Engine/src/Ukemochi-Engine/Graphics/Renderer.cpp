@@ -680,9 +680,6 @@ void Renderer::render()
 			batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 
-
-		batchRenderer->endBatch();
-
 		UIRenderer->renderButtons(*camera);
 
 		// Render debug wireframes if debug mode is enabled
@@ -712,6 +709,8 @@ void Renderer::render()
 		// Render text, UI, or additional overlays if needed
 		textRenderer->renderAllText();
 	}
+
+	batchRenderer->endBatch();
 }
 
 void Renderer::handleMouseClick(int mouseX, int mouseY) 

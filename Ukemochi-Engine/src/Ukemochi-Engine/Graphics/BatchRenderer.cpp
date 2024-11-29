@@ -175,13 +175,14 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     glm::vec3 pos3 = glm::vec3(topRight + position, 0.0f); // Top-right
     glm::vec3 pos4 = glm::vec3(topLeft + position, 0.0f); // Top-left
 
-    UME_ENGINE_INFO("Vertices Added for Texture ID: {0}", textureID);
     // Push vertices with updated UV coordinates and texture ID
     vertices.push_back({ pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID });
     vertices.push_back({ pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID });
     vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
     vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
-
+    UME_ENGINE_INFO("Vertices Added for Texture ID: {0}", textureID);
+    UME_ENGINE_INFO("Number of Vertices stored: {0}", vertices.size());
+    UME_ENGINE_INFO("Number of sets of Textures loaded: {0}", vertices.size() / 4);
 }
 
 /*!
@@ -217,6 +218,8 @@ void BatchRenderer2D::flush()
     int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+
+    UME_ENGINE_INFO("Draw Textures Done");
 
     vao->Unbind();
     ebo->Unbind();

@@ -240,7 +240,7 @@ namespace Ukemochi
 				}
 			}
 		}
-
+		UME_ENGINE_INFO("Assets completed loading");
 	}
 
 }
