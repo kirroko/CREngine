@@ -490,7 +490,7 @@ public:
 	glm::vec3 encodeIDToColor(int id);
 	void handleMouseDragTranslation(int mouseX, int mouseY);
 	void handleMouseClickOP(int mouseX, int mouseY); 
-	size_t selectedEntityID = -1; // Sentinel value for no selection
+	size_t selectedEntityID = static_cast<size_t>(-1); // Sentinel value for no selection
 	size_t getSelectedEntityID() { return selectedEntityID; }
 	bool isDragging = false; // Flag to check if dragging is active
 private:

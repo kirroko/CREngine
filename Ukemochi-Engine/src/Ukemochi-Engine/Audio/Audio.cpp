@@ -26,7 +26,7 @@ namespace Ukemochi
      This is where system initialization and resource allocation happen.
     *************************************************************************/
     Audio::Audio()
-        : pSystem(nullptr), numOfAudios(0)
+        : pSystem(nullptr), numOfMusic(0), numOfSFX(0)
     {
         FMOD_RESULT result;
 
@@ -56,7 +56,7 @@ namespace Ukemochi
     Audio::~Audio()
     {
         // Release all sounds
-        for (auto sound : pSounds)
+        for (auto sound : pSFX)
         {
             if (sound)
             {
@@ -64,7 +64,17 @@ namespace Ukemochi
                 sound = nullptr;
             }
         }
-        pSounds.clear();
+        pSFX.clear();
+
+        for (auto sound : pMusic)
+        {
+            if (sound)
+            {
+                sound->release();
+                sound = nullptr;
+            }
+        }
+        pMusic.clear();
 
         // Release all channel groups
         for (auto group : pChannelGroups)
@@ -77,14 +87,23 @@ namespace Ukemochi
         }
         pChannelGroups.clear();
 
-        for (auto chanel : pChannels)
+        for (auto chanel : pSFXChannels)
         {
             if (chanel)
             {
                 chanel = nullptr;
             }
         }
-        pChannels.clear();
+        pSFXChannels.clear();
+
+        for (auto chanel : pMusicChannels)
+        {
+            if (chanel)
+            {
+                chanel = nullptr;
+            }
+        }
+        pMusicChannels.clear();
 
         // Release FMOD system
         if (pSystem)
@@ -92,7 +111,7 @@ namespace Ukemochi
             pSystem = nullptr;
         }
 
-        numOfAudios = 0;
+        numOfMusic = numOfSFX = 0;
     }
 
     /*!***********************************************************************
@@ -145,7 +164,7 @@ namespace Ukemochi
         \param filePath: The file path to the sound file to be loaded.
         \return True if the sound was successfully loaded, false otherwise.
     *************************************************************************/
-    bool Audio::LoadSound(const char* filePath)
+    bool Audio::LoadSound(int index, const char* filePath ,std::string type)
     {
         FMOD::Sound* sound = nullptr;
         FMOD_RESULT result;
@@ -157,41 +176,79 @@ namespace Ukemochi
             std::cerr << "Failed to load sound: " << result << std::endl;
             return false;
         }
+        if (type == "SFX")
+        {
+            // Add the sound to the vector of sounds
+            if (pSFX.empty()||pSFX[index] == nullptr)
+            {
+                pSFX.push_back(sound);
+                pSFXChannels.push_back(nullptr);  // Add a corresponding channel for each sound
+                ++numOfSFX;
+            }
+            else
+            {
+                pSFX[index] = sound;
+            }
 
-        // Add the sound to the vector of sounds
-        pSounds.push_back(sound);
-        pChannels.push_back(nullptr);  // Add a corresponding channel for each sound
-        ++numOfAudios;
+        }
+        else if (type == "Music")
+        {
+            // Add the sound to the vector of sounds
+            if (pMusic.empty() || pMusic[index] == nullptr)
+            {
+                pMusic.push_back(sound);
+                pMusicChannels.push_back(nullptr);  // Add a corresponding channel for each sound
+                ++numOfMusic;
+            }
+            else
+            {
+                pMusic[index] = sound;
+            }
+        }
+
+
 
         return true;
     }
 
-    /*!***********************************************************************
-    \brief
-    Play a sound in a specified group.
-    \param soundIndex: Index of the sound to play.
-    \param groupIndex: Index of the group in which the sound should be played.
-    *************************************************************************/
-    void Audio::PlaySoundInGroup(int soundIndex, int groupIndex)
+    void Audio::PlaySound(int soundIndex, std::string type)
     {
-        if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
+        if (soundIndex < pSFX.size() || soundIndex < pMusic.size())
+
         {
             FMOD_RESULT result;
             FMOD::Channel* channel = nullptr;
 
-            // Play the sound
-            result = pSystem->playSound(pSounds[soundIndex], nullptr, false, &channel);
-            if (result != FMOD_OK)
+            if (type == "SFX")
             {
-                std::cerr << "Failed to play sound: " << result << std::endl;
-                return;
+                // Play the sound
+                result = pSystem->playSound(pSFX[soundIndex], nullptr, false, &channel);
+                if (result != FMOD_OK)
+                {
+                    std::cerr << "Failed to play sound: " << result << std::endl;
+                    return;
+                }
+
+                // Store the channel and assign it to the specific group
+                pSFXChannels[soundIndex] = channel;
+
+                std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
+            else if (type == "Music")
+            {
+                // Play the sound
+                result = pSystem->playSound(pMusic[soundIndex], nullptr, false, &channel);
+                if (result != FMOD_OK)
+                {
+                    std::cerr << "Failed to play sound: " << result << std::endl;
+                    return;
+                }
 
-            // Store the channel and assign it to the specific group
-            pChannels[soundIndex] = channel;
-            pChannels[soundIndex]->setChannelGroup(pChannelGroups[groupIndex]);
+                // Store the channel and assign it to the specific group
+                pMusicChannels[soundIndex] = channel;
 
-            std::cout << "Sound " << soundIndex << " is playing in group " << groupIndex << std::endl;
+                std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
+            }
         }
         else
         {
@@ -201,19 +258,68 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
+    Play a sound in a specified group.
+    \param soundIndex: Index of the sound to play.
+    \param groupIndex: Index of the group in which the sound should be played.
+    *************************************************************************/
+    //void Audio::PlaySoundInGroup(int soundIndex, int groupIndex)
+    //{
+    //    if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
+    //    {
+    //        FMOD_RESULT result;
+    //        FMOD::Channel* channel = nullptr;
+
+    //        // Play the sound
+    //        result = pSystem->playSound(pSounds[soundIndex], nullptr, false, &channel);
+    //        if (result != FMOD_OK)
+    //        {
+    //            std::cerr << "Failed to play sound: " << result << std::endl;
+    //            return;
+    //        }
+
+    //        // Store the channel and assign it to the specific group
+    //        pChannels[soundIndex] = channel;
+    //        pChannels[soundIndex]->setChannelGroup(pChannelGroups[groupIndex]);
+
+    //        std::cout << "Sound " << soundIndex << " is playing in group " << groupIndex << std::endl;
+    //    }
+    //    else
+    //    {
+    //        std::cerr << "Invalid sound or group index!" << std::endl;
+    //    }
+    //}
+
+    /*!***********************************************************************
+    \brief
     Stop playing a specific sound.
     \param soundIndex: Index of the sound to stop.
     *************************************************************************/
-    void Audio::StopSound(int soundIndex)
+    void Audio::StopSound(int soundIndex, std::string type)
     {
-        if (soundIndex < numOfAudios && pChannels[soundIndex] != nullptr)
+        if (type == "SFX")
         {
-            bool isPlaying = false;
-            pChannels[soundIndex]->isPlaying(&isPlaying);
-
-            if (isPlaying)
+            if (soundIndex < numOfSFX && pSFX[soundIndex] != nullptr)
             {
-                pChannels[soundIndex]->stop();  // Stop the sound if it's playing
+                bool isPlaying = false;
+                pSFXChannels[soundIndex]->isPlaying(&isPlaying);
+
+                if (isPlaying)
+                {
+                    pSFXChannels[soundIndex]->stop();  // Stop the sound if it's playing
+                }
+            }
+        }
+        else if (type == "Music")
+        {
+            if (soundIndex < numOfMusic && pMusic[soundIndex] != nullptr)
+            {
+                bool isPlaying = false;
+                pMusicChannels[soundIndex]->isPlaying(&isPlaying);
+
+                if (isPlaying)
+                {
+                    pMusicChannels[soundIndex]->stop();  // Stop the sound if it's playing
+                }
             }
         }
     }
@@ -223,31 +329,31 @@ namespace Ukemochi
     \param soundIndex: Index of the sound to toggle.
     \param groupIndex: Index of the group where the sound resides.
     *************************************************************************/
-    void Audio::ToggleSoundInGroup(int soundIndex, int groupIndex)
-    {
-        if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
-        {
-            bool isPlaying = false;
+    //void Audio::ToggleSoundInGroup(int soundIndex, int groupIndex)
+    //{
+    //    if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
+    //    {
+    //        bool isPlaying = false;
 
-            if (pChannels[soundIndex] != nullptr)
-            {
-                pChannels[soundIndex]->isPlaying(&isPlaying);
-            }
+    //        if (pChannels[soundIndex] != nullptr)
+    //        {
+    //            pChannels[soundIndex]->isPlaying(&isPlaying);
+    //        }
 
-            if (isPlaying)
-            {
-                StopSound(soundIndex);  // Stop the sound if it's currently playing
-            }
-            else
-            {
-                PlaySoundInGroup(soundIndex, groupIndex);  // Play the sound in the specified group if it's not playing
-            }
-        }
-        else
-        {
-            std::cerr << "Invalid sound or group index!" << std::endl;
-        }
-    }
+    //        if (isPlaying)
+    //        {
+    //            StopSound(soundIndex);  // Stop the sound if it's currently playing
+    //        }
+    //        else
+    //        {
+    //            PlaySoundInGroup(soundIndex, groupIndex);  // Play the sound in the specified group if it's not playing
+    //        }
+    //    }
+    //    else
+    //    {
+    //        std::cerr << "Invalid sound or group index!" << std::endl;
+    //    }
+    //}
 
     /*!***********************************************************************
     \brief
@@ -255,12 +361,23 @@ namespace Ukemochi
     \param soundIndex: Index of the sound whose volume is being set.
     \param volume: The volume level (0.0 to 1.0).
     *************************************************************************/
-    void Audio::SetAudioVolume(int soundIndex, float volume)
+    void Audio::SetAudioVolume(int soundIndex, float volume, std::string type)
     {
-        if (soundIndex < pChannels.size() && pChannels[soundIndex] != nullptr)
+        if (type == "SFX")
         {
-            pChannels[soundIndex]->setVolume(volume);
+            if (soundIndex < pSFXChannels.size() && pSFXChannels[soundIndex] != nullptr)
+            {
+                pSFXChannels[soundIndex]->setVolume(volume);
+            }
         }
+        else if (type == "Music")
+        {
+            if (soundIndex < pMusicChannels.size() && pMusicChannels[soundIndex] != nullptr)
+            {
+                pMusicChannels[soundIndex]->setVolume(volume);
+            }
+        }
+
     }
 
     /*!***********************************************************************
@@ -323,33 +440,23 @@ namespace Ukemochi
         pSystem->update();
     }
 
+    bool Audio::IsSFXPlaying(int soundIndex)
+    {
+        bool isPlaying = false;
+        pSFXChannels[soundIndex]->isPlaying(&isPlaying);
+        return isPlaying;
+    }
+
     /*!***********************************************************************
     \brief
     Check if a specific sound is currently playing.
     \param soundIndex: Index of the sound to check.
     \return True if the sound is playing, false otherwise.
     *************************************************************************/
-    bool Audio::IsPlaying(int soundIndex)
+    bool Audio::IsMusicPlaying(int soundIndex)
     {
         bool isPlaying = false;
-        FMOD::ChannelGroup* group;
-        pChannels[soundIndex]->getChannelGroup(&group);
-        bool groupPlay = false;
-        group->isPlaying(&groupPlay);
-        if (!groupPlay)
-        {
-            groupPlay = true; //means level audio is stop
-        }
-        else
-        {
-            groupPlay = false;
-        }
-
-        if (soundIndex < numOfAudios && pChannels[soundIndex] != nullptr && !groupPlay)
-        {
-            pChannels[soundIndex]->isPlaying(&isPlaying);
-
-        }
+        pMusicChannels[soundIndex]->isPlaying(&isPlaying);
         return isPlaying;
     }
 }

@@ -38,6 +38,12 @@ namespace Ukemochi
         {
             GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
 
+            if (object == nullptr)
+            {
+                it = enemyObjects.erase(it); 
+                continue;
+            }
+
             auto& enemycomponent = object->GetComponent<Enemy>();
             auto& enemyphysic = object->GetComponent<Rigidbody2D>();
             auto& enemytransform = object->GetComponent<Transform>();
@@ -86,7 +92,7 @@ namespace Ukemochi
             // Skip collision handling for dead enemies
             if (enemycomponent.isCollide)
             {
-                if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj),300.f))
+                if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj),300.f) && enemycomponent.state == enemycomponent.ROAM)
                 {
                     enemycomponent.nearestObj = -1;
                     enemycomponent.isCollide = false;
@@ -230,7 +236,7 @@ namespace Ukemochi
                 //    break;
                 //}
 
-                enemycomponent.atktimer -= g_FrameRateController.GetDeltaTime();
+                enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
                 if (enemycomponent.atktimer <= 0.0f)
                 {
@@ -269,15 +275,15 @@ namespace Ukemochi
 
         //set collide to true then now the obj is the obj save the pathfinding obj as prev
         enemyComponent.isCollide = true;
-        enemyComponent.prevObject = enemyComponent.nearestObj;
-        enemyComponent.nearestObj = objID;
+        enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
+        enemyComponent.nearestObj = static_cast<int>(objID);
         
         if (obj2->HasComponent<Enemy>())
         {
             auto& enemyComponent2 = obj2->GetComponent<Enemy>();
             enemyComponent2.isCollide = true;
             enemyComponent2.prevObject = enemyComponent2.nearestObj;
-            enemyComponent2.nearestObj = objID;
+            enemyComponent2.nearestObj = static_cast<int>(objID);
         }
 
         /*
@@ -449,7 +455,7 @@ namespace Ukemochi
         enemy->GetComponent<Enemy>().targetX = selectedObject->GetComponent<Transform>().position.x;
         enemy->GetComponent<Enemy>().targetY = selectedObject->GetComponent<Transform>().position.y;
 
-        return selectedObject->GetInstanceID();
+        return static_cast<int>(selectedObject->GetInstanceID());
     }
 
     bool EnemyManager::IsEnemyAwayFromObject(GameObject* enemy, GameObject* targetObject, float minDistanceThreshold) const

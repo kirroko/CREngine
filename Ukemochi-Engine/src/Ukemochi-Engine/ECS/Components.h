@@ -374,10 +374,10 @@ namespace Ukemochi
 		}
 
 		// Set the target destination
-		void SetTarget(float targetX, float targetY)
+		void SetTarget(float newtargetX, float newtargetY)
 		{
-			this->targetX = targetX;
-			this->targetY = targetY;
+			this->targetX = newtargetX;
+			this->targetY = newtargetY;
 		}
 
 		template <typename T>
@@ -386,10 +386,10 @@ namespace Ukemochi
 			return a + t * (b - a);
 		}
 		// GET TRANSFORM TO MOVE
-		void MoveToTarget(Transform& self, float targetX, float targetY, float deltaTime, float speed)
+		void MoveToTarget(Transform& self, float newtargetX, float newtargetY, float deltaTime, float movespeed)
 		{
 			// Check if already at the target
-			if (ReachedTarget(self.position.x, self.position.y, targetX, targetY, 0.1f))
+			if (ReachedTarget(self.position.x, self.position.y, newtargetX, newtargetY, 0.1f))
 			{
 				if (!isCollide)
 				{
@@ -400,8 +400,8 @@ namespace Ukemochi
 				return;
 			}
 
-			float dx = targetX - self.position.x;
-			float dy = targetY - self.position.y;
+			float dx = newtargetX - self.position.x;
+			float dy = newtargetY - self.position.y;
 			float distance = std::sqrt(dx * dx + dy * dy);
 
 			// Normalize direction
@@ -412,8 +412,8 @@ namespace Ukemochi
 			}
 
 			// Move the enemy
-			self.position.x += dx * speed * deltaTime;
-			self.position.y += dy * speed * deltaTime;
+			self.position.x += dx * movespeed * deltaTime;
+			self.position.y += dy * movespeed * deltaTime;
 			posX = self.position.x;
 			posY = self.position.y;
 			// Print position for debugging
@@ -430,11 +430,11 @@ namespace Ukemochi
 			return distance <= attackRange * attackRange;
 		}
 
-		void WrapToTarget(Transform& enemyTransform, float targetX, float targetY, float deltaTime, float speed)
+		void WrapToTarget(Transform& enemyTransform, float newtargetX, float newtargetY, float deltaTime, float movespeed)
 		{
 			// Calculate the direction vector from the enemy to the target
-			float dx = targetX - enemyTransform.position.x;
-			float dy = targetY - enemyTransform.position.y;
+			float dx = newtargetX - enemyTransform.position.x;
+			float dy = newtargetY - enemyTransform.position.y;
 
 			// Calculate the current angle to the target
 			float currentAngle = std::atan2(dy, dx); // Initialize angle based on initial direction
@@ -453,20 +453,20 @@ namespace Ukemochi
 			}
 
 			// Reduce the radius over time to spiral inwards
-			float shrinkRate = speed * deltaTime * 0.5f; // Adjust shrink rate for smooth spiraling
+			float shrinkRate = movespeed * deltaTime * 0.5f; // Adjust shrink rate for smooth spiraling
 			radius = std::max(radius - shrinkRate, 0.1f); // Ensure the radius doesn't go negative
 
 			// Increment the angle dynamically for circular motion
-			float angularVelocity = speed / (radius + 0.1f); // Adjust angular speed based on the shrinking radius
+			float angularVelocity = movespeed / (radius + 0.1f); // Adjust angular speed based on the shrinking radius
 			currentAngle += angularVelocity * deltaTime;
 
 			// Calculate the new position along the circular path
-			float newX = targetX - radius * std::cos(currentAngle);
-			float newY = targetY - radius * std::sin(currentAngle);
+			float newX = newtargetX - radius * std::cos(currentAngle);
+			float newY = newtargetY - radius * std::sin(currentAngle);
 
 			// Smoothly move the enemy's position toward the new point
-			enemyTransform.position.x = Lerp(enemyTransform.position.x, newX, deltaTime * speed);
-			enemyTransform.position.y = Lerp(enemyTransform.position.y, newY, deltaTime * speed);
+			enemyTransform.position.x = Lerp(enemyTransform.position.x, newX, deltaTime * movespeed);
+			enemyTransform.position.y = Lerp(enemyTransform.position.y, newY, deltaTime * movespeed);
 		}
 
 
@@ -476,11 +476,11 @@ namespace Ukemochi
 		{
 			if (playerHealth > 0.0f)
 			{
-				playerHealth -= attackPower;
+				playerHealth -= static_cast<int>(attackPower);
 
 				if (playerHealth < 0.0f)
 				{
-					playerHealth = 0.0f; // Ensure health does not go negative
+					playerHealth = static_cast<int>(0.0f); // Ensure health does not go negative
 				}
 			}
 		}
@@ -493,6 +493,7 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			isCollide = false;
 		}
 	};
 
@@ -500,11 +501,92 @@ namespace Ukemochi
 	\brief
 	 AudioSource component structure.
 	*************************************************************************/
-	struct AudioSource
+	struct AudioManager 
 	{
-		std::string audioPath;
-		std::string audioName;
-		FMOD::Sound* sound;
-		int pChannelGroups;
+		struct AudioSource
+		{
+			std::string audioPath;
+			std::string audioName;
+
+			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) {}
+		};
+
+		std::vector<AudioSource> music; // Music category
+		std::vector<AudioSource> sfx;   // Sfx category
+
+		
+
+		AudioManager() = default;
+
+		void PlayMusic(int index) {
+			Audio::GetInstance().LoadSound(index,music[index].audioPath.c_str(), "Music");
+			Audio::GetInstance().PlaySound(index, "Music");
+		}
+
+		void StopMusic(int index) {
+			Audio::GetInstance().StopSound(index, "Music");
+		}
+
+		void PlaySFX(int index) {
+			Audio::GetInstance().LoadSound(index,sfx[index].audioPath.c_str(), "SFX");
+			Audio::GetInstance().PlaySound(index,"SFX");
+		}
+
+		void StopSFX(int index) {
+			Audio::GetInstance().StopSound(index, "SFX");
+		}
+
+		int GetSFXindex(const std::string& name) {
+			auto it = std::find_if(sfx.begin(), sfx.end(), [&name](const AudioSource& source) {
+				return source.audioName == name;
+				});
+
+			if (it != sfx.end()) {
+				return static_cast<int>(std::distance(sfx.begin(), it)); // Return the index
+			}
+
+			std::cerr << "Sound effect with name '" << name << "' not found in SFX category." << std::endl;
+			return -1; // Return an invalid index if not found
+		}
+
+		int GetMusicindex(const std::string& name) {
+			auto it = std::find_if(music.begin(), music.end(), [&name](const AudioSource& source) {
+				return source.audioName == name;
+				});
+
+			if (it != music.end()) {
+				return static_cast<int>(std::distance(music.begin(), it)); // Return the index
+			}
+
+			std::cerr << "Music with name '" << name << "' not found in Music category." << std::endl;
+			return -1; // Return an invalid index if not found
+		}
+
+		// Add sound to the appropriate category
+		void AddSoundToMusic(const std::string& name) {
+			//music.emplace_back(path, name);
+
+			int index = GetMusicindex(name);
+			Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
+		}
+
+		void AddSoundToSfx(const std::string& name) {
+			//sfx.emplace_back(path, name);
+			int index = GetSFXindex(name);
+			Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
+		}
+
+		// Remove sound by index from the Music category
+		void RemoveSoundFromMusic(size_t index) {
+			if (index < music.size())
+				music.erase(music.begin() + index);
+		}
+
+		// Remove sound by index from the SFX category
+		void RemoveSoundFromSfx(size_t index) {
+			if (index < sfx.size())
+				sfx.erase(sfx.begin() + index);
+		}
+
 	};
 }
