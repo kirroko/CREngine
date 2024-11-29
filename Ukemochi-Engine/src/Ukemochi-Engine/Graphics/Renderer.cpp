@@ -1222,17 +1222,17 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) 
 	{
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
-		return -1; // Sentinel for no entity
+		return static_cast<size_t>(-1); // Sentinel for no entity
 	}
 	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0) {
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
-		return -1; // Sentinel for no entity
+		return static_cast<size_t>(-1); // Sentinel for no entity
 	}
 
 	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0)
 	{
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
-		return -1; // Sentinel for no entity
+		return static_cast<size_t>(-1); // Sentinel for no entity
 	}
 
 	size_t entityID = ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]) - 1;
@@ -1241,7 +1241,7 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	if (entityID == static_cast<size_t>(-1)) 
 	{
 		std::cout << "Invalid entity ID decoded at (" << mouseX << ", " << mouseY << ")" << std::endl;
-		return -1;
+		return static_cast<size_t>(-1);
 	}
 	// Debug output
 	/*std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
@@ -1427,7 +1427,7 @@ void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 	}
 	else
 	{
-		selectedEntityID = -1; // No valid entity selected
+		selectedEntityID = static_cast<size_t>(-1); // No valid entity selected
 		isDragging = false;
 		std::cout << "No valid entity at mouse click position." << std::endl;
 	}
