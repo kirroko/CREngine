@@ -61,6 +61,12 @@ namespace Ukemochi
             // If the enemy is in DEAD state, remove it from the list after processing DeadState
             if (enemycomponent.state == Enemy::DEAD)
             {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                //dont overlap kick sound
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+                {
+                    audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                }
                 object->SetActive(false);
                 it++;
                 //GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
@@ -263,7 +269,7 @@ namespace Ukemochi
                     }
 
                     std::cout << "player hit\n";
-                    enemycomponent.atktimer = 3.0f;
+                    enemycomponent.atktimer = 5.f;
                 }
                 break;
 

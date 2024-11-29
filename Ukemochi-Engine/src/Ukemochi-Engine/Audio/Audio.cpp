@@ -179,7 +179,7 @@ namespace Ukemochi
         if (type == "SFX")
         {
             // Add the sound to the vector of sounds
-            if (pSFX.empty()||pSFX[index] == nullptr)
+            if (pSFX.empty()||index == pSFX.size())
             {
                 pSFX.push_back(sound);
                 pSFXChannels.push_back(nullptr);  // Add a corresponding channel for each sound
@@ -194,7 +194,7 @@ namespace Ukemochi
         else if (type == "Music")
         {
             // Add the sound to the vector of sounds
-            if (pMusic.empty() || pMusic[index] == nullptr)
+            if (pMusic.empty() || index == pMusic.size())
             {
                 pMusic.push_back(sound);
                 pMusicChannels.push_back(nullptr);  // Add a corresponding channel for each sound
@@ -236,6 +236,15 @@ namespace Ukemochi
             }
             else if (type == "Music")
             {
+                result = pMusic[soundIndex]->setMode(FMOD_LOOP_NORMAL);
+                if (result != FMOD_OK) {
+                    std::cerr << "Failed to set loop mode: " << result << std::endl;
+                    return;
+                }
+
+                // Set the loop count (-1 for infinite looping)
+                result = pMusic[soundIndex]->setLoopCount(-1);
+
                 // Play the sound
                 result = pSystem->playSound(pMusic[soundIndex], nullptr, false, &channel);
                 if (result != FMOD_OK)
@@ -248,6 +257,7 @@ namespace Ukemochi
                 pMusicChannels[soundIndex] = channel;
 
                 std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
+
             }
         }
         else

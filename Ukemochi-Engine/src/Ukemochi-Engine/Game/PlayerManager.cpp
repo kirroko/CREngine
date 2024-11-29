@@ -84,14 +84,29 @@ namespace Ukemochi
                 anim.SetAnimation("Idle");
             }
 
+            static bool kickAudio = false;
+
             if (data.attackTimer > 0.0f)
             {
                 data.attackTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
                 data.canAttack = true;
                 data.isAttacking = false;
+
+                
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (data.currentComboHits == 3 && data.attackTimer < 1.f&& kickAudio == false)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+                        anim.attackAnimationFinished = true;
+                    }
+                    kickAudio = true;
+                }
             }
             else
             {
+                kickAudio = false;
                 data.currentComboHits = 0;
                 data.canAttack = false;
                 data.isAttacking = false;
@@ -102,6 +117,7 @@ namespace Ukemochi
 
             if (Input::IsKeyTriggered(UME_KEY_J))
             {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                 // Combat logic happens?
                 if (data.currentComboHits == 0 || data.canAttack)
                 {
@@ -110,9 +126,18 @@ namespace Ukemochi
                     {
                     case 1:
                         anim.SetAnimationImmediately("Attack1");
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack1")))
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
+                        }
                         break;
                     case 2:
                         anim.SetAnimationImmediately("Attack2");
+                        audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack2")))
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
+                        }
                         break;
                     case 3:
                         anim.SetAnimationImmediately("Attack3");

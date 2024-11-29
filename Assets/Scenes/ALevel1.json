@@ -1710,10 +1710,25 @@
                     "Shape": 0
                 }, {
                     "Name": "Audio",
-                    "Music": [],
+                    "Music": [{
+                            "Name": "BGM",
+                            "Path": "../Assets/Audio/GameBGM/ANCIENT RUINS - NewAge MSCNEW2_34.wav"
+                        }],
                     "SFX": [{
                             "Name": "HIT",
                             "Path": "../Assets/Audio/SFX_jump.wav"
+                        }, {
+                            "Name": "Pattack1",
+                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_88.5.wav"
+                        }, {
+                            "Name": "Pattack2",
+                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_89.4.wav"
+                        }, {
+                            "Name": "Pattack3",
+                            "Path": "../Assets/Audio/player/Vsh 45 Fist Kick Short by newagesoup Id-369089.wav"
+                        }, {
+                            "Name": "EnemyKilled",
+                            "Path": "../Assets/Audio/enemydead/Hit 02 by LittleRobotSoundFactory Id-270325.wav"
                         }]
                 }]
         }, {

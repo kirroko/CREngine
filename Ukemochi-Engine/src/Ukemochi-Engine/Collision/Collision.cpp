@@ -441,12 +441,22 @@ namespace Ukemochi
 			
 			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
 
-			if (!playerData.isAttacking)
-				return;
-
-			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+			auto& anim = ECS::GetInstance().GetComponent<Animation>(player);
 
 			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
+
+			if (anim.attackAnimationFinished)//kick
+			{
+				ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+
+				enemy.isCollide = true;
+				enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
+			}
+
+			if (!playerData.isAttacking)
+				return;
+			
+
 			enemy.isCollide = true;
 			enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
 
