@@ -194,10 +194,10 @@ namespace Ukemochi
             Vec2{ screen_width * 0.5f, screen_height * 0.9f },
             1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
 
-        //UME_ENGINE_TRACE("Initializing Collision...");
-        //ECS::GetInstance().GetSystem<Collision>()->Init();
-        //UME_ENGINE_TRACE("Initializing dungeon manager...");
-        //ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+        UME_ENGINE_TRACE("Initializing Collision...");
+        ECS::GetInstance().GetSystem<Collision>()->Init();
+        UME_ENGINE_TRACE("Initializing dungeon manager...");
+        ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
 
     void SceneManager::SceneMangerInit()

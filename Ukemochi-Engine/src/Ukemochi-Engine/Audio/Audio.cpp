@@ -459,4 +459,30 @@ namespace Ukemochi
         pMusicChannels[soundIndex]->isPlaying(&isPlaying);
         return isPlaying;
     }
+    void Audio::RemoveMusic(int index)
+    {
+        if (pMusic.size() > 1)
+        {
+            pMusic.erase(pMusic.begin() + index);
+            pMusicChannels.erase(pMusicChannels.begin() + index);
+        }
+        else
+        {
+            pMusic.clear();
+            pMusicChannels.clear();
+        }
+    }
+    void Audio::RemoveSFX(int index)
+    {
+        if (pSFX.size() > 1)
+        {
+            pSFX.erase(pSFX.begin() + index);
+            pSFXChannels.erase(pSFXChannels.begin() + index);
+        }
+        else
+        {
+            pSFX.clear();
+            pSFXChannels.clear();
+        }
+    }
 }
