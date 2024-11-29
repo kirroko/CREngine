@@ -500,18 +500,33 @@ private:
 	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
 
 // Gizmo
+	// Rotation
 	void drawRotationHandle(const Transform& transform);
-	void renderDebugShapes();
+	void renderRotationAxis();
 	float rotationStartAngle = 0.0f;
 	float rotationStartEntityAngle = 0.0f;
+
+	// Scale
+	void drawScalingHandles(const Transform& transform);
+	void renderScaleAxis();
+
+	// Translation
+	void renderTranslationAxis();
 public:
+	// Rotation
 	bool isRotating = false;
 	bool handleMouseClickForRotation(int mouseX, int mouseY);
 	void handleRotation(int mouseX, int mouseY);
-	enum class InteractionMode { TRANSLATE, ROTATE, NO_STATE };
+	enum class InteractionMode { TRANSLATE, ROTATE, SCALE, NO_STATE };
 	InteractionMode currentMode = InteractionMode::TRANSLATE;
 	void handleMouseClick(int mouseX, int mouseY);
 	void handleMouseDrag(int mouseX, int mouseY);
 
+	// Scale
+	bool handleMouseClickForScaling(int mouseX, int mouseY);
+	void handleScaling(int mouseX, int mouseY);
+	enum class ScalingAxis { NONE, X, Y, UNIFORM};
+	bool isScaling = false;           // Tracks whether scaling is active
+	ScalingAxis scalingAxis = ScalingAxis::NONE; // Tracks the active scaling axis
 };
 #endif

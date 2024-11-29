@@ -733,15 +733,19 @@ void Renderer::render()
 		debugBatchRenderer->endBatch();
 		debug_shader_program->Deactivate();
 	}
-
+	
 	debug_shader_program->Activate();
 	debug_shader_program->setMat4("view", view);
 	debug_shader_program->setMat4("projection", projection);
-	
-	if(currentMode == InteractionMode::ROTATE)
-		renderDebugShapes();
-	debug_shader_program->Deactivate();
 
+	if (currentMode == InteractionMode::TRANSLATE)
+		renderTranslationAxis();
+	else if (currentMode == InteractionMode::ROTATE)
+		renderRotationAxis();
+	else if (currentMode == InteractionMode::SCALE)
+		renderScaleAxis();
+
+	debug_shader_program->Deactivate(); 
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
@@ -1479,8 +1483,9 @@ bool isMouseOnRotationHandle(const glm::vec3& center, const glm::vec2& mousePosi
 	return glm::abs(distance - radius) < threshold; // Near the circle's edge
 }
 
-void Renderer::renderDebugShapes()
+void Renderer::renderRotationAxis()
 {
+
 	debugBatchRenderer->beginBatch();
 
 	// Check if an entity is selected
@@ -1497,6 +1502,7 @@ void Renderer::renderDebugShapes()
 	}
 
 	debugBatchRenderer->endBatch();
+
 }
 
 bool Renderer::handleMouseClickForRotation(int mouseX, int mouseY)
@@ -1553,6 +1559,13 @@ void Renderer::handleMouseClick(int mouseX, int mouseY)
 			isDragging = false;
 		}
 	}
+	else if (currentMode == InteractionMode::SCALE)
+	{
+		if (handleMouseClickForScaling(mouseX, mouseY))
+		{
+			isDragging = false; // Scaling takes precedence over dragging
+		}
+	}
 }
 
 void Renderer::handleMouseDrag(int mouseX, int mouseY)
@@ -1566,4 +1579,158 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 	{
 		handleRotation(mouseX, mouseY);
 	}
+	else if (currentMode == InteractionMode::SCALE)
+	{
+		handleScaling(mouseX, mouseY);
+	}
 }
+
+void Renderer::renderScaleAxis()
+{
+
+	debugBatchRenderer->beginBatch();
+
+	if (selectedEntityID != -1 && ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+		drawScalingHandles(transform);
+	}
+
+	debugBatchRenderer->endBatch();
+
+}
+
+void Renderer::drawScalingHandles(const Transform& transform)
+{
+	glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+	// Define the length of the scaling handles based on entity size
+	float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.4f;
+	// X-axis handle (red line and box)
+	glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
+	debugBatchRenderer->drawDebugLine(entityCenter, xHandleEnd, glm::vec3(1.0f, 0.0f, 0.0f)); // Red line
+	debugBatchRenderer->drawDebugBox(xHandleEnd, glm::vec2(30.f, 30.f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f); // Small red box
+
+	// Y-axis handle (green line and box)
+	glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
+	debugBatchRenderer->drawDebugLine(entityCenter, yHandleEnd, glm::vec3(0.0f, 1.0f, 0.0f)); // Green line
+	debugBatchRenderer->drawDebugBox(yHandleEnd, glm::vec2(30.f, 30.f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f); // Small green box
+
+	// Uniform scaling handle (center box)
+	glm::vec2 centerBoxSize(40.f, 40.f);
+	debugBatchRenderer->drawDebugBox(entityCenter, centerBoxSize, glm::vec3(0.5f, 0.5f, 0.5f), 1.0f); // Grey box
+}
+
+bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
+{
+	if (selectedEntityID != -1)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition(mouseX, mouseY);
+		glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+		float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.4f;
+
+		// Check X-axis handle
+		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
+		if (glm::length(mousePosition - xHandleEnd) <= 15.0f) // Match handle size (30.f / 2)
+		{
+			scalingAxis = ScalingAxis::X;
+			isScaling = true;
+			return true;
+		}
+
+		// Check Y-axis handle
+		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
+		if (glm::length(mousePosition - yHandleEnd) <= 15.0f) // Match handle size (30.f / 2)
+		{
+			scalingAxis = ScalingAxis::Y;
+			isScaling = true;
+			return true;
+		}
+
+		// Check Uniform handle (center box)
+		if (glm::length(mousePosition - entityCenter) <= 10.0f) // Match uniform box size (20.f / 2)
+		{
+			scalingAxis = ScalingAxis::UNIFORM;
+			isScaling = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Renderer::handleScaling(int mouseX, int mouseY)
+{
+	if (isScaling && selectedEntityID != -1)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition(mouseX, mouseY);
+		glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+		// Calculate the delta from the entity center
+		glm::vec2 delta = mousePosition - entityCenter;
+
+		if (scalingAxis == ScalingAxis::X)
+		{
+			transform.scale.x = glm::abs(delta.x); // Scale based on X-axis distance
+		}
+		else if (scalingAxis == ScalingAxis::Y)
+		{
+			transform.scale.y = glm::abs(delta.y); // Scale based on Y-axis distance
+		}
+		else if (scalingAxis == ScalingAxis::UNIFORM)
+		{
+			float uniformScale = glm::length(delta);
+			transform.scale.x = uniformScale;
+			transform.scale.y = uniformScale;
+		}
+	}
+}
+
+void Renderer::renderTranslationAxis()
+{
+	if (selectedEntityID == -1 || !ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+		return; // No valid entity selected
+
+	// Get the transform component of the selected entity
+	auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+	glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+	// Define the length of the translation axis
+	float axisLength = glm::max(transform.scale.x, transform.scale.y) * 0.35f;
+
+	// Define colors for the axes
+	glm::vec3 xAxisColor = glm::vec3(1.0f, 0.0f, 0.0f); // Red for X-axis
+	glm::vec3 yAxisColor = glm::vec3(0.0f, 1.0f, 0.0f); // Green for Y-axis
+
+	// Arrowhead size
+	float arrowSize = axisLength * 0.1f;
+
+	debugBatchRenderer->beginBatch();
+
+	// Draw the X-axis
+	glm::vec2 xAxisEnd = entityCenter + glm::vec2(axisLength, 0.0f);
+	debugBatchRenderer->drawDebugLine(entityCenter, xAxisEnd, xAxisColor);
+
+	// Draw arrowhead for X-axis
+	glm::vec2 xArrowLeft = xAxisEnd + glm::vec2(-arrowSize, arrowSize * 0.5f);
+	glm::vec2 xArrowRight = xAxisEnd + glm::vec2(-arrowSize, -arrowSize * 0.5f);
+	debugBatchRenderer->drawDebugLine(xAxisEnd, xArrowLeft, xAxisColor);
+	debugBatchRenderer->drawDebugLine(xAxisEnd, xArrowRight, xAxisColor);
+
+	// Draw the Y-axis
+	glm::vec2 yAxisEnd = entityCenter + glm::vec2(0.0f, axisLength);
+	debugBatchRenderer->drawDebugLine(entityCenter, yAxisEnd, yAxisColor);
+
+	// Draw arrowhead for Y-axis
+	glm::vec2 yArrowLeft = yAxisEnd + glm::vec2(-arrowSize * 0.5f, -arrowSize);
+	glm::vec2 yArrowRight = yAxisEnd + glm::vec2(arrowSize * 0.5f, -arrowSize);
+	debugBatchRenderer->drawDebugLine(yAxisEnd, yArrowLeft, yAxisColor);
+	debugBatchRenderer->drawDebugLine(yAxisEnd, yArrowRight, yAxisColor);
+
+	debugBatchRenderer->endBatch();
+}
+
