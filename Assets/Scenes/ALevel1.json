@@ -730,7 +730,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1258.0, 420.0],
+                    "Position": [1158.0, 420.0],
                     "Rotation": 0.0,
                     "Scale": [156.0, 200.0]
                 }, {
