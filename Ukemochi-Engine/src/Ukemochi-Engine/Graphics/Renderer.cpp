@@ -1606,16 +1606,16 @@ void Renderer::drawScalingHandles(const Transform& transform)
 	glm::vec2 entityCenter(transform.position.x, transform.position.y);
 
 	// Define the length of the scaling handles based on entity size
-	float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.4f;
+	float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
 	// X-axis handle (red line and box)
 	glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
 	debugBatchRenderer->drawDebugLine(entityCenter, xHandleEnd, glm::vec3(1.0f, 0.0f, 0.0f)); // Red line
-	debugBatchRenderer->drawDebugBox(xHandleEnd, glm::vec2(30.f, 30.f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f); // Small red box
+	debugBatchRenderer->drawDebugBox(xHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f); // Small red box
 
 	// Y-axis handle (green line and box)
 	glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
 	debugBatchRenderer->drawDebugLine(entityCenter, yHandleEnd, glm::vec3(0.0f, 1.0f, 0.0f)); // Green line
-	debugBatchRenderer->drawDebugBox(yHandleEnd, glm::vec2(30.f, 30.f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f); // Small green box
+	debugBatchRenderer->drawDebugBox(yHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f); // Small green box
 
 	// Uniform scaling handle (center box)
 	glm::vec2 centerBoxSize(40.f, 40.f);
@@ -1630,11 +1630,11 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		glm::vec2 mousePosition(mouseX, mouseY);
 		glm::vec2 entityCenter(transform.position.x, transform.position.y);
 
-		float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.4f;
+		float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
 
 		// Check X-axis handle
 		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
-		if (glm::length(mousePosition - xHandleEnd) <= 15.0f) // Match handle size (30.f / 2)
+		if (glm::length(mousePosition - xHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
 		{
 			scalingAxis = ScalingAxis::X;
 			isScaling = true;
@@ -1643,7 +1643,7 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 
 		// Check Y-axis handle
 		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
-		if (glm::length(mousePosition - yHandleEnd) <= 15.0f) // Match handle size (30.f / 2)
+		if (glm::length(mousePosition - yHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
 		{
 			scalingAxis = ScalingAxis::Y;
 			isScaling = true;
@@ -1651,7 +1651,7 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		}
 
 		// Check Uniform handle (center box)
-		if (glm::length(mousePosition - entityCenter) <= 10.0f) // Match uniform box size (20.f / 2)
+		if (glm::length(mousePosition - entityCenter) <= 20.0f) // Match uniform box size (40.f / 2)
 		{
 			scalingAxis = ScalingAxis::UNIFORM;
 			isScaling = true;
