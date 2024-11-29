@@ -1734,3 +1734,10 @@ void Renderer::renderTranslationAxis()
 	debugBatchRenderer->endBatch();
 }
 
+void Renderer::resetGizmo()
+{
+	// Reset selectedEntityID when switching scenes
+	selectedEntityID = -1;
+	isScaling = false;
+	isRotating = false;
+}

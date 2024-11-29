@@ -513,6 +513,7 @@ private:
 	// Translation
 	void renderTranslationAxis();
 public:
+	void resetGizmo();
 	// Rotation
 	bool isRotating = false;
 	bool handleMouseClickForRotation(int mouseX, int mouseY);

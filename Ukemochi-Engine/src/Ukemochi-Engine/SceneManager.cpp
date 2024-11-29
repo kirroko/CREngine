@@ -1014,6 +1014,7 @@ namespace Ukemochi
         {
             std::cerr << "Failed to save scene to file: " << file << std::endl;
         }
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
     }
 
     void SceneManager::CreateNewScene(const std::string& file_name)
