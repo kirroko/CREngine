@@ -447,6 +447,7 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 
 			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 			enemy.isCollide = true;
 			enemy.TakeDamage(playerData.comboDamage);
 

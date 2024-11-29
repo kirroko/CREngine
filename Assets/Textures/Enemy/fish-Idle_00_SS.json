@@ -5,10 +5,10 @@
         "PivotX": 0.5,
         "PivotY": 0.5,
         "PixelsPerUnit": 50,
-        "TotalFrames": 36,
+        "TotalFrames": 41,
         "PixelWidth": 515,
         "PixelHeight": 285,
-        "TextureWidth": 3604,
+        "TextureWidth": 3840,
         "TextureHeight": 2048,
         "FrameTime": 0.05000000074505806,
         "Looping": true
