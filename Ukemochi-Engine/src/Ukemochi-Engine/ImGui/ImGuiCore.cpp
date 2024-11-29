@@ -141,6 +141,14 @@ namespace Ukemochi
         {
             ImGui::MenuItem("Enable Docking", NULL, &enableDocking);
 
+            static float fontSize = 1.5f; // Default font scale (1.0 = 100%)
+
+            ImGui::Text("Font Size:");
+            if (ImGui::SliderFloat("##FontSize", &fontSize, 1.0f, 4.0f, "%.1fx"))
+            {
+                ImGui::GetIO().FontGlobalScale = fontSize; // Apply the new font scale
+            }
+
             if (ImGui::MenuItem("Quit"))
             {
                 es_current = ENGINE_STATES::ES_QUIT;
@@ -221,7 +229,7 @@ namespace Ukemochi
 
         Transform &transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 
-        auto &camera = ECS::GetInstance().GetSystem<Camera>();
+        const auto &camera = ECS::GetInstance().GetSystem<Camera>();
 
         // Use the camera's view and projection matrices
         glm::mat4 viewMatrix = camera->getCameraViewMatrix();
@@ -1859,7 +1867,7 @@ namespace Ukemochi
 
                     // List existing music
                     for (size_t i = 0; i < audio.music.size(); ++i) {
-                        ImGui::PushID(i);
+                        ImGui::PushID(static_cast<int>(i));
                         if (ImGui::TreeNode(("Music " + std::to_string(i)).c_str())) {
                             char newName[128] = "";
                             char newPath[256] = "";
@@ -1906,7 +1914,7 @@ namespace Ukemochi
                                     {
                                         // Update the path of the current music entry
                                         audio.music[i].audioPath = draggedAudio;
-                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(i,audio.music[i].audioPath.c_str(), "Music");
+                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i),audio.music[i].audioPath.c_str(), "Music");
                                     }
                                     else
                                     {
@@ -1920,7 +1928,7 @@ namespace Ukemochi
                             if (ImGui::Button("Play")) {
 
                                 // Call the audio manager to start playing the music
-                                audio.PlayMusic(i); //this one example
+                                audio.PlayMusic(static_cast<int>(i)); //this one example
                             }
 
                             ImGui::SameLine();
@@ -1928,7 +1936,7 @@ namespace Ukemochi
                             if (ImGui::Button("Stop")) {
                                 // Call the audio manager to stop playing the music
                                   // Assuming StopMusic takes an index or path as argument
-                                audio.StopMusic(i);
+                                audio.StopMusic(static_cast<int>(i));
                             }
 
                             ImGui::SameLine();
@@ -1936,7 +1944,7 @@ namespace Ukemochi
                             // Delete Music Button
                             if (ImGui::Button("Delete Music")) {
                                 // Remove music from the list
-                                audio.RemoveSoundFromMusic(i);
+                                audio.RemoveSoundFromMusic(static_cast<int>(i));
                             }
 
                             ImGui::TreePop();
@@ -1958,7 +1966,7 @@ namespace Ukemochi
 
                     // List existing SFX
                     for (size_t i = 0; i < audio.sfx.size(); ++i) {
-                        ImGui::PushID(i);
+                        ImGui::PushID(static_cast<int>(i));
                         if (ImGui::TreeNode(("SFX " + std::to_string(i)).c_str())) {
                             char newName[128] = "";
                             char newPath[256] = "";
@@ -1989,7 +1997,7 @@ namespace Ukemochi
                                     if (extension == ".wav" || extension == ".mp3" || extension == ".ogg") {
                                         // Update the path of the current SFX entry
                                         audio.sfx[i].audioPath = draggedAudio;
-                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(i, audio.sfx[i].audioPath.c_str(), "SFX");
+                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i), audio.sfx[i].audioPath.c_str(), "SFX");
                                     }
                                     else {
                                         ImGui::OpenPopup("InvalidAudioFileType");
@@ -2000,7 +2008,7 @@ namespace Ukemochi
 
                             // Add Play and Stop buttons for SFX
                             if (ImGui::Button("Play")) {
-                                audio.PlaySFX(i);
+                                audio.PlaySFX(static_cast<int>(i));
                                 // Call the audio manager to start playing the SFX
                                 //audio.PlaySFX(i);  // Assuming PlaySFX takes an index or path as argument
                             }
@@ -2008,7 +2016,7 @@ namespace Ukemochi
                             ImGui::SameLine();
 
                             if (ImGui::Button("Stop")) {
-                                audio.StopSFX(i);
+                                audio.StopSFX(static_cast<int>(i));
                                 // Call the audio manager to stop playing the SFX
                                 // Assuming StopSFX takes an index or path as argument
                                 //audio.StopSFX(i);
@@ -2441,7 +2449,7 @@ namespace Ukemochi
             // Calculate mouse position relative to the "Player Loader" window
             float relativeX = (mousePos.x - cursorPos.x) * 1920 / panelSizehere.x; // mousePos.x - windowPos.x;// * static_cast<float>(Application::Get().GetWindow().GetWidth())/windowSize.x;
 
-            const GLFWvidmode *videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            //const GLFWvidmode *videomode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             // float relativeY = (windowSize.y - (mousePos.y - windowPos.y));
             //  Get mouse position relative to the play window
             float relativeY = -1 * (mousePos.y - cursorPos.y + 5) * 1080 / displayHeight;

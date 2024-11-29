@@ -15,6 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DungeonManager.h"				  // for forward declaration
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
+#include "../Game/EnemyManager.h"
 
 namespace Ukemochi
 {
@@ -162,6 +163,8 @@ namespace Ukemochi
 	{
 		for (auto& entity : rooms[room_id].entities)
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
+
+		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
 	}
 
 	/*!***********************************************************************

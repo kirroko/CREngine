@@ -33,7 +33,7 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight();
 
 		//Create the game UI, elements are combined temporary
-		CreateImage("gameUI", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 9);
+		CreateImage("gameUI", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 8);
 
 		//CreateText("text1", "sample text",
 		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },

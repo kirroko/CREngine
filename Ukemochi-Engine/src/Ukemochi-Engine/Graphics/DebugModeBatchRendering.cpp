@@ -149,6 +149,28 @@ void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::ve
     vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f), color });
 }
 
+void DebugBatchRenderer2D::drawDebugCircle(const glm::vec2& center, float radius, const glm::vec3& color, int segments)
+{
+    if (vertices.size() + segments * 2 >= maxShapes * 4) {
+        flush();
+        beginBatch();
+    }
+
+    float angleStep = 2.0f * 3.14159265359f / segments;
+    glm::vec2 prevPoint = center + glm::vec2(cos(0.0f), sin(0.0f)) * radius;
+
+    for (int i = 1; i <= segments; ++i) {
+        float angle = i * angleStep;
+        glm::vec2 currentPoint = center + glm::vec2(cos(angle), sin(angle)) * radius;
+
+        // Add line segment
+        vertices.push_back({ glm::vec3(prevPoint, 0.0f), color });
+        vertices.push_back({ glm::vec3(currentPoint, 0.0f), color });
+
+        prevPoint = currentPoint;
+    }
+}
+
 /*!***********************************************************************
 \brief
 Ends the current batch by rendering all the vertices in the buffer.
