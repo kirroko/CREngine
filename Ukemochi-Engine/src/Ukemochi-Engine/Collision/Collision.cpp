@@ -112,9 +112,16 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 2 };  // Min Y is halfway down the object
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.5f };  // Min Y is halfway down the object
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
+		}
+		else if(tag == "Knife")
+		{
+			box.min = { -BOUNDING_BOX_SIZE * 1.5f* trans.scale.x + trans.position.x,
+						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			box.max = { BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
+						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		}
 		else
 		{
@@ -437,11 +444,11 @@ namespace Ukemochi
 			if (!playerData.isAttacking)
 				return;
 
+			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+
 			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
-
+			enemy.isCollide = true;
 			enemy.TakeDamage(playerData.comboDamage);
-
-			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 
 			std::cout << "enemy hit\n";
 		}
@@ -470,9 +477,15 @@ namespace Ukemochi
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			}
+
 			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+			//if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+			//	ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
 		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment"
 			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
@@ -486,9 +499,14 @@ namespace Ukemochi
 			}
 			else
 			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+				}
 				// Play a sound effect on collision
-				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-					ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+				//if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+				//	ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 
 			}
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
@@ -505,10 +523,14 @@ namespace Ukemochi
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			}
 			// Play a sound effect on collision
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
+			//if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
+			//	ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
 	}
 

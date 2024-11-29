@@ -38,6 +38,12 @@ namespace Ukemochi
         {
             GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
 
+            if (object == nullptr)
+            {
+                it = enemyObjects.erase(it); 
+                continue;
+            }
+
             auto& enemycomponent = object->GetComponent<Enemy>();
             auto& enemyphysic = object->GetComponent<Rigidbody2D>();
             auto& enemytransform = object->GetComponent<Transform>();
@@ -86,7 +92,7 @@ namespace Ukemochi
             // Skip collision handling for dead enemies
             if (enemycomponent.isCollide)
             {
-                if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj),300.f))
+                if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj),300.f) && enemycomponent.state == enemycomponent.ROAM)
                 {
                     enemycomponent.nearestObj = -1;
                     enemycomponent.isCollide = false;
