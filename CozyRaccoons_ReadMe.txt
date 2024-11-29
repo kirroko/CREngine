@@ -1,5 +1,5 @@
 UKEMOCHI BY COZY RACCOONS
-Ukemochi is a adventure game featuring a Soul Harvest mechanic combined with Hack-and-Slash combat.
+Guide Mochi, the adventurous fox chef, through perilous dungeons filled with corrupted foes in this precise and challenging 2D action game. Harvest souls, uncover hidden truths, and bring peace to a famine-stricken land as you navigate handcrafted dangers in a quest for the remnants of a forgotten deity. 
 
 TEAM ROSTER
 Wong Jun Yu Kean (Product Manager)
@@ -12,17 +12,13 @@ Tan Shun Zhi Tomy (Graphics Champion)
 Chia Naomi Maidison Yu Ning (Animation Champion)
 
 USER CONTROLS
-WASD - move player
-R/T - rotate the player
-F/G - scale the player
-U - toggle debug draw
-P - decrease volume
-O - increase volume
-M - mute volume
-N - unmute volume
-L - object clone
+WASD - Move the player
+J - Use knife attack
+F11 - Toggle full screen/window modes
 
 EDITOR CONTROLS
-Q - Zoom in
-E - Zoom out
-arrow keys - Camera movement
+Arrow keys - Move the camera
+Q - Zoom the camera in
+E - Zoom the camera out
+U - Toggle debug draw
+DEL - Delete the current entity

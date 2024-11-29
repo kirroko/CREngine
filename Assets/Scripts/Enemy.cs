@@ -33,12 +33,12 @@ public class Enemy : BaseScript
     GameObject playerObj = null;
 
     private Vector2 direction;
-    private float movementSpeed = 1.0f; // Adjust movement speed
-    //private float smoothingFactor = 0.05f;
-    float currentDirX = 0.0f; // Initialize and store outside of loop/scope for persistent direction state
-    float currentDirY = 0.0f;
+    // private float movementSpeed = 1.0f; // Adjust movement speed
+    // private float smoothingFactor = 0.05f;
+    // float currentDirX = 0.0f; // Initialize and store outside of loop/scope for persistent direction state
+    // float currentDirY = 0.0f;
 
-    Transform playerTran;
+    // Transform playerTran;
     
     public override void Start()
     {

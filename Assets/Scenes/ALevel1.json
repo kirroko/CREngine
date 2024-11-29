@@ -730,7 +730,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1258.0, 420.0],
+                    "Position": [1158.0, 420.0],
                     "Rotation": 0.0,
                     "Scale": [156.0, 200.0]
                 }, {
@@ -1654,7 +1654,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1667,7 +1667,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1680,7 +1680,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1693,7 +1693,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1706,7 +1706,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }, {
                     "Name": "Audio",
