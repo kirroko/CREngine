@@ -224,29 +224,12 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::ROTATE;
             std::cout << "Switched to Rotate Mode\n";
         }
+        if (Input::IsKeyTriggered(GLFW_KEY_0))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
+            std::cout << "Switched to Rotate Mode\n";
+        }
 
-
-        //// On mouse button press, start dragging
-        //if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
-        //{
-        //    ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
-        //}
-
-        //// On mouse movement, continue dragging if active
-        //if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-        //{
-        //    ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
-        //}
-
-        //// On mouse button release, stop dragging
-        //if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
-        //{
-        //    ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
-        //    ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
-        //}
-        
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
@@ -261,10 +244,6 @@ namespace Ukemochi
         // On mouse movement
         if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            /*ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(
-                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x) + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y) + ECS::GetInstance().GetSystem<Camera>()->position.y
-            );*/
             int mouseX = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().x)) +
                 static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.x));
             int mouseY = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().y)) +
@@ -278,6 +257,7 @@ namespace Ukemochi
         {
             ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
             ECS::GetInstance().GetSystem<Renderer>()->isRotating = false;
+            ECS::GetInstance().GetSystem<Renderer>()->isScaling = false;
             ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = static_cast<size_t>(-1);
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::NO_STATE;
         }
@@ -1019,6 +999,7 @@ namespace Ukemochi
         {
             std::cerr << "Failed to save scene to file: " << file << std::endl;
         }
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
     }
 
     void SceneManager::CreateNewScene(const std::string& file_name)

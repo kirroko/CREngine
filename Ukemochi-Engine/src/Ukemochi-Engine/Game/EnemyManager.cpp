@@ -39,7 +39,9 @@ namespace Ukemochi
         for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
         {
             GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
-            if (object->GetActive() == false)
+            object->GetComponent<Animation>().SetAnimation("Idle");
+
+            if (object ->GetActive() == false)
             {
                 it++;
                 continue;

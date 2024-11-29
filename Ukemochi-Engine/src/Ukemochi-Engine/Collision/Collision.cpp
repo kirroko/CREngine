@@ -457,6 +457,7 @@ namespace Ukemochi
 				return;
 			
 
+			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 			enemy.isCollide = true;
 			enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
 

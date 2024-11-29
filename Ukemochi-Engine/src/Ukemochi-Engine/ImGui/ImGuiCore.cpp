@@ -460,10 +460,12 @@ namespace Ukemochi
 
                 document.AddMember("TextureMeta", textureMetaData, allocator);
                 // Serialize the texture
-                std::string path = "../Assets/Textures/" + fileName + ".json";
-                if (!Serialization::PushJSON(path, document))
+                std::filesystem::path path = m_SpritePath;
+                path.replace_extension(".json");
+                // std::string path = "../Assets/Textures/" + fileName + ".json";
+                if (!Serialization::PushJSON(path.string(), document))
                 {
-                    UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path);
+                    UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path.string());
                 }
             }
         }
@@ -1797,10 +1799,15 @@ namespace Ukemochi
         // Animation Component
         if (selectedObject->HasComponent<Animation>())
         {
+            auto &animation = selectedObject->GetComponent<Animation>();
+            if (animation.clips.find("") != animation.clips.end())
+                animation.clips.clear();
             // TODO: Drag and drop texture to animation should pull the metadata
             if (ImGui::CollapsingHeader("Animation"))
             {
-                auto &animation = selectedObject->GetComponent<Animation>();
+                // Quick fix empty animation clip
+
+                
                 if (!animation.clips.empty())
                 {
                     if (ImGui::TreeNode("Clips"))
