@@ -438,7 +438,8 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader) //***********
 
 		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
-
+		UME_ENGINE_INFO("File path: {0}", path);
+		UME_ENGINE_INFO("Texture ID for binding: {0}", texture->ID);
 
 		if (texture->ID == 0) {
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
