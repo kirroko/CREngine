@@ -137,6 +137,8 @@ namespace Ukemochi
         *************************************************************************/
         bool IsSFXPlaying(int soundIndex);
 
+        bool IsAnySFXPlaying();
+
         bool IsMusicPlaying(int soundIndex);
 
         void RemoveMusic(int index);

@@ -65,32 +65,34 @@ namespace Ukemochi
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                 //dont overlap kick sound
-                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+                if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))&& !enemycomponent.isDead)
                 {
                     audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
                 }
                 object->SetActive(false);
+                enemycomponent.isDead = true;
                 it++;
                 //GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
                 //it = enemyObjects.erase(it); // Remove the enemy from the list
                 continue; // Skip further processing for this enemy
             }
 
-            //if (playerObj != nullptr && enemycomponent.state != Enemy::ATTACK)
-            //{
-            //    if (enemycomponent.ReachedTarget(enemycomponent.posX, enemycomponent.posY,
-            //        playerObj->GetComponent<Transform>().position.x,
-            //        playerObj->GetComponent<Transform>().position.y, 300.f) == true)
-            //    {
-            //        enemycomponent.isCollide = false;
-            //        enemycomponent.state = enemycomponent.CHASE;
-            //    }
-            //}
-
             //if there no nearest obj, find neareast obj
             if (enemycomponent.nearestObj == -1)
             {
                 enemycomponent.nearestObj = FindNearestObject(object);
+            }
+
+            if (enemycomponent.state != enemycomponent.ATTACK)
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (enemycomponent.type == enemycomponent.FISH)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
+                    }
+                }
             }
 
             if (playerObj != nullptr)
@@ -258,20 +260,34 @@ namespace Ukemochi
 
                 enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
-                if (enemycomponent.atktimer <= 0.0f)
+                if (enemycomponent.atktimer <= 1.0f)
                 {
                     //Charge attack for fish
                     //shoot for worm
-
-                    //temp
-                    if (playerObj != nullptr)
+                    static bool attack = false;
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    if (enemycomponent.type == enemycomponent.FISH)
                     {
-                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
-                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !attack)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+                            attack = true;
+                        }
+                        else
+                        {
+                            //temp
+                            if (playerObj != nullptr)
+                            {
+                                enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                            }
+
+                            std::cout << "player hit\n";
+                            enemycomponent.atktimer = 5.f;
+                            attack = false;
+                        }
                     }
 
-                    std::cout << "player hit\n";
-                    enemycomponent.atktimer = 5.f;
                 }
                 break;
 

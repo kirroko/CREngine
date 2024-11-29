@@ -457,6 +457,28 @@ namespace Ukemochi
         return isPlaying;
     }
 
+    bool Audio::IsAnySFXPlaying()
+    {
+        // Loop through all channels in the list
+        for (auto* channel : pSFXChannels)
+        {
+            // Variable to store the playing state
+            bool isPlaying = false;
+            // Ensure the channel is valid (not nullptr)
+            if (channel)
+            {
+                FMOD_RESULT result = channel->isPlaying(&isPlaying);
+                if (result == FMOD_OK && isPlaying)
+                {
+                    // If any channel is playing, return true
+                    return true; 
+                }
+            }
+        }
+        // If none of the channels are playing, return false
+        return false; 
+    }
+
     /*!***********************************************************************
     \brief
     Check if a specific sound is currently playing.

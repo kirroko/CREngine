@@ -337,6 +337,7 @@ namespace Ukemochi
 		mutable int prevObject;
 		bool isCollide;
 		float atktimer = 5.0f;
+		bool isDead = false;
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const

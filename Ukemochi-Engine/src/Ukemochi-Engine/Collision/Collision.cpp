@@ -748,6 +748,11 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::Trigger_Response(const std::string& trigger_tag)
 	{
+		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+		{
+			audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+		}
 		// PLAYER AND DOORS
 		if (trigger_tag == "LeftDoor")
 		{
