@@ -213,7 +213,7 @@ namespace Ukemochi
                     break;
                 }
 
-                // Ensure other transitions (like to ROAM) don’t block the ATTACK state
+                // Ensure other transitions (like to ROAM) donï¿½t block the ATTACK state
                 if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
                 {
                     //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
@@ -248,7 +248,7 @@ namespace Ukemochi
                 //    break;
                 //}
 
-                enemycomponent.atktimer -= g_FrameRateController.GetDeltaTime();
+                enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
                 if (enemycomponent.atktimer <= 0.0f)
                 {
@@ -295,8 +295,8 @@ namespace Ukemochi
         {
             //set collide to true then now the obj is the obj save the pathfinding obj as prev
             enemyComponent.isCollide = true;
-            enemyComponent.prevObject = enemyComponent.nearestObj;
-            enemyComponent.nearestObj = objID;
+            enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
+            enemyComponent.nearestObj = static_cast<int>(objID);
         }
 
 
@@ -471,7 +471,7 @@ namespace Ukemochi
         enemy->GetComponent<Enemy>().targetX = selectedObject->GetComponent<Transform>().position.x;
         enemy->GetComponent<Enemy>().targetY = selectedObject->GetComponent<Transform>().position.y;
 
-        return selectedObject->GetInstanceID();
+        return static_cast<int>(selectedObject->GetInstanceID());
     }
 
     bool EnemyManager::IsEnemyAwayFromObject(GameObject* enemy, GameObject* targetObject, float minDistanceThreshold) const

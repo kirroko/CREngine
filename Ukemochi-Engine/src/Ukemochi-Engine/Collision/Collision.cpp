@@ -448,7 +448,7 @@ namespace Ukemochi
 
 			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
 			enemy.isCollide = true;
-			enemy.TakeDamage(playerData.comboDamage);
+			enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
 
 			std::cout << "enemy hit\n";
 		}
