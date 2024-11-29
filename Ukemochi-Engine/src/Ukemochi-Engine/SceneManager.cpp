@@ -246,7 +246,7 @@ namespace Ukemochi
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
         {
             ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
-            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = static_cast<size_t>(-1); // Clear selection
         }
 
     }
@@ -264,8 +264,9 @@ namespace Ukemochi
         // Select entity
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
         }
         /*
         // Audio Inputs
