@@ -491,10 +491,10 @@ public:
 	glm::vec3 encodeIDToColor(int id);
 	void handleMouseDrag(int mouseX, int mouseY);
 	void handleMouseClickOP(int mouseX, int mouseY); 
-	size_t selectedEntityID = -1; // Sentinel value for no selection
+	size_t selectedEntityID = static_cast<size_t>(-1); // Sentinel value for no selection
 	size_t getSelectedEntityID() { return selectedEntityID; }
 	bool isDragging = false; // Flag to check if dragging is active
-	void renderImGuizmo();
+	//void renderImGuizmo();
 private:
 	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
 	std::shared_ptr<Shader> debug_shader_program;

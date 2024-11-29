@@ -229,15 +229,17 @@ namespace Ukemochi
         // On mouse button press, start dragging
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
         }
 
         // On mouse movement, continue dragging if active
         if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
         }
 
         // On mouse button release, stop dragging
@@ -671,20 +673,20 @@ namespace Ukemochi
                         const auto& musicArray = componentData["Music"].GetArray();
                         for (const auto& musicObject : musicArray)
                         {
-                            std::string name = musicObject["Name"].GetString();
+                            std::string musicname = musicObject["Name"].GetString();
                             std::string path = musicObject["Path"].GetString();
-                            audio.music.emplace_back(name, path);
-                            audio.AddSoundToMusic(name, path);
+                            audio.music.emplace_back(musicname, path);
+                            audio.AddSoundToMusic(musicname);
                         }
 
                         // Load SFX List
                         const auto& sfxArray = componentData["SFX"].GetArray();
                         for (const auto& sfxObject : sfxArray)
                         {
-                            std::string name = sfxObject["Name"].GetString();
+                            std::string sfxname = sfxObject["Name"].GetString();
                             std::string path = sfxObject["Path"].GetString();
-                            audio.sfx.emplace_back(name, path);
-                            audio.AddSoundToSfx(name, path);
+                            audio.sfx.emplace_back(sfxname, path);
+                            audio.AddSoundToSfx(sfxname);
                         }
 
                         // Add the AudioManager component to the object
