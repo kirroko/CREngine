@@ -733,33 +733,18 @@ void Renderer::render()
 		debugBatchRenderer->endBatch();
 		debug_shader_program->Deactivate();
 	}
+
+	debug_shader_program->Activate();
+	debug_shader_program->setMat4("view", view);
+	debug_shader_program->setMat4("projection", projection);
+	
+	if(currentMode == InteractionMode::ROTATE)
+		renderDebugShapes();
+	debug_shader_program->Deactivate();
+
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
-
-void Renderer::handleMouseClick(int mouseX, int mouseY) 
-{
-
-	for (auto& entity : m_Entities) 
-	{
-		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
-		glm::vec2 entityPos(transform.position.x, transform.position.y);
-		glm::vec2 entitySize(transform.scale.x, transform.scale.y);
-
-		// Check if the mouse is within the entity's bounding box
-		if ((mouseX >= entityPos.x - (entitySize.x / 2)) && (mouseX <= entityPos.x + (entitySize.x / 2)) &&
-			(mouseY <= entityPos.y + (entitySize.y / 2)) && (mouseY >= entityPos.y - (entitySize.y / 2)) ) 
-		{
-			std::cout << "Clicked on entity ID: " << entity << std::endl;
-
-			// Perform any additional logic here (e.g., highlight or select the entity)
-			break;
-		}
-	}
-}
-
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).
@@ -1444,7 +1429,7 @@ The x-coordinate of the mouse cursor in screen space.
 \param mouseY
 The y-coordinate of the mouse cursor in screen space.
 *************************************************************************/
-void Renderer::handleMouseDrag(int mouseX, int mouseY)
+void Renderer::handleMouseDragTranslation(int mouseX, int mouseY)
 {
 
 	if (isDragging && selectedEntityID != -1)
@@ -1472,23 +1457,6 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 	}
 }
 
-void Renderer::drawScalingHandles(const Transform& transform)
-{
-	glm::vec3 center = glm::vec3(transform.position.x, transform.position.y, 0);
-
-	// Arrow endpoints (unit length, scaled by entity size)
-	glm::vec3 right = center + glm::vec3(transform.scale.x, 0, 0);
-	glm::vec3 up = center + glm::vec3(0, transform.scale.y, 0);
-
-	// Draw X-axis arrow
-	debugBatchRenderer->drawDebugLine(center, right, glm::vec3(1, 0, 0)); // Red line for X-axis
-	debugBatchRenderer->drawDebugBox(right, glm::vec2(0.1f, 0.1f), glm::vec3(1, 0, 0), 0.0f); // Small red box
-
-	// Draw Y-axis arrow
-	debugBatchRenderer->drawDebugLine(center, up, glm::vec3(0, 1, 0)); // Green line for Y-axis
-	debugBatchRenderer->drawDebugBox(up, glm::vec2(0.1f, 0.1f), glm::vec3(0, 1, 0), 0.0f); // Small green box
-}
-
 void Renderer::drawRotationHandle(const Transform& transform)
 {
 	glm::vec3 center = glm::vec3(transform.position.x, transform.position.y, 0);
@@ -1511,3 +1479,96 @@ bool isMouseOnRotationHandle(const glm::vec3& center, const glm::vec2& mousePosi
 	return glm::abs(distance - radius) < threshold; // Near the circle's edge
 }
 
+void Renderer::renderDebugShapes()
+{
+	debugBatchRenderer->beginBatch();
+
+	// Check if an entity is selected
+	if (selectedEntityID != -1 && ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+		// Draw rotation circle for the selected entity
+		debugBatchRenderer->drawDebugCircle(
+			glm::vec2(transform.position.x, transform.position.y), // Center of the entity
+			glm::max(transform.scale.x, transform.scale.y) * 1.f, // Circle radius based on entity size
+			glm::vec3(0.0f, 0.0f, 1.0f)                            // Circle color (blue)
+		);
+	}
+
+	debugBatchRenderer->endBatch();
+}
+
+bool Renderer::handleMouseClickForRotation(int mouseX, int mouseY)
+{
+	if (selectedEntityID != -1)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition = glm::vec2(mouseX, mouseY);
+		glm::vec2 entityCenter = glm::vec2(transform.position.x, transform.position.y);
+		float radius = glm::max(transform.scale.x, transform.scale.y) * 1.5f; // Circle radius
+
+		// Calculate the distance between the mouse and the entity center
+		float distance = glm::length(mousePosition - entityCenter);
+
+		if (distance <= radius) // Mouse is within the rotation handle
+		{
+			isRotating = true;
+			rotationStartAngle = atan2(mousePosition.y - entityCenter.y, mousePosition.x - entityCenter.x);
+			rotationStartEntityAngle = glm::radians(transform.rotation);
+			return true;
+		}
+	}
+	return false;
+}
+
+void Renderer::handleRotation(int mouseX, int mouseY)
+{
+	if (isRotating)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition = glm::vec2(mouseX, mouseY);
+		glm::vec2 entityCenter = glm::vec2(transform.position.x, transform.position.y);
+
+		// Calculate the current angle between the mouse and the entity center
+		float currentMouseAngle = atan2(mousePosition.y - entityCenter.y, mousePosition.x - entityCenter.x);
+
+		// Calculate the angle delta and apply it to the entity's rotation
+		float angleDelta = currentMouseAngle - rotationStartAngle;
+		transform.rotation = glm::degrees(rotationStartEntityAngle + angleDelta);
+	}
+}
+
+void Renderer::handleMouseClick(int mouseX, int mouseY)
+{
+	if (currentMode == InteractionMode::TRANSLATE)
+	{
+		handleMouseClickOP(mouseX, mouseY);
+	}
+	else if (currentMode == InteractionMode::ROTATE)
+	{
+		if (handleMouseClickForRotation(mouseX, mouseY))
+		{
+			// Do not start dragging if in rotation mode and rotation is activated
+			isDragging = false;
+		}
+	}
+}
+
+void Renderer::handleMouseDrag(int mouseX, int mouseY)
+{
+	std::cout << "handleMouseDrag called with mouseX: " << mouseX << ", mouseY: " << mouseY << std::endl;
+
+	if (currentMode == InteractionMode::TRANSLATE)
+	{
+		handleMouseDragTranslation(mouseX, mouseY);
+	}
+	else if (currentMode == InteractionMode::ROTATE)
+	{
+		handleRotation(mouseX, mouseY);
+	}
+	else
+	{
+		std::cerr << "Unknown interaction mode!" << std::endl;
+	}
+}

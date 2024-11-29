@@ -91,7 +91,6 @@ public:
 	 */
 	void render();
 
-	void handleMouseClick(int mouseX, int mouseY);
 
 	/*!
 	 * @brief Cleans up and releases all OpenGL resources (e.g., VAOs, VBOs, EBOs, textures, shaders).
@@ -489,12 +488,11 @@ public:
 	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
 	void drawPoint(float x, float y, glm::vec3 color);
 	glm::vec3 encodeIDToColor(int id);
-	void handleMouseDrag(int mouseX, int mouseY);
+	void handleMouseDragTranslation(int mouseX, int mouseY);
 	void handleMouseClickOP(int mouseX, int mouseY); 
 	size_t selectedEntityID = -1; // Sentinel value for no selection
 	size_t getSelectedEntityID() { return selectedEntityID; }
 	bool isDragging = false; // Flag to check if dragging is active
-	void renderImGuizmo();
 private:
 	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
 	std::shared_ptr<Shader> debug_shader_program;
@@ -502,7 +500,18 @@ private:
 	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
 
 // Gizmo
-	void drawScalingHandles(const Transform& transform);
 	void drawRotationHandle(const Transform& transform);
+	void renderDebugShapes();
+	float rotationStartAngle = 0.0f;
+	float rotationStartEntityAngle = 0.0f;
+public:
+	bool isRotating = false;
+	bool handleMouseClickForRotation(int mouseX, int mouseY);
+	void handleRotation(int mouseX, int mouseY);
+	enum class InteractionMode { TRANSLATE, ROTATE, NO_STATE };
+	InteractionMode currentMode = InteractionMode::TRANSLATE;
+	void handleMouseClick(int mouseX, int mouseY);
+	void handleMouseDrag(int mouseX, int mouseY);
+
 };
 #endif

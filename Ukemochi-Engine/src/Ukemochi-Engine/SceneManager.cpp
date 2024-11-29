@@ -224,25 +224,64 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
 
-        // On mouse button press, start dragging
+        if (Input::IsKeyTriggered(GLFW_KEY_8)) 
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
+            std::cout << "Switched to Translate Mode\n";
+        }
+        if (Input::IsKeyTriggered(GLFW_KEY_9)) 
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::ROTATE;
+            std::cout << "Switched to Rotate Mode\n";
+        }
+
+
+        //// On mouse button press, start dragging
+        //if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+        //{
+        //    ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //}
+
+        //// On mouse movement, continue dragging if active
+        //if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        //{
+        //    ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+        //        SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+        //}
+
+        //// On mouse button release, stop dragging
+        //if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        //{
+        //    ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
+        //    ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+        //}
+        
+        // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(
+                SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y
+            );
         }
 
-        // On mouse movement, continue dragging if active
+        // On mouse movement
         if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(
+                SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y
+            );
         }
 
-        // On mouse button release, stop dragging
-        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        // On mouse button release
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT))
         {
             ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
-            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+            ECS::GetInstance().GetSystem<Renderer>()->isRotating = false;
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1;
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::NO_STATE;
         }
 
     }
