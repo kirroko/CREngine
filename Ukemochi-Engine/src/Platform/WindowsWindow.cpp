@@ -26,35 +26,53 @@ namespace Ukemochi {
 	// Static variable to track the GLFW initialization status.
 	bool WindowsWindow::s_GLFWInitialized = false;
 
-	/*!
-	\brief GLFW error callback function to handle error messages.
-	\param error_code The error code.
-	\param description The error description.
-	*/
+	/*!***********************************************************************
+	\brief
+	GLFW error callback function to handle error messages.
+	\param[in] error_code
+	The error code indicating the type of error.
+	\param[in] description
+	The description of the error encountered.
+	\return
+	None
+	*************************************************************************/
 	static void GLFWErrorCB(int error_code, const char* description)
 	{
 		UME_ENGINE_ERROR("GLFW Error ({0}): {1}", error_code, description);
 	}
 
-	/*!
-	\brief Constructs a WindowsWindow instance and initializes it.
-	\param props The properties for the window.
-	*/
+	/*!***********************************************************************
+	\brief
+	Constructs a WindowsWindow instance and initializes it with the specified properties.
+	\param[in] props
+	The properties for the window (title, width, height).
+	\return
+	None
+	*************************************************************************/
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
 		Init(props);
 	}
-	/*!
-	\brief Destroys the WindowsWindow instance and cleans up resources.
-	*/
+
+	/*!***********************************************************************
+	\brief
+	Destroys the WindowsWindow instance and cleans up resources.
+	\param[in] None
+	\return
+	None
+	*************************************************************************/
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
 	}
-	/*!
-	\brief Initializes the window with the specified properties.
-	\param props The properties for window creation.
-	*/
+	/*!***********************************************************************
+	\brief
+	Initializes the window with the specified properties.
+	\param[in] props
+	The properties for window creation (title, width, height).
+	\return
+	None
+	*************************************************************************/
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
@@ -205,16 +223,24 @@ namespace Ukemochi {
 				info.EventCallback(event);
 			});
 	}
-	/*!
-	\brief Shuts down the window and releases resources.
-	*/
+	/*!***********************************************************************
+	\brief
+	Shuts down the window and releases resources.
+	\param[in] None
+	\return
+	None
+	*************************************************************************/
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
 	}
-	/*!
-	\brief Toggle the screen between fullscreen and window modes.
-	*/
+	/*!***********************************************************************
+	\brief
+	Toggles the screen between fullscreen and window modes using F11 key.
+	\param[in] None
+	\return
+	None
+	*************************************************************************/
 	void WindowsWindow::ToggleFullscreen()
 	{
 		// Press F11 to toggle screen modes
@@ -242,9 +268,13 @@ namespace Ukemochi {
 		}
 	}
 
-	/*!
-	\brief Updates the window by polling events and swapping buffers.
-	*/
+	/*!***********************************************************************
+	\brief
+	Updates the window by polling events and swapping buffers.
+	\param[in] None
+	\return
+	None
+	*************************************************************************/
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
@@ -252,10 +282,14 @@ namespace Ukemochi {
 		
 		ToggleFullscreen();
 	}
-	/*!
-	\brief Sets vertical synchronization for the window.
-	\param enabled A boolean indicating whether VSync should be enabled or disabled.
-	*/
+	/*!***********************************************************************
+	\brief
+	Sets vertical synchronization for the window.
+	\param[in] enabled
+	A boolean indicating whether V-Sync should be enabled or disabled.
+	\return
+	None
+	*************************************************************************/
 	void WindowsWindow::SetVsync(bool enabled)
 	{
 		if (enabled)
@@ -266,7 +300,18 @@ namespace Ukemochi {
 		m_Data.VSync = enabled;
 	}
 
-	//bool fileDropped = false;
+	/*!***********************************************************************
+	\brief
+	Callback for handling file drop events.
+	\param[in] window
+	The GLFW window that received the file drop.
+	\param[in] count
+	The number of files dropped.
+	\param[in] paths
+	The paths of the dropped files.
+	\return
+	None
+	*************************************************************************/
 	void WindowsWindow::fileDropCallback(GLFWwindow* window, int count, const char** paths)
 	{
 		if (count > 0)
