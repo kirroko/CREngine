@@ -4,7 +4,7 @@
             "Tag": "Room",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-620.0, 497.0],
+                    "Position": [960.0, 540.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 1080.0]
                 }, {
@@ -44,10 +44,6 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "BtmBound1",
@@ -81,10 +77,6 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "LeftBound1",
@@ -118,10 +110,6 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "RightBound1",
@@ -155,10 +143,6 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "Box1",
