@@ -500,5 +500,9 @@ private:
 	std::shared_ptr<Shader> debug_shader_program;
 	
 	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
+
+// Gizmo
+	void drawScalingHandles(const Transform& transform);
+	void drawRotationHandle(const Transform& transform);
 };
 #endif

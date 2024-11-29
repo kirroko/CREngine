@@ -1471,3 +1471,43 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 		}
 	}
 }
+
+void Renderer::drawScalingHandles(const Transform& transform)
+{
+	glm::vec3 center = glm::vec3(transform.position.x, transform.position.y, 0);
+
+	// Arrow endpoints (unit length, scaled by entity size)
+	glm::vec3 right = center + glm::vec3(transform.scale.x, 0, 0);
+	glm::vec3 up = center + glm::vec3(0, transform.scale.y, 0);
+
+	// Draw X-axis arrow
+	debugBatchRenderer->drawDebugLine(center, right, glm::vec3(1, 0, 0)); // Red line for X-axis
+	debugBatchRenderer->drawDebugBox(right, glm::vec2(0.1f, 0.1f), glm::vec3(1, 0, 0), 0.0f); // Small red box
+
+	// Draw Y-axis arrow
+	debugBatchRenderer->drawDebugLine(center, up, glm::vec3(0, 1, 0)); // Green line for Y-axis
+	debugBatchRenderer->drawDebugBox(up, glm::vec2(0.1f, 0.1f), glm::vec3(0, 1, 0), 0.0f); // Small green box
+}
+
+void Renderer::drawRotationHandle(const Transform& transform)
+{
+	glm::vec3 center = glm::vec3(transform.position.x, transform.position.y, 0);
+
+	// Circle radius based on the entity's scale
+	float radius = glm::max(transform.scale.x, transform.scale.y) * 1.5f;
+
+	// Draw the rotation circle
+	debugBatchRenderer->drawDebugCircle(center, radius, glm::vec3(0, 0, 1)); // Blue circle
+}
+
+bool isMouseOnScalingHandle(const glm::vec3& handlePosition, const glm::vec2& mousePosition, float threshold = 0.1f)
+{
+	return glm::distance(glm::vec2(handlePosition.x, handlePosition.y), mousePosition) < threshold;
+}
+
+bool isMouseOnRotationHandle(const glm::vec3& center, const glm::vec2& mousePosition, float radius, float threshold = 0.1f)
+{
+	float distance = glm::distance(glm::vec2(center.x, center.y), mousePosition);
+	return glm::abs(distance - radius) < threshold; // Near the circle's edge
+}
+
