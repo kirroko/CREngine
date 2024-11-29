@@ -4,7 +4,7 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-961.0, 959.0],
+                    "Position": [-960.0, 960.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 250.0]
                 }, {
@@ -31,10 +31,6 @@
                     "Max": [0.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_BtmBound",
@@ -68,10 +64,6 @@
                     "Max": [0.0, 5.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_LeftBound",
@@ -105,10 +97,6 @@
                     "Max": [-1915.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_RightBound",
@@ -142,10 +130,6 @@
                     "Max": [5.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_RightDoor",
@@ -179,10 +163,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_Background",
@@ -380,7 +360,7 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 955.0],
+                    "Position": [960.0, 960.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 250.0]
                 }, {
@@ -407,10 +387,6 @@
                     "Max": [1920.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_BtmBound",
@@ -444,10 +420,6 @@
                     "Max": [1920.0, 5.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_LeftBound",
@@ -481,10 +453,6 @@
                     "Max": [5.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_RightBound",
@@ -518,10 +486,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_LeftDoor",
@@ -555,10 +519,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_RightDoor",
@@ -592,10 +552,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_Background",
@@ -673,19 +629,6 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_vine_2.png",
-                    "Shape": 0
-                }]
-        }, {
-            "Name": "2_BGM",
-            "Tag": "Audio",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1545.0, 872.0],
-                    "Rotation": 0.0,
-                    "Scale": [510.0, 417.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_vine_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -793,7 +736,7 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2880.0, 955.0],
+                    "Position": [2880.0, 960.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 250.0]
                 }, {
@@ -820,10 +763,6 @@
                     "Max": [1920.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_BtmBound",
@@ -857,10 +796,6 @@
                     "Max": [1920.0, 5.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_LeftBound",
@@ -894,10 +829,6 @@
                     "Max": [5.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_RightBound",
@@ -931,10 +862,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_LeftDoor",
@@ -968,10 +895,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_Background",
@@ -1292,7 +1215,7 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [931.0, 512.0],
+                    "Position": [960.0, 540.0],
                     "Rotation": 0.0,
                     "Scale": [170.57142639160156, 170.57142639160156]
                 }, {
@@ -1352,7 +1275,7 @@
             "Tag": "Knife",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [791.4563598632813, 540.0],
+                    "Position": [791.0, 540.0],
                     "Rotation": 0.0,
                     "Scale": [84.28571319580078, 126.42857360839844]
                 }, {
@@ -1379,10 +1302,6 @@
                     "Max": [875.7420654296875, 624.2857055664063],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_RightWallFront",
@@ -1652,10 +1571,6 @@
                     "Position": [388.0, 593.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_waypoint2",
@@ -1665,10 +1580,6 @@
                     "Position": [1527.0, 639.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_waypoint3",
@@ -1678,10 +1589,6 @@
                     "Position": [274.0, 156.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_waypoint4",
@@ -1691,10 +1598,6 @@
                     "Position": [1514.0, 65.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_AudioManager",
@@ -1704,10 +1607,6 @@
                     "Position": [1297.0, 183.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }, {
                     "Name": "Audio",
                     "Music": [],
