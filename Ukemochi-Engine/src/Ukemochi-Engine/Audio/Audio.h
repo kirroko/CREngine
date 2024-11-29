@@ -63,7 +63,9 @@ namespace Ukemochi
          \param filePath: The file path to the sound file to be loaded.
          \return True if the sound was successfully loaded, false otherwise.
         *************************************************************************/
-        bool LoadSound(const char* filePath);
+        bool LoadSound(int index,const char* filePath,std::string type);
+
+        void PlaySound(int soundIndex, std::string type);
 
         /*!***********************************************************************
         \brief
@@ -71,14 +73,14 @@ namespace Ukemochi
          \param soundIndex: Index of the sound to play.
          \param groupIndex: Index of the group in which the sound should be played.
         *************************************************************************/
-        void PlaySoundInGroup(int soundIndex, int groupIndex);
+        //void PlaySoundInGroup(int soundIndex, int groupIndex);
 
         /*!***********************************************************************
         \brief
          Stop playing a specific sound.
          \param soundIndex: Index of the sound to stop.
         *************************************************************************/
-        void StopSound(int soundIndex);
+        void StopSound(int soundIndex, std::string type);
 
         /*!***********************************************************************
         \brief
@@ -86,7 +88,7 @@ namespace Ukemochi
          \param soundIndex: Index of the sound to toggle.
          \param groupIndex: Index of the group where the sound resides.
         *************************************************************************/
-        void ToggleSoundInGroup(int soundIndex, int groupIndex);
+        //void ToggleSoundInGroup(int soundIndex, int groupIndex);
 
         /*!***********************************************************************
         \brief
@@ -94,7 +96,7 @@ namespace Ukemochi
          \param soundIndex: Index of the sound whose volume is being set.
          \param volume: The volume level (0.0 to 1.0).
         *************************************************************************/
-        void SetAudioVolume(int soundIndex, float volume);
+        void SetAudioVolume(int soundIndex, float volume, std::string type);
 
         /*!***********************************************************************
         \brief
@@ -133,19 +135,23 @@ namespace Ukemochi
          \param soundIndex: Index of the sound to check.
          \return True if the sound is playing, false otherwise.
         *************************************************************************/
-        bool IsPlaying(int soundIndex);
+        bool IsSFXPlaying(int soundIndex);
 
-        std::vector<FMOD::ChannelGroup*> pChannelGroups;  // A list of channel groups for managing groups of sounds
+        bool IsMusicPlaying(int soundIndex);
 
-        std::vector<FMOD::Sound*> pSounds;  // A list of loaded sounds
-    private:
+        std::vector<FMOD::Sound*> pSFX;  // A list of loaded sounds
+        std::vector<FMOD::Channel*> pSFXChannels;  // A list of channels playing individual sounds
+
+        std::vector<FMOD::Sound*> pMusic;  // A list of loaded sounds
+        std::vector<FMOD::Channel*> pMusicChannels;  // A list of channels playing individual sounds
+
         FMOD::System* pSystem;  // Pointer to the FMOD system, which manages all sound operations
 
+    private:
 
-
-        std::vector<FMOD::Channel*> pChannels;  // A list of channels playing individual sounds
-
-        int numOfAudios;  // A counter to track the number of loaded sounds
+        std::vector<FMOD::ChannelGroup*> pChannelGroups;  // A list of channel groups for managing groups of sounds
+        int numOfSFX;  // A counter to track the number of loaded sounds
+        int numOfMusic;
     };
 }
 

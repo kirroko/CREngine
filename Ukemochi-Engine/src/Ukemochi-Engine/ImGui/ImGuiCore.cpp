@@ -1171,7 +1171,7 @@ namespace Ukemochi
         }
 
         // Display Audio Component
-        if (obj.HasComponent<AudioSource>())
+        if (obj.HasComponent<AudioManager>())
         {
             ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.0f, 0.5f, 0.5f, 0.2f));  
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.5f, 0.5f, 0.4f)); 
@@ -1179,9 +1179,19 @@ namespace Ukemochi
 
             if (ImGui::TreeNodeEx("Audio Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
             {
-                AudioSource& audio = obj.GetComponent<AudioSource>();
-                ImGui::Text("Audio Path: %s", audio.audioPath.c_str());
-                ImGui::Text("Audio Name: %s", audio.audioName.c_str());
+                AudioManager& audio = obj.GetComponent<AudioManager>();
+                for (auto& music : audio.music)
+                {
+                    ImGui::Text("Music Name: %s", music.audioName.c_str());
+                    ImGui::Text("Music Path: %s", music.audioPath.c_str());
+                }
+                for (auto& sfx : audio.sfx)
+                {
+                    ImGui::Text("SFX Name: %s", sfx.audioName.c_str());
+                    ImGui::Text("SFX Path: %s", sfx.audioPath.c_str());
+                }
+                //ImGui::Text("Audio Path: %s", audio.audioPath.c_str());
+                //ImGui::Text("Audio Name: %s", audio.audioName.c_str());
 
                 ImGui::TreePop();
             }
@@ -1314,9 +1324,9 @@ namespace Ukemochi
                 }
                 break;
             case 6: // Audio
-                if (!selectedObject->HasComponent<AudioSource>())
+                if (!selectedObject->HasComponent<AudioManager>())
                 {
-                    selectedObject->AddComponent<AudioSource>(AudioSource{});
+                    selectedObject->AddComponent<AudioManager>(AudioManager{});
                     modified = true;
                 }
                 break;
@@ -1397,6 +1407,16 @@ namespace Ukemochi
                 ImGui::Spacing();
             }
 
+            if (selectedObject->HasComponent<Enemy>())
+            {
+                if (ImGui::Button("Remove Enemy Component"))
+                {
+                    selectedObject->RemoveComponent<Enemy>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
             if (selectedObject->HasComponent<Player>())
             {
                 if (ImGui::Button("Remove Player Component"))
@@ -1407,11 +1427,11 @@ namespace Ukemochi
                 ImGui::Spacing();
             }
 
-            if (selectedObject->HasComponent<AudioSource>())
+            if (selectedObject->HasComponent<AudioManager>())
             {
                 if (ImGui::Button("Remove Audio Component"))
                 {
-                    selectedObject->RemoveComponent<AudioSource>();
+                    selectedObject->RemoveComponent<AudioManager>();
                     modified = true;
                 }
                 ImGui::Spacing();
@@ -1813,91 +1833,276 @@ namespace Ukemochi
             }
         }
 
-        if (selectedObject->HasComponent<AudioSource>())
+        if (selectedObject->HasComponent<AudioManager>())
         {
             if (ImGui::CollapsingHeader("Audio"))
             {
-                AudioSource& audio = selectedObject->GetComponent<AudioSource>();
+                AudioManager& audio = selectedObject->GetComponent<AudioManager>();
                 ImGui::Text("Audio");
 
-                std::string filename = std::filesystem::path(audio.audioPath).filename().string();
+                // Music Section as TreeNode
+                if (ImGui::TreeNode("Music")) {
+                    static char musicPath[256] = "";
 
-                char audioPathBuffer[256];
-                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
-                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                    // Add Music Button
+                    if (ImGui::Button("Add Music")) {
+                        // Add a new music entry with default values (empty name and path)
+                        audio.music.push_back({ "", "" });  // Add a new entry with empty name and path
+                    }
 
-                ImGui::BeginDisabled(true); // Disable input field while using drag-and-drop
-                ImGui::InputText("##AudioPathInput", audioPathBuffer, sizeof(audioPathBuffer));
-                ImGui::EndDisabled();
+                    // List existing music
+                    for (size_t i = 0; i < audio.music.size(); ++i) {
+                        ImGui::PushID(i);
+                        if (ImGui::TreeNode(("Music " + std::to_string(i)).c_str())) {
+                            char newName[128] = "";
+                            char newPath[256] = "";
+                            strcpy(newName, audio.music[i].audioName.c_str());
 
-                if (es_current != ENGINE_STATES::ES_PLAY)
-                {
+                            // Display current music path with drag-and-drop for existing music
+                            std::string filename = std::filesystem::path(audio.music[i].audioPath).filename().string();
+                            strncpy(newPath, filename.c_str(), sizeof(newPath));
+                            newPath[sizeof(newPath) - 1] = '\0';
 
-                    // Check for drag-and-drop
-                    if (ImGui::BeginDragDropTarget())
-                    {
-                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
-                        {
-                            std::string draggedAudio = std::string((const char*)payload->Data);
-                            std::filesystem::path filePath(draggedAudio);
-                            std::string extension = filePath.extension().string();
-
-                            // Validate the file type (assuming only .wav, .mp3 , .ogg are allowed)
-                            if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
-                            {
-                                // Valid file type, update script path
-                                //strncpy(audioPathBuffer, draggedAudio.c_str(), sizeof(audioPathBuffer));
-                                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
-                                audio.audioPath = draggedAudio;
-                                filename = filePath.filename().string(); // Update displayed filename
-                                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
-                                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
-                                modified = true;
+                            // Rename Button to toggle name editing
+                            static bool isRenameMode = false;  // Flag to control renaming state
+                            if (ImGui::Button("Rename")) {
+                                isRenameMode = !isRenameMode;  // Toggle rename mode
                             }
-                            else
-                            {
-                                // Invalid file type, show error feedback
-                                ImGui::OpenPopup("InvalidAudioFileType");
+
+                            // Only allow name modification if isRenameMode is true
+                            if (isRenameMode) {
+                                if (ImGui::InputText("Music Name", newName, sizeof(newName))) {
+                                    // Only update if the name has changed and is not empty
+                                    if (strlen(newName) > 0 && audio.music[i].audioName != newName) {
+                                        audio.music[i].audioName = newName;
+                                    }
+                                }
                             }
+                            else {
+                                ImGui::Text("Name: %s", audio.music[i].audioName.c_str());  // Display name if not in rename mode
+                            }
+
+                            ImGui::BeginDisabled(true);
+                            ImGui::InputText("Music Path", newPath, sizeof(newPath), ImGuiInputTextFlags_ReadOnly);
+                            ImGui::EndDisabled();
+
+                            // Drag and Drop for Music Path (Existing Entry)
+                            if (es_current != ENGINE_STATES::ES_PLAY && ImGui::BeginDragDropTarget())
+                            {
+                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                                {
+                                    std::string draggedAudio = std::string((const char*)payload->Data);
+                                    std::filesystem::path filePath(draggedAudio);
+                                    std::string extension = filePath.extension().string();
+
+                                    if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+                                    {
+                                        // Update the path of the current music entry
+                                        audio.music[i].audioPath = draggedAudio;
+                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(i,audio.music[i].audioPath.c_str(), "Music");
+                                    }
+                                    else
+                                    {
+                                        ImGui::OpenPopup("InvalidAudioFileType");
+                                    }
+                                }
+                                ImGui::EndDragDropTarget();
+                            }
+
+                            // Add Play and Stop buttons
+                            if (ImGui::Button("Play")) {
+
+                                // Call the audio manager to start playing the music
+                                audio.PlayMusic(i); //this one example
+                            }
+
+                            ImGui::SameLine();
+
+                            if (ImGui::Button("Stop")) {
+                                // Call the audio manager to stop playing the music
+                                  // Assuming StopMusic takes an index or path as argument
+                                audio.StopMusic(i);
+                            }
+
+                            ImGui::SameLine();
+
+                            // Delete Music Button
+                            if (ImGui::Button("Delete Music")) {
+                                // Remove music from the list
+                                audio.RemoveSoundFromMusic(i);
+                            }
+
+                            ImGui::TreePop();
                         }
-                        ImGui::EndDragDropTarget();
-                    }
-                    // Play and Stop buttons
-                    if (!audio.audioPath.empty())
-                    {
-                        if (ImGui::Button("Play Audio"))
-                        {
-                            //PlayAudio(audio.audioPath); // Function to handle playback
-                        }
-
-                        ImGui::SameLine();
-
-                        if (ImGui::Button("Stop Audio"))
-                        {
-                            //StopAudio(); // Function to stop playback
-                        }
+                        ImGui::PopID();
                     }
 
-                    // Error Popup for invalid file type
-                    if (ImGui::BeginPopup("InvalidAudioFileType"))
-                    {
-                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
-                        if (ImGui::Button("OK"))
-                        {
-                            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
-                        }
-                        ImGui::EndPopup();
-                    }
-
-                    // Add input for channelGroups
-                    ImGui::InputInt("Channel Groups", &audio.pChannelGroups); // Allow the user to specify the number of channel groups
-
-                    // Optionally, validate that the number of channel groups is a positive number
-                    if (audio.pChannelGroups < 1)
-                    {
-                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Channel Groups must be at least 1.");
-                    }
+                    ImGui::TreePop();  // Close Music section
                 }
+
+                if (ImGui::TreeNode("SFX")) {
+                    static char sfxPath[256] = "";
+
+                    // Add SFX Button
+                    if (ImGui::Button("Add SFX")) {
+                        // Add a new SFX entry with default values (empty name and path)
+                        audio.sfx.push_back({ "", "" });  // Add a new entry with empty name and path
+                    }
+
+                    // List existing SFX
+                    for (size_t i = 0; i < audio.sfx.size(); ++i) {
+                        ImGui::PushID(i);
+                        if (ImGui::TreeNode(("SFX " + std::to_string(i)).c_str())) {
+                            char newName[128] = "";
+                            char newPath[256] = "";
+                            strcpy(newName, audio.sfx[i].audioName.c_str());
+
+                            // Display current SFX path with drag-and-drop for existing SFX
+                            std::string filename = std::filesystem::path(audio.sfx[i].audioPath).filename().string();
+                            strncpy(newPath, filename.c_str(), sizeof(newPath));
+                            newPath[sizeof(newPath) - 1] = '\0';
+
+                            // Editable name
+                            if (ImGui::InputText("SFX Name", newName, sizeof(newName))) {
+                                // Update name in the audio manager
+                                audio.sfx[i].audioName = newName;
+                            }
+
+                            ImGui::BeginDisabled(true);
+                            ImGui::InputText("SFX Path", newPath, sizeof(newPath), ImGuiInputTextFlags_ReadOnly);
+                            ImGui::EndDisabled();
+
+                            // Drag and Drop for SFX Path (Existing Entry)
+                            if (es_current != ENGINE_STATES::ES_PLAY && ImGui::BeginDragDropTarget()) {
+                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH")) {
+                                    std::string draggedAudio = std::string((const char*)payload->Data);
+                                    std::filesystem::path filePath(draggedAudio);
+                                    std::string extension = filePath.extension().string();
+
+                                    if (extension == ".wav" || extension == ".mp3" || extension == ".ogg") {
+                                        // Update the path of the current SFX entry
+                                        audio.sfx[i].audioPath = draggedAudio;
+                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(i, audio.sfx[i].audioPath.c_str(), "SFX");
+                                    }
+                                    else {
+                                        ImGui::OpenPopup("InvalidAudioFileType");
+                                    }
+                                }
+                                ImGui::EndDragDropTarget();
+                            }
+
+                            // Add Play and Stop buttons for SFX
+                            if (ImGui::Button("Play")) {
+                                audio.PlaySFX(i);
+                                // Call the audio manager to start playing the SFX
+                                //audio.PlaySFX(i);  // Assuming PlaySFX takes an index or path as argument
+                            }
+
+                            ImGui::SameLine();
+
+                            if (ImGui::Button("Stop")) {
+                                audio.StopSFX(i);
+                                // Call the audio manager to stop playing the SFX
+                                // Assuming StopSFX takes an index or path as argument
+                                //audio.StopSFX(i);
+                            }
+
+                            ImGui::SameLine();
+
+                            // Delete SFX Button
+                            if (ImGui::Button("Delete SFX")) {
+                                
+                                // Remove SFX from the list
+                                audio.RemoveSoundFromSfx(i);
+                            }
+
+                            ImGui::TreePop();
+                        }
+                        ImGui::PopID();
+                    }
+
+                    ImGui::TreePop();  // Close SFX section
+                }
+
+
+                //std::string filename = std::filesystem::path(audio.audioPath).filename().string();
+
+                //char audioPathBuffer[256];
+                //strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
+                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+
+                //ImGui::BeginDisabled(true); // Disable input field while using drag-and-drop
+                //ImGui::InputText("##AudioPathInput", audioPathBuffer, sizeof(audioPathBuffer));
+                //ImGui::EndDisabled();
+
+                //if (es_current != ENGINE_STATES::ES_PLAY)
+                //{
+
+                //    // Check for drag-and-drop
+                //    if (ImGui::BeginDragDropTarget())
+                //    {
+                //        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                //        {
+                //            std::string draggedAudio = std::string((const char*)payload->Data);
+                //            std::filesystem::path filePath(draggedAudio);
+                //            std::string extension = filePath.extension().string();
+
+                //            // Validate the file type (assuming only .wav, .mp3 , .ogg are allowed)
+                //            if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+                //            {
+                //                // Valid file type, update script path
+                //                //strncpy(audioPathBuffer, draggedAudio.c_str(), sizeof(audioPathBuffer));
+                //                //audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                //                audio.audioPath = draggedAudio;
+                //                filename = filePath.filename().string(); // Update displayed filename
+                //                strncpy(audioPathBuffer, filename.c_str(), sizeof(audioPathBuffer));
+                //                audioPathBuffer[sizeof(audioPathBuffer) - 1] = '\0'; // Ensure null termination
+                //                modified = true;
+                //            }
+                //            else
+                //            {
+                //                // Invalid file type, show error feedback
+                //                ImGui::OpenPopup("InvalidAudioFileType");
+                //            }
+                //        }
+                //        ImGui::EndDragDropTarget();
+                //    }
+                //    // Play and Stop buttons
+                //    if (!audio.audioPath.empty())
+                //    {
+                //        if (ImGui::Button("Play Audio"))
+                //        {
+                //            //PlayAudio(audio.audioPath); // Function to handle playback
+                //        }
+
+                //        ImGui::SameLine();
+
+                //        if (ImGui::Button("Stop Audio"))
+                //        {
+                //            //StopAudio(); // Function to stop playback
+                //        }
+                //    }
+
+                //    // Error Popup for invalid file type
+                //    if (ImGui::BeginPopup("InvalidAudioFileType"))
+                //    {
+                //        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
+                //        if (ImGui::Button("OK"))
+                //        {
+                //            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                //        }
+                //        ImGui::EndPopup();
+                //    }
+
+                //    // Add input for channelGroups
+                //    ImGui::InputInt("Channel Groups", &audio.pChannelGroups); // Allow the user to specify the number of channel groups
+
+                //    // Optionally, validate that the number of channel groups is a positive number
+                //    if (audio.pChannelGroups < 1)
+                //    {
+                //        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Channel Groups must be at least 1.");
+                //    }
+                //}
             }
         }
     }

@@ -58,8 +58,8 @@ namespace Ukemochi
 		//std::cout << "Level1:Load" << '\n';
 		if (es_current == ES_PLAY)
 		{
-			Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-			Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
+			//Audio::GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
+			//Audio::GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
 		}
 
 	}
@@ -68,8 +68,8 @@ namespace Ukemochi
 	{
 		if (es_current == ES_PLAY)
 		{
-			Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+			//Audio::GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
+			//Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
 
 		//std::cout << "Level1:Initialize" << '\n';
@@ -304,13 +304,13 @@ namespace Ukemochi
 		{
 			audioVolume -= 0.02f;
 			audioVolume = audioVolume < 0.f ? 0.f : audioVolume;
-			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+			//Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
 		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_O))
 		{
 			audioVolume += 0.02f;
 			audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
-			Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
+			//Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
 		}
 		if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
 		{
