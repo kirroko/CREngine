@@ -262,19 +262,27 @@ namespace Ukemochi
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(
-                SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y
-            );
+            int mouseX = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().x)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.x));
+            int mouseY = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().y)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.y));
+
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(mouseX, mouseY);
         }
 
         // On mouse movement
         if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(
-                SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y
-            );
+            /*ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x) + ECS::GetInstance().GetSystem<Camera>()->position.x,
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y) + ECS::GetInstance().GetSystem<Camera>()->position.y
+            );*/
+            int mouseX = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().x)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.x));
+            int mouseY = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().y)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.y));
+
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(mouseX, mouseY);
         }
 
         // On mouse button release

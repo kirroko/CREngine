@@ -1444,9 +1444,9 @@ void Renderer::handleMouseDragTranslation(int mouseX, int mouseY)
 			transform.position.y = mouseY + dragOffset.y;
 
 			// Optional: Debug output to monitor dragging behavior
-			std::cout << "Dragging entity " << selectedEntityID
+			/*std::cout << "Dragging entity " << selectedEntityID
 				<< " to position (" << transform.position.x
-				<< ", " << transform.position.y << ")" << std::endl;
+				<< ", " << transform.position.y << ")" << std::endl;*/
 		}
 		else
 		{
@@ -1557,7 +1557,6 @@ void Renderer::handleMouseClick(int mouseX, int mouseY)
 
 void Renderer::handleMouseDrag(int mouseX, int mouseY)
 {
-	std::cout << "handleMouseDrag called with mouseX: " << mouseX << ", mouseY: " << mouseY << std::endl;
 
 	if (currentMode == InteractionMode::TRANSLATE)
 	{
@@ -1566,9 +1565,5 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 	else if (currentMode == InteractionMode::ROTATE)
 	{
 		handleRotation(mouseX, mouseY);
-	}
-	else
-	{
-		std::cerr << "Unknown interaction mode!" << std::endl;
 	}
 }
