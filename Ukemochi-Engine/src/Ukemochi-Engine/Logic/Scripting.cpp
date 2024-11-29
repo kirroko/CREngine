@@ -78,11 +78,13 @@ namespace Ukemochi
         m_pCoreAssemblyImage = mono_assembly_get_image(CoreAssembly);
 
         RegisterMonoFunctions();
-
+        
+#if _DEBUG
         UME_ENGINE_INFO("Compiling Script Assembly");
         if(CompileScriptAssembly())
             UME_ENGINE_WARN("Loading Old Client Assembly instead!!!");
-
+#endif
+        
         UME_ENGINE_INFO("Loading Client Assembly");
         ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")

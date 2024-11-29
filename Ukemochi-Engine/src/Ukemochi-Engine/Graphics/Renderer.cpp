@@ -81,7 +81,6 @@ void Renderer::init()
 
 	setUpObjectPickingBuffer();
 	setupColorPickingFramebuffer();
-	assignUniqueColorsToEntities();
 
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
@@ -1109,24 +1108,6 @@ void Renderer::animationKeyInput()
 
 /*!***********************************************************************
 \brief
-Assigns unique colors to each entity in the scene for object picking.
-Each entity is assigned a color based on its unique ID.
-*************************************************************************/
-void Renderer::assignUniqueColorsToEntities()
-{
-	size_t entityID = 0; // Starting ID
-    for (auto& entity : m_Entities)
-    {
-        float r = ((entityID >> 16) & 0xFF) / 255.0f;  // Extract red
-        float g = ((entityID >> 8) & 0xFF) / 255.0f;   // Extract green
-        float b = (entityID & 0xFF) / 255.0f;          // Extract blue
-        entityColors[entity] = glm::vec3(r, g, b);
-        entityID++;
-    }
-}
-
-/*!***********************************************************************
-\brief
 Encodes an entity ID into an RGB color vector.
 
 \param id
@@ -1137,6 +1118,7 @@ A glm::vec3 representing the RGB color corresponding to the ID.
 *************************************************************************/
 glm::vec3 Renderer::encodeIDToColor(int id)
 {
+	id += 1;
 	float r = ((id >> 16) & 0xFF) / 255.0f;
 	float g = ((id >> 8) & 0xFF) / 255.0f;
 	float b = (id & 0xFF) / 255.0f;
@@ -1237,7 +1219,8 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Check if the color is the clear color
-	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) {
+	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) 
+	{
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
 		return -1; // Sentinel for no entity
 	}
@@ -1246,14 +1229,26 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 		return -1; // Sentinel for no entity
 	}
 
-	size_t entityID = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0)
+	{
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return -1; // Sentinel for no entity
+	}
 
+	size_t entityID = ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]) - 1;
+
+	// Handle the case where no valid entity exists (e.g., invalid ID)
+	if (entityID == static_cast<size_t>(-1)) 
+	{
+		std::cout << "Invalid entity ID decoded at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return -1;
+	}
 	// Debug output
-	std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
+	/*std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
 		<< ") " << std::endl;
 	std::cout << "Pixel RGB: [" << (int)pixel[0] << ", "
 		<< (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
-	std::cout << "Decoded Entity ID: " << entityID << std::endl;
+	std::cout << "Decoded Entity ID: " << entityID << std::endl;*/
 	return entityID;
 }
 
