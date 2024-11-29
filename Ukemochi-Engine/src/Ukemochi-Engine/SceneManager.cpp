@@ -36,10 +36,6 @@ namespace Ukemochi
     //for save & load
     using namespace rapidjson;
 
-    const float SPRITE_SCALE = 100.f;
-    const float ENTITY_ACCEL = 150.f;
-    const float PLAYER_FORCE = 1500.f;
-
     std::chrono::duration<double> SceneManager::loop_time{};
     std::chrono::duration<double> SceneManager::collision_time{};
     std::chrono::duration<double> SceneManager::physics_time{};
@@ -80,10 +76,9 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
-        ECS::GetInstance().RegisterSystem<EnemyManager>();
-
-		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<DungeonManager>();
+		ECS::GetInstance().RegisterSystem<PlayerManager>();
+        ECS::GetInstance().RegisterSystem<EnemyManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -106,7 +101,7 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
         ECS::GetInstance().SetSystemSignature<Collision>(sig);
 
-        // For Logic System
+        // For Logic system
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Script>());
         ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
@@ -116,7 +111,7 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
 
-	    // For Animation System
+	    // For Animation system
 	    sig.reset();
 	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
 	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
@@ -126,12 +121,12 @@ namespace Ukemochi
 		sig.set(ECS::GetInstance().GetComponentType<Player>());
 		ECS::GetInstance().SetSystemSignature<PlayerManager>(sig);
 
-        //For Enemy
+        //For Enemy system
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Enemy>());
         ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 
-        // For Player system
+        // For Audio system
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<AudioManager>());
         ECS::GetInstance().SetSystemSignature<Audio>(sig);
@@ -182,18 +177,6 @@ namespace Ukemochi
             LoadSaveFile(UseImGui::GetStartScene());
         }
 
-        Application& app = Application::Get();
-        int screen_width = app.GetWindow().GetWidth();
-        int screen_height = app.GetWindow().GetHeight();
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-            Vec2{ screen_width * 0.1f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text2", "Hi",
-            Vec2{ screen_width * 0.5f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
-
         //UME_ENGINE_TRACE("Initializing Collision...");
         //ECS::GetInstance().GetSystem<Collision>()->Init();
         //UME_ENGINE_TRACE("Initializing dungeon manager...");
@@ -216,12 +199,6 @@ namespace Ukemochi
      //When in game Engine State
     void SceneManager::SceneMangerUpdate()
     {
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
-
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-
-        SceneManagerDraw();
-
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
@@ -247,6 +224,11 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
         }
 
+        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
+
+        SceneManagerDraw();
     }
 
     //When engine is Running the scene
@@ -254,6 +236,7 @@ namespace Ukemochi
     {
         loop_start = std::chrono::steady_clock::now();
 
+#ifdef _DEBUG
         // Debug mode
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
@@ -265,6 +248,8 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
                 SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
         }
+#endif // _DEBUG
+
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
@@ -280,15 +265,7 @@ namespace Ukemochi
         //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
         //}
         */
-        if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSoundsInGroup(LEVEL1);
-        }
-        if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_N))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlayAllSoundsInGroup(LEVEL1);
-        }
-
+        
 		/*if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
@@ -310,37 +287,34 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
 		}*/
 
-        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
-
-		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->Update();
-        // ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+        // --- UI UPDATE ---
+        ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
 
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 	    
         // --- PHYSICS UPDATE ---
-        // Update the entities physics
         sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
 		sys_end = std::chrono::steady_clock::now();
 		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- COLLISION UPDATE ---
-        // Check the collisions between the entities
         sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
 		sys_end = std::chrono::steady_clock::now();
 		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- TRANSFORMATION UPDATE ---
-        // Compute the entities transformations
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
+
+        // --- AUDIO UPDATE ---
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
 	    // --- ANIMATION UPDATE ---
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
