@@ -16,16 +16,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {	
-	void AssetManager::addTexture(std::string file_path, size_t& order_index)
+	void AssetManager::addTexture(std::string filePath, size_t& orderIndex)
 	{
-		if (texture_list.find(file_path) != texture_list.end())
+		if (texture_list.find(filePath) != texture_list.end())
 		{
 			// std::cout << "Texture already exists";
-			UME_ENGINE_INFO("Texture {0} already exists in list", file_path);
+			UME_ENGINE_INFO("Texture {0} already exists in list", filePath);
 			return;
 		}
 		
-		std::string extention = file_path.substr(file_path.find_last_of('.') + 1);
+		std::string extention = filePath.substr(filePath.find_last_of('.') + 1);
 		std::transform(extention.begin(), extention.end(), extention.begin(), ::tolower);
 
 		GLenum file_render;
@@ -43,16 +43,16 @@ namespace Ukemochi
 		}
 
 		// Load and store the texture with the determined format
-		UME_ENGINE_TRACE("Creating texture of {0}", std::filesystem::path(file_path).stem().string(), order_index);
-		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(order_index), file_render, GL_UNSIGNED_BYTE));
+		UME_ENGINE_TRACE("Creating texture of {0}", std::filesystem::path(filePath).stem().string(), orderIndex);
+		std::shared_ptr<Texture> texture(new Texture(filePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(orderIndex), file_render, GL_UNSIGNED_BYTE));
 		//textures.push_back(texture);
 		//textures_enabled.push_back(true);
-		std::string uniformName = "textures[" + std::to_string(order_index) + "]";
-		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(order_index));
+		std::string uniformName = "textures[" + std::to_string(orderIndex) + "]";
+		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(orderIndex));
 
-		texture_list[file_path] = texture;
-		texture_order.push_back(file_path);
-		order_index++;
+		texture_list[filePath] = texture;
+		texture_order.push_back(filePath);
+		orderIndex++;
 	}
 
 	std::shared_ptr<Texture> AssetManager::getTexture(std::string key_name)

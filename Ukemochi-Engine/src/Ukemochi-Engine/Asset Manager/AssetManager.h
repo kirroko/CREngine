@@ -32,7 +32,7 @@ namespace Ukemochi
 		//void addSprite(std::string file_name, std::string file_path /* can add more if need any other arguements */);
 		//SpriteRender& getSprite(std::string key_name);
 
-		void addTexture(std::string file_path , size_t& order_index);
+		void addTexture(std::string filePath, size_t& orderIndex);
 		std::shared_ptr<Texture> getTexture(std::string key_name);
 
 		void addShader(std::string file_name, std::string vert_path, std::string frag_path);

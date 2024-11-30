@@ -91,6 +91,7 @@ namespace Ukemochi
         GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
         imguiInstance.ImGuiInit(glfwWindow);
 
+#if _DEBUG
         fwInstance = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
 
         fwInstance->Start([](const std::string& path_to_watch, FileStatus status)
@@ -132,7 +133,7 @@ namespace Ukemochi
                 }
             }
         });
-        //fwInstance->Stop();
+#endif
 
         GameStarted = false;
     }
@@ -144,11 +145,14 @@ namespace Ukemochi
         m_running = false;
 
         // Ensure the thread is joined before exiting to prevent memory leaks
+#if _DEBUG
         if (fwInstance)
         {
             fwInstance->Stop(); // Hypothetical method to stop monitoring
             fwInstance.reset(); // Reset shared pointer
         }
+#endif
+
         ScriptingEngine::GetInstance().ShutDown();
     }
 
