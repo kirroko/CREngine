@@ -69,6 +69,7 @@ void Camera::setViewportSize(const glm::vec2& new_size)
  */
 void Camera::processCameraInput(GLfloat delta_time)
 {
+	(void)delta_time;
 #ifdef _DEBUG
 	GLfloat speed = camera_speed * delta_time;
 
