@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       WindowsWindow.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
-\date       Sept 12, 2024
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (85%)
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (15%)
+\date       Nov 30, 2024
 \brief      This file contains the declaration and implementation of the WindowsWindow class, 
             which manages window creation, input handling, and rendering for a windowed application using GLFW.
 
@@ -87,6 +88,9 @@ namespace Ukemochi {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifndef _DEBUG
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // Disable window resizing
+#endif // !_DEBUG
 
 		// Create GLFW window
 		if(m_Data.IsFullScreen)
@@ -231,7 +235,7 @@ namespace Ukemochi {
 				GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 				const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-				glfwSetWindowMonitor(m_Window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+				glfwSetWindowMonitor(m_Window, monitor, 0, 0, m_Data.Width, m_Data.Height, mode->refreshRate);
 				m_Data.IsFullScreen = true;
 			}
 			else // Switch to windowed mode
