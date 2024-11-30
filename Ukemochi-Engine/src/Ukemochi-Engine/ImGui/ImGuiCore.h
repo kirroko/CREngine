@@ -160,6 +160,23 @@ namespace Ukemochi
 
 		/*!***********************************************************************
 		\brief
+			Displays a modal popup informing the user that an invalid audio file type was selected.
+			The popup shows an error message and prevents object picking while it's open.
+
+		\param[in] None
+			This function does not require any input parameters.
+
+		\param[in/out] None
+			This function does not modify any input/output parameters.
+
+		\return
+			None
+			This function does not return a value.
+		*************************************************************************/
+		static void ShowInvalidAudioFileTypePopup();
+
+		/*!***********************************************************************
+		\brief
 		Displays the UI for adding a component to the selected game object.
 		\param[in] selectedObject
 		Pointer to the game object to which a component is to be added.
@@ -298,6 +315,9 @@ namespace Ukemochi
 		bool IsKeyTypeEvent(KeyTypedEvent& e);
 		bool IsWindowResizeEvent(WindowResizeEvent& e);*/
 
+#pragma warning(push)
+#pragma warning(disable : 4251)
+
 		/*!***********************************************************************
 		\brief
 		List of asset file paths loaded into the engine.
@@ -417,4 +437,5 @@ namespace Ukemochi
 		*************************************************************************/
 		static bool m_Compiling;
 	};
+#pragma warning(pop)
 }

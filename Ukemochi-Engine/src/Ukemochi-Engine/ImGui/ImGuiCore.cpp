@@ -1574,6 +1574,46 @@ namespace Ukemochi
         // ImGui::Separator(); // Optional separator after the collapsible section
     }
 
+    /*!***********************************************************************
+    \brief
+        Displays a modal popup informing the user that an invalid audio file type was selected.
+        The popup shows an error message and prevents object picking while it's open.
+
+    \param[in] None
+        This function does not require any input parameters.
+
+    \param[in/out] None
+        This function does not modify any input/output parameters.
+
+    \return
+        None
+        This function does not return a value.
+    *************************************************************************/
+    void UseImGui::ShowInvalidAudioFileTypePopup()
+    {
+        if (ImGui::BeginPopupModal("InvalidAudioFileType", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::Text("Invalid file type selected!");
+            ImGui::Spacing();
+
+            // Emphasized error message in red
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Red color
+            ImGui::Text("Only .wav / .mp3 / .ogg files are allowed!");
+            ImGui::PopStyleColor();
+            ImGui::Spacing();
+
+            if (ImGui::Button("OK", ImVec2(120, 0))) // Add a fixed width for consistency
+            {
+                ImGui::CloseCurrentPopup(); // Close the modal when the button is pressed
+            }
+
+            ImGui::SetItemDefaultFocus(); // Focus the "OK" button
+            ImGui::EndPopup();
+
+            // Disable object picking while the error modal is open
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::NO_STATE;
+        }
+    }
+
     /**
      * @brief Displays and edits the properties of the selected `GameObject`.
      *
@@ -2070,16 +2110,7 @@ namespace Ukemochi
                                     ImGui::EndDragDropTarget();
                                 }
 
-                                // Error Popup for invalid file type
-                                if (ImGui::BeginPopup("InvalidAudioFileType"))
-                                {
-                                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
-                                    if (ImGui::Button("OK"))
-                                    {
-                                        ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
-                                    }
-                                    ImGui::EndPopup();
-                                }
+                                ShowInvalidAudioFileTypePopup();
                             }
 
                             // Add Play and Stop buttons
@@ -2166,16 +2197,7 @@ namespace Ukemochi
                                     ImGui::EndDragDropTarget();
                                 }
 
-                                // Error Popup for invalid file type
-                                if (ImGui::BeginPopup("InvalidAudioFileType"))
-                                {
-                                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
-                                    if (ImGui::Button("OK"))
-                                    {
-                                        ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
-                                    }
-                                    ImGui::EndPopup();
-                                }
+                                ShowInvalidAudioFileTypePopup();
                             }
 
                             // Add Play and Stop buttons for SFX
