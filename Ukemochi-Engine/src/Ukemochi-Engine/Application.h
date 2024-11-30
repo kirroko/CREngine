@@ -47,6 +47,7 @@ namespace Ukemochi {
 		WindowsWindow& GetWindow() { return *m_Window; } // Access the current window
 
 		bool GameStarted = false; // Has the game started?
+		bool IsPaused = false; // Is the game paused?
 
 	private:
 
