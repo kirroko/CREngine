@@ -1215,6 +1215,49 @@ namespace Ukemochi
 
             ImGui::PopStyleColor(3);
         }
+
+        if (obj.HasComponent<Enemy>())
+        {
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.3f, 1.0f, 0.3f, 0.2f));        // Light green background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.3f, 1.0f, 0.3f, 0.4f)); // Darker green when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.3f, 1.0f, 0.3f, 0.6f));  // Even darker green when active
+
+            if (ImGui::TreeNodeEx("Enemy Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
+            {
+                const auto& enemy = obj.GetComponent<Enemy>();
+
+                ImGui::Text("Enemy Details:");
+                ImGui::Text("Health: %.2f", enemy.health);
+                ImGui::Text("Attack Power: %.2f", enemy.attackPower);
+                ImGui::Text("Attack Range: %.2f", enemy.attackRange);
+                ImGui::Text("Speed: %.2f", enemy.speed);
+
+                ImGui::Text("Position:");
+                ImGui::Text("X: %.2f", enemy.posX);
+                ImGui::Text("Y: %.2f", enemy.posY);
+
+                ImGui::Text("Target:");
+                ImGui::Text("Target X: %.2f", enemy.targetX);
+                ImGui::Text("Target Y: %.2f", enemy.targetY);
+
+                ImGui::Text("State: %s",
+                    enemy.state == Enemy::ROAM ? "ROAM" :
+                    enemy.state == Enemy::CHASE ? "CHASE" :
+                    enemy.state == Enemy::ATTACK ? "ATTACK" : "DEAD");
+
+                ImGui::Text("Type: %s",
+                    enemy.type == Enemy::FISH ? "FISH" :
+                    enemy.type == Enemy::WORM ? "WORM" : "DEFAULT");
+
+                ImGui::Text("Is Dead: %s", enemy.isDead ? "Yes" : "No");
+                ImGui::Text("Is Collide: %s", enemy.isCollide ? "Yes" : "No");
+
+                ImGui::TreePop();
+            }
+
+            ImGui::PopStyleColor(3);
+        }
+
     }
 
     /**
@@ -1287,12 +1330,25 @@ namespace Ukemochi
             "Script",
             "Animation",
             "PlayerController",
-            "Audio"
+            "Audio",
+            "EnemyController"
         };
 
         ImGui::Text("Add Component");
         ImGui::Combo("##ComponentCombo", &selectedComponentIndex, availableComponents,
                      IM_ARRAYSIZE(availableComponents));
+
+        bool isAnyPopupOpen = ImGui::IsPopupOpen("Invalid Player Tag") || ImGui::IsPopupOpen("Invalid Enemy Tag");
+
+        // Disable object picking when any modal is open
+        if (isAnyPopupOpen)
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::NO_STATE;
+        }
+        else
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
+        }
 
         if (ImGui::Button("Add Selected Component"))
         {
@@ -1334,10 +1390,14 @@ namespace Ukemochi
                 }
                 break;
             case 5: // Player
-                if (!selectedObject->HasComponent<Player>())
+                if (selectedObject->GetTag() == "Player" && !selectedObject->HasComponent<Player>())
                 {
                     selectedObject->AddComponent<Player>(Player{});
                     modified = true;
+                }
+                else if (selectedObject->GetTag() != "Player")
+                {
+                    ImGui::OpenPopup("Invalid Player Tag");
                 }
                 break;
             case 6: // Audio
@@ -1347,9 +1407,49 @@ namespace Ukemochi
                     modified = true;
                 }
                 break;
+            case 7:
+                if (selectedObject->GetTag() == "Enemy" && !selectedObject->HasComponent<Enemy>())
+                {
+                    selectedObject->AddComponent<Enemy>(Enemy(0.0f, 0.0f, Enemy::DEFAULT, selectedObject->GetInstanceID()));
+                    modified = true;
+                }
+                else if (selectedObject->GetTag() != "Enemy")
+                {
+                    // Show popup instead of console message
+                    ImGui::OpenPopup("Invalid Enemy Tag");
+                }
+                break;
             default:
                 break;
             }
+        }
+
+        // Modal for invalid tag
+        if (ImGui::BeginPopupModal("Invalid Player Tag", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("The selected object is not tagged as 'Player'. Cannot add the Player component.");
+
+            // Change text color and font weight for emphasis
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Red color
+            ImGui::Text("YOU CAN ONLY HAVE 1 PLAYER");
+            ImGui::PopStyleColor();
+
+            if (ImGui::Button("Close"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+
+        // Modal for invalid tag
+        if (ImGui::BeginPopupModal("Invalid Enemy Tag", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("The selected object is not tagged as 'Enemy'. Cannot add the Enemy component.");
+            if (ImGui::Button("Close"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
         }
     }
 
@@ -1855,6 +1955,22 @@ namespace Ukemochi
             }
         }
 
+        if (selectedObject->HasComponent<Enemy>())
+        {
+            if (ImGui::CollapsingHeader("Enemy"))
+            {
+                auto& enemy = selectedObject->GetComponent<Enemy>();
+                ImGui::Text("Enemy Component");
+
+                ImGui::Text("Type:");
+                int type = static_cast<int>(enemy.type);
+                if (ImGui::Combo("Type", &type, "FISH\0WORM\0DEFAULT\0"))
+                {
+                    enemy.type = static_cast<Enemy::EnemyTypes>(type);
+                }
+            }
+        }
+
         if (selectedObject->HasComponent<AudioManager>())
         {
             if (ImGui::CollapsingHeader("Audio"))
@@ -2046,6 +2162,7 @@ namespace Ukemochi
                     ImGui::TreePop();  // Close SFX section
                 }
 
+        
 
                 //std::string filename = std::filesystem::path(audio.audioPath).filename().string();
 
