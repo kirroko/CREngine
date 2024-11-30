@@ -305,6 +305,7 @@ namespace Ukemochi
     Stop playing a specific sound.
     \param soundIndex: Index of the sound to stop.
     *************************************************************************/
+
     void Audio::StopSound(int soundIndex, std::string type)
     {
         if (type == "SFX")
@@ -334,6 +335,24 @@ namespace Ukemochi
             }
         }
     }
+
+    void Audio::StopAllSound()
+    {
+        for (auto* channel : pSFXChannels)
+        {
+            channel->stop();
+        }
+        for (auto* channel : pMusicChannels)
+        {
+            channel->stop();
+        }
+    }
+
+    void Audio::PlayGameBGM()
+    {
+        PlaySound(0, "BGM");
+    }
+
     /*!***********************************************************************
     \brief
     Toggle a sound in a group (play or pause).
