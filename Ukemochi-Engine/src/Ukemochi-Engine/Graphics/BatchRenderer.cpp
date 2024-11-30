@@ -223,7 +223,7 @@ void BatchRenderer2D::flush()
     vertices.clear();
 }
 
-void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> shader)
+void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> ashader)
 {
-    this->activeShader = shader; // Assign the new shader
+    activeShader = ashader; // Assign the new shader
 }
