@@ -209,7 +209,7 @@ namespace Ukemochi {
 				info.EventCallback(event);
 			});
 
-		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* window, int focused)
+		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow*, int focused)
 			{
 				if (focused) // Window gain focus
 					Application::Get().IsPaused = false;
@@ -217,7 +217,7 @@ namespace Ukemochi {
 					Application::Get().IsPaused = true;
 			});
 
-		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified)
+		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow*, int iconified)
 			{
 				if (iconified) // Window is minimized
 					Application::Get().IsPaused = true;
