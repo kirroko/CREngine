@@ -82,6 +82,8 @@ namespace Ukemochi
         *************************************************************************/
         void StopSound(int soundIndex, std::string type);
 
+        void StopAllSound();
+
         /*!***********************************************************************
         \brief
          Toggle a sound in a group (play or pause).
