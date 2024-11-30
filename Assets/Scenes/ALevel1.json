@@ -1645,32 +1645,32 @@
                     "Name": "Audio",
                     "Music": [{
                             "Name": "BGM",
-                            "Path": "../Assets/Audio/GameBGM/ANCIENT RUINS - NewAge MSCNEW2_34.wav"
+                            "Path": "../Assets/Audio/GameBGM/GameBGM.wav"
                         }],
                     "SFX": [{
                             "Name": "HIT",
                             "Path": "../Assets/Audio/SFX_jump.wav"
                         }, {
                             "Name": "Pattack1",
-                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_88.5.wav"
+                            "Path": "../Assets/Audio/player/Playerattack1.wav"
                         }, {
                             "Name": "Pattack2",
-                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_89.4.wav"
+                            "Path": "../Assets/Audio/player/Playerattack2.wav"
                         }, {
                             "Name": "Pattack3",
-                            "Path": "../Assets/Audio/player/Vsh 45 Fist Kick Short by newagesoup Id-369089.wav"
+                            "Path": "../Assets/Audio/player/Playerkick.wav"
                         }, {
                             "Name": "EnemyKilled",
-                            "Path": "../Assets/Audio/enemydead/Hit 02 by LittleRobotSoundFactory Id-270325.wav"
+                            "Path": "../Assets/Audio/enemydead/enemydead.wav"
                         }, {
                             "Name": "LevelChange",
-                            "Path": "../Assets/Audio/door/Games, Video, Event, Collect Item, Hurry, Out Of Time SND5516.wav"
+                            "Path": "../Assets/Audio/door/caveEnter.wav"
                         }, {
                             "Name": "FishMove",
-                            "Path": "../Assets/Audio/fish audio/Gore, Splat, Cadaver Impact, Slap, Drop, Long Tail, Bloody, Flesh 05 SND9913 - Copy.wav"
+                            "Path": "../Assets/Audio/fish audio/fishmove.wav"
                         }, {
                             "Name": "FishAttack",
-                            "Path": "../Assets/Audio/fish audio/SCI-FI-WHOOSH_GEN-HDF-20863.wav"
+                            "Path": "../Assets/Audio/fish audio/fishattack.wav"
                         }]
                 }]
         }]
