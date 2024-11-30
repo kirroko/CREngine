@@ -27,6 +27,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::Init()
 	{
+#ifndef _DEBUG
 		// Get the screen width and height
 		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
@@ -40,6 +41,7 @@ namespace Ukemochi
 
 		CreateButton("startButton", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 9, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 			[]() { Application::Get().StartGame(); });
+#endif // !_DEBUG
 
 		//CreateText("text1", "sample text",
 		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },

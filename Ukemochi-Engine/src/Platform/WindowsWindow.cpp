@@ -94,7 +94,7 @@ namespace Ukemochi {
 #endif // !_DEBUG
 
 		// Create GLFW window
-		if(m_Data.IsFullScreen)
+		if (m_Data.IsFullScreen)
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
 		else
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
@@ -215,12 +215,14 @@ namespace Ukemochi {
 				if (focused) // Window gain focus
 				{
 					Application::Get().IsPaused = false;
+#ifndef _DEBUG
 					Audio::GetInstance().PlayGameBGM();
+#endif // !_DEBUG
 				}
 				else // Window lost focus
 				{
-					Audio::GetInstance().StopAllSound();
 					Application::Get().IsPaused = true;
+					Audio::GetInstance().StopAllSound();
 				}
 			});
 
@@ -228,13 +230,15 @@ namespace Ukemochi {
 			{
 				if (iconified) // Window is minimized
 				{
-					Audio::GetInstance().StopAllSound();
 					Application::Get().IsPaused = true;
+					Audio::GetInstance().StopAllSound();
 				}
 				else // Window is restored
 				{
-					Audio::GetInstance().PlayGameBGM();
 					Application::Get().IsPaused = false;
+#ifndef _DEBUG
+					Audio::GetInstance().PlayGameBGM();
+#endif // !_DEBUG
 				}
 			});
 	}
