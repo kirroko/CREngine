@@ -84,7 +84,7 @@ namespace Ukemochi
 
         void StopAllSound();
 
-        void Audio::PlayGameBGM();
+        void PlayGameBGM();
 
         /*!***********************************************************************
         \brief

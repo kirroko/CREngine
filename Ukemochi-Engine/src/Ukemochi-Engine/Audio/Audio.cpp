@@ -350,7 +350,13 @@ namespace Ukemochi
 
     void Audio::PlayGameBGM()
     {
-        PlaySound(0, "BGM");
+        bool isPlaying = false;
+        pMusicChannels[0]->isPlaying(&isPlaying);
+
+        if (!isPlaying)
+        {
+            PlaySound(0, "Music");
+        }
     }
 
     /*!***********************************************************************
