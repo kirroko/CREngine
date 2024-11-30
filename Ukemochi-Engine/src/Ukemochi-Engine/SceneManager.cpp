@@ -276,6 +276,47 @@ namespace Ukemochi
         }
 #endif // _DEBUG
 
+#ifndef _DEBUG
+		// Game Inputs Quick fix
+		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+
+			LoadSaveFile(GetCurrScene() + ".json");
+
+			UME_ENGINE_TRACE("Initializing Collision...");
+			ECS::GetInstance().GetSystem<Collision>()->Init();
+			UME_ENGINE_TRACE("Initializing dungeon manager...");
+			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+			// enemy
+			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+			//audio
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+			return;
+		}
+
+		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
+		{
+			es_current = ES_QUIT;
+			return;
+		}
+#endif
+		
+
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
