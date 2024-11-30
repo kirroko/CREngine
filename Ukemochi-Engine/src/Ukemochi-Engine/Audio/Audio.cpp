@@ -231,6 +231,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pSFXChannels[soundIndex] = channel;
+                pSFXChannels[soundIndex]->setVolume(0.2f);
 
                 std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
@@ -255,7 +256,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pMusicChannels[soundIndex] = channel;
-
+                pMusicChannels[soundIndex]->setVolume(0.2f);
                 std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
 
             }
