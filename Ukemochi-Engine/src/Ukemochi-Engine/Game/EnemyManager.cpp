@@ -1,3 +1,16 @@
+/* Start Header ************************************************************************/
+/*!
+\file       EnemyManager.h
+\author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu
+\date       Sept 20, 2024
+\brief      This file contains the definition of the EnemyManager class and related methods.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "PreCompile.h"
 #include "EnemyManager.h"
 #include "../Factory/GameObjectManager.h"
@@ -7,6 +20,12 @@
 
 namespace Ukemochi
 {
+    /*!***********************************************************************
+    \brief
+        Updates the list of enemies in the game.
+    \details
+        This method performs any necessary updates on the enemies currently managed by the system.
+    *************************************************************************/
 	void EnemyManager::UpdateEnemyList()
 	{
         std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed the random generator
@@ -33,6 +52,12 @@ namespace Ukemochi
         playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
 	}
 
+    /*!***********************************************************************
+    \brief
+        Updates the behavior of all enemies.
+    \details
+        This method is called to update each enemy's behavior and logic during the game's update phase.
+    *************************************************************************/
     void EnemyManager::UpdateEnemies()
     {
         // Iterate through the enemyObjects list
@@ -71,10 +96,8 @@ namespace Ukemochi
                 }
                 object->SetActive(false);
                 enemycomponent.isDead = true;
-                it++;
-                //GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
-                //it = enemyObjects.erase(it); // Remove the enemy from the list
-                continue; // Skip further processing for this enemy
+                ++it;
+                continue;
             }
 
             //if there no nearest obj, find neareast obj
@@ -115,19 +138,6 @@ namespace Ukemochi
                     enemycomponent.nearestObj = -1;
                     enemycomponent.isCollide = false;
                 }
-
-
-                //enemycomponent.WrapToTarget(object->GetComponent<Transform>(), enemycomponent.targetX, enemycomponent.targetY, g_FrameRateController.GetDeltaTime(), enemycomponent.speed);
-                //
-                //if (enemycomponent.ReachedTarget(
-                //    enemycomponent.posX,
-                //    enemycomponent.posY,
-                //    enemycomponent.targetX,
-                //    enemycomponent.targetY, 0.2f))
-                //{
-                //    enemycomponent.isCollide = false;
-                //}
-
                 ++it;
                 continue;
             }
@@ -175,16 +185,9 @@ namespace Ukemochi
                     enemycomponent.prevObject = enemycomponent.nearestObj;
                     enemycomponent.nearestObj = -1;
                 }
-
-                ////enemycomponent.SetTarget(GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj)->GetComponent<Transform>());
-                //enemycomponent.MoveToTarget(object->GetComponent<Transform>(), enemycomponent.targetX, enemycomponent.targetY, g_FrameRateController.GetDeltaTime(), enemycomponent.speed);
-
                 break;
 
             case Enemy::CHASE:
-                
-                //std::cout << object->GetInstanceID() << " Chase" << std::endl;
-
                 // Compute the direction vector to the target (player)
                 enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
                 enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
@@ -230,33 +233,15 @@ namespace Ukemochi
                     enemycomponent.state = enemycomponent.ROAM;
                     break;
                 }
-
-                //enemycomponent.MoveToTarget(object->GetComponent<Transform>(), playerObj->GetComponent<Transform>().position.x,
-                //    playerObj->GetComponent<Transform>().position.y, g_FrameRateController.GetDeltaTime(), enemycomponent.speed);
-
-                //if (enemycomponent.ReachedTarget(enemycomponent.posX, enemycomponent.posY,
-                //    playerObj->GetComponent<Transform>().position.x,
-                //    playerObj->GetComponent<Transform>().position.y, 250.f) == false)
-                //{
-                //    enemycomponent.state = enemycomponent.ROAM;
-                //    return;
-                //}
                 break;
 
             case Enemy::ATTACK:
-
-                //std::cout << object->GetInstanceID() << " Attack" << std::endl;
 
                 if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                 {
                     enemycomponent.state = enemycomponent.CHASE;
                     break;
                 }
-                //if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>()) == false)
-                //{
-                //    enemycomponent.state = enemycomponent.CHASE;
-                //    break;
-                //}
 
                 enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
@@ -299,6 +284,15 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Handles the collision response when an enemy collides with another object.
+    \param enemyID: The ID of the enemy involved in the collision.
+    \param objID: The ID of the object involved in the collision.
+    \details
+        This method processes the appropriate response when an enemy collides with another entity,
+        which could include interactions with the player or other objects.
+    *************************************************************************/
     void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
     {
         auto& gameObjectManager = GameObjectManager::GetInstance();
@@ -306,8 +300,6 @@ namespace Ukemochi
         auto obj2 = gameObjectManager.GetGO(objID);
 
         auto& enemyComponent = enemy->GetComponent<Enemy>();
-        //auto& enemyTransform = enemy->GetComponent<Transform>();
-        //auto& obj2Transform = obj2->GetComponent<Transform>();
 
         if (obj2->HasComponent<Enemy>())
         {
@@ -322,122 +314,17 @@ namespace Ukemochi
             enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
             enemyComponent.nearestObj = static_cast<int>(objID);
         }
-
-
-        
-
-        /*
-        //auto& gameObjectManager = GameObjectManager::GetInstance();
-        //auto enemy = gameObjectManager.GetGO(enemyID);
-        //auto environment = gameObjectManager.GetGO(objID);
-
-        //auto& enemyComponent = enemy->GetComponent<Enemy>();
-        //auto& enemyTransform = enemy->GetComponent<Transform>();
-        //auto& envTransform = environment->GetComponent<Transform>();
-
-        //// Mark the enemy's state
-        //if (enemyComponent.nearestObj == objID)
-        //{
-        //    enemyComponent.prevObject = objID;
-        //    enemyComponent.nearestObj = FindNearestObject(enemy);
-        //}
-        //if (enemyComponent.nearestObj == -1)
-        //{
-        //    return;
-        //}
-        //enemyComponent.isCollide = true;
-
-        //// Determine if the environment object is on the right or left side of the enemy
-        //bool isRightSide = envTransform.position.x > enemyTransform.position.x;
-
-        //// Define potential new positions around the environment object
-        //std::vector<std::pair<float, float>> potentialPositions;
-
-        //if (isRightSide)
-        //{
-        //    //env obj is on right
-        //    std::cout << "R ENEMY < ENV" << std::endl;
-        //    //if nearest is on ride or left
-
-        //    //if nearest obj on right go top right or bottom right
-        //    if (gameObjectManager.GetGO(enemyComponent.nearestObj)->GetComponent<Transform>().position.x > enemyTransform.position.x)// right
-        //    {
-        //        std::cout << "R ENEMY < nearest" << std::endl;
-        //        // Environment is on the right side
-        //        potentialPositions = {
-        //            {envTransform.position.x + 0.6f * envTransform.scale.x, envTransform.position.y + 1.5f * envTransform.scale.y}, // Top right
-        //            {envTransform.position.x + 0.6f * envTransform.scale.x, envTransform.position.y - 1.5f * envTransform.scale.y}  // Bottom right
-        //        };
-        //    }
-        //    else
-        //    {
-        //        std::cout << "L ENV < nearest" << std::endl;
-        //        // Environment is on the left side
-        //        potentialPositions = {
-        //            {envTransform.position.x - 0.6f * envTransform.scale.x, envTransform.position.y + 1.5f * envTransform.scale.y}, // Top left
-        //            {envTransform.position.x - 0.6f * envTransform.scale.x, envTransform.position.y - 1.5f * envTransform.scale.y}  // Bottom left
-        //        };
-        //    }
-
-
-        //}
-        //else
-        //{
-        //    std::cout << "L ENV < ENEMY" << std::endl;
-        //    // Environment is on the left side
-
-        //    if (gameObjectManager.GetGO(enemyComponent.nearestObj)->GetComponent<Transform>().position.x > enemyTransform.position.x)
-        //    {
-        //        std::cout << "R ENEMY < nearest" << std::endl;
-        //        // Environment is on the right side
-        //        potentialPositions = {
-        //            {envTransform.position.x + 0.6f * envTransform.scale.x, envTransform.position.y + 1.5f * envTransform.scale.y}, // Top right
-        //            {envTransform.position.x + 0.6f * envTransform.scale.x, envTransform.position.y - 1.5f * envTransform.scale.y}  // Bottom right
-        //        };
-        //    }
-        //    else
-        //    {
-        //        std::cout << "L ENV < nearest" << std::endl;
-        //        // Environment is on the left side
-        //        potentialPositions = {
-        //            {envTransform.position.x - 0.6f * envTransform.scale.x, envTransform.position.y + 1.5f * envTransform.scale.y}, // Top left
-        //            {envTransform.position.x - 0.6f * envTransform.scale.x, envTransform.position.y - 1.5f * envTransform.scale.y}  // Bottom left
-        //        };
-        //    }
-
-
-        //}
-
-        //// Find the closest position to the enemy
-        //std::pair<float, float> closestPosition;
-        //float minDistance = std::numeric_limits<float>::max();
-
-        //for (const auto& pos : potentialPositions)
-        //{
-        //    // Calculate the distance to the potential position
-        //    float dx = pos.first - enemyTransform.position.x;
-        //    float dy = pos.second - enemyTransform.position.y;
-        //    float distance = std::sqrt(dx * dx + dy * dy);
-
-        //    // Check if this is the closest position and the path is clear
-        //    if (distance < minDistance && IsClearPathToPosition(enemy, pos.first, pos.second))
-        //    {
-        //        minDistance = distance;
-        //        closestPosition = pos;
-        //    }
-        //}
-
-        //// If a valid closest position is found, set it as the target
-        //if (minDistance < std::numeric_limits<float>::max())
-        //{
-        //    enemyComponent.targetX = closestPosition.first;
-        //    enemyComponent.targetY = closestPosition.second;
-        //}
-        */
-
     }
 
-
+    /*!***********************************************************************
+    \brief
+        Determines if there is a clear path for an enemy to move to a new position.
+    \param enemy: Pointer to the GameObject representing the enemy.
+    \param newX: The target X coordinate for the enemy to move to.
+    \param newY: The target Y coordinate for the enemy to move to.
+    \return
+        Returns true if the enemy can move to the new position without obstruction.
+    *************************************************************************/
     bool EnemyManager::IsClearPathToPosition(GameObject* enemy, float newX, float newY)
     {
         // Check if moving the enemy to the new position (newX, newY) is clear of obstacles
@@ -466,7 +353,13 @@ namespace Ukemochi
         return true;  // The path is clear to move
     }
 
-
+    /*!***********************************************************************
+    \brief
+        Finds the nearest object to a given enemy.
+    \param enemy: Pointer to the GameObject representing the enemy.
+    \return
+        The ID of the nearest object to the enemy.
+    *************************************************************************/
     int EnemyManager::FindNearestObject(GameObject* enemy) const
     {
         if (environmentObjects.empty()) {
@@ -498,6 +391,15 @@ namespace Ukemochi
         return static_cast<int>(selectedObject->GetInstanceID());
     }
 
+    /*!***********************************************************************
+    \brief
+        Checks if an enemy is far enough away from a target object.
+    \param enemy: Pointer to the GameObject representing the enemy.
+    \param targetObject: Pointer to the GameObject representing the target.
+    \param minDistanceThreshold: The minimum distance threshold to check.
+    \return
+        Returns true if the enemy is farther than the given threshold from the target object.
+    *************************************************************************/
     bool EnemyManager::IsEnemyAwayFromObject(GameObject* enemy, GameObject* targetObject, float minDistanceThreshold) const
     {
         if (!enemy || !targetObject) {
@@ -517,6 +419,12 @@ namespace Ukemochi
         return distanceSquared > (minDistanceThreshold * minDistanceThreshold);
     }
 
+    /*!***********************************************************************
+    \brief
+        Clears all enemy entities.
+    \details
+        This method removes all enemies from the enemy list and performs any necessary cleanup.
+    *************************************************************************/
     void EnemyManager::ClearEnemies()
     {
         if (!enemyObjects.empty())
