@@ -171,6 +171,20 @@ void DebugBatchRenderer2D::drawDebugCircle(const glm::vec2& center, float radius
     }
 }
 
+void DebugBatchRenderer2D::drawDebugLine(const glm::vec2& start, const glm::vec2& end, const glm::vec3& color)
+{
+    if (vertices.size() >= maxShapes * 2) // Each line has 2 vertices
+    {
+        flush();
+        beginBatch();
+    }
+
+    // Add the start and end points of the line
+    vertices.push_back({ glm::vec3(start, 0.0f), color });
+    vertices.push_back({ glm::vec3(end, 0.0f), color });
+}
+
+
 /*!***********************************************************************
 \brief
 Ends the current batch by rendering all the vertices in the buffer.

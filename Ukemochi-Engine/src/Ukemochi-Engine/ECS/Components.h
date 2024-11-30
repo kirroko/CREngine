@@ -221,6 +221,12 @@ namespace Ukemochi
 			AnimationClip &clip = clips[currentClip];
 			time_since_last_frame += dt;
 
+			if (isAttacking)
+			{
+				attackAnimationFinished = false;
+			}
+
+
 			// Advance new frame
 			if (time_since_last_frame >= clip.frame_time)
 			{
@@ -330,7 +336,8 @@ namespace Ukemochi
 		int nearestObj;
 		mutable int prevObject;
 		bool isCollide;
-		float atktimer = 0.0f;
+		float atktimer = 5.0f;
+		bool isDead = false;
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
@@ -349,13 +356,13 @@ namespace Ukemochi
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 20.f;
+				health = 50.f;
 				attackPower = 20.f;
 				attackRange = 300.f;
 				speed = 5000.f;
 				break;
 			case Enemy::WORM:
-				health = 20.f;
+				health = 50.f;
 				attackPower = 10.f;
 				attackRange = 300.f;
 				speed = 5000.f;

@@ -25,11 +25,12 @@ namespace Ukemochi
             
             auto& animation = ECS::GetInstance().GetComponent<Animation>(entity);
 
-            GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
-            float deltaTime = currentFrameTime - m_time;
-            m_time = currentFrameTime;
+            // GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+            // float deltaTime = currentFrameTime - m_time;
+            // m_time = currentFrameTime;
+            float dt = static_cast<float>(g_FrameRateController.GetDeltaTime());
             
-            animation.update(deltaTime);
+            animation.update(dt);
         }
     }
 }
