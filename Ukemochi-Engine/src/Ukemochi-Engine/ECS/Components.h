@@ -295,7 +295,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float attackCooldown = 0.5f;
 		float attackTimer = 0.0f;
-		float playerForce = 1500.0f;
+		float playerForce = 2500.0f;
 		bool isDead = false;
 		bool canAttack = true;
 		bool isAttacking = false;
