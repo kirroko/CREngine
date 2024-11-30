@@ -1649,7 +1649,7 @@
                         }],
                     "SFX": [{
                             "Name": "HIT",
-                            "Path": "../Assets/Audio/SFX_jump.wav"
+                            "Path": "../Assets/Audio/Collision.wav"
                         }, {
                             "Name": "Pattack1",
                             "Path": "../Assets/Audio/player/Playerattack1.wav"
