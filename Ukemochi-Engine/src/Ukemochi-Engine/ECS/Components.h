@@ -556,7 +556,7 @@ namespace Ukemochi
 			return -1; // Return an invalid index if not found
 		}
 
-		int GetMusicindex(const std::string& name) {
+		int GetMusicIndex(const std::string& name) {
 			auto it = std::find_if(music.begin(), music.end(), [&name](const AudioSource& source) {
 				return source.audioName == name;
 				});
@@ -573,7 +573,7 @@ namespace Ukemochi
 		void AddSoundToMusic(const std::string& name) {
 			//music.emplace_back(path, name);
 
-			int index = GetMusicindex(name);
+			int index = GetMusicIndex(name);
 			Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
 		}
 

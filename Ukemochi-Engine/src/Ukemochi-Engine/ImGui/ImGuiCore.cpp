@@ -750,8 +750,14 @@ namespace Ukemochi
                 // enemy
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 //audio
-                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                audioM.PlayMusic(audioM.GetMusicindex("BGM"));
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                {
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+                    {
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                    }
+                }
 
                 // Recompile scripts and display popup that its compiling. Remove popup when done
                 if (ScriptingEngine::GetInstance().compile_flag)
@@ -784,8 +790,14 @@ namespace Ukemochi
 
         if (ImGui::Button("Stop"))
         {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            audioM.StopMusic(audioM.GetMusicindex("BGM"));
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+                }
+            }
 
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
             es_current = ENGINE_STATES::ES_ENGINE;
