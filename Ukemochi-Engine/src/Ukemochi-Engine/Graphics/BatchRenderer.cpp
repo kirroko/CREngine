@@ -225,5 +225,5 @@ void BatchRenderer2D::flush()
 
 void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> shader)
 {
-    activeShader = shader; // Assign the new shader
+    this->activeShader = shader; // Assign the new shader
 }

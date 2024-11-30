@@ -1649,7 +1649,7 @@
                         }],
                     "SFX": [{
                             "Name": "HIT",
-                            "Path": "../Assets/Audio/SFX_jump.wav"
+                            "Path": "../Assets/Audio/Wood, Handle, Wooden Door Frame, Grab, Tap, Hit With Hand, Varying Force, Off Axis 04 SND88907.wav"
                         }, {
                             "Name": "Pattack1",
                             "Path": "../Assets/Audio/player/Playerattack1.wav"
