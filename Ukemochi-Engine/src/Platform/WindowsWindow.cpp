@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 #include "Ukemochi-Engine/Input/Input.h"
 #include "Ukemochi-Engine/Application.h"
+#include "Ukemochi-Engine/Audio/Audio.h"
 #include <glad/glad.h>
 
 namespace Ukemochi {
@@ -212,17 +213,29 @@ namespace Ukemochi {
 		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow*, int focused)
 			{
 				if (focused) // Window gain focus
+				{
 					Application::Get().IsPaused = false;
+					Audio::GetInstance().PlayGameBGM();
+				}
 				else // Window lost focus
+				{
+					Audio::GetInstance().StopAllSound();
 					Application::Get().IsPaused = true;
+				}
 			});
 
 		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow*, int iconified)
 			{
 				if (iconified) // Window is minimized
+				{
+					Audio::GetInstance().StopAllSound();
 					Application::Get().IsPaused = true;
+				}
 				else // Window is restored
+				{
+					Audio::GetInstance().PlayGameBGM();
 					Application::Get().IsPaused = false;
+				}
 			});
 	}
 	/*!
