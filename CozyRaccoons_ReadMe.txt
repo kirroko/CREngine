@@ -17,6 +17,8 @@ Control Mochi using the WASD keys and the J key to attack. Mochi can attack near
 USER CONTROLS
 F11 key - Toggle full screen/window modes
 Enter key - To start game
+R key - To reset the game
+Escape key - To quit the game
 Left mouse click - Select UI buttons
 WASD keys - Move the player
 J key - Use the knife attack
