@@ -1122,7 +1122,20 @@ A glm::vec3 representing the RGB color corresponding to the ID.
 *************************************************************************/
 glm::vec3 Renderer::encodeIDToColor(int id)
 {
+	// This incrementation is to skip the RGB value of 0,0,0
 	id += 1;
+
+	// Separates the entity id bits into R, G and B by moving the bits out
+	// Example if R wants to be encoded, we both the G and B parts out hence
+	// we move it by 16 bits to the right, each color component is 8 bits
+	// & 0xFF creates a comparsion between the RGB compononent in bits against 
+	// 0xFF in bits
+	// E.g ID = 1, comparing blue
+	// 0000 0000 0000 0000 0000 0001
+	// 0000 0000 0000 0000 1111 1111
+	// Result:
+	// 0000 0000 0000 0000 0000 0001
+	// If there is a corresponding bit in the same positions, result will be 1
 	float r = ((id >> 16) & 0xFF) / 255.0f;
 	float g = ((id >> 8) & 0xFF) / 255.0f;
 	float b = (id & 0xFF) / 255.0f;
@@ -1295,7 +1308,7 @@ void Renderer::setUpObjectPickingBuffer()
 	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("objectPickingFramebuffer");
 }
 
-/*!
+/*!***********************************************************************
  * @brief Draws a 2D box with the given position, dimensions, and texture,
 		  starting position is the top left of screen. It starts from the
 		  center of the box.
@@ -1304,7 +1317,7 @@ void Renderer::setUpObjectPickingBuffer()
  * @param width The width of the box (in screen space).
  * @param height The height of the box (in screen space).
  * @param texturePath The file path to the texture for the box.
- */
+*************************************************************************/
 void Renderer::drawBox()
 {
 	//object_picking_shader_program->Activate();
@@ -1362,6 +1375,9 @@ void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int h
 	glViewport(0, 0, width, height);
 }
 
+// Optional:
+// Currently here for debugging purposes only!!
+// Not in use at the moment
 void Renderer::drawPoint(float x, float y, glm::vec3 color)
 {
 	// Activate the point shader
@@ -1476,6 +1492,13 @@ void Renderer::handleMouseDragTranslation(int mouseX, int mouseY)
 	}
 }
 
+/*!***********************************************************************
+\brief
+Draws the rotation handle for the specified transform.
+
+\param transform
+The transform of the entity to draw the rotation handle for.
+*************************************************************************/
 void Renderer::drawRotationHandle(const Transform& transform)
 {
 	glm::vec3 center = glm::vec3(transform.position.x, transform.position.y, 0);
@@ -1487,17 +1510,10 @@ void Renderer::drawRotationHandle(const Transform& transform)
 	debugBatchRenderer->drawDebugCircle(center, radius, glm::vec3(0, 0, 1)); // Blue circle
 }
 
-bool isMouseOnScalingHandle(const glm::vec3& handlePosition, const glm::vec2& mousePosition, float threshold = 0.1f)
-{
-	return glm::distance(glm::vec2(handlePosition.x, handlePosition.y), mousePosition) < threshold;
-}
-
-bool isMouseOnRotationHandle(const glm::vec3& center, const glm::vec2& mousePosition, float radius, float threshold = 0.1f)
-{
-	float distance = glm::distance(glm::vec2(center.x, center.y), mousePosition);
-	return glm::abs(distance - radius) < threshold; // Near the circle's edge
-}
-
+/*!***********************************************************************
+\brief
+Renders the rotation axis for the currently selected entity, if any.
+*************************************************************************/
 void Renderer::renderRotationAxis()
 {
 
@@ -1520,6 +1536,19 @@ void Renderer::renderRotationAxis()
 
 }
 
+/*!***********************************************************************
+\brief
+Handles a mouse click event for initiating entity rotation.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+
+\return
+True if the rotation handle was clicked; otherwise, false.
+*************************************************************************/
 bool Renderer::handleMouseClickForRotation(int mouseX, int mouseY)
 {
 	if (selectedEntityID != -1)
@@ -1543,6 +1572,16 @@ bool Renderer::handleMouseClickForRotation(int mouseX, int mouseY)
 	return false;
 }
 
+/*!***********************************************************************
+\brief
+Handles the rotation of the selected entity based on mouse movement.
+
+\param mouseX
+The x-coordinate of the mouse cursor in screen space.
+
+\param mouseY
+The y-coordinate of the mouse cursor in screen space.
+*************************************************************************/
 void Renderer::handleRotation(int mouseX, int mouseY)
 {
 	if (isRotating)
@@ -1560,6 +1599,16 @@ void Renderer::handleRotation(int mouseX, int mouseY)
 	}
 }
 
+/*!***********************************************************************
+\brief
+Handles mouse click events and delegates to the appropriate interaction mode.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+*************************************************************************/
 void Renderer::handleMouseClick(int mouseX, int mouseY)
 {
 	if (currentMode == InteractionMode::TRANSLATE)
@@ -1583,6 +1632,16 @@ void Renderer::handleMouseClick(int mouseX, int mouseY)
 	}
 }
 
+/*!***********************************************************************
+\brief
+Handles mouse drag events and delegates to the appropriate interaction mode.
+
+\param mouseX
+The x-coordinate of the mouse drag in screen space.
+
+\param mouseY
+The y-coordinate of the mouse drag in screen space.
+*************************************************************************/
 void Renderer::handleMouseDrag(int mouseX, int mouseY)
 {
 
@@ -1600,6 +1659,10 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 	}
 }
 
+/*!***********************************************************************
+\brief
+Renders the scale axis for the currently selected entity, if any.
+*************************************************************************/
 void Renderer::renderScaleAxis()
 {
 
@@ -1616,6 +1679,13 @@ void Renderer::renderScaleAxis()
 
 }
 
+/*!***********************************************************************
+\brief
+Draws scaling handles for an entity to allow resizing along X, Y, or both axes.
+
+\param transform
+The transform of the entity to draw scaling handles for.
+*************************************************************************/
 void Renderer::drawScalingHandles(const Transform& transform)
 {
 	glm::vec2 entityCenter(transform.position.x, transform.position.y);
@@ -1637,6 +1707,19 @@ void Renderer::drawScalingHandles(const Transform& transform)
 	debugBatchRenderer->drawDebugBox(entityCenter, centerBoxSize, glm::vec3(0.5f, 0.5f, 0.5f), 1.0f); // Grey box
 }
 
+/*!***********************************************************************
+\brief
+Handles a mouse click event for initiating scaling of an entity.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+
+\return
+True if the scaling handle was clicked; otherwise, false.
+*************************************************************************/
 bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 {
 	if (selectedEntityID != -1)
@@ -1677,6 +1760,16 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 	return false;
 }
 
+/*!***********************************************************************
+\brief
+Handles scaling of an entity based on mouse movement.
+
+\param mouseX
+The x-coordinate of the mouse drag in screen space.
+
+\param mouseY
+The y-coordinate of the mouse drag in screen space.
+*************************************************************************/
 void Renderer::handleScaling(int mouseX, int mouseY)
 {
 	if (isScaling && selectedEntityID != -1)
@@ -1705,6 +1798,10 @@ void Renderer::handleScaling(int mouseX, int mouseY)
 	}
 }
 
+/*!***********************************************************************
+\brief
+Renders the translation axis for the currently selected entity, if any.
+*************************************************************************/
 void Renderer::renderTranslationAxis()
 {
 	if (selectedEntityID == -1 || !ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
@@ -1749,10 +1846,14 @@ void Renderer::renderTranslationAxis()
 	debugBatchRenderer->endBatch();
 }
 
+/*!***********************************************************************
+\brief
+Resets the gizmo state, clearing the selected entity and interaction modes.
+*************************************************************************/
 void Renderer::resetGizmo()
 {
 	// Reset selectedEntityID when switching scenes
-	selectedEntityID = -1;
+	selectedEntityID = static_cast<size_t>(-1);
 	isScaling = false;
 	isRotating = false;
 }
