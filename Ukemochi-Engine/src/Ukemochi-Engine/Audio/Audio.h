@@ -137,7 +137,12 @@ namespace Ukemochi
         *************************************************************************/
         bool IsSFXPlaying(int soundIndex);
 
+        bool IsAnySFXPlaying();
+
         bool IsMusicPlaying(int soundIndex);
+
+        void RemoveMusic(int index);
+        void RemoveSFX(int index);
 
         std::vector<FMOD::Sound*> pSFX;  // A list of loaded sounds
         std::vector<FMOD::Channel*> pSFXChannels;  // A list of channels playing individual sounds

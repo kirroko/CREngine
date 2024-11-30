@@ -91,7 +91,6 @@ public:
 	 */
 	void render();
 
-	void handleMouseClick(int mouseX, int mouseY);
 
 	/*!
 	 * @brief Cleans up and releases all OpenGL resources (e.g., VAOs, VBOs, EBOs, textures, shaders).
@@ -489,16 +488,46 @@ public:
 	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
 	void drawPoint(float x, float y, glm::vec3 color);
 	glm::vec3 encodeIDToColor(int id);
-	void handleMouseDrag(int mouseX, int mouseY);
+	void handleMouseDragTranslation(int mouseX, int mouseY);
 	void handleMouseClickOP(int mouseX, int mouseY); 
 	size_t selectedEntityID = static_cast<size_t>(-1); // Sentinel value for no selection
 	size_t getSelectedEntityID() { return selectedEntityID; }
 	bool isDragging = false; // Flag to check if dragging is active
-	//void renderImGuizmo();
 private:
 	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
 	std::shared_ptr<Shader> debug_shader_program;
 	
 	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
+
+// Gizmo
+	// Rotation
+	void drawRotationHandle(const Transform& transform);
+	void renderRotationAxis();
+	float rotationStartAngle = 0.0f;
+	float rotationStartEntityAngle = 0.0f;
+
+	// Scale
+	void drawScalingHandles(const Transform& transform);
+	void renderScaleAxis();
+
+	// Translation
+	void renderTranslationAxis();
+public:
+	void resetGizmo();
+	// Rotation
+	bool isRotating = false;
+	bool handleMouseClickForRotation(int mouseX, int mouseY);
+	void handleRotation(int mouseX, int mouseY);
+	enum class InteractionMode { TRANSLATE, ROTATE, SCALE, NO_STATE };
+	InteractionMode currentMode = InteractionMode::TRANSLATE;
+	void handleMouseClick(int mouseX, int mouseY);
+	void handleMouseDrag(int mouseX, int mouseY);
+
+	// Scale
+	bool handleMouseClickForScaling(int mouseX, int mouseY);
+	void handleScaling(int mouseX, int mouseY);
+	enum class ScalingAxis { NONE, X, Y, UNIFORM};
+	bool isScaling = false;           // Tracks whether scaling is active
+	ScalingAxis scalingAxis = ScalingAxis::NONE; // Tracks the active scaling axis
 };
 #endif

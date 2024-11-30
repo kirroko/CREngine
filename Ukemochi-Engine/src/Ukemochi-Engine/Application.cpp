@@ -36,6 +36,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Logic/Scripting.h"
 #include "FileWatcher.h"
 #include "Logic/Logic.h"
+#include "Game/DungeonManager.h"
+#include "Game/EnemyManager.h"
+#include "Factory/GameObjectManager.h"
 #include <crtdbg.h> // To check for memory leaks
 
 namespace Ukemochi
@@ -167,6 +170,10 @@ namespace Ukemochi
 
     void Application::StartGame()
     {
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        audioM.PlayMusic(audioM.GetMusicindex("BGM"));
+        // enemy
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
         // Recompile scripts if needed
         if (ScriptingEngine::GetInstance().compile_flag)
         {

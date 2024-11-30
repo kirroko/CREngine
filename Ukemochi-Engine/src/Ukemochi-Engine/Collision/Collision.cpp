@@ -441,12 +441,23 @@ namespace Ukemochi
 			
 			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
 
-			if (!playerData.isAttacking)
-				return;
-
-			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+			auto& anim = ECS::GetInstance().GetComponent<Animation>(player);
 
 			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
+
+			if (anim.attackAnimationFinished)//kick
+			{
+				ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+
+				enemy.isCollide = true;
+				enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
+			}
+
+			if (!playerData.isAttacking)
+				return;
+			
+
+			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 			enemy.isCollide = true;
 			enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
 
@@ -519,9 +530,10 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			// Enemy and Enemy
 			// Block each other
-
+			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
@@ -736,6 +748,11 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::Trigger_Response(const std::string& trigger_tag)
 	{
+		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+		{
+			audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+		}
 		// PLAYER AND DOORS
 		if (trigger_tag == "LeftDoor")
 		{

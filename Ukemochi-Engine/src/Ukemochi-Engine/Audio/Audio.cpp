@@ -179,7 +179,7 @@ namespace Ukemochi
         if (type == "SFX")
         {
             // Add the sound to the vector of sounds
-            if (pSFX.empty()||pSFX[index] == nullptr)
+            if (pSFX.empty()||index == pSFX.size())
             {
                 pSFX.push_back(sound);
                 pSFXChannels.push_back(nullptr);  // Add a corresponding channel for each sound
@@ -194,7 +194,7 @@ namespace Ukemochi
         else if (type == "Music")
         {
             // Add the sound to the vector of sounds
-            if (pMusic.empty() || pMusic[index] == nullptr)
+            if (pMusic.empty() || index == pMusic.size())
             {
                 pMusic.push_back(sound);
                 pMusicChannels.push_back(nullptr);  // Add a corresponding channel for each sound
@@ -236,6 +236,15 @@ namespace Ukemochi
             }
             else if (type == "Music")
             {
+                result = pMusic[soundIndex]->setMode(FMOD_LOOP_NORMAL);
+                if (result != FMOD_OK) {
+                    std::cerr << "Failed to set loop mode: " << result << std::endl;
+                    return;
+                }
+
+                // Set the loop count (-1 for infinite looping)
+                result = pMusic[soundIndex]->setLoopCount(-1);
+
                 // Play the sound
                 result = pSystem->playSound(pMusic[soundIndex], nullptr, false, &channel);
                 if (result != FMOD_OK)
@@ -248,6 +257,7 @@ namespace Ukemochi
                 pMusicChannels[soundIndex] = channel;
 
                 std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
+
             }
         }
         else
@@ -447,6 +457,28 @@ namespace Ukemochi
         return isPlaying;
     }
 
+    bool Audio::IsAnySFXPlaying()
+    {
+        // Loop through all channels in the list
+        for (auto* channel : pSFXChannels)
+        {
+            // Variable to store the playing state
+            bool isPlaying = false;
+            // Ensure the channel is valid (not nullptr)
+            if (channel)
+            {
+                FMOD_RESULT result = channel->isPlaying(&isPlaying);
+                if (result == FMOD_OK && isPlaying)
+                {
+                    // If any channel is playing, return true
+                    return true; 
+                }
+            }
+        }
+        // If none of the channels are playing, return false
+        return false; 
+    }
+
     /*!***********************************************************************
     \brief
     Check if a specific sound is currently playing.
@@ -458,5 +490,31 @@ namespace Ukemochi
         bool isPlaying = false;
         pMusicChannels[soundIndex]->isPlaying(&isPlaying);
         return isPlaying;
+    }
+    void Audio::RemoveMusic(int index)
+    {
+        if (pMusic.size() > 1)
+        {
+            pMusic.erase(pMusic.begin() + index);
+            pMusicChannels.erase(pMusicChannels.begin() + index);
+        }
+        else
+        {
+            pMusic.clear();
+            pMusicChannels.clear();
+        }
+    }
+    void Audio::RemoveSFX(int index)
+    {
+        if (pSFX.size() > 1)
+        {
+            pSFX.erase(pSFX.begin() + index);
+            pSFXChannels.erase(pSFXChannels.begin() + index);
+        }
+        else
+        {
+            pSFX.clear();
+            pSFXChannels.clear();
+        }
     }
 }

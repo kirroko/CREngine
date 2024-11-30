@@ -615,7 +615,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 875.0],
+                    "Position": [1026.0, 853.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 412.0]
                 }, {
@@ -730,7 +730,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1258.0, 420.0],
+                    "Position": [1158.0, 420.0],
                     "Rotation": 0.0,
                     "Scale": [156.0, 200.0]
                 }, {
@@ -1165,13 +1165,13 @@
                     "Shape": 0
                 }]
         }, {
-            "Name": "2_EnemyWorm1",
+            "Name": "2_EnemyFish1",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
                     "Position": [1103.0, 709.6694946289063],
                     "Rotation": 0.0,
-                    "Scale": [156.45217895507813, 273.79132080078125]
+                    "Scale": [156.45217895507813, 156.45217895507813]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
@@ -1198,21 +1198,28 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
                     "Shape": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true],
+                        "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Idle"
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 1
+                    "Type": 0
                 }]
         }, {
-            "Name": "2_EnemyWorm2",
+            "Name": "2_EnemyFish2",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
                     "Position": [500.0, 567.8617553710938],
                     "Rotation": 0.0,
-                    "Scale": [166.581298828125, 291.51727294921875]
+                    "Scale": [166.581298828125, 166.581298828125]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938],
@@ -1239,21 +1246,28 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
                     "Shape": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true],
+                        "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Idle"
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 1
+                    "Type": 0
                 }]
         }, {
-            "Name": "2_EnemyWorm3",
+            "Name": "2_EnemyFish3",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
                     "Position": [1600.0, 350.0],
                     "Rotation": 0.0,
-                    "Scale": [182.14285278320313, 318.75]
+                    "Scale": [182.14285278320313, 182.14285278320313]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438],
@@ -1280,20 +1294,27 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Worm.png",
+                    "Sprite": "../Assets/Textures/Enemy/Fish HUrt_SS.png",
                     "Shape": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true],
+                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Hurt"
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 1
+                    "Type": 0
                 }]
         }, {
             "Name": "Player",
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [931.0, 512.0],
-                    "Rotation": 0.0,
+                    "Position": [980.2860107421875, 512.0],
+                    "Rotation": -2.4000000953674316,
                     "Scale": [170.57142639160156, 170.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
@@ -1327,8 +1348,8 @@
                     "Name": "Animation",
                     "Clips": {
                         "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.5, 0.5199999809265137, 100, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.46000000834465027, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 90, 461, 428, 2048, 2048, 0.05000000074505806, true],
+                        "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.46000000834465027, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5299999713897705, 0.5, 90, 545, 420, 2048, 1024, 0.05000000074505806, true],
                         "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5350000262260437, 115, 716, 467, 3708, 1569, 0.03999999910593033, true],
                         "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5350000262260437, 0.5299999713897705, 125, 543, 484, 3900, 2597, 0.03999999910593033, true]
@@ -1506,7 +1527,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [151.0, 122.0],
+                    "Position": [152.0, 117.0],
                     "Rotation": 0.0,
                     "Scale": [302.0, 244.0]
                 }, {
@@ -1532,7 +1553,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [225.0, 59.0],
+                    "Position": [229.0, 57.0],
                     "Rotation": 0.0,
                     "Scale": [338.0, 119.0]
                 }, {
@@ -1654,7 +1675,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1667,7 +1688,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1680,7 +1701,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1693,7 +1714,7 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }]
         }, {
@@ -1706,52 +1727,39 @@
                     "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Moon Floor.png",
+                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
                     "Shape": 0
                 }, {
                     "Name": "Audio",
-                    "Music": [],
+                    "Music": [{
+                            "Name": "BGM",
+                            "Path": "../Assets/Audio/GameBGM/ANCIENT RUINS - NewAge MSCNEW2_34.wav"
+                        }],
                     "SFX": [{
                             "Name": "HIT",
                             "Path": "../Assets/Audio/SFX_jump.wav"
+                        }, {
+                            "Name": "Pattack1",
+                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_88.5.wav"
+                        }, {
+                            "Name": "Pattack2",
+                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_89.4.wav"
+                        }, {
+                            "Name": "Pattack3",
+                            "Path": "../Assets/Audio/player/Vsh 45 Fist Kick Short by newagesoup Id-369089.wav"
+                        }, {
+                            "Name": "EnemyKilled",
+                            "Path": "../Assets/Audio/enemydead/Hit 02 by LittleRobotSoundFactory Id-270325.wav"
+                        }, {
+                            "Name": "LevelChange",
+                            "Path": "../Assets/Audio/door/Games, Video, Event, Collect Item, Hurry, Out Of Time SND5516.wav"
+                        }, {
+                            "Name": "FishMove",
+                            "Path": "../Assets/Audio/fish audio/Gore, Splat, Cadaver Impact, Slap, Drop, Long Tail, Bloody, Flesh 05 SND9913 - Copy.wav"
+                        }, {
+                            "Name": "FishAttack",
+                            "Path": "../Assets/Audio/fish audio/SCI-FI-WHOOSH_GEN-HDF-20863.wav"
                         }]
-                }]
-        }, {
-            "Name": "2_Enemy1",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [926.0, 388.0],
-                    "Rotation": 0.0,
-                    "Scale": [177.07142639160156, 177.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0],
-                    "Velocity": [50.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [59.374000549316406, 0.0],
-                    "Mass": 85.01499938964844,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": true,
-                    "is_kinematic": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
-                    "Shape": 0
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 36, 0.5, 0.5, 50, 515, 285, 3604, 2048, 0.05000000074505806, true]
-                    },
-                    "CurrentClip": "Idle"
                 }]
         }]
 }

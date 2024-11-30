@@ -115,6 +115,9 @@ public:
     *************************************************************************/
 	void flush();
 
+	void drawDebugCircle(const glm::vec2& center, float radius, const glm::vec3& color, int segments = 1000);
+
+	void drawDebugLine(const glm::vec2& start, const glm::vec2& end, const glm::vec3& color);
 private:
 	std::vector<debugVertex> vertices;
 	std::unique_ptr<VAO> debug_vao;
