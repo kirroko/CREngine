@@ -109,6 +109,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::InitDungeon()
 	{
+		// Clear the rooms list
+		rooms.clear();
+
 		for (int room_id = 1; room_id <= NUM_OF_ROOMS; ++room_id)
 		{
 			std::string str_id = std::to_string(room_id);

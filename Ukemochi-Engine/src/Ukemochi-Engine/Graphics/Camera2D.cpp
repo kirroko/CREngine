@@ -82,10 +82,10 @@ void Camera::processCameraInput(GLfloat delta_time)
 	if (Ukemochi::Input::IsKeyPressed(UME_KEY_RIGHT))
 		position.x += speed;
 
-	if (Ukemochi::Input::IsKeyPressed(UME_KEY_Q))  // Zoom in
-		zoom += zoom * delta_time;
-	if (Ukemochi::Input::IsKeyPressed(UME_KEY_E))  // Zoom out
-		zoom -= zoom * delta_time;
+	//if (Ukemochi::Input::IsKeyPressed(UME_KEY_Q))  // Zoom in
+	//	zoom += zoom * delta_time;
+	//if (Ukemochi::Input::IsKeyPressed(UME_KEY_E))  // Zoom out
+	//	zoom -= zoom * delta_time;
 #endif // _DEBUG
 
 	// Restrict zoom level to avoid flipping or extreme values
