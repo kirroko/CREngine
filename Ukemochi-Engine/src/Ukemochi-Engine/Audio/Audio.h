@@ -84,6 +84,8 @@ namespace Ukemochi
 
         void StopAllSound();
 
+        void Audio::PlayGameBGM();
+
         /*!***********************************************************************
         \brief
          Toggle a sound in a group (play or pause).

@@ -348,6 +348,11 @@ namespace Ukemochi
         }
     }
 
+    void Audio::PlayGameBGM()
+    {
+        PlaySound(0, "BGM");
+    }
+
     /*!***********************************************************************
     \brief
     Toggle a sound in a group (play or pause).
