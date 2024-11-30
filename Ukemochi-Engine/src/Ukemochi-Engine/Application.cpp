@@ -133,6 +133,8 @@ namespace Ukemochi
             }
         });
         //fwInstance->Stop();
+
+        GameStarted = false;
     }
 
     Application::~Application()
@@ -198,6 +200,12 @@ namespace Ukemochi
         {
             //m_CompileError = true;
         }
+
+        // Disable main menu screen
+        ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("mainmenu");
+        ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("startButton");
+
+        GameStarted = true;
     }
 
     void Application::StopGame()
@@ -208,6 +216,8 @@ namespace Ukemochi
         // Switch back to editor mode
         es_current = ENGINE_STATES::ES_ENGINE;
         UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
+
+        GameStarted = false;
     }
 
     void Application::GameLoop() // run
@@ -225,14 +235,6 @@ namespace Ukemochi
             glClear(GL_COLOR_BUFFER_BIT);
 
             UpdateFPS();
-
-#ifndef _DEBUG
-            StartGame();
-            //if (Input::IsKeyPressed(UME_KEY_L))
-            //    StartGame();
-            //else if (Input::IsKeyPressed(UME_KEY_K))
-            //    StopGame();
-#endif // !_DEBUG
 
             // engine
             if (es_current == ENGINE_STATES::ES_ENGINE)

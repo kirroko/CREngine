@@ -152,20 +152,28 @@ public:
 	GLboolean debug_mode_enabled = false;
 
 	/*!
-	* @brief Create a text object in the text renderer.
-	*/
+	 * @brief Create a text object in the text renderer.
+	 */
 	void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
 
 	/*!
-	* @brief Update a text object in the text renderer.
-	*/
+	 * @brief Update a text object in the text renderer.
+	 */
 	void UpdateTextObject(const std::string& id, const std::string& newText);
 
 	/*!
-	* @brief Create a button object in the UI renderer.
-	*/
+	 * @brief Create a button object in the UI renderer.
+	 */
 	void CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
 
+	/*!
+	 * @brief Remove a button object in the UI renderer.
+	 */
+	void RemoveButtonObject(const std::string& id);
+
+	/*!
+	 * @brief Get the list of button objects in the UI renderer.
+	 */
 	std::vector<UIButton>& GetButtonObjects();
 
 	void setupFramebuffer();

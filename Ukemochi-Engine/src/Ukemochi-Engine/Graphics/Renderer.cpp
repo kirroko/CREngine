@@ -561,7 +561,9 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
+#ifdef _DEBUG
 	renderForObjectPicking();
+#endif // _DEBUG
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -577,7 +579,7 @@ void Renderer::render()
 #endif // _DEBUG
 
 #ifndef _DEBUG
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); 
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif // !_DEBUG
 
@@ -595,12 +597,12 @@ void Renderer::render()
 
 	// Render entities
 	batchRenderer->beginBatch();
-	
+
 	for (auto& entity : m_Entities)
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
 			continue;
-		
+
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
@@ -615,19 +617,19 @@ void Renderer::render()
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
 		GLint textureID = -1;
-		
+
 		// Check for an Animator component
-		if(ECS::GetInstance().HasComponent<Animation>(entity))
+		if (ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
 			auto& clip = ani.clips[ani.currentClip];
 			spriteRenderer.texturePath = clip.keyPath;
 			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
-			
+
 			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
 			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
 			glm::vec2 renderPos = pos;
-			if(spriteRenderer.flipX)
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -640,7 +642,7 @@ void Renderer::render()
 			else
 				renderPos -= offset;
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
 				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
 			{
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
@@ -653,7 +655,7 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			static constexpr int TARGET_SCALE_FACTOR = 5;
-			
+
 			float aspectRatio = static_cast<float>(clip.pixel_width) / static_cast<float>(clip.pixel_height);
 			glm::vec2 spriteWorldSize = glm::vec2(static_cast<float>(clip.pixel_width), static_cast<float>(clip.pixel_height)) / glm::vec2(
 				static_cast<float>(clip.pixelsPerUnit));
@@ -669,9 +671,9 @@ void Renderer::render()
 			uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
 			uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
 			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
-		
+
 			// Flip UVs for static sprites
-			if(spriteRenderer.flipX)
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -679,7 +681,7 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
+			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
 				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
 			{
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
@@ -688,7 +690,7 @@ void Renderer::render()
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
 			}
-			
+
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
@@ -702,7 +704,7 @@ void Renderer::render()
 	UIRenderer->renderButtons(*camera);
 
 	// Render debug wireframes if debug mode is enabled
-	if (debug_mode_enabled) 
+	if (debug_mode_enabled)
 	{
 		debug_shader_program->Activate();
 		debug_shader_program->setMat4("view", view);
@@ -710,7 +712,7 @@ void Renderer::render()
 
 		debugBatchRenderer->beginBatch();
 
-		for (auto& entity : m_Entities) 
+		for (auto& entity : m_Entities)
 		{
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
@@ -722,7 +724,7 @@ void Renderer::render()
 				// Draw box outlines for box shapes only
 				if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
 				{
-					if(boxCollider.collision_flag > 0)
+					if (boxCollider.collision_flag > 0)
 						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.f, 0.f, 0.f), glm::radians(transform.rotation));
 					else
 						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(0.f, 1.f, 0.f), glm::radians(transform.rotation));
@@ -733,19 +735,21 @@ void Renderer::render()
 		debugBatchRenderer->endBatch();
 		debug_shader_program->Deactivate();
 	}
-	
+
 	debug_shader_program->Activate();
 	debug_shader_program->setMat4("view", view);
 	debug_shader_program->setMat4("projection", projection);
 
+#ifdef _DEBUG
 	if (currentMode == InteractionMode::TRANSLATE)
 		renderTranslationAxis();
 	else if (currentMode == InteractionMode::ROTATE)
 		renderRotationAxis();
 	else if (currentMode == InteractionMode::SCALE)
 		renderScaleAxis();
+#endif // _DEBUG
 
-	debug_shader_program->Deactivate(); 
+	debug_shader_program->Deactivate();
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
@@ -980,11 +984,22 @@ void Renderer::CreateTextObject(const std::string& id, const std::string& label,
  */
 void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
+/*!
+ * @brief Create a button object in the UI renderer.
+ */
 void Renderer::CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
 {
 	UIRenderer->addButton(UIButton(id, glm::vec2(position.x, position.y), glm::vec2(size.x, size.y), GLuint(textureID), text, glm::vec3(textColor.x, textColor.y, textColor.z), fontName, textScale, alignment, interactable, on_click));
 }
 
+/*!
+ * @brief Remove a button object in the UI renderer.
+ */
+void Renderer::RemoveButtonObject(const std::string& id) { UIRenderer->removeButton(id); }
+
+/*!
+ * @brief Get the list of button objects in the UI renderer.
+ */
 std::vector<UIButton>& Renderer::GetButtonObjects() { return UIRenderer->GetButtons(); }
 
 /*!
