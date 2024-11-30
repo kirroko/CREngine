@@ -1554,6 +1554,11 @@ namespace Ukemochi
 
         ImGui::Separator();
 
+        if (es_current == ENGINE_STATES::ES_PLAY)
+        {
+            return;
+        }
+
         // Transform Component (always editable)
         if (selectedObject->HasComponent<Transform>())
         {
@@ -2333,13 +2338,16 @@ namespace Ukemochi
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
 
-                if (ImGui::Button("Remove Entity"))
+                if (es_current != ES_PLAY)
                 {
-                    if (selectedEntityID != -1)
+                    if (ImGui::Button("Remove Entity"))
                     {
-                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
-                        selectedEntityID = -1;
-                        modified = false;
+                        if (selectedEntityID != -1)
+                        {
+                            GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                            selectedEntityID = -1;
+                            modified = false;
+                        }
                     }
                 }
                 ImGui::PopStyleColor(3);
