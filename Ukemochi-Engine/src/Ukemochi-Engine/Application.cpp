@@ -91,6 +91,7 @@ namespace Ukemochi
         GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
         imguiInstance.ImGuiInit(glfwWindow);
 
+#if _DEBUG
         fwInstance = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
 
         fwInstance->Start([](const std::string& path_to_watch, FileStatus status)
@@ -132,7 +133,9 @@ namespace Ukemochi
                 }
             }
         });
-        //fwInstance->Stop();
+#endif
+
+        GameStarted = false;
     }
 
     Application::~Application()
@@ -142,11 +145,14 @@ namespace Ukemochi
         m_running = false;
 
         // Ensure the thread is joined before exiting to prevent memory leaks
+#if _DEBUG
         if (fwInstance)
         {
             fwInstance->Stop(); // Hypothetical method to stop monitoring
             fwInstance.reset(); // Reset shared pointer
         }
+#endif
+
         ScriptingEngine::GetInstance().ShutDown();
     }
 
@@ -171,7 +177,7 @@ namespace Ukemochi
     void Application::StartGame()
     {
         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        audioM.PlayMusic(audioM.GetMusicindex("BGM"));
+        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
         // enemy
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
         // Recompile scripts if needed
@@ -198,6 +204,12 @@ namespace Ukemochi
         {
             //m_CompileError = true;
         }
+
+        // Disable main menu screen
+        ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("mainmenu");
+        ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("startButton");
+
+        GameStarted = true;
     }
 
     void Application::StopGame()
@@ -208,6 +220,8 @@ namespace Ukemochi
         // Switch back to editor mode
         es_current = ENGINE_STATES::ES_ENGINE;
         UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
+
+        GameStarted = false;
     }
 
     void Application::GameLoop() // run
@@ -226,32 +240,30 @@ namespace Ukemochi
 
             UpdateFPS();
 
-#ifndef _DEBUG
-            StartGame();
-            //if (Input::IsKeyPressed(UME_KEY_L))
-            //    StartGame();
-            //else if (Input::IsKeyPressed(UME_KEY_K))
-            //    StopGame();
-#endif // !_DEBUG
-
             // engine
             if (es_current == ENGINE_STATES::ES_ENGINE)
             {
-                if (sceneManager.GetOnIMGUI() == false)
+                if (!IsPaused)
                 {
-                    sceneManager.SceneMangerUpdateCamera(deltaTime);
+                    if (sceneManager.GetOnIMGUI() == false)
+                    {
+                        sceneManager.SceneMangerUpdateCamera(deltaTime);
+                    }
+                    //************ Update & Draw ************
+                    sceneManager.SceneMangerUpdate();
+                    //************ Update & Draw ************
                 }
-                //************ Update & Draw ************
-                sceneManager.SceneMangerUpdate();
-                //************ Update & Draw ************
             }
             // play
             else if (es_current == ENGINE_STATES::ES_PLAY)
             {
-                //Run all the systems using ECS
-                //************ Update & Draw ************
-                sceneManager.SceneMangerRunSystems();
-                //************ Update & Draw ************
+                if (!IsPaused)
+                {
+                    //Run all the systems using ECS
+                    //************ Update & Draw ************
+                    sceneManager.SceneMangerRunSystems();
+                    //************ Update & Draw ************
+                }
             }
 
 #ifdef _DEBUG

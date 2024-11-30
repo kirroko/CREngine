@@ -71,10 +71,7 @@ namespace Ukemochi
 		float new_scale = scaling.min_scale + flip_t * (scaling.max_scale - scaling.min_scale);
 
 		// Set the new scale
-		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Enemy"/*"Worm"*/)
-			transform.scale = { new_scale, new_scale };
-			//transform.scale = { new_scale, new_scale * 1.75f };
-		else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
+		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
 			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
 		else
 			transform.scale = { new_scale, new_scale };

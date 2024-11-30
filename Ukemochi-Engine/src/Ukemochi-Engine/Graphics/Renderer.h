@@ -152,20 +152,28 @@ public:
 	GLboolean debug_mode_enabled = false;
 
 	/*!
-	* @brief Create a text object in the text renderer.
-	*/
+	 * @brief Create a text object in the text renderer.
+	 */
 	void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
 
 	/*!
-	* @brief Update a text object in the text renderer.
-	*/
+	 * @brief Update a text object in the text renderer.
+	 */
 	void UpdateTextObject(const std::string& id, const std::string& newText);
 
 	/*!
-	* @brief Create a button object in the UI renderer.
-	*/
+	 * @brief Create a button object in the UI renderer.
+	 */
 	void CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
 
+	/*!
+	 * @brief Remove a button object in the UI renderer.
+	 */
+	void RemoveButtonObject(const std::string& id);
+
+	/*!
+	 * @brief Get the list of button objects in the UI renderer.
+	 */
 	std::vector<UIButton>& GetButtonObjects();
 
 	void setupFramebuffer();
@@ -465,69 +473,385 @@ private:
 
 	// Object picking
 private:
+	/*!***********************************************************************
+	\brief
+	Shader program used for object picking.
+	*************************************************************************/
 	std::shared_ptr<Shader> object_picking_shader_program;
+
+	/*!***********************************************************************
+	\brief
+	Color buffer used for object picking.
+	*************************************************************************/
 	GLuint colorPickingBuffer = 0;
+
+	/*!***********************************************************************
+	\brief
+	Framebuffer used for object picking.
+	*************************************************************************/
 	GLuint objectPickingFrameBuffer = 0;
+
+	/*!***********************************************************************
+	\brief
+	Renderbuffer object used for object picking depth and stencil testing.
+	*************************************************************************/
 	GLuint object_picking_rbo = 0;
+
+	/*!***********************************************************************
+	\brief
+	Vertex Array Object for object picking.
+	*************************************************************************/
 	std::unique_ptr<VAO> objectPickingVAO;
+
+	/*!***********************************************************************
+	\brief
+	Vertex Buffer Object for object picking geometry data.
+	*************************************************************************/
 	std::unique_ptr<VBO> objectPickingVBO;
+
+	/*!***********************************************************************
+	\brief
+	Element Buffer Object for object picking geometry indices.
+	*************************************************************************/
 	std::unique_ptr<EBO> objectPickingEBO;
+
+	/*!***********************************************************************
+	\brief
+	Map that associates each entity ID with a unique RGB color for object picking.
+	*************************************************************************/
 	std::unordered_map<size_t, glm::vec3> entityColors; // Map from entity ID to unique color
-	void assignUniqueColorsToEntities();
+
+	/*!***********************************************************************
+	\brief
+	Sets up the framebuffer and its associated textures for object picking.
+	*************************************************************************/
 	void setupColorPickingFramebuffer();
+
+	/*!***********************************************************************
+	\brief
+	Sets up buffers (VAO, VBO, EBO) required for object picking rendering.
+	*************************************************************************/
 	void setUpObjectPickingBuffer();
+
+	/*!***********************************************************************
+	\brief
+	Shader program used for rendering points.
+	*************************************************************************/
 	std::unique_ptr<Shader> pointShader;
 
-	
+	/*!***********************************************************************
+	\brief
+	Offset between the mouse position and the entity center during dragging.
+	*************************************************************************/
 	glm::vec2 dragOffset = glm::vec2(0.0f, 0.0f); // Offset between mouse position and entity center
 
 public:
+	/*!***********************************************************************
+	\brief
+	Retrieves the entity ID corresponding to a mouse click position by
+	reading the color from the object picking framebuffer.
+
+	\param mouseX
+	The x-coordinate of the mouse click in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse click in screen space.
+
+	\return
+	The entity ID at the mouse click position, or -1 if no entity is found.
+	*************************************************************************/
 	size_t getEntityFromMouseClick(int mouseX, int mouseY);
+
+	/*!***********************************************************************
+	\brief
+	Renders all entities to the object picking framebuffer using unique colors.
+	*************************************************************************/
 	void renderForObjectPicking();
+
+	/*!***********************************************************************
+	\brief
+	Retrieves the color buffer used for object picking.
+
+	\return
+	The OpenGL texture ID of the color buffer.
+	*************************************************************************/
 	GLuint getObjectPickingColorBuffer() const;
+
+	/*!***********************************************************************
+	\brief
+	Resizes the object picking framebuffer and its textures based on the new dimensions.
+
+	\param width
+	The new width of the framebuffer.
+
+	\param height
+	The new height of the framebuffer.
+	*************************************************************************/
 	void resizeObjectPickingFramebuffer(unsigned int width, unsigned int height) const;
+
+	/*!***********************************************************************
+	\brief
+	Draws a point at the specified position with the given color. (ONLY FOR DEBUGGING)
+
+	\param x
+	The x-coordinate of the point.
+
+	\param y
+	The y-coordinate of the point.
+
+	\param color
+	The color of the point (RGB).
+	*************************************************************************/
 	void drawPoint(float x, float y, glm::vec3 color);
+
+	/*!***********************************************************************
+	\brief
+	Encodes an entity ID into a unique RGB color.
+
+	\param id
+	The entity ID to encode.
+
+	\return
+	A glm::vec3 representing the RGB color corresponding to the ID.
+	*************************************************************************/
 	glm::vec3 encodeIDToColor(int id);
+
+	/*!***********************************************************************
+	\brief
+	Handles dragging of the selected entity based on mouse movement.
+
+	\param mouseX
+	The x-coordinate of the mouse cursor in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse cursor in screen space.
+	*************************************************************************/
 	void handleMouseDragTranslation(int mouseX, int mouseY);
-	void handleMouseClickOP(int mouseX, int mouseY); 
+
+	/*!***********************************************************************
+	\brief
+	Handles a mouse click event for object picking.
+
+	\param mouseX
+	The x-coordinate of the mouse click in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse click in screen space.
+	*************************************************************************/
+	void handleMouseClickOP(int mouseX, int mouseY);
+
 	size_t selectedEntityID = static_cast<size_t>(-1); // Sentinel value for no selection
+
+	/*!***********************************************************************
+	\brief
+	Retrieves the currently selected entity ID.
+
+	\return
+	The ID of the selected entity, or -1 if no entity is selected.
+	*************************************************************************/
 	size_t getSelectedEntityID() { return selectedEntityID; }
+
+	/*!***********************************************************************
+	\brief
+	Flag to indicate whether dragging is currently active.
+	*************************************************************************/
 	bool isDragging = false; // Flag to check if dragging is active
+
 private:
-	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer; 
+	/*!***********************************************************************
+	\brief
+	Handles debug rendering tasks for 2D entities.
+	*************************************************************************/
+	std::unique_ptr<DebugBatchRenderer2D> debugBatchRenderer;
+
+	/*!***********************************************************************
+	\brief
+	Shader program used for debug rendering.
+	*************************************************************************/
 	std::shared_ptr<Shader> debug_shader_program;
-	
+
+	/*!***********************************************************************
+	\brief
+	Handles batch rendering for color buffer operations in 2D.
+	*************************************************************************/
 	std::unique_ptr<ColorBufferBatchRenderer2D> colorBufferBatchRenderer;
 
-// Gizmo
-	// Rotation
+	// Gizmo
+		// Rotation
+		/*!***********************************************************************
+		\brief
+		Draws a rotation handle for the specified transform.
+
+		\param transform
+		The transform of the entity to draw the rotation handle for.
+		*************************************************************************/
 	void drawRotationHandle(const Transform& transform);
+
+	/*!***********************************************************************
+	\brief
+	Renders the rotation axis for the currently selected entity.
+	*************************************************************************/
 	void renderRotationAxis();
+
+	/*!***********************************************************************
+	\brief
+	The starting angle of rotation when a rotation operation begins.
+	*************************************************************************/
 	float rotationStartAngle = 0.0f;
+	/*!***********************************************************************
+	\brief
+	The initial rotation angle of the selected entity when rotation starts.
+	*************************************************************************/
 	float rotationStartEntityAngle = 0.0f;
 
 	// Scale
+	/*!***********************************************************************
+	\brief
+	Draws scaling handles for an entity to allow resizing along X, Y, or both axes.
+
+	\param transform
+	The transform of the entity to draw scaling handles for.
+	*************************************************************************/
 	void drawScalingHandles(const Transform& transform);
+
+	/*!***********************************************************************
+	\brief
+	Renders the scale axis for the currently selected entity.
+	*************************************************************************/
 	void renderScaleAxis();
 
 	// Translation
+	/*!***********************************************************************
+	\brief
+	Renders the translation axis for the currently selected entity.
+	*************************************************************************/
 	void renderTranslationAxis();
+
 public:
+	/*!***********************************************************************
+	\brief
+	Resets the gizmo state, clearing the selected entity and interaction modes.
+	*************************************************************************/
 	void resetGizmo();
+
 	// Rotation
+	/*!***********************************************************************
+	\brief
+	Flag to track whether a rotation operation is active.
+	*************************************************************************/
 	bool isRotating = false;
+
+	/*!***********************************************************************
+	\brief
+	Handles a mouse click event to initiate rotation.
+
+	\param mouseX
+	The x-coordinate of the mouse click in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse click in screen space.
+
+	\return
+	True if the rotation handle was clicked; otherwise, false.
+	*************************************************************************/
 	bool handleMouseClickForRotation(int mouseX, int mouseY);
+
+	/*!***********************************************************************
+	\brief
+	Handles rotation of the selected entity based on mouse movement.
+
+	\param mouseX
+	The x-coordinate of the mouse cursor in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse cursor in screen space.
+	*************************************************************************/
 	void handleRotation(int mouseX, int mouseY);
+
+	/*!***********************************************************************
+	\brief
+	Enumeration representing the current interaction mode.
+	*************************************************************************/
 	enum class InteractionMode { TRANSLATE, ROTATE, SCALE, NO_STATE };
+
+	/*!***********************************************************************
+	\brief
+	The current interaction mode (e.g., translation, rotation, scaling).
+	*************************************************************************/
 	InteractionMode currentMode = InteractionMode::TRANSLATE;
+
+	/*!***********************************************************************
+	\brief
+	Handles a mouse click event and delegates to the appropriate interaction mode.
+
+	\param mouseX
+	The x-coordinate of the mouse click in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse click in screen space.
+	*************************************************************************/
 	void handleMouseClick(int mouseX, int mouseY);
+
+	/*!***********************************************************************
+	\brief
+	Handles mouse drag events and delegates to the appropriate interaction mode.
+
+	\param mouseX
+	The x-coordinate of the mouse drag in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse drag in screen space.
+	*************************************************************************/
 	void handleMouseDrag(int mouseX, int mouseY);
 
 	// Scale
+	/*!***********************************************************************
+	\brief
+	Handles a mouse click event to initiate scaling.
+
+	\param mouseX
+	The x-coordinate of the mouse click in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse click in screen space.
+
+	\return
+	True if the scaling handle was clicked; otherwise, false.
+	*************************************************************************/
 	bool handleMouseClickForScaling(int mouseX, int mouseY);
+
+	/*!***********************************************************************
+	\brief
+	Handles scaling of the selected entity based on mouse movement.
+
+	\param mouseX
+	The x-coordinate of the mouse cursor in screen space.
+
+	\param mouseY
+	The y-coordinate of the mouse cursor in screen space.
+	*************************************************************************/
 	void handleScaling(int mouseX, int mouseY);
-	enum class ScalingAxis { NONE, X, Y, UNIFORM};
+
+	/*!***********************************************************************
+	\brief
+	Enumeration representing the scaling axis.
+
+	\details
+	Defines NONE for no scaling, X for horizontal scaling, Y for vertical scaling,
+	and UNIFORM for uniform scaling along both axes.
+	*************************************************************************/
+	enum class ScalingAxis { NONE, X, Y, UNIFORM };
+
+	/*!***********************************************************************
+	\brief
+	Flag to track whether a scaling operation is active.
+	*************************************************************************/
 	bool isScaling = false;           // Tracks whether scaling is active
+
+	/*!***********************************************************************
+	\brief
+	The currently active scaling axis.
+	*************************************************************************/
 	ScalingAxis scalingAxis = ScalingAxis::NONE; // Tracks the active scaling axis
 };
 #endif

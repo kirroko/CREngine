@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DungeonManager.h"				  // for forward declaration
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
-#include "../Game/EnemyManager.h"
+#include "../Game/EnemyManager.h"		  // for updating enemy list
 
 namespace Ukemochi
 {
@@ -109,6 +109,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::InitDungeon()
 	{
+		// Clear the rooms list
+		rooms.clear();
+
 		for (int room_id = 1; room_id <= NUM_OF_ROOMS; ++room_id)
 		{
 			std::string str_id = std::to_string(room_id);

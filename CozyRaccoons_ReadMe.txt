@@ -11,14 +11,24 @@ Hurng Kai Rui (Engine Champion)
 Tan Shun Zhi Tomy (Graphics Champion)
 Chia Naomi Maidison Yu Ning (Animation Champion)
 
+HOW TO PLAY
+Control Mochi using the WASD keys and the J key to attack. Mochi can attack nearby fish enemies and enter doors on the far left and right of the room, unless there is a blockage.
+
 USER CONTROLS
-WASD - Move the player
-J - Use knife attack
-F11 - Toggle full screen/window modes
+F11 key - Toggle full screen/window modes
+Enter key - To start game
+R key - To reset the game
+Escape key - To quit the game
+Left mouse click - Select UI buttons
+WASD keys - Move the player
+J key - Use the knife attack
 
 EDITOR CONTROLS
 Arrow keys - Move the camera
-Q - Zoom the camera in
-E - Zoom the camera out
-U - Toggle debug draw
-DEL - Delete the current entity
+U key - Toggle debug draw
+8 - Switch to translate mode
+9 - Switch to rotate mode
+0 - Switch to scale mode
+Left mouse click - Select an object
+Right mouse click - Unselect an object
+Delete key - Delete the current object

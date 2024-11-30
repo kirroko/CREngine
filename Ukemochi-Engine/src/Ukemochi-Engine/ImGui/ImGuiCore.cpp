@@ -750,8 +750,14 @@ namespace Ukemochi
                 // enemy
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 //audio
-                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                audioM.PlayMusic(audioM.GetMusicindex("BGM"));
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                {
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+                    {
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                    }
+                }
 
                 // Recompile scripts and display popup that its compiling. Remove popup when done
                 if (ScriptingEngine::GetInstance().compile_flag)
@@ -774,14 +780,24 @@ namespace Ukemochi
                 {
                     m_CompileError = true;
                 }
+
+                // Disable main menu screen
+                ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("mainmenu");
+                ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("startButton");
             }
             ImGui::SameLine();
         }
 
         if (ImGui::Button("Stop"))
         {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            audioM.StopMusic(audioM.GetMusicindex("BGM"));
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+                }
+            }
 
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
             es_current = ENGINE_STATES::ES_ENGINE;
@@ -1650,6 +1666,11 @@ namespace Ukemochi
 
         ImGui::Separator();
 
+        if (es_current == ENGINE_STATES::ES_PLAY)
+        {
+            return;
+        }
+
         // Transform Component (always editable)
         if (selectedObject->HasComponent<Transform>())
         {
@@ -2025,26 +2046,40 @@ namespace Ukemochi
                             ImGui::EndDisabled();
 
                             // Drag and Drop for Music Path (Existing Entry)
-                            if (es_current != ENGINE_STATES::ES_PLAY && ImGui::BeginDragDropTarget())
+                            if (es_current != ENGINE_STATES::ES_PLAY)
                             {
-                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                                if (ImGui::BeginDragDropTarget())
                                 {
-                                    std::string draggedAudio = std::string((const char*)payload->Data);
-                                    std::filesystem::path filePath(draggedAudio);
-                                    std::string extension = filePath.extension().string();
+                                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
+                                    {
+                                        std::string draggedAudio = std::string((const char*)payload->Data);
+                                        std::filesystem::path filePath(draggedAudio);
+                                        std::string extension = filePath.extension().string();
 
-                                    if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
-                                    {
-                                        // Update the path of the current music entry
-                                        audio.music[i].audioPath = draggedAudio;
-                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i),audio.music[i].audioPath.c_str(), "Music");
+                                        if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+                                        {
+                                            // Update the path of the current music entry
+                                            audio.music[i].audioPath = draggedAudio;
+                                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i),audio.music[i].audioPath.c_str(), "Music");
+                                        }
+                                        else
+                                        {
+                                            ImGui::OpenPopup("InvalidAudioFileType");
+                                        }
                                     }
-                                    else
-                                    {
-                                        ImGui::OpenPopup("InvalidAudioFileType");
-                                    }
+                                    ImGui::EndDragDropTarget();
                                 }
-                                ImGui::EndDragDropTarget();
+
+                                // Error Popup for invalid file type
+                                if (ImGui::BeginPopup("InvalidAudioFileType"))
+                                {
+                                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
+                                    if (ImGui::Button("OK"))
+                                    {
+                                        ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                                    }
+                                    ImGui::EndPopup();
+                                }
                             }
 
                             // Add Play and Stop buttons
@@ -2111,22 +2146,36 @@ namespace Ukemochi
                             ImGui::EndDisabled();
 
                             // Drag and Drop for SFX Path (Existing Entry)
-                            if (es_current != ENGINE_STATES::ES_PLAY && ImGui::BeginDragDropTarget()) {
-                                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH")) {
-                                    std::string draggedAudio = std::string((const char*)payload->Data);
-                                    std::filesystem::path filePath(draggedAudio);
-                                    std::string extension = filePath.extension().string();
+                            if (es_current != ENGINE_STATES::ES_PLAY) {
+                                if (ImGui::BeginDragDropTarget())
+                                {
+                                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH")) {
+                                        std::string draggedAudio = std::string((const char*)payload->Data);
+                                        std::filesystem::path filePath(draggedAudio);
+                                        std::string extension = filePath.extension().string();
 
-                                    if (extension == ".wav" || extension == ".mp3" || extension == ".ogg") {
-                                        // Update the path of the current SFX entry
-                                        audio.sfx[i].audioPath = draggedAudio;
-                                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i), audio.sfx[i].audioPath.c_str(), "SFX");
+                                        if (extension == ".wav" || extension == ".mp3" || extension == ".ogg") {
+                                            // Update the path of the current SFX entry
+                                            audio.sfx[i].audioPath = draggedAudio;
+                                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i), audio.sfx[i].audioPath.c_str(), "SFX");
+                                        }
+                                        else {
+                                            ImGui::OpenPopup("InvalidAudioFileType");
+                                        }
                                     }
-                                    else {
-                                        ImGui::OpenPopup("InvalidAudioFileType");
-                                    }
+                                    ImGui::EndDragDropTarget();
                                 }
-                                ImGui::EndDragDropTarget();
+
+                                // Error Popup for invalid file type
+                                if (ImGui::BeginPopup("InvalidAudioFileType"))
+                                {
+                                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
+                                    if (ImGui::Button("OK"))
+                                    {
+                                        ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
+                                    }
+                                    ImGui::EndPopup();
+                                }
                             }
 
                             // Add Play and Stop buttons for SFX
@@ -2164,6 +2213,7 @@ namespace Ukemochi
 
         
 
+                
                 //std::string filename = std::filesystem::path(audio.audioPath).filename().string();
 
                 //char audioPathBuffer[256];
@@ -2222,16 +2272,7 @@ namespace Ukemochi
                 //        }
                 //    }
 
-                //    // Error Popup for invalid file type
-                //    if (ImGui::BeginPopup("InvalidAudioFileType"))
-                //    {
-                //        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Only .wav / .mp3 / .ogg files are allowed!");
-                //        if (ImGui::Button("OK"))
-                //        {
-                //            ImGui::CloseCurrentPopup(); // Close the popup when the button is pressed
-                //        }
-                //        ImGui::EndPopup();
-                //    }
+
 
                 //    // Add input for channelGroups
                 //    ImGui::InputInt("Channel Groups", &audio.pChannelGroups); // Allow the user to specify the number of channel groups
@@ -2446,13 +2487,16 @@ namespace Ukemochi
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
 
-                if (ImGui::Button("Remove Entity"))
+                if (es_current != ES_PLAY)
                 {
-                    if (selectedEntityID != -1)
+                    if (ImGui::Button("Remove Entity"))
                     {
-                        GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
-                        selectedEntityID = -1;
-                        modified = false;
+                        if (selectedEntityID != -1)
+                        {
+                            GameObjectManager::GetInstance().DestroyObject(selectedEntityID);
+                            selectedEntityID = -1;
+                            modified = false;
+                        }
                     }
                 }
                 ImGui::PopStyleColor(3);

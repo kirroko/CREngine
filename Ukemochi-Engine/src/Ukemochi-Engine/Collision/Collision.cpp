@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 24, 2024
+\date       Nov 30, 2024
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -73,7 +73,7 @@ namespace Ukemochi
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
 
 				// Update the bounding box size
-				UpdateBoundingBox(box1, trans1, GameObjectManager::GetInstance().GetGO(entity1)->GetTag());
+				UpdateBoundingBox(box1, trans1, tag1);
 
 				for (auto const& entity2 : m_Entities)
 				{
@@ -85,11 +85,7 @@ namespace Ukemochi
 					if (!GameObjectManager::GetInstance().GetGO(entity2)->GetActive())
 						continue;
 
-					// Get the tag of the second entity
-					std::string tag2 = GameObjectManager::GetInstance().GetGO(entity2)->GetTag();
-
 					// Get references of the second entity components
-					//auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
@@ -105,8 +101,14 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Update the bounding box of the object.
+	\param[out] box
+	 The BoxCollider2D component attached to the object.
+	\param[in] trans
+	 The Transform component attached to the object.
+	\param[in] tag
+	 The tag of the object.
 	*************************************************************************/
-	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, std::string tag)
+	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, const std::string& tag)
 	{
 		if (tag == "Player" || tag == "Enemy" || tag == "Environment")
 		{
@@ -116,9 +118,9 @@ namespace Ukemochi
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
-		else if(tag == "Knife")
+		else if (tag == "Knife")
 		{
-			box.min = { -BOUNDING_BOX_SIZE * 1.5f* trans.scale.x + trans.position.x,
+			box.min = { -BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
 						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 			box.max = { BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
 						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
@@ -130,12 +132,23 @@ namespace Ukemochi
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		}
-
 	}
 
 	/*!***********************************************************************
 	\brief
-	 Collision detection between two boxes.
+	 Check for collision detection between two boxes.
+	\param[in/out] box1
+	 The bounding box of the first box.
+	\param[in] vel1
+	 The velocity of the first box.
+	\param[in/out] box2
+	 The bounding box of the second box.
+	\param[in] vel2
+	 The velocity of the second box.
+	\param[out] firstTimeOfCollision
+	 Output variable for the calculated "tFirst" value.
+	\return
+	 True if there is an intersection, false otherwise.
 	*************************************************************************/
 	bool Collision::BoxBox_Intersection(BoxCollider2D& box1, const Vec2& vel1, BoxCollider2D& box2, const Vec2& vel2, float& firstTimeOfCollision)
 	{
@@ -286,7 +299,11 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Collision detection between a box and the screen boundaries.
+	 Check for collision detection between a box and the screen boundaries.
+	\param[in/out] box
+	 The box to collide.
+	\return
+	 Collision flags if the box and screen boundary intersect, no flag otherwise.
 	*************************************************************************/
 	int Collision::BoxScreen_Intersection(BoxCollider2D& box)
 	{
@@ -314,7 +331,13 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Collision detection between two circles.
+	 Check for collision detection between two circles.
+	\param[in] circle1
+	 The first circle.
+	\param[in] circle2
+	 The second circle.
+	\return
+	 True if the circles intersect, false otherwise.
 	*************************************************************************/
 	bool Collision::CircleCircle_Intersection(const CircleCollider2D& circle1, const CircleCollider2D& circle2)
 	{
@@ -329,7 +352,13 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 Collision detection between a circle and a box.
+	 Check for collision detection between a circle and a box.
+	\param[in] circle
+	 The circle to collide.
+	\param[in] box
+	 The box to collide.
+	\return
+	 True if the circle and box intersect, false otherwise.
 	*************************************************************************/
 	bool Collision::CircleBox_Intersection(const CircleCollider2D& circle, const BoxCollider2D& box)
 	{
@@ -350,6 +379,12 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Check for collision detection between two convex.
+	\param[in] convex1
+	 The first convex.
+	\param[in] convex2
+	 The second convex.
+	\return
+	 True if the two convex intersect, false otherwise.
 	*************************************************************************/
 	bool Collision::ConvexConvex_Intersection(const ConvexCollider2D& convex1, const ConvexCollider2D& convex2)
 	{
@@ -391,6 +426,14 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Project the vertices of a convex onto a given axis and find the min and max projection values.
+	\param[in] convex
+	 The convex collider to project.
+	\param[in] axis
+	 The axis which the convex vertices are projected.
+	\param[out] min
+	 The minimum projection value.
+	\param[out] max
+	 The maximum projection value.
 	*************************************************************************/
 	void Collision::ComputeProjInterval(const ConvexCollider2D& convex, const Vec2& axis, float& min, float& max)
 	{
@@ -409,6 +452,12 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Collision response between two objects.
+	\param[in/out] entity1
+	 The first collided object.
+	\param[in/out] entity2
+	 The second collided object.
+	\param[in] firstTimeOfCollision
+	 The calculated first time of collision.
 	*************************************************************************/
 	void Collision::BoxBox_Response(const EntityID& entity1, const EntityID& entity2, float firstTimeOfCollision)
 	{
@@ -438,30 +487,26 @@ namespace Ukemochi
 			// Mochi's Knife / Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
 
-			
-			auto& playerData = ECS::GetInstance().GetComponent<Player>(player);
+			// Get references of the player and enemy
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
-			auto& anim = ECS::GetInstance().GetComponent<Animation>(player);
-
-			auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity2);
-
-			if (anim.attackAnimationFinished)//kick
+			if (player_anim.attackAnimationFinished) // Perform knockback kick
 			{
 				ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-
-				enemy.isCollide = true;
-				enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
+				enemy_data.isCollide = true;
+				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 			}
 
-			if (!playerData.isAttacking)
+			if (!player_data.isAttacking)
 				return;
-			
 
+			// Deal damage to the enemy
 			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-			enemy.isCollide = true;
-			enemy.TakeDamage(static_cast<float>(playerData.comboDamage));
-
-			std::cout << "enemy hit\n";
+			enemy_data.isCollide = true;
+			enemy_data.atktimer = 5.0f;
+			enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
 		{
@@ -477,78 +522,83 @@ namespace Ukemochi
 		{
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
-			
-			// Temp
-
-			//ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(entity2);
-			//
-			//std::cout << "player hit\n";
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-			{
-				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-			}
-
 			// Play a sound effect on collision
-			//if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-			//	ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Environment"
-			|| tag1 == "Player" && tag2 == "Boundary" || tag1 == "Enemy" && tag2 == "Boundary")
-		{
-			// Mochi / Enemy and Environment Objects / Boundaries
-			// Acts as a wall
-			if (tag1 == "Enemy")
-			{
-				ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
-				StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-			}
-			else
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-				{
 					audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-				}
-				// Play a sound effect on collision
-				//if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-				//	ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-
 			}
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+		}
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary")
+		{
+			// Mochi and Environment Objects / Boundaries
+			// Acts as a wall
 
+			// STATIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
+			// Play a sound effect on collision
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+					audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			}
+		}
+		else if (tag1 == "Enemy" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Boundary")
+		{
+			// Enemy and Environment Objects / Boundaries
+			// Acts as a wall
+
+			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
+
+			// STATIC AND DYNAMIC
+			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 		}
 		else if (tag1 == "Enemy" && tag2 == "Enemy")
 		{
-			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			// Enemy and Enemy
 			// Block each other
+
+			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
+
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-			{
 				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-			}
-			// Play a sound effect on collision
-			//if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-			//	ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
 		}
 	}
 
 	/*!***********************************************************************
 	\brief
 	 Collision response between a static object and a dynamic object, and between two dynamic objects.
+	\param[out] trans1
+	 The Transform component attached to the first collided object.
+	\param[in] box1
+	 The BoxCollider2D component attached to the first collided object.
+	\param[out] rb1
+	 The Rigidbody2D component attached to the first collided object.
+	\param[out] trans2
+	 The Transform component attached to the second collided object.
+	\param[in] box2
+	 The BoxCollider2D component attached to the second collided object.
+	\param[out] rb2
+	 The Rigidbody2D component attached to the second collided object.
+	\param[in] firstTimeOfCollision
+	 The calculated first time of collision.
 	*************************************************************************/
 	void Collision::StaticDynamic_Response(Transform& trans1, BoxCollider2D& box1, Rigidbody2D& rb1, Transform& trans2, BoxCollider2D& box2, Rigidbody2D& rb2, float firstTimeOfCollision)
 	{
@@ -593,6 +643,18 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Collision response between a static object and a dynamic object.
+	\param[out] trans1
+	 The Transform component attached to the first collided object.
+	\param[in] box1
+	 The BoxCollider2D component attached to the first collided object.
+	\param[in] rb1
+	 The Rigidbody2D component attached to the first collided object.
+	\param[out] trans2
+	 The Transform component attached to the second collided object.
+	\param[in] box2
+	 The BoxCollider2D component attached to the second collided object.
+	\param[in] rb2
+	 The Rigidbody2D component attached to the second collided object.
 	*************************************************************************/
 	void Collision::Static_Response(Transform& trans1, const BoxCollider2D& box1, const Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, const Rigidbody2D& rb2)
 	{
@@ -643,6 +705,14 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Collision response between two dynamic objects.
+	\param[out] trans1
+	 The Transform component attached to the first collided object.
+	\param[out] rb1
+	 The Rigidbody2D component attached to the first collided object.
+	\param[out] trans2
+	 The Transform component attached to the second collided object.
+	\param[out] rb2
+	 The Rigidbody2D component attached to the second collided object.
 	*************************************************************************/
 	void Collision::Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2)
 	{
@@ -745,6 +815,8 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Collision response between the player and a trigger object.
+	\param[in] trigger_tag
+	 The tag of the trigger object.
 	*************************************************************************/
 	void Collision::Trigger_Response(const std::string& trigger_tag)
 	{
@@ -779,6 +851,10 @@ namespace Ukemochi
 	/*!***********************************************************************
 	\brief
 	 Collision response between an object and the screen boundaries.
+	\param[out] trans
+	 The Transform component attached to the collided object.
+	\param[in] box
+	 The BoxCollider2D component attached to the collided object.
 	*************************************************************************/
 	void Collision::BoxScreen_Response(Transform& trans, const BoxCollider2D& box)
 	{

@@ -4,9 +4,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-961.0, 959.0],
+                    "Position": [-960.0, 915.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 250.0]
+                    "Scale": [1920.0, 330.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -31,10 +31,6 @@
                     "Max": [0.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_BtmBound",
@@ -68,10 +64,6 @@
                     "Max": [0.0, 5.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_LeftBound",
@@ -105,10 +97,6 @@
                     "Max": [-1915.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_RightBound",
@@ -142,10 +130,6 @@
                     "Max": [5.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_RightDoor",
@@ -179,10 +163,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_Background",
@@ -380,9 +360,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 955.0],
+                    "Position": [960.0, 915.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 250.0]
+                    "Scale": [1920.0, 330.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -407,10 +387,6 @@
                     "Max": [1920.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_BtmBound",
@@ -444,10 +420,6 @@
                     "Max": [1920.0, 5.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_LeftBound",
@@ -481,10 +453,6 @@
                     "Max": [5.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_RightBound",
@@ -518,10 +486,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_LeftDoor",
@@ -555,10 +519,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_RightDoor",
@@ -592,10 +552,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_Background",
@@ -615,7 +571,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1026.0, 853.0],
+                    "Position": [960.0, 875.0],
                     "Rotation": 0.0,
                     "Scale": [1920.0, 412.0]
                 }, {
@@ -676,8 +632,8 @@
                     "Shape": 0
                 }]
         }, {
-            "Name": "2_BGM",
-            "Tag": "Audio",
+            "Name": "2_Vine1",
+            "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
                     "Position": [1545.0, 872.0],
@@ -793,9 +749,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2880.0, 955.0],
+                    "Position": [2880.0, 915.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 250.0]
+                    "Scale": [1920.0, 330.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -820,10 +776,6 @@
                     "Max": [1920.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_BtmBound",
@@ -857,10 +809,6 @@
                     "Max": [1920.0, 5.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_LeftBound",
@@ -894,10 +842,6 @@
                     "Max": [5.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_RightBound",
@@ -931,10 +875,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_LeftDoor",
@@ -968,10 +908,6 @@
                     "Max": [1925.0, 1080.0],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "3_Background",
@@ -1169,9 +1105,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1103.0, 709.6694946289063],
+                    "Position": [1702.0, 594.6694946289063],
                     "Rotation": 0.0,
-                    "Scale": [156.45217895507813, 156.45217895507813]
+                    "Scale": [164.6664581298828, 164.6664581298828]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063],
@@ -1217,9 +1153,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [500.0, 567.8617553710938],
+                    "Position": [282.0, 461.86175537109375],
                     "Rotation": 0.0,
-                    "Scale": [166.581298828125, 166.581298828125]
+                    "Scale": [174.15274047851563, 174.15274047851563]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938],
@@ -1265,9 +1201,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1600.0, 350.0],
+                    "Position": [1612.0, 438.0],
                     "Rotation": 0.0,
-                    "Scale": [182.14285278320313, 182.14285278320313]
+                    "Scale": [175.85714721679688, 175.85714721679688]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438],
@@ -1313,9 +1249,9 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [980.2860107421875, 512.0],
-                    "Rotation": -2.4000000953674316,
-                    "Scale": [170.57142639160156, 170.57142639160156]
+                    "Position": [960.0, 540.0],
+                    "Rotation": 0.0,
+                    "Scale": [168.57142639160156, 168.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [960.0, 540.0],
@@ -1342,7 +1278,7 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/idle_player_sprite_sheet.png",
+                    "Sprite": "../Assets/Textures/Mochi_Attack_3.png",
                     "Shape": 0
                 }, {
                     "Name": "Animation",
@@ -1351,10 +1287,10 @@
                         "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 90, 461, 428, 2048, 2048, 0.05000000074505806, true],
                         "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.46000000834465027, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
                         "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5299999713897705, 0.5, 90, 545, 420, 2048, 1024, 0.05000000074505806, true],
-                        "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5350000262260437, 115, 716, 467, 3708, 1569, 0.03999999910593033, true],
-                        "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5350000262260437, 0.5299999713897705, 125, 543, 484, 3900, 2597, 0.03999999910593033, true]
+                        "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5299999713897705, 110, 716, 467, 3708, 1569, 0.03999999910593033, true],
+                        "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5350000262260437, 0.5249999761581421, 120, 543, 484, 3900, 2597, 0.03999999910593033, true]
                     },
-                    "CurrentClip": "Idle"
+                    "CurrentClip": "Attack3"
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
@@ -1364,7 +1300,7 @@
                     "ComboDamage": 10,
                     "AttackCooldown": 0.5,
                     "AttackTimer": 0.0,
-                    "PlayerForce": 1500.0,
+                    "PlayerForce": 2500.0,
                     "IsDead": false,
                     "CanAttack": true
                 }]
@@ -1373,7 +1309,7 @@
             "Tag": "Knife",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [791.4563598632813, 540.0],
+                    "Position": [791.0, 540.0],
                     "Rotation": 0.0,
                     "Scale": [84.28571319580078, 126.42857360839844]
                 }, {
@@ -1400,10 +1336,6 @@
                     "Max": [875.7420654296875, 624.2857055664063],
                     "Collision Flag": 0,
                     "is_trigger": true
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "1_RightWallFront",
@@ -1673,10 +1605,6 @@
                     "Position": [388.0, 593.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_waypoint2",
@@ -1686,10 +1614,6 @@
                     "Position": [1527.0, 639.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_waypoint3",
@@ -1699,10 +1623,6 @@
                     "Position": [274.0, 156.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_waypoint4",
@@ -1712,10 +1632,6 @@
                     "Position": [1514.0, 65.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
                 }]
         }, {
             "Name": "2_AudioManager",
@@ -1726,39 +1642,35 @@
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_front-wall_1.png",
-                    "Shape": 0
-                }, {
                     "Name": "Audio",
                     "Music": [{
                             "Name": "BGM",
-                            "Path": "../Assets/Audio/GameBGM/ANCIENT RUINS - NewAge MSCNEW2_34.wav"
+                            "Path": "../Assets/Audio/GameBGM/GameBGM.wav"
                         }],
                     "SFX": [{
                             "Name": "HIT",
                             "Path": "../Assets/Audio/SFX_jump.wav"
                         }, {
                             "Name": "Pattack1",
-                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_88.5.wav"
+                            "Path": "../Assets/Audio/player/Playerattack1.wav"
                         }, {
                             "Name": "Pattack2",
-                            "Path": "../Assets/Audio/player/WhooshCartoon CTE02_89.4.wav"
+                            "Path": "../Assets/Audio/player/Playerattack2.wav"
                         }, {
                             "Name": "Pattack3",
-                            "Path": "../Assets/Audio/player/Vsh 45 Fist Kick Short by newagesoup Id-369089.wav"
+                            "Path": "../Assets/Audio/player/Playerkick.wav"
                         }, {
                             "Name": "EnemyKilled",
-                            "Path": "../Assets/Audio/enemydead/Hit 02 by LittleRobotSoundFactory Id-270325.wav"
+                            "Path": "../Assets/Audio/enemydead/enemydead.wav"
                         }, {
                             "Name": "LevelChange",
-                            "Path": "../Assets/Audio/door/Games, Video, Event, Collect Item, Hurry, Out Of Time SND5516.wav"
+                            "Path": "../Assets/Audio/door/caveEnter.wav"
                         }, {
                             "Name": "FishMove",
-                            "Path": "../Assets/Audio/fish audio/Gore, Splat, Cadaver Impact, Slap, Drop, Long Tail, Bloody, Flesh 05 SND9913 - Copy.wav"
+                            "Path": "../Assets/Audio/fish audio/fishmove.wav"
                         }, {
                             "Name": "FishAttack",
-                            "Path": "../Assets/Audio/fish audio/SCI-FI-WHOOSH_GEN-HDF-20863.wav"
+                            "Path": "../Assets/Audio/fish audio/fishattack.wav"
                         }]
                 }]
         }]

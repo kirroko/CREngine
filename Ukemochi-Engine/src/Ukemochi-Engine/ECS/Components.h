@@ -295,7 +295,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float attackCooldown = 0.5f;
 		float attackTimer = 0.0f;
-		float playerForce = 1500.0f;
+		float playerForce = 2500.0f;
 		bool isDead = false;
 		bool canAttack = true;
 		bool isAttacking = false;
@@ -526,8 +526,11 @@ namespace Ukemochi
 		AudioManager() = default;
 
 		void PlayMusic(int index) {
-			Audio::GetInstance().LoadSound(index,music[index].audioPath.c_str(), "Music");
-			Audio::GetInstance().PlaySound(index, "Music");
+			if (index < music.size() && music[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
+				Audio::GetInstance().PlaySound(index, "Music");
+			}
 		}
 
 		void StopMusic(int index) {
@@ -535,8 +538,11 @@ namespace Ukemochi
 		}
 
 		void PlaySFX(int index) {
-			Audio::GetInstance().LoadSound(index,sfx[index].audioPath.c_str(), "SFX");
-			Audio::GetInstance().PlaySound(index,"SFX");
+			if (index < sfx.size() && sfx[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
+				Audio::GetInstance().PlaySound(index, "SFX");
+			}
 		}
 
 		void StopSFX(int index) {
@@ -556,7 +562,7 @@ namespace Ukemochi
 			return -1; // Return an invalid index if not found
 		}
 
-		int GetMusicindex(const std::string& name) {
+		int GetMusicIndex(const std::string& name) {
 			auto it = std::find_if(music.begin(), music.end(), [&name](const AudioSource& source) {
 				return source.audioName == name;
 				});
@@ -573,7 +579,7 @@ namespace Ukemochi
 		void AddSoundToMusic(const std::string& name) {
 			//music.emplace_back(path, name);
 
-			int index = GetMusicindex(name);
+			int index = GetMusicIndex(name);
 			Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
 		}
 

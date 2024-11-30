@@ -306,8 +306,8 @@ namespace Ukemochi
         auto obj2 = gameObjectManager.GetGO(objID);
 
         auto& enemyComponent = enemy->GetComponent<Enemy>();
-        auto& enemyTransform = enemy->GetComponent<Transform>();
-        auto& obj2Transform = obj2->GetComponent<Transform>();
+        //auto& enemyTransform = enemy->GetComponent<Transform>();
+        //auto& obj2Transform = obj2->GetComponent<Transform>();
 
         if (obj2->HasComponent<Enemy>())
         {

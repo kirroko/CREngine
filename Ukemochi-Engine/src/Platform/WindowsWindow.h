@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       WindowsWindow.h
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
-\date       Sept 12, 2024
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (85%)
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (15%)
+\date       Nov 30, 2024
 \brief      This file contains the declaration of the WindowsWindow class, 
             which manages window creation, input handling, and rendering 
             for a windowed application using GLFW.

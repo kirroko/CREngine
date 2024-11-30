@@ -27,13 +27,21 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::Init()
 	{
+#ifndef _DEBUG
 		// Get the screen width and height
 		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
 
 		//Create the game UI, elements are combined temporary
-		CreateImage("gameUI", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 8);
+
+		CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 8);
+
+		CreateImage("mainmenu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 0);
+
+		CreateButton("startButton", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 9, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+			[]() { Application::Get().StartGame(); });
+#endif // !_DEBUG
 
 		//CreateText("text1", "sample text",
 		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },
@@ -141,6 +149,17 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 Remove a GUI object.
+	\param[in] id
+	 The ID for the GUI object.
+	*************************************************************************/
+	void InGameGUI::RemoveElement(const std::string& id)
+	{
+		ECS::GetInstance().GetSystem<Renderer>()->RemoveButtonObject(id);
+	}
+
+	/*!***********************************************************************
+	\brief
 	 Handle the GUI button inputs.
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
@@ -156,7 +175,22 @@ namespace Ukemochi
 
 				// Check if the mouse is within the button boundaries
 				if (IsInside(Vec2{ button.position.x, button.position.y }, Vec2{ button.size.x, button.size.y }))
-					button.on_click(); // Invoke the mouse on click event
+					button.on_click(); // Invoke the button on click event
+			}
+		}
+
+		// Press enter to start game
+		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
+		{
+			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
+			{
+				// Skip if the button is not interactable
+				if (!button.interactable)
+					continue;
+
+				// Check if it is the start button
+				if(button.id == "startButton")
+					button.on_click(); // Invoke the button on click event
 			}
 		}
 	}

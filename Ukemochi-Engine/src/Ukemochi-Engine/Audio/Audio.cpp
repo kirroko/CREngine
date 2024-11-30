@@ -231,6 +231,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pSFXChannels[soundIndex] = channel;
+                pSFXChannels[soundIndex]->setVolume(0.2f);
 
                 std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
@@ -255,7 +256,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pMusicChannels[soundIndex] = channel;
-
+                pMusicChannels[soundIndex]->setVolume(0.2f);
                 std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
 
             }
@@ -304,6 +305,7 @@ namespace Ukemochi
     Stop playing a specific sound.
     \param soundIndex: Index of the sound to stop.
     *************************************************************************/
+
     void Audio::StopSound(int soundIndex, std::string type)
     {
         if (type == "SFX")
@@ -333,6 +335,30 @@ namespace Ukemochi
             }
         }
     }
+
+    void Audio::StopAllSound()
+    {
+        for (auto* channel : pSFXChannels)
+        {
+            channel->stop();
+        }
+        for (auto* channel : pMusicChannels)
+        {
+            channel->stop();
+        }
+    }
+
+    void Audio::PlayGameBGM()
+    {
+        bool isPlaying = false;
+        pMusicChannels[0]->isPlaying(&isPlaying);
+
+        if (!isPlaying)
+        {
+            PlaySound(0, "Music");
+        }
+    }
+
     /*!***********************************************************************
     \brief
     Toggle a sound in a group (play or pause).

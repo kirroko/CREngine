@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       WindowsWindow.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu
-\date       Sept 12, 2024
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (85%)
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (15%)
+\date       Nov 30, 2024
 \brief      This file contains the declaration and implementation of the WindowsWindow class, 
             which manages window creation, input handling, and rendering for a windowed application using GLFW.
 
@@ -18,7 +19,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 #include "Ukemochi-Engine/Input/Input.h"
-
+#include "Ukemochi-Engine/Application.h"
+#include "Ukemochi-Engine/Audio/Audio.h"
 #include <glad/glad.h>
 
 namespace Ukemochi {
@@ -105,9 +107,12 @@ namespace Ukemochi {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifndef _DEBUG
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // Disable window resizing
+#endif // !_DEBUG
 
 		// Create GLFW window
-		if(m_Data.IsFullScreen)
+		if (m_Data.IsFullScreen)
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), glfwGetPrimaryMonitor(), NULL);
 		else
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
@@ -222,6 +227,38 @@ namespace Ukemochi {
 
 				info.EventCallback(event);
 			});
+
+		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow*, int focused)
+			{
+				if (focused) // Window gain focus
+				{
+					Application::Get().IsPaused = false;
+#ifndef _DEBUG
+					Audio::GetInstance().PlayGameBGM();
+#endif // !_DEBUG
+				}
+				else // Window lost focus
+				{
+					Application::Get().IsPaused = true;
+					Audio::GetInstance().StopAllSound();
+				}
+			});
+
+		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow*, int iconified)
+			{
+				if (iconified) // Window is minimized
+				{
+					Application::Get().IsPaused = true;
+					Audio::GetInstance().StopAllSound();
+				}
+				else // Window is restored
+				{
+					Application::Get().IsPaused = false;
+#ifndef _DEBUG
+					Audio::GetInstance().PlayGameBGM();
+#endif // !_DEBUG
+				}
+			});
 	}
 	/*!***********************************************************************
 	\brief
@@ -257,7 +294,7 @@ namespace Ukemochi {
 				GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 				const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-				glfwSetWindowMonitor(m_Window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+				glfwSetWindowMonitor(m_Window, monitor, 0, 0, m_Data.Width, m_Data.Height, mode->refreshRate);
 				m_Data.IsFullScreen = true;
 			}
 			else // Switch to windowed mode

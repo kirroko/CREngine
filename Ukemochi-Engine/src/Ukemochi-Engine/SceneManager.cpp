@@ -143,13 +143,9 @@ namespace Ukemochi
     {
         //load all assest
 		UME_ENGINE_TRACE("Loading Assets...");
-        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
-        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
-        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
 
         //load Asset Manager Texture
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -157,9 +153,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		
-        // Load UI textures
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+		// ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
 		UME_ENGINE_TRACE("Loading Scenes...");
@@ -175,18 +171,6 @@ namespace Ukemochi
             //load first scene
             LoadSaveFile(UseImGui::GetStartScene());
         }
-
-        Application& app = Application::Get();
-        int screen_width = app.GetWindow().GetWidth();
-        int screen_height = app.GetWindow().GetHeight();
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-            Vec2{ screen_width * 0.1f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text2", "Hi",
-            Vec2{ screen_width * 0.5f, screen_height * 0.9f },
-            1.f, Vec3{ 1.f, 1.f, 1.f }, "Exo2");
 
         UME_ENGINE_TRACE("Initializing Collision...");
         ECS::GetInstance().GetSystem<Collision>()->Init();
@@ -227,7 +211,7 @@ namespace Ukemochi
         if (Input::IsKeyTriggered(GLFW_KEY_0))
         {
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
-            std::cout << "Switched to Rotate Mode\n";
+            std::cout << "Switched to Scale Mode\n";
         }
 
         // On mouse button press
@@ -262,6 +246,9 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::NO_STATE;
         }
 
+        // --- UI UPDATE ---
+        ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
+
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
@@ -288,6 +275,47 @@ namespace Ukemochi
                 static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
         }
 #endif // _DEBUG
+
+#ifndef _DEBUG
+		// Game Inputs Quick fix
+		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+
+			LoadSaveFile(GetCurrScene() + ".json");
+
+			UME_ENGINE_TRACE("Initializing Collision...");
+			ECS::GetInstance().GetSystem<Collision>()->Init();
+			UME_ENGINE_TRACE("Initializing dungeon manager...");
+			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+			// enemy
+			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+			//audio
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+			return;
+		}
+
+		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
+		{
+			es_current = ES_QUIT;
+			return;
+		}
+#endif
+		
 
         /*
         // Audio Inputs
