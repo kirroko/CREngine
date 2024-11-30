@@ -4,9 +4,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-960.0, 960.0],
+                    "Position": [-960.0, 915.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 250.0]
+                    "Scale": [1920.0, 330.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -360,9 +360,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 960.0],
+                    "Position": [960.0, 915.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 250.0]
+                    "Scale": [1920.0, 330.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],
@@ -749,9 +749,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2880.0, 960.0],
+                    "Position": [2880.0, 915.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 250.0]
+                    "Scale": [1920.0, 330.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0],

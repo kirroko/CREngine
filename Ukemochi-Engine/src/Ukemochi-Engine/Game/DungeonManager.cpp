@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DungeonManager.h"				  // for forward declaration
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
-#include "../Game/EnemyManager.h"
+#include "../Game/EnemyManager.h"		  // for updating enemy list
 
 namespace Ukemochi
 {

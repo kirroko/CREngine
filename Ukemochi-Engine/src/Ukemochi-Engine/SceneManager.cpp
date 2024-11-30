@@ -211,7 +211,7 @@ namespace Ukemochi
         if (Input::IsKeyTriggered(GLFW_KEY_0))
         {
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
-            std::cout << "Switched to Rotate Mode\n";
+            std::cout << "Switched to Scale Mode\n";
         }
 
         // On mouse button press

@@ -2,7 +2,7 @@
 /*!
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 24, 2024
+\date       Nov 30, 2024
 \brief      This file contains the declaration of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -35,10 +35,14 @@ namespace Ukemochi
         const unsigned int COLLISION_TOP = 0x00000004;    //0100
         const unsigned int COLLISION_BOTTOM = 0x00000008; //1000
 
+        /*!***********************************************************************
+        \brief
+         Minimum offset for static collision.
+        *************************************************************************/
         const float MIN_OFFSET = 0.001f;
 
-        int screen_width{}, screen_height{};
-        EntityID player;
+        int screen_width{}, screen_height{}; // Screen size for box and screen collision
+        EntityID player;                     // Get the player for player data
 
     public:
         /*!***********************************************************************
@@ -61,8 +65,10 @@ namespace Ukemochi
          The BoxCollider2D component attached to the object.
         \param[in] trans
          The Transform component attached to the object.
+        \param[in] tag
+         The tag of the object.
         *************************************************************************/
-        void UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, std::string tag);
+        void UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, const std::string& tag);
 
         /*!***********************************************************************
         \brief
