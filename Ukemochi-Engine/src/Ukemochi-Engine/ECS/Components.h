@@ -526,8 +526,11 @@ namespace Ukemochi
 		AudioManager() = default;
 
 		void PlayMusic(int index) {
-			Audio::GetInstance().LoadSound(index,music[index].audioPath.c_str(), "Music");
-			Audio::GetInstance().PlaySound(index, "Music");
+			if (index < music.size() && music[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
+				Audio::GetInstance().PlaySound(index, "Music");
+			}
 		}
 
 		void StopMusic(int index) {
@@ -535,8 +538,11 @@ namespace Ukemochi
 		}
 
 		void PlaySFX(int index) {
-			Audio::GetInstance().LoadSound(index,sfx[index].audioPath.c_str(), "SFX");
-			Audio::GetInstance().PlaySound(index,"SFX");
+			if (index < sfx.size() && sfx[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
+				Audio::GetInstance().PlaySound(index, "SFX");
+			}
 		}
 
 		void StopSFX(int index) {
