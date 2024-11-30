@@ -505,6 +505,7 @@ namespace Ukemochi
 			// Deal damage to the enemy
 			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 			enemy_data.isCollide = true;
+			enemy_data.atktimer = 5.0f;
 			enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
