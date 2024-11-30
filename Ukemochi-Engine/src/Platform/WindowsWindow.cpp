@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Events/KeyEvent.h"
 #include "Ukemochi-Engine/Events/MouseEvent.h"
 #include "Ukemochi-Engine/Input/Input.h"
-
+#include "Ukemochi-Engine/Application.h"
 #include <glad/glad.h>
 
 namespace Ukemochi {
@@ -207,6 +207,22 @@ namespace Ukemochi {
 				MouseMovedEvent event((float)xpos, (float)ypos);
 
 				info.EventCallback(event);
+			});
+
+		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* window, int focused)
+			{
+				if (focused) // Window gain focus
+					Application::Get().IsPaused = false;
+				else // Window lost focus
+					Application::Get().IsPaused = true;
+			});
+
+		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified)
+			{
+				if (iconified) // Window is minimized
+					Application::Get().IsPaused = true;
+				else // Window is restored
+					Application::Get().IsPaused = false;
 			});
 	}
 	/*!

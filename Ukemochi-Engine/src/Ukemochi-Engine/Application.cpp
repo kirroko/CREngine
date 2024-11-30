@@ -243,21 +243,27 @@ namespace Ukemochi
             // engine
             if (es_current == ENGINE_STATES::ES_ENGINE)
             {
-                if (sceneManager.GetOnIMGUI() == false)
+                if (!IsPaused)
                 {
-                    sceneManager.SceneMangerUpdateCamera(deltaTime);
+                    if (sceneManager.GetOnIMGUI() == false)
+                    {
+                        sceneManager.SceneMangerUpdateCamera(deltaTime);
+                    }
+                    //************ Update & Draw ************
+                    sceneManager.SceneMangerUpdate();
+                    //************ Update & Draw ************
                 }
-                //************ Update & Draw ************
-                sceneManager.SceneMangerUpdate();
-                //************ Update & Draw ************
             }
             // play
             else if (es_current == ENGINE_STATES::ES_PLAY)
             {
-                //Run all the systems using ECS
-                //************ Update & Draw ************
-                sceneManager.SceneMangerRunSystems();
-                //************ Update & Draw ************
+                if (!IsPaused)
+                {
+                    //Run all the systems using ECS
+                    //************ Update & Draw ************
+                    sceneManager.SceneMangerRunSystems();
+                    //************ Update & Draw ************
+                }
             }
 
 #ifdef _DEBUG
