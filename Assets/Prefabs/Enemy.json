@@ -35,10 +35,6 @@
                 "Name": "SpriteRender",
                 "Sprite": "../Assets/Textures/Worm.png",
                 "Shape": 0
-            }, {
-                "Name": "Script",
-                "Path": "../Assets/Scripts/Enemy.cs",
-                "ClassName": "Enemy"
             }]
     }
 }
