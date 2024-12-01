@@ -470,16 +470,16 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Check if this texture is already mapped to a unit
 		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
 			// New texture, assign to the next available texture unit
-			textureIDMap[texture->ID] = nextAvailableTextureUnit;
+			textureIDMap[texture->ID] = i;
 
 			// Bind the texture to the OpenGL texture unit
-			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
-			glBindTexture(GL_TEXTURE_2D, texture->ID);
+			/*glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
+			glBindTexture(GL_TEXTURE_2D, texture->ID);*/
 
-			textureUnits[i] = nextAvailableTextureUnit;
+			textureUnits[i] = i;
 
 			// Increment to the next available texture unit
-			nextAvailableTextureUnit++;
+			//nextAvailableTextureUnit++;
 		}
 		else {
 			// Texture already mapped, retrieve existing texture unit
