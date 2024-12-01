@@ -14,6 +14,9 @@ Chia Naomi Maidison Yu Ning (Animation Champion)
 HOW TO PLAY
 Control Mochi using the WASD keys and the J key to attack. Mochi can attack nearby fish enemies and enter doors on the far left and right of the room, unless there is a blockage.
 
+NOTE
+The collider is placed at the foot of the player and enemy to showcase the depth effect, and they will also scale up when they are nearer to the screen and scale down when they are further away.
+
 USER CONTROLS
 F11 key - Toggle full screen/window modes
 Enter key - To start game
