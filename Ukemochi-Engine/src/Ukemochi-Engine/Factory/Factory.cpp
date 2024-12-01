@@ -156,6 +156,14 @@ namespace Ukemochi
 
 					go.AddComponent(std::move(anim));
 				}
+				else if (component == "EnemyComponent")
+				{
+					int type = comps["Type"].GetInt();
+					Enemy enemy(comps["Position"][0].GetFloat(),
+						comps["Position"][1].GetFloat(), static_cast<Enemy::EnemyTypes>(type), go.GetInstanceID());
+
+					go.AddComponent(std::move(enemy));
+				}
 				//else if(component == "Button")
 				//{
 				//	go.AddComponent(Button{});
