@@ -34,12 +34,12 @@ namespace Ukemochi
 
 		//Create the game UI, elements are combined temporary
 
-		CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 8);
+		//CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 8);
 
-		CreateImage("mainmenu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 0);
+		//CreateImage("mainmenu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 0);
 
-		CreateButton("startButton", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 9, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-			[]() { Application::Get().StartGame(); });
+		//CreateButton("startButton", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 9, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+			//[]() { Application::Get().StartGame(); });
 
 		//CreateText("text1", "sample text",
 		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },

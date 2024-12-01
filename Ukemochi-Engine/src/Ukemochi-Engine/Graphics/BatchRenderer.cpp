@@ -181,6 +181,10 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
     vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
 
+    UME_ENGINE_INFO("Vertices Added for Texture ID: {0}", textureID);
+    UME_ENGINE_INFO("Number of Vertices stored: {0}", vertices.size());
+    UME_ENGINE_INFO("Number of sets of Textures loaded: {0}", vertices.size() / 4);
+
 }
 
 /*!
