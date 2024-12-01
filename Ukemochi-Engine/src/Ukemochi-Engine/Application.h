@@ -33,17 +33,87 @@ namespace Ukemochi {
 	{
 
 	public:
+		/*!***********************************************************************
+		\brief
+		 Initializes the application, setting up the window, ImGui, and file watcher.
+		*************************************************************************/
 		Application();
+		/*!***********************************************************************
+		\brief
+		 Cleans up resources used by the application, such as the window, ImGui,
+		 and file watcher.
+		\return
+		 None.
+		*************************************************************************/
 		virtual ~Application();
+		/*!***********************************************************************
+		\brief
+		 The main application loop that handles updates, rendering, and events.
+		\return
+		 None.
+		*************************************************************************/
 		void GameLoop();
+		/*!***********************************************************************
+		\brief
+		 Updates the FPS counter by calculating the frame time and updating the display.
+		\return
+		 None.
+		*************************************************************************/
 		void UpdateFPS();
+
+		/*!***********************************************************************
+		\brief
+		 Draws the current FPS counter on the screen.
+		\return
+		 None.
+		*************************************************************************/
 		void DrawFPS();
+		/*!***********************************************************************
+		\brief
+		 Updates the ImGui interface, including rendering UI elements and
+		 processing input events.
+		\return
+		 None.
+		*************************************************************************/
 		void UpdateIMGUI();
+		/*!***********************************************************************
+		\brief
+		 Starts the game by initializing necessary resources and setting the
+		 game state to active.
+		\return
+		 None.
+		*************************************************************************/
 		void StartGame();
+		/*!***********************************************************************
+		\brief
+		 Stops the game, releasing resources and resetting the game state to inactive.
+		\return
+		 None.
+		*************************************************************************/
 		void StopGame();
+		/*!***********************************************************************
+		\brief
+		 Processes events received by the application.
+		\param[in] e
+		 The event to be processed.
+		\return
+		 None.
+		*************************************************************************/
 		void EventIsOn(Event& e);
 
+		/*!***********************************************************************
+		\brief
+		 Retrieves the singleton instance of the application.
+		\return
+		 A reference to the application instance.
+		*************************************************************************/
 		static Application& Get() { return *s_Instance; }
+		/*!***********************************************************************
+		\brief
+		 Retrieves the current application window.
+		\return
+		 A reference to the current WindowsWindow object.
+		*************************************************************************/
 		WindowsWindow& GetWindow() { return *m_Window; } // Access the current window
 
 		bool GameStarted = false; // Has the game started?
@@ -51,6 +121,14 @@ namespace Ukemochi {
 
 	private:
 
+		/*!***********************************************************************
+		\brief
+		 Checks if a window close event has been triggered.
+		\param[in] e
+		 The window close event to evaluate.
+		\return
+		 True if the window is marked for closing; false otherwise.
+		*************************************************************************/
 		bool IsWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<WindowsWindow> m_Window;
 		std::atomic_bool m_running = true; // Atomic flag for thread control
