@@ -14,12 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Animation.h"
 
-#include "GLFW/glfw3.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+#include "../FrameController.h"
 
 namespace Ukemochi
 {
+    /**
+     * @brief Initialize the Animation System
+     */
     void AnimationSystem::Init()
     {
         // Read for any metaData of the texture and set the animation clips
@@ -29,7 +32,10 @@ namespace Ukemochi
         // }
     }
 
-    void AnimationSystem::Update()
+    /**
+     * @brief Update the Animation System
+     */
+    void AnimationSystem::Update() const
     {
         for(auto& entity : m_Entities)
         {

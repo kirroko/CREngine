@@ -39,7 +39,7 @@ namespace Ukemochi
          * @param outSize The output data size
          * @return char* pointer to the char buffer with data
          */
-        char* ReadBytes(const std::string& filePath, uint32_t* outSize);
+        static char* ReadBytes(const std::string& filePath, uint32_t* outSize);
 
         /**
          * @brief Load Csharp Assembly
@@ -54,12 +54,12 @@ namespace Ukemochi
          *
          * @param assembly Our MonoAssembly
          */
-        void PrintAssemblyTypes(MonoAssembly* assembly);
+        static void PrintAssemblyTypes(MonoAssembly* assembly);
 
         /**
          * @brief Bind C++ function with Mono so they can be invoked from C#
          */
-        void RegisterMonoFunctions();
+        static void RegisterMonoFunctions();
 
         /**
          * @brief Extracts an error code and message from the given MonoError
@@ -75,7 +75,7 @@ namespace Ukemochi
          * @param className The C# class name
          * @return Reference to the class
          */
-        MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className);
+        static MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className);
 
     public:
         static ScriptingEngine& GetInstance()
@@ -102,6 +102,9 @@ namespace Ukemochi
          */
         static void RegisterComponents();
 
+        /**
+         * @brief Initialize Mono by creating an app domain
+         */
         ScriptingEngine();
         ~ScriptingEngine() = default;
         ScriptingEngine(const ScriptingEngine&) = delete;

@@ -43,8 +43,13 @@ namespace Ukemochi
 		m_SystemManager->EntitySignatureChanged(entity, signature);
 	}
 
+	/**
+	 * @brief Remove a component from an entity
+	 * @tparam T The component type to remove
+	 * @param entity The entity to remove the component from
+	 */
 	template <typename T>
-	void ECS::RemoveComponent(EntityID entity)
+	void ECS::RemoveComponent(EntityID entity) const
 	{
 		m_ComponentManager->RemoveComponent<T>(entity);
 
@@ -55,32 +60,57 @@ namespace Ukemochi
 		m_SystemManager->EntitySignatureChanged(entity, signature);
 	}
 
+	/**
+	 * @brief Get a reference to a component of type T for an entity
+	 * @tparam T The component type to get
+	 * @param entity The entity to get the component from
+	 * @return A reference to the component
+	 */
 	template <typename T>
-	T& ECS::GetComponent(EntityID entity)
+	T& ECS::GetComponent(EntityID entity) const
 	{
 		return m_ComponentManager->GetComponent<T>(entity);
 	}
 
+	/**
+	 * @brief Get a component type ID
+	 * @tparam T The component type to get the ID of
+	 * @return The component type ID
+	 */
 	template <typename T>
-	ComponentTypeID ECS::GetComponentType()
+	ComponentTypeID ECS::GetComponentType() const
 	{
 		return m_ComponentManager->GetComponentType<T>();
 	}
 
+	/**
+	 * @brief Register a system with the ECS
+	 * @tparam T The system type to register
+	 * @return A shared pointer to the registered system
+	 */
 	template <typename T>
-	std::shared_ptr<T> ECS::RegisterSystem()
+	std::shared_ptr<T> ECS::RegisterSystem() const
 	{
 		return m_SystemManager->RegisterSystem<T>();
 	}
 
+	/**
+	 * @brief Get a system from the ECS
+	 * @tparam T The system type to get
+	 * @return A shared pointer to the system
+	 */
 	template <typename T>
-	std::shared_ptr<T> ECS::GetSystem()
+	std::shared_ptr<T> ECS::GetSystem() const
 	{
 		return m_SystemManager->GetSystem<T>();
 	}
 
+	/**
+	 * @brief Set the signature of a system
+	 * @tparam T The system type to set the signature of
+	 */
 	template <typename T>
-	void ECS::SetSystemSignature(SignatureID signature)
+	void ECS::SetSystemSignature(SignatureID signature) const
 	{
 		m_SystemManager->SetSystemSignature<T>(signature);
 	}

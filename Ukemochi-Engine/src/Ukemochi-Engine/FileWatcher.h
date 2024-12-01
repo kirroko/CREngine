@@ -38,10 +38,21 @@ namespace Ukemochi
 		std::chrono::duration<int,std::milli> m_delay;
 		std::atomic_bool m_running = true;
 
+		/**
+		 * @brief Check if the file is in the m_Paths
+		 * @param key The key to check
+		 * @return true If the key is in the m_Paths
+		 * @return false If the key is not in the m_Paths
+		 */
 		bool contains(const std::string& key);
 	public:
 		std::atomic_bool m_isDone = false;
-		
+
+		/**
+		 * @brief Construct a new File Watcher object
+		 * @param path_to_watch The path to watch
+		 * @param delay The delay between file checks
+		 */
 		FileWatcher(const std::string& path_to_watch, std::chrono::duration<int, std::milli> delay);
 
 		/**

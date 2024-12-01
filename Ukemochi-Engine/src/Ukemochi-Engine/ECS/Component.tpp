@@ -10,11 +10,16 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header **************************************************************************/
+#pragma once
 
 #include "Component.h"
 
 namespace Ukemochi
 {
+	/**
+	 * @brief Register a component
+	 * @param entity The entity to add the component to
+	 */
 	template <typename T>
 	std::shared_ptr<ComponentArray<T>> ComponentManager::GetComponentArray()
 	{
@@ -23,6 +28,10 @@ namespace Ukemochi
 		return std::static_pointer_cast<ComponentArray<T>>(m_ComponentArrays[typeName]);
 	}
 
+	/**
+	 * @brief Register a component
+	 * @param entity The entity to add the component to
+	 */
 	template <typename T>
 	void ComponentManager::RegisterComponent()
 	{
@@ -35,6 +44,10 @@ namespace Ukemochi
 		m_ComponentArrays.insert({ typeName, std::make_shared<ComponentArray<T>>() });
 	}
 
+	/**
+	 * @brief Get the component type ID of a component
+	 * @param entity The entity to add the component to
+	 */
 	template <typename T>
 	ComponentTypeID ComponentManager::GetComponentType()
 	{
@@ -45,18 +58,30 @@ namespace Ukemochi
 		return m_ComponentTypes[typeName];
 	}
 
+	/**
+	 * @brief Add a component to an entity
+	 * @param entity The entity to add the component to
+	 */
 	template <typename T>
 	void ComponentManager::AddComponent(EntityID entity, T component)
 	{
 		GetComponentArray<T>()->InsertData(entity, component);
 	}
 
+	/**
+	 * @brief Remove a component from an entity
+	 * @param entity The entity to add the component to
+	 */
 	template <typename T>
 	void ComponentManager::RemoveComponent(EntityID entity)
 	{
 		GetComponentArray<T>()->RemoveData(entity);
 	}
 
+	/**
+	 * @brief Get a reference to a component of type T for an entity
+	 * @param entity The entity to add the component to
+	 */
 	template <typename T>
 	T& ComponentManager::GetComponent(EntityID entity)
 	{

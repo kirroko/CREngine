@@ -30,16 +30,37 @@ namespace Ukemochi
 	class ComponentArray : public IComponentArray
 	{
 	public:
+		/**
+		 * @brief Insert data into the component array
+		 * @param entity The entity to insert the data into
+		 * @param component The component data to insert
+		 */
 		void InsertData(EntityID entity, T component);
 
+		/**
+		 * @brief Remove data from the component array
+		 * @param entity The entity to remove the data from
+		 */
 		void RemoveData(EntityID entity);
 
+		/**
+		 * @brief Get the data of an entity
+		 * @param entity The entity to get the data from
+		 * @return The data of the entity
+		 */
 		T& GetData(EntityID entity);
 
+		/**
+		 * @brief Entity destroyed
+		 * @param entity The entity that was destroyed
+		 */
 		void EntityDestroyed(EntityID entity) override;
-
-		// Method to check if an entity has a component
-		// This function helps verify entity existence before accessing its components, preventing potential errors.
+		
+		/**
+		 * @brief Check if an entity has a component
+		 * @param entity The entity to check
+		 * @return True if the entity has the component, false otherwise
+		 */
 		bool HasEntity(EntityID entity) const {
 			return m_EntityToIndexMap.find(entity) != m_EntityToIndexMap.end();
 		}

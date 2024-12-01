@@ -46,6 +46,11 @@ namespace Ukemochi
 {
 	using namespace rapidjson;
 
+	/**
+	 * @brief Create a new GameObject
+	 *
+	 * @return GameObject&  newly created GameObject
+	 */
 	GameObject GameObjectFactory::CreateObject(const std::string& name, const std::string& tag)
 	{
 		EntityID entity = ECS::GetInstance().CreateEntity();
@@ -53,6 +58,12 @@ namespace Ukemochi
 		return {entity, name, tag};
 	}
 
+	/**
+	 * @brief Create a new GameObject with components from a JSON file
+	 *
+	 * @param filePath the path to the JSON file
+	 * @return GameObject& a reference to the newly created GameObject
+	 */
 	GameObject& GameObjectFactory::CreatePrefebObject(const std::string& filePath)
 	{
 		// EntityID entity = ECS::GetInstance().CreateEntity(); // A little bit special here
@@ -173,15 +184,28 @@ namespace Ukemochi
 		// Ignore the warning
 	}
 
+	/**
+	 * @brief Clone an existing GameObject
+	 *
+	 * @param targetObject the GameObject to clone
+	 * @param name the name of the new GameObject
+	 * @param tag the tag of the new GameObject
+	 * @return GameObject the newly cloned GameObject
+	 */
 	GameObject GameObjectFactory::CloneObject(const GameObject& targetObject, const std::string& name, const std::string& tag)
 	{
 		auto new_entity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
 		return {new_entity, name, tag};
 	}
 
-	void GameObjectFactory::DestroyObject(const GameObject& targetobject)
+	/**
+	 * @brief Destroy an existing GameObject
+	 *
+	 * @param targetObject the GameObject to destroy
+	 */
+	void GameObjectFactory::DestroyObject(const GameObject& targetObject)
 	{
-		ECS::GetInstance().DestroyEntity(targetobject.GetInstanceID());
+		ECS::GetInstance().DestroyEntity(targetObject.GetInstanceID());
 	}
 
 }

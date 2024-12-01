@@ -15,6 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/**
+	 * @brief Register a system
+	 * @tparam T The system to register
+	 * @return shared pointer the registered system
+	 */
 	template <typename T>
 	std::shared_ptr<T> SystemManager::RegisterSystem()
 	{
@@ -28,6 +33,11 @@ namespace Ukemochi
 		return system;
 	}
 
+	/**
+	 * @brief Get a system
+	 * @tparam T The system to get
+	 * @return shared pointer to the system
+	 */
 	template <typename T>
 	std::shared_ptr<T> SystemManager::GetSystem()
 	{
@@ -38,6 +48,11 @@ namespace Ukemochi
 		return std::static_pointer_cast<T>(m_Systems[typeName]);
 	}
 
+	/**
+	 * @brief Set the signature of a system
+	 * @tparam T The system to set the signature of
+	 * @param signature The signature to set
+	 */
 	template <typename T>
 	void SystemManager::SetSystemSignature(SignatureID signature)
 	{

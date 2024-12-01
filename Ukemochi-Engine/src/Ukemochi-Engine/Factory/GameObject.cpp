@@ -18,6 +18,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "GameObject.h"
 using namespace Ukemochi;
 
+/**
+ * @brief Construct a new GameObject object
+ * 
+ * @param id The entity ID
+ * @param name The name of the game object
+ * @param tag The tag of the game object
+ */
 GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(std::move(name)),
                                                                         m_Tag(std::move(tag)), m_InstanceID(id)
 {
@@ -28,6 +35,11 @@ GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(s
     // ScriptingEngine::SetMonoFieldValueString(m_ManagedInstance, "name", m_Name);
 }
 
+/**
+ * @brief Copy constructor
+ * 
+ * @param other The game object to copy
+ */
 GameObject& GameObject::operator=(const GameObject& other)
 {
     m_Name = other.m_Name;
@@ -37,11 +49,19 @@ GameObject& GameObject::operator=(const GameObject& other)
     return *this;
 }
 
+/**
+ * @brief Get the Entity ID of the game object
+ * @return EntityID The instance ID of the game object 
+ */
 EntityID GameObject::GetInstanceID() const
 {
     return m_InstanceID;
 }
 
+/**
+ * @brief Get the active state of the gameobject
+ * @return bool the active state of the game object
+ */
 bool GameObject::GetActive() const
 {
     return m_isActive;

@@ -21,9 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Vector2D.h"  // for Vec2 struct
 #include "../Audio/Audio.h"	   // for Audio class
 
-// for enemy
-#include "../FrameController.h"
-
 
 namespace Ukemochi
 {

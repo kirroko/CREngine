@@ -20,61 +20,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    // ================== PRIVATE FUNCTIONS ==================
-    std::string ProjectHandler::GenerateGUID()
-    {
-        GUID guid;
-        if (!CoCreateGuid(&guid))
-        {
-            UME_ENGINE_ERROR("Failed to generate GUID");
-            return std::string{}; // return empty string
-        }
-
-
-        // Format the GUID as a string with braces
-        std::ostringstream oss;
-        oss << "{" << std::hex << std::uppercase
-            << std::setw(8) << std::setfill('0') << guid.Data1 << "-"
-            << std::setw(4) << std::setfill('0') << guid.Data2 << "-"
-            << std::setw(4) << std::setfill('0') << guid.Data3 << "-";
-
-        for (int i = 0; i < 2; ++i)
-        {
-            oss << std::setw(2) << std::setfill('0') << static_cast<int>(guid.Data4[i]);
-        }
-
-        oss << "-";
-
-        for (int i = 2; i < 8; ++i)
-        {
-            oss << std::setw(2) << std::setfill('0') << static_cast<int>(guid.Data4[i]);
-        }
-
-        oss << "}";
-        return oss.str();
-    }
-
-    void ProjectHandler::replaceGUIDPlaceholder(std::string& slnString, const std::string& guid)
-    {
-        std::string placeholder = "{GUID}";
-        size_t pos = 0;
-
-        while ((pos = slnString.find(placeholder, pos)) != std::string::npos)
-        {
-            slnString.replace(pos, placeholder.length(), guid);
-            pos += guid.length(); // Move past the last replacement
-        }
-    }
-
-    std::string ProjectHandler::GetRelativepath(const std::string& from, const std::string& to)
-    {
-        std::filesystem::path fromPath(from);
-        std::filesystem::path toPath(to);
-        return std::filesystem::relative(toPath, fromPath).string();
-    }
-
-    // ================== PUBLIC FUNCTIONS ==================
-    void ProjectHandler::GenerateSolutionAndProject(
+    /**
+     * @brief Generate the C# project
+     * @param projectPath The path to the project location
+     */
+    void ProjectHandler::GenerateProject(
         const std::string& projectPath)
     {
         UME_ENGINE_TRACE("Generating Project");

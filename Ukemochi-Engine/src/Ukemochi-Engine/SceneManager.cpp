@@ -487,7 +487,7 @@ namespace Ukemochi
         {
             GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
         }
-        ECS::GetInstance().GetSystem<LogicSystem>()->End();
+
 		UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);

@@ -19,7 +19,13 @@ namespace Ukemochi
     class AnimationSystem : public System
     {
     public:
+        /**
+         * @brief Initialize the Animation System
+         */
         void Init();
-        void Update();
+        /**
+         * @brief Update the Animation System
+         */
+        void Update() const;
     };
 }

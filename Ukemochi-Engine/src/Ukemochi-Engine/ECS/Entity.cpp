@@ -16,6 +16,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/**
+	 * @brief Create an entity
+	 * @return The ID of the created entity
+	 */
 	EntityID EntityManager::CreateEntity()
 	{
 		EntityID id = m_AvailableEntities.front();
@@ -25,6 +29,10 @@ namespace Ukemochi
 		return id;
 	}
 
+	/**
+	 * @brief Destroy an entity
+	 * @param entity The entity to destroy
+	 */
 	void EntityManager::DestroyEntity(EntityID entity)
 	{
 		m_Signatures[entity].reset();
@@ -33,32 +41,32 @@ namespace Ukemochi
 		--m_ulLivingEntityCount;
 	}
 
+	/**
+	 * @brief Set the signature of an entity
+	 * @param entity The entity to set the signature of
+	 * @param signature The signature to set
+	 */
 	void EntityManager::SetSignature(EntityID entity, SignatureID signature)
 	{
 		m_Signatures[entity] = signature;
 	}
 
-	SignatureID EntityManager::GetSignature(EntityID entity)
+	/**
+	 * @brief Get the signature of an entity
+	 * @param entity The entity to get the signature of
+	 * @return The signature of the entity
+	 */
+	SignatureID EntityManager::GetSignature(EntityID entity) const
 	{
 		return m_Signatures[entity];
 	}
 
+	/**
+	 * @brief Get the number of living entities
+	 * @return The number of living entities
+	 */
 	unsigned long int EntityManager::GetLivingEntityCount() const
 	{
 		return m_ulLivingEntityCount;
 	}
-
-	// Used to retrive a list of all active entities within the ECS
-	// active is defined by having a non-empty signature
-	// 0x4B45414E - No no no, This is not the jedi way
-	// std::vector<EntityID> EntityManager::GetAllEntities() {
-	// 	std::vector<EntityID> activeEntities;
-	// 	for (EntityID entity = 0; entity < MAX_ENTITIES; ++entity) {
-	// 		// Check if the entity has an active signature
-	// 		if (m_Signatures[entity].any()) { // Adjust this condition as needed for "active" state
-	// 			activeEntities.push_back(entity);
-	// 		}
-	// 	}
-	// 	return activeEntities;
-	// }
 }
