@@ -2319,7 +2319,7 @@ namespace Ukemochi
         // Begin a dockable window
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
-        static char filePath[256] = "../Assets/Prefabs/Player.json";
+        static char filePath[256] = "";
         // Sync the selectedEntityID with the Renderer's picked entity
         static int selectedEntityID = -1;
         auto &renderer = *ECS::GetInstance().GetSystem<Renderer>();
@@ -2385,7 +2385,9 @@ namespace Ukemochi
 
         // Rest of your existing code for entity creation and management...
         ImGui::Text("Entity Management");
+        ImGui::BeginDisabled(true); // Start disabled state
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
+        ImGui::EndDisabled(); // End disabled state
 
         if (ImGui::Button("Create Entity"))
         {
