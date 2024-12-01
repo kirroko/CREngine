@@ -18,6 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "GameObject.h"
 using namespace Ukemochi;
 
+/*
+* @brief constructor of game object
+*/
 GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(std::move(name)),
                                                                         m_Tag(std::move(tag)), m_InstanceID(id)
 {
@@ -28,6 +31,9 @@ GameObject::GameObject(EntityID id, std::string name, std::string tag): m_Name(s
     // ScriptingEngine::SetMonoFieldValueString(m_ManagedInstance, "name", m_Name);
 }
 
+/*
+* @brief copy assignment operator
+*/
 GameObject& GameObject::operator=(const GameObject& other)
 {
     m_Name = other.m_Name;
@@ -37,11 +43,17 @@ GameObject& GameObject::operator=(const GameObject& other)
     return *this;
 }
 
+/*
+* @brief return EntityID of current object
+*/
 EntityID GameObject::GetInstanceID() const
 {
     return m_InstanceID;
 }
 
+/*
+* @brief return boolean that represents if current object is active
+*/
 bool GameObject::GetActive() const
 {
     return m_isActive;

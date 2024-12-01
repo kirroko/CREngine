@@ -46,6 +46,11 @@ namespace Ukemochi
 {
 	using namespace rapidjson;
 
+	/*
+	* @brief Create game object with a name and tag
+	* @param const std::string& name: name of object
+	* @pream const std::string& tag: tag to describe what kind of object
+	*/
 	GameObject GameObjectFactory::CreateObject(const std::string& name, const std::string& tag)
 	{
 		EntityID entity = ECS::GetInstance().CreateEntity();
@@ -53,6 +58,10 @@ namespace Ukemochi
 		return {entity, name, tag};
 	}
 
+	/*
+	* @brief Create game object from json file
+	* @param const std::string& filePath: file path of the json file
+	*/
 	GameObject& GameObjectFactory::CreatePrefebObject(const std::string& filePath)
 	{
 		// EntityID entity = ECS::GetInstance().CreateEntity(); // A little bit special here
@@ -173,6 +182,12 @@ namespace Ukemochi
 		// Ignore the warning
 	}
 
+	/*
+	* @brief Creates a copy of an existing game object
+	* @param const GameObject& targetObject: target to be cloned
+	* @param const std::string& name: name of object
+	* @pream const std::string& tag: tag to describe what kind of object
+	*/
 	GameObject GameObjectFactory::CloneObject(const GameObject& targetObject, const std::string& name, const std::string& tag)
 	{
 		auto new_entity = ECS::GetInstance().CloneEntity(targetObject.GetInstanceID());
