@@ -1363,7 +1363,6 @@ namespace Ukemochi
         }
         else
         {
-            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
         }
 
         if (ImGui::Button("Add Selected Component"))
