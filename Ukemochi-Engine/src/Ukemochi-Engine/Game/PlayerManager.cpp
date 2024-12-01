@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /**
+     * @brief update the PlayerManager
+     */
     void PlayerManager::Update() const
     {
         for (auto& entity : m_Entities)
@@ -190,6 +193,10 @@ namespace Ukemochi
         }
     }
 
+    /**
+     * @brief Handle collision with the player
+     * @param id The ID of the entity that collided with the player
+     */
     void PlayerManager::OnCollisionEnter(const EntityID& id) const
     {
         UME_ENGINE_INFO("Player got hit by {0}", GameObjectManager::GetInstance().GetGO(id)->GetName());

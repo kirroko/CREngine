@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
+
 #include <unordered_map> // std::unordered_map
 #include <set>           // std::set
 #include <memory>        // std::shared_ptr
@@ -36,17 +37,41 @@ namespace Ukemochi
 		std::unordered_map<const char*, std::shared_ptr<System>> m_Systems{};
 
 	public:
+		/**
+		 * @brief Register a system
+		 * @tparam T The system to register
+		 * @return shared pointer the registered system
+		 */
 		template <typename T>
 		std::shared_ptr<T> RegisterSystem();
 
+		/**
+		 * @brief Get a system
+		 * @tparam T The system to get
+		 * @return shared pointer to the system
+		 */
 		template <typename T>
 		std::shared_ptr<T> GetSystem();
 
+		/**
+		 * @brief Set the signature of a system
+		 * @tparam T The system to set the signature of
+		 * @param signature The signature to set
+		 */
 		template <typename T>
 		void SetSystemSignature(SignatureID signature);
 
-		void EntityDestroyed(EntityID entity);
+		/**
+		 * @brief Notify each system that an entity was destroyed
+		 * @param entity The entity that was destroyed
+		 */
+		void EntityDestroyed(EntityID entity) const;
 
+		/**
+		 * @brief Notify each system that an entity's signature changed
+		 * @param entity The entity whose signature changed
+		 * @param entitySignature The new signature of the entity
+		 */
 		void EntitySignatureChanged(EntityID entity, SignatureID entitySignature);
 	};
 }

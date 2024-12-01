@@ -16,7 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-	void ComponentManager::EntityDestroyed(EntityID entity)
+	/**
+	 * @brief Register a component
+	 * @param entity The entity to add the component to
+	 */
+	void ComponentManager::EntityDestroyed(EntityID entity) const
 	{
 		for (auto const& pair : m_ComponentArrays) // Iterate over all component arrays
 		{

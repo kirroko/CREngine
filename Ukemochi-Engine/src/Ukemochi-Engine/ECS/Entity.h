@@ -19,8 +19,8 @@ namespace Ukemochi
 {
 	using EntityID = unsigned long long int;       // A type alias representing Entity type (Their ID)
 	using ComponentTypeID = unsigned char; // A type alias representing Component type (Their ID)
-	const EntityID MAX_ENTITIES = 2501;   // Maximum number of entities that can be registered
-	const ComponentTypeID MAX_COMPONENTS = 32; // Maximum number of components that can be registered
+	constexpr EntityID MAX_ENTITIES = 2501;   // Maximum number of entities that can be registered
+	constexpr ComponentTypeID MAX_COMPONENTS = 32; // Maximum number of components that can be registered
 	using SignatureID = std::bitset<MAX_COMPONENTS>; // a type alias representing components bit signature (0x111 to represent 3 components)
 
 	// Manage the Entities
@@ -38,15 +38,39 @@ namespace Ukemochi
 			{
 				m_AvailableEntities.push(entity);
 			}
-		};
+		}
 
+		/**
+		 * @brief Create an entity
+		 * @return The ID of the created entity
+		 */
 		EntityID CreateEntity();
+		
+		/**
+		 * @brief Destroy an entity
+		 * @param entity The entity to destroy
+		 */
 		void DestroyEntity(EntityID entity);
+		
+		/**
+		 * @brief Set the signature of an entity
+		 * @param entity The entity to set the signature of
+		 * @param signature The signature to set
+		 */
 		void SetSignature(EntityID entity, SignatureID signature);
-		SignatureID GetSignature(EntityID entity);
+		
+		/**
+		 * @brief Get the signature of an entity
+		 * @param entity The entity to get the signature of
+		 * @return The signature of the entity
+		 */
+		SignatureID GetSignature(EntityID entity) const;
+		
+		/**
+		 * @brief Get the number of living entities
+		 * @return The number of living entities
+		 */
 		unsigned long int GetLivingEntityCount() const;
-
-		//std::vector<EntityID> GetAllEntities();
 	};
 }
 // 0x4B45414E

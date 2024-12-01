@@ -14,6 +14,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Serialization.h"
 
+/**
+ * @brief Load a JSON file
+ * 
+ * @param file_name The file name to load
+ * @param storage The storage to store the JSON data
+ * @return true If the file is loaded successfully
+ * @return false If the file is not loaded successfully
+ */
 bool Serialization::LoadJSON(const std::string& file_name, rapidjson::Document& storage)
 {
 	using namespace rapidjson;
@@ -72,6 +80,14 @@ bool Serialization::LoadJSON(const std::string& file_name, rapidjson::Document& 
 	return true;
 }
 
+/**
+ * @brief Save a JSON file
+ * 
+ * @param file_name The file name to save
+ * @param storage The storage to save the JSON data
+ * @return true If the file is saved successfully
+ * @return false If the file is not saved successfully
+ */
 bool Serialization::PushJSON(const std::string& file_name, rapidjson::Document& storage)
 {
 	using namespace rapidjson;

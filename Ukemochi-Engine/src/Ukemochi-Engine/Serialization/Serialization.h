@@ -33,8 +33,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Serialization
 {
+	/**
+	 * @brief Load a JSON file
+	 * 
+	 * @param file_name The file name to load
+	 * @param storage The document to store the JSON data
+	 * @return true if the file is loaded successfully
+	 * @return false if the file is not loaded successfully
+	 */
 	bool LoadJSON(const std::string& file_name, rapidjson::Document& storage);
 
+	/**
+	 * @brief Save a JSON file
+	 * 
+	 * @param file_name The file name to save
+	 * @param pushing The document to save
+	 * @return true if the file is saved successfully
+	 * @return false if the file is not saved successfully
+	 */
 	bool PushJSON(const std::string& file_name, rapidjson::Document& pushing);
 };
 

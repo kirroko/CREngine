@@ -18,6 +18,9 @@ namespace Ukemochi
     class PlayerManager : public System
     {
     public:
+        /**
+         * @brief Update the player manager
+         */
         void Update() const;
 
         /**
