@@ -27,21 +27,11 @@ namespace Ukemochi
 
 	AssetManager::~AssetManager()
 	{
-		//need to clear properly
 		for (auto& ptr : texture_list)
 		{
 			ptr.second.reset();
+			ptr.second.~shared_ptr();
 		}
-
-		for (auto& ptr : shader_list)
-		{
-			ptr.second.reset();
-		}
-
-		texture_order.clear();
-		texture_list.clear();
-		shader_list.clear();
-
 	}
 
 	void AssetManager::addTexture(std::string file_path)
