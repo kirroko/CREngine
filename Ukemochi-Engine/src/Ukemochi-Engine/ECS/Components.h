@@ -3,6 +3,7 @@
 \file       Components.h
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
 \date       Nov 17, 2024
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
@@ -302,9 +303,9 @@ namespace Ukemochi
 	};
 
 	/*!***********************************************************************
-\brief
- Enemy component structure.
-*************************************************************************/
+	\brief
+	 Enemy component structure.
+	*************************************************************************/
 	struct Enemy
 	{
 		enum EnemyStates
@@ -325,7 +326,7 @@ namespace Ukemochi
 		EntityID ID;
 		EnemyStates state;
 		EnemyTypes type;
-		float posX, posY;
+		float posX, posY; //place holder to be remove
 		float dirX, dirY;
 		float magnitude;
 		float targetX, targetY;
@@ -339,15 +340,8 @@ namespace Ukemochi
 		float atktimer = 5.0f;
 		bool isDead = false;
 
-		// Check if two points are within a threshold distance
-		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
-		{
-			float dx = x1 - x2;
-			float dy = y1 - y2;
-			return (dx * dx + dy * dy) <= (threshold * threshold);
-		}
-
 		Enemy() = default;
+
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
 			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), isCollide(false)
@@ -374,6 +368,15 @@ namespace Ukemochi
 			}
 		}
 
+		// Check if two points are within a threshold distance
+		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
+		{
+			float dx = x1 - x2;
+			float dy = y1 - y2;
+			return (dx * dx + dy * dy) <= (threshold * threshold);
+		}
+
+		// Check if two points are within a threshold distance
 		void SetTarget(Transform& target)
 		{
 			this->targetX = target.position.x;
@@ -387,12 +390,14 @@ namespace Ukemochi
 			this->targetY = newtargetY;
 		}
 
+		//helper function
 		template <typename T>
 		T Lerp(T a, T b, float t)
 		{
 			return a + t * (b - a);
 		}
-		// GET TRANSFORM TO MOVE
+		
+		//move to target
 		void MoveToTarget(Transform& self, float newtargetX, float newtargetY, float deltaTime, float movespeed)
 		{
 			// Check if already at the target
@@ -403,7 +408,7 @@ namespace Ukemochi
 					prevObject = nearestObj;
 					nearestObj = -1;
 				}
-				std::cout << "Enemy already at the target position.\n";
+				//std::cout << "Enemy already at the target position.\n";
 				return;
 			}
 
@@ -423,7 +428,6 @@ namespace Ukemochi
 			self.position.y += dy * movespeed * deltaTime;
 			posX = self.position.x;
 			posY = self.position.y;
-			// Print position for debugging
 			//std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
 		}
 
@@ -437,6 +441,7 @@ namespace Ukemochi
 			return distance <= attackRange * attackRange;
 		}
 
+		//wrap to target when collide
 		void WrapToTarget(Transform& enemyTransform, float newtargetX, float newtargetY, float deltaTime, float movespeed)
 		{
 			// Calculate the direction vector from the enemy to the target
@@ -521,28 +526,36 @@ namespace Ukemochi
 		std::vector<AudioSource> music; // Music category
 		std::vector<AudioSource> sfx;   // Sfx category
 
-		
-
 		AudioManager() = default;
 
+		//player the music audio
 		void PlayMusic(int index) {
-			Audio::GetInstance().LoadSound(index,music[index].audioPath.c_str(), "Music");
-			Audio::GetInstance().PlaySound(index, "Music");
+			if (index < music.size() && music[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
+				Audio::GetInstance().PlaySound(index, "Music");
+			}
 		}
-
+		//stop the music audio
 		void StopMusic(int index) {
 			Audio::GetInstance().StopSound(index, "Music");
 		}
 
+		//player the SFX audio
 		void PlaySFX(int index) {
-			Audio::GetInstance().LoadSound(index,sfx[index].audioPath.c_str(), "SFX");
-			Audio::GetInstance().PlaySound(index,"SFX");
+			if (index < sfx.size() && sfx[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
+				Audio::GetInstance().PlaySound(index, "SFX");
+			}
 		}
 
+		//stop the SFX audio
 		void StopSFX(int index) {
 			Audio::GetInstance().StopSound(index, "SFX");
 		}
 
+		//get the audio index
 		int GetSFXindex(const std::string& name) {
 			auto it = std::find_if(sfx.begin(), sfx.end(), [&name](const AudioSource& source) {
 				return source.audioName == name;
@@ -556,6 +569,7 @@ namespace Ukemochi
 			return -1; // Return an invalid index if not found
 		}
 
+		//get the audio index
 		int GetMusicIndex(const std::string& name) {
 			auto it = std::find_if(music.begin(), music.end(), [&name](const AudioSource& source) {
 				return source.audioName == name;
@@ -569,7 +583,7 @@ namespace Ukemochi
 			return -1; // Return an invalid index if not found
 		}
 
-		// Add sound to the appropriate category
+		//load the sound to audio
 		void AddSoundToMusic(const std::string& name) {
 			//music.emplace_back(path, name);
 
@@ -577,6 +591,7 @@ namespace Ukemochi
 			Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
 		}
 
+		//load the sound to audio
 		void AddSoundToSfx(const std::string& name) {
 			//sfx.emplace_back(path, name);
 			int index = GetSFXindex(name);

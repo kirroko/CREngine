@@ -18,7 +18,6 @@ namespace Ukemochi
 {
     class AnimationSystem : public System
     {
-        float m_time = 0.0f;
     public:
         void Init();
         void Update();

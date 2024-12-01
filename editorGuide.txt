@@ -1,7 +1,7 @@
 The editor is loaded upon running the application.
-On the left side of the screen, there will be a Scene Browser, Content Browser and a Control Panel.
-In the middle, we have Scene Loader and Sprite Editor. At the bottom, we have a Debug Window as well.
-On the right side of the screen, there's a Entity Management tab.
+There are Scene Browser, Content Browser and a Control Panel.
+In the middle, we have Scene Loader. 
+We have a Debug Window as well as a Entity Management tab.
 
 For the Scene Browser tab, it will display all the json file that is in ../Assets/Scenes. It will update itself frequently so that it can detect new files. User can click on the json file that is shown on the Scene Brower and it will load the scene accordingly. There's also a Save Scene button and Create Scene button. User can create their own scene by clicking on the Create Scene button and save it by clicking on the Save Scene button. The Saved Scene will be stored in ../Assets/Scenes.
 

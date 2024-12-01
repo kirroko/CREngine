@@ -1645,32 +1645,32 @@
                     "Name": "Audio",
                     "Music": [{
                             "Name": "BGM",
-                            "Path": "../Assets/Audio/GameBGM/GameBGM.wav"
+                            "Path": "../Assets/Audio/BGM/bgm_game.wav"
                         }],
                     "SFX": [{
                             "Name": "HIT",
-                            "Path": "../Assets/Audio/SFX_jump.wav"
+                            "Path": "../Assets/Audio/SFX/sfx_collision.wav"
                         }, {
                             "Name": "Pattack1",
-                            "Path": "../Assets/Audio/player/Playerattack1.wav"
+                            "Path": "../Assets/Audio/SFX/Player/sfx_player_attack_1.wav"
                         }, {
                             "Name": "Pattack2",
-                            "Path": "../Assets/Audio/player/Playerattack2.wav"
+                            "Path": "../Assets/Audio/SFX/Player/sfx_player_attack_2.wav"
                         }, {
                             "Name": "Pattack3",
-                            "Path": "../Assets/Audio/player/Playerkick.wav"
+                            "Path": "../Assets/Audio/SFX/Player/sfx_player_kick.wav"
                         }, {
                             "Name": "EnemyKilled",
-                            "Path": "../Assets/Audio/enemydead/enemydead.wav"
+                            "Path": "../Assets/Audio/SFX/Enemy/sfx_enemy_dead.wav"
                         }, {
                             "Name": "LevelChange",
-                            "Path": "../Assets/Audio/door/caveEnter.wav"
+                            "Path": "../Assets/Audio/SFX/sfx_cave_enter.wav"
                         }, {
                             "Name": "FishMove",
-                            "Path": "../Assets/Audio/fish audio/fishmove.wav"
+                            "Path": "../Assets/Audio/SFX/Enemy/sfx_fish_move.wav"
                         }, {
                             "Name": "FishAttack",
-                            "Path": "../Assets/Audio/fish audio/fishattack.wav"
+                            "Path": "../Assets/Audio/SFX/Enemy/sfx_fish_attack.wav"
                         }]
                 }]
         }]

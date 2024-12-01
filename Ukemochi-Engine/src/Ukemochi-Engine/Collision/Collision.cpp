@@ -528,9 +528,16 @@ namespace Ukemochi
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				
+				if (audioM.GetSFXindex("HIT") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+						audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+				}
+			}
 		}
 		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary")
 		{
@@ -542,9 +549,15 @@ namespace Ukemochi
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("HIT") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+						audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+				}
+			}
 		}
 		else if (tag1 == "Enemy" && tag2 == "Environment" || tag1 == "Enemy" && tag2 == "Boundary")
 		{
@@ -571,8 +584,11 @@ namespace Ukemochi
 			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-				audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			if (audioM.GetSFXindex("HIT") != -1)
+			{
+				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+					audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			}
 		}
 	}
 
@@ -815,9 +831,10 @@ namespace Ukemochi
 	void Collision::Trigger_Response(const std::string& trigger_tag)
 	{
 		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+		if (audioM.GetSFXindex("LevelChange") != -1)
 		{
-			audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+				audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
 		}
 		// PLAYER AND DOORS
 		if (trigger_tag == "LeftDoor")

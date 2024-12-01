@@ -52,6 +52,13 @@ namespace Ukemochi
     double fpsDisplayInterval = 1.0; // Display the FPS every 1 second
     double deltaTime = 0.0;
 
+    /*!***********************************************************************
+    \brief
+     Sets up memory leak checking in debug mode.
+    \param[in] breakAlloc
+     The allocation number to break on. Defaults to -1 (no specific allocation).
+    \ This is not our code
+    *************************************************************************/
     void EnableMemoryLeakChecking(int breakAlloc = -1)
     {
         int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
@@ -61,6 +68,10 @@ namespace Ukemochi
             _CrtSetBreakAlloc(breakAlloc);
     }
 
+    /*!***********************************************************************
+    \brief
+     Initializes the application, setting up the window, ImGui, and file watcher.
+    *************************************************************************/
     Application::Application()
     {
         s_Instance = this;
@@ -138,6 +149,11 @@ namespace Ukemochi
         GameStarted = false;
     }
 
+    /*!***********************************************************************
+    \brief
+     Destructor for the Application class. Cleans up resources such as ImGui
+     and file watchers.
+    *************************************************************************/
     Application::~Application()
     {
         UME_ENGINE_TRACE("Shutting down Application...");
@@ -156,6 +172,12 @@ namespace Ukemochi
         ScriptingEngine::GetInstance().ShutDown();
     }
 
+    /*!***********************************************************************
+    \brief
+     Handles incoming events and dispatches them to the appropriate handlers.
+    \param[in/out] e
+     The event to process.
+    *************************************************************************/
     void Application::EventIsOn(Event& e)
     {
         // imguiInstance.OnEvent(e);
@@ -166,6 +188,14 @@ namespace Ukemochi
             UME_ENGINE_TRACE("{0}", e.ToString());
     }
 
+    /*!***********************************************************************
+    \brief
+     Handles window close events.
+    \param[in] e
+     The window close event.
+    \return
+     True if the window should close, false otherwise.
+    *************************************************************************/
     bool Application::IsWindowClose(WindowCloseEvent& e)
     {
         (void)e; // Suppress the unused parameter warning
@@ -174,10 +204,21 @@ namespace Ukemochi
         return true;
     }
 
+    /*!***********************************************************************
+    \brief
+     Starts the game simulation, initializing relevant systems and playing music.
+    *************************************************************************/
     void Application::StartGame()
     {
         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+        if (audioM.GetMusicIndex("BGM") != -1)
+        {
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetSFXindex("BGM")))
+            {
+                audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+            }
+        }
+
         // enemy
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
         // Recompile scripts if needed
@@ -212,6 +253,10 @@ namespace Ukemochi
         GameStarted = true;
     }
 
+    /*!***********************************************************************
+    \brief
+     Stops the game simulation, reverting the engine to editor mode.
+    *************************************************************************/
     void Application::StopGame()
     {
         // Load the saved scene state to reset to the editor mode
@@ -224,6 +269,10 @@ namespace Ukemochi
         GameStarted = false;
     }
 
+    /*!***********************************************************************
+    \brief
+     Main game loop, handling updates for the editor and game modes.
+    *************************************************************************/
     void Application::GameLoop() // run
     {
         // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -278,6 +327,10 @@ namespace Ukemochi
         sceneManager.SceneManagerUnload();
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the frame rate controller and calculates frame timings.
+    *************************************************************************/
     void Application::UpdateFPS()
     {
         //************ FPS ************
@@ -299,6 +352,11 @@ namespace Ukemochi
         //************ FPS ************
     }
 
+
+    /*!***********************************************************************
+    \brief
+     Logs and displays the current FPS at regular intervals.
+    *************************************************************************/
     void Application::DrawFPS()
     {
         //************ Display FPS ************
@@ -322,6 +380,11 @@ namespace Ukemochi
         //************ Display FPS ************
     }
 
+
+    /*!***********************************************************************
+    \brief
+     Updates and renders the ImGui interface components.
+    *************************************************************************/
     void Application::UpdateIMGUI()
     {
         //************ Render IMGUI ************

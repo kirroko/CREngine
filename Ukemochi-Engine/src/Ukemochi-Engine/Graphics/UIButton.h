@@ -1,3 +1,16 @@
+/* Start Header ************************************************************************/
+/*!
+\file       UIButtion.h
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Defines the UIButton and UIButtonRenderer classes for creating and managing
+            UI buttons in a graphical application.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 #ifndef UI_BUTTON_H
 #define UI_BUTTON_H
 

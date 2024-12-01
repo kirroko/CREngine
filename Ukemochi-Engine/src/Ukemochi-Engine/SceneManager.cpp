@@ -45,6 +45,12 @@ namespace Ukemochi
 
 	//bool func_toggle = false;
 
+    /*!***********************************************************************
+    \brief
+        Constructor for SceneManager class.
+    \details
+        Initializes the scene manager and any necessary resources.
+    *************************************************************************/
 	SceneManager::SceneManager()
 		:sceneName("NewScene"), cameraSize(0,0)
 	{
@@ -135,10 +141,21 @@ namespace Ukemochi
         //GSM_Initialize(GS_ENGINE);
     }
 
+    /*!***********************************************************************
+    \brief
+        Destructor for SceneManager class.
+    *************************************************************************/
     SceneManager::~SceneManager()
     {
     }
 
+    /*!***********************************************************************
+    \brief
+        Loads the scene manager's resources and prepares it for use.
+    \details
+        This method is responsible for loading all necessary resources and
+        setting up the environment for scene management.
+    *************************************************************************/
     void SceneManager::SceneMangerLoad()
     {
         //load Asset Manager Texture
@@ -175,6 +192,13 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
 
+    /*!***********************************************************************
+    \brief
+        Initializes the scene manager.
+    \details
+        This method initializes various systems and components required for
+        scene management and the game environment.
+    *************************************************************************/
     void SceneManager::SceneMangerInit()
     {
         //load all assest
@@ -192,7 +216,13 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
 
-     //When in game Engine State
+    /*!***********************************************************************
+    \brief
+        Updates the state of the scene manager when in game Engine State.
+    \details
+        This method is called periodically to update the scene manager and
+        ensure the game world remains in sync with the game logic.
+    *************************************************************************/
     void SceneManager::SceneMangerUpdate()
     {
         if (Input::IsKeyTriggered(UME_KEY_U))
@@ -257,7 +287,12 @@ namespace Ukemochi
         SceneManagerDraw();
     }
 
-    //When engine is Running the scene
+    /*!***********************************************************************
+    \brief
+        Runs the systems for the current scene.
+    \details
+        This method iterates through all systems and runs them for the current scene.
+    *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
         loop_start = std::chrono::steady_clock::now();
@@ -276,6 +311,47 @@ namespace Ukemochi
                 static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
         }
 #endif // _DEBUG
+
+#ifndef _DEBUG
+		// Game Inputs Quick fix
+		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+
+			LoadSaveFile(GetCurrScene() + ".json");
+
+			UME_ENGINE_TRACE("Initializing Collision...");
+			ECS::GetInstance().GetSystem<Collision>()->Init();
+			UME_ENGINE_TRACE("Initializing dungeon manager...");
+			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+			// enemy
+			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+			//audio
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+			return;
+		}
+
+		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
+		{
+			es_current = ES_QUIT;
+			return;
+		}
+#endif
+		
 
         /*
         // Audio Inputs
@@ -346,6 +422,8 @@ namespace Ukemochi
 	    // --- ANIMATION UPDATE ---
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
 
+        // --- TURN OFF GIZMO ---
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
 		SceneManagerDraw();
@@ -356,12 +434,27 @@ namespace Ukemochi
 		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
 	}
 
+    /*!***********************************************************************
+    \brief
+        Updates the camera settings during each frame.
+    \param deltaTime: The time elapsed since the last frame.
+    \details
+        This method updates the camera's position, rotation, and other
+        settings based on the delta time.
+    *************************************************************************/
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
     {
         // Camera
         ECS::GetInstance().GetSystem<Camera>()->processCameraInput(static_cast<GLfloat>(deltaTime));
     }
 
+    /*!***********************************************************************
+    \brief
+        Draws the current scene to the screen.
+    \details
+        This method handles the rendering of the scene by drawing all objects
+        to the screen, including any necessary UI elements.
+    *************************************************************************/
     void SceneManager::SceneManagerDraw()
     {
 #ifdef _DEBUG
@@ -374,6 +467,13 @@ namespace Ukemochi
 #endif // !_DEBUG
     }
 
+    /*!***********************************************************************
+    \brief
+        Frees up resources used by the scene manager.
+    \details
+        This method is responsible for releasing any resources held by the
+        SceneManager, preparing it for shutdown or reinitialization.
+    *************************************************************************/
     void SceneManager::SceneManagerFree()
     {
 		UME_ENGINE_TRACE("Destroying all game objects...");
@@ -388,23 +488,50 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
     }
 
+    /*!***********************************************************************
+    \brief
+        Unloads the current scene.
+    \details
+        This method ensures the proper unloading of the current scene,
+        freeing any resources associated with it.
+    *************************************************************************/
     void SceneManager::SceneManagerUnload()
     {
         SceneManagerFree();
         ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
     }
 
+    /*!***********************************************************************
+    \brief
+        Returns a reference to the flag indicating whether IMGUI is on.
+    \return
+        A reference to the boolean flag that controls IMGUI visibility.
+    *************************************************************************/
     bool& SceneManager::GetOnIMGUI()
     {
         static bool isOnIMGUI = false;
         return isOnIMGUI;
     }
 
+    /*!***********************************************************************
+    \brief
+        Returns the name of the current scene.
+    \return
+        A reference to the string holding the current scene's name.
+    *************************************************************************/
     std::string& SceneManager::GetCurrScene()
     {
         return GetInstance().sceneName;
     }
 
+    /*!***********************************************************************
+    \brief
+        Loads a save file into the current scene.
+    \param file_name: The name of the save file to load.
+    \details
+        This method reads the save file and restores the scene to its state
+        from the saved file.
+    *************************************************************************/
     void SceneManager::LoadSaveFile(const std::string& file_name)
     {
         std::string sceneCpy = file_name;
@@ -718,6 +845,13 @@ namespace Ukemochi
         UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
     }
 
+    /*!***********************************************************************
+    \brief
+        Saves the current scene to a file.
+    \param file_name: The name of the file to save the scene to.
+    \details
+        This method writes the current state of the scene to a specified file.
+    *************************************************************************/
     void SceneManager::SaveScene(const std::string& file_name)
     {
         //get file name to save
@@ -990,6 +1124,13 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
     }
 
+    /*!***********************************************************************
+    \brief
+        Creates a new scene and loads it.
+    \param file_name: The name of the file to use for the new scene.
+    \details
+        This method initializes a new scene based on the provided file name.
+    *************************************************************************/
     void SceneManager::CreateNewScene(const std::string& file_name)
     {
         Document document;
@@ -1007,6 +1148,14 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Saves a prefab GameObject to a file.
+    \param prefabObj: Pointer to the GameObject to save as a prefab.
+    \param file_name: The name of the file to save the prefab to.
+    \details
+        This method saves a GameObject as a prefab, which can be reused or instantiated later.
+    *************************************************************************/
     void SceneManager::SavePrefab(GameObject* prefabObj, const std::string& file_name)
     {
         // TODO: Some day we will encapsulate all this into Serialization class...
@@ -1272,16 +1421,38 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Gets the play screen size.
+    \return
+        The size of the play screen as a Vec2 object.
+    *************************************************************************/
     Vec2 SceneManager::GetPlayScreen()
     {
         return GetInstance().cameraSize;
     }
 
+    /*!***********************************************************************
+    \brief
+        Sets the play screen size.
+    \param playsize: The new play screen size to set.
+    *************************************************************************/
     void SceneManager::SetPlayScreen(Vec2 playsize)
     {
         GetInstance().cameraSize = playsize;
     }
 
+    /*!***********************************************************************
+    \brief
+        Prints the performance statistics of different subsystems.
+    \param loop: Time duration of the loop.
+    \param collision: Time duration spent on collision detection.
+    \param physics: Time duration spent on physics simulation.
+    \param graphics: Time duration spent on rendering graphics.
+    \details
+        This method logs the performance data for different subsystems, which can be
+        useful for optimization and performance monitoring.
+    *************************************************************************/
 	void SceneManager::print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics)
 	{
 		double collision_percent = static_cast<double>((collision.count() / loop.count()) * 100.f);

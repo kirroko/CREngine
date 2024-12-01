@@ -24,6 +24,15 @@ namespace Ukemochi
 
 	FP gsm_fpLoad = nullptr, gsm_fpInitialize = nullptr, gsm_fpUpdate = nullptr, gsm_fpDraw = nullptr, gsm_fpFree = nullptr, gsm_fpUnload = nullptr;
 
+	/*!***********************************************************************
+	\brief
+		Initializes the GameStateManager with the starting state.
+	\param startingState
+		The initial state to set for the game.
+	\details
+		This function sets up the state manager and prepares the game
+		to start in the specified state.
+	*************************************************************************/
 	void GSM_Initialize(int startingState) // initialize the state manager
 	{
 		gsm_current = gsm_previous = gsm_next = startingState;
@@ -32,6 +41,15 @@ namespace Ukemochi
 		// std::cout << "GSM:Initialize" << '\n';
 	}
 
+	/*!***********************************************************************
+	\brief
+		Initializes the GameStateManager with the starting state.
+	\param startingState
+		The initial state to set for the game.
+	\details
+		This function sets up the state manager and prepares the game
+		to start in the specified state.
+	*************************************************************************/
 	void GSM_Update() // updating the gamestate when the game is running
 	{
 		// some unfinished code here
