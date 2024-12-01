@@ -1,3 +1,21 @@
+/* Start Header ************************************************************************/
+/*!
+\file       UIButtion.cpp
+\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu
+\date       Nov 6, 2024
+\brief      Implements the UIButtonRenderer class, including methods for managing and 
+            rendering UIButton objects. This file provides the logic for:
+            - Adding, removing, and clearing buttons from the renderer's collection.
+            - Rendering button backgrounds using batch rendering.
+            - Rendering button text labels with proper alignment and scaling.
+            - Handling camera-based transformations and view matrices for proper 
+              button positioning.
+
+Copyright (C) 2024 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 #include "PreCompile.h"
 #include "UIButton.h"
 #include <../vendor/glm/glm/gtc/matrix_transform.hpp> 
