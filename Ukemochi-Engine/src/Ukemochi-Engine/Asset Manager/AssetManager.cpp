@@ -117,7 +117,7 @@ namespace Ukemochi
 			return;
 		}
 		FMOD::Sound* sound{};
-		FMOD::System* sys = ECS::GetInstance().GetSystem<Audio>()->accessSys();
+		FMOD::System* sys = ECS::GetInstance().GetSystem<Audio>()->pSystem;
 
 		if (sys->createSound(file_path.c_str(), FMOD_DEFAULT, nullptr, &sound) != FMOD_OK)
 		{
