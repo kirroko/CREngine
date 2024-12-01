@@ -159,6 +159,73 @@ namespace Ukemochi
             pChannelGroups.push_back(group);
         }
     }
+    /*!***********************************************************************
+    \brief
+        Delete a sound from the loaded audio.
+    \param index
+        Index of the sound file to be deleted.
+    \param filePath
+        The file path to the sound file to be deleted.
+    \param type
+        Type of sound, either "SFX" or "Music".
+    \return
+        True if the sound was successfully deleted, false otherwise.
+    *************************************************************************/
+    bool Audio::DeleteSound(int index, const char* filePath, std::string type)
+    {
+        if (type == "SFX")
+        {
+            // Validate index
+            if (index < 0 || index >= pSFX.size())
+            {
+                std::cerr << "Invalid index for SFX: " << index << std::endl;
+                return false;
+            }
+
+            // Release the sound
+            FMOD_RESULT result = pSFX[index]->release();
+            if (result != FMOD_OK)
+            {
+                std::cerr << "Failed to release SFX sound: " << result << std::endl;
+                return false;
+            }
+
+            // Remove sound and channel from the vectors
+            pSFX.erase(pSFX.begin() + index);
+            pSFXChannels.erase(pSFXChannels.begin() + index);
+            --numOfSFX;
+
+            return true;
+        }
+        else if (type == "Music")
+        {
+            // Validate index
+            if (index < 0 || index >= pMusic.size())
+            {
+                std::cerr << "Invalid index for Music: " << index << std::endl;
+                return false;
+            }
+
+            // Release the sound
+            FMOD_RESULT result = pMusic[index]->release();
+            if (result != FMOD_OK)
+            {
+                std::cerr << "Failed to release Music sound: " << result << std::endl;
+                return false;
+            }
+
+            // Remove sound and channel from the vectors
+            pMusic.erase(pMusic.begin() + index);
+            pMusicChannels.erase(pMusicChannels.begin() + index);
+            --numOfMusic;
+
+            return true;
+        }
+
+        // If the type is neither SFX nor Music, return false
+        std::cerr << "Invalid type specified: " << type << std::endl;
+        return false;
+    }
 
     /*!***********************************************************************
     \brief

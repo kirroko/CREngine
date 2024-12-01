@@ -755,7 +755,13 @@ namespace Ukemochi
                     if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
                     {
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                        if (audioM.GetMusicIndex("BGM") != -1)
+                        {
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+                            {
+                                audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                            }
+                        }
                     }
                 }
 

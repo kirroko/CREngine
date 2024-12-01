@@ -211,7 +211,14 @@ namespace Ukemochi
     void Application::StartGame()
     {
         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+        if (audioM.GetMusicIndex("BGM") != -1)
+        {
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetSFXindex("BGM")))
+            {
+                audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+            }
+        }
+
         // enemy
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
         // Recompile scripts if needed
