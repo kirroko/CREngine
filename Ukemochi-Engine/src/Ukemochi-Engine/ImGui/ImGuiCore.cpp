@@ -625,8 +625,10 @@ namespace Ukemochi
             float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight) *
                                      displayHeight;
 
-            UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
-                              "Pixel size is larger than texture size");
+            // UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
+            //                   "Pixel size is larger than texture size");
+            pixelSize[0] = std::min(pixelSize[0], textureWidth);
+            pixelSize[1] = std::min(pixelSize[1], textureHeight);
 
             int colums = textureWidth / pixelSize[0];
             //            int rows = textureHeight / pixelSize[1];
