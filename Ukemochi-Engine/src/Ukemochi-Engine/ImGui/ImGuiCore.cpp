@@ -307,14 +307,13 @@ namespace Ukemochi
         if (m_SpriteFlag)
         {
             // Set up the texture details
-            if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(m_SpritePath) !=
-                ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+            if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(m_SpritePath))
             {
                 std::filesystem::path filePath;
                 showGrid = true;
-                texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
-                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->width;
-                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->height;
+                texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->ID;
+                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->width;
+                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->height;
                 filePath = m_SpritePath;
                 fileName = filePath.stem().string();
                 filePath.replace_extension(".json");
@@ -2321,7 +2320,7 @@ namespace Ukemochi
         // Begin a dockable window
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
-        static char filePath[256] = "../Assets/Prefabs/Player.json";
+        static char filePath[256] = "";
         // Sync the selectedEntityID with the Renderer's picked entity
         static int selectedEntityID = -1;
         auto &renderer = *ECS::GetInstance().GetSystem<Renderer>();
@@ -2387,7 +2386,9 @@ namespace Ukemochi
 
         // Rest of your existing code for entity creation and management...
         ImGui::Text("Entity Management");
+        ImGui::BeginDisabled(true); // Start disabled state
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
+        ImGui::EndDisabled(); // End disabled state
 
         if (ImGui::Button("Create Entity"))
         {

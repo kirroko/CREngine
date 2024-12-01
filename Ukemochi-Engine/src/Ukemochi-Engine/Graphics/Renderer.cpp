@@ -447,7 +447,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
 	// Set textureCount based on the number of unique textures, limited to 32
 	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
-	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->texture_order.size());
+	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
 
@@ -456,8 +456,9 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		/*const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
+
 
 		if (texture->ID == 0) {
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
@@ -467,16 +468,16 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Check if this texture is already mapped to a unit
 		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
 			// New texture, assign to the next available texture unit
-			textureIDMap[texture->ID] = nextAvailableTextureUnit;
+			textureIDMap[texture->ID] = i;
 
 			// Bind the texture to the OpenGL texture unit
-			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
-			glBindTexture(GL_TEXTURE_2D, texture->ID);
+			/*glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
+			glBindTexture(GL_TEXTURE_2D, texture->ID);*/
 
-			textureUnits[i] = nextAvailableTextureUnit;
+			textureUnits[i] = i;
 
 			// Increment to the next available texture unit
-			nextAvailableTextureUnit++;
+			//nextAvailableTextureUnit++;
 		}
 		else {
 			// Texture already mapped, retrieve existing texture unit
@@ -487,9 +488,9 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->order_index; i++)
+	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureListSize(); i++)
 	{
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -511,13 +512,13 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
  */
 void Renderer::setUpShaders()
 {
-	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	shaderProgram = ECS::GetInstance().GetSystem<AssetManager>()->getShader("default");
 
-	debug_shader_program = std::make_shared<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+	debug_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("debug");
 
-	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+	UI_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("UI");
 
-	object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("object_picking");
 
 	pointShader = std::make_unique<Shader>("../Assets/Shaders/point.vert", "../Assets/Shaders/point.frag");
 }
@@ -642,10 +643,9 @@ void Renderer::render()
 			else
 				renderPos -= offset;
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
-				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
-				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
@@ -681,10 +681,9 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) !=
-				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
-				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);

@@ -9,7 +9,7 @@
                 "Scale": [50.0, 50.0]
             }, {
                 "Name": "SpriteRender",
-                "Sprite": "../Assets/Textures/Moon Floor.png",
+                "Sprite": "../Assets/Textures/Environment/env_base_bg.png",
                 "Shape": 0
             }]
     }
