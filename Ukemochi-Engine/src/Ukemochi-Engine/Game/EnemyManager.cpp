@@ -90,9 +90,12 @@ namespace Ukemochi
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                 //dont overlap kick sound
-                if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))&& !enemycomponent.isDead)
+                if (audioM.GetSFXindex("Pattack3") != -1 && audioM.GetSFXindex("EnemyKilled") != -1)
                 {
-                    audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                    if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3"))) && !enemycomponent.isDead)
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                    }
                 }
                 object->SetActive(false);
                 enemycomponent.isDead = true;
@@ -109,7 +112,7 @@ namespace Ukemochi
             if (enemycomponent.state != enemycomponent.ATTACK)
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                if (enemycomponent.type == enemycomponent.FISH)
+                if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1)
                 {
                     if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
                     {
@@ -251,7 +254,7 @@ namespace Ukemochi
                     //shoot for worm
                     static bool attack = false;
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (enemycomponent.type == enemycomponent.FISH)
+                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
                     {
                         if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !attack)
                         {

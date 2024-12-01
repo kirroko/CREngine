@@ -59,6 +59,20 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
+            Delete a sound from the loaded audio.
+        \param index
+            Index of the sound file to be deleted.
+        \param filePath
+            The file path to the sound file to be deleted.
+        \param type
+            Type of sound, either "SFX" or "Music".
+        \return
+            True if the sound was successfully deleted, false otherwise.
+        *************************************************************************/
+        bool DeleteSound(int index, const char* filePath, std::string type);
+
+        /*!***********************************************************************
+        \brief
             Load a sound from a file.
         \param index
             Index to the sound file to be loaded.

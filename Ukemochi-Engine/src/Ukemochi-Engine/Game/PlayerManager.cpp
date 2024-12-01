@@ -96,7 +96,7 @@ namespace Ukemochi
 
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
                     AudioManager>();
-                if (data.currentComboHits == 3 && data.attackTimer < 1.f && kickAudio == false)
+                if (data.currentComboHits == 3 && data.attackTimer < 1.f && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
                 {
                     if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
                         audioM.GetSFXindex("Pattack3")))
@@ -136,7 +136,7 @@ namespace Ukemochi
                         case 1:
                             anim.SetAnimationImmediately("Attack1");
                             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                audioM.GetSFXindex("Pattack1")))
+                                audioM.GetSFXindex("Pattack1")) && audioM.GetSFXindex("Pattack1") != -1)
                             {
                                 audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
                             }
@@ -145,7 +145,7 @@ namespace Ukemochi
                             anim.SetAnimationImmediately("Attack2");
                             audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
                             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                audioM.GetSFXindex("Pattack2")))
+                                audioM.GetSFXindex("Pattack2")) && audioM.GetSFXindex("Pattack2") != -1)
                             {
                                 audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
                             }

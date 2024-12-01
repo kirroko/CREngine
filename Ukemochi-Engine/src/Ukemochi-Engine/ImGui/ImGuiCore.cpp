@@ -1,8 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       ImGuiCore.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (%)
-\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (%)
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (95%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (5%)
 \date       Sept 25, 2024
 \brief      This file contains the implementation of the UseImGui class,
             which manages the initialization, rendering, and event handling
@@ -757,7 +757,13 @@ namespace Ukemochi
                     if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
                     {
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                        if (audioM.GetMusicIndex("BGM") != -1)
+                        {
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+                            {
+                                audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                            }
+                        }
                     }
                 }
 
@@ -2063,23 +2069,10 @@ namespace Ukemochi
                             strncpy(newPath, filename.c_str(), sizeof(newPath));
                             newPath[sizeof(newPath) - 1] = '\0';
 
-                            // Rename Button to toggle name editing
-                            static bool isRenameMode = false;  // Flag to control renaming state
-                            if (ImGui::Button("Rename")) {
-                                isRenameMode = !isRenameMode;  // Toggle rename mode
-                            }
-
-                            // Only allow name modification if isRenameMode is true
-                            if (isRenameMode) {
-                                if (ImGui::InputText("Music Name", newName, sizeof(newName))) {
-                                    // Only update if the name has changed and is not empty
-                                    if (strlen(newName) > 0 && audio.music[i].audioName != newName) {
-                                        audio.music[i].audioName = newName;
-                                    }
-                                }
-                            }
-                            else {
-                                ImGui::Text("Name: %s", audio.music[i].audioName.c_str());  // Display name if not in rename mode
+                            // Editable name
+                            if (ImGui::InputText("Music Name", newName, sizeof(newName))) {
+                                // Update name in the audio manager
+                                audio.music[i].audioName = newName;
                             }
 
                             ImGui::BeginDisabled(true);
@@ -2087,24 +2080,19 @@ namespace Ukemochi
                             ImGui::EndDisabled();
 
                             // Drag and Drop for Music Path (Existing Entry)
-                            if (es_current != ENGINE_STATES::ES_PLAY)
-                            {
-                                if (ImGui::BeginDragDropTarget())
-                                {
-                                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
-                                    {
+                            if (es_current != ENGINE_STATES::ES_PLAY) {
+                                if (ImGui::BeginDragDropTarget()) {
+                                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH")) {
                                         std::string draggedAudio = std::string((const char*)payload->Data);
                                         std::filesystem::path filePath(draggedAudio);
                                         std::string extension = filePath.extension().string();
 
-                                        if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
-                                        {
+                                        if (extension == ".wav" || extension == ".mp3" || extension == ".ogg") {
                                             // Update the path of the current music entry
                                             audio.music[i].audioPath = draggedAudio;
-                                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i),audio.music[i].audioPath.c_str(), "Music");
+                                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(static_cast<int>(i), audio.music[i].audioPath.c_str(), "Music");
                                         }
-                                        else
-                                        {
+                                        else {
                                             ImGui::OpenPopup("InvalidAudioFileType");
                                         }
                                     }
@@ -2114,19 +2102,15 @@ namespace Ukemochi
                                 ShowInvalidAudioFileTypePopup();
                             }
 
-                            // Add Play and Stop buttons
+                            // Add Play and Stop buttons for Music
                             if (ImGui::Button("Play")) {
-
-                                // Call the audio manager to start playing the music
-                                audio.PlayMusic(static_cast<int>(i)); //this one example
+                                audio.PlayMusic(static_cast<int>(i)); // Assuming PlayMusic takes an index or path as argument
                             }
 
                             ImGui::SameLine();
 
                             if (ImGui::Button("Stop")) {
-                                // Call the audio manager to stop playing the music
-                                  // Assuming StopMusic takes an index or path as argument
-                                audio.StopMusic(static_cast<int>(i));
+                                audio.StopMusic(static_cast<int>(i)); // Assuming StopMusic takes an index or path as argument
                             }
 
                             ImGui::SameLine();
