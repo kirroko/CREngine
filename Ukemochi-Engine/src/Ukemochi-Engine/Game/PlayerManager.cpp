@@ -135,20 +135,31 @@ namespace Ukemochi
                         {
                         case 1:
                             anim.SetAnimationImmediately("Attack1");
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                audioM.GetSFXindex("Pattack1")) && audioM.GetSFXindex("Pattack1") != -1)
+                            if (audioM.GetSFXindex("Pattack1") != -1)
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                    audioM.GetSFXindex("Pattack1")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
+                                }
                             }
+           
                             break;
                         case 2:
                             anim.SetAnimationImmediately("Attack2");
-                            audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                audioM.GetSFXindex("Pattack2")) && audioM.GetSFXindex("Pattack2") != -1)
+                            if (audioM.GetSFXindex("Pattack1") != -1)
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
+                                audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
                             }
+                            if (audioM.GetSFXindex("Pattack2") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                    audioM.GetSFXindex("Pattack2")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
+                                }
+                            }
+
                             break;
                         case 3:
                             anim.SetAnimationImmediately("Attack3");
