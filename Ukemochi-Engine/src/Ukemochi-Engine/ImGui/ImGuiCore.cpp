@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       ImGuiCore.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (95%)
-\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (5%)
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (80%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
+\co-authors WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (10%)
 \date       Sept 25, 2024
 \brief      This file contains the implementation of the UseImGui class,
             which manages the initialization, rendering, and event handling
