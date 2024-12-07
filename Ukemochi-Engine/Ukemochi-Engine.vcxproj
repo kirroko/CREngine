@@ -198,11 +198,9 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Factory\GameObjectManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\FileWatcher.h" />
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Game\EnemyClass.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\EnemyManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GSM.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Game\Level1.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\DungeonManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\PlayerManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Animation.h" />
@@ -257,10 +255,8 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Factory\GameObjectManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FileWatcher.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Game\EnemyClass.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\EnemyManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Game\Level1.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\DungeonManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\PlayerManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Animation.cpp" />

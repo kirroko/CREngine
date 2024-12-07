@@ -18,6 +18,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
+/**
+ * @brief Create a new GameObject
+ *
+ * @return GameObject&  newly created GameObject
+ */
 GameObject& GameObjectManager::CreateObject(const std::string& name, const std::string& tag)
 {
     auto go = std::make_unique<GameObject>(GameObjectFactory::CreateObject(name, tag));
@@ -26,6 +31,14 @@ GameObject& GameObjectManager::CreateObject(const std::string& name, const std::
     return *m_GOs[id];
 }
 
+/**
+ * @brief Clone a GameObject
+ *
+ * @param targetGO the GameObject to clone
+ * @param name
+ * @param tag
+ * @return GameObject& a reference to the cloned GameObject
+ */
 GameObject& GameObjectManager::CloneObject(const GameObject& targetGO, const std::string& name, const std::string& tag)
 {
     auto go = std::make_unique<GameObject>(GameObjectFactory::CloneObject(targetGO,name,tag));
@@ -34,6 +47,12 @@ GameObject& GameObjectManager::CloneObject(const GameObject& targetGO, const std
     return *m_GOs[id];
 }
 
+/**
+ * @brief Create a new GameObject with components from a JSON file
+ *
+ * @param prefabPath the path to the JSON file
+ * @return GameObject& a reference to the newly created GameObject
+ */
 GameObject& GameObjectManager::CreatePrefabObject(const std::string& prefabPath)
 {
     auto go = std::make_unique<GameObject>(GameObjectFactory::CreatePrefebObject(prefabPath));
@@ -42,6 +61,11 @@ GameObject& GameObjectManager::CreatePrefabObject(const std::string& prefabPath)
     return *m_GOs[id];
 }
 
+/**
+ * @brief Destroy an existing game object
+ *
+ * @param id The entity ID of the game object to destroy
+ */
 void GameObjectManager::DestroyObject(EntityID id)
 {
     // Before we erase, we tell ECS to destroy the entity
@@ -54,6 +78,11 @@ void GameObjectManager::DestroyObject(EntityID id)
     m_GOs.erase(id);
 }
 
+/**
+ * @brief Get a GameObject by its tag
+ * @param tag The tag of the GameObject
+ * @return GameObject* The GameObject with the tag
+ */
 GameObject* GameObjectManager::GetGOByTag(const std::string& tag) const
 {
     for(auto& go : m_GOs)
@@ -67,6 +96,11 @@ GameObject* GameObjectManager::GetGOByTag(const std::string& tag) const
     return nullptr;
 }
 
+/**
+ * @brief Get a GameObject by its ID
+ * @param id The ID of the GameObject
+ * @return GameObject* The GameObject with the ID
+ */
 GameObject* GameObjectManager::GetGO(EntityID id)
 {
     auto it = m_GOs.find(id);
@@ -78,6 +112,10 @@ GameObject* GameObjectManager::GetGO(EntityID id)
     return nullptr;
 }
 
+/**
+ * @brief Get all GameObjects
+ * @return std::vector<GameObject*> A vector of all GameObjects
+ */
 std::vector<GameObject*> GameObjectManager::GetAllGOs() const
 {
     std::vector<GameObject*> gos;
@@ -88,6 +126,9 @@ std::vector<GameObject*> GameObjectManager::GetAllGOs() const
     return gos;
 }
 
+/**
+ * @brief Helper function to initialize all gameobject's script handles
+ */
 void GameObjectManager::InitAllHandles() const
 {
     for(auto& go : m_GOs)
@@ -103,6 +144,9 @@ void GameObjectManager::InitAllHandles() const
     }
 }
 
+/**
+ * @brief Helper function to release all gameobject's script handles
+ */
 void GameObjectManager::ReleaseAllHandles() const
 {
     for(auto& go : m_GOs)
@@ -115,6 +159,12 @@ void GameObjectManager::ReleaseAllHandles() const
     }
 }
 
+/**
+ * @brief Create an empty GameObject
+ * @param name The name of the GameObject
+ * @param tag The tag of the GameObject
+ * @return GameObject& The newly created GameObject
+ */
 GameObject& GameObjectManager::CreateEmptyObject(const std::string& name, const std::string& tag)
 {
     // Use the existing GameObjectFactory to create a new object

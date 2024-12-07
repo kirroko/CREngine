@@ -15,6 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/**
+	 * @brief Insert data into the component array
+	 * @param entity The entity to insert the data into
+	 * @param component The component data to insert
+	 */
 	template <typename T>
 	void ComponentArray<T>::InsertData(EntityID entity, T component)
 	{
@@ -28,6 +33,10 @@ namespace Ukemochi
 		++m_Size;
 	}
 
+	/**
+	 * @brief Remove data from the component array
+	 * @param entity The entity to remove the data from
+	 */
 	template <typename T>
 	void ComponentArray<T>::RemoveData(EntityID entity)
 	{
@@ -47,6 +56,11 @@ namespace Ukemochi
 		--m_Size;
 	}
 
+	/**
+	 * @brief Get the data of an entity
+	 * @param entity The entity to get the data from
+	 * @return The data of the entity
+	 */
 	template <typename T>
 	T& ComponentArray<T>::GetData(EntityID entity)
 	{
@@ -55,6 +69,10 @@ namespace Ukemochi
 		return m_ComponentArray[m_EntityToIndexMap[entity]]; // Return a reference to the entity's component
 	}
 
+	/**
+	 * @brief Entity destroyed
+	 * @param entity The entity that was destroyed
+	 */
 	template <typename T>
 	void ComponentArray<T>::EntityDestroyed(EntityID entity)
 	{

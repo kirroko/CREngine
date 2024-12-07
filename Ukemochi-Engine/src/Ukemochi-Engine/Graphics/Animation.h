@@ -18,9 +18,14 @@ namespace Ukemochi
 {
     class AnimationSystem : public System
     {
-        float m_time = 0.0f;
     public:
+        /**
+         * @brief Initialize the Animation System
+         */
         void Init();
-        void Update();
+        /**
+         * @brief Update the Animation System
+         */
+        void Update() const;
     };
 }

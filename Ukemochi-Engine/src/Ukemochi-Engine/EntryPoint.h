@@ -26,7 +26,7 @@ int main()
 
 #ifndef _DEBUG
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS")
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif // !_DEBUG
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

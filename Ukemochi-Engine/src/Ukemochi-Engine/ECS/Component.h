@@ -26,7 +26,8 @@ namespace Ukemochi
 		// This is where we store all the component arrays () that is attached to ComponentType's name
 		std::unordered_map<const char*, std::shared_ptr<IComponentArray>> m_ComponentArrays{}; // Map from type string pointer to a component array
 
-		ComponentTypeID m_NextComponentType{}; // The component type to be assigned to the next registered component - starting a 0
+		// The component type to be assigned to the next registered component - starting a 0
+		ComponentTypeID m_NextComponentType{};
 
 		// Convenience function to get the statically casted pointer to the ComponentArray of type T.
 		template <typename T>
@@ -37,6 +38,7 @@ namespace Ukemochi
 		template <typename T>
 		void RegisterComponent();
 
+		// Get the component type ID of a component
 		template <typename T>
 		ComponentTypeID GetComponentType();
 
@@ -53,7 +55,7 @@ namespace Ukemochi
 		T& GetComponent(EntityID entity);
 
 		// Notify all component arrays that an entity has been destroyed
-		void EntityDestroyed(EntityID entity);
+		void EntityDestroyed(EntityID entity) const;
 
 		// Verify whether an entity has a particular component 
 		template<typename T>

@@ -19,12 +19,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Ukemochi
 {
     // TODO: Implement windows.h ReadDirectoryChangesW for windows method
-    // ================== PUBLIC FUNCTIONS ==================
+    /**
+     * @brief Construct a new File Watcher object
+     * @param path_to_watch The path to watch
+     * @param delay The delay between file checks
+     */
     FileWatcher::FileWatcher(const std::string& path_to_watch,
                              std::chrono::duration<int, std::milli> delay) : m_path_to_watch(path_to_watch),
                                                                              m_delay(delay)
     {
-        ProjectHandler::GenerateSolutionAndProject("..\\Assets");
+        ProjectHandler::GenerateProject("..\\Assets");
         for (auto& file : std::filesystem::recursive_directory_iterator(path_to_watch))
         {
             if (file.path().string().find("obj") != std::string::npos || file.path().string().find("Temp") !=
@@ -46,7 +50,11 @@ namespace Ukemochi
         }
 
     }
-
+    
+    /**
+     * @brief Monitor "m_path_to_watch" for changes and in case of a change execute the user supplied
+     * @param action 
+     */
     void FileWatcher::Start(const std::function<void(std::string, FileStatus)>& action)
     {
         UME_ENGINE_TRACE("Thread: Started at File Watcher");
@@ -106,7 +114,10 @@ namespace Ukemochi
 
        // m_thread.detach();
     }
-
+    
+    /**
+     * @brief Stop the thread
+     */
     void FileWatcher::Stop()
     {
         m_running = false;
@@ -116,6 +127,12 @@ namespace Ukemochi
     }
 
     // ================== PRIVATE FUNCTIONS ==================
+    /**
+     * @brief Check if the file is in the m_Paths
+     * @param key The key to check
+     * @return true If the key is in the m_Paths
+     * @return false If the key is not in the m_Paths
+     */
     bool FileWatcher::contains(const std::string& key)
     {
         auto el = m_Paths.find(key);

@@ -102,6 +102,14 @@ namespace Ukemochi
 		*************************************************************************/
 		void CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
 
+		/*!***********************************************************************
+		\brief
+		 Remove a GUI object.
+		\param[in] id
+		 The ID for the GUI object.
+		*************************************************************************/
+		void RemoveElement(const std::string& id);
+
 	private:
 		/*!***********************************************************************
 		\brief

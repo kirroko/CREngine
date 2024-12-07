@@ -69,9 +69,10 @@ void Camera::setViewportSize(const glm::vec2& new_size)
  */
 void Camera::processCameraInput(GLfloat delta_time)
 {
+	(void)delta_time;
+#ifdef _DEBUG
 	GLfloat speed = camera_speed * delta_time;
 
-#ifdef _DEBUG
 	// Handle zooming in and out with keyboard keys Q and E
 	if (Ukemochi::Input::IsKeyPressed(UME_KEY_UP))
 		position.y += speed;
@@ -82,14 +83,14 @@ void Camera::processCameraInput(GLfloat delta_time)
 	if (Ukemochi::Input::IsKeyPressed(UME_KEY_RIGHT))
 		position.x += speed;
 
-	if (Ukemochi::Input::IsKeyPressed(UME_KEY_Q))  // Zoom in
-		zoom += zoom * delta_time;
-	if (Ukemochi::Input::IsKeyPressed(UME_KEY_E))  // Zoom out
-		zoom -= zoom * delta_time;
-#endif // _DEBUG
+	//if (Ukemochi::Input::IsKeyPressed(UME_KEY_Q))  // Zoom in
+	//	zoom += zoom * delta_time;
+	//if (Ukemochi::Input::IsKeyPressed(UME_KEY_E))  // Zoom out
+	//	zoom -= zoom * delta_time;
 
 	// Restrict zoom level to avoid flipping or extreme values
 	zoom = glm::clamp(zoom, 0.1f, 3.0f); // Adjust as necessary
+#endif // _DEBUG
 }
 
 /*!

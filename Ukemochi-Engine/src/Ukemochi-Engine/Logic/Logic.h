@@ -36,10 +36,5 @@ namespace Ukemochi
 		 * @brief Invoke all entity's script Update Method
 		 */
 		void Update() const;
-
-		/**
-		 * @brief Remove all script instance
-		 */
-		void End();
 	};
 }

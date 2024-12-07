@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /**
+     * @brief update the PlayerManager
+     */
     void PlayerManager::Update() const
     {
         for (auto& entity : m_Entities)
@@ -79,19 +82,37 @@ namespace Ukemochi
                 rb.force.x = 0.f;
             }
 
-            if (!Input::IsKeyPressed(UME_KEY_W) && !Input::IsKeyPressed(UME_KEY_S) && !Input::IsKeyPressed(UME_KEY_A) && !Input::IsKeyPressed(UME_KEY_D))
+            if (!Input::IsKeyPressed(UME_KEY_W) && !Input::IsKeyPressed(UME_KEY_S) && !Input::IsKeyPressed(UME_KEY_A) &&
+                !Input::IsKeyPressed(UME_KEY_D))
             {
                 anim.SetAnimation("Idle");
             }
+
+            static bool kickAudio = false;
 
             if (data.attackTimer > 0.0f)
             {
                 data.attackTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
                 data.canAttack = true;
                 data.isAttacking = false;
+
+
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+                    AudioManager>();
+                if (data.currentComboHits == 3 && data.attackTimer < 1.f && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                        audioM.GetSFXindex("Pattack3")))
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+                        anim.attackAnimationFinished = true;
+                    }
+                    kickAudio = true;
+                }
             }
             else
             {
+                kickAudio = false;
                 data.currentComboHits = 0;
                 data.canAttack = false;
                 data.isAttacking = false;
@@ -102,28 +123,59 @@ namespace Ukemochi
 
             if (Input::IsKeyTriggered(UME_KEY_J))
             {
-                // Combat logic happens?
-                if (data.currentComboHits == 0 || data.canAttack)
-                {
-                    data.currentComboHits++;
-                    switch (data.currentComboHits % 4)
-                    {
-                    case 1:
-                        anim.SetAnimationImmediately("Attack1");
-                        break;
-                    case 2:
-                        anim.SetAnimationImmediately("Attack2");
-                        break;
-                    case 3:
-                        anim.SetAnimationImmediately("Attack3");
-                        break;
-                    }
-                    anim.isAttacking = true;
+                // if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
 
-                    data.isAttacking = true;
-                    data.canAttack = false; // Prevent immediate chaining of attacks
-                    data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[anim.currentClip].frame_time;
-                    // data.attackTimer = data.attackCooldown;
+                // Combat logic happens?
+                if (audioObj)
+                {
+                    AudioManager& audioM = audioObj->GetComponent<AudioManager>();
+
+                    if (data.currentComboHits == 0 || data.canAttack)
+                    {
+                        data.currentComboHits++;
+                        switch (data.currentComboHits % 4)
+                        {
+                        case 1:
+                            anim.SetAnimationImmediately("Attack1");
+                            if (audioM.GetSFXindex("Pattack1") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                    audioM.GetSFXindex("Pattack1")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
+                                }
+                            }
+           
+                            break;
+                        case 2:
+                            anim.SetAnimationImmediately("Attack2");
+                            if (audioM.GetSFXindex("Pattack1") != -1)
+                            {
+                                audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
+                            }
+                            if (audioM.GetSFXindex("Pattack2") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                    audioM.GetSFXindex("Pattack2")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
+                                }
+                            }
+
+                            break;
+                        case 3:
+                            anim.SetAnimationImmediately("Attack3");
+                            break;
+                        }
+                        anim.isAttacking = true;
+
+                        data.isAttacking = true;
+                        data.canAttack = false; // Prevent immediate chaining of attacks
+                        data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[
+                            anim.currentClip].frame_time;
+                        // data.attackTimer = data.attackCooldown;
+                    }
                 }
             }
 
@@ -131,16 +183,20 @@ namespace Ukemochi
             if (sr.flipX)
             {
                 auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec2{ trans.position.x + trans.scale.x, trans.position.y };
+                knife_trans.position = Vec2{trans.position.x + trans.scale.x, trans.position.y};
             }
             else
             {
                 auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec2{ trans.position.x - trans.scale.x, trans.position.y };
+                knife_trans.position = Vec2{trans.position.x - trans.scale.x, trans.position.y};
             }
         }
     }
 
+    /**
+     * @brief Handle collision with the player
+     * @param id The ID of the entity that collided with the player
+     */
     void PlayerManager::OnCollisionEnter(const EntityID& id) const
     {
         UME_ENGINE_INFO("Player got hit by {0}", GameObjectManager::GetInstance().GetGO(id)->GetName());

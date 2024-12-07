@@ -181,6 +181,7 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
     vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
 
+
 }
 
 /*!
@@ -223,7 +224,7 @@ void BatchRenderer2D::flush()
     vertices.clear();
 }
 
-void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> shader)
+void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> ashader)
 {
-    activeShader = shader; // Assign the new shader
+    activeShader = ashader; // Assign the new shader
 }

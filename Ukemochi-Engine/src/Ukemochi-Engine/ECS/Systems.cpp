@@ -16,7 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-	void SystemManager::EntityDestroyed(EntityID entity)
+	/**
+	 * @brief Destroy an entity
+	 * @param entity The entity to destroy
+	 */
+	void SystemManager::EntityDestroyed(EntityID entity) const
 	{
 		for (auto const& pair : m_Systems)
 		{
@@ -26,6 +30,11 @@ namespace Ukemochi
 		}
 	}
 
+	/**
+	 * @brief Notify each system that an entity's signature changed
+	 * @param entity The entity whose signature changed
+	 * @param entitySignature The new signature of the entity
+	 */
 	void SystemManager::EntitySignatureChanged(EntityID entity, SignatureID entitySignature)
 	{
 		// Notify each system that an entity's signature changed

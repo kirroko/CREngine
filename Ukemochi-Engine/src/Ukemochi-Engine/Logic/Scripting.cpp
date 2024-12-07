@@ -22,6 +22,10 @@ namespace Ukemochi
     bool ScriptingEngine::ScriptHasError = false;
 
     // Reminded, this is because we're using reflection type to check if the entity has the component
+    /**
+     * @brief Register a component to the scripting engine
+     * @tparam Component The component to register
+     */
     template <typename Component>
     void ScriptingEngine::RegisterComponent() // TODO: 
     {
@@ -39,6 +43,9 @@ namespace Ukemochi
         };
     }
 
+    /**
+     * @brief Register all the components to the scripting engine
+     */
     void ScriptingEngine::RegisterComponents()
     {
         RegisterComponent<Transform>();
@@ -48,7 +55,9 @@ namespace Ukemochi
         RegisterComponent<Animation>();
     }
 
-    // ================== PUBLIC FUNCTIONS ==================
+    /**
+     * @brief Initialize Mono by creating an app domain
+     */
     ScriptingEngine::ScriptingEngine()
     {
         // ================== Initialize Mono Runtime ==================
@@ -67,7 +76,10 @@ namespace Ukemochi
         m_pAppDomain = mono_domain_create_appdomain("UkemochiDomain", nullptr);
         mono_domain_set(m_pAppDomain, true);
     }
-
+    
+    /**
+     * @brief Initialize Mono by creating an app domain
+     */
     void ScriptingEngine::Init()
     {
         // Load compiled assemblies into engine (This is our C# code wrapper library for the engine)
@@ -78,11 +90,13 @@ namespace Ukemochi
         m_pCoreAssemblyImage = mono_assembly_get_image(CoreAssembly);
 
         RegisterMonoFunctions();
-
+        
+#if _DEBUG
         UME_ENGINE_INFO("Compiling Script Assembly");
         if(CompileScriptAssembly())
             UME_ENGINE_WARN("Loading Old Client Assembly instead!!!");
-
+#endif
+        
         UME_ENGINE_INFO("Loading Client Assembly");
         ClientAssembly = LoadCSharpAssembly("Resources/Scripts/Assembly-CSharp.dll");
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
@@ -90,7 +104,10 @@ namespace Ukemochi
 
         RegisterComponents();
     }
-
+    
+    /**
+    * @brief Clean up mono, THIS MUST BE CALLED WHEN THE APPLICATION IS CLOSED
+    */
     void ScriptingEngine::ShutDown() const
     {
         mono_domain_set(mono_get_root_domain(), false);
@@ -98,6 +115,9 @@ namespace Ukemochi
         mono_jit_cleanup(m_pRootDomain); // Unload the root domain and all the assemblies
     }
 
+    /**
+     * @brief Compile client's script aseembly during runtime
+     */
     bool ScriptingEngine::CompileScriptAssembly()
     {
         // Search for the csproj file
@@ -152,6 +172,9 @@ namespace Ukemochi
         return result;
     }
 
+    /**
+     * @brief Reload the script assembly
+     */
     void ScriptingEngine::Reload()
     {
         MonoDomain* new_domain = mono_domain_create_appdomain("new_domain_name", nullptr);
@@ -165,11 +188,21 @@ namespace Ukemochi
         GameObjectManager::GetInstance().InitAllHandles(); // reset all the handles after reloading the assemblies
     }
 
+    /**
+     * @brief Create a GCHandle for a C# object
+     * @param instance the instance of the object
+     * @return the GCHandle
+     */
     MonoGCHandle ScriptingEngine::CreateGCHandle(MonoObject* instance)
     {
         return mono_gchandle_new_v2(instance, true);
     }
 
+    /**
+     * @brief Get the C# object from a GCHandle
+     * @param handle the handle to get the object from
+     * @return the object
+     */
     MonoObject* ScriptingEngine::GetObjectFromGCHandle(const MonoGCHandle& handle)
     {
         UME_ENGINE_ASSERT(handle != nullptr, "GCHandle is null!");
@@ -182,16 +215,29 @@ namespace Ukemochi
         return obj;
     }
 
+    /**
+     * @brief Destroy a GCHandle
+     * @param handle the handle to be destroyed
+     */
     void ScriptingEngine::DestroyGCHandle(const MonoGCHandle& handle)
     {
         mono_gchandle_free_v2(handle);
     }
 
+    /**
+     * @brief Get the core assembly image
+     * @return the core assembly image
+     */
     MonoImage* ScriptingEngine::GetCoreAssemblyImage() const
     {
         return m_pCoreAssemblyImage;
     }
 
+    /**
+     * @brief Instantiate C# class object that is internal
+     * @param className the class name of the internal class
+     * @return an instance of the class
+     */
     MonoObject* ScriptingEngine::InstantiateClass(const std::string& className)
     {
         UME_ENGINE_ASSERT(CoreAssembly != nullptr, "Core Assembly is null!")
@@ -208,7 +254,12 @@ namespace Ukemochi
 
         return instance;
     }
-
+    
+    /**
+     * @brief Instatiate C# class object from client assembly
+     * @param className the script's class name
+     * @return an instance of the script class
+     */
     MonoObject* ScriptingEngine::InstantiateClientClass(const std::string& className)
     {
         UME_ENGINE_ASSERT(ClientAssembly != nullptr, "Client Assembly is null!")
@@ -231,6 +282,12 @@ namespace Ukemochi
         return instance;
     }
 
+    /**
+     * @brief Instantiate a method from a class. This is for caching the method for future use
+     * @param methodName the method name to be instantiated
+     * @param instance the instance of the class
+     * @return an instance of the method
+     */
     MonoMethod* ScriptingEngine::InstantiateMethod(const std::string& methodName, MonoObject* instance)
     {
         MonoClass* klass = mono_object_get_class(instance);
@@ -243,7 +300,14 @@ namespace Ukemochi
         return method;
     }
 
-
+    /**
+     * @brief Invoke script Methods (Start, Update, etc)
+     * @param instance C# script instance
+     * @param methodName the method name to be invoked
+     * @param ignoreDebug = false
+     * @param args the arguments to be passed to the method, default is nullptr
+     * @param numArgs the number of arguments, default is 0
+     */
     void ScriptingEngine::InvokeMethod(MonoObject* instance, const std::string& methodName, const bool ignoreDebug, void* args[], int numArgs)
     {
         MonoClass* klass = mono_object_get_class(instance);
@@ -274,7 +338,13 @@ namespace Ukemochi
             UME_ENGINE_ASSERT(false, "Scripting Log: " + messageString)
         }
     }
-
+    
+    /**
+     * @brief Set the value of a field in a C# class. Value is of type unsigned long long
+     * @param instance the instance of the class
+     * @param fieldName the field name
+     * @param value the value to be set
+     */
     void ScriptingEngine::SetMonoFieldValueULL(MonoObject* instance, const std::string& fieldName, void* value)
     {
         MonoClass* klass = mono_object_get_class(instance);
@@ -283,10 +353,16 @@ namespace Ukemochi
         mono_field_set_value(instance, field, value);
     }
 
-    // ================== PRIVATE FUNCTIONS ==================
-    char* ScriptingEngine::ReadBytes(const std::string& filepath, uint32_t* outSize)
+    /**
+     * @brief load a file into an array of bytes
+     *
+     * @param filePath The absolute path or relative pathing
+     * @param outSize The output data size
+     * @return char* pointer to the char buffer with data
+     */
+    char* ScriptingEngine::ReadBytes(const std::string& filePath, uint32_t* outSize)
     {
-        std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
+        std::ifstream stream(filePath, std::ios::binary | std::ios::ate);
 
         if (!stream)
         {
@@ -312,7 +388,13 @@ namespace Ukemochi
         *outSize = size;
         return buffer;
     }
-
+    
+    /**
+     * @brief Load Csharp Assembly
+     *
+     * @param assemblyPath Path to the assembly
+     * @return MonoAssembly* Pointer to the assembly
+     */
     MonoAssembly* ScriptingEngine::LoadCSharpAssembly(const std::string& assemblyPath)
     {
         uint32_t fileSize = 0;
@@ -336,7 +418,12 @@ namespace Ukemochi
 
         return assembly;
     }
-
+    
+    /**
+     * @brief Proper testing by iterating over all the class types define in our assembly (i.e., classes, structs and enums)
+     *
+     * @param assembly Our MonoAssembly
+     */
     void ScriptingEngine::PrintAssemblyTypes(MonoAssembly* assembly)
     {
         MonoImage* image = mono_assembly_get_image(assembly);
@@ -357,6 +444,9 @@ namespace Ukemochi
 
     // Use this to bind C++ functions with Mono so they can be invoked from C#
     // Calls from C++ to C# are done through the mono_runtime_invoke function of the MonoObject instance of the class
+    /**
+     * @brief Bind C++ function with Mono so they can be invoked from C#
+     */
     void ScriptingEngine::RegisterMonoFunctions()
     {
         mono_add_internal_call("Ukemochi.EngineInterop::HasComponent",
@@ -470,7 +560,12 @@ namespace Ukemochi
         mono_add_internal_call("Ukemochi.EngineInterop::GetFixedDeltaTime",
                                (void*)InternalCalls::GetFixedDeltaTime);
     }
-
+    
+    /**
+     * @brief Extracts an error code and message from the given MonoError
+     * @param error The MonoError to extract the error from
+     * @return true if there is an error, false otherwise
+     */
     bool ScriptingEngine::CheckMonoError(MonoError& error)
     {
         bool hasError = !mono_error_ok(&error);
@@ -485,7 +580,12 @@ namespace Ukemochi
         }
         return hasError;
     }
-
+    
+    /**
+    * @brief Convert a MonoString to UTF8(std::string), This function has error handling and will return an empty string
+    * @param monoString The MonoString to convert
+    * @return std::string The converted string
+    */
     std::string ScriptingEngine::MonoStringToUTF8(MonoString* monoString)
     {
         if (monoString == nullptr || mono_string_length(monoString) == 0)
@@ -499,7 +599,14 @@ namespace Ukemochi
         mono_free(utf8);
         return result;
     }
-
+    
+    /**
+     * @brief Get a reference to a C# class
+     * @param MonoAssembly Our C# Assembly
+     * @param namespaceName The C# namespaceName
+     * @param className The C# class name
+     * @return Reference to the class
+     */
     MonoClass* ScriptingEngine::GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName,
                                                    const char* className)
     {

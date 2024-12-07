@@ -81,7 +81,6 @@ void Renderer::init()
 
 	setUpObjectPickingBuffer();
 	setupColorPickingFramebuffer();
-	assignUniqueColorsToEntities();
 
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
@@ -291,6 +290,27 @@ void Renderer::initDebugBoxBuffers()
 
 	// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
 	indices_count.push_back(4); // 4 lines with 2 vertices each
+
+	// Define vertices for a box below the origin (centered horizontally around origin)
+	//GLfloat vertices_box[] = {
+	//-0.5f,  0.0f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Top-left
+	//-0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-left
+	// 0.5f, -0.5f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f,   // Bottom-right
+	// 0.5f,  0.0f,  0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f    // Top-right
+	//};
+
+
+	//// Define indices for drawing the outline of the box using GL_LINES
+	//GLuint indices_box[] = {
+	//	0, 1, // Top-left to Bottom-left
+	//	2, 3 // Top-right to Top-left
+	//};
+
+	//// Set up the buffers once, and bind the VAO/VBO/EBO
+	//setUpBuffers(vertices_box, sizeof(vertices_box), indices_box, sizeof(indices_box));
+
+	//// Store the number of indices to be drawn, which is 8 (4 pairs of vertices)
+	//indices_count.push_back(4); // 4 lines with 2 vertices each
 }
 
 /*!
@@ -427,7 +447,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
 	// Set textureCount based on the number of unique textures, limited to 32
 	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
-	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->texture_order.size());
+	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
 
@@ -436,8 +456,9 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		/*const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
+
 
 		if (texture->ID == 0) {
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
@@ -447,16 +468,16 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Check if this texture is already mapped to a unit
 		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
 			// New texture, assign to the next available texture unit
-			textureIDMap[texture->ID] = nextAvailableTextureUnit;
+			textureIDMap[texture->ID] = i;
 
 			// Bind the texture to the OpenGL texture unit
-			glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
-			glBindTexture(GL_TEXTURE_2D, texture->ID);
+			/*glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
+			glBindTexture(GL_TEXTURE_2D, texture->ID);*/
 
-			textureUnits[i] = nextAvailableTextureUnit;
+			textureUnits[i] = i;
 
 			// Increment to the next available texture unit
-			nextAvailableTextureUnit++;
+			//nextAvailableTextureUnit++;
 		}
 		else {
 			// Texture already mapped, retrieve existing texture unit
@@ -467,9 +488,9 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		const auto& path = texturePathsOrder[i];
 		Texture* texture = textureCache[path];*/
 
-	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->order_index; i++)
+	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureListSize(); i++)
 	{
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->texture_order[i];
+		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -491,13 +512,13 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
  */
 void Renderer::setUpShaders()
 {
-	shaderProgram = std::make_shared<Shader>("../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
+	shaderProgram = ECS::GetInstance().GetSystem<AssetManager>()->getShader("default");
 
-	debug_shader_program = std::make_shared<Shader>("../Assets/Shaders/debug.vert", "../Assets/Shaders/debug.frag");
+	debug_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("debug");
 
-	UI_shader_program = std::make_shared<Shader>("../Assets/Shaders/UI.vert", "../Assets/Shaders/UI.frag");
+	UI_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("UI");
 
-	object_picking_shader_program = std::make_shared<Shader>("../Assets/Shaders/object_picking.vert", "../Assets/Shaders/object_picking.frag");
+	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("object_picking");
 
 	pointShader = std::make_unique<Shader>("../Assets/Shaders/point.vert", "../Assets/Shaders/point.frag");
 }
@@ -541,7 +562,9 @@ void Renderer::setUpBuffers(GLfloat* vertices, size_t vertSize, GLuint* indices,
  */
 void Renderer::render()
 {
+#ifdef _DEBUG
 	renderForObjectPicking();
+#endif // _DEBUG
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -575,12 +598,12 @@ void Renderer::render()
 
 	// Render entities
 	batchRenderer->beginBatch();
-	
+
 	for (auto& entity : m_Entities)
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
 			continue;
-		
+
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
@@ -595,19 +618,19 @@ void Renderer::render()
 		// Initialize UV coordinates
 		GLfloat uvCoordinates[8];
 		GLint textureID = -1;
-		
+
 		// Check for an Animator component
-		if(ECS::GetInstance().HasComponent<Animation>(entity))
+		if (ECS::GetInstance().HasComponent<Animation>(entity))
 		{
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
 			auto& clip = ani.clips[ani.currentClip];
 			spriteRenderer.texturePath = clip.keyPath;
 			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
-			
+
 			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
 			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
 			glm::vec2 renderPos = pos;
-			if(spriteRenderer.flipX)
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -620,10 +643,9 @@ void Renderer::render()
 			else
 				renderPos -= offset;
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
-				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
-				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
@@ -633,7 +655,7 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			static constexpr int TARGET_SCALE_FACTOR = 5;
-			
+
 			float aspectRatio = static_cast<float>(clip.pixel_width) / static_cast<float>(clip.pixel_height);
 			glm::vec2 spriteWorldSize = glm::vec2(static_cast<float>(clip.pixel_width), static_cast<float>(clip.pixel_height)) / glm::vec2(
 				static_cast<float>(clip.pixelsPerUnit));
@@ -649,9 +671,9 @@ void Renderer::render()
 			uvCoordinates[2] = 1.0f; uvCoordinates[3] = 0.0f;  // Bottom-right
 			uvCoordinates[4] = 1.0f; uvCoordinates[5] = 1.0f;  // Top-right
 			uvCoordinates[6] = 0.0f; uvCoordinates[7] = 1.0f;  // Top-left
-		
+
 			// Flip UVs for static sprites
-			if(spriteRenderer.flipX)
+			if (spriteRenderer.flipX)
 			{
 				std::swap(uvCoordinates[0], uvCoordinates[2]); // Bottom-left <-> Bottom-right
 				std::swap(uvCoordinates[1], uvCoordinates[3]);
@@ -659,16 +681,15 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(spriteRenderer.texturePath) != 
-				ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
-				textureID = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[spriteRenderer.texturePath]->ID;
+				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
 			}
-			
+
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
@@ -682,7 +703,7 @@ void Renderer::render()
 	UIRenderer->renderButtons(*camera);
 
 	// Render debug wireframes if debug mode is enabled
-	if (debug_mode_enabled) 
+	if (debug_mode_enabled)
 	{
 		debug_shader_program->Activate();
 		debug_shader_program->setMat4("view", view);
@@ -690,7 +711,7 @@ void Renderer::render()
 
 		debugBatchRenderer->beginBatch();
 
-		for (auto& entity : m_Entities) 
+		for (auto& entity : m_Entities)
 		{
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 			auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
@@ -702,7 +723,7 @@ void Renderer::render()
 				// Draw box outlines for box shapes only
 				if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
 				{
-					if(boxCollider.collision_flag > 0)
+					if (boxCollider.collision_flag > 0)
 						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.f, 0.f, 0.f), glm::radians(transform.rotation));
 					else
 						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(0.f, 1.f, 0.f), glm::radians(transform.rotation));
@@ -713,33 +734,24 @@ void Renderer::render()
 		debugBatchRenderer->endBatch();
 		debug_shader_program->Deactivate();
 	}
+
+	debug_shader_program->Activate();
+	debug_shader_program->setMat4("view", view);
+	debug_shader_program->setMat4("projection", projection);
+
+#ifdef _DEBUG
+	if (currentMode == InteractionMode::TRANSLATE)
+		renderTranslationAxis();
+	else if (currentMode == InteractionMode::ROTATE)
+		renderRotationAxis();
+	else if (currentMode == InteractionMode::SCALE)
+		renderScaleAxis();
+#endif // _DEBUG
+
+	debug_shader_program->Deactivate();
 	// Render text, UI, or additional overlays if needed
 	textRenderer->renderAllText();
 }
-
-void Renderer::handleMouseClick(int mouseX, int mouseY) 
-{
-
-	for (auto& entity : m_Entities) 
-	{
-		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
-		glm::vec2 entityPos(transform.position.x, transform.position.y);
-		glm::vec2 entitySize(transform.scale.x, transform.scale.y);
-
-		// Check if the mouse is within the entity's bounding box
-		if ((mouseX >= entityPos.x - (entitySize.x / 2)) && (mouseX <= entityPos.x + (entitySize.x / 2)) &&
-			(mouseY <= entityPos.y + (entitySize.y / 2)) && (mouseY >= entityPos.y - (entitySize.y / 2)) ) 
-		{
-			std::cout << "Clicked on entity ID: " << entity << std::endl;
-
-			// Perform any additional logic here (e.g., highlight or select the entity)
-			break;
-		}
-	}
-}
-
 
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).
@@ -971,11 +983,22 @@ void Renderer::CreateTextObject(const std::string& id, const std::string& label,
  */
 void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
+/*!
+ * @brief Create a button object in the UI renderer.
+ */
 void Renderer::CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
 {
 	UIRenderer->addButton(UIButton(id, glm::vec2(position.x, position.y), glm::vec2(size.x, size.y), GLuint(textureID), text, glm::vec3(textColor.x, textColor.y, textColor.z), fontName, textScale, alignment, interactable, on_click));
 }
 
+/*!
+ * @brief Remove a button object in the UI renderer.
+ */
+void Renderer::RemoveButtonObject(const std::string& id) { UIRenderer->removeButton(id); }
+
+/*!
+ * @brief Get the list of button objects in the UI renderer.
+ */
 std::vector<UIButton>& Renderer::GetButtonObjects() { return UIRenderer->GetButtons(); }
 
 /*!
@@ -1088,24 +1111,6 @@ void Renderer::animationKeyInput()
 
 /*!***********************************************************************
 \brief
-Assigns unique colors to each entity in the scene for object picking.
-Each entity is assigned a color based on its unique ID.
-*************************************************************************/
-void Renderer::assignUniqueColorsToEntities()
-{
-	size_t entityID = 0; // Starting ID
-    for (auto& entity : m_Entities)
-    {
-        float r = ((entityID >> 16) & 0xFF) / 255.0f;  // Extract red
-        float g = ((entityID >> 8) & 0xFF) / 255.0f;   // Extract green
-        float b = (entityID & 0xFF) / 255.0f;          // Extract blue
-        entityColors[entity] = glm::vec3(r, g, b);
-        entityID++;
-    }
-}
-
-/*!***********************************************************************
-\brief
 Encodes an entity ID into an RGB color vector.
 
 \param id
@@ -1116,6 +1121,20 @@ A glm::vec3 representing the RGB color corresponding to the ID.
 *************************************************************************/
 glm::vec3 Renderer::encodeIDToColor(int id)
 {
+	// This incrementation is to skip the RGB value of 0,0,0
+	id += 1;
+
+	// Separates the entity id bits into R, G and B by moving the bits out
+	// Example if R wants to be encoded, we both the G and B parts out hence
+	// we move it by 16 bits to the right, each color component is 8 bits
+	// & 0xFF creates a comparsion between the RGB compononent in bits against 
+	// 0xFF in bits
+	// E.g ID = 1, comparing blue
+	// 0000 0000 0000 0000 0000 0001
+	// 0000 0000 0000 0000 1111 1111
+	// Result:
+	// 0000 0000 0000 0000 0000 0001
+	// If there is a corresponding bit in the same positions, result will be 1
 	float r = ((id >> 16) & 0xFF) / 255.0f;
 	float g = ((id >> 8) & 0xFF) / 255.0f;
 	float b = (id & 0xFF) / 255.0f;
@@ -1216,19 +1235,36 @@ size_t Renderer::getEntityFromMouseClick(int mouseX, int mouseY)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Check if the color is the clear color
-	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) {
+	if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) 
+	{
 		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
-		return -1; // Sentinel for no entity
+		return static_cast<size_t>(-1); // Sentinel for no entity
+	}
+	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0) {
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return static_cast<size_t>(-1); // Sentinel for no entity
 	}
 
-	size_t entityID = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+	if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0)
+	{
+		std::cout << "No entity found at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return static_cast<size_t>(-1); // Sentinel for no entity
+	}
 
+	size_t entityID = ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]) - 1;
+
+	// Handle the case where no valid entity exists (e.g., invalid ID)
+	if (entityID == static_cast<size_t>(-1)) 
+	{
+		std::cout << "Invalid entity ID decoded at (" << mouseX << ", " << mouseY << ")" << std::endl;
+		return static_cast<size_t>(-1);
+	}
 	// Debug output
-	std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
+	/*std::cout << "Mouse Click at (" << mouseX << ", " << mouseY
 		<< ") " << std::endl;
 	std::cout << "Pixel RGB: [" << (int)pixel[0] << ", "
 		<< (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
-	std::cout << "Decoded Entity ID: " << entityID << std::endl;
+	std::cout << "Decoded Entity ID: " << entityID << std::endl;*/
 	return entityID;
 }
 
@@ -1271,7 +1307,7 @@ void Renderer::setUpObjectPickingBuffer()
 	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("objectPickingFramebuffer");
 }
 
-/*!
+/*!***********************************************************************
  * @brief Draws a 2D box with the given position, dimensions, and texture,
 		  starting position is the top left of screen. It starts from the
 		  center of the box.
@@ -1280,7 +1316,7 @@ void Renderer::setUpObjectPickingBuffer()
  * @param width The width of the box (in screen space).
  * @param height The height of the box (in screen space).
  * @param texturePath The file path to the texture for the box.
- */
+*************************************************************************/
 void Renderer::drawBox()
 {
 	//object_picking_shader_program->Activate();
@@ -1338,6 +1374,9 @@ void Renderer::resizeObjectPickingFramebuffer(unsigned int width, unsigned int h
 	glViewport(0, 0, width, height);
 }
 
+// Optional:
+// Currently here for debugging purposes only!!
+// Not in use at the moment
 void Renderer::drawPoint(float x, float y, glm::vec3 color)
 {
 	// Activate the point shader
@@ -1407,7 +1446,7 @@ void Renderer::handleMouseClickOP(int mouseX, int mouseY)
 	}
 	else
 	{
-		selectedEntityID = -1; // No valid entity selected
+		selectedEntityID = static_cast<size_t>(-1); // No valid entity selected
 		isDragging = false;
 		std::cout << "No valid entity at mouse click position." << std::endl;
 	}
@@ -1424,7 +1463,7 @@ The x-coordinate of the mouse cursor in screen space.
 \param mouseY
 The y-coordinate of the mouse cursor in screen space.
 *************************************************************************/
-void Renderer::handleMouseDrag(int mouseX, int mouseY)
+void Renderer::handleMouseDragTranslation(int mouseX, int mouseY)
 {
 
 	if (isDragging && selectedEntityID != -1)
@@ -1439,9 +1478,9 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 			transform.position.y = mouseY + dragOffset.y;
 
 			// Optional: Debug output to monitor dragging behavior
-			std::cout << "Dragging entity " << selectedEntityID
+			/*std::cout << "Dragging entity " << selectedEntityID
 				<< " to position (" << transform.position.x
-				<< ", " << transform.position.y << ")" << std::endl;
+				<< ", " << transform.position.y << ")" << std::endl;*/
 		}
 		else
 		{
@@ -1450,4 +1489,370 @@ void Renderer::handleMouseDrag(int mouseX, int mouseY)
 			isDragging = false;
 		}
 	}
+}
+
+/*!***********************************************************************
+\brief
+Draws the rotation handle for the specified transform.
+
+\param transform
+The transform of the entity to draw the rotation handle for.
+*************************************************************************/
+void Renderer::drawRotationHandle(const Transform& transform)
+{
+	glm::vec3 center = glm::vec3(transform.position.x, transform.position.y, 0);
+
+	// Circle radius based on the entity's scale
+	float radius = glm::max(transform.scale.x, transform.scale.y) * 1.5f;
+
+	// Draw the rotation circle
+	debugBatchRenderer->drawDebugCircle(center, radius, glm::vec3(0, 0, 1)); // Blue circle
+}
+
+/*!***********************************************************************
+\brief
+Renders the rotation axis for the currently selected entity, if any.
+*************************************************************************/
+void Renderer::renderRotationAxis()
+{
+
+	debugBatchRenderer->beginBatch();
+
+	// Check if an entity is selected
+	if (selectedEntityID != -1 && ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+		// Draw rotation circle for the selected entity
+		debugBatchRenderer->drawDebugCircle(
+			glm::vec2(transform.position.x, transform.position.y), // Center of the entity
+			glm::max(transform.scale.x, transform.scale.y) * 1.f, // Circle radius based on entity size
+			glm::vec3(0.0f, 0.0f, 1.0f)                            // Circle color (blue)
+		);
+	}
+
+	debugBatchRenderer->endBatch();
+
+}
+
+/*!***********************************************************************
+\brief
+Handles a mouse click event for initiating entity rotation.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+
+\return
+True if the rotation handle was clicked; otherwise, false.
+*************************************************************************/
+bool Renderer::handleMouseClickForRotation(int mouseX, int mouseY)
+{
+	if (selectedEntityID != -1)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition = glm::vec2(mouseX, mouseY);
+		glm::vec2 entityCenter = glm::vec2(transform.position.x, transform.position.y);
+		float radius = glm::max(transform.scale.x, transform.scale.y) * 1.5f; // Circle radius
+
+		// Calculate the distance between the mouse and the entity center
+		float distance = glm::length(mousePosition - entityCenter);
+
+		if (distance <= radius) // Mouse is within the rotation handle
+		{
+			isRotating = true;
+			rotationStartAngle = atan2(mousePosition.y - entityCenter.y, mousePosition.x - entityCenter.x);
+			rotationStartEntityAngle = glm::radians(transform.rotation);
+			return true;
+		}
+	}
+	return false;
+}
+
+/*!***********************************************************************
+\brief
+Handles the rotation of the selected entity based on mouse movement.
+
+\param mouseX
+The x-coordinate of the mouse cursor in screen space.
+
+\param mouseY
+The y-coordinate of the mouse cursor in screen space.
+*************************************************************************/
+void Renderer::handleRotation(int mouseX, int mouseY)
+{
+	if (isRotating)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition = glm::vec2(mouseX, mouseY);
+		glm::vec2 entityCenter = glm::vec2(transform.position.x, transform.position.y);
+
+		// Calculate the current angle between the mouse and the entity center
+		float currentMouseAngle = atan2(mousePosition.y - entityCenter.y, mousePosition.x - entityCenter.x);
+
+		// Calculate the angle delta and apply it to the entity's rotation
+		float angleDelta = currentMouseAngle - rotationStartAngle;
+		transform.rotation = glm::degrees(rotationStartEntityAngle + angleDelta);
+	}
+}
+
+/*!***********************************************************************
+\brief
+Handles mouse click events and delegates to the appropriate interaction mode.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+*************************************************************************/
+void Renderer::handleMouseClick(int mouseX, int mouseY)
+{
+	if (currentMode == InteractionMode::TRANSLATE)
+	{
+		handleMouseClickOP(mouseX, mouseY);
+	}
+	else if (currentMode == InteractionMode::ROTATE)
+	{
+		if (handleMouseClickForRotation(mouseX, mouseY))
+		{
+			// Do not start dragging if in rotation mode and rotation is activated
+			isDragging = false;
+		}
+	}
+	else if (currentMode == InteractionMode::SCALE)
+	{
+		if (handleMouseClickForScaling(mouseX, mouseY))
+		{
+			isDragging = false; // Scaling takes precedence over dragging
+		}
+	}
+}
+
+/*!***********************************************************************
+\brief
+Handles mouse drag events and delegates to the appropriate interaction mode.
+
+\param mouseX
+The x-coordinate of the mouse drag in screen space.
+
+\param mouseY
+The y-coordinate of the mouse drag in screen space.
+*************************************************************************/
+void Renderer::handleMouseDrag(int mouseX, int mouseY)
+{
+
+	if (currentMode == InteractionMode::TRANSLATE)
+	{
+		handleMouseDragTranslation(mouseX, mouseY);
+	}
+	else if (currentMode == InteractionMode::ROTATE)
+	{
+		handleRotation(mouseX, mouseY);
+	}
+	else if (currentMode == InteractionMode::SCALE)
+	{
+		handleScaling(mouseX, mouseY);
+	}
+}
+
+/*!***********************************************************************
+\brief
+Renders the scale axis for the currently selected entity, if any.
+*************************************************************************/
+void Renderer::renderScaleAxis()
+{
+
+	debugBatchRenderer->beginBatch();
+
+	if (selectedEntityID != -1 && ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+
+		drawScalingHandles(transform);
+	}
+
+	debugBatchRenderer->endBatch();
+
+}
+
+/*!***********************************************************************
+\brief
+Draws scaling handles for an entity to allow resizing along X, Y, or both axes.
+
+\param transform
+The transform of the entity to draw scaling handles for.
+*************************************************************************/
+void Renderer::drawScalingHandles(const Transform& transform)
+{
+	glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+	// Define the length of the scaling handles based on entity size
+	float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
+	// X-axis handle (red line and box)
+	glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
+	debugBatchRenderer->drawDebugLine(entityCenter, xHandleEnd, glm::vec3(1.0f, 0.0f, 0.0f)); // Red line
+	debugBatchRenderer->drawDebugBox(xHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f); // Small red box
+
+	// Y-axis handle (green line and box)
+	glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
+	debugBatchRenderer->drawDebugLine(entityCenter, yHandleEnd, glm::vec3(0.0f, 1.0f, 0.0f)); // Green line
+	debugBatchRenderer->drawDebugBox(yHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f); // Small green box
+
+	// Uniform scaling handle (center box)
+	glm::vec2 centerBoxSize(40.f, 40.f);
+	debugBatchRenderer->drawDebugBox(entityCenter, centerBoxSize, glm::vec3(0.5f, 0.5f, 0.5f), 1.0f); // Grey box
+}
+
+/*!***********************************************************************
+\brief
+Handles a mouse click event for initiating scaling of an entity.
+
+\param mouseX
+The x-coordinate of the mouse click in screen space.
+
+\param mouseY
+The y-coordinate of the mouse click in screen space.
+
+\return
+True if the scaling handle was clicked; otherwise, false.
+*************************************************************************/
+bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
+{
+	if (selectedEntityID != -1)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition(mouseX, mouseY);
+		glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+		float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
+
+		// Check X-axis handle
+		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
+		if (glm::length(mousePosition - xHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
+		{
+			scalingAxis = ScalingAxis::X;
+			isScaling = true;
+			return true;
+		}
+
+		// Check Y-axis handle
+		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
+		if (glm::length(mousePosition - yHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
+		{
+			scalingAxis = ScalingAxis::Y;
+			isScaling = true;
+			return true;
+		}
+
+		// Check Uniform handle (center box)
+		if (glm::length(mousePosition - entityCenter) <= 20.0f) // Match uniform box size (40.f / 2)
+		{
+			scalingAxis = ScalingAxis::UNIFORM;
+			isScaling = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*!***********************************************************************
+\brief
+Handles scaling of an entity based on mouse movement.
+
+\param mouseX
+The x-coordinate of the mouse drag in screen space.
+
+\param mouseY
+The y-coordinate of the mouse drag in screen space.
+*************************************************************************/
+void Renderer::handleScaling(int mouseX, int mouseY)
+{
+	if (isScaling && selectedEntityID != -1)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+		glm::vec2 mousePosition(mouseX, mouseY);
+		glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+		// Calculate the delta from the entity center
+		glm::vec2 delta = mousePosition - entityCenter;
+
+		if (scalingAxis == ScalingAxis::X)
+		{
+			transform.scale.x = glm::abs(delta.x); // Scale based on X-axis distance
+		}
+		else if (scalingAxis == ScalingAxis::Y)
+		{
+			transform.scale.y = glm::abs(delta.y); // Scale based on Y-axis distance
+		}
+		else if (scalingAxis == ScalingAxis::UNIFORM)
+		{
+			float uniformScale = glm::length(delta);
+			transform.scale.x = uniformScale;
+			transform.scale.y = uniformScale;
+		}
+	}
+}
+
+/*!***********************************************************************
+\brief
+Renders the translation axis for the currently selected entity, if any.
+*************************************************************************/
+void Renderer::renderTranslationAxis()
+{
+	if (selectedEntityID == -1 || !ECS::GetInstance().HasComponent<Transform>(selectedEntityID))
+		return; // No valid entity selected
+
+	// Get the transform component of the selected entity
+	auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
+	glm::vec2 entityCenter(transform.position.x, transform.position.y);
+
+	// Define the length of the translation axis
+	float axisLength = glm::max(transform.scale.x, transform.scale.y) * 0.35f;
+
+	// Define colors for the axes
+	glm::vec3 xAxisColor = glm::vec3(1.0f, 0.0f, 0.0f); // Red for X-axis
+	glm::vec3 yAxisColor = glm::vec3(0.0f, 1.0f, 0.0f); // Green for Y-axis
+
+	// Arrowhead size
+	float arrowSize = axisLength * 0.1f;
+
+	debugBatchRenderer->beginBatch();
+
+	// Draw the X-axis
+	glm::vec2 xAxisEnd = entityCenter + glm::vec2(axisLength, 0.0f);
+	debugBatchRenderer->drawDebugLine(entityCenter, xAxisEnd, xAxisColor);
+
+	// Draw arrowhead for X-axis
+	glm::vec2 xArrowLeft = xAxisEnd + glm::vec2(-arrowSize, arrowSize * 0.5f);
+	glm::vec2 xArrowRight = xAxisEnd + glm::vec2(-arrowSize, -arrowSize * 0.5f);
+	debugBatchRenderer->drawDebugLine(xAxisEnd, xArrowLeft, xAxisColor);
+	debugBatchRenderer->drawDebugLine(xAxisEnd, xArrowRight, xAxisColor);
+
+	// Draw the Y-axis
+	glm::vec2 yAxisEnd = entityCenter + glm::vec2(0.0f, axisLength);
+	debugBatchRenderer->drawDebugLine(entityCenter, yAxisEnd, yAxisColor);
+
+	// Draw arrowhead for Y-axis
+	glm::vec2 yArrowLeft = yAxisEnd + glm::vec2(-arrowSize * 0.5f, -arrowSize);
+	glm::vec2 yArrowRight = yAxisEnd + glm::vec2(arrowSize * 0.5f, -arrowSize);
+	debugBatchRenderer->drawDebugLine(yAxisEnd, yArrowLeft, yAxisColor);
+	debugBatchRenderer->drawDebugLine(yAxisEnd, yArrowRight, yAxisColor);
+
+	debugBatchRenderer->endBatch();
+}
+
+/*!***********************************************************************
+\brief
+Resets the gizmo state, clearing the selected entity and interaction modes.
+*************************************************************************/
+void Renderer::resetGizmo()
+{
+	// Reset selectedEntityID when switching scenes
+	selectedEntityID = static_cast<size_t>(-1);
+	isScaling = false;
+	isRotating = false;
 }

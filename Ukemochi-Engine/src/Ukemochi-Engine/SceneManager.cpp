@@ -36,10 +36,6 @@ namespace Ukemochi
     //for save & load
     using namespace rapidjson;
 
-    const float SPRITE_SCALE = 100.f;
-    const float ENTITY_ACCEL = 150.f;
-    const float PLAYER_FORCE = 1500.f;
-
     std::chrono::duration<double> SceneManager::loop_time{};
     std::chrono::duration<double> SceneManager::collision_time{};
     std::chrono::duration<double> SceneManager::physics_time{};
@@ -49,6 +45,12 @@ namespace Ukemochi
 
 	//bool func_toggle = false;
 
+    /*!***********************************************************************
+    \brief
+        Constructor for SceneManager class.
+    \details
+        Initializes the scene manager and any necessary resources.
+    *************************************************************************/
 	SceneManager::SceneManager()
 		:sceneName("NewScene"), cameraSize(0,0)
 	{
@@ -65,8 +67,9 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<SpriteRender>();
 	    ECS::GetInstance().RegisterComponent<Animation>();
         ECS::GetInstance().RegisterComponent<Script>();
+        ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<Enemy>();
-		ECS::GetInstance().RegisterComponent<Player>();
+        ECS::GetInstance().RegisterComponent<AudioManager>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -79,10 +82,9 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Audio>();
 		ECS::GetInstance().RegisterSystem<AssetManager>();
 	    ECS::GetInstance().RegisterSystem<AnimationSystem>();
-        ECS::GetInstance().RegisterSystem<EnemyManager>();
-
-		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<DungeonManager>();
+		ECS::GetInstance().RegisterSystem<PlayerManager>();
+        ECS::GetInstance().RegisterSystem<EnemyManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -105,7 +107,7 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<BoxCollider2D>());
         ECS::GetInstance().SetSystemSignature<Collision>(sig);
 
-        // For Logic System
+        // For Logic system
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Script>());
         ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
@@ -115,40 +117,49 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<InGameGUI>(sig);
 
-	    // For Animation System
+	    // For Animation system
 	    sig.reset();
 	    sig.set(ECS::GetInstance().GetComponentType<Animation>());
 	    ECS::GetInstance().SetSystemSignature<AnimationSystem>(sig);
 
-        //For Enemy
-        sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
-        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
 		// For Player system
 		sig.reset();
 		sig.set(ECS::GetInstance().GetComponentType<Player>());
 		ECS::GetInstance().SetSystemSignature<PlayerManager>(sig);
 
+        //For Enemy system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Enemy>());
+        ECS::GetInstance().SetSystemSignature<EnemyManager>(sig);
+
+        // For Audio system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<AudioManager>());
+        ECS::GetInstance().SetSystemSignature<Audio>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
 
+    /*!***********************************************************************
+    \brief
+        Destructor for SceneManager class.
+    *************************************************************************/
     SceneManager::~SceneManager()
     {
     }
 
+    /*!***********************************************************************
+    \brief
+        Loads the scene manager's resources and prepares it for use.
+    \details
+        This method is responsible for loading all necessary resources and
+        setting up the environment for scene management.
+    *************************************************************************/
     void SceneManager::SceneMangerLoad()
     {
-        //load all assest
-		UME_ENGINE_TRACE("Loading Assets...");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/BGM_game.mp3)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_jump.wav)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/UI_button_confirm.wav)");
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(R"(../Assets/Audio/SFX_knight_ready.ogg)");
-
         //load Asset Manager Texture
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Moon Floor.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Worm.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        /*ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -156,9 +167,9 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		
-        // Load UI textures
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
+		// ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
 		UME_ENGINE_TRACE("Loading Scenes...");
@@ -181,8 +192,19 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
     }
 
+    /*!***********************************************************************
+    \brief
+        Initializes the scene manager.
+    \details
+        This method initializes various systems and components required for
+        scene management and the game environment.
+    *************************************************************************/
     void SceneManager::SceneMangerInit()
     {
+        //load all assest
+        UME_ENGINE_TRACE("Loading Assets...");
+        ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
+
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
@@ -194,45 +216,88 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
 
-     //When in game Engine State
+    /*!***********************************************************************
+    \brief
+        Updates the state of the scene manager when in game Engine State.
+    \details
+        This method is called periodically to update the scene manager and
+        ensure the game world remains in sync with the game logic.
+    *************************************************************************/
     void SceneManager::SceneMangerUpdate()
     {
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
-
-        SceneManagerDraw();
-
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
 
-        // On mouse button press, start dragging
+        if (Input::IsKeyTriggered(GLFW_KEY_8)) 
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
+            std::cout << "Switched to Translate Mode\n";
+        }
+        if (Input::IsKeyTriggered(GLFW_KEY_9)) 
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::ROTATE;
+            std::cout << "Switched to Rotate Mode\n";
+        }
+        if (Input::IsKeyTriggered(GLFW_KEY_0))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
+            std::cout << "Switched to Scale Mode\n";
+        }
+
+        // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            int mouseX = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().x)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.x));
+            int mouseY = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().y)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.y));
+
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClick(mouseX, mouseY);
         }
 
-        // On mouse movement, continue dragging if active
+        // On mouse movement
         if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            int mouseX = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().x)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.x));
+            int mouseY = static_cast<int>(std::round(SceneManager::GetInstance().GetPlayScreen().y)) +
+                static_cast<int>(std::round(ECS::GetInstance().GetSystem<Camera>()->position.y));
+
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseDrag(mouseX, mouseY);
         }
 
-        // On mouse button release, stop dragging
-        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT)) // Or GLFW_RELEASE
+        // On mouse button release
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_RIGHT))
         {
             ECS::GetInstance().GetSystem<Renderer>()->isDragging = false;
-            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = -1; // Clear selection
+            ECS::GetInstance().GetSystem<Renderer>()->isRotating = false;
+            ECS::GetInstance().GetSystem<Renderer>()->isScaling = false;
+            ECS::GetInstance().GetSystem<Renderer>()->selectedEntityID = static_cast<size_t>(-1);
+            ECS::GetInstance().GetSystem<Renderer>()->currentMode = ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::NO_STATE;
         }
 
+        // --- UI UPDATE ---
+        ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
+
+        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
+
+        SceneManagerDraw();
     }
 
-    //When engine is Running the scene
+    /*!***********************************************************************
+    \brief
+        Runs the systems for the current scene.
+    \details
+        This method iterates through all systems and runs them for the current scene.
+    *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
         loop_start = std::chrono::steady_clock::now();
 
+#ifdef _DEBUG
         // Debug mode
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
@@ -241,9 +306,59 @@ namespace Ukemochi
         // Select entity
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x,
-                SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y);
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
         }
+#endif // _DEBUG
+
+#ifndef _DEBUG
+		// Game Inputs Quick fix
+		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+
+			LoadSaveFile(GetCurrScene() + ".json");
+
+			UME_ENGINE_TRACE("Initializing Collision...");
+			ECS::GetInstance().GetSystem<Collision>()->Init();
+			UME_ENGINE_TRACE("Initializing dungeon manager...");
+			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+			// enemy
+			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+			//audio
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    if (audioM.GetMusicIndex("BGM") != -1)
+                    {
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+                        {
+                            audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                        }
+                    }
+				}
+			}
+			return;
+		}
+
+		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
+		{
+			es_current = ES_QUIT;
+			return;
+		}
+#endif
+		
+
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
@@ -259,16 +374,8 @@ namespace Ukemochi
         //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
         //}
         */
-        if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_M))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSoundsInGroup(LEVEL1);
-        }
-        if (Ukemochi::Input::IsKeyPressed(GLFW_KEY_N))
-        {
-            ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlayAllSoundsInGroup(LEVEL1);
-        }
-
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
+        
+		/*if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
@@ -287,43 +394,42 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
 			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
-		}
+		}*/
 
-        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
-
-		ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-
-        ECS::GetInstance().GetSystem<InGameGUI>()->Update();
-        // ECS::GetInstance().GetSystem<Renderer>()->animationKeyInput();
+        // --- UI UPDATE ---
+        ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
 
         // --- GAME LOGIC UPDATE ---
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 	    
         // --- PHYSICS UPDATE ---
-        // Update the entities physics
         sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics();
+		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
 		sys_end = std::chrono::steady_clock::now();
 		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- COLLISION UPDATE ---
-        // Check the collisions between the entities
         sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions();
+		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
 		sys_end = std::chrono::steady_clock::now();
 		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- TRANSFORMATION UPDATE ---
-        // Compute the entities transformations
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
+        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
+
+        // --- AUDIO UPDATE ---
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
 	    // --- ANIMATION UPDATE ---
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
 
+        // --- TURN OFF GIZMO ---
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
 		SceneManagerDraw();
@@ -334,12 +440,27 @@ namespace Ukemochi
 		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
 	}
 
+    /*!***********************************************************************
+    \brief
+        Updates the camera settings during each frame.
+    \param deltaTime: The time elapsed since the last frame.
+    \details
+        This method updates the camera's position, rotation, and other
+        settings based on the delta time.
+    *************************************************************************/
     void SceneManager::SceneMangerUpdateCamera(double deltaTime)
     {
         // Camera
         ECS::GetInstance().GetSystem<Camera>()->processCameraInput(static_cast<GLfloat>(deltaTime));
     }
 
+    /*!***********************************************************************
+    \brief
+        Draws the current scene to the screen.
+    \details
+        This method handles the rendering of the scene by drawing all objects
+        to the screen, including any necessary UI elements.
+    *************************************************************************/
     void SceneManager::SceneManagerDraw()
     {
 #ifdef _DEBUG
@@ -352,6 +473,13 @@ namespace Ukemochi
 #endif // !_DEBUG
     }
 
+    /*!***********************************************************************
+    \brief
+        Frees up resources used by the scene manager.
+    \details
+        This method is responsible for releasing any resources held by the
+        SceneManager, preparing it for shutdown or reinitialization.
+    *************************************************************************/
     void SceneManager::SceneManagerFree()
     {
 		UME_ENGINE_TRACE("Destroying all game objects...");
@@ -360,29 +488,56 @@ namespace Ukemochi
         {
             GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
         }
-        ECS::GetInstance().GetSystem<LogicSystem>()->End();
+
 		UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
     }
 
+    /*!***********************************************************************
+    \brief
+        Unloads the current scene.
+    \details
+        This method ensures the proper unloading of the current scene,
+        freeing any resources associated with it.
+    *************************************************************************/
     void SceneManager::SceneManagerUnload()
     {
         SceneManagerFree();
         ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
     }
 
+    /*!***********************************************************************
+    \brief
+        Returns a reference to the flag indicating whether IMGUI is on.
+    \return
+        A reference to the boolean flag that controls IMGUI visibility.
+    *************************************************************************/
     bool& SceneManager::GetOnIMGUI()
     {
         static bool isOnIMGUI = false;
         return isOnIMGUI;
     }
 
+    /*!***********************************************************************
+    \brief
+        Returns the name of the current scene.
+    \return
+        A reference to the string holding the current scene's name.
+    *************************************************************************/
     std::string& SceneManager::GetCurrScene()
     {
         return GetInstance().sceneName;
     }
 
+    /*!***********************************************************************
+    \brief
+        Loads a save file into the current scene.
+    \param file_name: The name of the save file to load.
+    \details
+        This method reads the save file and restores the scene to its state
+        from the saved file.
+    *************************************************************************/
     void SceneManager::LoadSaveFile(const std::string& file_name)
     {
         std::string sceneCpy = file_name;
@@ -556,7 +711,7 @@ namespace Ukemochi
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
-                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
 					// if (tag == "Player")
 					// {
 					// 	newObject.GetComponent<SpriteRender>().animated = true;
@@ -640,6 +795,36 @@ namespace Ukemochi
             			newObject.AddComponent(std::move(player));
             		}
             	}
+                else if (componentName == "Audio")
+                {
+                    if (!newObject.HasComponent<AudioManager>())
+                    {
+                        AudioManager audio;
+
+                        // Load Music List
+                        const auto& musicArray = componentData["Music"].GetArray();
+                        for (const auto& musicObject : musicArray)
+                        {
+                            std::string musicname = musicObject["Name"].GetString();
+                            std::string path = musicObject["Path"].GetString();
+                            audio.music.emplace_back(musicname, path);
+                            audio.AddSoundToMusic(musicname);
+                        }
+
+                        // Load SFX List
+                        const auto& sfxArray = componentData["SFX"].GetArray();
+                        for (const auto& sfxObject : sfxArray)
+                        {
+                            std::string sfxname = sfxObject["Name"].GetString();
+                            std::string path = sfxObject["Path"].GetString();
+                            audio.sfx.emplace_back(sfxname, path);
+                            audio.AddSoundToSfx(sfxname);
+                        }
+
+                        // Add the AudioManager component to the object
+                        newObject.AddComponent(std::move(audio));
+                    }
+                    }
                 else
                 {
                     UME_ENGINE_ERROR("Unknown component type: {0}", componentName);
@@ -666,6 +851,13 @@ namespace Ukemochi
         UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
     }
 
+    /*!***********************************************************************
+    \brief
+        Saves the current scene to a file.
+    \param file_name: The name of the file to save the scene to.
+    \details
+        This method writes the current state of the scene to a specified file.
+    *************************************************************************/
     void SceneManager::SaveScene(const std::string& file_name)
     {
         //get file name to save
@@ -856,8 +1048,8 @@ namespace Ukemochi
                 const auto& enemy = gameobject->GetComponent<Enemy>();
 
                 Value position(rapidjson::kArrayType);
-                position.PushBack(enemy.GetPosition().first, allocator);
-                position.PushBack(enemy.GetPosition().second, allocator);
+                position.PushBack(enemy.posX, allocator);
+                position.PushBack(enemy.posY, allocator);
                 enemyComponent.AddMember("Position", position, allocator);
 
                 enemyComponent.AddMember("Type", enemy.type, allocator);
@@ -884,6 +1076,43 @@ namespace Ukemochi
 
         		componentsArray.PushBack(playerComponent, allocator);
         	}
+            if (gameobject->HasComponent<AudioManager>()) {
+                Value audioComponent(rapidjson::kObjectType);
+                audioComponent.AddMember("Name", "Audio", allocator);
+
+                const auto& audioManager = gameobject->GetComponent<AudioManager>();
+
+                // Save Music List
+                Value musicArray(rapidjson::kArrayType);
+                for (const auto& music : audioManager.music) {
+                    Value musicObject(rapidjson::kObjectType);
+
+                    // Add name and path for each music entry
+                    musicObject.AddMember("Name", Value(music.audioName.c_str(), allocator), allocator);
+                    musicObject.AddMember("Path", Value(music.audioPath.c_str(), allocator), allocator);
+
+                    // Add to the music array
+                    musicArray.PushBack(musicObject, allocator);
+                }
+                audioComponent.AddMember("Music", musicArray, allocator);
+
+                // Save SFX List
+                Value sfxArray(rapidjson::kArrayType);
+                for (const auto& sfx : audioManager.sfx) {
+                    Value sfxObject(rapidjson::kObjectType);
+
+                    // Add name and path for each SFX entry
+                    sfxObject.AddMember("Name", Value(sfx.audioName.c_str(), allocator), allocator);
+                    sfxObject.AddMember("Path", Value(sfx.audioPath.c_str(), allocator), allocator);
+
+                    // Add to the SFX array
+                    sfxArray.PushBack(sfxObject, allocator);
+                }
+                audioComponent.AddMember("SFX", sfxArray, allocator);
+
+                // Add the audio component to the components array
+                componentsArray.PushBack(audioComponent, allocator);
+            }
 
             gameObjectData.AddMember("Components", componentsArray, allocator);
 
@@ -898,8 +1127,16 @@ namespace Ukemochi
         {
             std::cerr << "Failed to save scene to file: " << file << std::endl;
         }
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
     }
 
+    /*!***********************************************************************
+    \brief
+        Creates a new scene and loads it.
+    \param file_name: The name of the file to use for the new scene.
+    \details
+        This method initializes a new scene based on the provided file name.
+    *************************************************************************/
     void SceneManager::CreateNewScene(const std::string& file_name)
     {
         Document document;
@@ -917,6 +1154,14 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Saves a prefab GameObject to a file.
+    \param prefabObj: Pointer to the GameObject to save as a prefab.
+    \param file_name: The name of the file to save the prefab to.
+    \details
+        This method saves a GameObject as a prefab, which can be reused or instantiated later.
+    *************************************************************************/
     void SceneManager::SavePrefab(GameObject* prefabObj, const std::string& file_name)
     {
         // TODO: Some day we will encapsulate all this into Serialization class...
@@ -1093,6 +1338,80 @@ namespace Ukemochi
 	    	animationComponent.AddMember("CurrentClip", Value(animation.currentClip.c_str(), allocator), allocator);
 	    	componentsArray.PushBack(animationComponent, allocator);
 	    }
+        if (prefabObj->HasComponent<Enemy>())
+        {
+            Value enemyComponent(rapidjson::kObjectType);
+
+            enemyComponent.AddMember("Name", Value("EnemyComponent", allocator), allocator);
+
+            const auto& enemy = prefabObj->GetComponent<Enemy>();
+
+            Value position(rapidjson::kArrayType);
+            position.PushBack(enemy.posX, allocator);
+            position.PushBack(enemy.posY, allocator);
+            enemyComponent.AddMember("Position", position, allocator);
+
+            enemyComponent.AddMember("Type", enemy.type, allocator);
+
+            componentsArray.PushBack(enemyComponent, allocator);
+        }
+
+        if (prefabObj->HasComponent<Player>())
+        {
+            Value playerComponent(rapidjson::kObjectType);
+            playerComponent.AddMember("Name", "Player", allocator);
+
+            const auto& player = prefabObj->GetComponent<Player>();
+            playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
+            playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
+            playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
+            playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+            playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
+            playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
+            playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+            playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
+            playerComponent.AddMember("IsDead", player.isDead, allocator);
+            playerComponent.AddMember("CanAttack", player.canAttack, allocator);
+
+            componentsArray.PushBack(playerComponent, allocator);
+        }
+        if (prefabObj->HasComponent<AudioManager>()) {
+            Value audioComponent(rapidjson::kObjectType);
+            audioComponent.AddMember("Name", "Audio", allocator);
+
+            const auto& audioManager = prefabObj->GetComponent<AudioManager>();
+
+            // Save Music List
+            Value musicArray(rapidjson::kArrayType);
+            for (const auto& music : audioManager.music) {
+                Value musicObject(rapidjson::kObjectType);
+
+                // Add name and path for each music entry
+                musicObject.AddMember("Name", Value(music.audioName.c_str(), allocator), allocator);
+                musicObject.AddMember("Path", Value(music.audioPath.c_str(), allocator), allocator);
+
+                // Add to the music array
+                musicArray.PushBack(musicObject, allocator);
+            }
+            audioComponent.AddMember("Music", musicArray, allocator);
+
+            // Save SFX List
+            Value sfxArray(rapidjson::kArrayType);
+            for (const auto& sfx : audioManager.sfx) {
+                Value sfxObject(rapidjson::kObjectType);
+
+                // Add name and path for each SFX entry
+                sfxObject.AddMember("Name", Value(sfx.audioName.c_str(), allocator), allocator);
+                sfxObject.AddMember("Path", Value(sfx.audioPath.c_str(), allocator), allocator);
+
+                // Add to the SFX array
+                sfxArray.PushBack(sfxObject, allocator);
+            }
+            audioComponent.AddMember("SFX", sfxArray, allocator);
+
+            // Add the audio component to the components array
+            componentsArray.PushBack(audioComponent, allocator);
+        }
 
         gameObjectData.AddMember("Components", componentsArray, allocator);
 
@@ -1108,16 +1427,38 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Gets the play screen size.
+    \return
+        The size of the play screen as a Vec2 object.
+    *************************************************************************/
     Vec2 SceneManager::GetPlayScreen()
     {
         return GetInstance().cameraSize;
     }
 
+    /*!***********************************************************************
+    \brief
+        Sets the play screen size.
+    \param playsize: The new play screen size to set.
+    *************************************************************************/
     void SceneManager::SetPlayScreen(Vec2 playsize)
     {
         GetInstance().cameraSize = playsize;
     }
 
+    /*!***********************************************************************
+    \brief
+        Prints the performance statistics of different subsystems.
+    \param loop: Time duration of the loop.
+    \param collision: Time duration spent on collision detection.
+    \param physics: Time duration spent on physics simulation.
+    \param graphics: Time duration spent on rendering graphics.
+    \details
+        This method logs the performance data for different subsystems, which can be
+        useful for optimization and performance monitoring.
+    *************************************************************************/
 	void SceneManager::print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics)
 	{
 		double collision_percent = static_cast<double>((collision.count() / loop.count()) * 100.f);

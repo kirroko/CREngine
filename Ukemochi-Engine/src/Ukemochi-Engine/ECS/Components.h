@@ -3,6 +3,7 @@
 \file       Components.h
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
 \date       Nov 17, 2024
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
@@ -20,8 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Vector2D.h"  // for Vec2 struct
 #include "../Audio/Audio.h"	   // for Audio class
 
-// for enemy
-#include "../FrameController.h"
 
 namespace Ukemochi
 {
@@ -220,6 +219,12 @@ namespace Ukemochi
 			AnimationClip &clip = clips[currentClip];
 			time_since_last_frame += dt;
 
+			if (isAttacking)
+			{
+				attackAnimationFinished = false;
+			}
+
+
 			// Advance new frame
 			if (time_since_last_frame >= clip.frame_time)
 			{
@@ -268,17 +273,6 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 AudioSource component structure.
-	*************************************************************************/
-	struct AudioSource
-	{
-		FMOD::Sound pSounds;
-		FMOD::Channel pChannels;
-		FMOD::ChannelGroup pChannelGroups;
-	};
-
-	/*!***********************************************************************
-	\brief
 	 Script component structure.
 	*************************************************************************/
 	struct Script
@@ -288,6 +282,21 @@ namespace Ukemochi
 		void *instance = nullptr;		// MonoObject from client script
 		void *handle = nullptr;			// MonoGCHandle from client script
 		void *methodInstance = nullptr; // MonoMethod from client script
+	};
+
+	struct Player
+	{
+		int maxHealth = 100;
+		int currentHealth = 100;
+		int maxComboHits = 3;
+		int currentComboHits = 0;
+		int comboDamage = 10;
+		float attackCooldown = 0.5f;
+		float attackTimer = 0.0f;
+		float playerForce = 2500.0f;
+		bool isDead = false;
+		bool canAttack = true;
+		bool isAttacking = false;
 	};
 
 	/*!***********************************************************************
@@ -314,7 +323,9 @@ namespace Ukemochi
 		EntityID ID;
 		EnemyStates state;
 		EnemyTypes type;
-		float posX, posY;
+		float posX, posY; //place holder to be remove
+		float dirX, dirY;
+		float magnitude;
 		float targetX, targetY;
 		float health;
 		float attackPower;
@@ -323,6 +334,36 @@ namespace Ukemochi
 		int nearestObj;
 		mutable int prevObject;
 		bool isCollide;
+		float atktimer = 5.0f;
+		bool isDead = false;
+
+		Enemy() = default;
+
+		// Constructor
+		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
+			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), isCollide(false)
+		{
+			nearestObj = -1;
+			switch (type)
+			{
+			case Enemy::FISH:
+				health = 50.f;
+				attackPower = 20.f;
+				attackRange = 300.f;
+				speed = 5000.f;
+				break;
+			case Enemy::WORM:
+				health = 50.f;
+				attackPower = 10.f;
+				attackRange = 300.f;
+				speed = 5000.f;
+				break;
+			case Enemy::DEFAULT:
+				break;
+			default:
+				break;
+			}
+		}
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
@@ -332,141 +373,44 @@ namespace Ukemochi
 			return (dx * dx + dy * dy) <= (threshold * threshold);
 		}
 
-		EnemyStates GetEnemyState() const
-		{
-			return state;
-		}
-
-		void SetEnemyState(EnemyStates newState)
-		{
-			state = newState;
-		}
-
-		bool IsCollide() const
-		{
-			return isCollide;
-		}
-
-		void SetIsCollide(bool b)
-		{
-			isCollide = b;
-		}
-		Enemy() = default;
-		// Constructor
-		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
-			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), isCollide(false)
-		{
-			nearestObj = -1;
-			switch (type)
-			{
-			case Enemy::FISH:
-				health = 120.f;
-				attackPower = 20.f;
-				attackRange = 0.5f;
-				speed = 150.f;
-				break;
-			case Enemy::WORM:
-				health = 100.f;
-				attackPower = 10.f;
-				attackRange = 5.f;
-				speed = 150.f;
-				break;
-			case Enemy::DEFAULT:
-				break;
-			default:
-				break;
-			}
-		}
-
-		void RoamState(Transform &self, std::vector<EntityID> &environmentObjects, Transform &nearestObjTransform, int playerID, Transform &playerTransform)
-		{
-			float targetX = nearestObjTransform.position.x;
-			float targetY = nearestObjTransform.position.y;
-
-			// Move to the nearest object
-			MoveToTarget(self, targetX, targetY, g_FrameRateController.GetDeltaTime(), speed);
-
-			// when target reach find next obj
-			if (ReachedTarget(GetPosition().first, GetPosition().second, targetX, targetY, 0.f) == true)
-			{
-				nearestObj = -1;
-			}
-
-			if (playerID == -1)
-			{
-				return;
-			}
-
-			if (ReachedTarget(GetPosition().first, GetPosition().second,
-							  playerTransform.position.x,
-							  playerTransform.position.y, 250.f) == true)
-			{
-				state = CHASE;
-				return;
-			}
-		}
-
-		void ChaseState(Transform &self, Transform &player)
-		{
-			SetTarget(player);
-
-			MoveToTarget(self, player.position.x,
-						 player.position.y, g_FrameRateController.GetDeltaTime(), speed);
-
-			if (ReachedTarget(GetPosition().first, GetPosition().second,
-							  player.position.x,
-							  player.position.y, 250.f) == false)
-			{
-				state = ROAM;
-				return;
-			}
-
-			// in attack range
-			if (IsPlayerInRange(player))
-			{
-				state = ATTACK;
-				return;
-			}
-		}
-
-		void AttackState()
-		{
-			static float timer = 0.0f;
-
-			timer -= g_FrameRateController.GetDeltaTime();
-
-			if (timer <= 0.0f)
-			{
-				// AttackPlayer(GameObjectManager::GetInstance().GetGOByTag("Player")->GetComponent<Collision>());
-				timer = 3.0f;
-			}
-		}
-
-		void SetTarget(Transform &target)
+		// Check if two points are within a threshold distance
+		void SetTarget(Transform& target)
 		{
 			this->targetX = target.position.x;
 			this->targetY = target.position.y;
 		}
 
 		// Set the target destination
-		void SetTarget(float targetX, float targetY)
+		void SetTarget(float newtargetX, float newtargetY)
 		{
-			this->targetX = targetX;
-			this->targetY = targetY;
+			this->targetX = newtargetX;
+			this->targetY = newtargetY;
 		}
 
-		// GET TRANSFORM TO MOVE
-		void MoveToTarget(Transform &self, float targetX, float targetY, float deltaTime, float speed)
+		//helper function
+		template <typename T>
+		T Lerp(T a, T b, float t)
+		{
+			return a + t * (b - a);
+		}
+		
+		//move to target
+		void MoveToTarget(Transform& self, float newtargetX, float newtargetY, float deltaTime, float movespeed)
 		{
 			// Check if already at the target
-			if (ReachedTarget(self.position.x, self.position.y, targetX, targetY, 0.1f))
+			if (ReachedTarget(self.position.x, self.position.y, newtargetX, newtargetY, 0.1f))
 			{
-				std::cout << "Enemy already at the target position.\n";
+				if (!isCollide)
+				{
+					prevObject = nearestObj;
+					nearestObj = -1;
+				}
+				//std::cout << "Enemy already at the target position.\n";
 				return;
 			}
 
-			float dx = targetX - self.position.x;
-			float dy = targetY - self.position.y;
+			float dx = newtargetX - self.position.x;
+			float dy = newtargetY - self.position.y;
 			float distance = std::sqrt(dx * dx + dy * dy);
 
 			// Normalize direction
@@ -477,48 +421,77 @@ namespace Ukemochi
 			}
 
 			// Move the enemy
-			self.position.x += dx * speed * deltaTime;
-			self.position.y += dy * speed * deltaTime;
+			self.position.x += dx * movespeed * deltaTime;
+			self.position.y += dy * movespeed * deltaTime;
 			posX = self.position.x;
 			posY = self.position.y;
-			// Print position for debugging
-			std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
+			//std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
 		}
 
 		// Check if the enemy can attack the player
-		bool IsPlayerInRange(Transform &player) const
+		bool IsPlayerInRange(Transform& player, Transform& enemy) const
 		{
-			float playerX = player.position.x;
-			float playerY = player.position.y;
-			float dx = playerX - posX;
-			float dy = playerY - posY;
-			float distance = std::sqrt(dx * dx + dy * dy);
-			return distance <= attackRange;
+			float dx = player.position.x - enemy.position.x;
+			float dy = player.position.y - enemy.position.y;
+			float distance = dx * dx + dy * dy;
+
+			return distance <= attackRange * attackRange;
 		}
 
+		//wrap to target when collide
+		void WrapToTarget(Transform& enemyTransform, float newtargetX, float newtargetY, float deltaTime, float movespeed)
+		{
+			// Calculate the direction vector from the enemy to the target
+			float dx = newtargetX - enemyTransform.position.x;
+			float dy = newtargetY - enemyTransform.position.y;
+
+			// Calculate the current angle to the target
+			float currentAngle = std::atan2(dy, dx); // Initialize angle based on initial direction
+
+			// Calculate the current radius (distance to the target)
+			float radius = std::sqrt(dx * dx + dy * dy);
+
+			// If close enough to the target, snap to it and stop wrapping
+			if (radius < 100.f) // Threshold for "reaching" the target
+			{
+				//enemyTransform.position.x = targetX;
+				//enemyTransform.position.y = targetY;
+				isCollide = false;
+				nearestObj = -1;
+				return;
+			}
+
+			// Reduce the radius over time to spiral inwards
+			float shrinkRate = movespeed * deltaTime * 0.5f; // Adjust shrink rate for smooth spiraling
+			radius = std::max(radius - shrinkRate, 0.1f); // Ensure the radius doesn't go negative
+
+			// Increment the angle dynamically for circular motion
+			float angularVelocity = movespeed / (radius + 0.1f); // Adjust angular speed based on the shrinking radius
+			currentAngle += angularVelocity * deltaTime;
+
+			// Calculate the new position along the circular path
+			float newX = newtargetX - radius * std::cos(currentAngle);
+			float newY = newtargetY - radius * std::sin(currentAngle);
+
+			// Smoothly move the enemy's position toward the new point
+			enemyTransform.position.x = Lerp(enemyTransform.position.x, newX, deltaTime * movespeed);
+			enemyTransform.position.y = Lerp(enemyTransform.position.y, newY, deltaTime * movespeed);
+		}
+
+
+
 		// Attack the player (reduces player's health)
-		void AttackPlayer(float &playerHealth)
+		void AttackPlayer(int& playerHealth)
 		{
 			if (playerHealth > 0.0f)
 			{
-				playerHealth -= attackPower;
+				playerHealth -= static_cast<int>(attackPower);
+
 				if (playerHealth < 0.0f)
 				{
-					playerHealth = 0.0f; // Ensure health does not go negative
+					playerHealth = static_cast<int>(0.0f); // Ensure health does not go negative
 				}
 			}
-		}
-
-		// Get the current position of the enemy
-		std::pair<float, float> GetPosition() const
-		{
-			return {posX, posY};
-		}
-
-		// Get the current health of the enemy
-		float GetHealth() const
-		{
-			return health;
 		}
 
 		// Reduce the enemy's health when taking damage
@@ -529,21 +502,110 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			isCollide = false;
 		}
 	};
 
-	struct Player
+	/*!***********************************************************************
+	\brief
+	 AudioSource component structure.
+	*************************************************************************/
+	struct AudioManager 
 	{
-		int maxHealth = 100;
-		int currentHealth = 100;
-		int maxComboHits = 3;
-		int currentComboHits = 0;
-		int comboDamage = 10;
-		float attackCooldown = 0.5f;
-		float attackTimer = 0.0f;
-		float playerForce = 1500.0f;
-		bool isDead = false;
-		bool canAttack = true;
-		bool isAttacking = false;
+		struct AudioSource
+		{
+			std::string audioPath;
+			std::string audioName;
+
+			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) {}
+		};
+
+		std::vector<AudioSource> music; // Music category
+		std::vector<AudioSource> sfx;   // Sfx category
+
+		AudioManager() = default;
+
+		//player the music audio
+		void PlayMusic(int index) {
+			if (index < music.size() && music[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
+				Audio::GetInstance().PlaySound(index, "Music");
+			}
+		}
+		//stop the music audio
+		void StopMusic(int index) {
+			Audio::GetInstance().StopSound(index, "Music");
+		}
+
+		//player the SFX audio
+		void PlaySFX(int index) {
+			if (index < sfx.size() && sfx[index].audioPath != "")
+			{
+				Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
+				Audio::GetInstance().PlaySound(index, "SFX");
+			}
+		}
+
+		//stop the SFX audio
+		void StopSFX(int index) {
+			Audio::GetInstance().StopSound(index, "SFX");
+		}
+
+		//get the audio index
+		int GetSFXindex(const std::string& name) {
+			auto it = std::find_if(sfx.begin(), sfx.end(), [&name](const AudioSource& source) {
+				return source.audioName == name;
+				});
+
+			if (it != sfx.end()) {
+				return static_cast<int>(std::distance(sfx.begin(), it)); // Return the index
+			}
+
+			std::cerr << "Sound effect with name '" << name << "' not found in SFX category." << std::endl;
+			return -1; // Return an invalid index if not found
+		}
+
+		//get the audio index
+		int GetMusicIndex(const std::string& name) {
+			auto it = std::find_if(music.begin(), music.end(), [&name](const AudioSource& source) {
+				return source.audioName == name;
+				});
+
+			if (it != music.end()) {
+				return static_cast<int>(std::distance(music.begin(), it)); // Return the index
+			}
+
+			std::cerr << "Music with name '" << name << "' not found in Music category." << std::endl;
+			return -1; // Return an invalid index if not found
+		}
+
+		//load the sound to audio
+		void AddSoundToMusic(const std::string& name) {
+			//music.emplace_back(path, name);
+
+			int index = GetMusicIndex(name);
+			Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
+		}
+
+		//load the sound to audio
+		void AddSoundToSfx(const std::string& name) {
+			//sfx.emplace_back(path, name);
+			int index = GetSFXindex(name);
+			Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
+		}
+
+		// Remove sound by index from the Music category
+		void RemoveSoundFromMusic(size_t index) {
+			if (index < music.size())
+				music.erase(music.begin() + index);
+		}
+
+		// Remove sound by index from the SFX category
+		void RemoveSoundFromSfx(size_t index) {
+			if (index < sfx.size())
+				sfx.erase(sfx.begin() + index);
+		}
+
 	};
 }
