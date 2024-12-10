@@ -127,7 +127,62 @@ void BatchRenderer2D::createVertexBuffer()
  * @param uvCoordinates UV coordinates for the texture.
  * @param rotation Rotation angle in radians.
  */
-void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation)
+//void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation)
+//{
+//    if (vertices.size() >= maxSprites * 4)
+//    {
+//        std::cout << "Reached maxSprites in batch, flushing..." << std::endl;
+//        flush();
+//        beginBatch();
+//    }
+//
+//    // Calculate sine and cosine for the rotation angle
+//    float cosTheta = cos(rotation);
+//    float sinTheta = sin(rotation);
+//
+//    // Define the four corners of the sprite relative to its center
+//    glm::vec2 halfSize = size * 0.5f;
+//
+//    glm::vec2 bottomLeft(-halfSize.x, -halfSize.y);
+//    glm::vec2 bottomRight(halfSize.x, -halfSize.y);
+//    glm::vec2 topRight(halfSize.x, halfSize.y);
+//    glm::vec2 topLeft(-halfSize.x, halfSize.y);
+//
+//    // Apply rotation to each corner
+//    bottomLeft = glm::vec2(
+//        cosTheta * bottomLeft.x - sinTheta * bottomLeft.y,
+//        sinTheta * bottomLeft.x + cosTheta * bottomLeft.y
+//    );
+//
+//    bottomRight = glm::vec2(
+//        cosTheta * bottomRight.x - sinTheta * bottomRight.y,
+//        sinTheta * bottomRight.x + cosTheta * bottomRight.y
+//    );
+//
+//    topRight = glm::vec2(
+//        cosTheta * topRight.x - sinTheta * topRight.y,
+//        sinTheta * topRight.x + cosTheta * topRight.y
+//    );
+//
+//    topLeft = glm::vec2(
+//        cosTheta * topLeft.x - sinTheta * topLeft.y,
+//        sinTheta * topLeft.x + cosTheta * topLeft.y
+//    );
+//
+//    // Translate rotated vertices to the actual position of the sprite
+//    glm::vec3 pos1 = glm::vec3(bottomLeft + position, 0.0f); // Bottom-left
+//    glm::vec3 pos2 = glm::vec3(bottomRight + position, 0.0f); // Bottom-right
+//    glm::vec3 pos3 = glm::vec3(topRight + position, 0.0f); // Top-right
+//    glm::vec3 pos4 = glm::vec3(topLeft + position, 0.0f); // Top-left
+//
+//    // Push vertices with updated UV coordinates and texture ID
+//    vertices.push_back({ pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID });
+//    vertices.push_back({ pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID });
+//    vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
+//    vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
+//}
+
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation)
 {
     if (vertices.size() >= maxSprites * 4)
     {
@@ -170,18 +225,16 @@ void BatchRenderer2D::drawSprite(const glm::vec2& position, const glm::vec2& siz
     );
 
     // Translate rotated vertices to the actual position of the sprite
-    glm::vec3 pos1 = glm::vec3(bottomLeft + position, 0.0f); // Bottom-left
-    glm::vec3 pos2 = glm::vec3(bottomRight + position, 0.0f); // Bottom-right
-    glm::vec3 pos3 = glm::vec3(topRight + position, 0.0f); // Top-right
-    glm::vec3 pos4 = glm::vec3(topLeft + position, 0.0f); // Top-left
+    glm::vec3 pos1 = glm::vec3(bottomLeft + glm::vec2(position.x, position.y), position.z); // Bottom-left
+    glm::vec3 pos2 = glm::vec3(bottomRight + glm::vec2(position.x, position.y), position.z); // Bottom-right
+    glm::vec3 pos3 = glm::vec3(topRight + glm::vec2(position.x, position.y), position.z); // Top-right
+    glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
 
     // Push vertices with updated UV coordinates and texture ID
     vertices.push_back({ pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID });
     vertices.push_back({ pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID });
     vertices.push_back({ pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID });
     vertices.push_back({ pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID });
-
-
 }
 
 /*!

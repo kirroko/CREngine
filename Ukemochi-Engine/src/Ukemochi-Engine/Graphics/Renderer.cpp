@@ -641,7 +641,10 @@ void Renderer::render()
 				renderPos.y -= offset.y;
 			}
 			else
+			{
 				renderPos -= offset;
+				//renderPos -= offset.y;
+			}
 
 			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
@@ -662,7 +665,7 @@ void Renderer::render()
 			float scaleFactor = TARGET_SCALE_FACTOR / spriteWorldSize.y;
 			glm::vec2 finalScale = glm::vec2(transform.scale.x, transform.scale.y) * scaleFactor;
 			finalScale.x = finalScale.y * aspectRatio;
-			batchRenderer->drawSprite(renderPos, finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+			batchRenderer->drawSprite(glm::vec3(renderPos, 0.f), finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 		else
 		{
@@ -693,7 +696,7 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, 0.f), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
 		}
 	}
 
@@ -724,9 +727,9 @@ void Renderer::render()
 				if (spriteRenderer.shape == SPRITE_SHAPE::BOX)
 				{
 					if (boxCollider.collision_flag > 0)
-						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.f, 0.f, 0.f), glm::radians(transform.rotation));
+						debugBatchRenderer->drawDebugBox(glm::vec3(transform.position.x, transform.position.y, 0.f), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.f, 0.f, 0.f), glm::radians(transform.rotation));
 					else
-						debugBatchRenderer->drawDebugBox(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(0.f, 1.f, 0.f), glm::radians(transform.rotation));
+						debugBatchRenderer->drawDebugBox(glm::vec3(transform.position.x, transform.position.y, 0.f), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(0.f, 1.f, 0.f), glm::radians(transform.rotation));
 				}
 			}
 		}
@@ -1687,23 +1690,41 @@ The transform of the entity to draw scaling handles for.
 *************************************************************************/
 void Renderer::drawScalingHandles(const Transform& transform)
 {
-	glm::vec2 entityCenter(transform.position.x, transform.position.y);
+	glm::vec3 entityCenter(transform.position.x, transform.position.y, 0.f);
+	//glm::vec3 entityCenter(transform.position.x, transform.position.y, transform.z);
+
+//	// Define the length of the scaling handles based on entity size
+//	float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
+//	// X-axis handle (red line and box)
+//	glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
+//	debugBatchRenderer->drawDebugLine(entityCenter, xHandleEnd, glm::vec3(1.0f, 0.0f, 0.0f)); // Red line
+//	debugBatchRenderer->drawDebugBox(xHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f); // Small red box
+//
+//	// Y-axis handle (green line and box)
+//	glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
+//	debugBatchRenderer->drawDebugLine(entityCenter, yHandleEnd, glm::vec3(0.0f, 1.0f, 0.0f)); // Green line
+//	debugBatchRenderer->drawDebugBox(yHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f); // Small green box
+//
+//	// Uniform scaling handle (center box)
+//	glm::vec2 centerBoxSize(40.f, 40.f);
+//	debugBatchRenderer->drawDebugBox(entityCenter, centerBoxSize, glm::vec3(0.5f, 0.5f, 0.5f), 1.0f); // Grey box
 
 	// Define the length of the scaling handles based on entity size
 	float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
+
 	// X-axis handle (red line and box)
-	glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
+	glm::vec3 xHandleEnd = entityCenter + glm::vec3(handleLength, 0.0f, 0.0f);
 	debugBatchRenderer->drawDebugLine(entityCenter, xHandleEnd, glm::vec3(1.0f, 0.0f, 0.0f)); // Red line
 	debugBatchRenderer->drawDebugBox(xHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(1.0f, 0.0f, 0.0f), 0.0f); // Small red box
 
 	// Y-axis handle (green line and box)
-	glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
+	glm::vec3 yHandleEnd = entityCenter + glm::vec3(0.0f, handleLength, 0.0f);
 	debugBatchRenderer->drawDebugLine(entityCenter, yHandleEnd, glm::vec3(0.0f, 1.0f, 0.0f)); // Green line
 	debugBatchRenderer->drawDebugBox(yHandleEnd, glm::vec2(25.f, 25.f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f); // Small green box
 
 	// Uniform scaling handle (center box)
 	glm::vec2 centerBoxSize(40.f, 40.f);
-	debugBatchRenderer->drawDebugBox(entityCenter, centerBoxSize, glm::vec3(0.5f, 0.5f, 0.5f), 1.0f); // Grey box
+	debugBatchRenderer->drawDebugBox(entityCenter, centerBoxSize, glm::vec3(0.5f, 0.5f, 0.5f), 0.0f); // Grey box
 }
 
 /*!***********************************************************************

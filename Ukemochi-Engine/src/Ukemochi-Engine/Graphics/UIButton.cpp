@@ -53,15 +53,39 @@ void UIButtonRenderer::addButton(const UIButton& button) {
  */
 void UIButtonRenderer::renderButtons(const Camera& camera)
 {
+    //batchRenderer->setActiveShader(uiShader);
+    //uiShader->setMat4("projection", projectionMatrix); 
+
+    //batchRenderer->beginBatch();
+
+    //for (const UIButton& button : buttons) 
+    //{
+    //    // Adjust the button position by subtracting the camera's position
+    //    glm::vec2 adjustedPosition = button.position + camera.position;
+
+    //    GLfloat uvCoordinates[8] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
+    //    batchRenderer->drawSprite(adjustedPosition, button.size, glm::vec3(1.0f), button.textureID, uvCoordinates);
+    //}
+
+    //batchRenderer->endBatch();
+
+    //for (const UIButton& button : buttons) 
+    //{
+    //    glm::vec2 textPos = button.position + glm::vec2(button.size.x * 0.f, button.size.y * -0.1f);
+    //    textPos -= glm::vec2(textRenderer->getTextWidth(button.text, button.textScale, button.fontName) * 0.5f, 0.0f);
+    //    textRenderer->addTextObject("ui_" + button.text, TextObject(button.text, textPos, button.textScale, button.textColor, button.fontName));
+    //}
+
+    //textRenderer->renderAllText();
     batchRenderer->setActiveShader(uiShader);
-    uiShader->setMat4("projection", projectionMatrix); 
+    uiShader->setMat4("projection", projectionMatrix);
 
     batchRenderer->beginBatch();
 
-    for (const UIButton& button : buttons) 
+    for (const UIButton& button : buttons)
     {
-        // Adjust the button position by subtracting the camera's position
-        glm::vec2 adjustedPosition = button.position + camera.position;
+        // Adjust the button position by subtracting the camera's position, including the Z-axis
+        glm::vec3 adjustedPosition = glm::vec3(button.position, 0.f) + glm::vec3(camera.position, 0.0f);
 
         GLfloat uvCoordinates[8] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
         batchRenderer->drawSprite(adjustedPosition, button.size, glm::vec3(1.0f), button.textureID, uvCoordinates);
@@ -69,11 +93,13 @@ void UIButtonRenderer::renderButtons(const Camera& camera)
 
     batchRenderer->endBatch();
 
-    for (const UIButton& button : buttons) 
+    for (const UIButton& button : buttons)
     {
-        glm::vec2 textPos = button.position + glm::vec2(button.size.x * 0.f, button.size.y * -0.1f);
-        textPos -= glm::vec2(textRenderer->getTextWidth(button.text, button.textScale, button.fontName) * 0.5f, 0.0f);
-        textRenderer->addTextObject("ui_" + button.text, TextObject(button.text, textPos, button.textScale, button.textColor, button.fontName));
+        glm::vec3 textPos = glm::vec3(button.position, 0.f) + glm::vec3(button.size.x * 0.f, button.size.y * -0.1f, 0.0f);
+        textPos -= glm::vec3(textRenderer->getTextWidth(button.text, button.textScale, button.fontName) * 0.5f, 0.0f, 0.0f);
+
+        textRenderer->addTextObject("ui_" + button.text,
+            TextObject(button.text, glm::vec2(textPos.x, textPos.y), button.textScale, button.textColor, button.fontName));
     }
 
     textRenderer->renderAllText();
