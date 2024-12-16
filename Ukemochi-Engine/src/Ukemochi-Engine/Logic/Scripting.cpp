@@ -27,7 +27,7 @@ namespace Ukemochi
      * @tparam Component The component to register
      */
     template <typename Component>
-    void ScriptingEngine::RegisterComponent() // TODO: 
+    void ScriptingEngine::RegisterComponent()
     {
         std::string_view typeName = typeid(Component).name();
         size_t pos = typeName.find_last_of(':');

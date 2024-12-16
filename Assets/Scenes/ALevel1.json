@@ -1284,8 +1284,8 @@
                     "Name": "Animation",
                     "Clips": {
                         "Idle": ["../Assets/Textures/idle_player_sprite_sheet.png", "Idle", 37, 0.5, 0.5199999809265137, 100, 442, 448, 4096, 4096, 0.05000000074505806, true],
-                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 90, 461, 428, 2048, 2048, 0.05000000074505806, true],
                         "Attack1": ["../Assets/Textures/Mochi_Attack_1.png", "Attack1", 19, 0.4300000071525574, 0.46000000834465027, 170, 678, 579, 4096, 2797, 0.03999999910593033, true],
+                        "Running": ["../Assets/Textures/running_player_sprite_sheet.png", "Running", 13, 0.5, 0.5, 90, 461, 428, 2048, 2048, 0.05000000074505806, true],
                         "Hurt": ["../Assets/Textures/Mochi_Hurt_SS.png", "Hurt", 4, 0.5299999713897705, 0.5, 90, 545, 420, 2048, 1024, 0.05000000074505806, true],
                         "Attack2": ["../Assets/Textures/Mochi_Attack_2.png", "Attack2", 13, 0.44999998807907104, 0.5299999713897705, 110, 716, 467, 3708, 1569, 0.03999999910593033, true],
                         "Attack3": ["../Assets/Textures/Mochi_Attack_3.png", "Attack3", 35, 0.5350000262260437, 0.5249999761581421, 120, 543, 484, 3900, 2597, 0.03999999910593033, true]

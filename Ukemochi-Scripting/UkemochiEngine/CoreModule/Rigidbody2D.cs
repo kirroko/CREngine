@@ -200,7 +200,6 @@ namespace Ukemochi
         public void AddForceY(float force)
         {
             Force = new Vector2(Force.x, force);
-            // _force.y = force;
         }
 
         public void AddTorque(float torque)
