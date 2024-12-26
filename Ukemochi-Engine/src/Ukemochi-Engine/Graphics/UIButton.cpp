@@ -88,7 +88,7 @@ void UIButtonRenderer::renderButtons(const Camera& camera)
         glm::vec3 adjustedPosition = glm::vec3(button.position, 0.f) + glm::vec3(camera.position, 0.0f);
 
         GLfloat uvCoordinates[8] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
-        batchRenderer->drawSprite(adjustedPosition, button.size, glm::vec3(1.0f), button.textureID, uvCoordinates);
+        batchRenderer->drawSprite(adjustedPosition, button.size, glm::vec3(1.0f), button.textureID, uvCoordinates); 
     }
 
     batchRenderer->endBatch();
