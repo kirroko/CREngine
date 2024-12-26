@@ -665,7 +665,7 @@ void Renderer::render()
 			float scaleFactor = TARGET_SCALE_FACTOR / spriteWorldSize.y;
 			glm::vec2 finalScale = glm::vec2(transform.scale.x, transform.scale.y) * scaleFactor;
 			finalScale.x = finalScale.y * aspectRatio;
-			batchRenderer->drawSprite(glm::vec3(renderPos, transform.position.z), finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+			batchRenderer->drawSprite(glm::vec3(renderPos, transform.position.z), finalScale, glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation),spriteRenderer.layer);
 		}
 		else
 		{
@@ -696,7 +696,7 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation));
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 
