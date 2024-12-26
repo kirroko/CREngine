@@ -1729,12 +1729,13 @@ namespace Ukemochi
                 ImGui::Text("Position");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                    //if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                    if(ImGui::SliderFloat3("##PositionSlider", &transform.position.x,-800.0f,1500.f))
                         modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat2("##PositionInput", &transform.position.x))
+                    if (ImGui::InputFloat3("##PositionInput", &transform.position.x))
                         modified = true;
                 }
 
@@ -1883,6 +1884,9 @@ namespace Ukemochi
                     }
                     ImGui::EndDragDropTarget();
                 }
+
+                ImGui::Text("Sortting Layer");
+                ImGui::InputInt("##Sorting Layer", &sprite.layer);
 
                 // Error Popup for invalid file type
                 if (ImGui::BeginPopup("InvalidTextureFileType"))

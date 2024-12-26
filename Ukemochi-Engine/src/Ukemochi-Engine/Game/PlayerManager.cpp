@@ -183,12 +183,12 @@ namespace Ukemochi
             if (sr.flipX)
             {
                 auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec2{trans.position.x + trans.scale.x, trans.position.y};
+                knife_trans.position = Vec3{trans.position.x + trans.scale.x, trans.position.y,0};
             }
             else
             {
                 auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec2{trans.position.x - trans.scale.x, trans.position.y};
+                knife_trans.position = Vec3{trans.position.x - trans.scale.x, trans.position.y,0};
             }
         }
     }

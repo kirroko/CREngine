@@ -84,7 +84,7 @@ namespace Ukemochi
 				{
 					go.AddComponent(Transform{
 						Mtx44{},
-						Vec2(comps["Position"][0].GetFloat(),comps["Position"][1].GetFloat()),
+						Vec3(comps["Position"][0].GetFloat(),comps["Position"][1].GetFloat(),0),
 						comps["Rotation"].GetFloat(),
 						Vec2(comps["Scale"][0].GetFloat(),comps["Scale"][1].GetFloat())
 						});
@@ -92,7 +92,7 @@ namespace Ukemochi
 				else if (component == "Rigidbody2D")
 				{
 					go.AddComponent(Rigidbody2D{
-						Vec2(comps["Position"][0].GetFloat(), comps["Position"][1].GetFloat()),
+						Vec3(comps["Position"][0].GetFloat(), comps["Position"][1].GetFloat(),0),
 						Vec2(comps["Velocity"][0].GetFloat(), comps["Velocity"][1].GetFloat()),
 						Vec2(comps["Acceleration"][0].GetFloat(), comps["Acceleration"][1].GetFloat()),
 						Vec2(comps["Force"][0].GetFloat(), comps["Force"][1].GetFloat()),

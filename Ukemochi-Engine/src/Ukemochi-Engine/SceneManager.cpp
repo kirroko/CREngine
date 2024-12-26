@@ -615,9 +615,10 @@ namespace Ukemochi
 
                 if (componentName == "Transform")
                 {
-                    Vec2 position(
+                    Vec3 position(
                         componentData["Position"][0].GetFloat(),
-                        componentData["Position"][1].GetFloat()
+                        componentData["Position"][1].GetFloat(),
+						componentData["Position"][2].GetFloat()
                     );
                     float rotation = componentData["Rotation"].GetFloat();
                     Vec2 scale(
@@ -632,9 +633,10 @@ namespace Ukemochi
                 }
                 else if (componentName == "Rigidbody2D")
                 {
-                    Vec2 position(
+                    Vec3 position(
                         componentData["Position"][0].GetFloat(),
-                        componentData["Position"][1].GetFloat()
+                        componentData["Position"][1].GetFloat(),
+						componentData["Position"][2].GetFloat()
                     );
                     Vec2 velocity(
                         componentData["Velocity"][0].GetFloat(),
@@ -890,6 +892,7 @@ namespace Ukemochi
                 Value position(rapidjson::kArrayType);
                 position.PushBack(transform.position.x, allocator);
                 position.PushBack(transform.position.y, allocator);
+                position.PushBack(transform.position.z, allocator);
                 transformComponent.AddMember("Position", position, allocator);
 
                 transformComponent.AddMember("Rotation", transform.rotation, allocator);
@@ -909,7 +912,7 @@ namespace Ukemochi
 
                 const auto& rigidbody = gameobject->GetComponent<Rigidbody2D>();
                 Value position(rapidjson::kArrayType);
-                position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+                position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator).PushBack(rigidbody.position.z, allocator);
                 rigidbodyComponent.AddMember("Position", position, allocator);
 
                 Value velocity(rapidjson::kArrayType);
@@ -993,6 +996,8 @@ namespace Ukemochi
                 spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator),
                                                 allocator);
                 spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
+
+                spriteRenderComponent.AddMember("Layer", spriteRender.layer, allocator);
 
                 componentsArray.PushBack(spriteRenderComponent, allocator);
             }
@@ -1191,6 +1196,7 @@ namespace Ukemochi
             Value position(rapidjson::kArrayType);
             position.PushBack(transform.position.x, allocator);
             position.PushBack(transform.position.y, allocator);
+            position.PushBack(transform.position.z, allocator);
             transformComponent.AddMember("Position", position, allocator);
 
             transformComponent.AddMember("Rotation", transform.rotation, allocator);
@@ -1210,7 +1216,7 @@ namespace Ukemochi
 
             const auto& rigidbody = prefabObj->GetComponent<Rigidbody2D>();
             Value position(rapidjson::kArrayType);
-            position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+            position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator).PushBack(rigidbody.position.z, allocator);
             rigidbodyComponent.AddMember("Position", position, allocator);
 
             Value velocity(rapidjson::kArrayType);
@@ -1292,6 +1298,7 @@ namespace Ukemochi
             const auto& spriteRender = prefabObj->GetComponent<SpriteRender>();
             spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator), allocator);
             spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
+            spriteRenderComponent.AddMember("Layer", spriteRender.layer, allocator);
 
             componentsArray.PushBack(spriteRenderComponent, allocator);
         }
