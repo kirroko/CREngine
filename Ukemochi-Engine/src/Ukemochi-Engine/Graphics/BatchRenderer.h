@@ -104,6 +104,12 @@ private:
 
 	std::shared_ptr<Shader> activeShader; // Use shared_ptr for the active shader 
 	std::map<int, std::vector<Vertex>> layerBatches; 
+
+	int maxTexturesPerPass = 32;
+	std::vector<GLuint> activeTextures;
+	std::unordered_map<GLuint, GLint> textureSlotMap;
+ 	void queryMaxTextureUnits();
+
 };
 
 #endif // !BATCH_RENDERER_H

@@ -43,6 +43,8 @@ BatchRenderer2D::~BatchRenderer2D() {
  */
 void BatchRenderer2D::init(std::shared_ptr<Shader> sharedShader)
 {
+    queryMaxTextureUnits();
+
     // Reserve memory for vertices and indices
     vertices.reserve(maxSprites * 4); // 4 vertices per sprite
     indices.reserve(maxSprites * 6);  // 6 indices per sprite (two triangles)
@@ -119,6 +121,19 @@ void BatchRenderer2D::createVertexBuffer()
 }
 
 /*!
+ * @brief Checks the current texture limit of the hardware and ensures that it is less
+ *        than or equals to 32
+ */
+void BatchRenderer2D::queryMaxTextureUnits()
+{
+    GLint maxTextureUnits;
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureUnits); // Get the texture limit of the system
+    maxTexturesPerPass = std::min(32, maxTextureUnits); // Caps it to be 32 but can be lesser as well
+}
+
+
+
+/*!
  * @brief Adds a sprite to the batch, handling rotation and texture information.
  * @param position Position of the sprite.
  * @param size Size of the sprite.
@@ -184,6 +199,31 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
 
 void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer)
 {
+    // Finds textureID being used for the sprite is already in the map
+    // If its not inside, add it in the map else it skips this statement
+    if (textureUnitMap.find(textureID) == textureUnitMap.end())
+    {
+        // If the number of textures exceeds the systems texture limit it will flush everything to free up space
+        if (activeTextures.size() >= maxTexturesPerPass)
+        {
+            flush();
+            beginBatch();
+        }
+
+        // Assigns the textureID to a texture unit index
+        // activeTextures.size() is a easy way to increment the index
+        // e.g. if the size of the vector is currently 0, it will mean that
+        // activeTextures.size() will be 0, hence index will be 0.
+        // Now that the vector has one value and its size is 1, activeTextures.size()
+        // will be 1 and hence for the next textureID i will have a index value of 1
+        textureUnitMap[textureID] = static_cast<int>(activeTextures.size());
+        
+        // Adds the textureID to activeTextures to keep track of which textures are being used
+        activeTextures.push_back(textureID);
+    }
+
+    int textureUnit = textureUnitMap[textureID];
+
     if (vertices.size() >= maxSprites * 4)
     {
         std::cout << "Reached maxSprites in batch, flushing..." << std::endl;
@@ -231,10 +271,10 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
 
     // Create vertices
-    Vertex v1 = { pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID };
-    Vertex v2 = { pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID };
-    Vertex v3 = { pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID };
-    Vertex v4 = { pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID };
+    Vertex v1 = { pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureUnit };
+    Vertex v2 = { pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureUnit };
+    Vertex v3 = { pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureUnit };
+    Vertex v4 = { pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureUnit };
 
     // Add vertices to the appropriate layer
     layerBatches[layer].push_back(v1);
@@ -245,6 +285,8 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
 
 void BatchRenderer2D::flush()
 {
+    // layer and layerVertices represent the layer number e.g 1, 2, 3 and layerVertices represent 
+    // the vertices in each layer
     for (const auto& [layer, layerVertices] : layerBatches) 
     {
         if (layerVertices.empty()) 
