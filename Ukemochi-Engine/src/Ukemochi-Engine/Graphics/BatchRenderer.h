@@ -107,7 +107,7 @@ private:
 
 	int maxTexturesPerPass = 32;
 	std::vector<GLuint> activeTextures;
-	std::unordered_map<GLuint, GLint> textureSlotMap;
+	std::unordered_map<GLuint, GLint> textureUnitMap;
  	void queryMaxTextureUnits();
 
 };
