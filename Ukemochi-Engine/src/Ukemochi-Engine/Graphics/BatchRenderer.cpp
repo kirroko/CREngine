@@ -283,85 +283,131 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
-void BatchRenderer2D::flush()
-{
-    // layer and layerVertices represent the layer number e.g 1, 2, 3 and layerVertices represent 
-    // the vertices in each layer
-    for (const auto& [layer, layerVertices] : layerBatches) 
-    {
-        if (layerVertices.empty()) 
-            continue;
-
-        // Bind VAO and Shader
-        vao->Bind();
-
-        // Update VBO data with current vertices
-        vbo->Bind();
-
-        // Print vertex data for debugging
-        vbo->UpdateData(layerVertices.data(), layerVertices.size() * sizeof(Vertex));
-        vbo->Unbind();
-
-        // Bind EBO
-        ebo->Bind();
-
-        if (activeShader) 
-        {
-            activeShader->Activate(); // Use the active shader
-        }
-
-        int indexCount = static_cast<int>((layerVertices.size() / 4) * 6); // 6 indices per quad
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-
-        vao->Unbind();
-    }
-
-    vao->Unbind();
-    ebo->Unbind();
-    // Clear batches for the next frame
-    layerBatches.clear();
-}
-
-
-/*!
- * @brief Flushes the batch, rendering all sprites in the vertex buffer.
- */
 //void BatchRenderer2D::flush()
 //{
-//    if (vertices.empty())
+//    // layer and layerVertices represent the layer number e.g 1, 2, 3 and layerVertices represent 
+//    // the vertices in each layer
+//    for (const auto& [layer, layerVertices] : layerBatches) 
 //    {
-//        //std::cout << "No vertices to flush." << std::endl;
-//        return;
+//        if (layerVertices.empty()) 
+//            continue;
+//
+//        // Bind VAO and Shader
+//        vao->Bind();
+//
+//        // Update VBO data with current vertices
+//        vbo->Bind();
+//
+//        // Print vertex data for debugging
+//        vbo->UpdateData(layerVertices.data(), layerVertices.size() * sizeof(Vertex));
+//        vbo->Unbind();
+//
+//        // Bind EBO
+//        ebo->Bind();
+//
+//        if (activeShader) 
+//        {
+//            activeShader->Activate(); // Use the active shader
+//        }
+//
+//        int indexCount = static_cast<int>((layerVertices.size() / 4) * 6); // 6 indices per quad
+//        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+//
+//        vao->Unbind();
 //    }
-//
-//    // Bind VAO and Shader
-//    vao->Bind();
-//
-//    // Update VBO data with current vertices
-//    vbo->Bind();
-//
-//    // Print vertex data for debugging
-//    vbo->UpdateData(vertices.data(), vertices.size() * sizeof(Vertex));
-//    vbo->Unbind();
-//
-//    // Bind EBO
-//    ebo->Bind();
-//    //shader->Activate();
-//
-//    if (activeShader) {
-//        activeShader->Activate(); // Use the active shader
-//    }
-//
-//    // Calculate the correct index count based on the number of quads in the batch
-//    int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
-//
-//    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 //
 //    vao->Unbind();
 //    ebo->Unbind();
-//
-//    vertices.clear();
+//    // Clear batches for the next frame
+//    layerBatches.clear();
 //}
+void BatchRenderer2D::flush()
+{
+    for (const auto& [layer, layerVertices] : layerBatches)
+    {
+        if (layerVertices.empty())
+            continue;
+
+        // Keep track of processed vertices and active textures
+        size_t vertexCount = 0;
+
+        // Process in texture batches
+        while (vertexCount < layerVertices.size())
+        {
+            // Reset textures for the current pass
+            textureUnitMap.clear();
+            activeTextures.clear();
+
+            // Bind VAO and Shader
+            vao->Bind();
+            vbo->Bind();
+
+            // Prepare a sub-range of vertices for this pass
+            std::vector<Vertex> passVertices;
+            size_t passStart = vertexCount;
+            size_t passEnd = layerVertices.size();
+
+            for (size_t i = passStart; i < layerVertices.size(); ++i)
+            {
+                const auto& vertex = layerVertices[i];
+
+                // Check if we need to bind a new texture
+                if (textureUnitMap.find(vertex.textureID) == textureUnitMap.end())
+                {
+                    // If maxTexturesPerPass is reached, stop this pass
+                    if (activeTextures.size() >= maxTexturesPerPass)
+                    {
+                        passEnd = i;
+                        break;
+                    }
+
+                    // Bind the new texture and map it to a unit
+                    textureUnitMap[vertex.textureID] = static_cast<int>(activeTextures.size());
+                    activeTextures.push_back(vertex.textureID);
+                }
+
+                // Adjust the vertex's texture unit index
+                passVertices.push_back(vertex);
+                passVertices.back().textureID = textureUnitMap[vertex.textureID];
+            }
+
+            // Update the VBO with the vertices for this pass
+            vbo->UpdateData(passVertices.data(), passVertices.size() * sizeof(Vertex));
+            vbo->Unbind();
+
+            // Bind the active textures
+            for (int i = 0; i < activeTextures.size(); ++i)
+            {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glBindTexture(GL_TEXTURE_2D, activeTextures[i]);
+            }
+
+            // Draw the elements for this pass
+            if (activeShader)
+            {
+                activeShader->Activate();
+            }
+
+            int indexCount = static_cast<int>((passVertices.size() / 4) * 6); // 6 indices per quad
+            glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)(passStart * sizeof(GLuint)));
+
+            vertexCount = passEnd;
+
+            vao->Unbind();
+        }
+    }
+
+    // Unbind EBO
+    ebo->Unbind();
+
+    // Clear texture state
+    glActiveTexture(GL_TEXTURE0);
+    activeTextures.clear();
+    textureUnitMap.clear();
+
+    // Clear batches for the next frame
+    layerBatches.clear();
+}
 
 void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> ashader)
 {
