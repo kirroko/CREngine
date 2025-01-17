@@ -13,6 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "AssetManager.h"
+#include "../include/rapidjson/istreamwrapper.h"
+#include "../include/rapidjson/document.h"
 
 namespace Ukemochi
 {
@@ -316,4 +318,49 @@ namespace Ukemochi
 		UME_ENGINE_INFO("Assets completed loading");
 	}
 
+}
+
+void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight)
+{
+	std::ifstream file(jsonPath);
+	if (!file.is_open())
+	{
+		UME_ENGINE_ERROR("Failed to open JSON file: {0}", jsonPath);
+		return;
+	}
+
+	rapidjson::IStreamWrapper isw(file);
+	rapidjson::Document document;
+	document.ParseStream(isw);
+
+	if (document.HasMember("frames"))
+	{
+		const auto& frames = document["frames"];
+		for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
+		{
+			const std::string textureName = it->name.GetString();
+			const auto& frame = it->value["frame"];
+
+			// Extract UV coordinates
+			UV uv;
+			uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
+			uv.vMin = static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight;
+
+			uv.uMax = uv.uMin + static_cast<GLfloat>(frame["w"].GetInt()) / atlasWidth;
+			uv.vMax = uv.vMin + static_cast<GLfloat>(frame["h"].GetInt()) / atlasHeight;
+
+			// Store UV
+			uvMapping[textureName] = uv;
+		}
+	}
+}
+
+void AssetManager::loadSpriteSheet(const std::string& atlasPath)
+{
+	spriteSheetTexture = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+}
+
+void AssetManager::bindSpriteSheet()
+{
+	spriteSheetTexture->Bind();
 }

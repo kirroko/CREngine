@@ -27,6 +27,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
+std::string getSpriteNameFromPath(const std::string& texturePath)
+{
+	return std::filesystem::path(texturePath).filename().string();
+}
 /*!
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
@@ -694,6 +698,9 @@ void Renderer::render()
 			}
 
 			int mappedTextureUnit = textureIDMap[textureID];
+
+			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
+			std::cout << spriteName << std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
 			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation), spriteRenderer.layer);

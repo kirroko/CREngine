@@ -46,7 +46,26 @@ namespace Ukemochi
 		//string storing the directory of the assets folder
 		std::string asset_dir{ "../Assets" };
 
+		struct UV {
+			GLfloat uMin, vMin;
+			GLfloat uMax, vMax;
+		};
+
+		std::unordered_map<std::string, UV> uvMapping;
+		void parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight);
+
+		GLuint atlasTextureID;
+		void loadSpriteSheet(const std::string& atlasPath);
+		std::unique_ptr<Texture> spriteSheetTexture;
 	public:
+
+		const UV& getUV(const std::string& textureName) 
+		{
+			return uvMapping.at(textureName);
+		}
+
+		void bindSpriteSheet();
+
 		/*!
 		* @brief Constructs the AssetManager Class
 		*/

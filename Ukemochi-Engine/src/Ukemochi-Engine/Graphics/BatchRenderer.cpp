@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "VBO.h"
 #include "VAO.h"
 #include "Texture.h"
+#include "Ukemochi-Engine/ECS/ECS.h"
 
  /*!
   * @brief Constructs a new BatchRenderer2D object.
@@ -243,6 +244,76 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer)
+{
+    // Check if the batch is full and flush it
+    if (vertices.size() >= maxSprites * 4)
+    {
+        std::cout << "Reached maxSprites in batch, flushing..." << std::endl;
+        flush();
+        beginBatch();
+    }
+    // After fixing the ECS call, i need to add the sprite sheet to scene manager and initialize the stuff there *********
+    
+    // Retrieve UV coordinates for the sprite from AssetManager
+    const auto& uv = ECS::GetInstance().GetSystem<AssetManager>()->getUV(spriteName);
+
+    // Predefined atlas texture ID (we assume it's bound during batch rendering)
+    GLint atlasTextureID = 0;
+
+    // Calculate sine and cosine for the rotation angle
+    float cosTheta = cos(rotation);
+    float sinTheta = sin(rotation);
+
+    // Define the four corners of the sprite relative to its center
+    glm::vec2 halfSize = size * 0.5f;
+
+    glm::vec2 bottomLeft(-halfSize.x, -halfSize.y);
+    glm::vec2 bottomRight(halfSize.x, -halfSize.y);
+    glm::vec2 topRight(halfSize.x, halfSize.y);
+    glm::vec2 topLeft(-halfSize.x, halfSize.y);
+
+    // Apply rotation to each corner
+    bottomLeft = glm::vec2(
+        cosTheta * bottomLeft.x - sinTheta * bottomLeft.y,
+        sinTheta * bottomLeft.x + cosTheta * bottomLeft.y
+    );
+
+    bottomRight = glm::vec2(
+        cosTheta * bottomRight.x - sinTheta * bottomRight.y,
+        sinTheta * bottomRight.x + cosTheta * bottomRight.y
+    );
+
+    topRight = glm::vec2(
+        cosTheta * topRight.x - sinTheta * topRight.y,
+        sinTheta * topRight.x + cosTheta * topRight.y
+    );
+
+    topLeft = glm::vec2(
+        cosTheta * topLeft.x - sinTheta * topLeft.y,
+        sinTheta * topLeft.x + cosTheta * topLeft.y
+    );
+
+    // Translate rotated vertices to the actual position of the sprite
+    glm::vec3 pos1 = glm::vec3(bottomLeft + glm::vec2(position.x, position.y), position.z); // Bottom-left
+    glm::vec3 pos2 = glm::vec3(bottomRight + glm::vec2(position.x, position.y), position.z); // Bottom-right
+    glm::vec3 pos3 = glm::vec3(topRight + glm::vec2(position.x, position.y), position.z); // Top-right
+    glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
+
+    // Create vertices with UV coordinates from the atlas
+    Vertex v1 = { pos1, color, {uv.uMin, uv.vMin}, atlasTextureID };
+    Vertex v2 = { pos2, color, {uv.uMax, uv.vMin}, atlasTextureID };
+    Vertex v3 = { pos3, color, {uv.uMax, uv.vMax}, atlasTextureID };
+    Vertex v4 = { pos4, color, {uv.uMin, uv.vMax}, atlasTextureID };
+
+    // Add vertices to the appropriate layer
+    layerBatches[layer].push_back(v1);
+    layerBatches[layer].push_back(v2);
+    layerBatches[layer].push_back(v3);
+    layerBatches[layer].push_back(v4);
+}
+
+
 void BatchRenderer2D::flush()
 {
     for (const auto& [layer, layerVertices] : layerBatches) 
@@ -279,47 +350,6 @@ void BatchRenderer2D::flush()
     // Clear batches for the next frame
     layerBatches.clear();
 }
-
-
-/*!
- * @brief Flushes the batch, rendering all sprites in the vertex buffer.
- */
-//void BatchRenderer2D::flush()
-//{
-//    if (vertices.empty())
-//    {
-//        //std::cout << "No vertices to flush." << std::endl;
-//        return;
-//    }
-//
-//    // Bind VAO and Shader
-//    vao->Bind();
-//
-//    // Update VBO data with current vertices
-//    vbo->Bind();
-//
-//    // Print vertex data for debugging
-//    vbo->UpdateData(vertices.data(), vertices.size() * sizeof(Vertex));
-//    vbo->Unbind();
-//
-//    // Bind EBO
-//    ebo->Bind();
-//    //shader->Activate();
-//
-//    if (activeShader) {
-//        activeShader->Activate(); // Use the active shader
-//    }
-//
-//    // Calculate the correct index count based on the number of quads in the batch
-//    int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
-//
-//    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-//
-//    vao->Unbind();
-//    ebo->Unbind();
-//
-//    vertices.clear();
-//}
 
 void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> ashader)
 {
