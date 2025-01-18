@@ -12,13 +12,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
+#include "../ECS/ECS.h"
+#include "../Asset Manager/AssetManager.h"
 #include "BatchRenderer.h"
 #include "shaderClass.h"
 #include "EBO.h"
 #include "VBO.h"
 #include "VAO.h"
 #include "Texture.h"
-#include "Ukemochi-Engine/ECS/ECS.h"
+
 
  /*!
   * @brief Constructs a new BatchRenderer2D object.
@@ -256,7 +258,11 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     // After fixing the ECS call, i need to add the sprite sheet to scene manager and initialize the stuff there *********
     
     // Retrieve UV coordinates for the sprite from AssetManager
-    const auto& uv = ECS::GetInstance().GetSystem<AssetManager>()->getUV(spriteName);
+    const auto& spriteInfo = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(spriteName);
+    const auto& uv = spriteInfo.uv;
+
+    // May not be here
+    ECS::GetInstance().GetSystem<AssetManager>()->bindSpriteSheet(spriteInfo.spriteSheetName);
 
     // Predefined atlas texture ID (we assume it's bound during batch rendering)
     GLint atlasTextureID = 0;

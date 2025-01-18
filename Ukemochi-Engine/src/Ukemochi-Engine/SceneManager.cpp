@@ -214,6 +214,15 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
+
+        auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
+
+        assetManager->loadSpriteSheet("spritesheet_1", "../Assets/Textures/Environment/Environment_Part1.png");
+        assetManager->parseAtlasJSON("../Assets/Textures/Environment/Environment_Part1.json", 1880, 1880, "spritesheet_1");
+
+        assetManager->loadSpriteSheet("spritesheet_2", "../Assets/Textures/Environment/Environment_Part2.png");
+        assetManager->parseAtlasJSON("../Assets/Textures/Environment/Environment_Part2.json", 1880, 1880, "spritesheet_2");
+
     }
 
     /*!***********************************************************************

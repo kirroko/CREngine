@@ -320,7 +320,7 @@ namespace Ukemochi
 
 }
 
-void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight)
+void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight, const std::string& sheetName)
 {
 	std::ifstream file(jsonPath);
 	if (!file.is_open())
@@ -338,7 +338,7 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, i
 		const auto& frames = document["frames"];
 		for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
 		{
-			const std::string textureName = it->name.GetString();
+			const std::string spriteName = it->name.GetString();
 			const auto& frame = it->value["frame"];
 
 			// Extract UV coordinates
@@ -350,17 +350,20 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, i
 			uv.vMax = uv.vMin + static_cast<GLfloat>(frame["h"].GetInt()) / atlasHeight;
 
 			// Store UV
-			uvMapping[textureName] = uv;
+			spriteData[spriteName] = { uv, sheetName };
 		}
 	}
 }
 
-void AssetManager::loadSpriteSheet(const std::string& atlasPath)
+void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
 {
-	spriteSheetTexture = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	spriteSheets[sheetName] = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 }
 
-void AssetManager::bindSpriteSheet()
+void AssetManager::bindSpriteSheet(const std::string& sheetName) 
 {
-	spriteSheetTexture->Bind();
+	if (spriteSheets.find(sheetName) != spriteSheets.end()) 
+	{
+		spriteSheets[sheetName]->Bind();
+	}
 }

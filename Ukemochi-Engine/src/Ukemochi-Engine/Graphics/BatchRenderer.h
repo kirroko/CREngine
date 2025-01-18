@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #ifndef BATCH_RENDERER_H
-#define BATHC_RENDERER_H
+#define BATCH_RENDERER_H
 
 #include "PreCompile.h" 
 #include "../vendor/glm/glm/glm.hpp"
@@ -24,6 +24,8 @@ class VBO;
 class EBO;
 class Shader;
 class Texture;
+
+
 
 /*!
  * @struct Vertex
@@ -79,7 +81,7 @@ public:
 	 */
 	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation = 0.0f);
 	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer);
-	void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer);
+	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer);
 
 	void setActiveShader(std::shared_ptr<Shader> shader); // Update method signature
 

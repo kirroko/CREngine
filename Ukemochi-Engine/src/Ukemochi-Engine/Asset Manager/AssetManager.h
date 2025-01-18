@@ -51,20 +51,27 @@ namespace Ukemochi
 			GLfloat uMax, vMax;
 		};
 
-		std::unordered_map<std::string, UV> uvMapping;
-		void parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight);
-
 		GLuint atlasTextureID;
-		void loadSpriteSheet(const std::string& atlasPath);
-		std::unique_ptr<Texture> spriteSheetTexture;
-	public:
+		std::unordered_map<std::string, std::unique_ptr<Texture>> spriteSheets;
 
-		const UV& getUV(const std::string& textureName) 
+		struct SpriteInfo {
+			UV uv;
+			std::string spriteSheetName;
+		};
+		std::unordered_map<std::string, SpriteInfo> spriteData;
+
+	public:
+		void parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight, const std::string& sheetName);
+
+		void loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath);
+
+		const SpriteInfo& getSpriteData(const std::string& spriteName) 
 		{
-			return uvMapping.at(textureName);
+			return spriteData.at(spriteName);
 		}
 
-		void bindSpriteSheet();
+
+		void bindSpriteSheet(const std::string& sheetName);
 
 		/*!
 		* @brief Constructs the AssetManager Class
