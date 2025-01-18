@@ -1,0 +1,100 @@
+{"frames": {
+
+"env_base_block_1.png":
+{
+	"frame": {"x":1460,"y":1401,"w":363,"h":406},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":363,"h":406},
+	"sourceSize": {"w":363,"h":406}
+},
+"env_base_block_2.png":
+{
+	"frame": {"x":1575,"y":1013,"w":386,"h":316},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":386,"h":316},
+	"sourceSize": {"w":386,"h":316}
+},
+"env_base_box_1.png":
+{
+	"frame": {"x":1575,"y":611,"w":311,"h":400},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":311,"h":400},
+	"sourceSize": {"w":311,"h":400}
+},
+"env_base_box_2.png":
+{
+	"frame": {"x":1460,"y":1809,"w":162,"h":335},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":162,"h":335},
+	"sourceSize": {"w":162,"h":335}
+},
+"env_base_bush_4.png":
+{
+	"frame": {"x":1022,"y":1,"w":753,"h":608},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":753,"h":608},
+	"sourceSize": {"w":753,"h":608}
+},
+"env_base_cave-drawings.png":
+{
+	"frame": {"x":790,"y":1571,"w":668,"h":418},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":668,"h":418},
+	"sourceSize": {"w":668,"h":418}
+},
+"env_base_rock_8.png":
+{
+	"frame": {"x":394,"y":837,"w":1126,"h":394},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1126,"h":394},
+	"sourceSize": {"w":1126,"h":394}
+},
+"env_base_rock_9.png":
+{
+	"frame": {"x":790,"y":837,"w":732,"h":520},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":732,"h":520},
+	"sourceSize": {"w":732,"h":520}
+},
+"env_base_spotlight_1.png":
+{
+	"frame": {"x":1312,"y":611,"w":731,"h":261},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":731,"h":261},
+	"sourceSize": {"w":731,"h":261}
+},
+"env_base_vine_1.png":
+{
+	"frame": {"x":1,"y":1,"w":1019,"h":834},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1019,"h":834},
+	"sourceSize": {"w":1019,"h":834}
+},
+"env_base_vine_2.png":
+{
+	"frame": {"x":1,"y":837,"w":1143,"h":391},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1143,"h":391},
+	"sourceSize": {"w":1143,"h":391}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "envir.png",
+	"format": "RGBA8888",
+	"size": {"w":1892,"h":1990},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:03ea714eeed9c61e1b794c2420218b2f:9df4e83da89c54c345c031fabc2ed2f7:15854cded1dd76caa8c08bbae052af71$"
+}
+}

@@ -703,7 +703,7 @@ void Renderer::render()
 			std::cout << spriteName << std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation), spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 
