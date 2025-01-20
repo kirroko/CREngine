@@ -76,7 +76,7 @@ namespace Ukemochi
 
 		int collision_flag{};	// Track the collision flags
 		bool is_trigger{false}; // If true, act as a trigger
-								// bool enabled{ true };		   // If true, box collision is enabled
+		// bool enabled{ true };// If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -284,6 +284,10 @@ namespace Ukemochi
 		void *methodInstance = nullptr; // MonoMethod from client script
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Player component structure.
+	*************************************************************************/
 	struct Player
 	{
 		int maxHealth = 100;
@@ -297,6 +301,21 @@ namespace Ukemochi
 		bool isDead = false;
 		bool canAttack = true;
 		bool isAttacking = false;
+	};
+
+	/*!***********************************************************************
+	\brief
+	 Player soul component structure.
+	*************************************************************************/
+	enum SoulType { FISH, WORM, NUM_OF_SOULS };
+	struct PlayerSoul
+	{
+		SoulType current_soul_type;		// The player's current active soul
+		float soul_bars[NUM_OF_SOULS];  // The player's soul bars, used for soul passive attacks
+		int soul_charges[NUM_OF_SOULS]; // The player's soul charges, used for soul abilities
+
+		float soul_decay_rate = 1.f; // The rate of decay for the soul bar
+		float soul_decay_timer = 0.f;
 	};
 
 	/*!***********************************************************************
