@@ -23,6 +23,8 @@ namespace Ukemochi
 	*************************************************************************/
 	const int ROOM_WIDTH = 1920, ROOM_HEIGHT = 1080, PLAYER_OFFSET = 800;
 	const int NUM_OF_ROOMS = 3;
+	const int WAVE_NUMBER = 0;
+	const size_t MAX_WAVE_SIZE = 3;
 
 	/*!***********************************************************************
 	\brief
@@ -33,6 +35,7 @@ namespace Ukemochi
 		int id;
 		std::vector<EntityID> entities;	  // Entities in the room
 		std::vector<EntityID> enemies;	  // Enemies in the room
+		std::vector<int> mobs_in_wave;
 		Vec2 position;					  // Position of the room
 	};
 
@@ -44,6 +47,7 @@ namespace Ukemochi
 	public:
 		std::unordered_map<int, Room> rooms; // Map of room IDs to room data
 		int current_room_id;				 // ID of the current active room
+		int current_room_wave;				 // Current Wave of enemies in the current room
 
 		/*!***********************************************************************
 		\brief

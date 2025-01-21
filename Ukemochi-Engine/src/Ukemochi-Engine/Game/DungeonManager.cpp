@@ -25,7 +25,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::Init()
 	{
+		//change when proper room structure is done
 		current_room_id = 2;
+		current_room_wave = WAVE_NUMBER;
 		player = static_cast<EntityID>(-1);
 
 		InitDungeon();
@@ -101,6 +103,15 @@ namespace Ukemochi
 		// Check if all enemies in the room is gone
 		//if (rooms[current_room_id].enemies.size() <= 0)
 		//	UnlockRoom();
+
+		bool kill_tracker = false; // kill tracker to trigger next wave. Need to link with EnemuManager? to read when enemy is defeated
+
+		
+
+		if (rooms[current_room_id].enemies.size() <= 0)
+		{
+			UnlockRoom();
+		}
 	}
 
 	/*!***********************************************************************
@@ -135,10 +146,30 @@ namespace Ukemochi
 					{
 						// Store all enemies of the same room in the room enemy list
 						rooms[room_id].enemies.push_back(entity);
+
+						//do-while loop to handle multiple waves
+						do						
+						{
+							if (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE)
+							{
+								rooms[room_id].mobs_in_wave[current_room_wave]++;
+								//main goal is just to track addition correctly, leave the loop after successful addition;
+								break;
+							}
+							else
+							{
+								//threshold is hit for the wave, go to the next wave and restart the loop
+								current_room_wave++;
+								continue;
+							}
+						} while (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE);
+							
+						
+						current_room_wave = WAVE_NUMBER;
 					}
 					else if (tag == "Room")
 					{
-						// Store the position of the room
+						// Store the position of the room	
 						auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 						rooms[room_id].position = transform.position;
 					}
@@ -184,13 +215,16 @@ namespace Ukemochi
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
-			// Enable doors
-			if (tag == "LeftDoor" || tag == "RightDoor")
-				GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
+			if(rooms[current_room_id].entities.empty())
+			{
+				// Enable doors
+				if (tag == "LeftDoor" || tag == "RightDoor")
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
 
-			// Disable blocks
-			if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
-				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+				// Disable blocks
+				if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+			}
 		}
 	}
 }
