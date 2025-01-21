@@ -17,11 +17,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /**
+     * @brief Constructor for the Logic System
+     */
     LogicSystem::LogicSystem()
     {
         ScriptingEngine::GetInstance().Init();
     }
 
+    /**
+     * @brief Initialize the Logic System
+     */
     void LogicSystem::Init() const
     {
         for (auto& entity : m_Entities)
@@ -32,6 +38,9 @@ namespace Ukemochi
         }
     }
 
+    /**
+     * @brief Update the Logic System
+     */
     void LogicSystem::Update() const
     {
         for (auto& entity : m_Entities)
@@ -40,20 +49,5 @@ namespace Ukemochi
 
             ScriptingEngine::InvokeMethod(ScriptingEngine::GetObjectFromGCHandle(logic.handle), "Update", false);
         }
-    }
-
-    void LogicSystem::End()
-    {
-        // auto objects = GameObjectManager::GetInstance().GetAllGOs();
-        // for(auto& go : objects)
-        // {
-        //     go->ReleaseHandle();
-        // }
-        // 0x4B45414E - Mono's GC will handle the destruction of the script instance when the domain is unloaded or when the application is closed
-        // for(auto& entity : m_Entities)
-        // {
-        // 	auto& scriptObj = ECS::GetInstance().GetComponent<Script>(entity);
-        // 	
-        // }
     }
 }

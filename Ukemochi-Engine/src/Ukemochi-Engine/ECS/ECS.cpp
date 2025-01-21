@@ -16,6 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/**
+	 * @brief Initialize the ECS
+	 */
 	void ECS::Init()
 	{
 		m_ComponentManager = std::make_unique<ComponentManager>();
@@ -23,23 +26,39 @@ namespace Ukemochi
 		m_SystemManager = std::make_unique<SystemManager>();
 	}
 
-	EntityID ECS::CreateEntity()
+	/**
+	 * @brief Create an entity
+	 * @return The ID of the created entity
+	 */
+	EntityID ECS::CreateEntity() const
 	{
 		return m_EntityManager->CreateEntity();
 	}
 
-	void ECS::DestroyEntity(EntityID entity)
+	/**
+	 * @brief Destroy an entity
+	 * @param entity The entity to destroy
+	 */
+	void ECS::DestroyEntity(EntityID entity) const
 	{
 		m_EntityManager->DestroyEntity(entity);
 		m_ComponentManager->EntityDestroyed(entity);
 		m_SystemManager->EntityDestroyed(entity);
 	}
 
+	/**
+	 * @brief Reload the entity manager
+	 */
 	void ECS::ReloadEntityManager()
 	{
 		m_EntityManager.reset(new EntityManager());
 	}
 
+	/**
+	 * @brief Clone an entity
+	 * @param entity The entity to clone
+	 * @return The ID of the new entity
+	 */
 	EntityID ECS::CloneEntity(EntityID entity)
 	{
 		EntityID newEntity = m_EntityManager->CreateEntity();

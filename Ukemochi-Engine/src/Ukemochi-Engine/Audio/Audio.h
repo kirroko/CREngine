@@ -69,7 +69,7 @@ namespace Ukemochi
         \return
             True if the sound was successfully deleted, false otherwise.
         *************************************************************************/
-        bool DeleteSound(int index, const char* filePath, std::string type);
+        bool DeleteSound(int index, std::string type);
 
         /*!***********************************************************************
         \brief

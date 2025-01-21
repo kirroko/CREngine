@@ -40,15 +40,33 @@ namespace Ukemochi
 		ECS(ECS&&) = delete;
 		ECS& operator=(ECS&&) = delete;
 		
-		// Create pointers to each manager
+		/**
+		 * @brief Initialize the ECS
+		 */
 		void Init();
 
-		EntityID CreateEntity();
+		/**
+		 * @brief Create an entity
+		 * @return The ID of the created entity
+		 */
+		EntityID CreateEntity() const;
 
+		/**
+		 * @brief Reload the entity manager
+		 */
 		void ReloadEntityManager();
 
-		void DestroyEntity(EntityID entity);
+		/**
+		 * @brief Destroy an entity
+		 * @param entity The entity to destroy
+		 */
+		void DestroyEntity(EntityID entity) const;
 
+		/**
+		 * @brief Clone an entity
+		 * @param entity The entity to clone
+		 * @return The ID of the cloned entity
+		 */
 		EntityID CloneEntity(EntityID entity);
 
 		/**
@@ -73,26 +91,62 @@ namespace Ukemochi
 		template<typename T>
 		void AddComponent(EntityID entity, T component);
 
+		/**
+		 * @brief Remove a component from an entity.
+		 * @tparam T The component type to remove
+		 * @param entity The entity to remove the component from
+		 */
 		template<typename T>
-		void RemoveComponent(EntityID entity);
+		void RemoveComponent(EntityID entity) const;
 
+		/**
+		 * @brief Get a reference to a component of type T for an entity.
+		 * @tparam T The component type to get
+		 * @param entity The entity to get the component from
+		 * @return A reference to the component
+		 */
 		template<typename T>
-		T& GetComponent(EntityID entity);
+		T& GetComponent(EntityID entity) const;
 
+		/**
+		 * @brief Get a component type ID
+		 * @tparam T The component type to get the ID of
+		 * @return The component type ID
+		 */
 		template<typename T>
-		ComponentTypeID GetComponentType();
+		ComponentTypeID GetComponentType() const;
 
-		// System methods
+		/**
+		 * @brief Register a system with the ECS
+		 * @tparam T The system type to register
+		 * @return A shared pointer to the registered system
+		 */
 		template<typename T>
-		std::shared_ptr<T> RegisterSystem();
+		std::shared_ptr<T> RegisterSystem() const;
 
+		/**
+		 * @brief Get a system from the ECS
+		 * @tparam T The system type to get
+		 * @return A shared pointer to the system
+		 */
 		template<typename T>
-		std::shared_ptr<T> GetSystem();
+		std::shared_ptr<T> GetSystem() const;
 
+		/**
+		 * @brief Set the signature of a system
+		 * @tparam T The system type to set the signature of
+		 * @param signature The signature to set
+		 */
 		template<typename T>
-		void SetSystemSignature(SignatureID signature);
-
-		// Manage and verify the relationship between entity and their components within ECS
+		void SetSystemSignature(SignatureID signature) const;
+		
+		/**
+		 * @brief Check if an entity has a component
+		 * Manage and verify the relationship between entity and their components within ECS
+		 * @tparam T The component type to check for
+		 * @param entity The entity to check
+		 * @return True if the entity has the component, false otherwise
+		 */
 		template<typename T>
 		bool HasComponent(EntityID entity) const
 		{

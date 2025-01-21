@@ -21,9 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Vector2D.h"  // for Vec2 struct
 #include "../Audio/Audio.h"	   // for Audio class
 
-// for enemy
-#include "../FrameController.h"
-
 
 namespace Ukemochi
 {
@@ -34,7 +31,7 @@ namespace Ukemochi
 	struct Transform
 	{
 		Mtx44 transform_matrix;
-		Vec2 position;
+		Vec3 position;
 		float rotation = 0.f; // TODO: Change to Quaternion?
 		Vec2 scale;
 	};
@@ -46,7 +43,7 @@ namespace Ukemochi
 	struct Rigidbody2D
 	{
 		// Linear Properties
-		Vec2 position{};
+		Vec3 position{};
 		Vec2 velocity{};
 		Vec2 acceleration{};
 		Vec2 force{};
@@ -267,7 +264,8 @@ namespace Ukemochi
 	{
 		std::string texturePath{};				// The path acting as a key to the texture
 		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX; // Draw as BOX | Circle
-		GLuint textureID = 0;					// The texture ID, to be set during runtime
+		//GLuint textureID = 0;					// The texture ID, to be set during runtime
+		int layer = 0;							// The layer to render the sprite on
 		bool animated = false;					// Is the object animated?
 
 		bool flipX = false;

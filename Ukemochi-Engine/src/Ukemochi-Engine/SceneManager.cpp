@@ -158,11 +158,8 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerLoad()
     {
-        //load all assest
-		UME_ENGINE_TRACE("Loading Assets...");
-
         //load Asset Manager Texture
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        /*ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
@@ -171,7 +168,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
 		// ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
@@ -204,6 +201,10 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerInit()
     {
+        //load all assest
+        UME_ENGINE_TRACE("Loading Assets...");
+        ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
+
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
@@ -487,7 +488,7 @@ namespace Ukemochi
         {
             GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
         }
-        ECS::GetInstance().GetSystem<LogicSystem>()->End();
+
 		UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
@@ -614,9 +615,10 @@ namespace Ukemochi
 
                 if (componentName == "Transform")
                 {
-                    Vec2 position(
+                    Vec3 position(
                         componentData["Position"][0].GetFloat(),
-                        componentData["Position"][1].GetFloat()
+                        componentData["Position"][1].GetFloat(),
+						componentData["Position"][2].GetFloat()
                     );
                     float rotation = componentData["Rotation"].GetFloat();
                     Vec2 scale(
@@ -631,9 +633,10 @@ namespace Ukemochi
                 }
                 else if (componentName == "Rigidbody2D")
                 {
-                    Vec2 position(
+                    Vec3 position(
                         componentData["Position"][0].GetFloat(),
-                        componentData["Position"][1].GetFloat()
+                        componentData["Position"][1].GetFloat(),
+						componentData["Position"][2].GetFloat()
                     );
                     Vec2 velocity(
                         componentData["Velocity"][0].GetFloat(),
@@ -710,7 +713,7 @@ namespace Ukemochi
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
-                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath, ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
 					// if (tag == "Player")
 					// {
 					// 	newObject.GetComponent<SpriteRender>().animated = true;
@@ -889,6 +892,7 @@ namespace Ukemochi
                 Value position(rapidjson::kArrayType);
                 position.PushBack(transform.position.x, allocator);
                 position.PushBack(transform.position.y, allocator);
+                position.PushBack(transform.position.z, allocator);
                 transformComponent.AddMember("Position", position, allocator);
 
                 transformComponent.AddMember("Rotation", transform.rotation, allocator);
@@ -908,7 +912,7 @@ namespace Ukemochi
 
                 const auto& rigidbody = gameobject->GetComponent<Rigidbody2D>();
                 Value position(rapidjson::kArrayType);
-                position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+                position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator).PushBack(rigidbody.position.z, allocator);
                 rigidbodyComponent.AddMember("Position", position, allocator);
 
                 Value velocity(rapidjson::kArrayType);
@@ -992,6 +996,8 @@ namespace Ukemochi
                 spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator),
                                                 allocator);
                 spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
+
+                spriteRenderComponent.AddMember("Layer", spriteRender.layer, allocator);
 
                 componentsArray.PushBack(spriteRenderComponent, allocator);
             }
@@ -1190,6 +1196,7 @@ namespace Ukemochi
             Value position(rapidjson::kArrayType);
             position.PushBack(transform.position.x, allocator);
             position.PushBack(transform.position.y, allocator);
+            position.PushBack(transform.position.z, allocator);
             transformComponent.AddMember("Position", position, allocator);
 
             transformComponent.AddMember("Rotation", transform.rotation, allocator);
@@ -1209,7 +1216,7 @@ namespace Ukemochi
 
             const auto& rigidbody = prefabObj->GetComponent<Rigidbody2D>();
             Value position(rapidjson::kArrayType);
-            position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+            position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator).PushBack(rigidbody.position.z, allocator);
             rigidbodyComponent.AddMember("Position", position, allocator);
 
             Value velocity(rapidjson::kArrayType);
@@ -1291,6 +1298,7 @@ namespace Ukemochi
             const auto& spriteRender = prefabObj->GetComponent<SpriteRender>();
             spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator), allocator);
             spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
+            spriteRenderComponent.AddMember("Layer", spriteRender.layer, allocator);
 
             componentsArray.PushBack(spriteRenderComponent, allocator);
         }

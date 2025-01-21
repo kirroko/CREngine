@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    /**
+     * @brief update the PlayerManager
+     */
     void PlayerManager::Update() const
     {
         for (auto& entity : m_Entities)
@@ -135,20 +138,31 @@ namespace Ukemochi
                         {
                         case 1:
                             anim.SetAnimationImmediately("Attack1");
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                audioM.GetSFXindex("Pattack1")) && audioM.GetSFXindex("Pattack1") != -1)
+                            if (audioM.GetSFXindex("Pattack1") != -1)
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                    audioM.GetSFXindex("Pattack1")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
+                                }
                             }
+           
                             break;
                         case 2:
                             anim.SetAnimationImmediately("Attack2");
-                            audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                audioM.GetSFXindex("Pattack2")) && audioM.GetSFXindex("Pattack2") != -1)
+                            if (audioM.GetSFXindex("Pattack1") != -1)
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
+                                audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
                             }
+                            if (audioM.GetSFXindex("Pattack2") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                    audioM.GetSFXindex("Pattack2")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
+                                }
+                            }
+
                             break;
                         case 3:
                             anim.SetAnimationImmediately("Attack3");
@@ -169,16 +183,20 @@ namespace Ukemochi
             if (sr.flipX)
             {
                 auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec2{trans.position.x + trans.scale.x, trans.position.y};
+                knife_trans.position = Vec3{trans.position.x + trans.scale.x, trans.position.y,0};
             }
             else
             {
                 auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec2{trans.position.x - trans.scale.x, trans.position.y};
+                knife_trans.position = Vec3{trans.position.x - trans.scale.x, trans.position.y,0};
             }
         }
     }
 
+    /**
+     * @brief Handle collision with the player
+     * @param id The ID of the entity that collided with the player
+     */
     void PlayerManager::OnCollisionEnter(const EntityID& id) const
     {
         UME_ENGINE_INFO("Player got hit by {0}", GameObjectManager::GetInstance().GetGO(id)->GetName());

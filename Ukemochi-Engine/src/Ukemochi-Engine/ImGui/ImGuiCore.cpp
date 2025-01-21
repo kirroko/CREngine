@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       ImGuiCore.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (95%)
-\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (5%)
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (80%)
+\co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
+\co-authors WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (10%)
 \date       Sept 25, 2024
 \brief      This file contains the implementation of the UseImGui class,
             which manages the initialization, rendering, and event handling
@@ -307,14 +308,13 @@ namespace Ukemochi
         if (m_SpriteFlag)
         {
             // Set up the texture details
-            if (ECS::GetInstance().GetSystem<AssetManager>()->texture_list.find(m_SpritePath) !=
-                ECS::GetInstance().GetSystem<AssetManager>()->texture_list.end())
+            if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(m_SpritePath))
             {
                 std::filesystem::path filePath;
                 showGrid = true;
-                texture = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->ID;
-                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->width;
-                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->texture_list[m_SpritePath]->height;
+                texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->ID;
+                textureWidth = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->width;
+                textureHeight = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(m_SpritePath)->height;
                 filePath = m_SpritePath;
                 fileName = filePath.stem().string();
                 filePath.replace_extension(".json");
@@ -1729,12 +1729,13 @@ namespace Ukemochi
                 ImGui::Text("Position");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                    //if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                    if(ImGui::SliderFloat3("##PositionSlider", &transform.position.x,-800.0f,1500.f))
                         modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat2("##PositionInput", &transform.position.x))
+                    if (ImGui::InputFloat3("##PositionInput", &transform.position.x))
                         modified = true;
                 }
 
@@ -1883,6 +1884,9 @@ namespace Ukemochi
                     }
                     ImGui::EndDragDropTarget();
                 }
+
+                ImGui::Text("Sortting Layer");
+                ImGui::InputInt("##Sorting Layer", &sprite.layer);
 
                 // Error Popup for invalid file type
                 if (ImGui::BeginPopup("InvalidTextureFileType"))
@@ -2321,7 +2325,7 @@ namespace Ukemochi
         // Begin a dockable window
         ImGui::Begin("Entity Management", nullptr, ImGuiWindowFlags_None);
 
-        static char filePath[256] = "../Assets/Prefabs/Player.json";
+        static char filePath[256] = "";
         // Sync the selectedEntityID with the Renderer's picked entity
         static int selectedEntityID = -1;
         auto &renderer = *ECS::GetInstance().GetSystem<Renderer>();
@@ -2387,7 +2391,9 @@ namespace Ukemochi
 
         // Rest of your existing code for entity creation and management...
         ImGui::Text("Entity Management");
+        ImGui::BeginDisabled(true); // Start disabled state
         ImGui::InputText("Object Data File", filePath, IM_ARRAYSIZE(filePath));
+        ImGui::EndDisabled(); // End disabled state
 
         if (ImGui::Button("Create Entity"))
         {

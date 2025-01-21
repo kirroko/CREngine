@@ -171,7 +171,7 @@ namespace Ukemochi
     \return
         True if the sound was successfully deleted, false otherwise.
     *************************************************************************/
-    bool Audio::DeleteSound(int index, const char* filePath, std::string type)
+    bool Audio::DeleteSound(int index, std::string type)
     {
         if (type == "SFX")
         {
