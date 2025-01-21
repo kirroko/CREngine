@@ -106,7 +106,8 @@ namespace Ukemochi
 
 		bool kill_tracker = false; // kill tracker to trigger next wave. Need to link with EnemuManager? to read when enemy is defeated
 
-		
+		//if kill tracker toggles to true decrement wave number then reset to false;
+		//if mobs in wave reachs 0 -> trigger some way to spawn next wave(need to find/ create spawning logic)
 
 		if (rooms[current_room_id].enemies.size() <= 0)
 		{
