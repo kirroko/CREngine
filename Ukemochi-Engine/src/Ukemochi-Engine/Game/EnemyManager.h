@@ -94,6 +94,7 @@ namespace Ukemochi
         std::vector<EntityID> enemyObjects;
         std::vector<EntityID> environmentObjects;
         int nearestID = -1;
+        int numEnemyTarget;
     };
 
 }

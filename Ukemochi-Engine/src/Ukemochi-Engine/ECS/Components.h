@@ -310,6 +310,7 @@ namespace Ukemochi
 		{
 			ROAM,
 			CHASE,
+			STANDBY,
 			ATTACK,
 			DEAD,
 		};
@@ -337,6 +338,8 @@ namespace Ukemochi
 		bool isCollide;
 		float atktimer = 5.0f;
 		bool isDead = false;
+		bool isWithPlayer = false;
+		float timeSinceTargetReached = 0.f;
 
 		Enemy() = default;
 

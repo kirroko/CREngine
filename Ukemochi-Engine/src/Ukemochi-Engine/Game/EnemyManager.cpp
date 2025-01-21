@@ -31,6 +31,7 @@ namespace Ukemochi
         std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed the random generator
         enemyObjects.clear();
         environmentObjects.clear();
+        numEnemyTarget = 0;
 
 		for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
 		{
@@ -99,6 +100,10 @@ namespace Ukemochi
                 }
                 object->SetActive(false);
                 enemycomponent.isDead = true;
+                if (enemycomponent.isWithPlayer && numEnemyTarget>=1)
+                {
+                    numEnemyTarget--;
+                }
                 ++it;
                 continue;
             }
@@ -135,7 +140,6 @@ namespace Ukemochi
             // Skip collision handling for dead enemies
             if (enemycomponent.isCollide)
             {
-
                 if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj),300.f) && enemycomponent.state == enemycomponent.ROAM)
                 {
                     enemycomponent.nearestObj = -1;
@@ -173,9 +177,18 @@ namespace Ukemochi
                         enemyphysic.velocity.x = 0.0f;
                         enemyphysic.velocity.y = 0.0f;
                         enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                        
-                        enemycomponent.prevObject = enemycomponent.nearestObj;
-                        enemycomponent.nearestObj = -1;
+                        // Start the timer for 1 second if not already running
+                        if (enemycomponent.timeSinceTargetReached < 1.0f) {
+                            enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
+                        }
+                        else {
+                            // Timer has reached 1 second, perform the object updates
+                            enemycomponent.prevObject = enemycomponent.nearestObj;
+                            enemycomponent.nearestObj = -1;
+
+                            // Reset the timer after execution
+                            enemycomponent.timeSinceTargetReached = 0.0f;
+                        }
                     }
                 }
                 else
@@ -215,7 +228,7 @@ namespace Ukemochi
                         enemyphysic.velocity.x = 0.0f;
                         enemyphysic.velocity.y = 0.0f;
                         enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                        enemycomponent.state = enemycomponent.ATTACK;
+                        enemycomponent.state = enemycomponent.STANDBY;
                         break;
                     }
                 }
@@ -225,8 +238,24 @@ namespace Ukemochi
                     enemyphysic.velocity.x = 0.0f;
                     enemyphysic.velocity.y = 0.0f;
                     enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                    enemycomponent.state = enemycomponent.ATTACK;
+                    enemycomponent.state = enemycomponent.STANDBY;
                     break;
+                }
+
+                // Ensure other transitions (like to ROAM) don�t block the ATTACK state
+                if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
+                {
+                    //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
+                    enemycomponent.state = enemycomponent.ROAM;
+                    break;
+                }
+                break;
+
+            case Enemy::STANDBY:
+                if (numEnemyTarget < 1)
+                {
+                    numEnemyTarget++;
+                    enemycomponent.state = enemycomponent.ATTACK;
                 }
 
                 // Ensure other transitions (like to ROAM) don�t block the ATTACK state
