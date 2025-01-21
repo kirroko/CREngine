@@ -217,12 +217,6 @@ namespace Ukemochi
 
         auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
 
-        assetManager->loadSpriteSheet("spritesheet_1", "../Assets/Textures/Environment/Environment_Part1.png");
-        assetManager->parseAtlasJSON("../Assets/Textures/Environment/Environment_Part1.json", 1892, 1990, "spritesheet_1");
-
-        assetManager->loadSpriteSheet("spritesheet_2", "../Assets/Textures/Environment/Environment_Part2.png");
-        assetManager->parseAtlasJSON("../Assets/Textures/Environment/Environment_Part2.json", 1341, 1838, "spritesheet_2");
-
     }
 
     /*!***********************************************************************

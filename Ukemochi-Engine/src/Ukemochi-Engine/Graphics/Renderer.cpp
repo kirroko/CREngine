@@ -449,63 +449,45 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
  */
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
-	// Set textureCount based on the number of unique textures, limited to 32
-	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
 	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
 
-
-	for (int i = 0; i < /*texturePathsOrder.size()*/ texture_order_count && nextAvailableTextureUnit < 32; ++i) {
-		/*const auto& path = texturePathsOrder[i];
-		Texture* texture = textureCache[path];*/
-
+	for (int i = 0; i < texture_order_count && i < 32; ++i) 
+	{
 		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
+
+		// Skip atlas subtextures
+		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path)) 
+		{
+			std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
+			continue;
+		}
+
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
-
-
-		if (texture->ID == 0) {
+		if (!texture || texture->ID == 0) {
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
 			continue;
 		}
 
-		// Check if this texture is already mapped to a unit
+		// Ensure no redundant binding
 		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
-			// New texture, assign to the next available texture unit
 			textureIDMap[texture->ID] = i;
-
-			// Bind the texture to the OpenGL texture unit
-			/*glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
-			glBindTexture(GL_TEXTURE_2D, texture->ID);*/
-
 			textureUnits[i] = i;
 
-			// Increment to the next available texture unit
-			//nextAvailableTextureUnit++;
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, texture->ID);
+
+			std::cout << "Binding texture:\n"
+				<< "  Path: " << path << "\n"
+				<< "  Texture ID: " << texture->ID << "\n"
+				<< "  Assigned Unit: " << i << std::endl;
 		}
 		else {
-			// Texture already mapped, retrieve existing texture unit
 			textureUnits[i] = textureIDMap[texture->ID];
 		}
 	}
-	/*for (int i = 0; i < textureCount; ++i) {
-		const auto& path = texturePathsOrder[i];
-		Texture* texture = textureCache[path];*/
 
-	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureListSize(); i++)
-	{
-		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
-		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
-
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, texture->ID);
-
-		// Verify that the texture is bound to the expected unit
-		GLint boundTexture;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
-
-	}
-	// Pass the array of texture unit indices to the shader uniform array "textures"
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
 }
 

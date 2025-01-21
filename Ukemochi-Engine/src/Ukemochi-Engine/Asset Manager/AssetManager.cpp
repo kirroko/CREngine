@@ -256,7 +256,21 @@ namespace Ukemochi
 				{
 					std::string file_path = to_load.generic_string();
 					std::replace(file_path.begin(), file_path.end(), '\\', '/');
-					addTexture(file_path);
+					if (isAtlasTexture(file_path))
+					{
+						// Derive sheetName from file_path
+						std::string sheetName = file_path.substr(file_path.find_last_of('/') + 1);
+						sheetName = sheetName.substr(0, sheetName.find_last_of('.')); // Remove extension
+
+						// Handle atlas texture
+						std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
+						parseAtlasJSON(json_path, sheetName); 
+					}
+					else
+					{
+						// Handle regular texture
+						addTexture(file_path);
+					}
 				}
 				else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
 				{
@@ -318,10 +332,36 @@ namespace Ukemochi
 		UME_ENGINE_INFO("Assets completed loading");
 	}
 
+	bool AssetManager::isAtlasTexture(const std::string& file_path)
+	{
+		return file_path.find("Environment_Part") != std::string::npos;
+	}
+
+	std::string Ukemochi::AssetManager::getAtlasMetaData(const std::string& atlasPath)
+	{
+		std::filesystem::path jsonPath = atlasPath;
+		jsonPath.replace_extension(".json");
+
+		if (std::filesystem::exists(jsonPath))
+		{
+			return jsonPath.generic_string();
+		}
+		return ""; // Return empty string if no JSON metadata is found
+	}
 }
 
-void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight, const std::string& sheetName)
+void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string& sheetName)
 {
+	int atlasWidth = 0, atlasHeight = 0, channels = 0;
+	std::string atlasFilePath = "../Assets/Textures/Environment/" + sheetName + ".png";
+	stbi_uc* data = stbi_load(atlasFilePath.c_str(), &atlasWidth, &atlasHeight, &channels, 0);
+	if (!data)
+	{
+		UME_ENGINE_ERROR("Failed to load atlas texture: {}", sheetName);
+		return;
+	}
+	stbi_image_free(data); // Free texture data after getting dimensions
+
 	std::ifstream file(jsonPath);
 	if (!file.is_open())
 	{
@@ -349,6 +389,10 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, int atlasWidth, i
 			uv.uMax = uv.uMin + static_cast<GLfloat>(frame["w"].GetInt()) / atlasWidth;
 			uv.vMax = uv.vMin + static_cast<GLfloat>(frame["h"].GetInt()) / atlasHeight;
 
+			std::cout << "UV Coordinates for " << spriteName << ": "
+				<< "uMin=" << uv.uMin << ", vMin=" << uv.vMin
+				<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
+
 			// Store UV
 			spriteData[spriteName] = { uv, sheetName };
 		}
@@ -366,4 +410,28 @@ void AssetManager::bindSpriteSheet(const std::string& sheetName)
 	{
 		spriteSheets[sheetName]->Bind();
 	}
+}
+
+void AssetManager::debugPrintSpriteData() const
+{
+	std::cout << "SpriteData contains the following keys:" << std::endl;
+	for (const auto& [key, value] : spriteData) {
+		std::cout << key << std::endl;
+	}
+}
+
+const AssetManager::SpriteInfo& AssetManager::getSpriteData(const std::string& spriteName)
+{
+	auto it = spriteData.find(spriteName);
+	if (it == spriteData.end()) {
+		std::cerr << "Error: Sprite '" << spriteName << "' not found in spriteData!" << std::endl;
+		throw std::out_of_range("Sprite name not found: " + spriteName);
+	}
+	return it->second;
+}
+
+bool AssetManager::isTextureInAtlas(const std::string& texturePath) const
+{
+	// Check if the texturePath exists as a key in spriteData
+	return spriteData.find(texturePath.substr(texturePath.find_last_of('/') + 1)) != spriteData.end();
 }

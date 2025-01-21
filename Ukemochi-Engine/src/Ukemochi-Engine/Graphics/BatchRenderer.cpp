@@ -255,8 +255,40 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         flush();
         beginBatch();
     }
-    // After fixing the ECS call, i need to add the sprite sheet to scene manager and initialize the stuff there *********
-    
+
+    auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
+
+    // Check if the sprite exists in the atlas
+    if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())
+    {
+        // Handle standalone texture
+        auto texture = assetManager->getTexture(spriteName);
+        // !!!!! stand alone texture are not being read and atlas might not be read as well
+        if (!texture)
+        {
+            std::cerr << "Error: Sprite '" << spriteName << "' not found in atlas or as a standalone texture!" << std::endl;
+            return;
+        }
+
+        // Bind the standalone texture
+        texture->Bind();
+
+        // Create vertices for standalone texture rendering
+        glm::vec3 pos1 = { position.x, position.y, position.z };
+        glm::vec3 pos2 = { position.x + size.x, position.y, position.z };
+        glm::vec3 pos3 = { position.x + size.x, position.y + size.y, position.z };
+        glm::vec3 pos4 = { position.x, position.y + size.y, position.z };
+
+        // Push vertices (using dummy UV coordinates)
+        vertices.push_back({ pos1, color, { 0.0f, 0.0f }, 0 });
+        vertices.push_back({ pos2, color, { 1.0f, 0.0f }, 0 });
+        vertices.push_back({ pos3, color, { 1.0f, 1.0f }, 0 });
+        vertices.push_back({ pos4, color, { 0.0f, 1.0f }, 0 });
+
+        return;
+    }
+
+    ECS::GetInstance().GetSystem<AssetManager>()->debugPrintSpriteData();
     // Retrieve UV coordinates for the sprite from AssetManager
     const auto& spriteInfo = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(spriteName);
     const auto& uv = spriteInfo.uv;

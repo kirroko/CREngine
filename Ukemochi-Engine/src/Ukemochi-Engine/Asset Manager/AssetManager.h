@@ -58,18 +58,22 @@ namespace Ukemochi
 			UV uv;
 			std::string spriteSheetName;
 		};
-		std::unordered_map<std::string, SpriteInfo> spriteData;
+
+		bool isAtlasTexture(const std::string& file_path);
+
+		std::string getAtlasMetaData(const std::string& atlasPath);
 
 	public:
-		void parseAtlasJSON(const std::string& jsonPath, int atlasWidth, int atlasHeight, const std::string& sheetName);
+		std::unordered_map<std::string, SpriteInfo> spriteData;
+		void parseAtlasJSON(const std::string& jsonPath, const std::string& sheetName);
 
 		void loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath);
 
-		const SpriteInfo& getSpriteData(const std::string& spriteName) 
-		{
-			return spriteData.at(spriteName);
-		}
+		void debugPrintSpriteData() const;
 
+		const SpriteInfo& getSpriteData(const std::string& spriteName);
+
+		bool isTextureInAtlas(const std::string& texturePath) const;
 
 		void bindSpriteSheet(const std::string& sheetName);
 
