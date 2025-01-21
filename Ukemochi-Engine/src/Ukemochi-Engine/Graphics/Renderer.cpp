@@ -465,13 +465,15 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		}
 
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
-		if (!texture || texture->ID == 0) {
+		if (!texture || texture->ID == 0) 
+		{
 			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
 			continue;
 		}
 
 		// Ensure no redundant binding
-		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
+		if (textureIDMap.find(texture->ID) == textureIDMap.end()) 
+		{
 			textureIDMap[texture->ID] = i;
 			textureUnits[i] = i;
 
@@ -483,15 +485,14 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 				<< "  Texture ID: " << texture->ID << "\n"
 				<< "  Assigned Unit: " << i << std::endl;
 		}
-		else {
+		else 
+		{
 			textureUnits[i] = textureIDMap[texture->ID];
 		}
 	}
 
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
 }
-
-
 
 /*!
  * @brief Sets up and compiles shaders used by the renderer.

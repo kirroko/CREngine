@@ -67,6 +67,13 @@ namespace Ukemochi
 	*/
 	void AssetManager::addTexture(std::string file_path)
 	{
+		// Skip if the texture is part of an atlas
+		/*if (isTextureInAtlas(file_path))
+		{
+			UME_ENGINE_INFO("Skipping atlas subtexture: {0}", file_path);
+			return;
+		}*/
+
 		if (texture_list.find(file_path) != texture_list.end())
 		{
 			// std::cout << "Texture already exists";
@@ -397,6 +404,8 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string
 			spriteData[spriteName] = { uv, sheetName };
 		}
 	}
+
+	addTexture(atlasFilePath);
 }
 
 void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)

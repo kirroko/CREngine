@@ -263,7 +263,6 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     {
         // Handle standalone texture
         auto texture = assetManager->getTexture(spriteName);
-        // !!!!! stand alone texture are not being read and atlas might not be read as well
         if (!texture)
         {
             std::cerr << "Error: Sprite '" << spriteName << "' not found in atlas or as a standalone texture!" << std::endl;
@@ -273,17 +272,26 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         // Bind the standalone texture
         texture->Bind();
 
-        // Create vertices for standalone texture rendering
+        // Retrieve the texture ID
+        GLint textureID = texture->ID;
+
+        // Define the four corners of the sprite relative to its size
         glm::vec3 pos1 = { position.x, position.y, position.z };
         glm::vec3 pos2 = { position.x + size.x, position.y, position.z };
         glm::vec3 pos3 = { position.x + size.x, position.y + size.y, position.z };
         glm::vec3 pos4 = { position.x, position.y + size.y, position.z };
 
-        // Push vertices (using dummy UV coordinates)
-        vertices.push_back({ pos1, color, { 0.0f, 0.0f }, 0 });
-        vertices.push_back({ pos2, color, { 1.0f, 0.0f }, 0 });
-        vertices.push_back({ pos3, color, { 1.0f, 1.0f }, 0 });
-        vertices.push_back({ pos4, color, { 0.0f, 1.0f }, 0 });
+        // Define proper UV coordinates for standalone textures
+        glm::vec2 uv1 = { 0.0f, 0.0f }; // Bottom-left
+        glm::vec2 uv2 = { 1.0f, 0.0f }; // Bottom-right
+        glm::vec2 uv3 = { 1.0f, 1.0f }; // Top-right
+        glm::vec2 uv4 = { 0.0f, 1.0f }; // Top-left
+
+        // Push vertices for rendering
+        vertices.push_back({ pos1, color, uv1, textureID });
+        vertices.push_back({ pos2, color, uv2, textureID });
+        vertices.push_back({ pos3, color, uv3, textureID });
+        vertices.push_back({ pos4, color, uv4, textureID });
 
         return;
     }
