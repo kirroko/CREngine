@@ -80,6 +80,10 @@ namespace Ukemochi
 			UME_ENGINE_INFO("Texture {0} already exists in list", file_path);
 			return;
 		}
+		else 
+		{
+			std::cout << "Adding texture: " << file_path << " /from addTexture() line 85" << std::endl;
+		}
 
 		std::string extention = file_path.substr(file_path.find_last_of('.') + 1);
 		std::transform(extention.begin(), extention.end(), extention.begin(), ::tolower);
@@ -110,6 +114,8 @@ namespace Ukemochi
 		texture_order.push_back(file_path);
 		texture_list_size++;
 		UME_ENGINE_INFO("Texture {0} added successfully", file_path);
+
+		std::cout << "Loaded texture: " << file_path << ", Texture ID: " << texture->ID << std::endl;
 	}
 
 	/*!
@@ -118,14 +124,28 @@ namespace Ukemochi
 	*/
 	std::shared_ptr<Texture> AssetManager::getTexture(std::string key_name)
 	{
-		if (texture_list.find(key_name) != texture_list.end())
+		/*for (const auto& [key, value] : texture_list)
 		{
-			return texture_list.find(key_name)->second;
-		}
-		else
+			std::cout << "Texture Key: " << key << ", Texture ID: " << value->ID << std::endl;
+		}*/
+
+		auto it = texture_list.find(key_name);
+		if (it != texture_list.end()) 
 		{
-			return nullptr;
+			return it->second;
 		}
+
+		// Try matching by file name
+		for (const auto& [path, texture] : texture_list) 
+		{
+			if (path.substr(path.find_last_of('/') + 1, path.find_last_of('.') - path.find_last_of('/') - 1) == key_name)
+			{
+				return texture;
+			}
+		}
+
+		std::cerr << "Texture not found: " << key_name << std::endl;
+		return nullptr;
 	}
 
 	/*!
@@ -396,9 +416,9 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string
 			uv.uMax = uv.uMin + static_cast<GLfloat>(frame["w"].GetInt()) / atlasWidth;
 			uv.vMax = uv.vMin + static_cast<GLfloat>(frame["h"].GetInt()) / atlasHeight;
 
-			std::cout << "UV Coordinates for " << spriteName << ": "
+			/*std::cout << "UV Coordinates for " << spriteName << ": "
 				<< "uMin=" << uv.uMin << ", vMin=" << uv.vMin
-				<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
+				<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;*/
 
 			// Store UV
 			spriteData[spriteName] = { uv, sheetName };

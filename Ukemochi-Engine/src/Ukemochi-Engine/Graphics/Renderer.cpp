@@ -29,7 +29,15 @@ using namespace Ukemochi;
 
 std::string getSpriteNameFromPath(const std::string& texturePath)
 {
-	return std::filesystem::path(texturePath).filename().string();
+	std::string fileName = std::filesystem::path(texturePath).filename().string();
+
+	// Remove the extension if it exists
+	size_t dotIndex = fileName.find_last_of('.');
+	if (dotIndex != std::string::npos) {
+		fileName = fileName.substr(0, dotIndex);
+	}
+
+	return fileName;
 }
 /*!
  * @brief Constructor for the Renderer class.
@@ -683,10 +691,10 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
-			std::cout << spriteName << std::endl;
+			std::cout << spriteName << " from render() line 686" <<std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, mappedTextureUnit, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 

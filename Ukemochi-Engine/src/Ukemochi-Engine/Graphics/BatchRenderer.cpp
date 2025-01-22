@@ -246,7 +246,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
-void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer)
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, GLint textureID, float rotation, int layer)
 {
     // Check if the batch is full and flush it
     if (vertices.size() >= maxSprites * 4)
@@ -273,13 +273,46 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         texture->Bind();
 
         // Retrieve the texture ID
-        GLint textureID = texture->ID;
+      
 
-        // Define the four corners of the sprite relative to its size
-        glm::vec3 pos1 = { position.x, position.y, position.z };
-        glm::vec3 pos2 = { position.x + size.x, position.y, position.z };
-        glm::vec3 pos3 = { position.x + size.x, position.y + size.y, position.z };
-        glm::vec3 pos4 = { position.x, position.y + size.y, position.z };
+        // Calculate sine and cosine for the rotation angle
+        float cosTheta = cos(rotation);
+        float sinTheta = sin(rotation);
+
+        // Define the four corners of the sprite relative to its center
+        glm::vec2 halfSize = size * 0.5f;
+
+        glm::vec2 bottomLeft(-halfSize.x, -halfSize.y);
+        glm::vec2 bottomRight(halfSize.x, -halfSize.y);
+        glm::vec2 topRight(halfSize.x, halfSize.y);
+        glm::vec2 topLeft(-halfSize.x, halfSize.y);
+
+        // Apply rotation to each corner
+        bottomLeft = glm::vec2(
+            cosTheta * bottomLeft.x - sinTheta * bottomLeft.y,
+            sinTheta * bottomLeft.x + cosTheta * bottomLeft.y
+        );
+
+        bottomRight = glm::vec2(
+            cosTheta * bottomRight.x - sinTheta * bottomRight.y,
+            sinTheta * bottomRight.x + cosTheta * bottomRight.y
+        );
+
+        topRight = glm::vec2(
+            cosTheta * topRight.x - sinTheta * topRight.y,
+            sinTheta * topRight.x + cosTheta * topRight.y
+        );
+
+        topLeft = glm::vec2(
+            cosTheta * topLeft.x - sinTheta * topLeft.y,
+            sinTheta * topLeft.x + cosTheta * topLeft.y
+        );
+
+        // Translate rotated vertices to the actual position of the sprite
+        glm::vec3 pos1 = glm::vec3(bottomLeft + glm::vec2(position.x, position.y), position.z); // Bottom-left
+        glm::vec3 pos2 = glm::vec3(bottomRight + glm::vec2(position.x, position.y), position.z); // Bottom-right
+        glm::vec3 pos3 = glm::vec3(topRight + glm::vec2(position.x, position.y), position.z); // Top-right
+        glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
 
         // Define proper UV coordinates for standalone textures
         glm::vec2 uv1 = { 0.0f, 0.0f }; // Bottom-left
@@ -287,16 +320,23 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         glm::vec2 uv3 = { 1.0f, 1.0f }; // Top-right
         glm::vec2 uv4 = { 0.0f, 1.0f }; // Top-left
 
-        // Push vertices for rendering
-        vertices.push_back({ pos1, color, uv1, textureID });
-        vertices.push_back({ pos2, color, uv2, textureID });
-        vertices.push_back({ pos3, color, uv3, textureID });
-        vertices.push_back({ pos4, color, uv4, textureID });
+        // Create vertices
+        Vertex v1 = { pos1, color, {uv1}, textureID };
+        Vertex v2 = { pos2, color, {uv2}, textureID };
+        Vertex v3 = { pos3, color, {uv3}, textureID };
+        Vertex v4 = { pos4, color, {uv4}, textureID };
+
+        // Add vertices to the appropriate layer
+        layerBatches[layer].push_back(v1);
+        layerBatches[layer].push_back(v2);
+        layerBatches[layer].push_back(v3);
+        layerBatches[layer].push_back(v4);
 
         return;
     }
 
-    ECS::GetInstance().GetSystem<AssetManager>()->debugPrintSpriteData();
+
+    //ECS::GetInstance().GetSystem<AssetManager>()->debugPrintSpriteData();
     // Retrieve UV coordinates for the sprite from AssetManager
     const auto& spriteInfo = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(spriteName);
     const auto& uv = spriteInfo.uv;
@@ -304,8 +344,14 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     // May not be here
     ECS::GetInstance().GetSystem<AssetManager>()->bindSpriteSheet(spriteInfo.spriteSheetName);
 
-    // Predefined atlas texture ID (we assume it's bound during batch rendering)
-    GLint atlasTextureID = 0;
+    // Retrieve the texture ID of the atlas
+    auto atlasTexture = assetManager->getTexture(spriteInfo.spriteSheetName);
+    if (!atlasTexture)
+    {
+        std::cerr << "Error: Atlas texture '" << spriteInfo.spriteSheetName << "' not found!" << std::endl;
+        return;
+    }
+    textureID = atlasTexture->ID;
 
     // Calculate sine and cosine for the rotation angle
     float cosTheta = cos(rotation);
@@ -347,10 +393,10 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
 
     // Create vertices with UV coordinates from the atlas
-    Vertex v1 = { pos1, color, {uv.uMin, uv.vMin}, atlasTextureID };
-    Vertex v2 = { pos2, color, {uv.uMax, uv.vMin}, atlasTextureID };
-    Vertex v3 = { pos3, color, {uv.uMax, uv.vMax}, atlasTextureID };
-    Vertex v4 = { pos4, color, {uv.uMin, uv.vMax}, atlasTextureID };
+    Vertex v1 = { pos1, color, {uv.uMin, uv.vMin}, textureID };
+    Vertex v2 = { pos2, color, {uv.uMax, uv.vMin}, textureID };
+    Vertex v3 = { pos3, color, {uv.uMax, uv.vMax}, textureID };
+    Vertex v4 = { pos4, color, {uv.uMin, uv.vMax}, textureID };
 
     // Add vertices to the appropriate layer
     layerBatches[layer].push_back(v1);
