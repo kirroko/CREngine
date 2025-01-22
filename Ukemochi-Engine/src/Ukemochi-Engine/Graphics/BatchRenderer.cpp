@@ -258,6 +258,20 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
 
     auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
 
+    //std::cout << "Checking spriteData for spriteName: " << spriteName << std::endl;
+    //if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())
+    //{
+    //    std::cerr << "Sprite '" << spriteName << "' not found in spriteData." << std::endl;
+
+    //    // Print all keys in spriteData for verification
+    //    for (const auto& [key, value] : assetManager->spriteData)
+    //    {
+    //        std::cout << "Available key in spriteData: " << key << std::endl;
+    //    }
+    //    return;
+    //}
+
+
     // Check if the sprite exists in the atlas
     if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())
     {

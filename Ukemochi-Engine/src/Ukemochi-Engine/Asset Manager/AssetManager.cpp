@@ -357,6 +357,7 @@ namespace Ukemochi
 			}
 		}
 		UME_ENGINE_INFO("Assets completed loading");
+
 	}
 
 	bool AssetManager::isAtlasTexture(const std::string& file_path)
@@ -405,23 +406,33 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string
 		const auto& frames = document["frames"];
 		for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
 		{
+			// Get the sprite name and remove the file extension
 			const std::string spriteName = it->name.GetString();
+			std::string standardizedSpriteName = spriteName.substr(0, spriteName.find_last_of('.'));
+
 			const auto& frame = it->value["frame"];
 
 			// Extract UV coordinates
 			UV uv;
 			uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
-			uv.vMin = static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight;
+			uv.uMax = (static_cast<GLfloat>(frame["x"].GetInt()) + static_cast<GLfloat>(frame["w"].GetInt())) / atlasWidth;
 
-			uv.uMax = uv.uMin + static_cast<GLfloat>(frame["w"].GetInt()) / atlasWidth;
-			uv.vMax = uv.vMin + static_cast<GLfloat>(frame["h"].GetInt()) / atlasHeight;
+			uv.vMax = static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight;
+			uv.vMin = (static_cast<GLfloat>(frame["y"].GetInt()) - static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight;
 
-			/*std::cout << "UV Coordinates for " << spriteName << ": "
+			std::cout << "Atlas Dimensions: " << atlasWidth << "x" << atlasHeight << std::endl;
+			std::cout << "Sprite: " << spriteName
+				<< ", x: " << frame["x"].GetInt()
+				<< ", y: " << frame["y"].GetInt()
+				<< ", w: " << frame["w"].GetInt()
+				<< ", h: " << frame["h"].GetInt() << std::endl;
+
+			std::cout << "UV Coordinates for " << spriteName << ": "
 				<< "uMin=" << uv.uMin << ", vMin=" << uv.vMin
-				<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;*/
+				<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
 
 			// Store UV
-			spriteData[spriteName] = { uv, sheetName };
+			spriteData[standardizedSpriteName] = { uv, sheetName };
 		}
 	}
 
