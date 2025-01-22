@@ -229,10 +229,10 @@ private:
 	*/
 	std::unordered_map<std::string, Texture*> textureCache;
 	std::vector<std::string> texturePathsOrder;
-	std::unordered_map<GLuint, int> textureIDMap;
 	int nextAvailableTextureUnit = 0;
 
 public:
+	std::unordered_map<GLuint, int> textureIDMap;
 	/*!
 	 * @brief Sets up and compiles the shaders used by the renderer.
 	 */

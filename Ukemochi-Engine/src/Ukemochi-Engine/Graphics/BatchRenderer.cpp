@@ -365,7 +365,8 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         std::cerr << "Error: Atlas texture '" << spriteInfo.spriteSheetName << "' not found!" << std::endl;
         return;
     }
-    textureID = atlasTexture->ID;
+
+    textureID = ECS::GetInstance().GetSystem<Renderer>()->textureIDMap[atlasTexture->ID];
 
     // Calculate sine and cosine for the rotation angle
     float cosTheta = cos(rotation);

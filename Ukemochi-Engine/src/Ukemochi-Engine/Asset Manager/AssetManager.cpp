@@ -360,6 +360,7 @@ namespace Ukemochi
 
 	}
 
+	// Update this to be more dynamic
 	bool AssetManager::isAtlasTexture(const std::string& file_path)
 	{
 		return file_path.find("Environment_Part") != std::string::npos;
@@ -413,12 +414,20 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string
 			const auto& frame = it->value["frame"];
 
 			// Extract UV coordinates
-			UV uv;
+			/*UV uv;
 			uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
 			uv.uMax = (static_cast<GLfloat>(frame["x"].GetInt()) + static_cast<GLfloat>(frame["w"].GetInt())) / atlasWidth;
 
 			uv.vMax = static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight;
-			uv.vMin = (static_cast<GLfloat>(frame["y"].GetInt()) - static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight;
+			uv.vMin = (static_cast<GLfloat>(frame["y"].GetInt()) - static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight;*/
+			// Extract UV coordinates
+			UV uv;
+			uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
+			uv.uMax = (static_cast<GLfloat>(frame["x"].GetInt()) + static_cast<GLfloat>(frame["w"].GetInt())) / atlasWidth;
+
+			// Flip the Y-axis for OpenGL
+			uv.vMax = 1.0f - (static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight);
+			uv.vMin = 1.0f - (static_cast<GLfloat>(frame["y"].GetInt()) + static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight;
 
 			std::cout << "Atlas Dimensions: " << atlasWidth << "x" << atlasHeight << std::endl;
 			std::cout << "Sprite: " << spriteName
@@ -472,6 +481,10 @@ const AssetManager::SpriteInfo& AssetManager::getSpriteData(const std::string& s
 
 bool AssetManager::isTextureInAtlas(const std::string& texturePath) const
 {
-	// Check if the texturePath exists as a key in spriteData
-	return spriteData.find(texturePath.substr(texturePath.find_last_of('/') + 1)) != spriteData.end();
+	// Extract the file name without the extension
+	std::string fileName = texturePath.substr(texturePath.find_last_of('/') + 1);
+	fileName = fileName.substr(0, fileName.find_last_of('.')); // Remove the extension
+
+	// Check if the fileName exists as a key in spriteData
+	return spriteData.find(fileName) != spriteData.end();
 }
