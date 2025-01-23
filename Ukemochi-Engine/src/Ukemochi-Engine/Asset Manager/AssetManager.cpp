@@ -82,7 +82,7 @@ namespace Ukemochi
 		}
 		else 
 		{
-			std::cout << "Adding texture: " << file_path << " /from addTexture() line 85" << std::endl;
+			//std::cout << "Adding texture: " << file_path << " /from addTexture() line 85" << std::endl;
 		}
 
 		std::string extention = file_path.substr(file_path.find_last_of('.') + 1);
@@ -115,7 +115,7 @@ namespace Ukemochi
 		texture_list_size++;
 		UME_ENGINE_INFO("Texture {0} added successfully", file_path);
 
-		std::cout << "Loaded texture: " << file_path << ", Texture ID: " << texture->ID << std::endl;
+		//std::cout << "Loaded texture: " << file_path << ", Texture ID: " << texture->ID << std::endl;
 	}
 
 	/*!
@@ -363,7 +363,8 @@ namespace Ukemochi
 	// Update this to be more dynamic
 	bool AssetManager::isAtlasTexture(const std::string& file_path)
 	{
-		return file_path.find("Environment_Part") != std::string::npos;
+		// Check if the file path contains "_Part", indicating it's part of an atlas
+		return file_path.find("_Part") != std::string::npos;
 	}
 
 	std::string Ukemochi::AssetManager::getAtlasMetaData(const std::string& atlasPath)

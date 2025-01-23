@@ -468,7 +468,7 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		// Skip atlas subtextures
 		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path)) 
 		{
-			std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
+			//std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
 			continue;
 		}
 
@@ -488,10 +488,10 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			glActiveTexture(GL_TEXTURE0 + i);
 			glBindTexture(GL_TEXTURE_2D, texture->ID);
 
-			std::cout << "Binding texture:\n"
+			/*std::cout << "Binding texture:\n"
 				<< "  Path: " << path << "\n"
 				<< "  Texture ID: " << texture->ID << "\n"
-				<< "  Assigned Unit: " << i << std::endl;
+				<< "  Assigned Unit: " << i << std::endl;*/
 		}
 		else 
 		{
@@ -691,7 +691,7 @@ void Renderer::render()
 			int mappedTextureUnit = textureIDMap[textureID];
 
 			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
-			std::cout << spriteName << " from render() line 686" <<std::endl;
+			//std::cout << spriteName << " from render() line 686" <<std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
 			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, mappedTextureUnit, glm::radians(transform.rotation), spriteRenderer.layer);
