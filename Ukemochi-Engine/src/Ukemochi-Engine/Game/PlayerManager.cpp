@@ -13,6 +13,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "PlayerManager.h"
 
+#include <dinput.h>
+#include <windowsx.h>
+
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
@@ -88,18 +91,28 @@ namespace Ukemochi
                 anim.SetAnimation("Idle");
             }
 
-            static bool kickAudio = false;
-
-            if (data.attackTimer > 0.0f)
+            // Update knife position
+            if (sr.flipX)
             {
-                data.attackTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
-                data.canAttack = true;
-                data.isAttacking = false;
+                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                knife_trans.position = Vec3{trans.position.x + trans.scale.x, trans.position.y,0};
+            }
+            else
+            {
+                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                knife_trans.position = Vec3{trans.position.x - trans.scale.x, trans.position.y,0};
+            }
 
-
+            static bool kickAudio = false;
+            // Handle Combo timing
+            if (data.comboTimer > 0.0f)
+            {
+                data.comboTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
                     AudioManager>();
-                if (data.currentComboHits == 3 && data.attackTimer < 1.f && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
+                // Kick
+                if (data.comboState == 3 && data.comboTimer < 1.f && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
                 {
                     if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
                         audioM.GetSFXindex("Pattack3")))
@@ -113,82 +126,100 @@ namespace Ukemochi
             else
             {
                 kickAudio = false;
-                data.currentComboHits = 0;
-                data.canAttack = false;
-                data.isAttacking = false;
-                data.attackTimer = 0.0f;
-
-                anim.isAttacking = false;
+                data.comboState = -1;
             }
-
+            
+            if (data.comboIsAttacking && anim.currentClip == "Idle")
+            {
+                UME_ENGINE_TRACE("CAN ATTACK!");
+                data.comboIsAttacking = false;
+            }
+            
+            // Player input
             if (Input::IsKeyTriggered(UME_KEY_J))
             {
-                // if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                 auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
 
-                // Combat logic happens?
-                if (audioObj)
+                AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                if (!data.comboIsAttacking)
                 {
-                    AudioManager& audioM = audioObj->GetComponent<AudioManager>();
+                    data.comboState = (data.comboState + 1) % 3;    // loop back after 3 hits
+                    data.comboTimer = data.maxComboTimer;           // Reset the combo timer
+                    data.comboIsAttacking = true;                        // Prevent spamming
 
-                    if (data.currentComboHits == 0 || data.canAttack)
+                    UME_ENGINE_TRACE("ATTACKING! COMBO STATE: {0}",data.comboState);
+                    // Perform attack
+                    switch (data.comboState)
                     {
-                        data.currentComboHits++;
-                        switch (data.currentComboHits % 4)
-                        {
-                        case 1:
-                            anim.SetAnimationImmediately("Attack1");
-                            if (audioM.GetSFXindex("Pattack1") != -1)
-                            {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                    audioM.GetSFXindex("Pattack1")))
-                                {
-                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
-                                }
-                            }
-           
+                    case 0:
+                        anim.SetAnimationFromTo("Attack",0,14);
+                        if (audio.GetSFXindex("Pattack1") == -1)
                             break;
-                        case 2:
-                            anim.SetAnimationImmediately("Attack2");
-                            if (audioM.GetSFXindex("Pattack1") != -1)
-                            {
-                                audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
-                            }
-                            if (audioM.GetSFXindex("Pattack2") != -1)
-                            {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                    audioM.GetSFXindex("Pattack2")))
-                                {
-                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
-                                }
-                            }
-
+                        if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
                             break;
-                        case 3:
-                            anim.SetAnimationImmediately("Attack3");
+                        audio.PlaySFX(audio.GetSFXindex("Pattack1"));
+                        // Deal damage?
+                        break;
+                    case 1:
+                        anim.SetAnimationFromTo("Attack",14,25);
+                        if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
+                            audio.StopSFX(audio.GetSFXindex("Pattack1"));
+                        if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
                             break;
-                        }
-                        anim.isAttacking = true;
-
-                        data.isAttacking = true;
-                        data.canAttack = false; // Prevent immediate chaining of attacks
-                        data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[
-                            anim.currentClip].frame_time;
-                        // data.attackTimer = data.attackCooldown;
+                        if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
+                            break;
+                        audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+                        break;
+                    case 2:
+                        anim.SetAnimationFromTo("Attack",25,46);
+                        break;
+                    default:
+                        break;
                     }
-                }
-            }
 
-            // Update knife position
-            if (sr.flipX)
-            {
-                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec3{trans.position.x + trans.scale.x, trans.position.y,0};
-            }
-            else
-            {
-                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec3{trans.position.x - trans.scale.x, trans.position.y,0};
+                    UME_ENGINE_INFO("Current clip name: {0}", anim.currentClip);
+                }
+                // if (data.currentComboHits == 0 || data.canAttack) // first attack or can attack (Follow-up combo)
+                // {
+                //     data.currentComboHits++;
+                //     switch (data.currentComboHits)
+                //     {
+                //     case 1:
+                //         // anim.SetAnimationImmediately("Attack");
+                //         anim.SetAnimationFromTo("Attack",0,14);
+                //         if (audio.GetSFXindex("Pattack1") != -1)
+                //         {
+                //             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
+                //                 audio.PlaySFX(audio.GetSFXindex("Pattack1"));
+                //         }
+                //
+                //         break;
+                //     case 2:
+                //         anim.SetAnimationFromTo("Attack",15,24);
+                //         if (audio.GetSFXindex("Pattack1") != -1)
+                //             audio.StopSFX(audio.GetSFXindex("Pattack1"));
+                //
+                //         if (audio.GetSFXindex("Pattack2") != -1)
+                //         {
+                //             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
+                //                 audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+                //         }
+                //
+                //         break;
+                //     case 3:
+                //         anim.SetAnimationImmediately("Attack",25);
+                //         break;
+                //     default:
+                //         break;
+                //     }
+                //
+                //     anim.isAttacking = true;
+                //     
+                //     data.canAttack = false; // Prevent immediate chaining of attacks
+                //     data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[anim.currentClip].frame_time;
+                // }
             }
         }
     }
@@ -208,9 +239,9 @@ namespace Ukemochi
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
 
             anim.SetAnimationUninterrupted("Hurt");
-            data.currentComboHits = 0;
+            data.comboState = 0;
             data.canAttack = false;
-            data.attackTimer = 0.0f;
+            data.comboTimer = 0.0f;
         }
     }
 }

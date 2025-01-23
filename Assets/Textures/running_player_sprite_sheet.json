@@ -4,13 +4,13 @@
         "ClipName": "Running",
         "PivotX": 0.5,
         "PivotY": 0.5,
-        "PixelsPerUnit": 70,
+        "PixelsPerUnit": 90,
         "TotalFrames": 13,
         "PixelWidth": 461,
         "PixelHeight": 428,
         "TextureWidth": 2048,
         "TextureHeight": 2048,
-        "FrameTime": 0.05000000074505806,
+        "FrameTime": 0.03999999910593033,
         "Looping": true
     }
 }
