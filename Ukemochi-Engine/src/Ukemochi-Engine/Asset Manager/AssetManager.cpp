@@ -485,3 +485,4 @@ bool AssetManager::isTextureInAtlas(const std::string& texturePath) const
 	// Check if the fileName exists as a key in spriteData
 	return spriteData.find(fileName) != spriteData.end();
 }
+

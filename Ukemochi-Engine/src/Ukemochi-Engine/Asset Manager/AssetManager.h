@@ -77,6 +77,7 @@ namespace Ukemochi
 
 		void bindSpriteSheet(const std::string& sheetName);
 
+		std::string getAtlasForSubtexture(const std::string& subtextureName) const;
 		/*!
 		* @brief Constructs the AssetManager Class
 		*/
