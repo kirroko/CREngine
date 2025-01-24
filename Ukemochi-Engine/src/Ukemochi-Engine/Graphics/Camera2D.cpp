@@ -51,7 +51,7 @@ glm::mat4 Camera::getCameraProjectionMatrix()
 	GLfloat bottom = 0.f;
 	GLfloat top = viewport_size.y;
 
-	return glm::ortho(left, right , bottom, top);
+	return glm::ortho(left, right , bottom, top, -1.f, 1.f);
 }
 
 /*!

@@ -103,9 +103,8 @@ The size (width and height) of the box.
 \param rotation
 The rotation angle of the box, in radians.
 *************************************************************************/
-void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::vec2& size, glm::vec3 color, float rotation)
+void DebugBatchRenderer2D::drawDebugBox(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, float rotation)
 {
-
     if (vertices.size() >= maxShapes * 4) {
         flush();
         beginBatch();
@@ -131,22 +130,21 @@ void DebugBatchRenderer2D::drawDebugBox(const glm::vec2& position, const glm::ve
         rotatedCorners[i] = glm::vec2(
             cosTheta * corners[i].x - sinTheta * corners[i].y,
             sinTheta * corners[i].x + cosTheta * corners[i].y
-        ) + position;
+        );
     }
 
-    // Push vertices to the batch
-    // Add vertices for GL_LINES (2 vertices per line)
-    vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f), color}); // Bottom-left -> Bottom-right
-    vertices.push_back({ glm::vec3(rotatedCorners[1], 0.0f), color });
+    // Push vertices to the batch with Z-axis support
+    vertices.push_back({ glm::vec3(rotatedCorners[0].x + position.x, rotatedCorners[0].y + position.y, position.z), color }); // Bottom-left -> Bottom-right
+    vertices.push_back({ glm::vec3(rotatedCorners[1].x + position.x, rotatedCorners[1].y + position.y, position.z), color });
 
-    vertices.push_back({ glm::vec3(rotatedCorners[1], 0.0f), color }); // Bottom-right -> Top-right
-    vertices.push_back({ glm::vec3(rotatedCorners[2], 0.0f), color });
+    vertices.push_back({ glm::vec3(rotatedCorners[1].x + position.x, rotatedCorners[1].y + position.y, position.z), color }); // Bottom-right -> Top-right
+    vertices.push_back({ glm::vec3(rotatedCorners[2].x + position.x, rotatedCorners[2].y + position.y, position.z), color });
 
-    vertices.push_back({ glm::vec3(rotatedCorners[2], 0.0f), color }); // Top-right -> Top-left
-    vertices.push_back({ glm::vec3(rotatedCorners[3], 0.0f), color });
+    vertices.push_back({ glm::vec3(rotatedCorners[2].x + position.x, rotatedCorners[2].y + position.y, position.z), color }); // Top-right -> Top-left
+    vertices.push_back({ glm::vec3(rotatedCorners[3].x + position.x, rotatedCorners[3].y + position.y, position.z), color });
 
-    vertices.push_back({ glm::vec3(rotatedCorners[3], 0.0f), color }); // Top-left -> Bottom-left
-    vertices.push_back({ glm::vec3(rotatedCorners[0], 0.0f), color });
+    vertices.push_back({ glm::vec3(rotatedCorners[3].x + position.x, rotatedCorners[3].y + position.y, position.z), color }); // Top-left -> Bottom-left
+    vertices.push_back({ glm::vec3(rotatedCorners[0].x + position.x, rotatedCorners[0].y + position.y, position.z), color });
 }
 
 void DebugBatchRenderer2D::drawDebugCircle(const glm::vec2& center, float radius, const glm::vec3& color, int segments)

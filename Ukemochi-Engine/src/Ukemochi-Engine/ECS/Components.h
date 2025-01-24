@@ -31,7 +31,7 @@ namespace Ukemochi
 	struct Transform
 	{
 		Mtx44 transform_matrix;
-		Vec2 position;
+		Vec3 position;
 		float rotation = 0.f; // TODO: Change to Quaternion?
 		Vec2 scale;
 	};
@@ -43,7 +43,7 @@ namespace Ukemochi
 	struct Rigidbody2D
 	{
 		// Linear Properties
-		Vec2 position{};
+		Vec3 position{};
 		Vec2 velocity{};
 		Vec2 acceleration{};
 		Vec2 force{};
@@ -164,7 +164,7 @@ namespace Ukemochi
 		std::string currentClip{};							  // Name of the active animation.
 		std::string defaultClip{};							  // Name of the default animation.
 		int current_frame = 0;								  // Current frame index
-		int original_frame = 0;								  // Original frame index
+		int stop_frame = 0;
 		float time_since_last_frame = 0.0f;					  // Time since the last frame
 		float original_frame_time = 0.05f;					  // Original frame time
 		bool is_playing = true;								  // Is the animation playing?
@@ -179,10 +179,46 @@ namespace Ukemochi
 			{
 				currentClip = name;
 				current_frame = 0;
+				stop_frame = 0;
 				time_since_last_frame = 0.0f;
 
 				return true;
 			}
+			return false;
+		}
+
+		bool SetAnimation(const std::string &name, const int initialFrame)
+		{
+			doNotInterrupt = false;
+			isAttacking = false;
+			if (clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt && !isAttacking)
+			{
+				currentClip = name;
+				current_frame = initialFrame;
+				stop_frame = 0;
+				time_since_last_frame = 0.0f;
+
+				return true;
+			}
+			return false;
+		}
+
+		bool SetAnimationFromTo(const std::string &name, const int initialFrame, const int untilFrame)
+		{
+			doNotInterrupt = false;
+			isAttacking = false;
+			if (clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt && !isAttacking)
+			{
+				currentClip = name;
+				current_frame = initialFrame;
+				stop_frame = untilFrame;
+				time_since_last_frame = 0.0f;
+
+				doNotInterrupt = true;
+				isAttacking = true;
+				return true;
+			}
+
 			return false;
 		}
 
@@ -191,6 +227,13 @@ namespace Ukemochi
 			doNotInterrupt = false;
 			isAttacking = false;
 			return SetAnimation(name);
+		}
+
+		bool SetAnimationImmediately(const std::string &name, const int initialFrame)
+		{
+			doNotInterrupt = false;
+			isAttacking = false;
+			return SetAnimation(name,initialFrame);
 		}
 
 		bool SetAnimationUninterrupted(const std::string &name)
@@ -223,20 +266,20 @@ namespace Ukemochi
 			{
 				attackAnimationFinished = false;
 			}
-
-
+			
 			// Advance new frame
 			if (time_since_last_frame >= clip.frame_time)
 			{
 				current_frame++;
 				// time_since_last_frame -= clip.frame_time;
-				if (current_frame >= clip.total_frames)
+				if (current_frame >= clip.total_frames || (current_frame >= stop_frame && stop_frame != 0))
 				{
 					current_frame = clip.looping ? 0 : clip.total_frames - 1;
 					doNotInterrupt = false;
 					isAttacking = false;
 					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
 				}
+
 				time_since_last_frame = 0.0f; // Reset time
 			}
 			// Renderer system handles the UV coordinates for us
@@ -264,7 +307,8 @@ namespace Ukemochi
 	{
 		std::string texturePath{};				// The path acting as a key to the texture
 		SPRITE_SHAPE shape = SPRITE_SHAPE::BOX; // Draw as BOX | Circle
-		GLuint textureID = 0;					// The texture ID, to be set during runtime
+		//GLuint textureID = 0;					// The texture ID, to be set during runtime
+		int layer = 0;							// The layer to render the sprite on
 		bool animated = false;					// Is the object animated?
 
 		bool flipX = false;
@@ -292,15 +336,14 @@ namespace Ukemochi
 	{
 		int maxHealth = 100;
 		int currentHealth = 100;
-		int maxComboHits = 3;
-		int currentComboHits = 0;
+		int comboState = 0;			// Tracks current combat state 
 		int comboDamage = 10;
-		float attackCooldown = 0.5f;
-		float attackTimer = 0.0f;
+		float comboTimer = 0.0f;	// Tracks time since last attack
+		float maxComboTimer = 5.0f; // Max time to continue combo 
 		float playerForce = 2500.0f;
 		bool isDead = false;
 		bool canAttack = true;
-		bool isAttacking = false;
+		bool comboIsAttacking = false;
 	};
 
 	/*!***********************************************************************

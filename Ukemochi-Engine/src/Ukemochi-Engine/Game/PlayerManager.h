@@ -11,12 +11,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #pragma once
+#include "Ukemochi-Engine/ECS/Components.h"
 #include "Ukemochi-Engine/ECS/Systems.h"
 
 namespace Ukemochi
 {
     class PlayerManager : public System
     {
+        void PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const;
+        
     public:
         /**
          * @brief Update the player manager

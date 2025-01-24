@@ -1,0 +1,16 @@
+{
+    "TextureMeta": {
+        "KeyPath": "../Assets/Textures/Player/Base Attack.png",
+        "ClipName": "Attack",
+        "PivotX": 0.45500001311302185,
+        "PivotY": 0.44999998807907104,
+        "PixelsPerUnit": 155,
+        "TotalFrames": 46,
+        "PixelWidth": 620,
+        "PixelHeight": 490,
+        "TextureWidth": 4096,
+        "TextureHeight": 4096,
+        "FrameTime": 0.032999999821186066,
+        "Looping": true
+    }
+}

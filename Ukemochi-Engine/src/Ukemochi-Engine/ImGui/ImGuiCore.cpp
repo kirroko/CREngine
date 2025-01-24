@@ -421,8 +421,8 @@ namespace Ukemochi
         pivot[1] = std::max(0.0f, std::min(1.0f, pivot[1]));
 
         // Input for frame time
-        ImGui::InputFloat("Frame Time", &frameTime, 0, 0, "%.2f");
-        frameTime = std::max(0.01f, frameTime); // max 0.01s
+        ImGui::InputFloat("Frame Time", &frameTime, 0, 0, "%.3f");
+        frameTime = std::max(0.001f, frameTime); // max 0.001s
 
         // Input for looping
         ImGui::Checkbox("Looping", &looping);
@@ -1192,6 +1192,31 @@ namespace Ukemochi
             ImGui::PopStyleColor(3);
         }
 
+        if (obj.HasComponent<Animation>())
+        {
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f,0.4f,0.4f,0.2f));        // Light Red background
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered,ImVec4(0.6f,0.0f,0.0f,0.4f));  // Darker red when hovered
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive,ImVec4(0.4f,0.0f,0.0f,0.6f));    // Even darker red when active
+
+            if (ImGui::TreeNodeEx("Animation Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth))
+            {
+                Animation &anim = obj.GetComponent<Animation>();
+                for (auto& element : anim.clips)
+                {
+                    ImGui::Text("Clip name: %s", element.second.name.c_str());
+                    ImGui::Text("PPU: %d", element.second.pixelsPerUnit);
+                    ImGui::Text("Pivot: %f , %f", element.second.pivot.x, element.second.pivot.y);
+                    ImGui::Text("Speed: %f", element.second.frame_time);
+                    
+                    ImGui::Separator();
+                }
+
+                ImGui::TreePop();
+            }
+
+            ImGui::PopStyleColor(3);
+        }
+
         // Display Script Component (Yellow)
         if (obj.HasComponent<Script>())
         {
@@ -1729,12 +1754,13 @@ namespace Ukemochi
                 ImGui::Text("Position");
                 if (useSliders)
                 {
-                    if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                    //if (ImGui::SliderFloat2("##PositionSlider", &transform.position.x, -800.0f, 1500.0f))
+                    if(ImGui::SliderFloat3("##PositionSlider", &transform.position.x,-800.0f,1500.f))
                         modified = true;
                 }
                 else
                 {
-                    if (ImGui::InputFloat2("##PositionInput", &transform.position.x))
+                    if (ImGui::InputFloat3("##PositionInput", &transform.position.x))
                         modified = true;
                 }
 
@@ -1884,6 +1910,9 @@ namespace Ukemochi
                     ImGui::EndDragDropTarget();
                 }
 
+                ImGui::Text("Sortting Layer");
+                ImGui::InputInt("##Sorting Layer", &sprite.layer);
+
                 // Error Popup for invalid file type
                 if (ImGui::BeginPopup("InvalidTextureFileType"))
                 {
@@ -1986,13 +2015,6 @@ namespace Ukemochi
                             {
                                 animation.currentClip = clip.second.name;
                             }
-                            // if (ImGui::TreeNode(clip.second.name.c_str()))
-                            // {
-                            //     ImGui::Text("Total_Frame: %d", clip.second.total_frames);
-                            //     ImGui::Text("Frame_Rate: %f", clip.second.frame_time);
-                            //     ImGui::Text("Loop: %s", clip.second.looping ? "True" : "False");
-                            //     ImGui::TreePop();
-                            // }
                         }
                         ImGui::TreePop();
                     }

@@ -90,7 +90,8 @@ namespace Ukemochi
         Vec2 knockback_direction{};
 
         // Get the knockback direction
-        Vec2Normalize(knockback_direction, (target_trans.position - source_trans.position));
+        Vec3 newValue = target_trans.position - source_trans.position;
+        Vec2Normalize(knockback_direction, Vec2(newValue.x,newValue.y));
         knockback_direction *= source_force;
 
         // Apply the knockback force
@@ -191,7 +192,8 @@ namespace Ukemochi
         }
 
         // Apply velocity to the position (dx = v * dt)
-        rb.position = rb.position + rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		Vec2 newValue = rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		rb.position = rb.position + Vec3(newValue.x, newValue.y, 0.f);
 
         // Update transform position with the physics position
         trans.position = rb.position;

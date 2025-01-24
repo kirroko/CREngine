@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #ifndef BATCH_RENDERER_H
-#define BATHC_RENDERER_H
+#define BATCH_RENDERER_H
 
 #include "PreCompile.h" 
 #include "../vendor/glm/glm/glm.hpp"
@@ -24,6 +24,8 @@ class VBO;
 class EBO;
 class Shader;
 class Texture;
+
+
 
 /*!
  * @struct Vertex
@@ -77,7 +79,9 @@ public:
 	 * @param uvCoordinates The UV coordinates for the texture.
 	 * @param rotation The rotation angle for the sprite.
 	 */
-	void drawSprite(const glm::vec2& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation = 0.0f);
+	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation = 0.0f);
+	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer);
+	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer);
 
 	void setActiveShader(std::shared_ptr<Shader> shader); // Update method signature
 
@@ -102,6 +106,7 @@ private:
 	int maxSprites = 1000; // Maximum number of sprites per batch
 
 	std::shared_ptr<Shader> activeShader; // Use shared_ptr for the active shader 
+	std::map<int, std::vector<Vertex>> layerBatches; 
 };
 
 #endif // !BATCH_RENDERER_H
