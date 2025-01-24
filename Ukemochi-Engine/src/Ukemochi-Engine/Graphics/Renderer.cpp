@@ -88,7 +88,7 @@ void Renderer::init()
 
 	// Load multiple fonts into the text renderer
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
-	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
 
 	// Add text objects
 	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
