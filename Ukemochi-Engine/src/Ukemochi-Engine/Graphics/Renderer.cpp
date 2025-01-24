@@ -835,22 +835,22 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
+			/*if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
-			}
+			}*/
 
-			int mappedTextureUnit = textureIDMap[textureID];
+			//int mappedTextureUnit = textureIDMap[textureID];
 
 			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
 			//std::cout << spriteName << " from render() line 686" <<std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, mappedTextureUnit, glm::radians(transform.rotation), spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 

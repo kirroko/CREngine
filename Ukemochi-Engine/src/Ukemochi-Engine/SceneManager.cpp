@@ -716,7 +716,7 @@ namespace Ukemochi
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
-                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
+                    //ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
 					// if (tag == "Player")
 					// {
 					// 	newObject.GetComponent<SpriteRender>().animated = true;

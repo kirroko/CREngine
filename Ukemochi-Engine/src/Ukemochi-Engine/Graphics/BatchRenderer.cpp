@@ -246,7 +246,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
-void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, GLint textureID, float rotation, int layer)
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer)
 {
     // Check if the batch is full and flush it
     if (vertices.size() >= maxSprites * 4)
@@ -255,6 +255,8 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         flush();
         beginBatch();
     }
+    
+    GLint textureID = -1;
 
     auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
 
@@ -287,7 +289,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         texture->Bind();
 
         // Retrieve the texture ID
-      
+        textureID = ECS::GetInstance().GetSystem<Renderer>()->textureIDMap[texture->ID];
 
         // Calculate sine and cosine for the rotation angle
         float cosTheta = cos(rotation);
