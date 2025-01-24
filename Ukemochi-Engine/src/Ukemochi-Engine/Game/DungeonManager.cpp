@@ -109,22 +109,23 @@ namespace Ukemochi
 		//if kill tracker toggles to true decrement wave number then reset to false;
 		//if mobs in wave reachs 0 -> trigger some way to spawn next wave(need to find/ create spawning logic)
 
-		int alive_enemies{};
-
-		for (const auto& enemy : rooms[current_room_id].enemies)
+		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
 		{
-			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(enemy);
+			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);
 			auto& isDead = enemyObj->GetComponent<Enemy>();
 			if (isDead.state == Enemy::DEAD)
 			{
-				alive_enemies++;
+				rooms[current_room_id].enemies.erase(enemy);
 			}
 		}
 
-		if (alive_enemies <= 0)
+		//hopefully unlock room will just trigger once
+		if (rooms[current_room_id].enemies.empty() && !rooms[current_room_id].cleared)
 		{
+			rooms[current_room_id].cleared = true;
 			UnlockRoom();
 		}
+
 	}
 
 	/*!***********************************************************************
@@ -211,7 +212,10 @@ namespace Ukemochi
 		for (auto& entity : rooms[room_id].entities)
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 
-		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+		if (!rooms[room_id].cleared)
+		{
+			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+		}
 	}
 
 	/*!***********************************************************************
@@ -220,6 +224,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::UnlockRoom()
 	{
+		//check for enemies
+
+
 		std::string str_id = std::to_string(current_room_id);
 
 		// Enable doors and disable blocks in the room
