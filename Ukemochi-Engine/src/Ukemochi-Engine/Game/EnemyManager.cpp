@@ -76,6 +76,7 @@ namespace Ukemochi
             auto& enemycomponent = object->GetComponent<Enemy>();
             auto& enemyphysic = object->GetComponent<Rigidbody2D>();
             auto& enemytransform = object->GetComponent<Transform>();
+            auto& sr = object->GetComponent<SpriteRender>();
 
             if (enemycomponent.health <= 0.f)
             {
@@ -85,6 +86,19 @@ namespace Ukemochi
             {
                 object->SetActive(true);
             }
+
+            //animation
+            if (enemyphysic.force.x < 0)
+            {
+                auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
+                //anim.SetAnimation("Running");
+                sr.flipX = false;
+            }
+            else
+            {
+                sr.flipX = true;
+            }
+
 
             // If the enemy is in DEAD state, remove it from the list after processing DeadState
             if (enemycomponent.state == Enemy::DEAD)
@@ -140,11 +154,35 @@ namespace Ukemochi
             // Skip collision handling for dead enemies
             if (enemycomponent.isCollide)
             {
-                if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj),300.f) && enemycomponent.state == enemycomponent.ROAM)
-                {
-                    enemycomponent.nearestObj = -1;
-                    enemycomponent.isCollide = false;
+                // Start the timer for 1 second if not already running
+                if (enemycomponent.timeSinceTargetReached < 1.0f) {
+                    enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
                 }
+                else {
+
+                    // Timer has reached 1 second, perform the object updates
+                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                    enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+
+                    if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+                    {
+                        enemycomponent.prevObject2 = enemycomponent.prevObject;
+                        enemycomponent.prevObject = enemycomponent.nearestObj;
+                        enemycomponent.nearestObj = -1;
+
+                        if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                        {
+                            enemycomponent.nearestObj = FindNearestObject(object);
+                        }
+                        else
+                        {
+                            enemycomponent.isCollide = false;
+                            enemycomponent.timeSinceTargetReached = 0.f;
+                        }
+
+                    }
+                }
+
                 ++it;
                 continue;
             }
@@ -333,7 +371,7 @@ namespace Ukemochi
 
         auto& enemyComponent = enemy->GetComponent<Enemy>();
 
-        if (obj2->HasComponent<Enemy>())
+        if (obj2->HasComponent<Enemy>()) //NOT IN USED
         {
             auto& enemyComponent2 = obj2->GetComponent<Enemy>();
             enemyComponent2.isCollide = false;
@@ -343,8 +381,9 @@ namespace Ukemochi
         {
             //set collide to true then now the obj is the obj save the pathfinding obj as prev
             enemyComponent.isCollide = true;
-            enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
-            enemyComponent.nearestObj = static_cast<int>(objID);
+            enemyComponent.timeSinceTargetReached = 0.f;
+            //enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
+            //enemyComponent.nearestObj = static_cast<int>(objID);
         }
     }
 

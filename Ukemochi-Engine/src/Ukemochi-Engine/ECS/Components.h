@@ -335,6 +335,7 @@ namespace Ukemochi
 		float speed;
 		int nearestObj;
 		mutable int prevObject;
+		mutable int prevObject2;
 		bool isCollide;
 		float atktimer = 5.0f;
 		bool isDead = false;
@@ -345,7 +346,7 @@ namespace Ukemochi
 
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
-			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), isCollide(false)
+			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false)
 		{
 			nearestObj = -1;
 			switch (type)
@@ -354,7 +355,7 @@ namespace Ukemochi
 				health = 50.f;
 				attackPower = 20.f;
 				attackRange = 300.f;
-				speed = 5000.f;
+				speed = 2000.f;
 				break;
 			case Enemy::WORM:
 				health = 50.f;
