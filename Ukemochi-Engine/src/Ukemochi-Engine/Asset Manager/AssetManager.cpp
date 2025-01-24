@@ -124,10 +124,10 @@ namespace Ukemochi
 	*/
 	std::shared_ptr<Texture> AssetManager::getTexture(std::string key_name)
 	{
-		for (const auto& [key, value] : texture_list)
+		/*for (const auto& [key, value] : texture_list)
 		{
 			std::cout << "Texture Key: " << key << ", Texture ID: " << value->ID << std::endl;
-		}
+		}*/
 
 		auto it = texture_list.find(key_name);
 		if (it != texture_list.end()) 
