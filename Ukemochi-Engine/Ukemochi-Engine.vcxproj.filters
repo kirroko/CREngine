@@ -55,6 +55,9 @@
     <Filter Include="Ukemochi-Engine\Serialization">
       <UniqueIdentifier>{EA434876-565C-2FA0-1F09-BF398BE0C339}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ukemochi-Engine\Video">
+      <UniqueIdentifier>{E3D988FB-4F46-44F6-183A-DC538465665E}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\WindowsWindow.h">
@@ -128,6 +131,9 @@
     <ClInclude Include="src\Ukemochi-Engine\FrameController.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\DungeonManager.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Game\EnemyManager.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
@@ -137,6 +143,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\GameStateList.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\PlayerManager.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Animation.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -144,6 +153,12 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Camera2D.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\EBO.h">
@@ -230,10 +245,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Game\DungeonManager.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Game\PlayerManager.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Video\VideoManager.h">
+      <Filter>Ukemochi-Engine\Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -279,10 +293,16 @@
     <ClCompile Include="src\Ukemochi-Engine\FrameController.cpp">
       <Filter>Ukemochi-Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\DungeonManager.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\EnemyManager.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\GSM.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\PlayerManager.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Animation.cpp">
@@ -292,6 +312,12 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Camera2D.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.cpp">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\EBO.cpp">
@@ -369,10 +395,9 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Game\DungeonManager.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Game\PlayerManager.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Video\VideoManager.cpp">
+      <Filter>Ukemochi-Engine\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

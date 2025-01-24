@@ -609,4 +609,27 @@ namespace Ukemochi
 		}
 
 	};
+
+	/*!***********************************************************************
+	\brief
+	 VideoSource component structure.
+	*************************************************************************/
+	struct VideoSource {
+		std::string videoPath;  // Path to the video file
+		std::string videoName;  // Name of the video
+
+		VideoSource(std::string name, std::string path)
+			: videoName(name), videoPath(path) {}
+	};
+
+	/*!***********************************************************************
+	\brief
+	 VideoData component structure. Contains categorized video sources.
+	*************************************************************************/
+	struct VideoData {
+		std::vector<VideoSource> videos;  // List of videos
+
+		VideoData() = default;
+	};
+
 }

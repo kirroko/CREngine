@@ -1728,6 +1728,9 @@
                         }, {
                             "Name": "FishAttack",
                             "Path": "../Assets/Audio/SFX/Enemy/sfx_fish_attack.wav"
+                        }, {
+                            "Name": "Move",
+                            "Path": "../Assets/Audio/SFX/Player/Footsteps_Gravel-Dirt_far-small_3.wav"
                         }]
                 }]
         }]

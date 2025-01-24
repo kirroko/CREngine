@@ -22,6 +22,7 @@ IncludeDir ["Mono"] = "Ukemochi-Engine/vendor/Mono/include"
 IncludeDir ["ImGui"] = "Ukemochi-Engine/vendor/imgui"
 IncludeDir["ImGuizmo"] = "Ukemochi-Engine/vendor/ImGuizmo"
 IncludeDir ["Freetype"] = "Ukemochi-Engine/vendor/freetype/include" 
+IncludeDir ["PLMpeg"] = "Ukemochi-Engine/vendor/pl_mpeg" 
 
 LibraryDir = {}
 LibraryDir["Fmod"] = "Ukemochi-Engine/vendor/Fmod/lib"
@@ -36,6 +37,7 @@ include "Ukemochi-Engine/vendor/GLFW"
 include "Ukemochi-Engine/vendor/Glad"
 include "Ukemochi-Engine/vendor/imgui"
 include "Ukemochi-Engine/vendor/ImGuizmo"
+include "Ukemochi-Engine/vendor/pl_mpeg"
 
 project "Ukemochi-Engine"
 	location "Ukemochi-Engine"
@@ -66,7 +68,8 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Freetype}",
 		"%{IncludeDir.Mono}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.PLMpeg}"
 
 	}
 	
@@ -86,7 +89,8 @@ project "Ukemochi-Engine"
 		"ImGuizmo",
 		"opengl32.lib",
 		"freetype",
-		"mono-2.0-sgen.lib"
+		"mono-2.0-sgen.lib",
+		"PLMpeg"
 	}
 	filter "system:windows"
 		cppdialect "C++17"

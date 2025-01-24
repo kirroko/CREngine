@@ -82,6 +82,34 @@ namespace Ukemochi
                 rb.force.x = 0.f;
             }
 
+            static bool walkingAudioPlaying = false;
+
+            // Handle walking sound
+            if (Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) ||
+                Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D)) {
+                if (!walkingAudioPlaying) {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                    int walkingSoundIndex = audioM.GetSFXindex("Move"); // Replace "WalkingSound" with the actual sound name
+                    if (walkingSoundIndex != -1) {
+                        audioM.PlaySFX(walkingSoundIndex);
+                        walkingAudioPlaying = true;
+                    }
+                }
+            }
+            else {
+                if (walkingAudioPlaying) {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                    int walkingSoundIndex = audioM.GetSFXindex("Move");
+                    if (walkingSoundIndex != -1) {
+                        audioM.StopSFX(walkingSoundIndex);
+                    }
+                    walkingAudioPlaying = false;
+                }
+            }
+
+
             if (!Input::IsKeyPressed(UME_KEY_W) && !Input::IsKeyPressed(UME_KEY_S) && !Input::IsKeyPressed(UME_KEY_A) &&
                 !Input::IsKeyPressed(UME_KEY_D))
             {
