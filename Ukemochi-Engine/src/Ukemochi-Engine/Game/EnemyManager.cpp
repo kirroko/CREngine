@@ -443,5 +443,4 @@ namespace Ukemochi
             enemyObjects.clear();
         }
     }
-
 }

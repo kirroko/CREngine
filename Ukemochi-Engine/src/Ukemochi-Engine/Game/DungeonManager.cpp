@@ -104,12 +104,24 @@ namespace Ukemochi
 		//if (rooms[current_room_id].enemies.size() <= 0)
 		//	UnlockRoom();
 
-		bool kill_tracker = false; // kill tracker to trigger next wave. Need to link with EnemuManager? to read when enemy is defeated
+		//bool kill_tracker = false; // kill tracker to trigger next wave. Need to link with EnemuManager? to read when enemy is defeated
 
 		//if kill tracker toggles to true decrement wave number then reset to false;
 		//if mobs in wave reachs 0 -> trigger some way to spawn next wave(need to find/ create spawning logic)
 
-		if (rooms[current_room_id].enemies.size() <= 0)
+		int alive_enemies{};
+
+		for (const auto& enemy : rooms[current_room_id].enemies)
+		{
+			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(enemy);
+			auto& isDead = enemyObj->GetComponent<Enemy>();
+			if (isDead.state == Enemy::DEAD)
+			{
+				alive_enemies++;
+			}
+		}
+
+		if (alive_enemies <= 0)
 		{
 			UnlockRoom();
 		}
@@ -148,25 +160,25 @@ namespace Ukemochi
 						// Store all enemies of the same room in the room enemy list
 						rooms[room_id].enemies.push_back(entity);
 
-						//do-while loop to handle multiple waves
-						do						
-						{
-							if (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE)
-							{
-								rooms[room_id].mobs_in_wave[current_room_wave]++;
-								//main goal is just to track addition correctly, leave the loop after successful addition;
-								break;
-							}
-							else
-							{
-								//threshold is hit for the wave, go to the next wave and restart the loop
-								current_room_wave++;
-								continue;
-							}
-						} while (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE);
-							
-						
-						current_room_wave = WAVE_NUMBER;
+						////do-while loop to handle multiple waves
+						//do						
+						//{
+						//	if (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE)
+						//	{
+						//		rooms[room_id].mobs_in_wave[current_room_wave]++;
+						//		//main goal is just to track addition correctly, leave the loop after successful addition;
+						//		break;
+						//	}
+						//	else
+						//	{
+						//		//threshold is hit for the wave, go to the next wave and restart the loop
+						//		current_room_wave++;
+						//		continue;
+						//	}
+						//} while (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE);
+						//	
+						//
+						//current_room_wave = WAVE_NUMBER;
 					}
 					else if (tag == "Room")
 					{

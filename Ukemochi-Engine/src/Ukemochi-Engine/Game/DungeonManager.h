@@ -35,7 +35,8 @@ namespace Ukemochi
 		int id;
 		std::vector<EntityID> entities;	  // Entities in the room
 		std::vector<EntityID> enemies;	  // Enemies in the room
-		std::vector<int> mobs_in_wave;
+		
+		//std::vector<int> mobs_in_wave;
 		Vec2 position;					  // Position of the room
 	};
 
