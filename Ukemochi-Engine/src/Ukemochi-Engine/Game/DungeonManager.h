@@ -48,7 +48,7 @@ namespace Ukemochi
 	public:
 		std::unordered_map<int, Room> rooms; // Map of room IDs to room data
 		int current_room_id;				 // ID of the current active room
-		int current_room_wave;				 // Current Wave of enemies in the current room
+		//int current_room_wave;				 // Current Wave of enemies in the current room
 
 		/*!***********************************************************************
 		\brief

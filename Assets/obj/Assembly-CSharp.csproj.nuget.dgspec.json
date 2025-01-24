@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lum_k\\OneDrive\\Desktop\\SEP3_csd2401\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj": {}
+    "C:\\Users\\geral\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lum_k\\OneDrive\\Desktop\\SEP3_csd2401\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj": {
+    "C:\\Users\\geral\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lum_k\\OneDrive\\Desktop\\SEP3_csd2401\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj",
+        "projectUniqueName": "C:\\Users\\geral\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj",
         "projectName": "Assembly-CSharp",
-        "projectPath": "C:\\Users\\lum_k\\OneDrive\\Desktop\\SEP3_csd2401\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj",
-        "packagesPath": "C:\\Users\\lum_k\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lum_k\\OneDrive\\Desktop\\SEP3_csd2401\\team_cozyraccoons_f24\\Assets\\obj\\",
+        "projectPath": "C:\\Users\\geral\\team_cozyraccoons_f24\\Assets\\Assembly-CSharp.csproj",
+        "packagesPath": "C:\\Users\\geral\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\geral\\team_cozyraccoons_f24\\Assets\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lum_k\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\geral\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -44,7 +44,7 @@
       "frameworks": {
         "net472": {
           "targetAlias": "net472",
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

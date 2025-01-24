@@ -27,7 +27,7 @@ namespace Ukemochi
 	{
 		//change when proper room structure is done
 		current_room_id = 2;
-		current_room_wave = WAVE_NUMBER;
+		//current_room_wave = WAVE_NUMBER;
 		player = static_cast<EntityID>(-1);
 
 		InitDungeon();
@@ -235,7 +235,7 @@ namespace Ukemochi
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
-			if(rooms[current_room_id].entities.empty())
+			if(rooms[current_room_id].enemies.empty())
 			{
 				// Enable doors
 				if (tag == "LeftDoor" || tag == "RightDoor")

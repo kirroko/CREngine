@@ -1511,6 +1511,34 @@
                     "Layer": 0
                 }]
         }, {
+            "Name": "2_RightBlock",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3720.0, 770.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [218.0, 243.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "2_LeftBlock",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1785.0, 740.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [193.0, 158.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
             "Name": "2_Rock9",
             "Tag": "Default",
             "Components": [{
