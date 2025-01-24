@@ -30,6 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Graphics/Animation.h"
 #include "Game/EnemyManager.h"
 #include "Game/DungeonManager.h"
+#include "Game/SoulManager.h"
 
 namespace Ukemochi
 {
@@ -70,6 +71,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
+        ECS::GetInstance().RegisterComponent<PlayerSoul>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -85,6 +87,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<DungeonManager>();
 		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<EnemyManager>();
+        ECS::GetInstance().RegisterSystem<SoulManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -137,6 +140,11 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<AudioManager>());
         ECS::GetInstance().SetSystemSignature<Audio>(sig);
 
+        // For Soul system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<PlayerSoul>());
+        ECS::GetInstance().SetSystemSignature<SoulManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
@@ -160,19 +168,19 @@ namespace Ukemochi
     {
         //load Asset Manager Texture
         /*ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_2.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_2.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
-		// ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        // ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
-		UME_ENGINE_TRACE("Loading Scenes...");
+        UME_ENGINE_TRACE("Loading Scenes...");
         UseImGui::LoadScene();
 
         //if fresh start
@@ -190,6 +198,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+        UME_ENGINE_TRACE("Initializing soul manager...");
+        ECS::GetInstance().GetSystem<SoulManager>()->Init();
     }
 
     /*!***********************************************************************
@@ -403,6 +413,7 @@ namespace Ukemochi
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
+        ECS::GetInstance().GetSystem<SoulManager>()->Update();
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
