@@ -34,7 +34,7 @@ namespace Ukemochi {
 	{
 		spdlog::set_pattern("%^[%T] %n: %v%$"); // color,time, engine/client, error msg 
 												// Set the log pattern with color, time, logger name, and message
-		s_EngineLogger = spdlog::stdout_color_mt("Cozy Raccon"); // Create engine logger
+		s_EngineLogger = spdlog::stdout_color_mt("Cozy Raccoon"); // Create engine logger
 		s_EngineLogger->set_level(spdlog::level::trace); // Set level to trace
 		s_ClientLogger = spdlog::stdout_color_mt("Game"); // Create client logger
 		s_ClientLogger->set_level(spdlog::level::trace);  // Set level to trace
