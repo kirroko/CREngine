@@ -499,7 +499,7 @@ namespace Ukemochi
 				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 			}
 
-			if (!player_data.isAttacking)
+			if (!player_data.comboIsAttacking)
 				return;
 
 			// Deal damage to the enemy
