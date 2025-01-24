@@ -94,7 +94,7 @@ namespace Ukemochi
                 //anim.SetAnimation("Running");
                 sr.flipX = false;
             }
-            else
+            else if (enemyphysic.force.x > 0)
             {
                 sr.flipX = true;
             }
