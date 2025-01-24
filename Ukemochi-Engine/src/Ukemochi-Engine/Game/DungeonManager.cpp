@@ -54,7 +54,7 @@ namespace Ukemochi
 			transform.position.x += offset;
 
 			if (name == str_id + "_Background")
-				rooms[room_id].position = transform.position;
+				rooms[room_id].position = Vec2(transform.position.x,transform.position.y);
 		}
 	}
 
@@ -184,7 +184,7 @@ namespace Ukemochi
 					{
 						// Store the position of the room	
 						auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-						rooms[room_id].position = transform.position;
+						rooms[room_id].position = Vec2(transform.position.x,transform.position.y);
 					}
 				}
 			}

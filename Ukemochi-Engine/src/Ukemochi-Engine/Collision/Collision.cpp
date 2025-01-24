@@ -499,7 +499,7 @@ namespace Ukemochi
 				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 			}
 
-			if (!player_data.isAttacking)
+			if (!player_data.comboIsAttacking)
 				return;
 
 			// Deal damage to the enemy
@@ -614,9 +614,19 @@ namespace Ukemochi
 	{
 		// Move objects to the point of collision
 		if (!rb1.is_kinematic)
-			trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		{
+			Vec2 newValue = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans1.position.x += newValue.x;
+			trans1.position.y += newValue.y;
+			/*trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());*/
+		}
 		if (!rb2.is_kinematic)
-			trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		{
+			Vec2 newValue = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans2.position.x += newValue.x;
+			trans2.position.y += newValue.y;
+			//trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		}
 
 		// Check collision flags and adjust velocities based on impact direction
 		if (box1.collision_flag & COLLISION_RIGHT && box2.collision_flag & COLLISION_LEFT)
@@ -728,7 +738,7 @@ namespace Ukemochi
 	{
 		// DYNAMIC AND DYNAMIC
 		// Calculate the difference in positions
-		Vector2D difference = trans2.position - trans1.position;
+		Vector3D difference = trans2.position - trans1.position;
 		Vector2D combine_half_scale = (trans1.scale + trans2.scale) * 0.5f;
 
 		// Calculate the overlap on the x and y axis

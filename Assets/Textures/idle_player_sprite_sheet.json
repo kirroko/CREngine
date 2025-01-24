@@ -3,14 +3,14 @@
         "KeyPath": "../Assets/Textures/idle_player_sprite_sheet.png",
         "ClipName": "Idle",
         "PivotX": 0.5,
-        "PivotY": 0.5099999904632568,
+        "PivotY": 0.5199999809265137,
         "PixelsPerUnit": 100,
         "TotalFrames": 37,
         "PixelWidth": 442,
         "PixelHeight": 448,
         "TextureWidth": 4096,
         "TextureHeight": 4096,
-        "FrameTime": 0.05000000074505806,
+        "FrameTime": 0.03999999910593033,
         "Looping": true
     }
 }

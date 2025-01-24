@@ -214,6 +214,9 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
+
+        auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
+
     }
 
     /*!***********************************************************************
@@ -615,9 +618,10 @@ namespace Ukemochi
 
                 if (componentName == "Transform")
                 {
-                    Vec2 position(
+                    Vec3 position(
                         componentData["Position"][0].GetFloat(),
-                        componentData["Position"][1].GetFloat()
+                        componentData["Position"][1].GetFloat(),
+						componentData["Position"][2].GetFloat()
                     );
                     float rotation = componentData["Rotation"].GetFloat();
                     Vec2 scale(
@@ -632,9 +636,10 @@ namespace Ukemochi
                 }
                 else if (componentName == "Rigidbody2D")
                 {
-                    Vec2 position(
+                    Vec3 position(
                         componentData["Position"][0].GetFloat(),
-                        componentData["Position"][1].GetFloat()
+                        componentData["Position"][1].GetFloat(),
+						componentData["Position"][2].GetFloat()
                     );
                     Vec2 velocity(
                         componentData["Velocity"][0].GetFloat(),
@@ -711,7 +716,7 @@ namespace Ukemochi
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
-                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
+                    //ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
 					// if (tag == "Player")
 					// {
 					// 	newObject.GetComponent<SpriteRender>().animated = true;
@@ -782,11 +787,10 @@ namespace Ukemochi
             			Player player;
             			player.maxHealth = componentData["MaxHealth"].GetInt();
             			player.currentHealth = componentData["CurrentHealth"].GetInt();
-            			player.maxComboHits = componentData["MaxComboHits"].GetInt();
-            			player.currentComboHits = componentData["CurrentComboHits"].GetInt();
+            			player.comboState = componentData["CurrentComboHits"].GetInt();
             			player.comboDamage = componentData["ComboDamage"].GetInt();
-            			player.attackCooldown = componentData["AttackCooldown"].GetFloat();
-            			player.attackTimer = componentData["AttackTimer"].GetFloat();
+            			player.maxComboTimer = componentData["AttackCooldown"].GetFloat();
+            			player.comboTimer = componentData["AttackTimer"].GetFloat();
             			player.playerForce = componentData["PlayerForce"].GetFloat();
             			player.isDead = componentData["IsDead"].GetBool();
             			player.canAttack = componentData["CanAttack"].GetBool();
@@ -890,6 +894,7 @@ namespace Ukemochi
                 Value position(rapidjson::kArrayType);
                 position.PushBack(transform.position.x, allocator);
                 position.PushBack(transform.position.y, allocator);
+                position.PushBack(transform.position.z, allocator);
                 transformComponent.AddMember("Position", position, allocator);
 
                 transformComponent.AddMember("Rotation", transform.rotation, allocator);
@@ -909,7 +914,7 @@ namespace Ukemochi
 
                 const auto& rigidbody = gameobject->GetComponent<Rigidbody2D>();
                 Value position(rapidjson::kArrayType);
-                position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+                position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator).PushBack(rigidbody.position.z, allocator);
                 rigidbodyComponent.AddMember("Position", position, allocator);
 
                 Value velocity(rapidjson::kArrayType);
@@ -994,6 +999,8 @@ namespace Ukemochi
                                                 allocator);
                 spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
 
+                spriteRenderComponent.AddMember("Layer", spriteRender.layer, allocator);
+
                 componentsArray.PushBack(spriteRenderComponent, allocator);
             }
 
@@ -1065,11 +1072,10 @@ namespace Ukemochi
         		const auto&player = gameobject->GetComponent<Player>();
         		playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
         		playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
-        		playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
-        		playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+        		playerComponent.AddMember("CurrentComboHits", player.comboState, allocator);
         		playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
-        		playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
-        		playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+        		playerComponent.AddMember("AttackCooldown", player.maxComboTimer, allocator);
+        		playerComponent.AddMember("AttackTimer", player.comboTimer, allocator);
         		playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
         		playerComponent.AddMember("IsDead", player.isDead, allocator);
         		playerComponent.AddMember("CanAttack", player.canAttack, allocator);
@@ -1191,6 +1197,7 @@ namespace Ukemochi
             Value position(rapidjson::kArrayType);
             position.PushBack(transform.position.x, allocator);
             position.PushBack(transform.position.y, allocator);
+            position.PushBack(transform.position.z, allocator);
             transformComponent.AddMember("Position", position, allocator);
 
             transformComponent.AddMember("Rotation", transform.rotation, allocator);
@@ -1210,7 +1217,7 @@ namespace Ukemochi
 
             const auto& rigidbody = prefabObj->GetComponent<Rigidbody2D>();
             Value position(rapidjson::kArrayType);
-            position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator);
+            position.PushBack(rigidbody.position.x, allocator).PushBack(rigidbody.position.y, allocator).PushBack(rigidbody.position.z, allocator);
             rigidbodyComponent.AddMember("Position", position, allocator);
 
             Value velocity(rapidjson::kArrayType);
@@ -1292,6 +1299,7 @@ namespace Ukemochi
             const auto& spriteRender = prefabObj->GetComponent<SpriteRender>();
             spriteRenderComponent.AddMember("Sprite", Value(spriteRender.texturePath.c_str(), allocator), allocator);
             spriteRenderComponent.AddMember("Shape", spriteRender.shape == SPRITE_SHAPE::BOX ? 0 : 1, allocator);
+            spriteRenderComponent.AddMember("Layer", spriteRender.layer, allocator);
 
             componentsArray.PushBack(spriteRenderComponent, allocator);
         }
@@ -1364,11 +1372,10 @@ namespace Ukemochi
             const auto& player = prefabObj->GetComponent<Player>();
             playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
             playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
-            playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
-            playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+            playerComponent.AddMember("CurrentComboHits", player.comboState, allocator);
             playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
-            playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
-            playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+            playerComponent.AddMember("AttackCooldown", player.maxComboTimer, allocator);
+            playerComponent.AddMember("AttackTimer", player.comboTimer, allocator);
             playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
             playerComponent.AddMember("IsDead", player.isDead, allocator);
             playerComponent.AddMember("CanAttack", player.canAttack, allocator);

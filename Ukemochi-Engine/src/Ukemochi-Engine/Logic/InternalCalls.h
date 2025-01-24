@@ -127,7 +127,7 @@ namespace Ukemochi
         {
             auto* go = GameObjectManager::GetInstance().GetGO(id);
             auto& transform = go->GetComponent<Transform>();
-            transform.position = Vec2(*x, *y);
+            transform.position = Vec3(*x, *y,0);
         }
 
         /*!
