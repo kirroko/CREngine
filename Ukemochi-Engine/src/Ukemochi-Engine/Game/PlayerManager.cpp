@@ -23,6 +23,31 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    void PlayerManager::PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const
+    {
+        if (Input::IsKeyPressed(UME_KEY_W))
+            rb.force.y = data.playerForce;
+        else if (Input::IsKeyPressed(UME_KEY_S))
+            rb.force.y = -data.playerForce;
+        else
+            rb.force.y = 0.f;
+
+        if (Input::IsKeyPressed(UME_KEY_A))
+        {
+            rb.force.x = -data.playerForce;
+            sr.flipX = false;
+        }
+        else if (Input::IsKeyPressed(UME_KEY_D))
+        {
+            rb.force.x = data.playerForce;
+            sr.flipX = true;
+        }
+        else
+        {
+            rb.force.x = 0.f;
+        }
+    }
+
     /**
      * @brief update the PlayerManager
      */
@@ -53,44 +78,16 @@ namespace Ukemochi
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
             auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
-            if (Input::IsKeyPressed(UME_KEY_W))
-            {
-                rb.force.y = data.playerForce;
+            if (!data.comboIsAttacking)
+                PlayersMovement(rb,anim,sr,data);
+            
+            if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
+                && !data.comboIsAttacking)
                 anim.SetAnimation("Running");
-            }
-            else if (Input::IsKeyPressed(UME_KEY_S))
-            {
-                rb.force.y = -data.playerForce;
-                anim.SetAnimation("Running");
-            }
             else
-            {
-                rb.force.y = 0.f;
-            }
-
-            if (Input::IsKeyPressed(UME_KEY_A))
-            {
-                rb.force.x = -data.playerForce;
-                anim.SetAnimation("Running");
-                sr.flipX = false;
-            }
-            else if (Input::IsKeyPressed(UME_KEY_D))
-            {
-                rb.force.x = data.playerForce;
-                anim.SetAnimation("Running");
-                sr.flipX = true;
-            }
-            else
-            {
-                rb.force.x = 0.f;
-            }
-
-            if (!Input::IsKeyPressed(UME_KEY_W) && !Input::IsKeyPressed(UME_KEY_S) && !Input::IsKeyPressed(UME_KEY_A) &&
-                !Input::IsKeyPressed(UME_KEY_D))
-            {
                 anim.SetAnimation("Idle");
-            }
-
+            
+            
             // Update knife position
             if (sr.flipX)
             {
@@ -130,10 +127,7 @@ namespace Ukemochi
             }
             
             if (data.comboIsAttacking && anim.currentClip == "Idle")
-            {
-                UME_ENGINE_TRACE("CAN ATTACK!");
                 data.comboIsAttacking = false;
-            }
             
             // Player input
             if (Input::IsKeyTriggered(UME_KEY_J))
@@ -148,6 +142,8 @@ namespace Ukemochi
                     data.comboState = (data.comboState + 1) % 3;    // loop back after 3 hits
                     data.comboTimer = data.maxComboTimer;           // Reset the combo timer
                     data.comboIsAttacking = true;                        // Prevent spamming
+
+                    rb.force = Vec2(0,0);
 
                     UME_ENGINE_TRACE("ATTACKING! COMBO STATE: {0}",data.comboState);
                     // Perform attack
@@ -181,45 +177,6 @@ namespace Ukemochi
 
                     UME_ENGINE_INFO("Current clip name: {0}", anim.currentClip);
                 }
-                // if (data.currentComboHits == 0 || data.canAttack) // first attack or can attack (Follow-up combo)
-                // {
-                //     data.currentComboHits++;
-                //     switch (data.currentComboHits)
-                //     {
-                //     case 1:
-                //         // anim.SetAnimationImmediately("Attack");
-                //         anim.SetAnimationFromTo("Attack",0,14);
-                //         if (audio.GetSFXindex("Pattack1") != -1)
-                //         {
-                //             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
-                //                 audio.PlaySFX(audio.GetSFXindex("Pattack1"));
-                //         }
-                //
-                //         break;
-                //     case 2:
-                //         anim.SetAnimationFromTo("Attack",15,24);
-                //         if (audio.GetSFXindex("Pattack1") != -1)
-                //             audio.StopSFX(audio.GetSFXindex("Pattack1"));
-                //
-                //         if (audio.GetSFXindex("Pattack2") != -1)
-                //         {
-                //             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
-                //                 audio.PlaySFX(audio.GetSFXindex("Pattack2"));
-                //         }
-                //
-                //         break;
-                //     case 3:
-                //         anim.SetAnimationImmediately("Attack",25);
-                //         break;
-                //     default:
-                //         break;
-                //     }
-                //
-                //     anim.isAttacking = true;
-                //     
-                //     data.canAttack = false; // Prevent immediate chaining of attacks
-                //     data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[anim.currentClip].frame_time;
-                // }
             }
         }
     }
