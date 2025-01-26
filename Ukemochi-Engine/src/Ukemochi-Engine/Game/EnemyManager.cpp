@@ -150,6 +150,18 @@ namespace Ukemochi
                     enemycomponent.state = enemycomponent.CHASE;
                 }
             }
+            if (enemycomponent.isKick)
+            {
+                if (enemycomponent.timeSinceTargetReached < 1.0f) {
+                    enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
+                }
+                else {
+                    enemycomponent.timeSinceTargetReached = 0.f;
+                    enemycomponent.isKick = false;
+                }
+                ++it;
+                continue;
+            }
 
             // Skip collision handling for dead enemies
             if (enemycomponent.isCollide)

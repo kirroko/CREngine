@@ -109,12 +109,12 @@ namespace Ukemochi
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
                     AudioManager>();
                 // Kick
-                if (data.comboState == 3 && data.comboTimer < 1.f && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
+                if (data.comboState == 2 && anim.current_frame >= 29 && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
                 {
                     if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
                         audioM.GetSFXindex("Pattack3")))
                     {
-                        audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+                        //audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
                         anim.attackAnimationFinished = true;
                     }
                     kickAudio = true;
@@ -167,6 +167,8 @@ namespace Ukemochi
                         if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
                             break;
                         audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+                        anim.attackAnimationFinished = false;
+                        kickAudio = false;
                         break;
                     case 2:
                         anim.SetAnimationFromTo("Attack",25,46);

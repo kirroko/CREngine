@@ -114,15 +114,15 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.5f };  // Min Y is halfway down the object
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
 		else if (tag == "Knife")
 		{
-			box.min = { -BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
+			box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
 						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
+			box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
 						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		}
 		else
@@ -492,21 +492,81 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
-			if (player_anim.attackAnimationFinished) // Perform knockback kick
-			{
-				ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-				enemy_data.isCollide = true;
-				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
-			}
-
-			if (!player_data.comboIsAttacking)
+			if (player_anim.currentClip != "Attack")
 				return;
 
-			// Deal damage to the enemy
-			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-			enemy_data.isCollide = true;
-			enemy_data.atktimer = 5.0f;
-			enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 8)
+				{
+					if (!enemy_data.hasDealtDamage)
+					{
+						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+						enemy_data.atktimer = 5.0f;
+						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+					}
+				}
+				else
+				{
+					// Reset damage flag for the kick combo if not at the damage frame
+					enemy_data.hasDealtDamage = false;
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 23)
+				{
+					if (!enemy_data.hasDealtDamage)
+					{
+						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+						enemy_data.atktimer = 5.0f;
+						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+					}
+				}
+				else
+				{
+					// Reset damage flag for the kick combo if not at the damage frame
+					enemy_data.hasDealtDamage = false;
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 29)
+				{
+					// Apply knockback and play sound effects
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+						AudioManager>();
+					ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 150000, trans2, rb2);
+
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+						audioM.GetSFXindex("Pattack3")))
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+					}
+					enemy_data.isKick = true;
+
+					// Deal damage during the knockback kick
+					if (!enemy_data.hasDealtDamage)
+					{
+						enemy_data.atktimer = 5.0f;
+						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						enemy_data.hasDealtDamage = true;
+					}
+				}
+				else
+				{
+					// Reset damage flag for the kick combo if not at the damage frame
+					enemy_data.hasDealtDamage = false;
+				}
+				break;
+
+			default:
+				break;
+			}
+
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
 		{

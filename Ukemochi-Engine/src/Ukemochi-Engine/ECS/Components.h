@@ -379,6 +379,8 @@ namespace Ukemochi
 		mutable int prevObject;
 		mutable int prevObject2;
 		bool isCollide;
+		bool isKick;
+		bool hasDealtDamage = false;
 		float atktimer = 5.0f;
 		bool isDead = false;
 		bool isWithPlayer = false;
@@ -388,7 +390,7 @@ namespace Ukemochi
 
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
-			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false)
+			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
 			nearestObj = -1;
 			switch (type)
