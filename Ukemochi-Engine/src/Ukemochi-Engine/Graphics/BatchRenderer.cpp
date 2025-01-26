@@ -12,12 +12,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "PreCompile.h"
+#include "../ECS/ECS.h"
+#include "../Asset Manager/AssetManager.h"
 #include "BatchRenderer.h"
 #include "shaderClass.h"
 #include "EBO.h"
 #include "VBO.h"
 #include "VAO.h"
 #include "Texture.h"
+
 
  /*!
   * @brief Constructs a new BatchRenderer2D object.
@@ -243,6 +246,183 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer)
+{
+    // Check if the batch is full and flush it
+    if (vertices.size() >= maxSprites * 4)
+    {
+        std::cout << "Reached maxSprites in batch, flushing..." << std::endl;
+        flush();
+        beginBatch();
+    }
+    
+    GLint textureID = -1;
+
+    auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
+
+    //std::cout << "Checking spriteData for spriteName: " << spriteName << std::endl;
+    //if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())
+    //{
+    //    std::cerr << "Sprite '" << spriteName << "' not found in spriteData." << std::endl;
+
+    //    // Print all keys in spriteData for verification
+    //    for (const auto& [key, value] : assetManager->spriteData)
+    //    {
+    //        std::cout << "Available key in spriteData: " << key << std::endl;
+    //    }
+    //    return;
+    //}
+
+
+    // Check if the sprite exists in the atlas
+    if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())
+    {
+        // Handle standalone texture
+        auto texture = assetManager->getTexture(spriteName);
+        if (!texture)
+        {
+            std::cerr << "Error: Sprite '" << spriteName << "' not found in atlas or as a standalone texture!" << std::endl;
+            return;
+        }
+
+        // Bind the standalone texture
+        texture->Bind();
+
+        // Retrieve the texture ID
+        textureID = ECS::GetInstance().GetSystem<Renderer>()->textureIDMap[texture->ID];
+
+        // Calculate sine and cosine for the rotation angle
+        float cosTheta = cos(rotation);
+        float sinTheta = sin(rotation);
+
+        // Define the four corners of the sprite relative to its center
+        glm::vec2 halfSize = size * 0.5f;
+
+        glm::vec2 bottomLeft(-halfSize.x, -halfSize.y);
+        glm::vec2 bottomRight(halfSize.x, -halfSize.y);
+        glm::vec2 topRight(halfSize.x, halfSize.y);
+        glm::vec2 topLeft(-halfSize.x, halfSize.y);
+
+        // Apply rotation to each corner
+        bottomLeft = glm::vec2(
+            cosTheta * bottomLeft.x - sinTheta * bottomLeft.y,
+            sinTheta * bottomLeft.x + cosTheta * bottomLeft.y
+        );
+
+        bottomRight = glm::vec2(
+            cosTheta * bottomRight.x - sinTheta * bottomRight.y,
+            sinTheta * bottomRight.x + cosTheta * bottomRight.y
+        );
+
+        topRight = glm::vec2(
+            cosTheta * topRight.x - sinTheta * topRight.y,
+            sinTheta * topRight.x + cosTheta * topRight.y
+        );
+
+        topLeft = glm::vec2(
+            cosTheta * topLeft.x - sinTheta * topLeft.y,
+            sinTheta * topLeft.x + cosTheta * topLeft.y
+        );
+
+        // Translate rotated vertices to the actual position of the sprite
+        glm::vec3 pos1 = glm::vec3(bottomLeft + glm::vec2(position.x, position.y), position.z); // Bottom-left
+        glm::vec3 pos2 = glm::vec3(bottomRight + glm::vec2(position.x, position.y), position.z); // Bottom-right
+        glm::vec3 pos3 = glm::vec3(topRight + glm::vec2(position.x, position.y), position.z); // Top-right
+        glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
+
+        // Define proper UV coordinates for standalone textures
+        glm::vec2 uv1 = { 0.0f, 0.0f }; // Bottom-left
+        glm::vec2 uv2 = { 1.0f, 0.0f }; // Bottom-right
+        glm::vec2 uv3 = { 1.0f, 1.0f }; // Top-right
+        glm::vec2 uv4 = { 0.0f, 1.0f }; // Top-left
+
+        // Create vertices
+        Vertex v1 = { pos1, color, {uv1}, textureID };
+        Vertex v2 = { pos2, color, {uv2}, textureID };
+        Vertex v3 = { pos3, color, {uv3}, textureID };
+        Vertex v4 = { pos4, color, {uv4}, textureID };
+
+        // Add vertices to the appropriate layer
+        layerBatches[layer].push_back(v1);
+        layerBatches[layer].push_back(v2);
+        layerBatches[layer].push_back(v3);
+        layerBatches[layer].push_back(v4);
+
+        return;
+    }
+
+
+    //ECS::GetInstance().GetSystem<AssetManager>()->debugPrintSpriteData();
+    // Retrieve UV coordinates for the sprite from AssetManager
+    const auto& spriteInfo = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(spriteName);
+    const auto& uv = spriteInfo.uv;
+
+    // May not be here
+    ECS::GetInstance().GetSystem<AssetManager>()->bindSpriteSheet(spriteInfo.spriteSheetName);
+
+    // Retrieve the texture ID of the atlas
+    auto atlasTexture = assetManager->getTexture(spriteInfo.spriteSheetName);
+    if (!atlasTexture)
+    {
+        std::cerr << "Error: Atlas texture '" << spriteInfo.spriteSheetName << "' not found!" << std::endl;
+        return;
+    }
+
+    textureID = ECS::GetInstance().GetSystem<Renderer>()->textureIDMap[atlasTexture->ID];
+
+    // Calculate sine and cosine for the rotation angle
+    float cosTheta = cos(rotation);
+    float sinTheta = sin(rotation);
+
+    // Define the four corners of the sprite relative to its center
+    glm::vec2 halfSize = size * 0.5f;
+
+    glm::vec2 bottomLeft(-halfSize.x, -halfSize.y);
+    glm::vec2 bottomRight(halfSize.x, -halfSize.y);
+    glm::vec2 topRight(halfSize.x, halfSize.y);
+    glm::vec2 topLeft(-halfSize.x, halfSize.y);
+
+    // Apply rotation to each corner
+    bottomLeft = glm::vec2(
+        cosTheta * bottomLeft.x - sinTheta * bottomLeft.y,
+        sinTheta * bottomLeft.x + cosTheta * bottomLeft.y
+    );
+
+    bottomRight = glm::vec2(
+        cosTheta * bottomRight.x - sinTheta * bottomRight.y,
+        sinTheta * bottomRight.x + cosTheta * bottomRight.y
+    );
+
+    topRight = glm::vec2(
+        cosTheta * topRight.x - sinTheta * topRight.y,
+        sinTheta * topRight.x + cosTheta * topRight.y
+    );
+
+    topLeft = glm::vec2(
+        cosTheta * topLeft.x - sinTheta * topLeft.y,
+        sinTheta * topLeft.x + cosTheta * topLeft.y
+    );
+
+    // Translate rotated vertices to the actual position of the sprite
+    glm::vec3 pos1 = glm::vec3(bottomLeft + glm::vec2(position.x, position.y), position.z); // Bottom-left
+    glm::vec3 pos2 = glm::vec3(bottomRight + glm::vec2(position.x, position.y), position.z); // Bottom-right
+    glm::vec3 pos3 = glm::vec3(topRight + glm::vec2(position.x, position.y), position.z); // Top-right
+    glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
+
+    // Create vertices with UV coordinates from the atlas
+    Vertex v1 = { pos1, color, {uv.uMin, uv.vMin}, textureID };
+    Vertex v2 = { pos2, color, {uv.uMax, uv.vMin}, textureID };
+    Vertex v3 = { pos3, color, {uv.uMax, uv.vMax}, textureID };
+    Vertex v4 = { pos4, color, {uv.uMin, uv.vMax}, textureID };
+
+    // Add vertices to the appropriate layer
+    layerBatches[layer].push_back(v1);
+    layerBatches[layer].push_back(v2);
+    layerBatches[layer].push_back(v3);
+    layerBatches[layer].push_back(v4);
+}
+
+
 void BatchRenderer2D::flush()
 {
     for (const auto& [layer, layerVertices] : layerBatches) 
@@ -279,47 +459,6 @@ void BatchRenderer2D::flush()
     // Clear batches for the next frame
     layerBatches.clear();
 }
-
-
-/*!
- * @brief Flushes the batch, rendering all sprites in the vertex buffer.
- */
-//void BatchRenderer2D::flush()
-//{
-//    if (vertices.empty())
-//    {
-//        //std::cout << "No vertices to flush." << std::endl;
-//        return;
-//    }
-//
-//    // Bind VAO and Shader
-//    vao->Bind();
-//
-//    // Update VBO data with current vertices
-//    vbo->Bind();
-//
-//    // Print vertex data for debugging
-//    vbo->UpdateData(vertices.data(), vertices.size() * sizeof(Vertex));
-//    vbo->Unbind();
-//
-//    // Bind EBO
-//    ebo->Bind();
-//    //shader->Activate();
-//
-//    if (activeShader) {
-//        activeShader->Activate(); // Use the active shader
-//    }
-//
-//    // Calculate the correct index count based on the number of quads in the batch
-//    int indexCount = static_cast<int>((vertices.size() / 4) * 6); // Each quad has 6 indices
-//
-//    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-//
-//    vao->Unbind();
-//    ebo->Unbind();
-//
-//    vertices.clear();
-//}
 
 void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> ashader)
 {

@@ -4,7 +4,7 @@
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
-\date       Nov 17, 2024
+\date       Jan 24, 2025
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -76,7 +76,7 @@ namespace Ukemochi
 
 		int collision_flag{};	// Track the collision flags
 		bool is_trigger{false}; // If true, act as a trigger
-								// bool enabled{ true };		   // If true, box collision is enabled
+		// bool enabled{ true };// If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -328,6 +328,10 @@ namespace Ukemochi
 		void *methodInstance = nullptr; // MonoMethod from client script
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Player component structure.
+	*************************************************************************/
 	struct Player
 	{
 		int maxHealth = 100;
@@ -340,6 +344,27 @@ namespace Ukemochi
 		bool isDead = false;
 		bool canAttack = true;
 		bool comboIsAttacking = false;
+	};
+
+	/*!***********************************************************************
+	\brief
+	 Player soul component structure.
+	*************************************************************************/
+	enum SoulType { EMPTY = -1, FISH, WORM, NUM_OF_SOULS };
+	struct PlayerSoul
+	{
+		SoulType current_soul = EMPTY;	   // The player's current active soul
+		float soul_bars[NUM_OF_SOULS]{};   // The player's soul bars, used for soul passive attacks
+		int soul_charges[NUM_OF_SOULS]{};  // The player's soul charges, used for soul abilities
+		float soul_damage[NUM_OF_SOULS]{}; // The player's soul skill damages
+
+		float soul_decay_rate = 5.f;	   // The rate of decay for the soul bar
+		float soul_decay_timer = 0.f;
+		float soul_decay_amount = 10.f;
+
+		float skill_cooldown = 5.f;
+		float skill_timer = 0.f;
+		bool skill_ready = false;
 	};
 
 	/*!***********************************************************************

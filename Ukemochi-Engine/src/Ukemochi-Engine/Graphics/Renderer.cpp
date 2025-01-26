@@ -27,6 +27,18 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using namespace Ukemochi;
 
+std::string getSpriteNameFromPath(const std::string& texturePath)
+{
+	std::string fileName = std::filesystem::path(texturePath).filename().string();
+
+	// Remove the extension if it exists
+	size_t dotIndex = fileName.find_last_of('.');
+	if (dotIndex != std::string::npos) {
+		fileName = fileName.substr(0, dotIndex);
+	}
+
+	return fileName;
+}
 /*!
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
@@ -88,7 +100,7 @@ void Renderer::init()
 
 	// Load multiple fonts into the text renderer
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
-	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
 
 	// Add text objects
 	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
@@ -443,10 +455,57 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
  * @brief Binds textures to OpenGL texture units and sets them up in the shader.
  * @param shader The shader program to bind textures to.
  */
+//void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
+//{
+//	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
+//	int textureCount = std::min(32, texture_order_count);
+//	std::vector<int> textureUnits(textureCount);
+//
+//	for (int i = 0; i < texture_order_count && i < 32; ++i) 
+//	{
+//		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
+//
+//		// Skip atlas subtextures
+//		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path)) 
+//		{
+//			//std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
+//			continue;
+//		}
+//
+//		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
+//		if (!texture || texture->ID == 0) 
+//		{
+//			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
+//			continue;
+//		}
+//
+//		// Ensure no redundant binding
+//		if (textureIDMap.find(texture->ID) == textureIDMap.end()) 
+//		{
+//			textureIDMap[texture->ID] = i;
+//			textureUnits[i] = i;
+//
+//			glActiveTexture(GL_TEXTURE0 + i);
+//			glBindTexture(GL_TEXTURE_2D, texture->ID);
+//
+//			/*std::cout << "Binding texture:\n"
+//				<< "  Path: " << path << "\n"
+//				<< "  Texture ID: " << texture->ID << "\n"
+//				<< "  Assigned Unit: " << i << std::endl;*/
+//		}
+//		else 
+//		{
+//			textureUnits[i] = textureIDMap[texture->ID];
+//		}
+//	}
+//
+//	shader->setIntArray("textures", textureUnits.data(), textureCount);
+//}
+
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
-	// Set textureCount based on the number of unique textures, limited to 32
-	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
+	// Set textureCount based on the number of unique textures, limited to 32 
+	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size())); 
 	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
@@ -457,6 +516,11 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		Texture* texture = textureCache[path];*/
 
 		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
+		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path))
+		{
+			//std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
+			continue;
+		}
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 
@@ -465,28 +529,28 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			continue;
 		}
 
-		// Check if this texture is already mapped to a unit
+		// Check if this texture is already mapped to a unit 
 		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
-			// New texture, assign to the next available texture unit
+			// New texture, assign to the next available texture unit 
 			textureIDMap[texture->ID] = i;
 
-			// Bind the texture to the OpenGL texture unit
+			// Bind the texture to the OpenGL texture unit 
 			/*glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
 			glBindTexture(GL_TEXTURE_2D, texture->ID);*/
 
 			textureUnits[i] = i;
 
-			// Increment to the next available texture unit
-			//nextAvailableTextureUnit++;
+			// Increment to the next available texture unit 
+			//nextAvailableTextureUnit++; 
 		}
 		else {
-			// Texture already mapped, retrieve existing texture unit
+			// Texture already mapped, retrieve existing texture unit 
 			textureUnits[i] = textureIDMap[texture->ID];
 		}
 	}
 	/*for (int i = 0; i < textureCount; ++i) {
-		const auto& path = texturePathsOrder[i];
-		Texture* texture = textureCache[path];*/
+	 const auto& path = texturePathsOrder[i];
+	 Texture* texture = textureCache[path];*/
 
 	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureListSize(); i++)
 	{
@@ -496,16 +560,103 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, texture->ID);
 
-		// Verify that the texture is bound to the expected unit
+		// Verify that the texture is bound to the expected unit 
 		GLint boundTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
 
 	}
-	// Pass the array of texture unit indices to the shader uniform array "textures"
+	// Pass the array of texture unit indices to the shader uniform array "textures" 
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
 }
 
-
+/* 
+	FUNCTION I WANT TO USE BUT CANT BECAUSE OF GHOST TEXTURE 
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+//void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
+//{
+//	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
+//	int textureCount = std::min(32, texture_order_count);
+//	std::vector<int> textureUnits(textureCount);
+//
+//	// Keep track of bound atlas textures
+//	std::unordered_set<std::string> boundAtlases;
+//
+//	for (int i = 0; i < texture_order_count && i < 32; ++i)
+//	{
+//		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
+//
+//		// Determine if the texture is part of an atlas
+//		bool isInAtlas = ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path);
+//
+//		if (isInAtlas)
+//		{
+//			// Retrieve the atlas texture path from the sprite data
+//			const auto& spriteData = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(path);
+//			const std::string& atlasPath = spriteData.spriteSheetName;
+//
+//			// Skip if the atlas is already bound
+//			if (boundAtlases.find(atlasPath) != boundAtlases.end())
+//				continue;
+//
+//			Texture* atlasTexture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(atlasPath).get();
+//			if (!atlasTexture || atlasTexture->ID == 0)
+//			{
+//				std::cerr << "Error: Failed to load atlas texture: " << atlasPath << std::endl;
+//				continue;
+//			}
+//
+//			// Bind atlas texture if not already bound
+//			if (textureIDMap.find(atlasTexture->ID) == textureIDMap.end())
+//			{
+//				textureIDMap[atlasTexture->ID] = i;
+//				textureUnits[i] = i;
+//
+//				glActiveTexture(GL_TEXTURE0 + i);
+//				glBindTexture(GL_TEXTURE_2D, atlasTexture->ID);
+//
+//				std::cout << "Binding atlas texture:\n"
+//					<< "  Path: " << atlasPath << "\n"
+//					<< "  Texture ID: " << atlasTexture->ID << "\n"
+//					<< "  Assigned Unit: " << i << std::endl;
+//
+//				boundAtlases.insert(atlasPath);
+//			}
+//		}
+//		else
+//		{
+//			// Handle standalone textures
+//			Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
+//			if (!texture || texture->ID == 0)
+//			{
+//				std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
+//				continue;
+//			}
+//
+//			// Ensure no redundant binding
+//			if (textureIDMap.find(texture->ID) == textureIDMap.end())
+//			{
+//				textureIDMap[texture->ID] = i;
+//				textureUnits[i] = i;
+//
+//				glActiveTexture(GL_TEXTURE0 + i);
+//				glBindTexture(GL_TEXTURE_2D, texture->ID);
+//
+//				std::cout << "Binding standalone texture:\n"
+//					<< "  Path: " << path << "\n"
+//					<< "  Texture ID: " << texture->ID << "\n"
+//					<< "  Assigned Unit: " << i << std::endl;
+//			}
+//			else
+//			{
+//				textureUnits[i] = textureIDMap[texture->ID];
+//			}
+//		}
+//	}
+//
+//	// Pass the array of texture unit indices to the shader
+//	shader->setIntArray("textures", textureUnits.data(), textureCount);
+//}
 
 /*!
  * @brief Sets up and compiles shaders used by the renderer.
@@ -684,19 +835,22 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
+			/*if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
-			}
+			}*/
 
-			int mappedTextureUnit = textureIDMap[textureID];
+			//int mappedTextureUnit = textureIDMap[textureID];
+
+			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
+			//std::cout << spriteName << " from render() line 686" <<std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation), spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 

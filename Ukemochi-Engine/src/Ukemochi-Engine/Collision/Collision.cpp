@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 30, 2024
+\date       Jan 19, 2025
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -37,6 +37,12 @@ namespace Ukemochi
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 
+		// Initialize the quadtree
+		BoxCollider2D bounds;
+		bounds.min = Vec2{ 0, 0 };
+		bounds.max = Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) };
+		quadtree = std::make_unique<QuadTree>(0, bounds);
+
 		// Find the player entity
 		player = static_cast<EntityID>(-1);
 		for (auto const& entity : m_Entities)
@@ -55,6 +61,67 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::CheckCollisions()
 	{
+		// Update the collision based on the number of steps
+		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+		{
+			// Clear the quadtree
+			quadtree->Clear();
+
+			// Update the bounding boxes of the entities and insert them into the quadtree
+			for (auto const& entity : m_Entities)
+			{
+				// Skip if the entity is not active
+				if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+					continue;
+
+				// Get the tag of the entity
+				std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
+				// Get references of the entity components
+				auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+				auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+
+				// Update the bounding box size
+				UpdateBoundingBox(box, trans, tag);
+
+				// Insert the entity into the quadtree
+				quadtree->Insert(entity, box);
+			}
+
+			// Perform broad-phase collision checks
+			for (auto const& entity1 : m_Entities)
+			{
+				// Skip if the entity is not active
+				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
+					continue;
+
+				// Get references of the first entity components
+				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
+
+				// Get the vector of potential collisions within the quad
+				std::vector<EntityID> potential_collisions;
+				quadtree->Retrieve(potential_collisions, box1);
+
+				for (auto const& entity2 : potential_collisions)
+				{
+					// Skip self collision
+					if (entity1 == entity2)
+						continue;
+
+					// Get references of the second entity components
+					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
+					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+
+					// Perform narrow-phase collision checks, check collision between two box objects
+					float tLast{};
+					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
+						BoxBox_Response(entity1, entity2, tLast);
+				}
+			}
+		}
+
+		/* OLD IMPLEMENTATION
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
@@ -95,7 +162,7 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}
+		}*/
 	}
 
 	/*!***********************************************************************
@@ -591,7 +658,7 @@ namespace Ukemochi
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				
+
 				if (audioM.GetSFXindex("HIT") != -1)
 				{
 					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
@@ -760,25 +827,23 @@ namespace Ukemochi
 		}
 
 		// Box 1 top and box 2 bottom collision response
-		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM) {
+		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		{
 			float overlap = box2.max.y - box1.min.y; // Calculate overlap depth
-			if (!rb1.is_kinematic) {
+			if (!rb1.is_kinematic)
 				trans1.position.y += overlap + MIN_OFFSET; // Move box1 out of the collision
-			}
-			if (!rb2.is_kinematic) {
+			if (!rb2.is_kinematic)
 				trans2.position.y -= overlap + MIN_OFFSET; // Move box2 out of the collision
-			}
 		}
 
 		// Box 1 bottom and box 2 top collision response
-		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP) {
+		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		{
 			float overlap = box1.max.y - box2.min.y; // Calculate overlap depth
-			if (!rb1.is_kinematic) {
+			if (!rb1.is_kinematic)
 				trans1.position.y -= overlap + MIN_OFFSET; // Move box1 out of the collision
-			}
-			if (!rb2.is_kinematic) {
+			if (!rb2.is_kinematic)
 				trans2.position.y += overlap + MIN_OFFSET; // Move box2 out of the collision
-			}
 		}
 	}
 
