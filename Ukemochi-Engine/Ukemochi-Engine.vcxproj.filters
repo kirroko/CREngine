@@ -234,6 +234,8 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\PlayerManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.h" />
     <ClInclude Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Quadtree.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Game\SoulManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -373,6 +375,8 @@
     <ClCompile Include="src\Ukemochi-Engine\Game\PlayerManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Quadtree.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\SoulManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

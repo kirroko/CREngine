@@ -2,7 +2,7 @@
 /*!
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 30, 2024
+\date       Jan 19, 2025
 \brief      This file contains the declaration of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../ECS/ECS.h" // for ECS system and components
+#include "Quadtree.h"   // for Quadtree algorithm
 
 namespace Ukemochi
 {
@@ -41,8 +42,9 @@ namespace Ukemochi
         *************************************************************************/
         const float MIN_OFFSET = 0.001f;
 
-        int screen_width{}, screen_height{}; // Screen size for box and screen collision
-        EntityID player;                     // Get the player for player data
+        int screen_width{}, screen_height{};          // Screen size for box and screen collision
+        EntityID player;                              // Get the player for player data
+        std::unique_ptr<QuadTree> quadtree = nullptr; // Quadtree instance for broad-phase collision
 
     public:
         /*!***********************************************************************

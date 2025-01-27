@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 30, 2024
+\date       Jan 19, 2025
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -37,6 +37,12 @@ namespace Ukemochi
 		screen_width = app.GetWindow().GetWidth();
 		screen_height = app.GetWindow().GetHeight();
 
+		// Initialize the quadtree
+		BoxCollider2D bounds;
+		bounds.min = Vec2{ 0, 0 };
+		bounds.max = Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) };
+		quadtree = std::make_unique<QuadTree>(0, bounds);
+
 		// Find the player entity
 		player = static_cast<EntityID>(-1);
 		for (auto const& entity : m_Entities)
@@ -55,6 +61,67 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::CheckCollisions()
 	{
+		// Update the collision based on the number of steps
+		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+		{
+			// Clear the quadtree
+			quadtree->Clear();
+
+			// Update the bounding boxes of the entities and insert them into the quadtree
+			for (auto const& entity : m_Entities)
+			{
+				// Skip if the entity is not active
+				if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+					continue;
+
+				// Get the tag of the entity
+				std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
+				// Get references of the entity components
+				auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+				auto& box = ECS::GetInstance().GetComponent<BoxCollider2D>(entity);
+
+				// Update the bounding box size
+				UpdateBoundingBox(box, trans, tag);
+
+				// Insert the entity into the quadtree
+				quadtree->Insert(entity, box);
+			}
+
+			// Perform broad-phase collision checks
+			for (auto const& entity1 : m_Entities)
+			{
+				// Skip if the entity is not active
+				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
+					continue;
+
+				// Get references of the first entity components
+				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
+
+				// Get the vector of potential collisions within the quad
+				std::vector<EntityID> potential_collisions;
+				quadtree->Retrieve(potential_collisions, box1);
+
+				for (auto const& entity2 : potential_collisions)
+				{
+					// Skip self collision
+					if (entity1 == entity2)
+						continue;
+
+					// Get references of the second entity components
+					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
+					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+
+					// Perform narrow-phase collision checks, check collision between two box objects
+					float tLast{};
+					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
+						BoxBox_Response(entity1, entity2, tLast);
+				}
+			}
+		}
+
+		/* OLD IMPLEMENTATION
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
@@ -95,7 +162,7 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}
+		}*/
 	}
 
 	/*!***********************************************************************
@@ -114,15 +181,15 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.5f };  // Min Y is halfway down the object
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
 		else if (tag == "Knife")
 		{
-			box.min = { -BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
+			box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
 						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * 1.5f * trans.scale.x + trans.position.x,
+			box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
 						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		}
 		else
@@ -492,21 +559,81 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
-			if (player_anim.attackAnimationFinished) // Perform knockback kick
-			{
-				ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-				enemy_data.isCollide = true;
-				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
-			}
-
-			if (!player_data.comboIsAttacking)
+			if (player_anim.currentClip != "Attack")
 				return;
 
-			// Deal damage to the enemy
-			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-			enemy_data.isCollide = true;
-			enemy_data.atktimer = 5.0f;
-			enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 8)
+				{
+					if (!enemy_data.hasDealtDamage)
+					{
+						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+						enemy_data.atktimer = 5.0f;
+						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+					}
+				}
+				else
+				{
+					// Reset damage flag for the kick combo if not at the damage frame
+					enemy_data.hasDealtDamage = false;
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 23)
+				{
+					if (!enemy_data.hasDealtDamage)
+					{
+						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+						enemy_data.atktimer = 5.0f;
+						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+					}
+				}
+				else
+				{
+					// Reset damage flag for the kick combo if not at the damage frame
+					enemy_data.hasDealtDamage = false;
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 29)
+				{
+					// Apply knockback and play sound effects
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+						AudioManager>();
+					ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 150000, trans2, rb2);
+
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+						audioM.GetSFXindex("Pattack3")))
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+					}
+					enemy_data.isKick = true;
+
+					// Deal damage during the knockback kick
+					if (!enemy_data.hasDealtDamage)
+					{
+						enemy_data.atktimer = 5.0f;
+						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						enemy_data.hasDealtDamage = true;
+					}
+				}
+				else
+				{
+					// Reset damage flag for the kick combo if not at the damage frame
+					enemy_data.hasDealtDamage = false;
+				}
+				break;
+
+			default:
+				break;
+			}
+
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
 		{
@@ -574,7 +701,7 @@ namespace Ukemochi
 		{
 			// Enemy and Enemy
 			// Block each other
-
+			return;
 			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
@@ -700,25 +827,23 @@ namespace Ukemochi
 		}
 
 		// Box 1 top and box 2 bottom collision response
-		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM) {
+		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		{
 			float overlap = box2.max.y - box1.min.y; // Calculate overlap depth
-			if (!rb1.is_kinematic) {
+			if (!rb1.is_kinematic)
 				trans1.position.y += overlap + MIN_OFFSET; // Move box1 out of the collision
-			}
-			if (!rb2.is_kinematic) {
+			if (!rb2.is_kinematic)
 				trans2.position.y -= overlap + MIN_OFFSET; // Move box2 out of the collision
-			}
 		}
 
 		// Box 1 bottom and box 2 top collision response
-		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP) {
+		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		{
 			float overlap = box1.max.y - box2.min.y; // Calculate overlap depth
-			if (!rb1.is_kinematic) {
+			if (!rb1.is_kinematic)
 				trans1.position.y -= overlap + MIN_OFFSET; // Move box1 out of the collision
-			}
-			if (!rb2.is_kinematic) {
+			if (!rb2.is_kinematic)
 				trans2.position.y += overlap + MIN_OFFSET; // Move box2 out of the collision
-			}
 		}
 	}
 
