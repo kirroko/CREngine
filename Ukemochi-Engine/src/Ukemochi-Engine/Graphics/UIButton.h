@@ -62,6 +62,9 @@ public:
      */
     UIButton(const std::string& id, glm::vec2 position, glm::vec2 size, GLuint textureID, const std::string& text, glm::vec3 textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr)
         : id(id), position(position), size(size), textureID(textureID), text(text), textColor(textColor), fontName(fontName), textScale(textScale), textAlignment(alignment), interactable(interactable), on_click(on_click) {}
+
+    UIButton(glm::vec2 position, glm::vec2 size, const std::string& text, glm::vec3 textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr)
+    : position(position), size(size), text(text), textColor(textColor), fontName(fontName), textScale(textScale), textAlignment(alignment), interactable(interactable), on_click(on_click) {}
 };
 
 /*!

@@ -1,0 +1,180 @@
+{"frames": {
+
+"button1.png":
+{
+	"frame": {"x":838,"y":0,"w":145,"h":135},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":145,"h":135},
+	"sourceSize": {"w":145,"h":135}
+},
+"button2.png":
+{
+	"frame": {"x":983,"y":0,"w":147,"h":134},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":134},
+	"sourceSize": {"w":147,"h":134}
+},
+"defeat bg.png":
+{
+	"frame": {"x":0,"y":135,"w":1920,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
+	"sourceSize": {"w":1920,"h":1080}
+},
+"defeat.png":
+{
+	"frame": {"x":2119,"y":0,"w":499,"h":129},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":499,"h":129},
+	"sourceSize": {"w":499,"h":129}
+},
+"exit button.png":
+{
+	"frame": {"x":219,"y":0,"w":78,"h":72},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":78,"h":72},
+	"sourceSize": {"w":78,"h":72}
+},
+"in game_abilities.png":
+{
+	"frame": {"x":716,"y":0,"w":122,"h":107},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":122,"h":107},
+	"sourceSize": {"w":122,"h":107}
+},
+"in game_blue fire.png":
+{
+	"frame": {"x":89,"y":0,"w":65,"h":71},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
+	"sourceSize": {"w":65,"h":71}
+},
+"in game_border shadow.png":
+{
+	"frame": {"x":1920,"y":135,"w":1920,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
+	"sourceSize": {"w":1920,"h":1080}
+},
+"in game_health bar bg.png":
+{
+	"frame": {"x":3212,"y":0,"w":627,"h":66},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
+	"sourceSize": {"w":627,"h":66}
+},
+"in game_health bar border.png":
+{
+	"frame": {"x":2618,"y":0,"w":594,"h":31},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":594,"h":31},
+	"sourceSize": {"w":594,"h":31}
+},
+"in game_health bar icon.png":
+{
+	"frame": {"x":480,"y":0,"w":117,"h":129},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":117,"h":129},
+	"sourceSize": {"w":117,"h":129}
+},
+"in game_pause.png":
+{
+	"frame": {"x":381,"y":0,"w":99,"h":87},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":99,"h":87},
+	"sourceSize": {"w":99,"h":87}
+},
+"in game_red fire.png":
+{
+	"frame": {"x":154,"y":0,"w":65,"h":71},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
+	"sourceSize": {"w":65,"h":71}
+},
+"in game_soul ability charge bg.png":
+{
+	"frame": {"x":31,"y":0,"w":58,"h":61},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":61},
+	"sourceSize": {"w":58,"h":61}
+},
+"in game_soul ability charge border.png":
+{
+	"frame": {"x":0,"y":0,"w":31,"h":31},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":31},
+	"sourceSize": {"w":31,"h":31}
+},
+"in game_soul bar bg.png":
+{
+	"frame": {"x":1846,"y":0,"w":273,"h":55},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":273,"h":55},
+	"sourceSize": {"w":273,"h":55}
+},
+"in game_soul bar blue.png":
+{
+	"frame": {"x":1130,"y":0,"w":238,"h":18},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":18},
+	"sourceSize": {"w":238,"h":18}
+},
+"in game_soul bar border.png":
+{
+	"frame": {"x":1606,"y":0,"w":240,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":20},
+	"sourceSize": {"w":240,"h":20}
+},
+"in game_soul bar red.png":
+{
+	"frame": {"x":1368,"y":0,"w":238,"h":18},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":18},
+	"sourceSize": {"w":238,"h":18}
+},
+"in game_soul change.png":
+{
+	"frame": {"x":597,"y":0,"w":119,"h":121},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":121},
+	"sourceSize": {"w":119,"h":121}
+},
+"restart icon.png":
+{
+	"frame": {"x":297,"y":0,"w":84,"h":88},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":84,"h":88},
+	"sourceSize": {"w":84,"h":88}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "UI_Part1.png",
+	"format": "RGBA8888",
+	"size": {"w":3840,"h":1215},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:39ded3d62cea5748dc51fd923c1b71a0:0259f77f45cb030c8f570a2d369c53d4:7c3b2cf4ddd856dc2a5d808eb042303c$"
+}
+}
