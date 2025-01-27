@@ -301,6 +301,12 @@ namespace Ukemochi
 
 			clips[currentClip].frame_time = original_frame_time;
 		}
+
+		int GetCurrentFrame() const
+		{
+			return current_frame;
+		}
+
 	};
 
 	struct SpriteRender
