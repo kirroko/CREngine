@@ -72,7 +72,7 @@ namespace Ukemochi
 
 		// Set the new scale
 		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
-			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
+			transform.scale = { new_scale * 0.6f, new_scale * 0.9f };
 		else
 			transform.scale = { new_scale, new_scale };
 	}

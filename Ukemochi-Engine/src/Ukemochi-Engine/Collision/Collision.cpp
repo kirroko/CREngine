@@ -62,7 +62,7 @@ namespace Ukemochi
 	void Collision::CheckCollisions()
 	{
 		// Update the collision based on the number of steps
-		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+		/*/for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
 			// Clear the quadtree
 			quadtree->Clear();
@@ -119,9 +119,9 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}
+		}*/
 
-		/* OLD IMPLEMENTATION
+		// OLD IMPLEMENTATION
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
@@ -162,7 +162,7 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}*/
+		}//*/
 	}
 
 	/*!***********************************************************************
@@ -177,22 +177,22 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, const std::string& tag)
 	{
-		if (tag == "Player" || tag == "Enemy" || tag == "Environment")
-		{
-			// Lower half of the object (legs or bottom part)
-			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object
-			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y };  // Max Y stops at the object's center
-		}
-		else if (tag == "Knife")
-		{
-			box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
-						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
-						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-		}
-		else
+		//if (tag == "Player" || tag == "Enemy" || tag == "Environment")
+		//{
+		//	// Lower half of the object (legs or bottom part)
+		//	box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+		//				trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.f };  // Min Y is halfway down the object 1.5f
+		//	box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+		//				trans.position.y };  // Max Y stops at the object's center
+		//}
+		//else if (tag == "Knife")
+		//{
+		//	box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
+		//				-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+		//	box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
+		//				BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+		//}
+		//else
 		{
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
@@ -651,8 +651,8 @@ namespace Ukemochi
 			// Mochi takes damage and knockback
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -825,6 +825,27 @@ namespace Ukemochi
 			if (!rb2.is_kinematic)
 				trans2.position.x = box1.max.x + trans2.scale.x * 0.5f + MIN_OFFSET; // Move box2 to the right
 		}
+
+		//// Box 1 top and box 2 bottom collision response
+		//if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		//{
+		//	// To simulate floor/ceiling collision
+		//	if (!rb1.is_kinematic)
+		//		trans1.position.y = box2.max.y + trans1.scale.y * 0.5f + MIN_OFFSET; // Move box1 upwards
+		//	if (!rb2.is_kinematic)
+		//		trans2.position.y = box1.min.y - trans2.scale.y * 0.5f - MIN_OFFSET; // Move box2 downwards
+		//}
+
+		//// Box 1 bottom and box 2 top collision response
+		//if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		//{
+		//	// To simulate floor/ceiling collision
+		//	if (!rb1.is_kinematic)
+		//		trans1.position.y = box2.min.y - trans1.scale.y * 0.5f - MIN_OFFSET; // Move box1 downwards
+		//	if (!rb2.is_kinematic)
+		//		trans2.position.y = box1.max.y + trans2.scale.y * 0.5f + MIN_OFFSET; // Move box2 upwards
+		//}
+
 
 		// Box 1 top and box 2 bottom collision response
 		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
