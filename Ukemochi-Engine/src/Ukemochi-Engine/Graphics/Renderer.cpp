@@ -115,13 +115,15 @@ void Renderer::init()
 
 	batchRenderer->init(shaderProgram);
 
-	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
+	//UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
 	debugBatchRenderer->init(debug_shader_program);
 
 	colorBufferBatchRenderer = std::make_unique<ColorBufferBatchRenderer2D>();
 	colorBufferBatchRenderer->init(object_picking_shader_program);
+
+	batchRendererUI = std::make_shared<BatchRenderer2D>();
 
 	// Add buttons
 	//UIRenderer->addButton(UIButton("pauseButton",
@@ -857,7 +859,7 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	UIRenderer->renderButtons(*camera);
+	uiManager.render(glm::vec3(camera->position, 0.f));
 
 	// Render debug wireframes if debug mode is enabled
 	if (debug_mode_enabled)
@@ -1128,35 +1130,41 @@ void Renderer::drawBoxAnimation()
  * @param color Color of the text.
  * @param font_name Font to be used for rendering the text.
  */
-void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
-{
-	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
-}
+//void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+//{
+	//textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+//}
 
 /*!
  * @brief Updates the text of an existing text object.
  * @param id Identifier of the text object.
  * @param newText The new text content.
  */
-void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+//void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
 /*!
  * @brief Create a button object in the UI renderer.
  */
-void Renderer::CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
+void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::function<void()> onClick)
 {
-	UIRenderer->addButton(UIButton(id, glm::vec2(position.x, position.y), glm::vec2(size.x, size.y), GLuint(textureID), text, glm::vec3(textColor.x, textColor.y, textColor.z), fontName, textScale, alignment, interactable, on_click));
+	if (!batchRendererUI) 
+	{
+		std::cerr << "Error: UIRenderer is not initialized!" << std::endl;
+		return;
+	}
+
+	uiManager.addButton(position, size, sprite, color, batchRendererUI, onClick);
 }
 
 /*!
  * @brief Remove a button object in the UI renderer.
  */
-void Renderer::RemoveButtonObject(const std::string& id) { UIRenderer->removeButton(id); }
+//void Renderer::RemoveButtonObject(const std::string& id) {  }
 
 /*!
  * @brief Get the list of button objects in the UI renderer.
  */
-std::vector<UIButton>& Renderer::GetButtonObjects() { return UIRenderer->GetButtons(); }
+std::vector<UIButton>& Renderer::GetButtonObjects() { return; }
 
 /*!
  * @brief Initializes animation entities, creating idle and running animations for the player entity.

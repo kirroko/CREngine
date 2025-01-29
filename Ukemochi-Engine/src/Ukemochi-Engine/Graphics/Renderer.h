@@ -45,6 +45,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "UIButton.h"
 #include "DebugModeBatchRendering.h"
 #include "ColorBufferBatchRendering.h"
+#include "UIButtonManager.h"
 
 // Forward
 class TextRenderer;
@@ -154,7 +155,7 @@ public:
 	/*!
 	 * @brief Create a text object in the text renderer.
 	 */
-	void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
+	//void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
 
 	/*!
 	 * @brief Update a text object in the text renderer.
@@ -164,7 +165,7 @@ public:
 	/*!
 	 * @brief Create a button object in the UI renderer.
 	 */
-	void CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
+	void CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::function<void()> onClick);
 
 	/*!
 	 * @brief Remove a button object in the UI renderer.
@@ -443,7 +444,10 @@ private:
 
 	std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-	std::unique_ptr<UIButtonRenderer> UIRenderer;
+	std::shared_ptr<BatchRenderer2D> batchRendererUI;
+	UIButtonManager uiManager;
+
+	
 
 public:
 	// Setter method to set the player object

@@ -46,7 +46,7 @@ namespace Ukemochi
 			[]() { Application::Get().StartGame(); });
 
 		// Create FPS text
-		CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
+		//CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 
 #endif // !_DEBUG
 
@@ -92,7 +92,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
+		//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
 	}
 
 	/*!***********************************************************************
@@ -122,7 +122,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::CreateImage(const std::string& id, const Vec2& pos, const Vec2& size, int textureID)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Ukemochi", 1.f, TextAlignment::Center, false, nullptr);
+		//ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Ukemochi", 1.f, TextAlignment::Center, false, nullptr);
 	}
 
 	/*!***********************************************************************
@@ -153,7 +153,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
+		//ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
 	}
 
 	/*!***********************************************************************
@@ -164,7 +164,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::RemoveElement(const std::string& id)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->RemoveButtonObject(id);
+		//ECS::GetInstance().GetSystem<Renderer>()->RemoveButtonObject(id);
 	}
 
 	/*!***********************************************************************

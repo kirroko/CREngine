@@ -103,7 +103,7 @@ namespace Ukemochi
 		\param[in] on_click
 		 A callback function triggered on button click.
 		*************************************************************************/
-		void CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
+		void CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, bool interactable = true, std::function<void()> on_click = nullptr);
 
 		/*!***********************************************************************
 		\brief
