@@ -46,6 +46,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DebugModeBatchRendering.h"
 #include "ColorBufferBatchRendering.h"
 #include "UIButtonManager.h"
+#include "../Application.h"	
 
 // Forward
 class TextRenderer;
@@ -160,12 +161,12 @@ public:
 	/*!
 	 * @brief Update a text object in the text renderer.
 	 */
-	void UpdateTextObject(const std::string& id, const std::string& newText);
+	//void UpdateTextObject(const std::string& id, const std::string& newText);
 
 	/*!
 	 * @brief Create a button object in the UI renderer.
 	 */
-	void CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::function<void()> onClick);
+	void CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, int layer = 0, std::function<void()> onClick = nullptr);
 
 	/*!
 	 * @brief Remove a button object in the UI renderer.

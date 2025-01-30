@@ -105,7 +105,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
+		//ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
 	}
 
 	/*!***********************************************************************
@@ -151,10 +151,10 @@ namespace Ukemochi
 	\param[in] on_click
 	 A callback function triggered on button click.
 	*************************************************************************/
-	void InGameGUI::CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
-	{
-		//ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
-	}
+	//void InGameGUI::CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
+	//{
+	//	//ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
+	//}
 
 	/*!***********************************************************************
 	\brief
@@ -173,39 +173,39 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
 	{
-		// Check for mouse left click
-		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-		{
-			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
-			{
-				// Skip if the button is not interactable
-				if (!button.interactable)
-					continue;
+		//// Check for mouse left click
+		//if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
+		//{
+		//	for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
+		//	{
+		//		// Skip if the button is not interactable
+		//		if (!button.interactable)
+		//			continue;
 
-				// Check if the mouse is within the button boundaries
-				if (IsInside(Vec2{ button.position.x, button.position.y }, Vec2{ button.size.x, button.size.y }))
-					button.on_click(); // Invoke the button on click event
-			}
-		}
+		//		// Check if the mouse is within the button boundaries
+		//		if (IsInside(Vec2{ button.position.x, button.position.y }, Vec2{ button.size.x, button.size.y }))
+		//			button.on_click(); // Invoke the button on click event
+		//	}
+		//}
 
-		// Press enter to start game
-		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
-		{
-			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
-			{
-				// Skip if the button is not interactable
-				if (!button.interactable)
-					continue;
+		//// Press enter to start game
+		//if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
+		//{
+		//	for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
+		//	{
+		//		// Skip if the button is not interactable
+		//		if (!button.interactable)
+		//			continue;
 
-				// Check if it is the start button
-				if(button.id == "start_button")
-					button.on_click(); // Invoke the button on click event
-			}
-		}
+		//		// Check if it is the start button
+		//		if(button.id == "start_button")
+		//			button.on_click(); // Invoke the button on click event
+		//	}
+		//}
 
-		// Press F10 to toggle fps text
-		if (Input::IsKeyTriggered(UME_KEY_F10))
-			show_fps = !show_fps;
+		//// Press F10 to toggle fps text
+		//if (Input::IsKeyTriggered(UME_KEY_F10))
+		//	show_fps = !show_fps;
 	}
 
 	/*!***********************************************************************

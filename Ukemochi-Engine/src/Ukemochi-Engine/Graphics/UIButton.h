@@ -30,12 +30,12 @@ public:
     std::function<void()> onClick;
 
     bool isHovered = false;
-    int ui_layer = 10;
+    int ui_layer;
 
     std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, std::function<void()> callback = nullptr)
-       : position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), onClick(callback){} 
+    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, std::function<void()> callback = nullptr)
+       : position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), onClick(callback){} 
 
     void update(glm::vec2 mousePos, bool mousePressed)
     {

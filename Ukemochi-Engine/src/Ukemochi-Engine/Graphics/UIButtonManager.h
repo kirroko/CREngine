@@ -9,9 +9,9 @@ class UIButtonManager {
 public:
 	std::vector<std::shared_ptr<UIButton>> buttons;
 
-    void addButton(glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, std::function<void()> callback) 
+    void addButton(glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, int ui_layer, std::function<void()> callback) 
     {
-        buttons.push_back(std::make_shared<UIButton>(pos, size, sprite, color, std::move(renderer), callback));
+        buttons.push_back(std::make_shared<UIButton>(pos, size, sprite, color, std::move(renderer), ui_layer, callback));
     }
 
     void update(glm::vec2 mousePos, bool mousePressed) 
@@ -28,6 +28,8 @@ public:
         {
             button->render(cameraPos);
         }
+
+
     }
 };
 

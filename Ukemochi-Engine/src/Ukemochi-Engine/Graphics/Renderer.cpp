@@ -124,7 +124,13 @@ void Renderer::init()
 	colorBufferBatchRenderer->init(object_picking_shader_program);
 
 	batchRendererUI = std::make_shared<BatchRenderer2D>();
+	batchRendererUI->init(UI_shader_program);
 
+	uiManager.addButton(glm::vec3(static_cast<float>(screen_width) * 0.5f, static_cast<float>(screen_height) * 0.5f, 0.f), glm::vec2(static_cast<float>(screen_width), static_cast<float>(screen_height)), "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
+		});
+
+	uiManager.addButton(glm::vec3(static_cast<float>(screen_width) * 0.5f, static_cast<float>(screen_height) * 0.5f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+		Application::Get().StartGame(); });
 	// Add buttons
 	//UIRenderer->addButton(UIButton("pauseButton",
 	//	glm::vec2(100.0f, 700.0f),
@@ -859,8 +865,15 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
+	glDisable(GL_DEPTH_TEST);
+	//UI_shader_program->Activate();
+	batchRendererUI->setActiveShader(UI_shader_program);
+	//UI_shader_program->Activate();
+	UI_shader_program->setMat4("projecton", projection);
+	batchRendererUI->beginBatch();
 	uiManager.render(glm::vec3(camera->position, 0.f));
-
+	batchRendererUI->endBatch();
+	glEnable(GL_DEPTH_TEST);
 	// Render debug wireframes if debug mode is enabled
 	if (debug_mode_enabled)
 	{
@@ -1145,7 +1158,7 @@ void Renderer::drawBoxAnimation()
 /*!
  * @brief Create a button object in the UI renderer.
  */
-void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::function<void()> onClick)
+void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, int layer, std::function<void()> onClick)
 {
 	if (!batchRendererUI) 
 	{
@@ -1153,7 +1166,7 @@ void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm
 		return;
 	}
 
-	uiManager.addButton(position, size, sprite, color, batchRendererUI, onClick);
+	uiManager.addButton(position, size, sprite, color, batchRendererUI, layer, onClick);
 }
 
 /*!
@@ -1164,7 +1177,7 @@ void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm
 /*!
  * @brief Get the list of button objects in the UI renderer.
  */
-std::vector<UIButton>& Renderer::GetButtonObjects() { return; }
+//std::vector<UIButton>& Renderer::GetButtonObjects() { return; }
 
 /*!
  * @brief Initializes animation entities, creating idle and running animations for the player entity.
