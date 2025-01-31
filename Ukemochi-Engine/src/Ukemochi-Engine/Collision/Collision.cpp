@@ -659,10 +659,10 @@ namespace Ukemochi
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				
-				if (audioM.GetSFXindex("HURTSOUND") != -1)
+				if (audioM.GetSFXindex("PlayerHurt") != -1)
 				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HURTSOUND")))
-						audioM.PlaySFX(audioM.GetSFXindex("HURTSOUND"));
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+						audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
 				}
 			}
 		}

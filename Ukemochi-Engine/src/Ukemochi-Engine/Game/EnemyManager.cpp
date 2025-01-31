@@ -86,12 +86,9 @@ namespace Ukemochi
                 {
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     // Play different hit sounds based on enemy type
-                    if (enemycomponent.type == Enemy::FISH && audioM.GetSFXindex("FishHit") != -1)
+                    if (enemycomponent.type == Enemy::FISH && audioM.GetSFXindex("FishHurt") != -1)
                     {
-                        
-                      
-                            audioM.PlaySFX(audioM.GetSFXindex("FishHit"));
-                   
+                            audioM.PlaySFX(audioM.GetSFXindex("FishHurt"));
                     }
                     else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHit") != -1)
                     {

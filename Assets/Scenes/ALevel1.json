@@ -1734,10 +1734,10 @@
                             "Name": "Running",
                             "Path": "../Assets/Audio/SFX/Player/Footsteps2_Gravel-Dirt_far-small_2.wav"
                         }, {
-                            "Name": "HURTSOUND",
+                            "Name": "PlayerHurt",
                             "Path": "../Assets/Audio/SFX/Player/mochihurt.wav"
                         }, {
-                            "Name": "FishHit",
+                            "Name": "FishHurt",
                             "Path": "../Assets/Audio/SFX/Enemy/FishHurtVR.wav"
                         }]
                 }]
