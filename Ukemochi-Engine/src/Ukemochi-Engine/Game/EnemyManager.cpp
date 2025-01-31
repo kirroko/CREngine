@@ -88,10 +88,10 @@ namespace Ukemochi
                     // Play different hit sounds based on enemy type
                     if (enemycomponent.type == Enemy::FISH && audioM.GetSFXindex("FishHit") != -1)
                     {
-                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishHit")))
-                        {
+                        
+                      
                             audioM.PlaySFX(audioM.GetSFXindex("FishHit"));
-                        }
+                   
                     }
                     else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHit") != -1)
                     {
