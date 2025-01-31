@@ -126,21 +126,22 @@ void Renderer::init()
 	batchRendererUI = std::make_shared<BatchRenderer2D>();
 	batchRendererUI->init(UI_shader_program);
 
-	uiManager.addButton(glm::vec3(static_cast<float>(screen_width) * 0.5f, static_cast<float>(screen_height) * 0.5f, 0.f), glm::vec2(static_cast<float>(screen_width), static_cast<float>(screen_height)), "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
-		});
+	// fix coordinates, maybe use the default shader
+	/*uiManager.addButton(glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(static_cast<float>(screen_width), static_cast<float>(screen_height)), "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
+		}); 
 
-	uiManager.addButton(glm::vec3(static_cast<float>(screen_width) * 0.5f, static_cast<float>(screen_height) * 0.5f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
-		Application::Get().StartGame(); });
+	uiManager.addButton(glm::vec3(1168.f, 478.f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
+		Application::Get().StartGame(); });*/
+
+	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+		});
+	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+		});
+	uiManager.addButton(glm::vec3(353.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+		});
+	
 	// Add buttons
-	//UIRenderer->addButton(UIButton("pauseButton",
-	//	glm::vec2(100.0f, 700.0f),
-	//	glm::vec2(150.0f, 100.0f),
-	//	5,  // Replace with actual texture ID
-	//	"hi",
-	//	glm::vec3(1.0f, 0.f, 0.f),
-	//	"Exo2",
-	//	1.0f
-	//));
+
 }
 
 /*!
@@ -754,7 +755,6 @@ void Renderer::render()
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
 
-
 	// Render entities
 	batchRenderer->beginBatch();
 
@@ -862,18 +862,21 @@ void Renderer::render()
 		}
 	}
 
-
 	batchRenderer->endBatch();
 
-	glDisable(GL_DEPTH_TEST);
-	//UI_shader_program->Activate();
-	batchRendererUI->setActiveShader(UI_shader_program);
-	//UI_shader_program->Activate();
-	UI_shader_program->setMat4("projecton", projection);
+
+	batchRendererUI->setActiveShader(shaderProgram);
+	shaderProgram->Activate();
+	shaderProgram->setMat4("projection", projection);
+	shaderProgram->setMat4("view", glm::mat4(1.0f));
+
+	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
+
 	batchRendererUI->beginBatch();
-	uiManager.render(glm::vec3(camera->position, 0.f));
+	uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
 	batchRendererUI->endBatch();
-	glEnable(GL_DEPTH_TEST);
+
+	
 	// Render debug wireframes if debug mode is enabled
 	if (debug_mode_enabled)
 	{
@@ -1158,7 +1161,7 @@ void Renderer::drawBoxAnimation()
 /*!
  * @brief Create a button object in the UI renderer.
  */
-void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, int layer, std::function<void()> onClick)
+void Renderer::CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, std::function<void()> onClick)
 {
 	if (!batchRendererUI) 
 	{
@@ -1166,7 +1169,7 @@ void Renderer::CreateButtonObject(const std::string& id, glm::vec3 position, glm
 		return;
 	}
 
-	uiManager.addButton(position, size, sprite, color, batchRendererUI, layer, onClick);
+	uiManager.addButton(glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, onClick);
 }
 
 /*!

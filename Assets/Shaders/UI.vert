@@ -1,23 +1,33 @@
 #version 450 core
 
-layout (location = 0) in vec3 aPos;        // Position in screen space (e.g., in pixels)
-layout (location = 1) in vec3 aColor;      // Button color
-layout (location = 2) in vec2 aTexCoord;   // Texture coordinates
-layout (location = 3) in int aTextureID;   // Texture ID to use (if any)
+// Positions/Coordinates
+layout (location = 0) in vec3 aPos;
+// Colors
+layout (location = 1) in vec3 aColor;
+// Texture Coordinates
+layout (location = 2) in vec2 aTex;
+// Texture ID
+layout (location = 3) in int aTexID;  // Changed from vec2 to int
 
-out vec3 fragColor;
-out vec2 TexCoord;
-flat out int TextureID;
+// Outputs the color for the Fragment Shader
+out vec3 color;
+// Outputs the texture coordinates to the fragment shader
+out vec2 texCoord;
+// Outputs the texture ID to the fragment shader
+flat out int texID;  // Use 'flat' to prevent interpolation
 
-uniform mat4 projection;  // For converting screen coordinates if necessary
+
+uniform mat4 projection;
+uniform mat4 view;
 
 void main()
 {
-    // Position directly in screen space
-    gl_Position = projection * vec4(aPos, 0,0, 1.0);
-    
-    // Pass color and texture coordinates to fragment shader
-    fragColor = aColor;
-    TexCoord = aTexCoord;
-    TextureID = aTextureID;
+    // Outputs the positions/coordinates of all vertices
+    gl_Position = projection * view * vec4(aPos, 1.0);
+    // Assigns the colors from the Vertex Data to "color"
+    color = aColor;
+    // Assigns the texture coordinates from the Vertex Data to "texCoord"
+    texCoord = aTex;
+    // Pass the texture ID to the fragment shader
+    texID = aTexID;  // Passes integer texture ID without interpolation
 }

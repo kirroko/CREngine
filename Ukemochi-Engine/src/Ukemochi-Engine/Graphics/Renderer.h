@@ -166,7 +166,7 @@ public:
 	/*!
 	 * @brief Create a button object in the UI renderer.
 	 */
-	void CreateButtonObject(const std::string& id, glm::vec3 position, glm::vec2 size, const std::string& sprite, glm::vec3 color, int layer = 0, std::function<void()> onClick = nullptr);
+	void CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, std::function<void()> onClick);
 
 	/*!
 	 * @brief Remove a button object in the UI renderer.

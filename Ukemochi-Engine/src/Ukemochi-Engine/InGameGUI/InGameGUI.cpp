@@ -36,18 +36,19 @@ namespace Ukemochi
 
 		//Create the game UI, elements are combined temporary
 		// Create game UI screen
-		CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 28);
+		//CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 28);
 
-		// Create main menu screen
-		CreateImage("main_menu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
+		//// Create main menu screen
+		//CreateImage("main_menu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
 
-		// Create start menu button
-		CreateButton("start_button", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-			[]() { Application::Get().StartGame(); });
+		//// Create start menu button
+		//CreateButton("start_button", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+		//	[]() { Application::Get().StartGame(); });
 
 		// Create FPS text
 		//CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 
+		CreateImage(Vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", 0, Vec3(1.f, 1.f, 1.f));
 #endif // !_DEBUG
 
 		//CreateButton("pauseButton", Vec2{ 1840.f, 1010.f }, Vec2{ 75.f, 75.f }, 10, "P", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
@@ -108,6 +109,8 @@ namespace Ukemochi
 		//ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
 	}
 
+	
+
 	/*!***********************************************************************
 	\brief
 	 Create a GUI image object.
@@ -120,9 +123,9 @@ namespace Ukemochi
 	\param[in] textureID
 	 The ID for the image texture.
 	*************************************************************************/
-	void InGameGUI::CreateImage(const std::string& id, const Vec2& pos, const Vec2& size, int textureID)
+	void InGameGUI::CreateImage(const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color)
 	{
-		//ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Ukemochi", 1.f, TextAlignment::Center, false, nullptr);
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(pos, size, spriteName, Vec3{ 0.f, 0.f, 0.f }, layer, nullptr);
 	}
 
 	/*!***********************************************************************

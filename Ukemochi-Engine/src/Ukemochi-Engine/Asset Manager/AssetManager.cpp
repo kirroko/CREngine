@@ -285,13 +285,17 @@ namespace Ukemochi
 					std::replace(file_path.begin(), file_path.end(), '\\', '/');
 					if (isAtlasTexture(file_path))
 					{
-						// Derive sheetName from file_path
-						std::string sheetName = file_path.substr(file_path.find_last_of('/') + 1);
-						sheetName = sheetName.substr(0, sheetName.find_last_of('.')); // Remove extension
-
-						// Handle atlas texture
 						std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
-						parseAtlasJSON(json_path, sheetName); 
+
+						// Check if the corresponding JSON file exists before parsing
+						if (std::filesystem::exists(json_path))
+						{
+							parseAtlasJSON(json_path, file_path);
+						}
+						else
+						{
+							UME_ENGINE_WARN("No JSON found for atlas texture: {}", file_path);
+						}
 					}
 					else
 					{
@@ -380,22 +384,24 @@ namespace Ukemochi
 	}
 }
 
-void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string& sheetName)
+void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string& atlasFilePath)
 {
 	int atlasWidth = 0, atlasHeight = 0, channels = 0;
-	std::string atlasFilePath = "../Assets/Textures/Environment/" + sheetName + ".png";
+
+	// Load atlas texture to get dimensions
 	stbi_uc* data = stbi_load(atlasFilePath.c_str(), &atlasWidth, &atlasHeight, &channels, 0);
 	if (!data)
 	{
-		UME_ENGINE_ERROR("Failed to load atlas texture: {}", sheetName);
+		UME_ENGINE_ERROR("Failed to load atlas texture: {}", atlasFilePath);
 		return;
 	}
 	stbi_image_free(data); // Free texture data after getting dimensions
 
+	// Open JSON file
 	std::ifstream file(jsonPath);
 	if (!file.is_open())
 	{
-		UME_ENGINE_ERROR("Failed to open JSON file: {0}", jsonPath);
+		UME_ENGINE_ERROR("Failed to open JSON file: {}", jsonPath);
 		return;
 	}
 
@@ -408,42 +414,27 @@ void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string
 		const auto& frames = document["frames"];
 		for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
 		{
-			// Get the sprite name and remove the file extension
 			const std::string spriteName = it->name.GetString();
 			std::string standardizedSpriteName = spriteName.substr(0, spriteName.find_last_of('.'));
 
 			const auto& frame = it->value["frame"];
-			//bool isRotated = it->value["rotated"].GetBool();
-			
+
 			// Extract UV coordinates
 			UV uv;
-
-			// Handle non-rotated sprite
 			uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
 			uv.uMax = (static_cast<GLfloat>(frame["x"].GetInt()) + static_cast<GLfloat>(frame["w"].GetInt())) / atlasWidth;
-
 			uv.vMax = 1.0f - (static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight);
 			uv.vMin = 1.0f - ((static_cast<GLfloat>(frame["y"].GetInt()) + static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight);
-			
 
-			//std::cout << "Atlas Dimensions: " << atlasWidth << "x" << atlasHeight << std::endl;
-			//std::cout << "Sprite: " << spriteName
-			//	<< ", x: " << frame["x"].GetInt()
-			//	<< ", y: " << frame["y"].GetInt()
-			//	<< ", w: " << frame["w"].GetInt()
-			//	<< ", h: " << frame["h"].GetInt() << std::endl;
-
-			//std::cout << "UV Coordinates for " << spriteName << ": "
-			//	<< "uMin=" << uv.uMin << ", vMin=" << uv.vMin
-			//	<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
-
-			// Store UV
-			spriteData[standardizedSpriteName] = { uv, sheetName };
+			// Store UV data dynamically
+			spriteData[standardizedSpriteName] = { uv, atlasFilePath };
 		}
 	}
 
+	// Add the atlas texture to the system
 	addTexture(atlasFilePath);
 }
+
 
 void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
 {

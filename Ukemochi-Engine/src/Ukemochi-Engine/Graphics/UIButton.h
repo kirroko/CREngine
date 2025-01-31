@@ -53,7 +53,7 @@ public:
         if (batchRenderer)
         {
             glm::vec3 renderColor = isHovered ? glm::vec3(1.0f, 1.0f, 0.5f) : color;
-            glm::vec3 screenPosition = position - cameraPosition;
+            glm::vec3 screenPosition = position - cameraPosition + cameraPosition;
             batchRenderer->drawSprite(screenPosition, size, renderColor, spriteName, 0.0f, ui_layer);
         }
     }
