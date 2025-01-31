@@ -104,18 +104,19 @@ namespace Ukemochi
 		//if (rooms[current_room_id].enemies.size() <= 0)
 		//	UnlockRoom();
 
+		bool enemy_alive = false;
+
 		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
 		{
 			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);
-			auto& isDead = enemyObj->GetComponent<Enemy>();
-			if (isDead.state == Enemy::DEAD)
+			if (enemyObj->GetActive())
 			{
-				rooms[current_room_id].enemies.erase(enemy);
+				enemy_alive = true;
 			}
 		}
 
 		//hopefully unlock room will just trigger once
-		if (rooms[current_room_id].enemies.empty())
+		if (!enemy_alive)
 		{
 			UnlockRoom();
 		}
@@ -154,7 +155,6 @@ namespace Ukemochi
 					{
 						// Store all enemies of the same room in the room enemy list
 						rooms[room_id].enemies.push_back(entity);
-
 					}
 					else if (tag == "Room")
 					{
@@ -163,7 +163,10 @@ namespace Ukemochi
 						rooms[room_id].position = Vec2(transform.position.x,transform.position.y);
 					}
 				}
+				
 			}
+
+			rooms[room_id].enemy_count = rooms[room_id].enemies.size();
 
 			// Deactivate all rooms except the current room
 			if (room_id != current_room_id)
@@ -196,7 +199,7 @@ namespace Ukemochi
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 			std::string room = std::to_string(room_id);
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
-			if (!rooms[room_id].enemies.empty())
+			if (!rooms[room_id].enemy_count < 1)
 			{
 				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
 					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
@@ -219,8 +222,6 @@ namespace Ukemochi
 	void DungeonManager::UnlockRoom()
 	{
 		//check for enemies
-
-
 		std::string str_id = std::to_string(current_room_id);
 
 		// Enable doors and disable blocks in the room
@@ -228,20 +229,16 @@ namespace Ukemochi
 		{
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
-
-			if(rooms[current_room_id].enemies.empty())
+			// Enable doors
+			if (tag == "LeftDoor" || tag == "RightDoor")
 			{
-				// Enable doors
-				if (tag == "LeftDoor" || tag == "RightDoor")
-				{
-					GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
+				GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
 					
-				}
-					
-				// Disable blocks
-				if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
-					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
 			}
+					
+			// Disable blocks
+			if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
+				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
 		}
 	}
 }
