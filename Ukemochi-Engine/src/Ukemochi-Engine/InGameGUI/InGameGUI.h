@@ -75,7 +75,7 @@ namespace Ukemochi
 		\param[in] textureID
 		 The ID for the image texture.
 		*************************************************************************/
-		void CreateImage(const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color);
+		void CreateImage(const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color, bool isHealth);
 
 		/*!***********************************************************************
 		\brief
