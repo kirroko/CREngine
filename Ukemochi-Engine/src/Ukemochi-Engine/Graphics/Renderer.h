@@ -178,6 +178,8 @@ public:
 	 */
 	std::vector<UIButton>& GetButtonObjects();
 
+	void updateHealthBar();
+
 	void setupFramebuffer();
 
 	void beginFramebufferRender();

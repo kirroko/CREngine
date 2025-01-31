@@ -31,11 +31,23 @@ public:
 
     bool isHovered = false;
     int ui_layer;
+    bool isHealthBar = false;
 
     std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, std::function<void()> callback = nullptr)
-       : position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), onClick(callback){} 
+    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, bool healthBar = false, std::function<void()> callback = nullptr)
+       : position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), isHealthBar(), onClick(callback){} 
+
+    void updateHealthBar(float healthPercentage)
+    {
+        if (isHealthBar)
+        {
+            float newWidth = size.x * healthPercentage;
+            float offset = (size.x - newWidth) * 0.5f;
+            position.x -= offset;
+            size.x = newWidth;
+        }
+    }
 
     void update(glm::vec2 mousePos, bool mousePressed)
     {

@@ -133,15 +133,20 @@ void Renderer::init()
 	uiManager.addButton(glm::vec3(1168.f, 478.f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
 		Application::Get().StartGame(); });*/
 
-	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
 		});
-	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, true, []() {
 		});
-	uiManager.addButton(glm::vec3(353.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, []() {
+	uiManager.addButton(glm::vec3(353.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
 		});
 	
 	// Add buttons
 
+}
+
+void Renderer::updateHealthBar()
+{
+	auto& player = ECS::GetInstance().GetComponent<Player>(playerEntity);
 }
 
 /*!
@@ -765,7 +770,7 @@ void Renderer::render()
 
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
+		
 		//// Set up the model matrix
 		//glm::mat4 model{};
 		//
