@@ -416,6 +416,7 @@ namespace Ukemochi
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
+		bool wasHit = false;  // New flag for hit detection
 
 		Enemy() = default;
 
@@ -582,6 +583,7 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			wasHit = true;
 			isCollide = false;
 		}
 	};

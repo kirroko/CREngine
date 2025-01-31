@@ -78,9 +78,44 @@ namespace Ukemochi
             auto& enemytransform = object->GetComponent<Transform>();
             auto& sr = object->GetComponent<SpriteRender>();
 
-            if (enemycomponent.health <= 0.f)
+            // Handle enemy hit state and sound effects
+            if (enemycomponent.wasHit)
             {
+                // Only play hit sound if this hit wasn't fatal (health > 0)
+                if (enemycomponent.health > 0)
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    // Play different hit sounds based on enemy type
+                    if (enemycomponent.type == Enemy::FISH && audioM.GetSFXindex("FishHit") != -1)
+                    {
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishHit")))
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("FishHit"));
+                        }
+                    }
+                    else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHit") != -1)
+                    {
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHit")))
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("WormHit"));
+                        }
+                    }
+                }
+                enemycomponent.wasHit = false; // Reset the hit flag
+            }
+
+
+            // When enemy health reaches 0
+            if (enemycomponent.health <= 0.f && !enemycomponent.isDead)  // Add !isDead check
+            {
+                // Play death sound immediately when health hits 0
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (audioM.GetSFXindex("EnemyKilled") != -1)
+                {
+                    audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                }
                 enemycomponent.state = Enemy::DEAD;
+                enemycomponent.isDead = true;  // Mark as dead immediately
             }
             else
             {
@@ -103,15 +138,6 @@ namespace Ukemochi
             // If the enemy is in DEAD state, remove it from the list after processing DeadState
             if (enemycomponent.state == Enemy::DEAD)
             {
-                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                //dont overlap kick sound
-                if (audioM.GetSFXindex("Pattack3") != -1 && audioM.GetSFXindex("EnemyKilled") != -1)
-                {
-                    if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3"))) && !enemycomponent.isDead)
-                    {
-                        audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
-                    }
-                }
                 object->SetActive(false);
                 enemycomponent.isDead = true;
                 if (enemycomponent.isWithPlayer && numEnemyTarget>=1)

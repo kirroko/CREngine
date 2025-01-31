@@ -1697,8 +1697,14 @@
                 }, {
                     "Name": "Audio",
                     "Music": [{
-                            "Name": "BGM",
+                            "Name": "BGMOG",
                             "Path": "../Assets/Audio/BGM/bgm_game.wav"
+                        }, {
+                            "Name": "BGM",
+                            "Path": "../Assets/Audio/BGM/By_ProfBGM_GAME.wav"
+                        }, {
+                            "Name": "Wind_BGM",
+                            "Path": "../Assets/Audio/BGM/Cold_Wind.wav"
                         }],
                     "SFX": [{
                             "Name": "HIT",
@@ -1714,7 +1720,7 @@
                             "Path": "../Assets/Audio/SFX/Player/sfx_player_kick.wav"
                         }, {
                             "Name": "EnemyKilled",
-                            "Path": "../Assets/Audio/SFX/Enemy/sfx_enemy_dead.wav"
+                            "Path": "../Assets/Audio/SFX/Enemy/FishDeadVR.wav"
                         }, {
                             "Name": "LevelChange",
                             "Path": "../Assets/Audio/SFX/sfx_cave_enter.wav"
@@ -1723,13 +1729,16 @@
                             "Path": "../Assets/Audio/SFX/Enemy/sfx_fish_move.wav"
                         }, {
                             "Name": "FishAttack",
-                            "Path": "../Assets/Audio/SFX/Enemy/sfx_fish_attack.wav"
+                            "Path": "../Assets/Audio/SFX/Enemy/FishAttackVR.wav"
                         }, {
                             "Name": "Running",
                             "Path": "../Assets/Audio/SFX/Player/Footsteps2_Gravel-Dirt_far-small_2.wav"
                         }, {
                             "Name": "HURTSOUND",
-                            "Path": "../Assets/Audio/SFX/Player/hurtsound.wav"
+                            "Path": "../Assets/Audio/SFX/Player/mochihurt.wav"
+                        }, {
+                            "Name": "FishHit",
+                            "Path": "../Assets/Audio/SFX/Enemy/FishHurtVR.wav"
                         }]
                 }]
         }]
