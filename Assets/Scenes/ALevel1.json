@@ -1710,7 +1710,7 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1514.0, 65.0, 0.0],
+                    "Position": [1666.0, 109.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]

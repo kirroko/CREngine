@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Application.h"		  // for screen size
 #include "../Graphics/Camera2D.h" // for camera viewport
 #include "../Graphics/Renderer.h" // for text objects
+#include "../FrameController.h"	  // for fps text
 
 namespace Ukemochi
 {
@@ -34,18 +35,20 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight();
 
 		//Create the game UI, elements are combined temporary
-
+		// Create game UI screen
 		CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 28);
 
-		CreateImage("mainmenu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
+		// Create main menu screen
+		CreateImage("main_menu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
 
-		CreateButton("startButton", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+		// Create start menu button
+		CreateButton("start_button", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 			[]() { Application::Get().StartGame(); });
-#endif // !_DEBUG
 
-		//CreateText("text1", "sample text",
-		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },
-		//	1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+		// Create FPS text
+		CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
+
+#endif // !_DEBUG
 
 		//CreateButton("pauseButton", Vec2{ 1840.f, 1010.f }, Vec2{ 75.f, 75.f }, 10, "P", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 		//	[this]() { UpdateText("text1", "pause clicked!"); });
@@ -65,6 +68,12 @@ namespace Ukemochi
 	{
 		// Handle button inputs
 		HandleButtonInput();
+
+		// Update fps text
+		if(show_fps)
+			UpdateText("fps_text", std::to_string(static_cast<int>(g_FrameRateController.GetFPS())));
+		else
+			UpdateText("fps_text", "");
 	}
 
 	/*!***********************************************************************
@@ -113,7 +122,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::CreateImage(const std::string& id, const Vec2& pos, const Vec2& size, int textureID)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Exo2", 1.f, TextAlignment::Center, false, nullptr);
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Ukemochi", 1.f, TextAlignment::Center, false, nullptr);
 	}
 
 	/*!***********************************************************************
@@ -189,10 +198,14 @@ namespace Ukemochi
 					continue;
 
 				// Check if it is the start button
-				if(button.id == "startButton")
+				if(button.id == "start_button")
 					button.on_click(); // Invoke the button on click event
 			}
 		}
+
+		// Press F10 to toggle fps text
+		if (Input::IsKeyTriggered(UME_KEY_F10))
+			show_fps = !show_fps;
 	}
 
 	/*!***********************************************************************

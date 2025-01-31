@@ -790,8 +790,8 @@ namespace Ukemochi
                 }
 
                 // Disable main menu screen
-                ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("mainmenu");
-                ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("startButton");
+                ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("main_menu");
+                ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("start_button");
             }
             ImGui::SameLine();
         }

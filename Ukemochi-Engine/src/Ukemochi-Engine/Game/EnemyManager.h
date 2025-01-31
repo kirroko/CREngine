@@ -103,7 +103,7 @@ namespace Ukemochi
         std::vector<EntityID> enemyObjects;
         std::vector<EntityID> environmentObjects;
         int nearestID = -1;
-        //bool killTracker = false;
+        int numEnemyTarget;
     };
 
 }

@@ -21,6 +21,9 @@ namespace Ukemochi
 {
 	class InGameGUI : public System
 	{
+	private:
+		bool show_fps = false; // Show FPS debug text
+
 	public:
 		/*!***********************************************************************
 		\brief
