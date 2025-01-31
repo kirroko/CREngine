@@ -210,7 +210,14 @@ namespace Ukemochi
 	void DungeonManager::ActivateRoom(int room_id, bool activate)
 	{
 		for (auto& entity : rooms[room_id].entities)
+		{
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
+			std::string room = std::to_string(room_id);
+			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
+			if (name == room + "_LeftBlock" || name == room + "_RightBlock")
+				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+		}
+
 
 		if (!rooms[room_id].cleared)
 		{
@@ -239,8 +246,11 @@ namespace Ukemochi
 			{
 				// Enable doors
 				if (tag == "LeftDoor" || tag == "RightDoor")
+				{
 					GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
-
+					
+				}
+					
 				// Disable blocks
 				if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
 					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
