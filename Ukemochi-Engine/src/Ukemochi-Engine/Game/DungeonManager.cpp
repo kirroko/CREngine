@@ -104,11 +104,6 @@ namespace Ukemochi
 		//if (rooms[current_room_id].enemies.size() <= 0)
 		//	UnlockRoom();
 
-		//bool kill_tracker = false; // kill tracker to trigger next wave. Need to link with EnemuManager? to read when enemy is defeated
-
-		//if kill tracker toggles to true decrement wave number then reset to false;
-		//if mobs in wave reachs 0 -> trigger some way to spawn next wave(need to find/ create spawning logic)
-
 		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
 		{
 			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);
@@ -120,9 +115,8 @@ namespace Ukemochi
 		}
 
 		//hopefully unlock room will just trigger once
-		if (rooms[current_room_id].enemies.empty() && !rooms[current_room_id].cleared)
+		if (rooms[current_room_id].enemies.empty())
 		{
-			rooms[current_room_id].cleared = true;
 			UnlockRoom();
 		}
 
@@ -161,25 +155,6 @@ namespace Ukemochi
 						// Store all enemies of the same room in the room enemy list
 						rooms[room_id].enemies.push_back(entity);
 
-						////do-while loop to handle multiple waves
-						//do						
-						//{
-						//	if (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE)
-						//	{
-						//		rooms[room_id].mobs_in_wave[current_room_wave]++;
-						//		//main goal is just to track addition correctly, leave the loop after successful addition;
-						//		break;
-						//	}
-						//	else
-						//	{
-						//		//threshold is hit for the wave, go to the next wave and restart the loop
-						//		current_room_wave++;
-						//		continue;
-						//	}
-						//} while (rooms[room_id].mobs_in_wave[current_room_wave] < MAX_WAVE_SIZE);
-						//	
-						//
-						//current_room_wave = WAVE_NUMBER;
 					}
 					else if (tag == "Room")
 					{
@@ -192,7 +167,14 @@ namespace Ukemochi
 
 			// Deactivate all rooms except the current room
 			if (room_id != current_room_id)
+			{
 				ActivateRoom(room_id, false);
+			}
+			else
+			{
+				ActivateRoom(room_id, true);
+			}
+				
 		}
 
 		// Set the camera initial position
@@ -214,15 +196,20 @@ namespace Ukemochi
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 			std::string room = std::to_string(room_id);
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
-			if (name == room + "_LeftBlock" || name == room + "_RightBlock")
-				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+			if (!rooms[room_id].enemies.empty())
+			{
+				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+			}
+			else
+			{
+				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
+			}
 		}
 
-
-		if (!rooms[room_id].cleared)
-		{
-			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
-		}
+		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+		
 	}
 
 	/*!***********************************************************************
