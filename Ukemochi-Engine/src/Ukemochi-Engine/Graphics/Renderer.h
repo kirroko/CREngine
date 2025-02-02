@@ -195,6 +195,9 @@ public:
 
 	EntityID playerID = -1;
 private:
+
+	const int MAX_SOUL_CHARGES = 1;
+
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/

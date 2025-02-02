@@ -24,8 +24,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 enum class BarType{
     None,
     Health,
+    Blue_Soul,
     Red_Soul,
-    Blue_Soul
+    Blue_Charge_Bar,
+    Red_Charge_Bar
 };
 
 class UIButton {
