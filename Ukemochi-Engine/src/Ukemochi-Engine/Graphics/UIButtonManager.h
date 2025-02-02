@@ -43,6 +43,21 @@ public:
         }
     }
 
+    void updateBars(std::unordered_map<BarType, float>& barPercentages)
+    {
+        for (auto& button : buttons)
+        {
+            if (button->barType != BarType::None)
+            {
+                auto it = barPercentages.find(button->barType);
+                if (it != barPercentages.end())
+                {
+                    button->updateBar(it->second);
+                }
+            }
+        }
+    }
+
     void update(glm::vec2 mousePos, bool mousePressed) 
     {
         for (auto& button : buttons) 

@@ -63,14 +63,11 @@ public:
 
     void updateBar(float percentage)
     {
-        if (barType != BarType::None)
-        {
-            percentage = glm::clamp(percentage, 0.f, 1.f);
+        percentage = glm::clamp(percentage, 0.f, 1.f);
 
-            size.x = originalSize.x * percentage;
+        size.x = originalSize.x * percentage;
 
-            position.x  = originalPosition.x - (originalSize.x - size.x) * 0.5f;
-        }
+        position.x  = originalPosition.x - (originalSize.x - size.x) * 0.5f;
     }
 
     void update(glm::vec2 mousePos, bool mousePressed)

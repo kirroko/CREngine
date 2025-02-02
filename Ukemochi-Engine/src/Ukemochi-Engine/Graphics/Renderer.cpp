@@ -208,16 +208,15 @@ void Renderer::HandleInputTesting()
 void Renderer::updatePlayerBars()
 {
 	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
+	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
+
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
-	uiManager.updateBars(healthPercentage);
-	if (ECS::GetInstance().HasComponent<Player>(playerID)) 
-	{	
-		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
-		std::cout << "Player Component Found! Current Health: " << player.currentHealth << std::endl;
-	}
-	else {
-		std::cerr << "Error: Player entity does not have a Player component!" << std::endl;
-	}
+	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / 5.f;
+	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / 5.f;
+
+	std::unordered_map<BarType, float> barUpdates = { {BarType::Health, healthPercentage}, {BarType::Blue_Soul, blueSoul}, {BarType::Red_Soul, redSoul} };
+
+	uiManager.updateBars(barUpdates);
 }
 
 /*!
