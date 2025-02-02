@@ -142,7 +142,7 @@ namespace Ukemochi
 
         // For Soul system
         sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<PlayerSoul>());
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<SoulManager>(sig);
 
         //init GSM
@@ -348,6 +348,8 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Collision>()->Init();
 			UME_ENGINE_TRACE("Initializing dungeon manager...");
 			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+            UME_ENGINE_TRACE("Initializing soul manager...");
+            ECS::GetInstance().GetSystem<SoulManager>()->Init();
 			// enemy
 			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
 			//audio
@@ -814,6 +816,34 @@ namespace Ukemochi
             			newObject.AddComponent(std::move(player));
             		}
             	}
+                else if (componentName == "PlayerSoul")
+                {
+                    if (!newObject.HasComponent<PlayerSoul>())
+                    {
+                        PlayerSoul player_soul;
+                        player_soul.current_soul = static_cast<SoulType>(componentData["CurrentSoul"].GetInt());
+
+                        player_soul.soul_bars[FISH] = componentData["SoulBars"][FISH].GetFloat();
+                        player_soul.soul_bars[WORM] = componentData["SoulBars"][WORM].GetFloat();
+
+                        player_soul.soul_charges[FISH] = componentData["SoulCharges"][FISH].GetInt();
+                        player_soul.soul_charges[WORM] = componentData["SoulCharges"][WORM].GetInt();
+
+                        player_soul.skill_damages[FISH] = componentData["SkillDamages"][FISH].GetFloat();
+                        player_soul.skill_damages[WORM] = componentData["SkillDamages"][WORM].GetFloat();
+
+                        player_soul.skill_duration = componentData["SkillDuration"].GetFloat();
+                        player_soul.skill_cooldown = componentData["SkillCooldown"].GetFloat();
+                        player_soul.skill_timer = componentData["SkillTimer"].GetFloat();
+                        player_soul.skill_ready = componentData["SkillReady"].GetBool();
+
+                        player_soul.soul_decay_amount = componentData["SoulDecayAmount"].GetFloat();
+                        player_soul.soul_decay_rate = componentData["SoulDecayRate"].GetFloat();
+                        player_soul.soul_decay_timer = componentData["SoulDecayTimer"].GetFloat();
+
+                        newObject.AddComponent(std::move(player_soul));
+                    }
+                }
                 else if (componentName == "Audio")
                 {
                     if (!newObject.HasComponent<AudioManager>())
@@ -1097,6 +1127,38 @@ namespace Ukemochi
 
         		componentsArray.PushBack(playerComponent, allocator);
         	}
+
+            if (gameobject->HasComponent<PlayerSoul>())
+            {
+                Value playerSoulComponent(rapidjson::kObjectType);
+                playerSoulComponent.AddMember("Name", "PlayerSoul", allocator);
+
+                const auto& playerSoul = gameobject->GetComponent<PlayerSoul>();
+                playerSoulComponent.AddMember("CurrentSoul", playerSoul.current_soul, allocator);
+
+                Value soulBars(rapidjson::kArrayType);
+                soulBars.PushBack(playerSoul.soul_bars[0], allocator).PushBack(playerSoul.soul_bars[1], allocator);
+                playerSoulComponent.AddMember("SoulBars", soulBars, allocator);
+
+                Value soulCharges(rapidjson::kArrayType);
+                soulCharges.PushBack(playerSoul.soul_charges[0], allocator).PushBack(playerSoul.soul_charges[1], allocator);
+                playerSoulComponent.AddMember("SoulCharges", soulCharges, allocator);
+
+                Value skillDamages(rapidjson::kArrayType);
+                skillDamages.PushBack(playerSoul.skill_damages[0], allocator).PushBack(playerSoul.skill_damages[1], allocator);
+                playerSoulComponent.AddMember("SkillDamages", skillDamages, allocator);
+
+                playerSoulComponent.AddMember("SkillDuration", playerSoul.skill_duration, allocator);
+                playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
+                playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
+                playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+                playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
+                playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
+                playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
+
+                componentsArray.PushBack(playerSoulComponent, allocator);
+            }
+
             if (gameobject->HasComponent<AudioManager>()) {
                 Value audioComponent(rapidjson::kObjectType);
                 audioComponent.AddMember("Name", "Audio", allocator);
@@ -1397,6 +1459,38 @@ namespace Ukemochi
 
             componentsArray.PushBack(playerComponent, allocator);
         }
+
+        if (prefabObj->HasComponent<PlayerSoul>())
+        {
+            Value playerSoulComponent(rapidjson::kObjectType);
+            playerSoulComponent.AddMember("Name", "PlayerSoul", allocator);
+
+            const auto& playerSoul = prefabObj->GetComponent<PlayerSoul>();
+            playerSoulComponent.AddMember("CurrentSoul", playerSoul.current_soul, allocator);
+
+            Value soulBars(rapidjson::kArrayType);
+            soulBars.PushBack(playerSoul.soul_bars[0], allocator).PushBack(playerSoul.soul_bars[1], allocator);
+            playerSoulComponent.AddMember("SoulBars", soulBars, allocator);
+
+            Value soulCharges(rapidjson::kArrayType);
+            soulCharges.PushBack(playerSoul.soul_charges[0], allocator).PushBack(playerSoul.soul_charges[1], allocator);
+            playerSoulComponent.AddMember("SoulCharges", soulCharges, allocator);
+
+            Value skillDamages(rapidjson::kArrayType);
+            skillDamages.PushBack(playerSoul.skill_damages[0], allocator).PushBack(playerSoul.skill_damages[1], allocator);
+            playerSoulComponent.AddMember("SkillDamages", skillDamages, allocator);
+
+            playerSoulComponent.AddMember("SkillDuration", playerSoul.skill_duration, allocator);
+            playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
+            playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
+            playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+            playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
+            playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
+            playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
+
+            componentsArray.PushBack(playerSoulComponent, allocator);
+        }
+
         if (prefabObj->HasComponent<AudioManager>()) {
             Value audioComponent(rapidjson::kObjectType);
             audioComponent.AddMember("Name", "Audio", allocator);
