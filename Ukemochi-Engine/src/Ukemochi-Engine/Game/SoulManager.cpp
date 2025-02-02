@@ -75,7 +75,7 @@ namespace Ukemochi
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
             // Handle soul bar decay over time
-            HandleSoulDecay();
+            //HandleSoulDecay();
 
             // Handle skill effects over time
             HandleSkillEffects();
