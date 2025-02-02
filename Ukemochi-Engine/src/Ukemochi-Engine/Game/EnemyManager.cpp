@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"
 #include "DungeonManager.h"
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
+#include "SoulManager.h" // for soul harvest
 
 namespace Ukemochi
 {
@@ -112,6 +113,10 @@ namespace Ukemochi
                         audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
                     }
                 }
+
+                // Harvest the soul of the dead enemy
+                ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 1);
+
                 object->SetActive(false);
                 enemycomponent.isDead = true;
                 if (enemycomponent.isWithPlayer && numEnemyTarget>=2)
