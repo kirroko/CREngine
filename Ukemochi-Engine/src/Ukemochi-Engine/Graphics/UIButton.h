@@ -21,8 +21,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "BatchRenderer.h"
 
+enum class BarType{
+    None,
+    Health,
+    Red_Soul,
+    Blue_Soul
+};
+
 class UIButton {
 public:
+    glm::vec3 originalPosition;
+    glm::vec2 originalSize;
     glm::vec3 position;
     glm::vec2 size;
     glm::vec3 color;
@@ -31,21 +40,36 @@ public:
 
     bool isHovered = false;
     int ui_layer;
-    bool isHealthBar = false;
+    BarType barType = BarType::None;
 
     std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, bool healthBar = false, std::function<void()> callback = nullptr)
-       : position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), isHealthBar(), onClick(callback){} 
+    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, std::function<void()> callback = nullptr)
+       : originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), onClick(callback){} 
 
-    void updateHealthBar(float healthPercentage)
+    //void updateHealthBar(float healthPercentage)
+    //{
+    //    if (isHealthBar)
+    //    {
+    //        healthPercentage = glm::clamp(healthPercentage, 0.0f, 1.0f);
+
+    //        // Adjust width based on health
+    //        size.x = originalSize.x * healthPercentage;
+
+    //        // Keep the left side fixed, shift the right side
+    //        position.x = originalPosition.x - (originalSize.x - size.x) * 0.5f;
+    //    }
+    //}
+
+    void updateBar(float percentage)
     {
-        if (isHealthBar)
+        if (barType != BarType::None)
         {
-            float newWidth = size.x * healthPercentage;
-            float offset = (size.x - newWidth) * 0.5f;
-            position.x -= offset;
-            size.x = newWidth;
+            percentage = glm::clamp(percentage, 0.f, 1.f);
+
+            size.x = originalSize.x * percentage;
+
+            position.x  = originalPosition.x - (originalSize.x - size.x) * 0.5f;
         }
     }
 

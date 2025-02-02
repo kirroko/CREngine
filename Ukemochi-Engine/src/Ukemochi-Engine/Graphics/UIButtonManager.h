@@ -8,25 +8,38 @@
 class UIButtonManager {
 public:
 	std::vector<std::shared_ptr<UIButton>> buttons;
-    std::shared_ptr<UIButton> healthBar;
 
-    void addButton(glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, int ui_layer, bool isHealth = false, std::function<void()> callback = nullptr)
+    void addButton(glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, int ui_layer, BarType barType = BarType::None, std::function<void()> callback = nullptr)
     {
-        auto button = std::make_shared<UIButton>(pos, size, sprite, color, std::move(renderer), ui_layer, isHealth, callback);
-
-        if (isHealth) 
-        {
-            healthBar = button;  
-        }
-
+        auto button = std::make_shared<UIButton>(pos, size, sprite, color, std::move(renderer), ui_layer, barType, callback);
+        button->barType = barType;
         buttons.push_back(button);
     }
 
-    void updateHealth(float healthPercentage)
+    /*void updateHealth(float healthPercentage)
     {
-        if (healthBar)
+        for (auto& button : buttons)
         {
-            healthBar->updateHealthBar(healthPercentage);
+            std::cout << "Checking button: " << button->spriteName
+                << " | isHealthBar: " << button->isHealthBar << std::endl;
+
+            if (button->isHealthBar)
+            {
+                std::cout << "Updating health bar with percentage: " << healthPercentage << std::endl;
+                button->updateHealthBar(healthPercentage);
+            }
+        }
+    }*/
+
+    void updateBars(float percentage)
+    {
+        for (auto& button : buttons)
+        {
+            if (button->barType == BarType::Health)
+            {
+                //std::cout << "Updating health bar with percentage: " << healthPercentage << std::endl;
+                button->updateBar(percentage);
+            }
         }
     }
 

@@ -135,41 +135,43 @@ void Renderer::init()
 		Application::Get().StartGame(); });*/
 
 	// Health
-	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
-	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, true, []() {
+	uiManager.addButton(glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Health, []() {
 		});
-	uiManager.addButton(glm::vec3(353.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+		});
+	uiManager.addButton(glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
 	// Soul blue
-	uiManager.addButton(glm::vec3(293.f, 940.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(293.f, 940.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton(glm::vec3(293.f, 940.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(293.f, 940.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton(glm::vec3(293.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(293.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
 	// Soul red
-	uiManager.addButton(glm::vec3(293.f, 880.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(293.f, 880.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton(glm::vec3(293.f, 880.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(293.f, 880.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton(glm::vec3(293.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(293.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
 	// Abilities and pause
-	uiManager.addButton(glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 	
-	uiManager.addButton(glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton(glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+	uiManager.addButton(glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
 	// Add buttons
@@ -200,14 +202,14 @@ void Renderer::HandleInputTesting()
 		std::cout << "Debug: Player HP = " << player.currentHealth << std::endl;
 	
 		float healthPercentage = static_cast<float>(player.currentHealth) / player.maxHealth;
-		uiManager.updateHealth(healthPercentage);
+		uiManager.updateBars(healthPercentage);
 	}
 }
-void Renderer::updateHealthBar()
+void Renderer::updatePlayerBars()
 {
 	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
-	uiManager.updateHealth(healthPercentage);
+	uiManager.updateBars(healthPercentage);
 	if (ECS::GetInstance().HasComponent<Player>(playerID)) 
 	{	
 		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
@@ -939,7 +941,11 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	updateHealthBar(); 
+	if (Input::IsKeyTriggered(UME_KEY_H))
+	{
+		HandleInputTesting();
+	}	
+	updatePlayerBars(); 
 
 	batchRendererUI->setActiveShader(shaderProgram);
 	shaderProgram->Activate();
@@ -1237,7 +1243,7 @@ void Renderer::drawBoxAnimation()
 /*!
  * @brief Create a button object in the UI renderer.
  */
-void Renderer::CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, bool isHealth, std::function<void()> onClick)
+void Renderer::CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType, std::function<void()> onClick)
 {
 	if (!batchRendererUI) 
 	{
@@ -1245,7 +1251,7 @@ void Renderer::CreateButtonObject(const Vec3& position, const Vec2& size, const 
 		return;
 	}
 
-	uiManager.addButton(glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, isHealth, onClick);
+	uiManager.addButton(glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, barType, onClick);
 }
 
 /*!

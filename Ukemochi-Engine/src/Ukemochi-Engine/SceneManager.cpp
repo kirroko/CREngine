@@ -244,7 +244,6 @@ namespace Ukemochi
         {
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
-            ECS::GetInstance().GetSystem<Renderer>()->HandleInputTesting();
         }
         if (Input::IsKeyTriggered(GLFW_KEY_8)) 
         {
@@ -262,10 +261,7 @@ namespace Ukemochi
             std::cout << "Switched to Scale Mode\n";
         }
 
-        if (Input::IsKeyTriggered(UME_KEY_H))
-        {
-            ECS::GetInstance().GetSystem<Renderer>()->HandleInputTesting();
-        }
+
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
