@@ -401,6 +401,7 @@ namespace Ukemochi
 		float attackRange;
 		float speed;
 		int nearestObj;
+		int collideObj;
 		mutable int prevObject;
 		mutable int prevObject2;
 		bool isCollide;
@@ -418,6 +419,7 @@ namespace Ukemochi
 			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
 			nearestObj = -1;
+			collideObj = -1;
 			switch (type)
 			{
 			case Enemy::FISH:

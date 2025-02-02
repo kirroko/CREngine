@@ -178,26 +178,68 @@ namespace Ukemochi
                 else {
 
                     // Timer has reached 1 second, perform the object updates
-                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                    enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
-
-                    if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+                    auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+                    if (collidedObj->GetTag() == "Boundary")
                     {
-                        enemycomponent.prevObject2 = enemycomponent.prevObject;
-                        enemycomponent.prevObject = enemycomponent.nearestObj;
-                        enemycomponent.nearestObj = -1;
+                        enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
+                        enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+                        enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
 
-                        if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                        if (enemycomponent.timeSinceTargetReached > 3.0f) 
                         {
-                            enemycomponent.nearestObj = FindNearestObject(object);
-                        }
-                        else
-                        {
-                            enemycomponent.isCollide = false;
-                            enemycomponent.timeSinceTargetReached = 0.f;
+                            enemycomponent.prevObject2 = enemycomponent.prevObject;
+                            enemycomponent.prevObject = enemycomponent.nearestObj;
+                            enemycomponent.nearestObj = -1;
+                            enemycomponent.collideObj = -1;
+
+                            if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                            {
+                                enemycomponent.nearestObj = FindNearestObject(object);
+                            }
+                            else
+                            {
+                                enemycomponent.isCollide = false;
+                                enemycomponent.timeSinceTargetReached = 0.f;
+                            }
                         }
 
                     }
+                    else
+                    {
+                        auto& collidedTransform = ECS::GetInstance().GetComponent<Transform>(enemycomponent.collideObj);
+                        Vec2 awayDir;
+                        Vec2Normalize(awayDir, Vec2(enemytransform.position.x - collidedTransform.position.x,
+                            enemytransform.position.y - collidedTransform.position.y));
+                        
+                        enemycomponent.dirX = awayDir.x;
+                        enemycomponent.dirY = awayDir.y;
+                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+
+                        if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+                        {
+                            enemycomponent.prevObject2 = enemycomponent.prevObject;
+                            enemycomponent.prevObject = enemycomponent.nearestObj;
+                            enemycomponent.nearestObj = -1;
+                            enemycomponent.collideObj = -1;
+
+                            if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                            {
+                                enemycomponent.nearestObj = FindNearestObject(object);
+                            }
+                            else
+                            {
+                                enemycomponent.isCollide = false;
+                                enemycomponent.timeSinceTargetReached = 0.f;
+                            }
+
+                        }
+                    }
+
+                    //enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                    //enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+
+                    
                 }
 
                 ++it;
@@ -400,6 +442,7 @@ namespace Ukemochi
             //set collide to true then now the obj is the obj save the pathfinding obj as prev
             enemyComponent.isCollide = true;
             enemyComponent.timeSinceTargetReached = 0.f;
+            enemyComponent.collideObj = static_cast<int>(objID);
             //enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
             //enemyComponent.nearestObj = static_cast<int>(objID);
         }
