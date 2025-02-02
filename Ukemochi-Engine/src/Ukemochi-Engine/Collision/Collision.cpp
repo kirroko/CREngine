@@ -177,14 +177,14 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, const std::string& tag)
 	{
-		//if (tag == "Player" || tag == "Enemy" || tag == "Environment")
-		//{
-		//	// Lower half of the object (legs or bottom part)
-		//	box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-		//				trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.f };  // Min Y is halfway down the object 1.5f
-		//	box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-		//				trans.position.y };  // Max Y stops at the object's center
-		//}
+		if (tag == "Player" || tag == "Enemy" || tag == "Environment")
+		{
+			// Lower half of the object (legs or bottom part)
+			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						trans.position.y };  // Max Y stops at the object's center
+		}
 		//else if (tag == "Knife")
 		//{
 		//	box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
@@ -192,7 +192,7 @@ namespace Ukemochi
 		//	box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
 		//				BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
 		//}
-		//else
+		else
 		{
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };

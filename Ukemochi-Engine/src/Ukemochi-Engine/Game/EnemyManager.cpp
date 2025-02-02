@@ -114,7 +114,7 @@ namespace Ukemochi
                 }
                 object->SetActive(false);
                 enemycomponent.isDead = true;
-                if (enemycomponent.isWithPlayer && numEnemyTarget>=1)
+                if (enemycomponent.isWithPlayer && numEnemyTarget>=2)
                 {
                     numEnemyTarget--;
                 }
@@ -302,7 +302,7 @@ namespace Ukemochi
                 break;
 
             case Enemy::STANDBY:
-                if (numEnemyTarget < 1)
+                if (numEnemyTarget < 2)
                 {
                     numEnemyTarget++;
                     enemycomponent.state = enemycomponent.ATTACK;
@@ -313,6 +313,7 @@ namespace Ukemochi
                 {
                     //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
                     enemycomponent.state = enemycomponent.ROAM;
+                    numEnemyTarget--;
                     break;
                 }
                 break;
@@ -349,7 +350,7 @@ namespace Ukemochi
                                 ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                             }
 
-                            std::cout << "player hit\n";
+                            //std::cout << (int)enemycomponent.ID<< " player hit\n";
                             enemycomponent.atktimer = 5.f;
                             attack = false;
                         }
