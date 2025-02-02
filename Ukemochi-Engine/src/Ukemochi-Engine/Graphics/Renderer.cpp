@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "UIButton.h"
 #include "imgui.h"
 #include "ImGuizmo.h"
+#include "../ECS/ECS.h"
 
 using namespace Ukemochi;
 
@@ -133,20 +134,88 @@ void Renderer::init()
 	uiManager.addButton(glm::vec3(1168.f, 478.f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
 		Application::Get().StartGame(); });*/
 
+	// Health
 	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
 		});
 	uiManager.addButton(glm::vec3(350.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, true, []() {
 		});
 	uiManager.addButton(glm::vec3(353.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
 		});
+
+	// Soul blue
+	uiManager.addButton(glm::vec3(293.f, 940.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	uiManager.addButton(glm::vec3(293.f, 940.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	uiManager.addButton(glm::vec3(293.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	// Soul red
+	uiManager.addButton(glm::vec3(293.f, 880.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	uiManager.addButton(glm::vec3(293.f, 880.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	uiManager.addButton(glm::vec3(293.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	// Abilities and pause
+	uiManager.addButton(glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
 	
+	uiManager.addButton(glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
+	uiManager.addButton(glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, false, []() {
+		});
+
 	// Add buttons
 
 }
+void Renderer::finding_player_ID()
+{
+	for (auto const& entity : m_Entities)
+	{
+		if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+		{
+			playerID = entity;
+			break;
+		}
+	}
+}
 
+void Renderer::HandleInputTesting()
+{
+	if (ECS::GetInstance().HasComponent<Player>(playerID))
+	{
+		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
+		player.currentHealth -= 10;
+	
+		if (player.currentHealth < 0)
+			player.currentHealth = 0;
+	
+		std::cout << "Debug: Player HP = " << player.currentHealth << std::endl;
+	
+		float healthPercentage = static_cast<float>(player.currentHealth) / player.maxHealth;
+		uiManager.updateHealth(healthPercentage);
+	}
+}
 void Renderer::updateHealthBar()
 {
-	auto& player = ECS::GetInstance().GetComponent<Player>(playerEntity);
+	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
+	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
+	uiManager.updateHealth(healthPercentage);
+	if (ECS::GetInstance().HasComponent<Player>(playerID)) 
+	{	
+		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
+		std::cout << "Player Component Found! Current Health: " << player.currentHealth << std::endl;
+	}
+	else {
+		std::cerr << "Error: Player entity does not have a Player component!" << std::endl;
+	}
 }
 
 /*!
@@ -763,6 +832,7 @@ void Renderer::render()
 	// Render entities
 	batchRenderer->beginBatch();
 
+	
 	for (auto& entity : m_Entities)
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
@@ -869,6 +939,7 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
+	updateHealthBar(); 
 
 	batchRendererUI->setActiveShader(shaderProgram);
 	shaderProgram->Activate();
@@ -1240,59 +1311,59 @@ void Renderer::toggleSlowMotion()
  */
 void Renderer::animationKeyInput()
 {
-	std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
-	if (list.empty())
-	{
-		return;
-	}
-	for (auto& GameObject : list)
-	{
-		if (GetPlayer() == GameObject->GetInstanceID())
-		{
-			// auto& playerSprite = GameObject->GetComponent<SpriteRender>();
+	//std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+	//if (list.empty())
+	//{
+	//	return;
+	//}
+	//for (auto& GameObject : list)
+	//{
+	//	if (GetPlayer() == GameObject->GetInstanceID())
+	//	{
+	//		// auto& playerSprite = GameObject->GetComponent<SpriteRender>();
 
-			// File paths for the textures
-			std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
-			std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+	//		// File paths for the textures
+	//		std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	//		std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
 
-			// if (Input::IsKeyPressed(GLFW_KEY_A)) {
-			// 	isFacingRight = false; // Moving left
-			// }
-			// else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-			// 	isFacingRight = true; // Moving right
-			// }
+	//		// if (Input::IsKeyPressed(GLFW_KEY_A)) {
+	//		// 	isFacingRight = false; // Moving left
+	//		// }
+	//		// else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+	//		// 	isFacingRight = true; // Moving right
+	//		// }
 
-			// Check if any movement keys are pressed
-			// if (Input::IsKeyPressed(GLFW_KEY_W) ||
-			// 	Input::IsKeyPressed(GLFW_KEY_A) ||
-			// 	Input::IsKeyPressed(GLFW_KEY_S) ||
-			// 	Input::IsKeyPressed(GLFW_KEY_D))
-			// {
-			// 	// If we are not already in the running state, switch to the running texture
-			// 	if (playerSprite.animationIndex != 1)
-			// 	{
-			// 		playerSprite.animationIndex = 1;
-			// 		playerSprite.texturePath = runningTexturePath;
-			//
-			// 		// Set the animation index and texture path to indicate running state
-			// 		std::cout << "Switching to running animation.\n";
-			// 	}
-			// }
-			// else
-			// {
-			// 	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-			// 	if (playerSprite.animationIndex != 0)
-			// 	{
-			// 		playerSprite.animationIndex = 0;
-			// 		playerSprite.texturePath = idleTexturePath;
-			//
-			// 		// Set the animation index and texture path to indicate idle state
-			// 		std::cout << "Switching to idle animation.\n";
-			// 	}
-			// }
-			break;
-		}
-	}
+	//		// Check if any movement keys are pressed
+	//		// if (Input::IsKeyPressed(GLFW_KEY_W) ||
+	//		// 	Input::IsKeyPressed(GLFW_KEY_A) ||
+	//		// 	Input::IsKeyPressed(GLFW_KEY_S) ||
+	//		// 	Input::IsKeyPressed(GLFW_KEY_D))
+	//		// {
+	//		// 	// If we are not already in the running state, switch to the running texture
+	//		// 	if (playerSprite.animationIndex != 1)
+	//		// 	{
+	//		// 		playerSprite.animationIndex = 1;
+	//		// 		playerSprite.texturePath = runningTexturePath;
+	//		//
+	//		// 		// Set the animation index and texture path to indicate running state
+	//		// 		std::cout << "Switching to running animation.\n";
+	//		// 	}
+	//		// }
+	//		// else
+	//		// {
+	//		// 	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+	//		// 	if (playerSprite.animationIndex != 0)
+	//		// 	{
+	//		// 		playerSprite.animationIndex = 0;
+	//		// 		playerSprite.texturePath = idleTexturePath;
+	//		//
+	//		// 		// Set the animation index and texture path to indicate idle state
+	//		// 		std::cout << "Switching to idle animation.\n";
+	//		// 	}
+	//		// }
+	//		break;
+	//	}
+	//}
 }
 
 /*!***********************************************************************

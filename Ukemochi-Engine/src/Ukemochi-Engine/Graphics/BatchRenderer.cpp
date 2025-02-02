@@ -255,10 +255,6 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         flush();
         beginBatch();
     }
-    
-    std::cout << "Adding sprite: " << spriteName
-        << " at Layer: " << layer
-        << " Position: (" << position.x << ", " << position.y << ")\n";
 
     GLint textureID = -1;
 
@@ -435,17 +431,17 @@ void BatchRenderer2D::flush()
 
     std::sort(layers.begin(), layers.end()); // Ensure lower layers render first
 
-    std::cout << "Rendering UI Layers in Order: ";
+    /*std::cout << "Rendering UI Layers in Order: ";
     for (int layer : layers)
         std::cout << layer << " ";
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     for (int layer : layers)
     {
         auto& layerVertices = layerBatches[layer];
         if (layerVertices.empty()) continue;
 
-        std::cout << "Layer " << layer << " has " << layerVertices.size() << " vertices\n";
+        //std::cout << "Layer " << layer << " has " << layerVertices.size() << " vertices\n";
 
         vao->Bind();
         vbo->Bind();

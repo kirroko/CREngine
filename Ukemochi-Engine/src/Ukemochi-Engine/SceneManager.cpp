@@ -200,6 +200,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
         UME_ENGINE_TRACE("Initializing soul manager...");
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
+
+        ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
     }
 
     /*!***********************************************************************
@@ -239,9 +241,11 @@ namespace Ukemochi
     void SceneManager::SceneMangerUpdate()
     {
         if (Input::IsKeyTriggered(UME_KEY_U))
+        {
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
-
+            ECS::GetInstance().GetSystem<Renderer>()->HandleInputTesting();
+        }
         if (Input::IsKeyTriggered(GLFW_KEY_8)) 
         {
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
@@ -258,6 +262,10 @@ namespace Ukemochi
             std::cout << "Switched to Scale Mode\n";
         }
 
+        if (Input::IsKeyTriggered(UME_KEY_H))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->HandleInputTesting();
+        }
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {

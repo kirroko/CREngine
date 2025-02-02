@@ -192,6 +192,7 @@ public:
 
 	void resizeFramebuffer(unsigned int width, unsigned int height) const;
 
+	EntityID playerID = -1;
 private:
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
@@ -443,7 +444,7 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
-	int Player = -1;
+	int player = -1;
 
 	std::shared_ptr<BatchRenderer2D> batchRenderer;
 
@@ -459,20 +460,22 @@ public:
 		playerObject = &player;
 	}
 
-	int GetPlayer()
-	{
-		return Player;
-	}
+	//int GetPlayer()
+	//{
+	//	//return Player;
+	//}
 	void SetPlayer(int id)
 	{
-		Player = id;
+		player = id;
 	}
 
 	// Not in use at the moment
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
-	
+	void finding_player_ID();
+
+	void HandleInputTesting();
 
 private:
 	std::shared_ptr<Shader> UI_shader_program;
