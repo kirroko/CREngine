@@ -194,8 +194,12 @@ void Renderer::HandleInputTesting()
 	if (ECS::GetInstance().HasComponent<Player>(playerID))
 	{
 		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
+		auto& soul_count = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
+
 		player.currentHealth -= 10;
-	
+		soul_count.soul_bars[SoulType::FISH] += 1;
+		soul_count.soul_bars[SoulType::WORM] += 1;
+
 		if (player.currentHealth < 0)
 			player.currentHealth = 0;
 	
