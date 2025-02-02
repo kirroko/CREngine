@@ -24,7 +24,9 @@ R key - To reset the game
 Escape key - To quit the game
 Left mouse click - Select UI buttons
 WASD keys - Move the player
+Q key - To switch between souls
 J key - Use the knife attack
+F key - To use soul ability
 
 EDITOR CONTROLS
 Arrow keys - Move the camera
