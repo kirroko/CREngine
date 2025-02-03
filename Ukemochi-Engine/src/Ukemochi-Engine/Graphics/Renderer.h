@@ -167,7 +167,7 @@ public:
 	 * @brief Create a button object in the UI renderer.
 	 */
 	//void CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, bool isHealth, std::function<void()> onClick);
-	void CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType = BarType::None, std::function<void()> onClick = nullptr);
+	void CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType = BarType::None, std::function<void()> onClick = nullptr);
 	/*!
 	 * @brief Remove a button object in the UI renderer.
 	 */

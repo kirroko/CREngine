@@ -123,9 +123,9 @@ namespace Ukemochi
 	\param[in] textureID
 	 The ID for the image texture.
 	*************************************************************************/
-	void InGameGUI::CreateImage(const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color, BarType barType)
+	void InGameGUI::CreateImage(const std::string& id, const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color, BarType barType)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(pos, size, spriteName, Vec3{ 0.f, 0.f, 0.f }, layer, barType, nullptr);
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, spriteName, Vec3{ 0.f, 0.f, 0.f }, layer, barType, nullptr);
 	}
 
 	/*!***********************************************************************

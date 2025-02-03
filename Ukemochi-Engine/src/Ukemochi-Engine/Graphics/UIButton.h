@@ -32,6 +32,7 @@ enum class BarType{
 
 class UIButton {
 public:
+    std::string id; // Unique ID for each button
     glm::vec3 originalPosition;
     glm::vec2 originalSize;
     glm::vec3 position;
@@ -46,8 +47,8 @@ public:
 
     std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-    UIButton(glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, std::function<void()> callback = nullptr)
-       : originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), onClick(callback){} 
+    UIButton(const std::string& buttonID, glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, std::function<void()> callback = nullptr)
+       : id(buttonID), originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), onClick(callback){} 
 
     //void updateHealthBar(float healthPercentage)
     //{
