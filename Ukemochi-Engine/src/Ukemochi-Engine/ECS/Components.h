@@ -21,7 +21,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Vector2D.h"  // for Vec2 struct
 #include "../Audio/Audio.h"	   // for Audio class
 
-
 namespace Ukemochi
 {
 	/*!***********************************************************************
@@ -356,21 +355,22 @@ namespace Ukemochi
 	\brief
 	 Player soul component structure.
 	*************************************************************************/
-	enum SoulType { EMPTY = -1, FISH, WORM, NUM_OF_SOULS };
+	enum SoulType { EMPTY = -1, FISH, WORM, NUM_OF_SOULS }; // The type of souls
 	struct PlayerSoul
 	{
-		SoulType current_soul = EMPTY;	   // The player's current active soul
-		float soul_bars[NUM_OF_SOULS]{};   // The player's soul bars, used for soul passive attacks
-		int soul_charges[NUM_OF_SOULS]{};  // The player's soul charges, used for soul abilities
-		float soul_damage[NUM_OF_SOULS]{}; // The player's soul skill damages
+		SoulType current_soul = EMPTY;					 // The player's current active soul
+		float soul_bars[NUM_OF_SOULS]{};				 // The player's soul bars, used for soul passive attacks
+		int soul_charges[NUM_OF_SOULS]{};				 // The player's soul charges, used for soul abilities
 
-		float soul_decay_rate = 5.f;	   // The rate of decay for the soul bar
-		float soul_decay_timer = 0.f;
-		float soul_decay_amount = 10.f;
+		float skill_damages[NUM_OF_SOULS]{ 50.f, 50.f }; // The damage of the skills
+		float skill_duration = 1.f;						 // The duration of the skill
+		float skill_cooldown = 5.f;						 // The cooldown of the skill
+		float skill_timer = 0.f;						 // The timer for skill ready
+		bool skill_ready = false;						 // The skill's ready state
 
-		float skill_cooldown = 5.f;
-		float skill_timer = 0.f;
-		bool skill_ready = false;
+		float soul_decay_amount = 10.f;					 // The amount of soul to decay
+		float soul_decay_rate = 5.f;					 // The rate of decay for the soul bar
+		float soul_decay_timer = 0.f;					 // The timer for soul decay
 	};
 
 	/*!***********************************************************************

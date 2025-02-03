@@ -39,6 +39,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "../Game/EnemyManager.h"
 #include "../Game/DungeonManager.h"
+#include "../Game/SoulManager.h"
 #include <../vendor/glm/glm/gtx/matrix_decompose.hpp>
 
 namespace Ukemochi
@@ -749,6 +750,8 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<Collision>()->Init();
                 UME_ENGINE_TRACE("Initializing dungeon manager...");
                 ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+                UME_ENGINE_TRACE("Initializing soul manager...");
+                ECS::GetInstance().GetSystem<SoulManager>()->Init();
                 // enemy
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 //audio
@@ -1380,7 +1383,8 @@ namespace Ukemochi
             "Animation",
             "PlayerController",
             "Audio",
-            "EnemyController"
+            "EnemyController",
+            "PlayerSoul"
         };
 
         ImGui::Text("Add Component");
@@ -1455,7 +1459,7 @@ namespace Ukemochi
                     modified = true;
                 }
                 break;
-            case 7:
+            case 7: // Enemy
                 if (selectedObject->GetTag() == "Enemy" && !selectedObject->HasComponent<Enemy>())
                 {
                     selectedObject->AddComponent<Enemy>(Enemy(0.0f, 0.0f, Enemy::DEFAULT, selectedObject->GetInstanceID()));
@@ -1465,6 +1469,13 @@ namespace Ukemochi
                 {
                     // Show popup instead of console message
                     ImGui::OpenPopup("Invalid Enemy Tag");
+                }
+                break;
+            case 8: // Player Soul
+                if (!selectedObject->HasComponent<PlayerSoul>())
+                {
+                    selectedObject->AddComponent<PlayerSoul>(PlayerSoul{});
+                    modified = true;
                 }
                 break;
             default:
@@ -1587,6 +1598,16 @@ namespace Ukemochi
                 if (ImGui::Button("Remove Player Component"))
                 {
                     selectedObject->RemoveComponent<Player>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
+            if (selectedObject->HasComponent<PlayerSoul>())
+            {
+                if (ImGui::Button("Remove Player Soul Component"))
+                {
+                    selectedObject->RemoveComponent<PlayerSoul>();
                     modified = true;
                 }
                 ImGui::Spacing();
@@ -2042,6 +2063,17 @@ namespace Ukemochi
                 ImGui::Text("Player Component");
                 ImGui::InputInt("Current Health", &player.currentHealth);
                 ImGui::InputInt("Combo Damage", &player.comboDamage);
+            }
+        }
+
+        if (selectedObject->HasComponent<PlayerSoul>())
+        {
+            if (ImGui::CollapsingHeader("PlayerSoul"))
+            {
+                auto& playerSoul = selectedObject->GetComponent<PlayerSoul>();
+                ImGui::Text("Player Soul Component");
+                ImGui::InputFloat("Skill Cooldown", &playerSoul.skill_cooldown);
+                ImGui::InputFloat("Skill Duration", &playerSoul.skill_duration);
             }
         }
 

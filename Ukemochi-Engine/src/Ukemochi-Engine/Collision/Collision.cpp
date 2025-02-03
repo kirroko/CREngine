@@ -549,13 +549,14 @@ namespace Ukemochi
 			// Mochi and Door / Other Triggers
 			Trigger_Response(tag2);
 		}
-		else if ((tag1 == "Knife" && tag2 == "Enemy" || tag1 == "Ability" && tag2 == "Enemy"))
+		else if (tag1 == "Knife" && tag2 == "Enemy")
 		{
-			// Mochi's Knife / Mochi's Ability and Enemy
+			// Mochi's Knife and Enemy
 			// Enemy takes damage and knockback
 
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
@@ -571,7 +572,13 @@ namespace Ukemochi
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 5.0f;
-						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+						// Deal 2x dmg if the player and the enemy has the same soul type
+						if (player_soul.current_soul == enemy_data.type)
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+						else
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
 					}
 				}
@@ -589,7 +596,13 @@ namespace Ukemochi
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 5.0f;
-						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+						// Deal 2x dmg if the player and the enemy has the same soul type
+						if (player_soul.current_soul == enemy_data.type)
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+						else
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
 					}
 				}
@@ -619,7 +632,13 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						enemy_data.atktimer = 5.0f;
-						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						
+						// Deal 2x dmg if the player and the enemy has the same soul type
+						if (player_soul.current_soul == enemy_data.type)
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+						else
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
 						enemy_data.hasDealtDamage = true;
 					}
 				}
@@ -633,7 +652,35 @@ namespace Ukemochi
 			default:
 				break;
 			}
+		}
+		else if (tag1 == "Ability" && tag2 == "Enemy")
+		{
+			// Mochi's Ability and Enemy
+			// Enemy takes damage and knockback
 
+			// Get references of the player and enemy
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+			//auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+
+			if (!enemy_data.hasDealtDamage)
+			{
+				ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+				enemy_data.atktimer = 5.0f;
+
+				// Deal 2x dmg if the player and the enemy has the same soul type
+				if (player_soul.current_soul == enemy_data.type)
+					enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul] * 2.f);
+				else
+					enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+				
+				enemy_data.hasDealtDamage = true; // Prevent multiple applications
+			}
+			else
+			{
+				// Reset damage flag for the kick combo if not at the damage frame
+				enemy_data.hasDealtDamage = false;
+			}
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
 		{
@@ -649,6 +696,13 @@ namespace Ukemochi
 		{
 			// Mochi and Enemy / Enemy's Projectile
 			// Mochi takes damage and knockback
+
+			// Get references of the player and enemy
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+
+			// Deal damage to the player
+			enemy_data.AttackPlayer(player_data.currentHealth);
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);

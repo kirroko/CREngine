@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"
 #include "DungeonManager.h"
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
+#include "SoulManager.h" // for soul harvest
 
 namespace Ukemochi
 {
@@ -135,6 +136,19 @@ namespace Ukemochi
             // If the enemy is in DEAD state, remove it from the list after processing DeadState
             if (enemycomponent.state == Enemy::DEAD)
             {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                //dont overlap kick sound
+                if (audioM.GetSFXindex("Pattack3") != -1 && audioM.GetSFXindex("EnemyKilled") != -1)
+                {
+                    if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3"))) && !enemycomponent.isDead)
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                    }
+                }
+
+                // Harvest the soul of the dead enemy
+                ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 1);
+
                 object->SetActive(false);
                 enemycomponent.isDead = true;
                 if (enemycomponent.isWithPlayer && numEnemyTarget>=1)
