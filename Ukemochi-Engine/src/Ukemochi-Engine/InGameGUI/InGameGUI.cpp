@@ -108,10 +108,10 @@ namespace Ukemochi
 	\param[in] new_label
 	 The new text to set as the label.
 	*************************************************************************/
-	void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
-	{
-		//ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
-	}
+	//void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
+	//{
+	//	//ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
+	//}
 
 	/*!***********************************************************************
 	\brief

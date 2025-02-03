@@ -61,7 +61,7 @@ namespace Ukemochi
 		\param[in] new_label
 		 The new text to set as the label.
 		*************************************************************************/
-		void UpdateText(const std::string& id, const std::string& new_label);
+		//void UpdateText(const std::string& id, const std::string& new_label);
 
 		/*!***********************************************************************
 		\brief
