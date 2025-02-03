@@ -1,48 +1,32 @@
 {"frames": {
 
-"button1.png":
+"dmg number_10.png":
 {
-	"frame": {"x":763,"y":182,"w":145,"h":135},
+	"frame": {"x":530,"y":5,"w":119,"h":106},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":145,"h":135},
-	"sourceSize": {"w":145,"h":135}
+	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":106},
+	"sourceSize": {"w":119,"h":106}
 },
-"button2.png":
+"dmg number_20_blue.png":
 {
-	"frame": {"x":616,"y":182,"w":147,"h":134},
+	"frame": {"x":905,"y":5,"w":155,"h":109},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":134},
-	"sourceSize": {"w":147,"h":134}
+	"spriteSourceSize": {"x":0,"y":0,"w":155,"h":109},
+	"sourceSize": {"w":155,"h":109}
 },
-"defeat bg.png":
+"dmg number_20_red.png":
 {
-	"frame": {"x":0,"y":317,"w":1920,"h":1080},
+	"frame": {"x":1065,"y":5,"w":155,"h":109},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
-	"sourceSize": {"w":1920,"h":1080}
-},
-"defeat.png":
-{
-	"frame": {"x":0,"y":182,"w":499,"h":129},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":499,"h":129},
-	"sourceSize": {"w":499,"h":129}
-},
-"exit button.png":
-{
-	"frame": {"x":1384,"y":61,"w":78,"h":72},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":78,"h":72},
-	"sourceSize": {"w":78,"h":72}
+	"spriteSourceSize": {"x":0,"y":0,"w":155,"h":109},
+	"sourceSize": {"w":155,"h":109}
 },
 "in game_abilities.png":
 {
-	"frame": {"x":1645,"y":61,"w":122,"h":107},
+	"frame": {"x":778,"y":5,"w":122,"h":107},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":122,"h":107},
@@ -50,7 +34,7 @@
 },
 "in game_blue fire.png":
 {
-	"frame": {"x":1254,"y":61,"w":65,"h":71},
+	"frame": {"x":164,"y":5,"w":65,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
@@ -58,7 +42,7 @@
 },
 "in game_border shadow.png":
 {
-	"frame": {"x":0,"y":1397,"w":1920,"h":1080},
+	"frame": {"x":5,"y":281,"w":1920,"h":1080},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
@@ -66,7 +50,7 @@
 },
 "in game_health bar bg.png":
 {
-	"frame": {"x":0,"y":61,"w":627,"h":66},
+	"frame": {"x":1127,"y":139,"w":627,"h":66},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
@@ -74,7 +58,7 @@
 },
 "in game_health bar border.png":
 {
-	"frame": {"x":716,"y":0,"w":594,"h":31},
+	"frame": {"x":528,"y":139,"w":594,"h":31},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":594,"h":31},
@@ -82,7 +66,7 @@
 },
 "in game_health bar icon.png":
 {
-	"frame": {"x":499,"y":182,"w":117,"h":129},
+	"frame": {"x":408,"y":5,"w":117,"h":129},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":117,"h":129},
@@ -90,7 +74,7 @@
 },
 "in game_health bar.png":
 {
-	"frame": {"x":627,"y":61,"w":627,"h":66},
+	"frame": {"x":5,"y":210,"w":627,"h":66},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
@@ -98,7 +82,7 @@
 },
 "in game_pause.png":
 {
-	"frame": {"x":1462,"y":61,"w":99,"h":87},
+	"frame": {"x":304,"y":5,"w":99,"h":87},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":99,"h":87},
@@ -106,7 +90,7 @@
 },
 "in game_red fire.png":
 {
-	"frame": {"x":1319,"y":61,"w":65,"h":71},
+	"frame": {"x":234,"y":5,"w":65,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
@@ -114,23 +98,39 @@
 },
 "in game_soul ability charge bg.png":
 {
-	"frame": {"x":1614,"y":0,"w":58,"h":61},
+	"frame": {"x":101,"y":5,"w":58,"h":61},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":61},
 	"sourceSize": {"w":58,"h":61}
 },
+"in game_soul ability charge blue.png":
+{
+	"frame": {"x":5,"y":5,"w":25,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":27},
+	"sourceSize": {"w":25,"h":27}
+},
 "in game_soul ability charge border.png":
 {
-	"frame": {"x":1310,"y":0,"w":31,"h":31},
+	"frame": {"x":65,"y":5,"w":31,"h":31},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":31},
 	"sourceSize": {"w":31,"h":31}
 },
+"in game_soul ability charge red.png":
+{
+	"frame": {"x":35,"y":5,"w":25,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":27},
+	"sourceSize": {"w":25,"h":27}
+},
 "in game_soul bar bg.png":
 {
-	"frame": {"x":1341,"y":0,"w":273,"h":55},
+	"frame": {"x":250,"y":139,"w":273,"h":55},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":273,"h":55},
@@ -138,15 +138,15 @@
 },
 "in game_soul bar blue.png":
 {
-	"frame": {"x":0,"y":0,"w":238,"h":18},
+	"frame": {"x":1225,"y":5,"w":238,"h":13},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":18},
-	"sourceSize": {"w":238,"h":18}
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":13},
+	"sourceSize": {"w":238,"h":13}
 },
 "in game_soul bar border.png":
 {
-	"frame": {"x":476,"y":0,"w":240,"h":20},
+	"frame": {"x":5,"y":139,"w":240,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":20},
@@ -154,35 +154,27 @@
 },
 "in game_soul bar red.png":
 {
-	"frame": {"x":238,"y":0,"w":238,"h":18},
+	"frame": {"x":1468,"y":5,"w":238,"h":13},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":18},
-	"sourceSize": {"w":238,"h":18}
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":13},
+	"sourceSize": {"w":238,"h":13}
 },
 "in game_soul change.png":
 {
-	"frame": {"x":1767,"y":61,"w":119,"h":121},
+	"frame": {"x":654,"y":5,"w":119,"h":121},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":121},
 	"sourceSize": {"w":119,"h":121}
-},
-"restart icon.png":
-{
-	"frame": {"x":1561,"y":61,"w":84,"h":88},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":84,"h":88},
-	"sourceSize": {"w":84,"h":88}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
-	"image": "UI_Part1.png",
+	"image": "in game spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":1920,"h":2477},
+	"size": {"w":1930,"h":1366},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:3e74232edb02ebce82aeb87ec29c8b62:1e8cba1d7569fe7a3489fe392719af60:7c3b2cf4ddd856dc2a5d808eb042303c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b4b31bd6e8ff4b765de098ce2199d912:7809f6d4cf02197d1b4a59dfef7e443d:2e49993461a20d9c010ef92aee1f7b97$"
 }
 }
