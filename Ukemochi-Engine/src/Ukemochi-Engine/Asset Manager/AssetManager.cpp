@@ -429,7 +429,8 @@ namespace Ukemochi
 				uv.vMin = 1.0f - ((static_cast<GLfloat>(frame["y"].GetInt()) + static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight);
 
 				Vec2 dimension = Vec2(static_cast<float>(frame["w"].GetInt()), static_cast<float>(frame["h"].GetInt()));
-
+				Vec2 position = Vec2(static_cast<float>(frame["x"].GetInt()),static_cast<float>(frame["y"].GetInt()));
+				
 				//std::cout << "Atlas Dimensions: " << atlasWidth << "x" << atlasHeight << std::endl;
 				//std::cout << "Sprite: " << spriteName
 				//	<< ", x: " << frame["x"].GetInt()
@@ -442,7 +443,7 @@ namespace Ukemochi
 				//	<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
 
 				// Store UV
-				spriteData[standardizedSpriteName] = { uv, sheetName, dimension };
+				spriteData[standardizedSpriteName] = { uv, sheetName, dimension, position };
 			}
 		}
 

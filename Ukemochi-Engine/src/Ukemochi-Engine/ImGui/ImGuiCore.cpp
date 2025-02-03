@@ -291,8 +291,8 @@ namespace Ukemochi
         // Static animation variables
         static GLuint texture = 0;
         static char clipName[128] = "";
-        static int textureWidth = 0;
-        static int textureHeight = 0;
+        static int spriteWidth = 0;
+        static int spriteHeight = 0;
         static int totalFrames = 1;
         static int pixelSize[2] = {64, 64};
         static float pivot[2] = {0.5f, 0.5f}; // center pivot by default
@@ -301,12 +301,12 @@ namespace Ukemochi
         static bool looping = true;
 
         // Editor variables
-        static bool showTools = false;
         static bool showGrid = false;
         static bool showPreview = true;
         static bool isAnimation = false;
+        static bool spriteChanged = false;
         static std::string spriteName;
-
+        
         std::shared_ptr<AssetManager> amRef = ECS::GetInstance().GetSystem<AssetManager>();
 
         // Back to selection
@@ -316,8 +316,11 @@ namespace Ukemochi
             {
                 m_SpriteFlag = true;
                 texture = 0;
-                textureWidth = 0;
-                textureHeight = 0;
+                spriteWidth = 0;
+                spriteHeight = 0;
+                showGrid = false;
+                isAnimation = false;
+                spriteChanged = true;
             }
 
             ImGui::SameLine();
@@ -360,8 +363,8 @@ namespace Ukemochi
                         spriteName = basic_string;
                         showPreview = true;
                         texture = amRef->getTexture(m_TexturePath)->ID;
-                        textureWidth = static_cast<int>(amRef->spriteData[basic_string].spriteSheetDimension.x);
-                        textureHeight = static_cast<int>(amRef->spriteData[basic_string].spriteSheetDimension.y);
+                        spriteWidth = static_cast<int>(amRef->spriteData[basic_string].spriteSheetDimension.x);
+                        spriteHeight = static_cast<int>(amRef->spriteData[basic_string].spriteSheetDimension.y);
                     }
 
                     // Enable dragging of sprite to sprite renderer
@@ -385,14 +388,14 @@ namespace Ukemochi
         // Calculate the aspect ratio of the image
         if (showPreview && !isAnimation)
         {
-            float aspectRatio = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
+            float aspectRatio = static_cast<float>(spriteWidth) / static_cast<float>(spriteHeight);
             ImVec2 availSize = ImGui::GetContentRegionAvail();
 
             // determine the final size to display the image
-            float displayWidth = static_cast<float>(textureWidth);
-            float displayHeight = static_cast<float>(textureHeight);
+            float displayWidth = static_cast<float>(spriteWidth);
+            float displayHeight = static_cast<float>(spriteHeight);
 
-            if (static_cast<float>(textureWidth) > availSize.x || static_cast<float>(textureHeight) > availSize.y)
+            if (static_cast<float>(spriteWidth) > availSize.x || static_cast<float>(spriteHeight) > availSize.y)
             {
                 if (availSize.x / aspectRatio <= availSize.y)
                 {
@@ -412,8 +415,8 @@ namespace Ukemochi
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xOffset);
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + yOffset);
 
-            ImVec2 UV0 = ImVec2(amRef->spriteData[spriteName].uv.uMin,amRef->spriteData[spriteName].uv.vMax);
-            ImVec2 UV1 = ImVec2(amRef->spriteData[spriteName].uv.uMax,amRef->spriteData[spriteName].uv.vMin);
+            ImVec2 UV0 = ImVec2(amRef->spriteData[spriteName].uv.uMin,amRef->spriteData[spriteName].uv.vMax); // 0,1
+            ImVec2 UV1 = ImVec2(amRef->spriteData[spriteName].uv.uMax,amRef->spriteData[spriteName].uv.vMin); // 1,0
             
             ImGui::Image((ImTextureID)(intptr_t)texture, ImVec2(displayWidth, displayHeight), UV0, UV1);
         }
@@ -428,7 +431,7 @@ namespace Ukemochi
 
         // Display the texture details
         ImGui::Text("File = %s", spriteName.c_str());
-        ImGui::Text("Size = %d x %d", textureWidth, textureHeight);
+        ImGui::Text("Size = %d x %d", spriteWidth, spriteHeight);
         ImGui::Checkbox("Show Grid", &showGrid);
 
         // Input for name of clip
@@ -459,50 +462,50 @@ namespace Ukemochi
         // Input for looping
         ImGui::Checkbox("Looping", &looping);
 
-        if (ImGui::Button("Export Clip"))
-        {
-            std::string sClipName = clipName;
-            if (sClipName.empty())
-            {
-                ImGui::OpenPopup("Missing Clip Name");
-            }
-            else
-            {
-                // Save the metadata to a file
-                // Get file name to save
-                rapidjson::Document document;
-                document.SetObject();
-                rapidjson::Document::AllocatorType &allocator = document.GetAllocator();
+        // if (ImGui::Button("Export Clip"))
+        // {
+        //     std::string sClipName = clipName;
+        //     if (sClipName.empty())
+        //     {
+        //         ImGui::OpenPopup("Missing Clip Name");
+        //     }
+        //     else
+        //     {
+        //         // Save the metadata to a file
+        //         // Get file name to save
+        //         rapidjson::Document document;
+        //         document.SetObject();
+        //         rapidjson::Document::AllocatorType &allocator = document.GetAllocator();
+        //
+        //         rapidjson::Value textureMetaData(rapidjson::kObjectType);
+        //         std::string tempStr = clipName;
+        //         textureMetaData.AddMember("KeyPath", rapidjson::Value(m_TexturePath.c_str(), allocator), allocator);
+        //         textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
+        //         textureMetaData.AddMember("PivotX", pivot[0], allocator);
+        //         textureMetaData.AddMember("PivotY", pivot[1], allocator);
+        //         textureMetaData.AddMember("PixelsPerUnit", pixelPerUnit, allocator);
+        //         textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
+        //         textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
+        //         textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
+        //         textureMetaData.AddMember("TextureWidth", spriteWidth, allocator);
+        //         textureMetaData.AddMember("TextureHeight", spriteHeight, allocator);
+        //         textureMetaData.AddMember("FrameTime", frameTime, allocator);
+        //         textureMetaData.AddMember("Looping", looping, allocator);
+        //         // textureMetaData.AddMember("PixelPerUnit", pixelPerUnit, allocator);
+        //
+        //         document.AddMember("TextureMeta", textureMetaData, allocator);
+        //         // Serialize the texture
+        //         std::filesystem::path path = m_TexturePath;
+        //         path.replace_extension(".json");
+        //         // std::string path = "../Assets/Textures/" + fileName + ".json";
+        //         if (!Serialization::PushJSON(path.string(), document))
+        //         {
+        //             UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path.string());
+        //         }
+        //     }
+        // }
 
-                rapidjson::Value textureMetaData(rapidjson::kObjectType);
-                std::string tempStr = clipName;
-                textureMetaData.AddMember("KeyPath", rapidjson::Value(m_TexturePath.c_str(), allocator), allocator);
-                textureMetaData.AddMember("ClipName", rapidjson::Value(tempStr.c_str(), allocator), allocator);
-                textureMetaData.AddMember("PivotX", pivot[0], allocator);
-                textureMetaData.AddMember("PivotY", pivot[1], allocator);
-                textureMetaData.AddMember("PixelsPerUnit", pixelPerUnit, allocator);
-                textureMetaData.AddMember("TotalFrames", totalFrames, allocator);
-                textureMetaData.AddMember("PixelWidth", pixelSize[0], allocator);
-                textureMetaData.AddMember("PixelHeight", pixelSize[1], allocator);
-                textureMetaData.AddMember("TextureWidth", textureWidth, allocator);
-                textureMetaData.AddMember("TextureHeight", textureHeight, allocator);
-                textureMetaData.AddMember("FrameTime", frameTime, allocator);
-                textureMetaData.AddMember("Looping", looping, allocator);
-                // textureMetaData.AddMember("PixelPerUnit", pixelPerUnit, allocator);
-
-                document.AddMember("TextureMeta", textureMetaData, allocator);
-                // Serialize the texture
-                std::filesystem::path path = m_TexturePath;
-                path.replace_extension(".json");
-                // std::string path = "../Assets/Textures/" + fileName + ".json";
-                if (!Serialization::PushJSON(path.string(), document))
-                {
-                    UME_ENGINE_ERROR("Failed to save metadata to file: {0}", path.string());
-                }
-            }
-        }
-
-        ImGui::SameLine();
+        // ImGui::SameLine();
 
         if (ImGui::Button("Add Clip to GO"))
         {
@@ -521,8 +524,8 @@ namespace Ukemochi
                 if (GOs[m_global_selected]->HasComponent<Animation>())
                 {
                     auto &anim = GOs[m_global_selected]->GetComponent<Animation>();
-                    anim.clips[sClipName] = AnimationClip{
-                        m_TexturePath, sClipName, Vec2(pivot[0], pivot[1]), pixelPerUnit, totalFrames, pixelSize[0], pixelSize[1], textureWidth, textureHeight, frameTime,
+                    anim.clips[sClipName] = AnimationClip{spriteName,
+                        m_TexturePath, sClipName, Vec2(pivot[0], pivot[1]), pixelPerUnit, totalFrames, pixelSize[0], pixelSize[1], spriteWidth, spriteHeight, frameTime,
                         looping};
                     anim.SetAnimation(clipName);
                 }
@@ -555,6 +558,12 @@ namespace Ukemochi
         static int currentFrame = 0;
         static ImVec2 uv0 = ImVec2(amRef->spriteData[spriteName].uv.uMin, amRef->spriteData[spriteName].uv.vMax);
         static ImVec2 uv1 = ImVec2(amRef->spriteData[spriteName].uv.uMax,amRef->spriteData[spriteName].uv.vMin);
+        if (spriteChanged)
+        {
+            uv0 = ImVec2(amRef->spriteData[spriteName].uv.uMin, amRef->spriteData[spriteName].uv.vMax);
+            uv1 = ImVec2(amRef->spriteData[spriteName].uv.uMax,amRef->spriteData[spriteName].uv.vMin);
+            spriteChanged = false;
+        }
         if (isToggled)
         {
             if (ImGui::Button("PLAY"))
@@ -599,32 +608,39 @@ namespace Ukemochi
             }
 
             // Handle the UV here
-            UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
+            UME_ENGINE_ASSERT(pixelSize[0] < spriteWidth && pixelSize[1] < spriteHeight,
                               "Pixel size is larger than texture size")
-            int col = currentFrame % (textureWidth / pixelSize[0]);
-            int row = currentFrame / (textureWidth / pixelSize[0]);
+            int col = currentFrame % (spriteWidth / pixelSize[0]);
+            int row = currentFrame / (spriteWidth / pixelSize[0]);
+            // int numColumns = spriteWidth / pixelSize[0];
+            // int col = currentFrame % numColumns;
+            // int row = spriteHeight / pixelSize[1] - 1 - currentFrame / numColumns; // bottom-up row calculation
 
-            float uvX = static_cast<float>(col) * static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth);
-            float uvY = 1.0f - static_cast<float>(1 + row) * static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight);
-            float uvWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth);
-            float uvHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight);
+            float uvX = static_cast<float>(col) * static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth);
+            float uvY = static_cast<float>(row) * static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight);
+            float uvWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth);
+            float uvHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight);
 
-            uv0.x = uvX;
-            uv0.y = uvY + uvHeight;
-            uv1.x = uvX + uvWidth;
-            uv1.y = uvY;
+            float aw = amRef->spriteData[spriteName].uv.uMax - amRef->spriteData[spriteName].uv.uMin;
+            float ah = amRef->spriteData[spriteName].uv.vMax - amRef->spriteData[spriteName].uv.vMin;
+
+            uv0.x = amRef->spriteData[spriteName].uv.uMin + uvX * aw;
+            uv1.x = uv0.x + uvWidth * aw;
+            
+            uv0.y = amRef->spriteData[spriteName].uv.vMax - uvY * ah;
+            uv1.y = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * ah;
         }
 
         // Display Image
         // Calculate the aspect ratio of the image
-        float aspectRatio = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
+        float aspectRatio = static_cast<float>(spriteWidth) / static_cast<float>(spriteHeight);
         ImVec2 availSize = ImGui::GetContentRegionAvail();
         
         // determine the final size to display the image
-        float displayWidth = static_cast<float>(textureWidth);
-        float displayHeight = static_cast<float>(textureHeight);
+        float displayWidth = static_cast<float>(spriteWidth);
+        float displayHeight = static_cast<float>(spriteHeight);
         
-        if (static_cast<float>(textureWidth) > availSize.x || static_cast<float>(textureHeight) > availSize.y)
+        if (static_cast<float>(spriteWidth) > availSize.x || static_cast<float>(spriteHeight) > availSize.y)
         {
             if (availSize.x / aspectRatio <= availSize.y)
             {
@@ -653,16 +669,16 @@ namespace Ukemochi
             ImDrawList *drawList = ImGui::GetWindowDrawList();
         
             // scale the grid to match the resized image
-            float scaledCellWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(textureWidth) * displayWidth;
-            float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(textureHeight) *
+            float scaledCellWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth) * displayWidth;
+            float scaledCellHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight) *
                                      displayHeight;
         
             // UME_ENGINE_ASSERT(pixelSize[0] < textureWidth && pixelSize[1] < textureHeight,
             //                   "Pixel size is larger than texture size");
-            pixelSize[0] = std::min(pixelSize[0], textureWidth);
-            pixelSize[1] = std::min(pixelSize[1], textureHeight);
+            pixelSize[0] = std::min(pixelSize[0], spriteWidth);
+            pixelSize[1] = std::min(pixelSize[1], spriteHeight);
         
-            int colums = textureWidth / pixelSize[0];
+            int colums = spriteWidth / pixelSize[0];
             //            int rows = textureHeight / pixelSize[1];
             int maxRows = (totalFrames + colums - 1) / colums;
         

@@ -58,6 +58,7 @@ namespace Ukemochi
 			UV uv;
 			std::string spriteSheetName;
 			Vec2 spriteSheetDimension{};
+			Vec2 spriteSheetPosition{};
 		};
 		
 		std::string getAtlasMetaData(const std::string& atlasPath);
