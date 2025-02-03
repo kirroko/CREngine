@@ -23,7 +23,7 @@ namespace Ukemochi
 	{
 	private:
 		bool show_fps = false; // Show FPS debug text
-
+		 
 	public:
 		/*!***********************************************************************
 		\brief
@@ -75,7 +75,7 @@ namespace Ukemochi
 		\param[in] textureID
 		 The ID for the image texture.
 		*************************************************************************/
-		void CreateImage(const std::string& id, const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color, BarType barType = BarType::None);
+		void CreateImage();
 
 		/*!***********************************************************************
 		\brief
@@ -103,7 +103,7 @@ namespace Ukemochi
 		\param[in] on_click
 		 A callback function triggered on button click.
 		*************************************************************************/
-		void CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, bool interactable = true, std::function<void()> on_click = nullptr);
+		void CreateButton();
 
 		/*!***********************************************************************
 		\brief
@@ -112,6 +112,8 @@ namespace Ukemochi
 		 The ID for the GUI object.
 		*************************************************************************/
 		void RemoveElement(const std::string& id);
+
+		void Render(glm::vec3& cameraPos);
 
 	private:
 		/*!***********************************************************************

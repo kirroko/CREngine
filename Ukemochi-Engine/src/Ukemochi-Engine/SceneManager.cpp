@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/EnemyManager.h"
 #include "Game/DungeonManager.h"
 #include "Game/SoulManager.h"
+#include "Graphics/UIButtonManager.h"
 
 namespace Ukemochi
 {
@@ -88,6 +89,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<EnemyManager>();
         ECS::GetInstance().RegisterSystem<SoulManager>();
+        ECS::GetInstance().RegisterSystem<UIButtonManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -144,6 +146,11 @@ namespace Ukemochi
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<SoulManager>(sig);
+
+        // For UIButtonManager system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
 
         //init GSM
         //GSM_Initialize(GS_ENGINE);

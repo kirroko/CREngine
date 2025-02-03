@@ -42,11 +42,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "BatchRenderer.h"
 
 #include "../Asset Manager/AssetManager.h"
-
 #include "DebugModeBatchRendering.h"
 #include "ColorBufferBatchRendering.h"
-#include "UIButtonManager.h"
 #include "../Application.h"	
+#include "UIButtonManager.h"
 
 // Forward
 class TextRenderer;
@@ -451,12 +450,12 @@ private:
 
 	std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-	std::shared_ptr<BatchRenderer2D> batchRendererUI;
 	UIButtonManager uiManager;
 
 	
 
 public:
+	std::shared_ptr<BatchRenderer2D> batchRendererUI;
 	// Setter method to set the player object
 	void SetPlayerObject(GameObject& player)
 	{

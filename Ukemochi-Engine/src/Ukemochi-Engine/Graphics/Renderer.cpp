@@ -135,71 +135,78 @@ void Renderer::init()
 	uiManager.addButton(glm::vec3(1168.f, 478.f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
 		Application::Get().StartGame(); });*/
 
-	// Health
-	uiManager.addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
-	uiManager.addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Health, []() {
-		});
-	uiManager.addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
-	uiManager.addButton("health bar icon", glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//// Health
+	//uiManager.addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
+	//uiManager.addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Health, []() {
+	//	});
+	//uiManager.addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
+	//uiManager.addButton("health bar icon", glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	//--Soul blue----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	uiManager.addButton("blue soul bar bg", glm::vec3(300.f, 941.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	////--Soul blue----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//uiManager.addButton("blue soul bar bg", glm::vec3(300.f, 941.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("blue soul bar", glm::vec3(300.f, 941.5f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Soul, []() {
-		});
+	//uiManager.addButton("blue soul bar", glm::vec3(300.f, 941.5f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Soul, []() {
+	//	});
 
-	uiManager.addButton("blue soul bar border", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//uiManager.addButton("blue soul bar border", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
-		});
+	//uiManager.addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("blue soul ability charge bg", glm::vec3(500.f, 941.5f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//uiManager.addButton("blue soul ability charge bg", glm::vec3(500.f, 941.5f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("blue soul ability charge bar", glm::vec3(500.f, 941.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Charge_Bar, []() {
-		});
+	//uiManager.addButton("blue soul ability charge bar", glm::vec3(500.f, 941.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Charge_Bar, []() {
+	//	});
 
-	uiManager.addButton("blue soul ability charge border", glm::vec3(500.5f, 944.5f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
-	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//uiManager.addButton("blue soul ability charge border", glm::vec3(500.5f, 944.5f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
+	////---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	//--Soul red----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	uiManager.addButton("red soul bar bg", glm::vec3(333.f, 881.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	////--Soul red----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//uiManager.addButton("red soul bar bg", glm::vec3(333.f, 881.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("red soul bar", glm::vec3(333.f, 881.f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Soul, []() {
-		});
+	//uiManager.addButton("red soul bar", glm::vec3(333.f, 881.f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Soul, []() {
+	//	});
 
-	uiManager.addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//uiManager.addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
-		});
+	//uiManager.addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("red soul ability charge bg", glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//uiManager.addButton("red soul ability charge bg", glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("red soul ability charge bar", glm::vec3(533.f, 881.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Charge_Bar, []() {
-		});
+	//uiManager.addButton("red soul ability charge bar", glm::vec3(533.f, 881.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Charge_Bar, []() {
+	//	});
 
-	uiManager.addButton("red soul ability charge border", glm::vec3(534.f, 884.75f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
-	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//uiManager.addButton("red soul ability charge border", glm::vec3(534.f, 884.75f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
+	////---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	// Abilities and pause
-	uiManager.addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
-	
-	uiManager.addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//// Abilities and pause
+	//uiManager.addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
+	//
+	//uiManager.addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
 
-	uiManager.addButton("healthBar", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-		});
+	//uiManager.addButton("healthBar", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	//	});
+
+	//// Main Menu
+	//uiManager.addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+	//	});
+
+	//uiManager.addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, []() {
+	//	 });
 
 }
 void Renderer::finding_player_ID()
@@ -707,95 +714,6 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
 }
 
-/* 
-	FUNCTION I WANT TO USE BUT CANT BECAUSE OF GHOST TEXTURE 
-	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-*/
-//void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
-//{
-//	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
-//	int textureCount = std::min(32, texture_order_count);
-//	std::vector<int> textureUnits(textureCount);
-//
-//	// Keep track of bound atlas textures
-//	std::unordered_set<std::string> boundAtlases;
-//
-//	for (int i = 0; i < texture_order_count && i < 32; ++i)
-//	{
-//		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
-//
-//		// Determine if the texture is part of an atlas
-//		bool isInAtlas = ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path);
-//
-//		if (isInAtlas)
-//		{
-//			// Retrieve the atlas texture path from the sprite data
-//			const auto& spriteData = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(path);
-//			const std::string& atlasPath = spriteData.spriteSheetName;
-//
-//			// Skip if the atlas is already bound
-//			if (boundAtlases.find(atlasPath) != boundAtlases.end())
-//				continue;
-//
-//			Texture* atlasTexture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(atlasPath).get();
-//			if (!atlasTexture || atlasTexture->ID == 0)
-//			{
-//				std::cerr << "Error: Failed to load atlas texture: " << atlasPath << std::endl;
-//				continue;
-//			}
-//
-//			// Bind atlas texture if not already bound
-//			if (textureIDMap.find(atlasTexture->ID) == textureIDMap.end())
-//			{
-//				textureIDMap[atlasTexture->ID] = i;
-//				textureUnits[i] = i;
-//
-//				glActiveTexture(GL_TEXTURE0 + i);
-//				glBindTexture(GL_TEXTURE_2D, atlasTexture->ID);
-//
-//				std::cout << "Binding atlas texture:\n"
-//					<< "  Path: " << atlasPath << "\n"
-//					<< "  Texture ID: " << atlasTexture->ID << "\n"
-//					<< "  Assigned Unit: " << i << std::endl;
-//
-//				boundAtlases.insert(atlasPath);
-//			}
-//		}
-//		else
-//		{
-//			// Handle standalone textures
-//			Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
-//			if (!texture || texture->ID == 0)
-//			{
-//				std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
-//				continue;
-//			}
-//
-//			// Ensure no redundant binding
-//			if (textureIDMap.find(texture->ID) == textureIDMap.end())
-//			{
-//				textureIDMap[texture->ID] = i;
-//				textureUnits[i] = i;
-//
-//				glActiveTexture(GL_TEXTURE0 + i);
-//				glBindTexture(GL_TEXTURE_2D, texture->ID);
-//
-//				std::cout << "Binding standalone texture:\n"
-//					<< "  Path: " << path << "\n"
-//					<< "  Texture ID: " << texture->ID << "\n"
-//					<< "  Assigned Unit: " << i << std::endl;
-//			}
-//			else
-//			{
-//				textureUnits[i] = textureIDMap[texture->ID];
-//			}
-//		}
-//	}
-//
-//	// Pass the array of texture unit indices to the shader
-//	shader->setIntArray("textures", textureUnits.data(), textureCount);
-//}
-
 /*!
  * @brief Sets up and compiles shaders used by the renderer.
  */
@@ -1008,7 +926,8 @@ void Renderer::render()
 	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
 
 	batchRendererUI->beginBatch();
-	uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
+	//uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
+	ECS::GetInstance().GetSystem<InGameGUI>()->Render(glm::vec3(0.f, 0.f, 0.f));
 	batchRendererUI->endBatch();
 
 	
@@ -1296,16 +1215,16 @@ void Renderer::drawBoxAnimation()
 /*!
  * @brief Create a button object in the UI renderer.
  */
-void Renderer::CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType, std::function<void()> onClick)
-{
-	if (!batchRendererUI) 
-	{
-		std::cerr << "Error: UIRenderer is not initialized!" << std::endl;
-		return;
-	}
-
-	uiManager.addButton(id, glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, barType, onClick);
-}
+//void Renderer::CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType, std::function<void()> onClick)
+//{
+//	if (!batchRendererUI) 
+//	{
+//		std::cerr << "Error: UIRenderer is not initialized!" << std::endl;
+//		return;
+//	}
+//
+//	uiManager.addButton(id, glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, barType, onClick);
+//}
 
 /*!
  * @brief Remove a button object in the UI renderer.
