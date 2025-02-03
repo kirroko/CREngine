@@ -191,7 +191,7 @@ public:
 
 	void resizeFramebuffer(unsigned int width, unsigned int height) const;
 
-	EntityID playerID = -1;
+	EntityID playerID = (EntityID)-1;
 private:
 
 	const int MAX_SOUL_CHARGES = 1;

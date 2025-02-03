@@ -51,7 +51,7 @@ namespace Ukemochi
 		\param[in] font_name
 		 The font to be used for rendering the text.
 		*************************************************************************/
-		void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
+		//void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
 
 		/*!***********************************************************************
 		\brief

@@ -50,7 +50,6 @@ namespace Ukemochi
 
 		//CreateImage(Vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", 0, Vec3(1.f, 1.f, 1.f));
 
-		CreateImage();
 
 #endif // !_DEBUG
 
@@ -62,10 +61,8 @@ namespace Ukemochi
 
 		//CreateButton("swapButton", Vec2{ 1840.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "Q", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 		//	[this]() { UpdateText("text1", "swap clicked!"); });
-#ifndef _RELEASE
-		CreateImage();
-#endif
 
+		CreateImage();
 	}
 
 	/*!***********************************************************************
@@ -98,10 +95,10 @@ namespace Ukemochi
 	\param[in] font_name
 	 The font to be used for rendering the text.
 	*************************************************************************/
-	void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
-	{
-		//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
-	}
+	//void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
+	//{
+	//	//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
+	//}
 
 	/*!***********************************************************************
 	\brief
