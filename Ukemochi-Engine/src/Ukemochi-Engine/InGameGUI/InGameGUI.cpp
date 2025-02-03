@@ -62,8 +62,10 @@ namespace Ukemochi
 
 		//CreateButton("swapButton", Vec2{ 1840.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "Q", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 		//	[this]() { UpdateText("text1", "swap clicked!"); });
+#ifndef _RELEASE
+		CreateImage();
+#endif
 
-		//CreateImage();
 	}
 
 	/*!***********************************************************************
@@ -245,35 +247,29 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
 	{
-		//// Check for mouse left click
-		//if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-		//{
-		//	for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
-		//	{
-		//		// Skip if the button is not interactable
-		//		if (!button.interactable)
-		//			continue;
+		auto [mouseX, mouseY] = Input::GetMousePosition();
+		mouseY = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouseY; // Flip Y-axis
 
-		//		// Check if the mouse is within the button boundaries
-		//		if (IsInside(Vec2{ button.position.x, button.position.y }, Vec2{ button.size.x, button.size.y }))
-		//			button.on_click(); // Invoke the button on click event
-		//	}
-		//}
+		for (auto& [id, button] : ECS::GetInstance().GetSystem<UIButtonManager>()->buttons)
+		{
+			// Update the isHovered state for each button
+			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
 
-		//// Press enter to start game
-		//if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
-		//{
-		//	for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
-		//	{
-		//		// Skip if the button is not interactable
-		//		if (!button.interactable)
-		//			continue;
+			// Check for mouse left click when hovering
+			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
+			{
+				if (button->onClick) // Ensure the button has a callback
+					button->onClick(); // Trigger the button click event
 
-		//		// Check if it is the start button
-		//		if(button.id == "start_button")
-		//			button.on_click(); // Invoke the button on click event
-		//	}
-		//}
+				break; // Only trigger one button per click
+			}
+		}
+
+		// Press enter to start game
+		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
+		{
+			Application::Get().StartGame();
+		}
 
 		//// Press F10 to toggle fps text
 		//if (Input::IsKeyTriggered(UME_KEY_F10))

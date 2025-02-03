@@ -50,20 +50,6 @@ public:
     UIButton(const std::string& buttonID, glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, std::function<void()> callback = nullptr)
        : id(buttonID), originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), onClick(callback){} 
 
-    //void updateHealthBar(float healthPercentage)
-    //{
-    //    if (isHealthBar)
-    //    {
-    //        healthPercentage = glm::clamp(healthPercentage, 0.0f, 1.0f);
-
-    //        // Adjust width based on health
-    //        size.x = originalSize.x * healthPercentage;
-
-    //        // Keep the left side fixed, shift the right side
-    //        position.x = originalPosition.x - (originalSize.x - size.x) * 0.5f;
-    //    }
-    //}
-
     void updateBar(float percentage)
     {
         percentage = glm::clamp(percentage, 0.f, 1.f);
@@ -88,7 +74,10 @@ public:
     {
         if (batchRenderer)
         {
-            glm::vec3 renderColor = isHovered ? glm::vec3(1.0f, 1.0f, 0.5f) : color;
+            float hoverIntensity = isHovered ? 0.8f : 1.0f;
+
+            glm::vec3 renderColor = color * hoverIntensity;
+
             glm::vec3 screenPosition = position - cameraPosition + cameraPosition;
             batchRenderer->drawSprite(screenPosition, size, renderColor, spriteName, 0.0f, ui_layer);
         }

@@ -128,87 +128,8 @@ void Renderer::init()
 	batchRendererUI = std::make_shared<BatchRenderer2D>();
 	batchRendererUI->init(UI_shader_program);
 
-	// fix coordinates, maybe use the default shader
-	/*uiManager.addButton(glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(static_cast<float>(screen_width), static_cast<float>(screen_height)), "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
-		}); 
-
-	uiManager.addButton(glm::vec3(1168.f, 478.f, 0.f), glm::vec2(464.f, 243.f), "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 0, []() {
-		Application::Get().StartGame(); });*/
-
-	//// Health
-	//uiManager.addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-	//uiManager.addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Health, []() {
-	//	});
-	//uiManager.addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-	//uiManager.addButton("health bar icon", glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	////--Soul blue----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	//uiManager.addButton("blue soul bar bg", glm::vec3(300.f, 941.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("blue soul bar", glm::vec3(300.f, 941.5f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Soul, []() {
-	//	});
-
-	//uiManager.addButton("blue soul bar border", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("blue soul ability charge bg", glm::vec3(500.f, 941.5f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("blue soul ability charge bar", glm::vec3(500.f, 941.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Charge_Bar, []() {
-	//	});
-
-	//uiManager.addButton("blue soul ability charge border", glm::vec3(500.5f, 944.5f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-	////---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	////--Soul red----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	//uiManager.addButton("red soul bar bg", glm::vec3(333.f, 881.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("red soul bar", glm::vec3(333.f, 881.f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Soul, []() {
-	//	});
-
-	//uiManager.addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("red soul ability charge bg", glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("red soul ability charge bar", glm::vec3(533.f, 881.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Charge_Bar, []() {
-	//	});
-
-	//uiManager.addButton("red soul ability charge border", glm::vec3(534.f, 884.75f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-	////---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	//// Abilities and pause
-	//uiManager.addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-	//
-	//uiManager.addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("healthBar", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
-	//	});
-
-	//// Main Menu
-	//uiManager.addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
-	//	});
-
-	//uiManager.addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, []() {
-	//	 });
-
 }
+
 void Renderer::finding_player_ID()
 {
 	for (auto const& entity : m_Entities)
@@ -243,8 +164,7 @@ void Renderer::updatePlayerBars()
 	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
-	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / 5.f;
-	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / 5.f;
+	
 
 	// Check if soul bar is full for FISH
 	if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
@@ -265,7 +185,8 @@ void Renderer::updatePlayerBars()
 		}
 		soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
 	}
-
+	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / 5.f;
+	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / 5.f;
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 
@@ -277,7 +198,7 @@ void Renderer::updatePlayerBars()
 		{BarType::Red_Charge_Bar, redCharge} 
 	};
 
-	uiManager.updateBars(barUpdates);
+	ECS::GetInstance().GetSystem<UIButtonManager>()->updateBars(barUpdates);
 }
 
 /*!
