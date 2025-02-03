@@ -197,7 +197,7 @@ public:
 private:
 
 	const int MAX_SOUL_CHARGES = 1;
-
+	const int SOUL_BAR_THRESHOLD = 5;
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/

@@ -160,6 +160,9 @@ void Renderer::init()
 	uiManager.addButton(glm::vec3(500.f, 941.5f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
+	uiManager.addButton(glm::vec3(500.f, 941.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Blue_Charge_Bar, []() {
+		});
+
 	uiManager.addButton(glm::vec3(500.5f, 944.5f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -178,6 +181,9 @@ void Renderer::init()
 		});
 
 	uiManager.addButton(glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+		});
+
+	uiManager.addButton(glm::vec3(533.f, 881.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::Red_Charge_Bar, []() {
 		});
 
 	uiManager.addButton(glm::vec3(534.f, 884.75f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
@@ -217,16 +223,12 @@ void Renderer::HandleInputTesting()
 		auto& soul_count = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
 		player.currentHealth -= 10;
-		soul_count.soul_bars[SoulType::FISH] += 1;
-		soul_count.soul_bars[SoulType::WORM] += 1;
-
 		if (player.currentHealth < 0)
 			player.currentHealth = 0;
+
+		soul_count.soul_bars[SoulType::FISH] += 1;
+		soul_count.soul_bars[SoulType::WORM] += 1;
 	
-		std::cout << "Debug: Player HP = " << player.currentHealth << std::endl;
-	
-		float healthPercentage = static_cast<float>(player.currentHealth) / player.maxHealth;
-		uiManager.updateBars(healthPercentage);
 	}
 }
 void Renderer::updatePlayerBars()
@@ -238,7 +240,36 @@ void Renderer::updatePlayerBars()
 	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / 5.f;
 	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / 5.f;
 
-	std::unordered_map<BarType, float> barUpdates = { {BarType::Health, healthPercentage}, {BarType::Blue_Soul, blueSoul}, {BarType::Red_Soul, redSoul} };
+	// Check if soul bar is full for FISH
+	if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
+	{
+		if (soul.soul_charges[SoulType::FISH] < MAX_SOUL_CHARGES) 
+		{
+			soul.soul_charges[SoulType::FISH]++;  // Add charge
+		}
+		soul.soul_bars[SoulType::FISH] = 0;       // Reset bar
+	}
+
+	// Check if soul bar is full for WORM
+	if (soul.soul_bars[SoulType::WORM] >= SOUL_BAR_THRESHOLD) 
+	{
+		if (soul.soul_charges[SoulType::WORM] < MAX_SOUL_CHARGES) 
+		{
+			soul.soul_charges[SoulType::WORM]++;  // Add charge
+		}
+		soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
+	}
+
+	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
+	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
+
+	std::unordered_map<BarType, float> barUpdates = { 
+		{BarType::Health, healthPercentage}, 
+		{BarType::Blue_Soul, blueSoul}, 
+		{BarType::Red_Soul, redSoul},
+		{BarType::Blue_Charge_Bar, blueCharge},
+		{BarType::Red_Charge_Bar, redCharge} 
+	};
 
 	uiManager.updateBars(barUpdates);
 }
