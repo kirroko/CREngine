@@ -42,7 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "BatchRenderer.h"
 
 #include "../Asset Manager/AssetManager.h"
-#include "UIButton.h"
+
 #include "DebugModeBatchRendering.h"
 #include "ColorBufferBatchRendering.h"
 #include "UIButtonManager.h"
@@ -52,7 +52,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 class TextRenderer;
 class ParticleSystem;
 class UIButton;
-class UIButtonRenderer;
 
 struct SpriteData {
 	glm::vec3 position;

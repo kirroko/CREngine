@@ -7,45 +7,41 @@
 
 class UIButtonManager {
 public:
-	std::vector<std::shared_ptr<UIButton>> buttons;
+	//std::vector<std::shared_ptr<UIButton>> buttons;
+    std::unordered_map<std::string, std::shared_ptr<UIButton>> buttons;
 
     void addButton(const std::string& id, glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, int ui_layer, BarType barType = BarType::None, std::function<void()> callback = nullptr)
     {
         auto button = std::make_shared<UIButton>(id, pos, size, sprite, color, std::move(renderer), ui_layer, barType, callback);
         button->barType = barType;
-        buttons.push_back(button);
+        //buttons.push_back(button);
+        buttons[id] = button;
     }
 
-    /*void updateHealth(float healthPercentage)
+    std::shared_ptr<UIButton> getButtonByID(const std::string& id)
     {
-        for (auto& button : buttons)
+        auto it = buttons.find(id);
+        if (it != buttons.end())
         {
-            std::cout << "Checking button: " << button->spriteName
-                << " | isHealthBar: " << button->isHealthBar << std::endl;
-
-            if (button->isHealthBar)
-            {
-                std::cout << "Updating health bar with percentage: " << healthPercentage << std::endl;
-                button->updateHealthBar(healthPercentage);
-            }
+            return it->second;
         }
-    }*/
 
-    void updateBars(float percentage)
+        return nullptr;
+    }
+
+    void removeButton(const std::string& id)
     {
-        for (auto& button : buttons)
+        auto it = buttons.find(id);
+
+        if (it != buttons.end())
         {
-            if (button->barType == BarType::Health)
-            {
-                //std::cout << "Updating health bar with percentage: " << healthPercentage << std::endl;
-                button->updateBar(percentage);
-            }
+            buttons.erase(it);
         }
     }
 
     void updateBars(std::unordered_map<BarType, float>& barPercentages)
     {
-        for (auto& button : buttons)
+        for (auto& [id, button] : buttons)
         {
             if (button->barType != BarType::None)
             {
@@ -60,7 +56,7 @@ public:
 
     void update(glm::vec2 mousePos, bool mousePressed) 
     {
-        for (auto& button : buttons) 
+        for (auto& [id, button] : buttons)
         {
             button->update(mousePos, mousePressed);
         }
@@ -68,12 +64,10 @@ public:
 
     void render(glm::vec3& cameraPos)
     {
-        for (auto& button : buttons) 
+        for (auto& [id, button] : buttons)
         {
             button->render(cameraPos);
         }
-
-
     }
 };
 

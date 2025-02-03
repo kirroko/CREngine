@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "imgui.h"
 #include "ImGuizmo.h"
 #include "../ECS/ECS.h"
+#include "UIButton.h"
 
 using namespace Ukemochi;
 
@@ -154,7 +155,7 @@ void Renderer::init()
 	uiManager.addButton("blue soul bar border", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	uiManager.addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
 		});
 
 	uiManager.addButton("blue soul ability charge bg", glm::vec3(500.f, 941.5f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
@@ -177,7 +178,7 @@ void Renderer::init()
 	uiManager.addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
-	uiManager.addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	uiManager.addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 2, BarType::None, []() {
 		});
 
 	uiManager.addButton("red soul ability charge bg", glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
@@ -191,16 +192,14 @@ void Renderer::init()
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// Abilities and pause
-	uiManager.addButton("healthBar", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	uiManager.addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 	
-	uiManager.addButton("healthBar", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
+	uiManager.addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
 
 	uiManager.addButton("healthBar", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), batchRendererUI, 1, BarType::None, []() {
 		});
-
-	// Add buttons
 
 }
 void Renderer::finding_player_ID()
@@ -1316,7 +1315,13 @@ void Renderer::CreateButtonObject(const std::string& id, const Vec3& position, c
 /*!
  * @brief Get the list of button objects in the UI renderer.
  */
-//std::vector<UIButton>& Renderer::GetButtonObjects() { return; }
+//std::vector<UIButton>& Renderer::GetButton(const std::string& buttonID) 
+//{
+//	for (auto& button : buttons)
+//	{
+//		if(button->id == )
+//	}
+//}
 
 /*!
  * @brief Initializes animation entities, creating idle and running animations for the player entity.
