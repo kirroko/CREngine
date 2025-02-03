@@ -167,8 +167,10 @@ namespace Ukemochi
 
             if (enemycomponent.state != enemycomponent.ATTACK)
             {
+				bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
+
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1)
+                if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1 && isMoving)
                 {
                     if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
                     {
