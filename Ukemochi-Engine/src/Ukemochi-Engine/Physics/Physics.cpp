@@ -126,10 +126,10 @@ namespace Ukemochi
                 std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
                 // Update the linear physics of the entity
-                UpdateLinearPhysics(trans, rb);
+                UpdateLinearPhysics(tag, trans, rb);
 
                 // Update the rotational physics of the entity
-                UpdateRotationalPhysics(trans, rb);
+                UpdateRotationalPhysics(tag, trans, rb);
             }
         }
     }
@@ -137,12 +137,14 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Update the linear physics of all the entities.
+    \param[in] tag
+     The tag of the entity.
     \param[in/out] trans
      The transform of the entity.
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::UpdateLinearPhysics(Transform& trans, Rigidbody2D& rb)
+    void Physics::UpdateLinearPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb)
     {
         // Update physics position with the transform position
         rb.position = trans.position;
@@ -174,13 +176,16 @@ namespace Ukemochi
         }
 
         // Apply linear drag to the velocity of the entity
-        rb.velocity.x *= rb.linear_drag;
-        if (abs(rb.velocity.x) < 0.01f)
-            rb.velocity.x = 0.f; // Complete stop if almost still
+        if (tag != "EnemyProjectile")
+        {
+            rb.velocity.x *= rb.linear_drag;
+            if (abs(rb.velocity.x) < 0.01f)
+                rb.velocity.x = 0.f; // Complete stop if almost still
 
-        rb.velocity.y *= rb.linear_drag;
-        if (abs(rb.velocity.y) < 0.01f)
-            rb.velocity.y = 0.f; // Complete stop if almost still
+            rb.velocity.y *= rb.linear_drag;
+            if (abs(rb.velocity.y) < 0.01f)
+                rb.velocity.y = 0.f; // Complete stop if almost still
+        }
 
         // Apply velocity to the position (dx = v * dt)
         Vec2 new_value = rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
@@ -193,12 +198,14 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Update the rotational physics of all the entities.
+    \param[in] tag
+     The tag of the entity.
     \param[in/out] trans
      The transform of the entity.
     \param[in/out] rb
      The rigidbody of the entity.
     *************************************************************************/
-    void Physics::UpdateRotationalPhysics(Transform& trans, Rigidbody2D& rb)
+    void Physics::UpdateRotationalPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb)
     {
         // Update physics angle with the transform rotation
         rb.angle = trans.rotation;
@@ -213,9 +220,12 @@ namespace Ukemochi
         rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
 
         // Apply angular drag to the angular velocity of the entity
-        rb.angular_velocity *= rb.angular_drag;
-        if (abs(rb.angular_velocity) < 0.01f)
-            rb.angular_velocity = 0.f; // Complete stop if almost still
+        if (tag != "EnemyProjectile")
+        {
+            rb.angular_velocity *= rb.angular_drag;
+            if (abs(rb.angular_velocity) < 0.01f)
+                rb.angular_velocity = 0.f; // Complete stop if almost still
+        }
 
         // Apply angular velocity to the angle
         rb.angle = rb.angle + rb.angular_velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());

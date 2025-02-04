@@ -598,39 +598,43 @@ namespace Ukemochi
         }
 
         // Animation
-        if (isPlaying)
+        // Update the animation based on the number of steps
+        for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
-            timeSinceLastFrame += static_cast<float>(g_FrameRateController.GetDeltaTime());
-            if (timeSinceLastFrame >= frameTime)
+            if (isPlaying)
             {
-                currentFrame++;
-                if (currentFrame >= totalFrames)
-                    currentFrame = looping ? 0 : totalFrames - 1;
-                timeSinceLastFrame = 0.0f;
+                timeSinceLastFrame += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                if (timeSinceLastFrame >= frameTime)
+                {
+                    currentFrame++;
+                    if (currentFrame >= totalFrames)
+                        currentFrame = looping ? 0 : totalFrames - 1;
+                    timeSinceLastFrame = 0.0f;
+                }
+
+                // Handle the UV here
+                UME_ENGINE_ASSERT(pixelSize[0] < spriteWidth && pixelSize[1] < spriteHeight,
+                    "Pixel size is larger than texture size")
+                    int col = currentFrame % (spriteWidth / pixelSize[0]);
+                int row = currentFrame / (spriteWidth / pixelSize[0]);
+                // int numColumns = spriteWidth / pixelSize[0];
+                // int col = currentFrame % numColumns;
+                // int row = spriteHeight / pixelSize[1] - 1 - currentFrame / numColumns; // bottom-up row calculation
+
+                float uvX = static_cast<float>(col) * static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth);
+                float uvY = static_cast<float>(row) * static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight);
+                float uvWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth);
+                float uvHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight);
+
+                float aw = amRef->spriteData[spriteName].uv.uMax - amRef->spriteData[spriteName].uv.uMin;
+                float ah = amRef->spriteData[spriteName].uv.vMax - amRef->spriteData[spriteName].uv.vMin;
+
+                uv0.x = amRef->spriteData[spriteName].uv.uMin + uvX * aw;
+                uv1.x = uv0.x + uvWidth * aw;
+
+                uv0.y = amRef->spriteData[spriteName].uv.vMax - uvY * ah;
+                uv1.y = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * ah;
             }
-
-            // Handle the UV here
-            UME_ENGINE_ASSERT(pixelSize[0] < spriteWidth && pixelSize[1] < spriteHeight,
-                              "Pixel size is larger than texture size")
-            int col = currentFrame % (spriteWidth / pixelSize[0]);
-            int row = currentFrame / (spriteWidth / pixelSize[0]);
-            // int numColumns = spriteWidth / pixelSize[0];
-            // int col = currentFrame % numColumns;
-            // int row = spriteHeight / pixelSize[1] - 1 - currentFrame / numColumns; // bottom-up row calculation
-
-            float uvX = static_cast<float>(col) * static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth);
-            float uvY = static_cast<float>(row) * static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight);
-            float uvWidth = static_cast<float>(pixelSize[0]) / static_cast<float>(spriteWidth);
-            float uvHeight = static_cast<float>(pixelSize[1]) / static_cast<float>(spriteHeight);
-
-            float aw = amRef->spriteData[spriteName].uv.uMax - amRef->spriteData[spriteName].uv.uMin;
-            float ah = amRef->spriteData[spriteName].uv.vMax - amRef->spriteData[spriteName].uv.vMin;
-
-            uv0.x = amRef->spriteData[spriteName].uv.uMin + uvX * aw;
-            uv1.x = uv0.x + uvWidth * aw;
-            
-            uv0.y = amRef->spriteData[spriteName].uv.vMax - uvY * ah;
-            uv1.y = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * ah;
         }
 
         // Display Image
@@ -2064,6 +2068,8 @@ namespace Ukemochi
 
                 ImGui::Text("Sortting Layer");
                 ImGui::InputInt("##Sorting Layer", &sprite.layer);
+
+                ImGui::Checkbox("Flip X", &sprite.flipX);
 
                 // Error Popup for invalid file type
                 if (ImGui::BeginPopup("InvalidTextureFileType"))
