@@ -1146,7 +1146,7 @@
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
+                    "Force": [-1938.7623291015625, 491.1217956542969],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
                     "Linear Drag": 0.8999999761581421,
@@ -1195,7 +1195,7 @@
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
+                    "Force": [-583.9249877929688, 1912.859619140625],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
                     "Linear Drag": 0.8999999761581421,
@@ -1244,7 +1244,7 @@
                     "Position": [1796.7720947265625, 512.1513061523438, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
+                    "Force": [323.9331359863281, -1973.592529296875],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
                     "Linear Drag": 0.8999999761581421,
@@ -1265,7 +1265,7 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Fish HUrt_SS.png",
+                    "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
@@ -1274,7 +1274,7 @@
                         "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true],
                         "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true]
                     },
-                    "CurrentClip": "Hurt"
+                    "CurrentClip": "Idle"
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
@@ -1293,7 +1293,7 @@
                     "Position": [960.0, 540.0, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
+                    "Force": [-2500.0, 0.0],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
                     "Linear Drag": 0.8999999761581421,
@@ -1314,7 +1314,7 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Player/Base Attack.png",
+                    "Sprite": "../Assets/Textures/Player/Base Run.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
@@ -1324,12 +1324,12 @@
                         "Running": ["../Assets/Textures/Player/Base Run.png", "Running", 10, 0.5, 0.5, 90, 480, 370, 2048, 2048, 0.057999998331069946, true],
                         "Attack": ["../Assets/Textures/Player/Base Attack.png", "Attack", 46, 0.45500001311302185, 0.44999998807907104, 155, 620, 490, 4096, 4096, 0.032999999821186066, true]
                     },
-                    "CurrentClip": "Attack"
+                    "CurrentClip": "Running"
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
                     "CurrentHealth": 100,
-                    "CurrentComboHits": 0,
+                    "CurrentComboHits": -1,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
                     "AttackTimer": 0.0,
@@ -1355,7 +1355,7 @@
             "Tag": "Knife",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [791.0, 540.0, 0.0],
+                    "Position": [791.4285888671875, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [84.28571319580078, 126.42857360839844]
                 }, {
@@ -1390,7 +1390,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1.0, 1.0]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1423,7 +1423,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1.0, 1.0]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],

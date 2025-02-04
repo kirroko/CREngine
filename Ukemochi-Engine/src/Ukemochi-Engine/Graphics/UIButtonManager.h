@@ -54,14 +54,6 @@ public:
         }
     }
 
-    void update(glm::vec2 mousePos, bool mousePressed) 
-    {
-        for (auto& [id, button] : buttons)
-        {
-            button->update(mousePos, mousePressed);
-        }
-    }
-
     void render(glm::vec3& cameraPos)
     {
         for (auto& [id, button] : buttons)

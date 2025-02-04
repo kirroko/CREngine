@@ -133,5 +133,8 @@ namespace Ukemochi
 		 True if the mouse is within the object's boundaries, false otherwise.
 		*************************************************************************/
 		bool IsInside(const Vec2& pos, const Vec2& size);
+
+		void ShowPauseMenu();
+		void HidePauseMenu();
 	};
 }

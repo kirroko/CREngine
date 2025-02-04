@@ -262,6 +262,20 @@ namespace Ukemochi
 			}
 		}
 
+		// Toggle pause with 'R'
+		if (Input::IsKeyTriggered(UME_KEY_R))
+		{
+			Application::Get().IsPaused = !Application::Get().IsPaused;
+
+			if (Application::Get().IsPaused)
+			{
+				//Application::Get().StopGame();
+				ShowPauseMenu();
+			}
+			else
+				HidePauseMenu();
+		}
+
 		// Press enter to start game
 		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
 		{
@@ -296,4 +310,53 @@ namespace Ukemochi
 			&& mouse_y >= pos.y - size.y * 0.5f
 			&& mouse_y <= pos.y + size.y * 0.5f;
 	}
+
+	void InGameGUI::ShowPauseMenu()
+	{
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
+		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		uiManager->addButton("pause overly", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3);
+
+		uiManager->addButton("pause bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(999.f, 869.f), "back", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
+		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
+
+		// Resume
+		uiManager->addButton("resume button bg", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 134.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, []() {
+			});
+		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(73.f, 86.f), "return icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			Application::Get().IsPaused = false;
+			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+			});
+		uiManager->addButton("resume text", glm::vec3(810.f, 450.f, 0.f), glm::vec2(118.f, 26.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			});
+
+		// Exit
+		uiManager->addButton("exit button bg", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, []() {
+			});
+		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			Application::Get().IsPaused = false;
+			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+			});
+		uiManager->addButton("exit text", glm::vec3(1110.f, 450.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			});
+	}
+
+	void InGameGUI::HidePauseMenu()
+	{
+		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+		uiManager->removeButton("pause overlay");
+		uiManager->removeButton("pause bg");
+		uiManager->removeButton("pause");
+		uiManager->removeButton("resume button bg");
+		uiManager->removeButton("resume button");
+		uiManager->removeButton("resume text");
+		uiManager->removeButton("exit button");
+		uiManager->removeButton("exit button bg");
+		uiManager->removeButton("exit text");
+
+	}
+
 }
