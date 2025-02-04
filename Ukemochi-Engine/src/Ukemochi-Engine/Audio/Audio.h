@@ -252,6 +252,13 @@ namespace Ukemochi
 
         void RemoveSFX(int index);
 
+        void StopSFX(int sfxIndex);
+
+        void StopAllSFX();
+
+        void MuteMusic();
+        void MuteSFX();
+
         std::vector<FMOD::Sound *> pSFX;           // A list of loaded sounds
         std::vector<FMOD::Channel *> pSFXChannels; // A list of channels playing individual sounds
 
@@ -264,6 +271,11 @@ namespace Ukemochi
         std::vector<FMOD::ChannelGroup *> pChannelGroups; // A list of channel groups for managing groups of sounds
         int numOfSFX;                                     // A counter to track the number of loaded sounds
         int numOfMusic;
+
+        bool isMusicMuted = false;
+        bool isSFXMuted = false;
+        float musicVolume = 0.2f; // Default music volume
+        float sfxVolume = 0.2f;   // Default SFX volume
     };
 }
 

@@ -117,6 +117,30 @@ namespace Ukemochi
                     anim.SetAnimation(SoulAnimation(soulData,"Idle"));
                     // anim.SetAnimation("Idle");
 
+            // Play the running sound only at frame 2
+            static bool runningSoundPlayed = false;
+            if (anim.currentClip == "Running")  // Only when running animation is active
+            {
+                int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
+
+                // 6 or 7 for current frame
+                if ((currentFrame == 2 || currentFrame == 7) && !runningSoundPlayed)
+                {
+                    // Assuming you have an audio manager and running sound index
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    int runningSoundIndex = audioM.GetSFXindex("Running"); // Replace with the actual sound name
+                    if (runningSoundIndex != -1)
+                    {
+                        audioM.PlaySFX(runningSoundIndex);
+                    }
+                    runningSoundPlayed = true; // Prevent it from playing again at the same frame
+                }
+                else if ((currentFrame != 2 && currentFrame != 7))
+                {
+                    runningSoundPlayed = false; // Reset when leaving frame 2
+                }
+            }
+
 
                 // Update knife position
                 if (sr.flipX)
