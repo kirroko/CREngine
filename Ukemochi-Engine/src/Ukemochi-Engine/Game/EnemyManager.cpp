@@ -203,173 +203,214 @@ namespace Ukemochi
             }
 
             // Skip collision handling for dead enemies
-            if (enemycomponent.isCollide)
-            {
-                // Start the timer for 1 second if not already running
-                if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                    enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
-                }
-                else {
+if (enemycomponent.isCollide)
+{
+     // Start the timer for 1 second if not already running
+     if (enemycomponent.timeSinceTargetReached < 1.0f) {
+         enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+     }
+     else {
+ 
+         // Timer has reached 1 second, perform the object updates
+         auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+         if (collidedObj->GetTag() == "Boundary")
+         {
+             enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
+             enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+             enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+ 
+             if (enemycomponent.timeSinceTargetReached > 3.0f)
+             {
+                 enemycomponent.prevObject2 = enemycomponent.prevObject;
+                 enemycomponent.prevObject = enemycomponent.nearestObj;
+                 enemycomponent.nearestObj = -1;
+                 enemycomponent.collideObj = -1;
+ 
+                 if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                 {
+                     enemycomponent.nearestObj = FindNearestObject(object);
+                 }
+                 else
+                 {
+                     enemycomponent.isCollide = false;
+                     enemycomponent.timeSinceTargetReached = 0.f;
+                 }
+             }
+ 
+         }
+         else
+         {
+             auto& collidedTransform = ECS::GetInstance().GetComponent<Transform>(enemycomponent.collideObj);
+             Vec2 awayDir;
+             Vec2Normalize(awayDir, Vec2(enemytransform.position.x - collidedTransform.position.x,
+                 enemytransform.position.y - collidedTransform.position.y));
+ 
+             enemycomponent.dirX = awayDir.x;
+             enemycomponent.dirY = awayDir.y;
+             enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+             enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+ 
+             if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+             {
+                 enemycomponent.prevObject2 = enemycomponent.prevObject;
+                 enemycomponent.prevObject = enemycomponent.nearestObj;
+                 enemycomponent.nearestObj = -1;
+                 enemycomponent.collideObj = -1;
+ 
+                 if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                 {
+                     enemycomponent.nearestObj = FindNearestObject(object);
+                 }
+                 else
+                 {
+                     enemycomponent.isCollide = false;
+                     enemycomponent.timeSinceTargetReached = 0.f;
+                 }
+ 
+             }
+         }
+ 
+         //enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+         //enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+ 
+        }
+    
+        ++it;
+        continue;
+    }
 
-                    // Timer has reached 1 second, perform the object updates
-                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                    enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
 
-                    if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
-                    {
-                        enemycomponent.prevObject2 = enemycomponent.prevObject;
-                        enemycomponent.prevObject = enemycomponent.nearestObj;
-                        enemycomponent.nearestObj = -1;
-
-                        if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
-                        {
-                            enemycomponent.nearestObj = FindNearestObject(object);
-                        }
-                        else
-                        {
-                            enemycomponent.isCollide = false;
-                            enemycomponent.timeSinceTargetReached = 0.f;
-                        }
-
-                    }
-                }
-
-                ++it;
-                continue;
+    // Handle other states
+switch (enemycomponent.state)
+{
+case Enemy::ROAM:
+ 
+    // Compute the direction vector to the target waypoint
+    enemycomponent.dirX = enemycomponent.targetX - enemytransform.position.x;
+    enemycomponent.dirY = enemycomponent.targetY - enemytransform.position.y;
+ 
+    // Calculate the distance to normalize the direction
+    enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
+ 
+    if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
+    {
+        // Normalize the direction vector
+        enemycomponent.dirX /= enemycomponent.magnitude;
+        enemycomponent.dirY /= enemycomponent.magnitude;
+ 
+        // Scale the normalized direction by the enemy's speed
+        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+ 
+        if (enemycomponent.ReachedTarget(enemyphysic.position.x, enemyphysic.position.y, enemycomponent.targetX, enemycomponent.targetY, 20.f))
+        {
+            enemyphysic.velocity.x = 0.0f;
+            enemyphysic.velocity.y = 0.0f;
+            enemyphysic.force.x = enemyphysic.force.y = 0.f;
+            // Start the timer for 1 second if not already running
+            if (enemycomponent.timeSinceTargetReached < 1.0f) {
+                enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
             }
-
-
-            // Handle other states
-            switch (enemycomponent.state)
-            {
-            case Enemy::ROAM:
-
-                // Compute the direction vector to the target waypoint
-                enemycomponent.dirX = enemycomponent.targetX - enemytransform.position.x;
-                enemycomponent.dirY = enemycomponent.targetY - enemytransform.position.y;
-
-                // Calculate the distance to normalize the direction
-                enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
-
-                if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
-                {
-                    // Normalize the direction vector
-                    enemycomponent.dirX /= enemycomponent.magnitude;
-                    enemycomponent.dirY /= enemycomponent.magnitude;
-
-                    // Scale the normalized direction by the enemy's speed
-                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                    if (enemycomponent.ReachedTarget(enemyphysic.position.x, enemyphysic.position.y, enemycomponent.targetX, enemycomponent.targetY,20.f))
-                    {
-                        enemyphysic.velocity.x = 0.0f;
-                        enemyphysic.velocity.y = 0.0f;
-                        enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                        // Start the timer for 1 second if not already running
-                        if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                            enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
-                        }
-                        else {
-                            // Timer has reached 1 second, perform the object updates
-                            enemycomponent.prevObject = enemycomponent.nearestObj;
-                            enemycomponent.nearestObj = -1;
-
-                            // Reset the timer after execution
-                            enemycomponent.timeSinceTargetReached = 0.0f;
-                        }
-                    }
-                }
-                else
-                {
-                    // If the target position is reached or very close, set velocity to zero
-                    enemyphysic.velocity.x = 0.0f;
-                    enemyphysic.velocity.y = 0.0f;
-                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
-
-                    enemycomponent.prevObject = enemycomponent.nearestObj;
-                    enemycomponent.nearestObj = -1;
-                }
-                break;
-
-            case Enemy::CHASE:
-                // Compute the direction vector to the target (player)
-                enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-                enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
-
-                // Calculate the magnitude of the direction vector (distance to player)
-                enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
-
-                if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
-                {
-                    // Normalize the direction vector
-                    enemycomponent.dirX /= enemycomponent.magnitude;
-                    enemycomponent.dirY /= enemycomponent.magnitude;
-
-                    // Scale the normalized direction by the enemy's speed to compute velocity
-                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                    // Check if the player is within attack range
-                    if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(),enemytransform))
-                    {
-                        // Stop movement and transition to ATTACK state
-                        enemyphysic.velocity.x = 0.0f;
-                        enemyphysic.velocity.y = 0.0f;
-                        enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                        enemycomponent.state = enemycomponent.STANDBY;
-                        break;
-                    }
-                }
-                else
-                {
-                    // If the magnitude is zero (enemy is on top of the player), go to ATTACK
-                    enemyphysic.velocity.x = 0.0f;
-                    enemyphysic.velocity.y = 0.0f;
-                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                    enemycomponent.state = enemycomponent.STANDBY;
-                    break;
-                }
-
-                // Ensure other transitions (like to ROAM) don�t block the ATTACK state
-                if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
-                {
-                    //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                    enemycomponent.state = enemycomponent.ROAM;
-                    break;
-                }
-                break;
-
-            case Enemy::STANDBY:
-                if (numEnemyTarget < 1)
-                {
-                    numEnemyTarget++;
-                    enemycomponent.state = enemycomponent.ATTACK;
-                }
-
-                // Ensure other transitions (like to ROAM) don�t block the ATTACK state
-                if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
-                {
-                    //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                    enemycomponent.state = enemycomponent.ROAM;
-                    break;
-                }
-                break;
+            else {
+                // Timer has reached 1 second, perform the object updates
+                enemycomponent.prevObject = enemycomponent.nearestObj;
+                enemycomponent.nearestObj = -1;
+ 
+                // Reset the timer after execution
+                enemycomponent.timeSinceTargetReached = 0.0f;
+            }
+        }
+    }
+    else
+    {
+        // If the target position is reached or very close, set velocity to zero
+        enemyphysic.velocity.x = 0.0f;
+        enemyphysic.velocity.y = 0.0f;
+        enemyphysic.force.x = enemyphysic.force.y = 0.f;
+ 
+        enemycomponent.prevObject = enemycomponent.nearestObj;
+        enemycomponent.nearestObj = -1;
+    }
+    break;
+ 
+case Enemy::CHASE:
+    // Compute the direction vector to the target (player)
+    enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+    enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
+ 
+    // Calculate the magnitude of the direction vector (distance to player)
+    enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
+ 
+    if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
+    {
+        // Normalize the direction vector
+        enemycomponent.dirX /= enemycomponent.magnitude;
+        enemycomponent.dirY /= enemycomponent.magnitude;
+ 
+        // Scale the normalized direction by the enemy's speed to compute velocity
+        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+ 
+        // Check if the player is within attack range
+        if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+        {
+            // Stop movement and transition to ATTACK state
+            enemyphysic.velocity.x = 0.0f;
+            enemyphysic.velocity.y = 0.0f;
+            enemyphysic.force.x = enemyphysic.force.y = 0.f;
+            enemycomponent.state = enemycomponent.STANDBY;
+            break;
+        }
+    }
+    else
+    {
+        // If the magnitude is zero (enemy is on top of the player), go to ATTACK
+        enemyphysic.velocity.x = 0.0f;
+        enemyphysic.velocity.y = 0.0f;
+        enemyphysic.force.x = enemyphysic.force.y = 0.f;
+        enemycomponent.state = enemycomponent.STANDBY;
+        break;
+    }
+ 
+    // Ensure other transitions (like to ROAM) don�t block the ATTACK state
+    if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
+    {
+        //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
+        enemycomponent.state = enemycomponent.ROAM;
+        break;
+    }
+    break;
+ 
+case Enemy::STANDBY:
+    if (numEnemyTarget < 2)
+    {
+        numEnemyTarget++;
+        enemycomponent.state = enemycomponent.ATTACK;
+    }
+ 
+    // Ensure other transitions (like to ROAM) don�t block the ATTACK state
+    if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
+    {
+        //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
+        enemycomponent.state = enemycomponent.ROAM;
+        numEnemyTarget--;
+        break;
+    }
+    break;
 
             case Enemy::ATTACK:
-
+ 
                 if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                 {
                     enemycomponent.state = enemycomponent.CHASE;
                     break;
                 }
-
-                enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
-
+ 
+                enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+ 
                 if (enemycomponent.atktimer <= 1.0f)
                 {
                     //Charge attack for fish
-                    //shoot for worm
                     static bool attack = false;
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
@@ -387,23 +428,59 @@ namespace Ukemochi
                                 enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
                                 ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                             }
-
-                            std::cout << "player hit\n";
-                            enemycomponent.atktimer = 5.f;
+ 
+                            //std::cout << (int)enemycomponent.ID<< " player hit\n";
+                            enemycomponent.atktimer = 3.f;
                             attack = false;
                         }
                     }
-
+                    //shoot for worm
+ 
+                    if (enemycomponent.type == enemycomponent.WORM && audioM.GetSFXindex("FishAttack") != -1)
+                    {
+                        //worm
+                        static int number = 0;
+                        static bool wormatk = false;
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !wormatk)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+                            wormatk = true;
+                            GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile");
+                            std::string name = "bullet" + std::to_string(number++);
+                            std::cout << name << std::endl;
+                            GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
+                            newObject.GetComponent<Transform>().position = enemytransform.position;
+                            newObject.GetComponent<Animation>().SetAnimation("Projectile");
+ 
+                            newObject.GetComponent<Rigidbody2D>().velocity.x = enemycomponent.dirX * 500;
+                            newObject.GetComponent<Rigidbody2D>().velocity.y = enemycomponent.dirY * 500;
+ 
+                            if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                            {
+                                newObject.GetComponent<SpriteRender>().flipX = true;
+                            }
+                            else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                            {
+                                newObject.GetComponent<SpriteRender>().flipX = false;
+                            }
+                        }
+                        else
+                        {
+                            enemycomponent.atktimer = 3.f;
+                            wormatk = false;
+                        }
+                    }
+ 
                 }
                 break;
-
+ 
             default:
                 break;
             }
-
+ 
             ++it; // Move to the next enemy
         }
-    }
+}
 
     /*!***********************************************************************
     \brief
@@ -414,14 +491,14 @@ namespace Ukemochi
         This method processes the appropriate response when an enemy collides with another entity,
         which could include interactions with the player or other objects.
     *************************************************************************/
-    void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
+void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
     {
         auto& gameObjectManager = GameObjectManager::GetInstance();
         auto enemy = gameObjectManager.GetGO(enemyID);
         auto obj2 = gameObjectManager.GetGO(objID);
-
+ 
         auto& enemyComponent = enemy->GetComponent<Enemy>();
-
+ 
         if (obj2->HasComponent<Enemy>()) //NOT IN USED
         {
             auto& enemyComponent2 = obj2->GetComponent<Enemy>();
@@ -433,11 +510,12 @@ namespace Ukemochi
             //set collide to true then now the obj is the obj save the pathfinding obj as prev
             enemyComponent.isCollide = true;
             enemyComponent.timeSinceTargetReached = 0.f;
+            enemyComponent.collideObj = static_cast<int>(objID);
             //enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
             //enemyComponent.nearestObj = static_cast<int>(objID);
         }
     }
-
+ 
     /*!***********************************************************************
     \brief
         Determines if there is a clear path for an enemy to move to a new position.
@@ -450,12 +528,12 @@ namespace Ukemochi
     bool EnemyManager::IsClearPathToPosition(GameObject* enemy, float newX, float newY)
     {
         // Check if moving the enemy to the new position (newX, newY) is clear of obstacles
-
+ 
         for (EntityID objectID : environmentObjects)
         {
             GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
             Transform& objectTransform = object->GetComponent<Transform>();
-
+ 
             // Calculate if the potential new position collides with any other environment object
             float dx = newX - objectTransform.position.x;
             float dy = newY - objectTransform.position.y;
@@ -464,17 +542,17 @@ namespace Ukemochi
             {
                 return false;
             }
-
+ 
             // If the new position is too close to the environment object, it's not clear
             if (distance < 1.0f)  // Adjust this threshold as needed
             {
                 return false;
             }
         }
-
+ 
         return true;  // The path is clear to move
     }
-
+ 
     /*!***********************************************************************
     \brief
         Finds the nearest object to a given enemy.
@@ -487,7 +565,7 @@ namespace Ukemochi
         if (environmentObjects.empty()) {
             return -1; // No objects available
         }
-
+ 
         // Collect all eligible objects excluding the previous object
         std::vector<GameObject*> eligibleObjects;
         for (EntityID objectID : environmentObjects) {
@@ -496,23 +574,23 @@ namespace Ukemochi
                 eligibleObjects.push_back(object);
             }
         }
-
+ 
         // If there are no eligible objects, return -1
         if (eligibleObjects.empty()) {
             return -1;
         }
-
+ 
         // Select a random object from the eligible list
         int randomIndex = std::rand() % eligibleObjects.size();
         GameObject* selectedObject = eligibleObjects[randomIndex];
-
+ 
         // Set the target position for the enemy
         enemy->GetComponent<Enemy>().targetX = selectedObject->GetComponent<Transform>().position.x;
         enemy->GetComponent<Enemy>().targetY = selectedObject->GetComponent<Transform>().position.y;
-
+ 
         return static_cast<int>(selectedObject->GetInstanceID());
     }
-
+ 
     /*!***********************************************************************
     \brief
         Checks if an enemy is far enough away from a target object.
@@ -527,20 +605,20 @@ namespace Ukemochi
         if (!enemy || !targetObject) {
             return true; // Consider "away" if either is null
         }
-
+ 
         // Get positions
         const auto& enemyPos = enemy->GetComponent<Transform>().position;
         const auto& objectPos = targetObject->GetComponent<Transform>().position;
-
+ 
         // Calculate squared distance (avoids costly sqrt operation for performance)
         float dx = enemyPos.x - objectPos.x;
         float dy = enemyPos.y - objectPos.y;
         float distanceSquared = dx * dx + dy * dy;
-
+ 
         // Compare with squared threshold
         return distanceSquared > (minDistanceThreshold * minDistanceThreshold);
     }
-
+ 
     /*!***********************************************************************
     \brief
         Clears all enemy entities.
@@ -562,5 +640,5 @@ namespace Ukemochi
             enemyObjects.clear();
         }
     }
-
+ 
 }
