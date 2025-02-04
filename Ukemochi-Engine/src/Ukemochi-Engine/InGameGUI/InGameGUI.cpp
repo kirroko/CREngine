@@ -19,9 +19,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h" // for camera viewport
 #include "../Graphics/Renderer.h" // for text objects
 #include "../FrameController.h"	  // for fps text
+#include "../Factory/GameObjectManager.h"
+
 
 namespace Ukemochi
 {
+	bool startButtonHovered = false;
 	/*!***********************************************************************
 	\brief
 	 Initialize the in game GUI system.
@@ -137,9 +140,9 @@ namespace Ukemochi
 	void InGameGUI::CreateImage()
 	{
 		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
-		Application& app = Application::Get(); 
-		int screen_width = app.GetWindow().GetWidth(); 
-		int screen_height = app.GetWindow().GetHeight(); 
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
 
 		//--Health---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
@@ -197,7 +200,7 @@ namespace Ukemochi
 		uiManager->addButton("red soul ability charge border", glm::vec3(534.f, 884.75f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		
+
 		//--Ability and Pause----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		uiManager->addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
 			});
@@ -214,6 +217,16 @@ namespace Ukemochi
 			});
 
 		uiManager->addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, []() {
+			// Get the AudioManager
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+			// Check if the StartButton SFX exists and play it
+			if (audioM.GetSFXindex("StartButton") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("StartButton"));
+			}
+
+			// Start the game
 			Application::Get().StartGame(); });
 	}
 
@@ -251,6 +264,22 @@ namespace Ukemochi
 		{
 			// Update the isHovered state for each button
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
+
+			// Check for mouse hover on the start button
+			if (id == "start button" && button->isHovered && !startButtonHovered)
+			{
+				// Play hover sound
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("HoverSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
+				}
+				startButtonHovered = true;
+			}
+			else if (id == "start button" && !button->isHovered)
+			{
+				startButtonHovered = false;
+			}
 
 			// Check for mouse left click when hovering
 			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))

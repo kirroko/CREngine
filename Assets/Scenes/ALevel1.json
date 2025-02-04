@@ -1328,7 +1328,7 @@
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 100,
+                    "CurrentHealth": 90,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1339,7 +1339,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [0.0, 0.0],
+                    "SoulBars": [1.0, 1.0],
                     "SoulCharges": [0, 0],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
@@ -1818,6 +1818,12 @@
                         }, {
                             "Name": "FishHurt",
                             "Path": "../Assets/Audio/SFX/Enemy/FishHurtVR.wav"
+                        }, {
+                            "Name": "StartButton",
+                            "Path": "../Assets/Audio/SFX/MainMenu/MenuHoverOverSFX 2.wav"
+                        }, {
+                            "Name": "HoverSound",
+                            "Path": "../Assets/Audio/SFX/MainMenu/button click.wav"
                         }]
                 }]
         }]
