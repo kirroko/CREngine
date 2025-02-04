@@ -333,7 +333,7 @@ namespace Ukemochi
                     if (GOs[m_global_selected]->HasComponent<SpriteRender>())
                     {
                         auto &sr = GOs[m_global_selected]->GetComponent<SpriteRender>();
-                        sr.texturePath = m_TexturePath;
+                        sr.texturePath = spriteName;
                     }
                 }
             }
