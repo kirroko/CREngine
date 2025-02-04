@@ -1339,7 +1339,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [1.0, 1.0],
+                    "SoulBars": [0.0, 0.0],
                     "SoulCharges": [0, 0],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,

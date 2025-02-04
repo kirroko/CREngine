@@ -165,28 +165,28 @@ void Renderer::updatePlayerBars()
 
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
 	
+	//// Check if soul bar is full for FISH
+	//if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
+	//{
+	//	if (soul.soul_charges[SoulType::FISH] < MAX_SOUL_CHARGES) 
+	//	{
+	//		soul.soul_charges[SoulType::FISH]++;  // Add charge
+	//	}
+	//	soul.soul_bars[SoulType::FISH] = 0;       // Reset bar
+	//}
 
-	// Check if soul bar is full for FISH
-	if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
-	{
-		if (soul.soul_charges[SoulType::FISH] < MAX_SOUL_CHARGES) 
-		{
-			soul.soul_charges[SoulType::FISH]++;  // Add charge
-		}
-		soul.soul_bars[SoulType::FISH] = 0;       // Reset bar
-	}
+	//// Check if soul bar is full for WORM
+	//if (soul.soul_bars[SoulType::WORM] >= SOUL_BAR_THRESHOLD) 
+	//{
+	//	if (soul.soul_charges[SoulType::WORM] < MAX_SOUL_CHARGES) 
+	//	{
+	//		soul.soul_charges[SoulType::WORM]++;  // Add charge
+	//	}
+	//	soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
+	//}
 
-	// Check if soul bar is full for WORM
-	if (soul.soul_bars[SoulType::WORM] >= SOUL_BAR_THRESHOLD) 
-	{
-		if (soul.soul_charges[SoulType::WORM] < MAX_SOUL_CHARGES) 
-		{
-			soul.soul_charges[SoulType::WORM]++;  // Add charge
-		}
-		soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
-	}
-	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / 5.f;
-	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / 5.f;
+	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / SOUL_BAR_THRESHOLD;
+	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / SOUL_BAR_THRESHOLD;
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 

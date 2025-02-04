@@ -84,6 +84,35 @@ namespace Ukemochi
             {
                 // Only play hit sound if this hit wasn't fatal (health > 0)
                 if (enemycomponent.health > 0)
+                auto& enemycomponent = object->GetComponent<Enemy>();
+                auto& enemyphysic = object->GetComponent<Rigidbody2D>();
+                auto& enemytransform = object->GetComponent<Transform>();
+                auto& sr = object->GetComponent<SpriteRender>();
+
+                if (enemycomponent.health <= 0.f)
+                {
+                    enemycomponent.state = Enemy::DEAD;
+                }
+                else
+                {
+                    object->SetActive(true);
+                }
+
+                //animation
+                if (enemyphysic.force.x < 0)
+                {
+                    auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
+                    //anim.SetAnimation("Running");
+                    sr.flipX = false;
+                }
+                else if (enemyphysic.force.x > 0)
+                {
+                    sr.flipX = true;
+                }
+
+
+                // If the enemy is in DEAD state, remove it from the list after processing DeadState
+                if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
                 {
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     // Play different hit sounds based on enemy type
