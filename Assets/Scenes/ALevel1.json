@@ -1285,12 +1285,12 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 540.0, 0.0],
+                    "Position": [-960.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [168.57142639160156, 168.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [960.0, 540.0, 0.0],
+                    "Position": [-960.0, 540.0, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [0.0, 0.0],
