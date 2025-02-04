@@ -37,20 +37,16 @@ namespace Ukemochi
      */
     void AnimationSystem::Update() const
     {
-        // Update the animation system based on the number of steps
-        for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+        for(auto& entity : m_Entities)
         {
-            for (auto& entity : m_Entities)
-            {
-                if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
-                    continue;
+            if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                continue;
+            
+            auto& animation = ECS::GetInstance().GetComponent<Animation>(entity);
 
-                auto& animation = ECS::GetInstance().GetComponent<Animation>(entity);
-
-                float dt = static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-
-                animation.update(dt);
-            }
+            float dt = static_cast<float>(g_FrameRateController.GetDeltaTime());
+            
+            animation.update(dt);
         }
     }
 }

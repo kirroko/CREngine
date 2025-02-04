@@ -796,15 +796,17 @@ namespace Ukemochi
 		// Move objects to the point of collision
 		if (!rb1.is_kinematic)
 		{
-			Vec2 new_value = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-			trans1.position.x += new_value.x;
-			trans1.position.y += new_value.y;
+			Vec2 newValue = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans1.position.x += newValue.x;
+			trans1.position.y += newValue.y;
+			/*trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());*/
 		}
 		if (!rb2.is_kinematic)
 		{
-			Vec2 new_value = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-			trans2.position.x += new_value.x;
-			trans2.position.y += new_value.y;
+			Vec2 newValue = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans2.position.x += newValue.x;
+			trans2.position.y += newValue.y;
+			//trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		}
 
 		// Check collision flags and adjust velocities based on impact direction

@@ -773,19 +773,18 @@ namespace Ukemochi
             			for (auto itr = componentData["Clips"].MemberBegin(); itr != componentData["Clips"].MemberEnd(); ++itr)
 						{
 							AnimationClip newClip;
-            			    newClip.spriteName = itr->value[0].GetString();
-            				newClip.keyPath = itr->value[1].GetString();
-							newClip.name = itr->value[2].GetString();
-							newClip.total_frames = itr->value[3].GetInt();
-            				newClip.pivot.x = itr->value[4].GetFloat();
-            				newClip.pivot.y = itr->value[5].GetFloat();
-            				newClip.pixelsPerUnit = itr->value[6].GetInt();
-							newClip.pixel_width = itr->value[7].GetInt();
-							newClip.pixel_height = itr->value[8].GetInt();
-							newClip.total_width = itr->value[9].GetInt();
-							newClip.total_height = itr->value[10].GetInt();
-							newClip.frame_time = itr->value[11].GetFloat();
-							newClip.looping = itr->value[12].GetBool();
+            				newClip.keyPath = itr->value[0].GetString();
+							newClip.name = itr->value[1].GetString();
+							newClip.total_frames = itr->value[2].GetInt();
+            				newClip.pivot.x = itr->value[3].GetFloat();
+            				newClip.pivot.y = itr->value[4].GetFloat();
+            				newClip.pixelsPerUnit = itr->value[5].GetInt();
+							newClip.pixel_width = itr->value[6].GetInt();
+							newClip.pixel_height = itr->value[7].GetInt();
+							newClip.total_width = itr->value[8].GetInt();
+							newClip.total_height = itr->value[9].GetInt();
+							newClip.frame_time = itr->value[10].GetFloat();
+							newClip.looping = itr->value[11].GetBool();
 							anim.clips[newClip.name] = newClip;
 						}
 
@@ -1080,7 +1079,6 @@ namespace Ukemochi
         		{
         			Value clip(key.c_str(),allocator);
         			Value clipData(kArrayType);
-        		    clipData.PushBack(Value(value.spriteName.c_str(), allocator), allocator);
         			clipData.PushBack(Value(value.keyPath.c_str(),allocator), allocator);
         			clipData.PushBack(Value(key.c_str(),allocator), allocator);
 

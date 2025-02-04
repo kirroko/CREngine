@@ -140,7 +140,7 @@ public:
 	 */
 	void drawCircleOutline();
 
-	void updateAnimationFrame(std::string spriteName, int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates);
+	void updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates);
 
 
 

@@ -62,14 +62,17 @@ namespace Ukemochi
     *************************************************************************/
     void EnemyManager::UpdateEnemies()
     {
-        // Update the enemy manager based on the number of steps
-        for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+        // Iterate through the enemyObjects list
+        for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
         {
-            // Iterate through the enemyObjects list
-            for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
+            GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
+            object->GetComponent<Animation>().SetAnimation("Idle");
+
+            if (object ->GetActive() == false)
             {
-                GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
-                object->GetComponent<Animation>().SetAnimation("Idle");
+                it++;
+                continue;
+            }
 
             auto& enemycomponent = object->GetComponent<Enemy>();
             auto& enemyphysic = object->GetComponent<Rigidbody2D>();
@@ -137,16 +140,18 @@ namespace Ukemochi
                 //dont overlap kick sound
                 if (audioM.GetSFXindex("Pattack3") != -1 && audioM.GetSFXindex("EnemyKilled") != -1)
                 {
-                    it++;
-                    continue;
+                    if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3"))) && !enemycomponent.isDead)
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                    }
                 }
 
-                auto& enemycomponent = object->GetComponent<Enemy>();
-                auto& enemyphysic = object->GetComponent<Rigidbody2D>();
-                auto& enemytransform = object->GetComponent<Transform>();
-                auto& sr = object->GetComponent<SpriteRender>();
+                // Harvest the soul of the dead enemy
+                ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 1);
 
-                if (enemycomponent.health <= 0.f)
+                object->SetActive(false);
+                enemycomponent.isDead = true;
+                if (enemycomponent.isWithPlayer && numEnemyTarget>=1)
                 {
                     numEnemyTarget--;
                 }
@@ -277,290 +282,126 @@ namespace Ukemochi
                 }
                 else
                 {
-                    object->SetActive(true);
-                }
+                    // If the target position is reached or very close, set velocity to zero
+                    enemyphysic.velocity.x = 0.0f;
+                    enemyphysic.velocity.y = 0.0f;
+                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
 
-                //animation
-                if (enemyphysic.force.x < 0)
-                {
-                    auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
-                    //anim.SetAnimation("Running");
-                    sr.flipX = false;
+                    enemycomponent.prevObject = enemycomponent.nearestObj;
+                    enemycomponent.nearestObj = -1;
                 }
-                else if (enemyphysic.force.x > 0)
-                {
-                    sr.flipX = true;
-                }
+                break;
 
+            case Enemy::CHASE:
+                // Compute the direction vector to the target (player)
+                enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+                enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
 
-                // If the enemy is in DEAD state, remove it from the list after processing DeadState
-                if (enemycomponent.state == Enemy::DEAD)
+                // Calculate the magnitude of the direction vector (distance to player)
+                enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
+
+                if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
                 {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    //dont overlap kick sound
-                    if (audioM.GetSFXindex("Pattack3") != -1 && audioM.GetSFXindex("EnemyKilled") != -1)
+                    // Normalize the direction vector
+                    enemycomponent.dirX /= enemycomponent.magnitude;
+                    enemycomponent.dirY /= enemycomponent.magnitude;
+
+                    // Scale the normalized direction by the enemy's speed to compute velocity
+                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+
+                    // Check if the player is within attack range
+                    if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(),enemytransform))
                     {
-                        if ((!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3"))) && !enemycomponent.isDead)
-                        {
-                            audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
-                        }
-                    }
-
-                    // Harvest the soul of the dead enemy
-                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 1);
-
-                    object->SetActive(false);
-                    enemycomponent.isDead = true;
-                    if (enemycomponent.isWithPlayer && numEnemyTarget >= 1)
-                    {
-                        numEnemyTarget--;
-                    }
-                    ++it;
-                    continue;
-                }
-
-                //if there no nearest obj, find neareast obj
-                if (enemycomponent.nearestObj == -1)
-                {
-                    enemycomponent.nearestObj = FindNearestObject(object);
-                }
-
-                if (enemycomponent.state != enemycomponent.ATTACK)
-                {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1)
-                    {
-                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
-                        {
-                            audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
-                        }
-                    }
-                }
-
-                if (playerObj != nullptr)
-                {
-                    if (enemycomponent.ReachedTarget(enemytransform.position.x, enemytransform.position.y,
-                        playerObj->GetComponent<Transform>().position.x,
-                        playerObj->GetComponent<Transform>().position.y, 350.f) == true && enemycomponent.state == enemycomponent.ROAM)
-                    {
-                        //std::cout << object->GetInstanceID() << " Chase" << std::endl;
-                        enemycomponent.state = enemycomponent.CHASE;
-                    }
-                }
-                if (enemycomponent.isKick)
-                {
-                    if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                        enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-                    }
-                    else {
-                        enemycomponent.timeSinceTargetReached = 0.f;
-                        enemycomponent.isKick = false;
-                    }
-                    ++it;
-                    continue;
-                }
-
-                // Skip collision handling for dead enemies
-                if (enemycomponent.isCollide)
-                {
-                    // Start the timer for 1 second if not already running
-                    if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                        enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-                    }
-                    else {
-
-                        // Timer has reached 1 second, perform the object updates
-                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
-
-                        if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
-                        {
-                            enemycomponent.prevObject2 = enemycomponent.prevObject;
-                            enemycomponent.prevObject = enemycomponent.nearestObj;
-                            enemycomponent.nearestObj = -1;
-
-                            if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
-                            {
-                                enemycomponent.nearestObj = FindNearestObject(object);
-                            }
-                            else
-                            {
-                                enemycomponent.isCollide = false;
-                                enemycomponent.timeSinceTargetReached = 0.f;
-                            }
-
-                        }
-                    }
-
-                    ++it;
-                    continue;
-                }
-
-
-                // Handle other states
-                switch (enemycomponent.state)
-                {
-                case Enemy::ROAM:
-
-                    // Compute the direction vector to the target waypoint
-                    enemycomponent.dirX = enemycomponent.targetX - enemytransform.position.x;
-                    enemycomponent.dirY = enemycomponent.targetY - enemytransform.position.y;
-
-                    // Calculate the distance to normalize the direction
-                    enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
-
-                    if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
-                    {
-                        // Normalize the direction vector
-                        enemycomponent.dirX /= enemycomponent.magnitude;
-                        enemycomponent.dirY /= enemycomponent.magnitude;
-
-                        // Scale the normalized direction by the enemy's speed
-                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                        if (enemycomponent.ReachedTarget(enemyphysic.position.x, enemyphysic.position.y, enemycomponent.targetX, enemycomponent.targetY, 20.f))
-                        {
-                            enemyphysic.velocity.x = 0.0f;
-                            enemyphysic.velocity.y = 0.0f;
-                            enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                            // Start the timer for 1 second if not already running
-                            if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                                enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-                            }
-                            else {
-                                // Timer has reached 1 second, perform the object updates
-                                enemycomponent.prevObject = enemycomponent.nearestObj;
-                                enemycomponent.nearestObj = -1;
-
-                                // Reset the timer after execution
-                                enemycomponent.timeSinceTargetReached = 0.0f;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // If the target position is reached or very close, set velocity to zero
-                        enemyphysic.velocity.x = 0.0f;
-                        enemyphysic.velocity.y = 0.0f;
-                        enemyphysic.force.x = enemyphysic.force.y = 0.f;
-
-                        enemycomponent.prevObject = enemycomponent.nearestObj;
-                        enemycomponent.nearestObj = -1;
-                    }
-                    break;
-
-                case Enemy::CHASE:
-                    // Compute the direction vector to the target (player)
-                    enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-                    enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
-
-                    // Calculate the magnitude of the direction vector (distance to player)
-                    enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
-
-                    if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
-                    {
-                        // Normalize the direction vector
-                        enemycomponent.dirX /= enemycomponent.magnitude;
-                        enemycomponent.dirY /= enemycomponent.magnitude;
-
-                        // Scale the normalized direction by the enemy's speed to compute velocity
-                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                        // Check if the player is within attack range
-                        if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
-                        {
-                            // Stop movement and transition to ATTACK state
-                            enemyphysic.velocity.x = 0.0f;
-                            enemyphysic.velocity.y = 0.0f;
-                            enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                            enemycomponent.state = enemycomponent.STANDBY;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        // If the magnitude is zero (enemy is on top of the player), go to ATTACK
+                        // Stop movement and transition to ATTACK state
                         enemyphysic.velocity.x = 0.0f;
                         enemyphysic.velocity.y = 0.0f;
                         enemyphysic.force.x = enemyphysic.force.y = 0.f;
                         enemycomponent.state = enemycomponent.STANDBY;
                         break;
                     }
-
-                    // Ensure other transitions (like to ROAM) don�t block the ATTACK state
-                    if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
-                    {
-                        //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                        enemycomponent.state = enemycomponent.ROAM;
-                        break;
-                    }
-                    break;
-
-                case Enemy::STANDBY:
-                    if (numEnemyTarget < 1)
-                    {
-                        numEnemyTarget++;
-                        enemycomponent.state = enemycomponent.ATTACK;
-                    }
-
-                    // Ensure other transitions (like to ROAM) don�t block the ATTACK state
-                    if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
-                    {
-                        //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                        enemycomponent.state = enemycomponent.ROAM;
-                        break;
-                    }
-                    break;
-
-                case Enemy::ATTACK:
-
-                    if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
-                    {
-                        enemycomponent.state = enemycomponent.CHASE;
-                        break;
-                    }
-
-                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-
-                    if (enemycomponent.atktimer <= 1.0f)
-                    {
-                        //Charge attack for fish
-                        //shoot for worm
-                        static bool attack = false;
-                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                        if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
-                        {
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !attack)
-                            {
-                                audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
-                                attack = true;
-                            }
-                            else
-                            {
-                                //temp
-                                if (playerObj != nullptr)
-                                {
-                                    enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
-                                    ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
-                                }
-
-                                std::cout << "player hit\n";
-                                enemycomponent.atktimer = 5.f;
-                                attack = false;
-                            }
-                        }
-
-                    }
-                    break;
-
-                default:
+                }
+                else
+                {
+                    // If the magnitude is zero (enemy is on top of the player), go to ATTACK
+                    enemyphysic.velocity.x = 0.0f;
+                    enemyphysic.velocity.y = 0.0f;
+                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
+                    enemycomponent.state = enemycomponent.STANDBY;
                     break;
                 }
 
-                ++it; // Move to the next enemy
+                // Ensure other transitions (like to ROAM) don�t block the ATTACK state
+                if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
+                {
+                    //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
+                    enemycomponent.state = enemycomponent.ROAM;
+                    break;
+                }
+                break;
+
+            case Enemy::STANDBY:
+                if (numEnemyTarget < 1)
+                {
+                    numEnemyTarget++;
+                    enemycomponent.state = enemycomponent.ATTACK;
+                }
+
+                // Ensure other transitions (like to ROAM) don�t block the ATTACK state
+                if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
+                {
+                    //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
+                    enemycomponent.state = enemycomponent.ROAM;
+                    break;
+                }
+                break;
+
+            case Enemy::ATTACK:
+
+                if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                {
+                    enemycomponent.state = enemycomponent.CHASE;
+                    break;
+                }
+
+                enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+
+                if (enemycomponent.atktimer <= 1.0f)
+                {
+                    //Charge attack for fish
+                    //shoot for worm
+                    static bool attack = false;
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
+                    {
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !attack)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+                            attack = true;
+                        }
+                        else
+                        {
+                            //temp
+                            if (playerObj != nullptr)
+                            {
+                                enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                            }
+
+                            std::cout << "player hit\n";
+                            enemycomponent.atktimer = 5.f;
+                            attack = false;
+                        }
+                    }
+
+                }
+                break;
+
+            default:
+                break;
             }
+
+            ++it; // Move to the next enemy
         }
     }
 

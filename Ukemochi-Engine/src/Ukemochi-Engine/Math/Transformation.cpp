@@ -87,7 +87,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void Transformation::IncreaseScale(Transform& trans)
 	{
-		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}
@@ -100,7 +100,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void Transformation::DecreaseScale(Transform& trans)
 	{
-		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}

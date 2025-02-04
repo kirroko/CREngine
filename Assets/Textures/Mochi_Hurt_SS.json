@@ -1,0 +1,16 @@
+{
+    "TextureMeta": {
+        "KeyPath": "../Assets/Textures/Mochi_Hurt_SS.png",
+        "ClipName": "Hurt",
+        "PivotX": 0.5299999713897705,
+        "PivotY": 0.5,
+        "PixelsPerUnit": 90,
+        "TotalFrames": 4,
+        "PixelWidth": 545,
+        "PixelHeight": 420,
+        "TextureWidth": 2048,
+        "TextureHeight": 1024,
+        "FrameTime": 0.05000000074505806,
+        "Looping": true
+    }
+}
