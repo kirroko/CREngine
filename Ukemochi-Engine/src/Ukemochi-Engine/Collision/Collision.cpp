@@ -185,13 +185,13 @@ namespace Ukemochi
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
-		//else if (tag == "Knife")
-		//{
-		//	box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
-		//				-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-		//	box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
-		//				BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-		//}
+		else if (tag == "Knife")
+		{
+			box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
+						-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+			box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
+						BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+		}
 		else
 		{
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
@@ -568,7 +568,7 @@ namespace Ukemochi
 			case 0: // First combo state
 				if (player_anim.current_frame == 8)
 				{
-					if (!enemy_data.hasDealtDamage)
+					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 5.0f;

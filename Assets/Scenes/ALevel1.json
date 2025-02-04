@@ -1186,7 +1186,7 @@
                     "Type": 0
                 }]
         }, {
-            "Name": "2_EnemyFish2",
+            "Name": "2_EnemyWorm",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
@@ -1235,7 +1235,7 @@
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 0
+                    "Type": 1
                 }]
         }, {
             "Name": "2_EnemyFish3",
