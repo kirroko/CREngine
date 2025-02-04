@@ -276,6 +276,11 @@ namespace Ukemochi
 				HidePauseMenu();
 		}
 
+		if (Input::IsKeyTriggered(UME_KEY_M))
+		{
+			showDefeatScreen();
+		}
+
 		// Press enter to start game
 		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
 		{
@@ -318,7 +323,7 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight();
 		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("pause overly", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3);
+		uiManager->addButton("pause overlay", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3);
 
 		uiManager->addButton("pause bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(999.f, 869.f), "back", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
 		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
@@ -357,6 +362,35 @@ namespace Ukemochi
 		uiManager->removeButton("exit button bg");
 		uiManager->removeButton("exit text");
 
+	}
+
+	void InGameGUI::showDefeatScreen()
+	{
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
+		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		uiManager->addButton("defeat overlay", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3);
+		uiManager->addButton("defeat text", glm::vec3(screen_width * 0.5f, 800.f, 0.f), glm::vec2(499.f, 129.f), "defeat", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5);
+		uiManager->addButton("defeat bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(1920.f, 1080.f), "defeat bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
+		// Restart
+		uiManager->addButton("restart bg", glm::vec3(810.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
+		uiManager->addButton("resume button", glm::vec3(810.f, 350.f, 0.f), glm::vec2(84.f, 88.f), "restart icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			Application::Get().IsPaused = false;
+			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+			});
+		uiManager->addButton("restart button text", glm::vec3(810.f, 250.f, 0.f), glm::vec2(140.f, 27.f), "restart", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6);
+
+		// Exit
+		uiManager->addButton("exit button bg", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, []() {
+			});
+		uiManager->addButton("exit button", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			Application::Get().IsPaused = false;
+			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+			});
+		uiManager->addButton("exit text", glm::vec3(1160.f, 250.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
+			});
 	}
 
 }

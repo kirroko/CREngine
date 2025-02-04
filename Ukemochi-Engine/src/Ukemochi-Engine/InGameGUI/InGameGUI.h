@@ -136,5 +136,6 @@ namespace Ukemochi
 
 		void ShowPauseMenu();
 		void HidePauseMenu();
+		void showDefeatScreen();
 	};
 }
