@@ -1167,14 +1167,17 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true],
-                        "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true]
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true]
                     },
                     "CurrentClip": "Idle"
                 }, {
@@ -1216,14 +1219,17 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true],
-                        "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true]
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
                     },
                     "CurrentClip": "Idle"
                 }, {
@@ -1265,16 +1271,19 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Fish HUrt_SS.png",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 4, 0.5, 0.5, 50, 374, 278, 1024, 1024, 0.05000000074505806, true],
-                        "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 41, 0.5, 0.5, 50, 515, 285, 3840, 2048, 0.05000000074505806, true]
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true]
                     },
-                    "CurrentClip": "Hurt"
+                    "CurrentClip": "Attack"
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
@@ -1285,9 +1294,9 @@
             "Tag": "Player",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [960.0, 540.0, 0.0],
+                    "Position": [960.0, 539.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [168.57142639160156, 168.57142639160156]
+                    "Scale": [168.64285278320313, 168.64285278320313]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [960.0, 540.0, 0.0],
@@ -1314,21 +1323,23 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Player/Base Attack.png",
+                    "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["../Assets/Textures/Player/Base Idle.png", "Idle", 24, 0.5, 0.5199999809265137, 90, 460, 370, 4096, 2048, 0.04399999976158142, true],
-                        "Running": ["../Assets/Textures/Player/Base Run.png", "Running", 10, 0.5, 0.5, 90, 480, 370, 2048, 2048, 0.057999998331069946, true],
-                        "Attack": ["../Assets/Textures/Player/Base Attack.png", "Attack", 46, 0.45500001311302185, 0.44999998807907104, 155, 620, 490, 4096, 4096, 0.032999999821186066, true]
+                        "Idle": ["Idle_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Idle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
+                        "Running": ["Run_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Running", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
+                        "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
+                        "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
+                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true]
                     },
-                    "CurrentClip": "Attack"
+                    "CurrentClip": "Running"
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 100,
+                    "CurrentHealth": 50,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1340,7 +1351,7 @@
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
                     "SoulBars": [0.0, 0.0],
-                    "SoulCharges": [0, 0],
+                    "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
                     "SkillCooldown": 5.0,
@@ -1390,7 +1401,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1.0, 1.0]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1423,7 +1434,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1.0, 1.0]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],

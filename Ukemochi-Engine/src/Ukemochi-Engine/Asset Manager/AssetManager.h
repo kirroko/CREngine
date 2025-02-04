@@ -60,15 +60,18 @@ namespace Ukemochi
 		struct SpriteInfo {
 			UV uv;
 			std::string spriteSheetName;
+			Vec2 spriteSheetDimension{};
+			Vec2 spriteSheetPosition{};
 		};
-
-		bool isAtlasTexture(const std::string& file_path);
-
+		
 		std::string getAtlasMetaData(const std::string& atlasPath);
-
 	public:
 		std::unordered_map<std::string, SpriteInfo> spriteData;
+		bool isAtlasTexture(const std::string& file_path);
+		
 		void parseAtlasJSON(const std::string& jsonPath, const std::string& sheetName);
+
+		std::vector<std::string> getAtlasJSONData(const std::string& jsonPath);
 
 		void loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath);
 
