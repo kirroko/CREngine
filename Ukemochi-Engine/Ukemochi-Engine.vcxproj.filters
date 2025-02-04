@@ -236,6 +236,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.h" />
     <ClInclude Include="src\Ukemochi-Engine\Collision\Quadtree.h" />
     <ClInclude Include="src\Ukemochi-Engine\Game\SoulManager.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButtonManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -306,9 +307,6 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Texture.cpp">
-      <Filter>Ukemochi-Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\UIButton.cpp">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\VAO.cpp">

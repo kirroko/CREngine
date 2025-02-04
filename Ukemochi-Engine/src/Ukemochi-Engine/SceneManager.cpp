@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/EnemyManager.h"
 #include "Game/DungeonManager.h"
 #include "Game/SoulManager.h"
+#include "Graphics/UIButtonManager.h"
 
 namespace Ukemochi
 {
@@ -88,6 +89,7 @@ namespace Ukemochi
 		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<EnemyManager>();
         ECS::GetInstance().RegisterSystem<SoulManager>();
+        ECS::GetInstance().RegisterSystem<UIButtonManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -145,6 +147,11 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<SoulManager>(sig);
 
+        // For UIButtonManager system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
@@ -200,6 +207,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
         UME_ENGINE_TRACE("Initializing soul manager...");
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
+
+        ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
     }
 
     /*!***********************************************************************
@@ -239,9 +248,10 @@ namespace Ukemochi
     void SceneManager::SceneMangerUpdate()
     {
         if (Input::IsKeyTriggered(UME_KEY_U))
+        {
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
-
+        }
         if (Input::IsKeyTriggered(GLFW_KEY_8)) 
         {
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
@@ -257,6 +267,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
             std::cout << "Switched to Scale Mode\n";
         }
+
 
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))

@@ -16,89 +16,72 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../vendor/glm/glm/glm.hpp"
 #include <string>
-#include <vector>
-#include "TextRenderer.h"
+#include <functional>
+#include <memory>
 
-class Shader;
-class BatchRenderer2D;
-class Camera;
+#include "BatchRenderer.h"
 
-enum class TextAlignment {
-    Center,
-    TopLeft,
-    TopRight,
-    BottomLeft,
-    BottomRight
+enum class BarType{
+    None,
+    Health,
+    Blue_Soul,
+    Red_Soul,
+    Blue_Charge_Bar,
+    Red_Charge_Bar
 };
 
-/*!
- * @class UIButton
- * @brief Represents a button in the UI, with a background texture and a text label.
- */
 class UIButton {
 public:
-    std::string id;
-    glm::vec2 position;             // Screen position
-    glm::vec2 size;                 // Size of the button
-    GLuint textureID;               // Texture for the button background
-    std::string text;               // Button label
-    glm::vec3 textColor;            // Label color
-    std::string fontName;           // Font for the label
-    float textScale;                // Text scale
-    TextAlignment textAlignment;    // Text alignment
-    bool interactable;		        // Is the button interactable
-    std::function<void()> on_click; // The event to trigger on click
+    std::string id; // Unique ID for each button
+    glm::vec3 originalPosition;
+    glm::vec2 originalSize;
+    glm::vec3 position;
+    glm::vec2 size;
+    glm::vec3 color;
+    std::string spriteName;
+    std::function<void()> onClick;
 
-    /*!
-     * @brief Constructs a UIButton object with the given parameters.
-     * @param id of the button
-     * @param position Screen position of the button.
-     * @param size Size of the button.
-     * @param textureID OpenGL texture ID for the button background.
-     * @param text Label text on the button.
-     * @param textColor Color of the label text.
-     * @param fontName Font used for the label text.
-     * @param textScale Scale of the label text.
-     */
-    UIButton(const std::string& id, glm::vec2 position, glm::vec2 size, GLuint textureID, const std::string& text, glm::vec3 textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr)
-        : id(id), position(position), size(size), textureID(textureID), text(text), textColor(textColor), fontName(fontName), textScale(textScale), textAlignment(alignment), interactable(interactable), on_click(on_click) {}
-};
+    bool isHovered = false;
+    int ui_layer;
+    BarType barType = BarType::None;
 
-/*!
- * @class UIButtonRenderer
- * @brief Renders a collection of UI buttons using a batch renderer and a text renderer.
- */
-class UIButtonRenderer {
-private:
-    std::vector<UIButton> buttons;   // List of buttons to render
-    std::shared_ptr<BatchRenderer2D> batchRenderer; // For button background
-    TextRenderer* textRenderer;      // For button text
-    glm::mat4 projectionMatrix;      // Static orthographic projection
-    glm::mat4 viewMatrix;
-    std::shared_ptr<Shader> uiShader;
+    std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-public:
+    UIButton(const std::string& buttonID, glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, std::function<void()> callback = nullptr)
+       : id(buttonID), originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), onClick(callback){} 
 
-    UIButtonRenderer(std::shared_ptr<BatchRenderer2D> batchRenderer, TextRenderer* textRenderer, int screenWidth, int screenHeight, std::shared_ptr<Shader> uiShader);
+    void updateBar(float percentage)
+    {
+        percentage = glm::clamp(percentage, 0.f, 1.f);
 
-    /*!
-     * @brief Adds a button to the renderer's collection.
-     * @param button The UIButton to add.
-     */
-    void addButton(const UIButton& button);
+        size.x = originalSize.x * percentage;
 
-    /*!
-     * @brief Renders all buttons in the collection.
-     */
-    void renderButtons(const Camera& camera); 
+        position.x  = originalPosition.x - (originalSize.x - size.x) * 0.5f;
+    }
 
-    void setViewMatrix(const glm::mat4& view);
+    void update(glm::vec2 mousePos, bool mousePressed)
+    {
+        isHovered = (mousePos.x >= position.x && mousePos.x <= position.x + size.x &&
+            mousePos.y >= position.y && mousePos.y <= position.y + size.y);
 
-    void removeButton(const std::string& id);
+        if (isHovered && mousePressed && onClick)
+        {
+            onClick();
+        }
+    }
 
-    void clearButtons();
+    void render(const glm::vec3& cameraPosition)
+    {
+        if (batchRenderer)
+        {
+            float hoverIntensity = isHovered ? 0.8f : 1.0f;
 
-    std::vector<UIButton>& GetButtons();
+            glm::vec3 renderColor = color * hoverIntensity;
+
+            glm::vec3 screenPosition = position - cameraPosition + cameraPosition;
+            batchRenderer->drawSprite(screenPosition, size, renderColor, spriteName, 0.0f, ui_layer);
+        }
+    }
 };
 
 #endif // UI_BUTTON_H
