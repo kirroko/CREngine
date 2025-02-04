@@ -143,6 +143,10 @@ namespace Ukemochi
                         audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
                     }
                 }
+                else
+                {
+                    //worm
+                }
             }
 
             if (playerObj != nullptr)
@@ -239,7 +243,6 @@ namespace Ukemochi
                     //enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                     //enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
 
-                    
                 }
 
                 ++it;
@@ -378,7 +381,6 @@ namespace Ukemochi
                 if (enemycomponent.atktimer <= 1.0f)
                 {
                     //Charge attack for fish
-                    //shoot for worm
                     static bool attack = false;
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
@@ -401,6 +403,12 @@ namespace Ukemochi
                             enemycomponent.atktimer = 5.f;
                             attack = false;
                         }
+                    }
+                    //shoot for worm
+                    else
+                    {
+                        //worm
+
                     }
 
                 }

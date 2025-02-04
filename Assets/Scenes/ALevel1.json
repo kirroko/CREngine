@@ -1390,7 +1390,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1.0, 1.0]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1423,7 +1423,7 @@
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1.0, 1.0]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
