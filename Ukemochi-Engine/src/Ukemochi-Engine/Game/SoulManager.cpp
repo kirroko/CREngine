@@ -2,7 +2,7 @@
 /*!
 \file       SoulManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Jan 31, 2025
+\date       Feb 02, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -75,7 +75,7 @@ namespace Ukemochi
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
             // Handle soul bar decay over time
-            HandleSoulDecay();
+            //HandleSoulDecay();
 
             // Handle skill effects over time
             HandleSkillEffects();
@@ -154,33 +154,37 @@ namespace Ukemochi
     {
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 
-        // Use the ability if the skill is ready
-        if (player_soul.skill_ready)
+        // Check if the skill is ready
+        if (!player_soul.skill_ready)
+            return;
+
+        // Use the FISH ability if there are enough FISH charges
+        if (player_soul.current_soul == FISH && player_soul.soul_charges[FISH] > 0)
         {
-            // Use the FISH ability if there are enough FISH charges
-            if (player_soul.current_soul == FISH && player_soul.soul_charges[FISH] > 0)
-            {
-                // Trigger fish AOE effect
-                GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(true);
+            // Trigger fish AOE effect at the nearest enemy
+            auto& fish_transform = ECS::GetInstance().GetComponent<Transform>(fish_ability);
+            fish_transform.position = FindNearestEnemyPosition();
+            GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(true);
 
-                --player_soul.soul_charges[player_soul.current_soul];
-                player_soul.skill_ready = false;
-                player_soul.skill_timer = 0.f;
+            --player_soul.soul_charges[player_soul.current_soul];
+            player_soul.skill_ready = false;
+            player_soul.skill_timer = 0.f;
 
-                UME_ENGINE_TRACE("Soul Ability: FISH");
-            }
-            // Use the WORM ability if there are enough WORM charges
-            else if (player_soul.current_soul == WORM && player_soul.soul_charges[WORM] > 0)
-            {
-                // Trigger worm web effect
-                GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(true);
+            UME_ENGINE_TRACE("Soul Ability: FISH");
+        }
+        // Use the WORM ability if there are enough WORM charges
+        else if (player_soul.current_soul == WORM && player_soul.soul_charges[WORM] > 0)
+        {
+            // Trigger worm web effect at the nearest enemy
+            auto& worm_transform = ECS::GetInstance().GetComponent<Transform>(worm_ability);
+            worm_transform.position = FindNearestEnemyPosition();
+            GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(true);
 
-                --player_soul.soul_charges[player_soul.current_soul];
-                player_soul.skill_ready = false;
-                player_soul.skill_timer = 0.f;
+            --player_soul.soul_charges[player_soul.current_soul];
+            player_soul.skill_ready = false;
+            player_soul.skill_timer = 0.f;
 
-                UME_ENGINE_TRACE("Soul Ability: WORM");
-            }
+            UME_ENGINE_TRACE("Soul Ability: WORM");
         }
     }
 
@@ -247,5 +251,36 @@ namespace Ukemochi
                 player_soul.skill_timer = 0.f;
             }
         }
+    }
+
+    /*!***********************************************************************
+    \brief
+     Find the position of the nearest enemy relative to the player.
+    \return
+     The position of the nearest enemy or the player's position if no enemy exist.
+    *************************************************************************/
+    Vector3D SoulManager::FindNearestEnemyPosition()
+    {
+        Vec3 player_position = ECS::GetInstance().GetComponent<Transform>(player).position;
+        Vec3 closest_enemy_position = player_position;
+        float min_distance = std::numeric_limits<float>::max();
+
+        // Search through the entity list for the nearest enemy
+        for (auto const& entity : m_Entities)
+        {
+            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
+            {
+                Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                float distance = Vec3Length(enemy_position - player_position);
+
+                if (distance < min_distance)
+                {
+                    min_distance = distance;
+                    closest_enemy_position = enemy_position;
+                }
+            }
+        }
+
+        return closest_enemy_position;
     }
 }

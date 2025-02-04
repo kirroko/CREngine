@@ -255,7 +255,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         flush();
         beginBatch();
     }
-    
+
     GLint textureID = -1;
 
     auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
@@ -425,38 +425,41 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
 
 void BatchRenderer2D::flush()
 {
-    for (const auto& [layer, layerVertices] : layerBatches) 
+    std::vector<int> layers;
+    for (const auto& entry : layerBatches)
+        layers.push_back(entry.first);
+
+    std::sort(layers.begin(), layers.end()); // Ensure lower layers render first
+
+    /*std::cout << "Rendering UI Layers in Order: ";
+    for (int layer : layers)
+        std::cout << layer << " ";
+    std::cout << std::endl;*/
+
+    for (int layer : layers)
     {
-        if (layerVertices.empty()) 
-            continue;
+        auto& layerVertices = layerBatches[layer];
+        if (layerVertices.empty()) continue;
 
-        // Bind VAO and Shader
+        //std::cout << "Layer " << layer << " has " << layerVertices.size() << " vertices\n";
+
         vao->Bind();
-
-        // Update VBO data with current vertices
         vbo->Bind();
-
-        // Print vertex data for debugging
         vbo->UpdateData(layerVertices.data(), layerVertices.size() * sizeof(Vertex));
         vbo->Unbind();
-
-        // Bind EBO
         ebo->Bind();
 
-        if (activeShader) 
+        if (activeShader)
         {
-            activeShader->Activate(); // Use the active shader
+            activeShader->Activate();
         }
 
-        int indexCount = static_cast<int>((layerVertices.size() / 4) * 6); // 6 indices per quad
+        int indexCount = static_cast<int>((layerVertices.size() / 4) * 6);
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
         vao->Unbind();
     }
 
-    vao->Unbind();
-    ebo->Unbind();
-    // Clear batches for the next frame
     layerBatches.clear();
 }
 

@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 24, 2024
+\date       Feb 02, 2025
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -40,6 +40,8 @@ namespace Ukemochi
 			// Compute the depth scale of the dynamic entities
 			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "WormAbility"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 		}

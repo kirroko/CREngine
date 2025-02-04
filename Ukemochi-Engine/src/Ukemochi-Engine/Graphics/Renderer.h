@@ -42,15 +42,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "BatchRenderer.h"
 
 #include "../Asset Manager/AssetManager.h"
-#include "UIButton.h"
 #include "DebugModeBatchRendering.h"
 #include "ColorBufferBatchRendering.h"
+#include "../Application.h"	
+#include "UIButtonManager.h"
 
 // Forward
 class TextRenderer;
 class ParticleSystem;
 class UIButton;
-class UIButtonRenderer;
 
 struct SpriteData {
 	glm::vec3 position;
@@ -154,18 +154,18 @@ public:
 	/*!
 	 * @brief Create a text object in the text renderer.
 	 */
-	void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
+	//void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
 
 	/*!
 	 * @brief Update a text object in the text renderer.
 	 */
-	void UpdateTextObject(const std::string& id, const std::string& newText);
+	//void UpdateTextObject(const std::string& id, const std::string& newText);
 
 	/*!
 	 * @brief Create a button object in the UI renderer.
 	 */
-	void CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
-
+	//void CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, bool isHealth, std::function<void()> onClick);
+	void CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType = BarType::None, std::function<void()> onClick = nullptr);
 	/*!
 	 * @brief Remove a button object in the UI renderer.
 	 */
@@ -175,6 +175,9 @@ public:
 	 * @brief Get the list of button objects in the UI renderer.
 	 */
 	std::vector<UIButton>& GetButtonObjects();
+
+	//void updateHealthBar();
+	void updatePlayerBars();
 
 	void setupFramebuffer();
 
@@ -188,7 +191,11 @@ public:
 
 	void resizeFramebuffer(unsigned int width, unsigned int height) const;
 
+	EntityID playerID = (EntityID)-1;
 private:
+
+	const int MAX_SOUL_CHARGES = 1;
+	const int SOUL_BAR_THRESHOLD = 5;
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/
@@ -439,33 +446,38 @@ private:
 	TextRenderer* textRenderer;
 
 	GameObject* playerObject = nullptr;
-	int Player = -1;
+	int player = -1;
 
 	std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-	std::unique_ptr<UIButtonRenderer> UIRenderer;
+	UIButtonManager uiManager;
+
+	
 
 public:
+	std::shared_ptr<BatchRenderer2D> batchRendererUI;
 	// Setter method to set the player object
 	void SetPlayerObject(GameObject& player)
 	{
 		playerObject = &player;
 	}
 
-	int GetPlayer()
-	{
-		return Player;
-	}
+	//int GetPlayer()
+	//{
+	//	//return Player;
+	//}
 	void SetPlayer(int id)
 	{
-		Player = id;
+		player = id;
 	}
 
 	// Not in use at the moment
 	std::unique_ptr<ParticleSystem> particleSystem;
 	Shader* particleShader;
 
-	
+	void finding_player_ID();
+
+	void HandleInputTesting();
 
 private:
 	std::shared_ptr<Shader> UI_shader_program;

@@ -556,6 +556,7 @@ namespace Ukemochi
 
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
@@ -571,7 +572,13 @@ namespace Ukemochi
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 5.0f;
-						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+						// Deal 2x dmg if the player and the enemy has the same soul type
+						if (player_soul.current_soul == enemy_data.type)
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+						else
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
 					}
 				}
@@ -589,7 +596,13 @@ namespace Ukemochi
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 5.0f;
-						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+						// Deal 2x dmg if the player and the enemy has the same soul type
+						if (player_soul.current_soul == enemy_data.type)
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+						else
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
 					}
 				}
@@ -619,7 +632,13 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						enemy_data.atktimer = 5.0f;
-						enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+						
+						// Deal 2x dmg if the player and the enemy has the same soul type
+						if (player_soul.current_soul == enemy_data.type)
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+						else
+							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
 						enemy_data.hasDealtDamage = true;
 					}
 				}
@@ -648,7 +667,13 @@ namespace Ukemochi
 			{
 				ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 				enemy_data.atktimer = 5.0f;
-				enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+
+				// Deal 2x dmg if the player and the enemy has the same soul type
+				if (player_soul.current_soul == enemy_data.type)
+					enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul] * 2.f);
+				else
+					enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+				
 				enemy_data.hasDealtDamage = true; // Prevent multiple applications
 			}
 			else
