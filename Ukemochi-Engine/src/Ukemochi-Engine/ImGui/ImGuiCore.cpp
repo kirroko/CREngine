@@ -1,15 +1,16 @@
 /* Start Header ************************************************************************/
 /*!
 \file       ImGuiCore.cpp
-\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (80%)
+\author     Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (70%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
 \co-authors WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (10%)
-\date       Sept 25, 2024
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (10%)
+\date       Feb 04, 2025
 \brief      This file contains the implementation of the UseImGui class,
             which manages the initialization, rendering, and event handling
             for ImGui within the engine.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -860,9 +861,12 @@ namespace Ukemochi
         }
     }
 
-    void UseImGui::ContentBrowser(char *filePath)
+    void UseImGui::ContentBrowser(char* filePath)
     {
         static std::string currentDirectory = "../Assets";
+        static int selectedAssetIndex = -1; // Track selected asset
+        static char newAssetPath[256] = ""; // Buffer for new asset path input
+
         ImGui::Begin("Content Browser");
 
         // Back Button
@@ -872,6 +876,76 @@ namespace Ukemochi
             currentDirectory = std::filesystem::path(currentDirectory).parent_path().string();
             LoadContents(currentDirectory);
         }
+        
+        // Add Asset Button
+        ImGui::InputText("Asset Path", newAssetPath, IM_ARRAYSIZE(newAssetPath));
+        if (ImGui::Button("Add Asset"))
+        {
+            if (strlen(newAssetPath) > 0)
+            {
+                std::string assetPath(newAssetPath);
+                std::filesystem::path fullPath = assetPath;
+
+                // Check if the file exists before adding it
+                if (std::filesystem::exists(fullPath))
+                {
+                    // Determine the type of asset based on the file extension
+                    std::string extension = fullPath.extension().string();
+                    if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
+                    {
+                        ECS::GetInstance().GetSystem<AssetManager>()->addAsset<Texture>(fullPath.string());
+                    }
+                    //else if (extension == ".vert" || extension == ".frag")
+                    //{
+                    //    ECS::GetInstance().GetSystem<AssetManager>()->addAsset<Shader>(fullPath.string());
+                    //}
+                    else if (extension == ".wav")
+                    {
+                        ECS::GetInstance().GetSystem<AssetManager>()->addAsset<FMOD::Sound>(fullPath.string());
+                    }
+
+                    // Refresh the asset list
+                    assetFiles.push_back(assetPath);
+                }
+                else
+                {
+                    // Handle file not found
+                    ImGui::TextColored(ImVec4(1, 0, 0, 1), "File does not exist.");
+                }
+
+                memset(newAssetPath, 0, sizeof(newAssetPath)); // Clear the input buffer
+            }
+        }
+
+        ImGui::SameLine();
+
+        // Delete Asset Button
+        if (ImGui::Button("Delete Asset") && selectedAssetIndex >= 0 && selectedAssetIndex < assetFiles.size())
+        {
+            std::string selectedAsset = assetFiles[selectedAssetIndex];
+            std::filesystem::path fullPath = currentDirectory + "/" + selectedAsset;
+
+            // Determine asset type and remove it
+            std::string extension = fullPath.extension().string();
+            if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
+            {
+                ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<Texture>(fullPath.string());
+            }
+            else if (extension == ".vert" || extension == ".frag")
+            {
+                ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<Shader>(fullPath.string());
+            }
+            else if (extension == ".wav")
+            {
+                ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<FMOD::Sound>(fullPath.string());
+            }
+
+            // Remove asset from the UI list
+            LoadContents(currentDirectory);
+            selectedAssetIndex = -1;
+        }
+
+        ImGui::SameLine();
 
         // Refresh Button
         if (ImGui::Button("Refresh Assets"))
@@ -893,7 +967,6 @@ namespace Ukemochi
         }
 
         // Display files
-        static int selectedAssetIndex = -1;
         for (size_t i = 0; i < assetFiles.size(); ++i)
         {
             bool isSelected = (selectedAssetIndex == static_cast<int>(i));
@@ -918,6 +991,9 @@ namespace Ukemochi
                 ImGui::EndDragDropSource();
             }
         }
+        
+        // Show contents at the start
+        LoadContents(currentDirectory);
 
         ImGui::End();
     }

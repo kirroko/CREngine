@@ -1,11 +1,14 @@
 /* Start Header ************************************************************************/
 /*!
 \file       AssetManager.cpp
-\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
-\date       Nov 13, 2024
+\author     Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (50%)
+\co-authors Wong Jun Yu Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (10%)
+\co-authors TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (25%)
+\co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (15%)
+\date       Feb 04, 2025
 \brief      This file contains the definition of the Asset Manager.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -27,7 +30,7 @@ namespace Ukemochi
 		texture_list.clear();
 		shader_list.clear();
 		sound_list.clear();
-		//sound_name_list.clear();
+		sound_name_list.clear();
 	}
 
 	/*!
@@ -57,8 +60,171 @@ namespace Ukemochi
 		texture_list.clear();
 		shader_list.clear();
 		sound_list.clear();
-		//sound_name_list.clear();
-		
+		sound_name_list.clear();
+	}
+
+	/*!
+	* @brief Copies an asset file to the appropriate asset directory.
+	* @param source_path The file path of the source asset.
+	* @param asset_name The name of the asset file.
+	* @param asset_type The type of asset (e.g., Texture, Shader, Sound).
+	* @return True if the asset was copied successfully, false otherwise.
+	*/
+	bool AssetManager::copyAssetToDirectory(const std::string& source_path, const std::string& asset_name, const std::string& asset_type)
+	{
+		std::filesystem::path target_path = asset_dir;
+
+		if (asset_type == "Texture")
+			target_path /= "Textures";
+		else if (asset_type == "Shader")
+			target_path /= "Shaders";
+		else if (asset_type == "Sound")
+			target_path /= "Audio";
+
+		// Create directory if it doesn't exist
+		if (!std::filesystem::exists(target_path))
+		{
+			if (!std::filesystem::create_directory(target_path))
+				return false;
+		}
+
+		target_path /= asset_name;
+
+		// Check if the source file exists
+		if (!std::filesystem::exists(source_path))
+			return false;
+
+		// Check if the target file already exists (for overwriting)
+		if (std::filesystem::exists(target_path))
+		{
+			if (!std::filesystem::remove(target_path))
+				return false;
+		}
+
+		// Perform the copy operation
+		std::error_code ec; // to capture errors without throwing exceptions
+		std::filesystem::copy(source_path, target_path, std::filesystem::copy_options::overwrite_existing, ec);
+
+		if (ec)
+			return false;
+
+		UME_ENGINE_INFO("{0} added to {1} directory.", asset_name, asset_type);
+		return true;
+	}
+
+	/*!
+	* @brief Adds an asset of a specific type to the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be added.
+	*/
+	template<>
+	void AssetManager::addAsset<Texture>(const std::string& file_path)
+	{
+		std::string asset_name = std::filesystem::path(file_path).filename().string();
+
+		if (copyAssetToDirectory(file_path, asset_name, "Texture"))
+		{
+			// Define the target directory where the asset will be copied
+			std::string target_directory = asset_dir + "/Textures";
+
+			// Build the full target path
+			std::string target_path = target_directory + "/" + asset_name;
+
+			// Ensure the target directory exists (if it doesn't, create it)
+			if (!std::filesystem::exists(target_directory))
+				std::filesystem::create_directories(target_directory);
+
+			addTexture(target_path);
+		}
+	}
+
+	/*!
+	* @brief Adds an asset of a specific type to the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be added.
+	*/
+	template<>
+	void AssetManager::addAsset<Shader>(const std::string& file_path)
+	{
+		std::string asset_name = std::filesystem::path(file_path).filename().string();
+		std::string vert_path = file_path + ".vert";
+		std::string frag_path = file_path + ".frag";
+
+		if (copyAssetToDirectory(file_path, asset_name, "Shader") &&
+			copyAssetToDirectory(file_path, asset_name, "Shader"))
+		{
+			// Define the target directory where the asset will be copied
+			std::string target_directory = asset_dir + "/Shaders";
+
+			// Build target paths for vertex and fragment shaders
+			std::string target_vert_path = target_directory + "/" + asset_name;
+			std::string target_frag_path = target_directory + "/" + asset_name;
+
+			// Ensure the target directory exists (if it doesn't, create it)
+			if (!std::filesystem::exists(target_directory))
+				std::filesystem::create_directories(target_directory);
+
+			addShader(asset_name, target_vert_path, target_frag_path);
+		}
+	}
+
+	/*!
+	* @brief Adds an asset of a specific type to the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be added.
+	*/
+	template<>
+	void AssetManager::addAsset<FMOD::Sound>(const std::string& file_path)
+	{
+		std::string asset_name = std::filesystem::path(file_path).filename().string();
+
+		if (copyAssetToDirectory(file_path, asset_name, "Sound"))
+		{
+			// Define the target directory where the asset will be copied
+			std::string target_directory = asset_dir + "/Audio";
+
+			// Build the full target path for sound file
+			std::string target_path = target_directory + "/" + asset_name;
+
+			// Ensure the target directory exists (if it doesn't, create it)
+			if (!std::filesystem::exists(target_directory))
+				std::filesystem::create_directories(target_directory);
+
+			addSound(target_path);
+		}
+	}
+
+	/*!
+	* @brief Removes an asset of a specific type from the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be removed.
+	*/
+	template<>
+	void AssetManager::removeAsset<Texture>(const std::string& file_path)
+	{
+		removeTexture(file_path);
+	}
+
+	/*!
+	* @brief Removes an asset of a specific type from the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be removed.
+	*/
+	template<>
+	void AssetManager::removeAsset<Shader>(const std::string& file_path)
+	{
+		removeShader(file_path);
+	}
+
+	/*!
+	* @brief Removes an asset of a specific type from the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be removed.
+	*/
+	template<>
+	void AssetManager::removeAsset<FMOD::Sound>(const std::string& file_path)
+	{
+		removeSound(file_path);
 	}
 
 	/*!
@@ -80,7 +246,7 @@ namespace Ukemochi
 			UME_ENGINE_INFO("Texture {0} already exists in list", file_path);
 			return;
 		}
-		else 
+		else
 		{
 			//std::cout << "Adding texture: " << file_path << " /from addTexture() line 85" << std::endl;
 		}
@@ -116,6 +282,34 @@ namespace Ukemochi
 		UME_ENGINE_INFO("Texture {0} added successfully", file_path);
 
 		//std::cout << "Loaded texture: " << file_path << ", Texture ID: " << texture->ID << std::endl;
+	}
+
+	/*!
+	* @brief Removes a texture from the asset manager.
+	* @param file_path The file path of the texture to be removed.
+	*/
+	void AssetManager::removeTexture(const std::string& file_path)
+	{
+		auto it = texture_list.find(file_path);
+		if (it != texture_list.end())
+		{
+			// Release texture memory
+			it->second.reset();
+			texture_list.erase(it);
+			texture_order.erase(std::remove(texture_order.begin(), texture_order.end(), file_path), texture_order.end());
+			texture_list_size--;
+
+			// Physically delete the file
+			if (std::filesystem::exists(file_path))
+			{
+				std::filesystem::remove(file_path);
+				UME_ENGINE_INFO("Texture file {0} deleted from disk", file_path);
+			}
+
+			UME_ENGINE_INFO("Texture {0} removed successfully", file_path);
+		}
+		else
+			UME_ENGINE_WARN("Texture {0} not found", file_path);
 	}
 
 	/*!
@@ -170,6 +364,43 @@ namespace Ukemochi
 	}
 
 	/*!
+	* @brief Removes a shader from the asset manager.
+	* @param file_name The name of the shader to be removed.
+	*/
+	void AssetManager::removeShader(const std::string& file_name)
+	{
+		// Remove file extension and path from the file_name
+		std::filesystem::path shaderPath(file_name);
+		std::string baseFileName = shaderPath.stem().string();
+
+		auto it = shader_list.find(baseFileName);
+		if (it != shader_list.end())
+		{
+			it->second.reset();
+			shader_list.erase(it);
+
+			// Physically delete the shader file
+			std::string vert_path = asset_dir + "/Shaders/" + baseFileName + ".vert";
+			std::string frag_path = asset_dir + "/Shaders/" + baseFileName + ".frag";
+
+			if (std::filesystem::exists(vert_path))
+			{
+				std::filesystem::remove(vert_path);
+				UME_ENGINE_INFO("Vertex shader {0} deleted from disk", vert_path);
+			}
+			if (std::filesystem::exists(frag_path))
+			{
+				std::filesystem::remove(frag_path);
+				UME_ENGINE_INFO("Fragment shader {0} deleted from disk", frag_path);
+			}
+
+			UME_ENGINE_INFO("Shader {0} removed successfully", file_name);
+		}
+		else
+			UME_ENGINE_WARN("Shader {0} not found", file_name);
+	}
+
+	/*!
 	* @brief Returns shared pointer to the Shader object desired
 	* @param std::string key_name: name of desired Shader
 	*/
@@ -206,9 +437,41 @@ namespace Ukemochi
 		}
 
 		sound_list.push_back(sound);
-		//sound_name_list.push_back(file_path);
+		sound_name_list.push_back(file_path);
 		sound_count++;
 		UME_ENGINE_INFO("Sound {0} added successfully", file_path);
+	}
+
+	/*!
+	* @brief Removes a sound from the asset manager.
+	* @param file_path The file path of the sound to be removed.
+	*/
+	void AssetManager::removeSound(const std::string& file_path)
+	{
+		// Find the sound in the sound_name_list
+		auto it = std::find(sound_name_list.begin(), sound_name_list.end(), file_path);
+
+		if (it != sound_name_list.end())
+		{
+			// Get the index of the sound to remove
+			int key = static_cast<int>(it - sound_name_list.begin());
+
+			// Release FMOD Sound memory
+			sound_list[key]->release();
+			sound_list.erase(sound_list.begin() + key);
+			sound_name_list.erase(it);
+
+			// Physically delete the sound file
+			if (std::filesystem::exists(file_path))
+			{
+				std::filesystem::remove(file_path);
+				UME_ENGINE_INFO("Sound file {0} deleted from disk", file_path);
+			}
+
+			UME_ENGINE_INFO("Sound {0} removed successfully", file_path);
+		}
+		else
+			UME_ENGINE_WARN("Sound {0} not found", file_path);
 	}
 
 	/*!
