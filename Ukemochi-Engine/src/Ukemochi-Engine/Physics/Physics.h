@@ -116,25 +116,21 @@ namespace Ukemochi
         /*!***********************************************************************
         \brief
          Update the linear physics of all the entities.
-        \param[in] tag
-         The tag of the entity.
         \param[in/out] trans
          The transform of the entity.
         \param[in/out] rb
          The rigidbody of the entity.
         *************************************************************************/
-        void UpdateLinearPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb);
+        void UpdateLinearPhysics(Transform& trans, Rigidbody2D& rb);
 
         /*!***********************************************************************
         \brief
          Update the rotational physics of all the entities.
-        \param[in] tag
-         The tag of the entity.
         \param[in/out] trans
          The transform of the entity.
         \param[in/out] rb
          The rigidbody of the entity.
         *************************************************************************/
-        void UpdateRotationalPhysics(const std::string& tag, Transform& trans, Rigidbody2D& rb);
+        void UpdateRotationalPhysics(Transform& trans, Rigidbody2D& rb);
     };
 }

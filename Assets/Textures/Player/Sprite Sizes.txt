@@ -1,0 +1,78 @@
+ W  x  H
+
+Mochi Idle
+200 x 200
+
+Mochi Run
+220 x 220
+
+Mochi Attack 
+340 x 340
+
+Mochi Death
+350 x 350
+
+Mochi Hurt
+250 x 250
+
+Mochi Switching
+220 x 220
+
+Mochi Blue Skill
+280 x 280
+
+Blue + Red Flame
+90 x 90
+
+Fish Idle
+260 x 260
+
+Fish Walk
+250 x 250
+
+Fish Attack
+350 x 350
+
+Fish Death
+250 x 250
+
+Fish Hurt
+200 x 200
+
+Worm Idle
+310 x 310
+
+Worm Walk
+310 x 310
+
+Worm Attack
+380 x 380
+
+Worm Death
+360 x 360
+
+Worm Hurt
+350 x 350
+
+Blunt Hit + Slash Hit VFX
+170 x 170
+
+Worm Projectile
+130 x 130
+
+Worm Projectile Impact
+180 x 180
+
+Blue Skill Attacking
+400 x 400
+
+Blue Skill Spawning
+440 x 440
+
+Red Skill Spawning
+370 x 370
+
+Red skill Attacking
+360 x 360
+
+

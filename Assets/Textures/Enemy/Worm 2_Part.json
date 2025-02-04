@@ -1,0 +1,28 @@
+{"frames": {
+
+"Worm Hurt.png":
+{
+	"frame": {"x":0,"y":0,"w":700,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":700,"h":700},
+	"sourceSize": {"w":700,"h":700}
+},
+"Worm Idle.png":
+{
+	"frame": {"x":0,"y":700,"w":1860,"h":1240},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1860,"h":1240},
+	"sourceSize": {"w":1860,"h":1240}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Worm 2.png",
+	"format": "RGBA8888",
+	"size": {"w":1860,"h":1940},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6f20c2a0bf8fb6d7285bc05176addde3:2318ac3abcf462078eda41806b0f76bc:d4edaf886be930a75546ab906e2bc7e7$"
+}
+}

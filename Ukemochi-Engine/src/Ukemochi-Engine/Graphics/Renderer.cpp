@@ -753,7 +753,7 @@ void Renderer::render()
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
 			auto& clip = ani.clips[ani.currentClip];
 			spriteRenderer.texturePath = clip.keyPath;
-			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
+			updateAnimationFrame(clip.spriteName, ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
 
 			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
 			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
@@ -1068,6 +1068,7 @@ void Renderer::drawCircleOutline()
 
 /*!
  * @brief Updates the UV coordinates for the current frame of an animation.
+ * @param spriteName
  * @param currentFrame The current frame index.
  * @param frameWidth Width of each frame in pixels.
  * @param frameHeight Height of each frame in pixels.
@@ -1075,27 +1076,35 @@ void Renderer::drawCircleOutline()
  * @param totalHeight Total height of the sprite sheet.
  * @param uvCoordinates Output UV coordinates for the current frame.
  */
-void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
+void Renderer::updateAnimationFrame(std::string spriteName, int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
 {
 	// Calculate column and row of the current frame
 	int column = currentFrame % (totalWidth / frameWidth);
 	int row = currentFrame / (totalWidth / frameWidth);
 
 	// Calculate normalized UV coordinates
-	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
-	float uvY = 1.0f - ((row + 1) * frameHeight) / static_cast<float>(totalHeight); // Adjusted to flip vertically
-	float uvWidth = frameWidth / static_cast<float>(totalWidth);
-	float uvHeight = frameHeight / static_cast<float>(totalHeight);
+	float uvX = static_cast<float>(column * frameWidth) / static_cast<float>(totalWidth);
+	float uvY = static_cast<float>(row * frameHeight) / static_cast<float>(totalHeight); // Adjusted to flip vertically
+	float uvWidth = static_cast<float>(frameWidth) / static_cast<float>(totalWidth);
+	float uvHeight = static_cast<float>(frameHeight) / static_cast<float>(totalHeight);
 
+	std::shared_ptr<AssetManager> amRef = ECS::GetInstance().GetSystem<AssetManager>();
+
+	float atlasWidth = amRef->spriteData[spriteName].uv.uMax - amRef->spriteData[spriteName].uv.uMin;
+	float atlasHeight = amRef->spriteData[spriteName].uv.vMax - amRef->spriteData[spriteName].uv.vMin;
+	
 	// Set UV coordinates with OpenGL bottom-left orientation
-	uvCoordinates[0] = uvX;                 // Bottom-left
-	uvCoordinates[1] = uvY;
-	uvCoordinates[2] = uvX + uvWidth;       // Bottom-right
-	uvCoordinates[3] = uvY;
-	uvCoordinates[4] = uvX + uvWidth;       // Top-right
-	uvCoordinates[5] = uvY + uvHeight;
-	uvCoordinates[6] = uvX;                 // Top-left
-	uvCoordinates[7] = uvY + uvHeight;
+	uvCoordinates[0] = amRef->spriteData[spriteName].uv.uMin + uvX * atlasWidth;                // Bottom-left
+	uvCoordinates[1] = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * atlasHeight;
+	
+	uvCoordinates[2] = uvCoordinates[0] + uvWidth * atlasWidth;									// Bottom-right
+	uvCoordinates[3] = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * atlasHeight;
+	
+	uvCoordinates[4] = uvCoordinates[0] + uvWidth * atlasWidth;									// Top-right
+	uvCoordinates[5] = amRef->spriteData[spriteName].uv.vMax - uvY * atlasHeight;
+	
+	uvCoordinates[6] = amRef->spriteData[spriteName].uv.uMin + uvX * atlasWidth;				// Top-left
+	uvCoordinates[7] = amRef->spriteData[spriteName].uv.vMax - uvY * atlasHeight;
 }
 
 /*!
