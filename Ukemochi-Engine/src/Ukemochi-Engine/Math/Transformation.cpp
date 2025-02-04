@@ -73,10 +73,7 @@ namespace Ukemochi
 		float new_scale = scaling.min_scale + flip_t * (scaling.max_scale - scaling.min_scale);
 
 		// Set the new scale
-		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
-			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
-		else
-			transform.scale = { new_scale, new_scale };
+		transform.scale = { new_scale, new_scale };
 	}
 
 	/*!***********************************************************************
@@ -87,7 +84,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void Transformation::IncreaseScale(Transform& trans)
 	{
-		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
+		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}
@@ -100,7 +97,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void Transformation::DecreaseScale(Transform& trans)
 	{
-		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
+		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}

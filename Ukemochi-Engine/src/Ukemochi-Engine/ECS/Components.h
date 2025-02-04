@@ -135,6 +135,7 @@ namespace Ukemochi
 
 	struct AnimationClip
 	{
+		std::string spriteName{};		// Name of the spritesheet inside the atlas texture
 		std::string keyPath{};
 		std::string name{};				 // Name of the animation clip
 		Vec2 pivot = Vec2{32.0f, 32.0f}; // Pivot point of the sprite
@@ -407,12 +408,13 @@ namespace Ukemochi
 		float attackRange;
 		float speed;
 		int nearestObj;
+		int collideObj;
 		mutable int prevObject;
 		mutable int prevObject2;
 		bool isCollide;
 		bool isKick;
 		bool hasDealtDamage = false;
-		float atktimer = 5.0f;
+		float atktimer = 3.0f;
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
@@ -425,6 +427,7 @@ namespace Ukemochi
 			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
 			nearestObj = -1;
+			collideObj = -1;
 			switch (type)
 			{
 			case Enemy::FISH:
@@ -584,6 +587,7 @@ namespace Ukemochi
 				health = 0.0f; // Ensure health does not go negative
 			}
 			wasHit = true;
+			atktimer = 3.f;
 			isCollide = false;
 		}
 	};

@@ -62,7 +62,7 @@ namespace Ukemochi
 	void Collision::CheckCollisions()
 	{
 		// Update the collision based on the number of steps
-		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+		/*/for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
 			// Clear the quadtree
 			quadtree->Clear();
@@ -119,9 +119,9 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}
+		}*/
 
-		/* OLD IMPLEMENTATION
+		// OLD IMPLEMENTATION
 		// Update the collision based on the number of steps
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
@@ -162,7 +162,7 @@ namespace Ukemochi
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}*/
+		}//*/
 	}
 
 	/*!***********************************************************************
@@ -181,16 +181,16 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
 		else if (tag == "Knife")
 		{
-			box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
-						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
-						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
+						-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+			box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
+						BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
 		}
 		else
 		{
@@ -568,7 +568,7 @@ namespace Ukemochi
 			case 0: // First combo state
 				if (player_anim.current_frame == 8)
 				{
-					if (!enemy_data.hasDealtDamage)
+					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 5.0f;
@@ -699,14 +699,16 @@ namespace Ukemochi
 
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
-			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
-
-			// Deal damage to the player
-			enemy_data.AttackPlayer(player_data.currentHealth);
+			if (tag2 == "Enemy")
+			{
+				auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+				// Deal damage to the player
+				enemy_data.AttackPlayer(player_data.currentHealth);
+			}
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -756,6 +758,7 @@ namespace Ukemochi
 			// Enemy and Enemy
 			// Block each other
 			return;
+
 			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
 			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
@@ -796,17 +799,15 @@ namespace Ukemochi
 		// Move objects to the point of collision
 		if (!rb1.is_kinematic)
 		{
-			Vec2 newValue = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-			trans1.position.x += newValue.x;
-			trans1.position.y += newValue.y;
-			/*trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());*/
+			Vec2 new_value = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans1.position.x += new_value.x;
+			trans1.position.y += new_value.y;
 		}
 		if (!rb2.is_kinematic)
 		{
-			Vec2 newValue = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-			trans2.position.x += newValue.x;
-			trans2.position.y += newValue.y;
-			//trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			Vec2 new_value = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans2.position.x += new_value.x;
+			trans2.position.y += new_value.y;
 		}
 
 		// Check collision flags and adjust velocities based on impact direction
@@ -879,6 +880,27 @@ namespace Ukemochi
 			if (!rb2.is_kinematic)
 				trans2.position.x = box1.max.x + trans2.scale.x * 0.5f + MIN_OFFSET; // Move box2 to the right
 		}
+
+		//// Box 1 top and box 2 bottom collision response
+		//if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		//{
+		//	// To simulate floor/ceiling collision
+		//	if (!rb1.is_kinematic)
+		//		trans1.position.y = box2.max.y + trans1.scale.y * 0.5f + MIN_OFFSET; // Move box1 upwards
+		//	if (!rb2.is_kinematic)
+		//		trans2.position.y = box1.min.y - trans2.scale.y * 0.5f - MIN_OFFSET; // Move box2 downwards
+		//}
+
+		//// Box 1 bottom and box 2 top collision response
+		//if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		//{
+		//	// To simulate floor/ceiling collision
+		//	if (!rb1.is_kinematic)
+		//		trans1.position.y = box2.min.y - trans1.scale.y * 0.5f - MIN_OFFSET; // Move box1 downwards
+		//	if (!rb2.is_kinematic)
+		//		trans2.position.y = box1.max.y + trans2.scale.y * 0.5f + MIN_OFFSET; // Move box2 upwards
+		//}
+
 
 		// Box 1 top and box 2 bottom collision response
 		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)

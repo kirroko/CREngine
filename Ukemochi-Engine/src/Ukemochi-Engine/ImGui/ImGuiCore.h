@@ -361,7 +361,7 @@ namespace Ukemochi
 		\type
 		std::string
 		*************************************************************************/
-		static std::string m_SpritePath;
+		static std::string m_TexturePath;
 
 		/*!***********************************************************************
 		\brief
