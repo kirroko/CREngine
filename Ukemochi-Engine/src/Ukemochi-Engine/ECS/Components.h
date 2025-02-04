@@ -135,6 +135,7 @@ namespace Ukemochi
 
 	struct AnimationClip
 	{
+		std::string spriteName{};		// Name of the spritesheet inside the atlas texture
 		std::string keyPath{};
 		std::string name{};				 // Name of the animation clip
 		Vec2 pivot = Vec2{32.0f, 32.0f}; // Pivot point of the sprite

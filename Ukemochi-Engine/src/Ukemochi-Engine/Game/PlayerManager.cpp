@@ -53,11 +53,10 @@ namespace Ukemochi
      */
     void PlayerManager::Update() const
     {
-        for (auto& entity : m_Entities)
+        // Update the player manager based on the number of steps
+        for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
-            auto& data = ECS::GetInstance().GetComponent<Player>(entity);
-            // I know that this entity will have transform, rigidbody2d and spriteRender, but it's not implicitly stated when setting the signature
-            if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity))
+            for (auto& entity : m_Entities)
             {
                 UME_ENGINE_WARN("Entity {0} doesn't have Rigidbody2D component", entity);
                 return;
@@ -134,74 +133,130 @@ namespace Ukemochi
                     AudioManager>();
                 // Kick
                 if (data.comboState == 2 && anim.current_frame >= 29 && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
+                auto& data = ECS::GetInstance().GetComponent<Player>(entity);
+                // I know that this entity will have transform, rigidbody2d and spriteRender, but it's not implicitly stated when setting the signature
+                if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity))
                 {
-                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                        audioM.GetSFXindex("Pattack3")))
-                    {
-                        //audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
-                        anim.attackAnimationFinished = true;
-                    }
-                    kickAudio = true;
+                    UME_ENGINE_WARN("Entity {0} doesn't have Rigidbody2D component", entity);
+                    return;
                 }
-            }
-            else
-            {
-                kickAudio = false;
-                data.comboState = -1;
-            }
-            
-            if (data.comboIsAttacking && anim.currentClip == "Idle")
-                data.comboIsAttacking = false;
-            
-            // Player input
-            if (Input::IsKeyTriggered(UME_KEY_J))
-            {
-                auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
-                UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
+                if (!ECS::GetInstance().HasComponent<Animation>(entity))
+                {
+                    UME_ENGINE_WARN("Entity {0} doesn't have Animation component", entity);
+                    return;
+                }
+                if (!ECS::GetInstance().HasComponent<SpriteRender>(entity))
+                {
+                    UME_ENGINE_WARN("Entity {0} doesn't have SpriteRender component", entity);
+                    return;
+                }
 
-                AudioManager& audio = audioObj->GetComponent<AudioManager>();
+                auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+                auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+                auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
+                auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
                 if (!data.comboIsAttacking)
+                    PlayersMovement(rb, anim, sr, data);
+
+                if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
+                    && !data.comboIsAttacking)
+                    anim.SetAnimation("Running");
+                else
+                    anim.SetAnimation("Idle");
+
+
+                // Update knife position
+                if (sr.flipX)
                 {
-                    data.comboState = (data.comboState + 1) % 3;    // loop back after 3 hits
-                    data.comboTimer = data.maxComboTimer;           // Reset the combo timer
-                    data.comboIsAttacking = true;                        // Prevent spamming
+                    auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                    knife_trans.position = Vec3{ trans.position.x + trans.scale.x, trans.position.y,0 };
+                }
+                else
+                {
+                    auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                    knife_trans.position = Vec3{ trans.position.x - trans.scale.x, trans.position.y,0 };
+                }
 
-                    rb.force = Vec2(0,0);
+                static bool kickAudio = false;
+                // Handle Combo timing
+                if (data.comboTimer > 0.0f)
+                {
+                    data.comboTimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
-                    UME_ENGINE_TRACE("ATTACKING! COMBO STATE: {0}",data.comboState);
-                    // Perform attack
-                    switch (data.comboState)
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+                        AudioManager>();
+                    // Kick
+                    if (data.comboState == 2 && anim.current_frame >= 29 && kickAudio == false && audioM.GetSFXindex("Pattack3") != -1)
                     {
-                    case 0:
-                        anim.SetAnimationFromTo("Attack",0,14);
-                        if (audio.GetSFXindex("Pattack1") == -1)
-                            break;
-                        if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
-                            break;
-                        audio.PlaySFX(audio.GetSFXindex("Pattack1"));
-                        // Deal damage?
-                        break;
-                    case 1:
-                        anim.SetAnimationFromTo("Attack",14,25);
-                        if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
-                            audio.StopSFX(audio.GetSFXindex("Pattack1"));
-                        if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
-                            break;
-                        if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
-                            break;
-                        audio.PlaySFX(audio.GetSFXindex("Pattack2"));
-                        anim.attackAnimationFinished = false;
-                        kickAudio = false;
-                        break;
-                    case 2:
-                        anim.SetAnimationFromTo("Attack",25,46);
-                        break;
-                    default:
-                        break;
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                            audioM.GetSFXindex("Pattack3")))
+                        {
+                            //audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+                            anim.attackAnimationFinished = true;
+                        }
+                        kickAudio = true;
                     }
+                }
+                else
+                {
+                    kickAudio = false;
+                    data.comboState = -1;
+                }
 
-                    UME_ENGINE_INFO("Current clip name: {0}", anim.currentClip);
+                if (data.comboIsAttacking && anim.currentClip == "Idle")
+                    data.comboIsAttacking = false;
+
+                // Player input
+                if (Input::IsKeyTriggered(UME_KEY_J))
+                {
+                    auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                    UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
+
+                        AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                    if (!data.comboIsAttacking)
+                    {
+                        data.comboState = (data.comboState + 1) % 3;    // loop back after 3 hits
+                        data.comboTimer = data.maxComboTimer;           // Reset the combo timer
+                        data.comboIsAttacking = true;                        // Prevent spamming
+
+                        rb.force = Vec2(0, 0);
+
+                        UME_ENGINE_TRACE("ATTACKING! COMBO STATE: {0}", data.comboState);
+                        // Perform attack
+                        switch (data.comboState)
+                        {
+                        case 0:
+                            anim.SetAnimationFromTo("Attack", 0, 14);
+                            if (audio.GetSFXindex("Pattack1") == -1)
+                                break;
+                            if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
+                                break;
+                            audio.PlaySFX(audio.GetSFXindex("Pattack1"));
+                            // Deal damage?
+                            break;
+                        case 1:
+                            anim.SetAnimationFromTo("Attack", 14, 25);
+                            if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
+                                audio.StopSFX(audio.GetSFXindex("Pattack1"));
+                            if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
+                                break;
+                            if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
+                                break;
+                            audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+                            anim.attackAnimationFinished = false;
+                            kickAudio = false;
+                            break;
+                        case 2:
+                            anim.SetAnimationFromTo("Attack", 25, 46);
+                            break;
+                        default:
+                            break;
+                        }
+
+                        UME_ENGINE_INFO("Current clip name: {0}", anim.currentClip);
+                    }
                 }
             }
         }
