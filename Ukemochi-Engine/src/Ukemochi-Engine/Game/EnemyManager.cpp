@@ -425,8 +425,18 @@ namespace Ukemochi
                                 GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
                                 newObject.GetComponent<Transform>().position = enemytransform.position;
                                 newObject.GetComponent<Animation>().SetAnimation("Projectile");
-                                newObject.GetComponent<Rigidbody2D>().velocity.x = enemycomponent.dirX * 1000;
-                                newObject.GetComponent<Rigidbody2D>().velocity.y = enemycomponent.dirY * 1000;
+
+                                newObject.GetComponent<Rigidbody2D>().velocity.x = enemycomponent.dirX * 500;
+                                newObject.GetComponent<Rigidbody2D>().velocity.y = enemycomponent.dirY * 500;
+
+                                if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = true;
+                                }
+                                else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = false;
+                                }
                             }
                             else
                             {
