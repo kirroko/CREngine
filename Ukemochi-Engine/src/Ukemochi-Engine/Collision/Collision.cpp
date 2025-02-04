@@ -699,10 +699,12 @@ namespace Ukemochi
 
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
-			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
-
-			// Deal damage to the player
-			enemy_data.AttackPlayer(player_data.currentHealth);
+			if (tag2 == "Enemy")
+			{
+				auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+				// Deal damage to the player
+				enemy_data.AttackPlayer(player_data.currentHealth);
+			}
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);

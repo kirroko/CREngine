@@ -1368,7 +1368,7 @@
                     "Name": "Transform",
                     "Position": [791.0, 540.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [101.14286041259766, 151.7142791748047]
+                    "Scale": [168.57142639160156, 168.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1829,6 +1829,50 @@
                     "Sprite": "bush 2",
                     "Shape": 0,
                     "Layer": 1
+                }]
+        },{
+            "Name": "enemybullet",
+            "Tag": "EnemyProjectile",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [25.0, 25.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [0.0, 0.0],
+                    "Max": [0.0, 0.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Projectile": ["Projectile_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "Projectile", 5, 0.5, 0.5, 130, 130, 130, 390, 260, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Projectile"
                 }]
         }]
 }

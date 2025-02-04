@@ -408,7 +408,7 @@ namespace Ukemochi
 		bool isCollide;
 		bool isKick;
 		bool hasDealtDamage = false;
-		float atktimer = 5.0f;
+		float atktimer = 3.0f;
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
@@ -579,6 +579,7 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			atktimer = 3.f;
 			isCollide = false;
 		}
 	};
