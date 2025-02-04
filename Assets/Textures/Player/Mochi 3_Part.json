@@ -1,0 +1,36 @@
+{"frames": {
+
+"Attack_Base.png":
+{
+	"frame": {"x":0,"y":0,"w":4096,"h":1360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":4096,"h":1360},
+	"sourceSize": {"w":4096,"h":1360}
+},
+"Attack_Blue.png":
+{
+	"frame": {"x":0,"y":1360,"w":4096,"h":1360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":4096,"h":1360},
+	"sourceSize": {"w":4096,"h":1360}
+},
+"Attack_Red.png":
+{
+	"frame": {"x":0,"y":2720,"w":4096,"h":1360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":4096,"h":1360},
+	"sourceSize": {"w":4096,"h":1360}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Mochi 3.png",
+	"format": "RGBA8888",
+	"size": {"w":4096,"h":4080},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b3c8c203ef465df2d6baa5f033ffacb4:4b35bc14c834932a0c0a134126744d84:292325c993682f393a6cc866e81b2066$"
+}
+}

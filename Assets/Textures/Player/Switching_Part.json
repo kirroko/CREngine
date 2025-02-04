@@ -1,0 +1,60 @@
+{"frames": {
+
+"Base To Blue_0000.png":
+{
+	"frame": {"x":0,"y":0,"w":880,"h":880},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":880,"h":880},
+	"sourceSize": {"w":880,"h":880}
+},
+"Base to Red_0000.png":
+{
+	"frame": {"x":880,"y":0,"w":880,"h":880},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":880,"h":880},
+	"sourceSize": {"w":880,"h":880}
+},
+"Blue to Base_0000.png":
+{
+	"frame": {"x":0,"y":880,"w":880,"h":880},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":880,"h":880},
+	"sourceSize": {"w":880,"h":880}
+},
+"Blue to Red_0000.png":
+{
+	"frame": {"x":880,"y":880,"w":880,"h":880},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":880,"h":880},
+	"sourceSize": {"w":880,"h":880}
+},
+"Red to Base_0000.png":
+{
+	"frame": {"x":0,"y":1760,"w":880,"h":880},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":880,"h":880},
+	"sourceSize": {"w":880,"h":880}
+},
+"Red to Blue_0000.png":
+{
+	"frame": {"x":880,"y":1760,"w":880,"h":880},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":880,"h":880},
+	"sourceSize": {"w":880,"h":880}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Switching.png",
+	"format": "RGBA8888",
+	"size": {"w":1760,"h":2640},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:cdb51f2a4e6418ee42bff63893eac6ca:6306e5fc2551924d0f0da3fc28d07978:5bc7d28e5c6de8b7c0c0131ac6f50e5a$"
+}
+}
