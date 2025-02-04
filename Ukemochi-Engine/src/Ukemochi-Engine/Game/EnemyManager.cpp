@@ -105,7 +105,7 @@ namespace Ukemochi
 
 
                 // If the enemy is in DEAD state, remove it from the list after processing DeadState
-                if (enemycomponent.state == Enemy::DEAD)
+                if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
                 {
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     //dont overlap kick sound
