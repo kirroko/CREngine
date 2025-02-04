@@ -274,89 +274,83 @@ namespace Ukemochi
 				//if it is another directory ignore
 				continue;
 			}
-			else
+			
+			//file is a file
+			const std::filesystem::path& to_load = dir.path();
+			std::string visualize = to_load.generic_string();
+			if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
 			{
-				//file is a file
-				std::filesystem::path to_load = dir.path();
-				std::string visualize = to_load.generic_string();
-				if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
+				std::string file_path = to_load.generic_string();
+				std::replace(file_path.begin(), file_path.end(), '\\', '/');
+				if (isAtlasTexture(file_path))
 				{
-					std::string file_path = to_load.generic_string();
-					std::replace(file_path.begin(), file_path.end(), '\\', '/');
-					if (isAtlasTexture(file_path))
-					{
-						std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
+					// Derive sheetName from file_path
+					std::string sheetName = file_path.substr(file_path.find_last_of('/') + 1);
+					sheetName = sheetName.substr(0, sheetName.find_last_of('.')); // Remove extension
 
-						// Check if the corresponding JSON file exists before parsing
-						if (std::filesystem::exists(json_path))
-						{
-							parseAtlasJSON(json_path, file_path);
-						}
-						else
-						{
-							UME_ENGINE_WARN("No JSON found for atlas texture: {}", file_path);
-						}
-					}
-					else
-					{
-						// Handle regular texture
-						addTexture(file_path);
-					}
+					// Handle atlas texture
+					std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
+					parseAtlasJSON(json_path, sheetName); 
 				}
-				else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
+				else
 				{
-					std::string file_path = to_load.generic_string();
-					std::replace(file_path.begin(), file_path.end(), '\\', '/');
-					addSound(file_path);
+					// Handle regular texture
+					addTexture(file_path);
 				}
-				else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
+			}
+			else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
+			{
+				std::string file_path = to_load.generic_string();
+				std::replace(file_path.begin(), file_path.end(), '\\', '/');
+				addSound(file_path);
+			}
+			else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
+			{
+				std::string holder = to_load.filename().generic_string();
+				std::string file_name = holder.substr(0, holder.find_first_of("."));
+
+				if (to_load.extension() == ".vert")
 				{
-					std::string holder = to_load.filename().generic_string();
-					std::string file_name = holder.substr(0, holder.find_first_of("."));
-
-					if (to_load.extension() == ".vert")
+					std::string vertex_shader = to_load.generic_string();
+					std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
+					std::string frag_shader{};
+					for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
 					{
-						std::string vertex_shader = to_load.generic_string();
-						std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
-						std::string frag_shader{};
-						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
-						{
-							std::filesystem::path checker = match_shader.path();
-							std::string holder2 = checker.filename().generic_string();
-							std::string check_name = holder2.substr(0, holder.find_first_of("."));
+						std::filesystem::path checker = match_shader.path();
+						std::string holder2 = checker.filename().generic_string();
+						std::string check_name = holder2.substr(0, holder.find_first_of("."));
 
-							check_name;
-							if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
-							{
-								frag_shader = checker.generic_string();
-								std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
-								break;
-							}
+						check_name;
+						if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
+						{
+							frag_shader = checker.generic_string();
+							std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
+							break;
 						}
-						addShader(file_name, vertex_shader, frag_shader);
 					}
-					else
+					addShader(file_name, vertex_shader, frag_shader);
+				}
+				else
+				{
+					std::string frag_shader = to_load.generic_string();
+					std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
+					std::string vertex_shader{};
+
+					for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
 					{
-						std::string frag_shader = to_load.generic_string();
-						std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
-						std::string vertex_shader{};
+						std::filesystem::path checker = match_shader.path();
+						std::string holder2 = checker.filename().generic_string();
+						std::string check_name = holder2.substr(0, holder.find_first_of("."));
 
-						for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
+						check_name;
+						if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
 						{
-							std::filesystem::path checker = match_shader.path();
-							std::string holder2 = checker.filename().generic_string();
-							std::string check_name = holder2.substr(0, holder.find_first_of("."));
-
-							check_name;
-							if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
-							{
-								vertex_shader = checker.generic_string();
-								std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
-								break;
-							}
+							vertex_shader = checker.generic_string();
+							std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
+							break;
 						}
-						addShader(file_name, vertex_shader, frag_shader);
 					}
+					addShader(file_name, vertex_shader, frag_shader);
 				}
 			}
 		}
@@ -371,7 +365,7 @@ namespace Ukemochi
 		return file_path.find("_Part") != std::string::npos;
 	}
 
-	std::string Ukemochi::AssetManager::getAtlasMetaData(const std::string& atlasPath)
+	std::string AssetManager::getAtlasMetaData(const std::string& atlasPath)
 	{
 		std::filesystem::path jsonPath = atlasPath;
 		jsonPath.replace_extension(".json");
@@ -382,98 +376,155 @@ namespace Ukemochi
 		}
 		return ""; // Return empty string if no JSON metadata is found
 	}
-}
-
-void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string& atlasFilePath)
-{
-	int atlasWidth = 0, atlasHeight = 0, channels = 0;
-
-	// Load atlas texture to get dimensions
-	stbi_uc* data = stbi_load(atlasFilePath.c_str(), &atlasWidth, &atlasHeight, &channels, 0);
-	if (!data)
+	
+	void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string& sheetName)
 	{
-		UME_ENGINE_ERROR("Failed to load atlas texture: {}", atlasFilePath);
-		return;
-	}
-	stbi_image_free(data); // Free texture data after getting dimensions
-
-	// Open JSON file
-	std::ifstream file(jsonPath);
-	if (!file.is_open())
-	{
-		UME_ENGINE_ERROR("Failed to open JSON file: {}", jsonPath);
-		return;
-	}
-
-	rapidjson::IStreamWrapper isw(file);
-	rapidjson::Document document;
-	document.ParseStream(isw);
-
-	if (document.HasMember("frames"))
-	{
-		const auto& frames = document["frames"];
-		for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
+		int atlasWidth = 0, atlasHeight = 0, channels = 0;
+		// std::string atlasFilePath = "../Assets/Textures/Environment/" + sheetName + ".png";
+		std::string atlasFilePath = jsonPath;
+		size_t pos = atlasFilePath.find(".json");
+		if (pos != std::string::npos)
+			atlasFilePath.replace(pos, 5, ".png");
+		
+		stbi_uc* data = stbi_load(atlasFilePath.c_str(), &atlasWidth, &atlasHeight, &channels, 0);
+		if (!data)
 		{
-			const std::string spriteName = it->name.GetString();
-			std::string standardizedSpriteName = spriteName.substr(0, spriteName.find_last_of('.'));
-
-			const auto& frame = it->value["frame"];
-
-			// Extract UV coordinates
-			UV uv;
-			uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
-			uv.uMax = (static_cast<GLfloat>(frame["x"].GetInt()) + static_cast<GLfloat>(frame["w"].GetInt())) / atlasWidth;
-			uv.vMax = 1.0f - (static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight);
-			uv.vMin = 1.0f - ((static_cast<GLfloat>(frame["y"].GetInt()) + static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight);
-
-			// Store UV data dynamically
-			spriteData[standardizedSpriteName] = { uv, atlasFilePath };
+			UME_ENGINE_ERROR("Failed to load atlas texture: {}", sheetName);
+			return;
 		}
-	}
+		stbi_image_free(data); // Free texture data after getting dimensions
+
+		std::ifstream file(jsonPath);
+		if (!file.is_open())
+		{
+			UME_ENGINE_ERROR("Failed to open JSON file: {0}", jsonPath);
+			return;
+		}
+
+		rapidjson::IStreamWrapper isw(file);
+		rapidjson::Document document;
+		document.ParseStream(isw);
+
+		if (document.HasMember("frames"))
+		{
+			const auto& frames = document["frames"];
+			for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
+			{
+				// Get the sprite name and remove the file extension
+				const std::string spriteName = it->name.GetString();
+				std::string standardizedSpriteName = spriteName.substr(0, spriteName.find_last_of('.'));
+
+				const auto& frame = it->value["frame"];
+				//bool isRotated = it->value["rotated"].GetBool();
+				
+				// Extract UV coordinates
+				UV uv;
+
+				// Handle non-rotated sprite
+				uv.uMin = static_cast<GLfloat>(frame["x"].GetInt()) / atlasWidth;
+				uv.uMax = (static_cast<GLfloat>(frame["x"].GetInt()) + static_cast<GLfloat>(frame["w"].GetInt())) / atlasWidth;
+
+				uv.vMax = 1.0f - (static_cast<GLfloat>(frame["y"].GetInt()) / atlasHeight);
+				uv.vMin = 1.0f - ((static_cast<GLfloat>(frame["y"].GetInt()) + static_cast<GLfloat>(frame["h"].GetInt())) / atlasHeight);
+
+				Vec2 dimension = Vec2(static_cast<float>(frame["w"].GetInt()), static_cast<float>(frame["h"].GetInt()));
+				Vec2 position = Vec2(static_cast<float>(frame["x"].GetInt()),static_cast<float>(frame["y"].GetInt()));
+				
+				//std::cout << "Atlas Dimensions: " << atlasWidth << "x" << atlasHeight << std::endl;
+				//std::cout << "Sprite: " << spriteName
+				//	<< ", x: " << frame["x"].GetInt()
+				//	<< ", y: " << frame["y"].GetInt()
+				//	<< ", w: " << frame["w"].GetInt()
+				//	<< ", h: " << frame["h"].GetInt() << std::endl;
+
+				//std::cout << "UV Coordinates for " << spriteName << ": "
+				//	<< "uMin=" << uv.uMin << ", vMin=" << uv.vMin
+				//	<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
+
+				// Store UV
+				spriteData[standardizedSpriteName] = { uv, sheetName, dimension, position };
+			}
+		}
 
 	// Add the atlas texture to the system
 	addTexture(atlasFilePath);
 }
 
-
-void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
-{
-	spriteSheets[sheetName] = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-}
-
-void AssetManager::bindSpriteSheet(const std::string& sheetName) 
-{
-	if (spriteSheets.find(sheetName) != spriteSheets.end()) 
+	std::vector<std::string> AssetManager::getAtlasJSONData(
+		const std::string& jsonPath)
 	{
-		spriteSheets[sheetName]->Bind();
+		std::string convertedExtension = jsonPath;
+		size_t pos = convertedExtension.find(".png");
+		if (pos != std::string::npos)
+			convertedExtension.replace(pos, 5, ".json");
+		
+		std::ifstream file(convertedExtension);
+		if (!file.is_open())
+		{
+			UME_ENGINE_ERROR("File cannot be open! {0}", convertedExtension);
+			return std::vector<std::string>{}; // return empty
+		}
+
+		rapidjson::IStreamWrapper isw(file);
+		rapidjson::Document doc;
+		doc.ParseStream(isw);
+
+		std::vector<std::string> payload;
+
+		if (doc.HasMember("frames"))
+		{
+			const auto& frames = doc["frames"];
+			for (auto it = frames.MemberBegin(); it != frames.MemberEnd(); it++)
+			{
+				const std::string spriteName = it->name.GetString();
+				std::string standardSpriteName = spriteName.substr(0, spriteName.find_last_of('.'));
+
+				payload.push_back(standardSpriteName);
+			}
+		}
+
+		return payload;
+	}
+
+
+	void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
+	{
+		spriteSheets[sheetName] = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	}
+
+	void AssetManager::bindSpriteSheet(const std::string& sheetName) 
+	{
+		if (spriteSheets.find(sheetName) != spriteSheets.end()) 
+		{
+			spriteSheets[sheetName]->Bind();
+		}
+	}
+
+	void AssetManager::debugPrintSpriteData() const
+	{
+		std::cout << "SpriteData contains the following keys:" << std::endl;
+		for (const auto& [key, value] : spriteData) {
+			std::cout << key << std::endl;
+		}
+	}
+
+	const AssetManager::SpriteInfo& AssetManager::getSpriteData(const std::string& spriteName)
+	{
+		auto it = spriteData.find(spriteName);
+		if (it == spriteData.end()) {
+			std::cerr << "Error: Sprite '" << spriteName << "' not found in spriteData!" << std::endl;
+			throw std::out_of_range("Sprite name not found: " + spriteName);
+		}
+		return it->second;
+	}
+
+	bool AssetManager::isTextureInAtlas(const std::string& texturePath) const
+	{
+		// Extract the file name without the extension
+		std::string fileName = texturePath.substr(texturePath.find_last_of('/') + 1);
+		fileName = fileName.substr(0, fileName.find_last_of('.')); // Remove the extension
+
+		// Check if the fileName exists as a key in spriteData
+		return spriteData.find(fileName) != spriteData.end();
 	}
 }
-
-void AssetManager::debugPrintSpriteData() const
-{
-	std::cout << "SpriteData contains the following keys:" << std::endl;
-	for (const auto& [key, value] : spriteData) {
-		std::cout << key << std::endl;
-	}
-}
-
-const AssetManager::SpriteInfo& AssetManager::getSpriteData(const std::string& spriteName)
-{
-	auto it = spriteData.find(spriteName);
-	if (it == spriteData.end()) {
-		std::cerr << "Error: Sprite '" << spriteName << "' not found in spriteData!" << std::endl;
-		throw std::out_of_range("Sprite name not found: " + spriteName);
-	}
-	return it->second;
-}
-
-bool AssetManager::isTextureInAtlas(const std::string& texturePath) const
-{
-	// Extract the file name without the extension
-	std::string fileName = texturePath.substr(texturePath.find_last_of('/') + 1);
-	fileName = fileName.substr(0, fileName.find_last_of('.')); // Remove the extension
-
-	// Check if the fileName exists as a key in spriteData
-	return spriteData.find(fileName) != spriteData.end();
-}
-
