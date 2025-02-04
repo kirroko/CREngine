@@ -2069,6 +2069,8 @@ namespace Ukemochi
                 ImGui::Text("Sortting Layer");
                 ImGui::InputInt("##Sorting Layer", &sprite.layer);
 
+                ImGui::Checkbox("Flip X", &sprite.flipX);
+
                 // Error Popup for invalid file type
                 if (ImGui::BeginPopup("InvalidTextureFileType"))
                 {
