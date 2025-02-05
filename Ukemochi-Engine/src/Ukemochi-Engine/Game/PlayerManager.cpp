@@ -13,9 +13,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "PlayerManager.h"
 
-#include <dinput.h>
-#include <windowsx.h>
-
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
@@ -48,6 +45,32 @@ namespace Ukemochi
         }
     }
 
+    std::string PlayerManager::SoulAnimation(const PlayerSoul& soulData, std::string clip) const
+    {
+        std::string temp = std::move(clip);
+        switch (soulData.current_soul)  // NOLINT(clang-diagnostic-switch-enum)
+        {
+        case EMPTY: // Grey
+            break;
+        case FISH: // Blue
+            temp.push_back('b');
+            break;
+        case WORM: // Red
+            temp.push_back('r');
+            break;
+        default:
+            break;
+        }
+
+        return temp;
+    }
+
+    bool PlayerManager::CheckIfIdle(const Animation& anim) const
+    {
+        std::string check = anim.currentClip;
+        return check.find("Idle") != std::string::npos;
+    }
+
     /**
      * @brief update the PlayerManager
      */
@@ -59,6 +82,8 @@ namespace Ukemochi
             for (auto& entity : m_Entities)
             {
                 auto& data = ECS::GetInstance().GetComponent<Player>(entity);
+                auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
+                
                 // I know that this entity will have transform, rigidbody2d and spriteRender, but it's not implicitly stated when setting the signature
                 if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity))
                 {
@@ -86,9 +111,11 @@ namespace Ukemochi
 
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
                     && !data.comboIsAttacking)
-                    anim.SetAnimation("Running");
+                    anim.SetAnimation(SoulAnimation(soulData,"Running"));
+                    // anim.SetAnimation("Running");
                 else
-                    anim.SetAnimation("Idle");
+                    anim.SetAnimation(SoulAnimation(soulData,"Idle"));
+                    // anim.SetAnimation("Idle");
 
             // Play the running sound only at frame 2
             static bool runningSoundPlayed = false;
@@ -153,7 +180,7 @@ namespace Ukemochi
                     data.comboState = -1;
                 }
 
-                if (data.comboIsAttacking && anim.currentClip == "Idle")
+                if (data.comboIsAttacking && CheckIfIdle(anim))
                     data.comboIsAttacking = false;
 
                 // Player input
@@ -162,7 +189,7 @@ namespace Ukemochi
                     auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
                     UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
 
-                        AudioManager& audio = audioObj->GetComponent<AudioManager>();
+                    AudioManager& audio = audioObj->GetComponent<AudioManager>();
 
                     if (!data.comboIsAttacking)
                     {
@@ -177,7 +204,8 @@ namespace Ukemochi
                         switch (data.comboState)
                         {
                         case 0:
-                            anim.SetAnimationFromTo("Attack", 0, 14);
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),0,14);
+                            // anim.SetAnimationFromTo("Attack", 0, 14);
                             if (audio.GetSFXindex("Pattack1") == -1)
                                 break;
                             if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
@@ -186,7 +214,8 @@ namespace Ukemochi
                             // Deal damage?
                             break;
                         case 1:
-                            anim.SetAnimationFromTo("Attack", 14, 25);
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),14,25);
+                            // anim.SetAnimationFromTo("Attack", 14, 25);
                             if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
                                 audio.StopSFX(audio.GetSFXindex("Pattack1"));
                             if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
@@ -198,7 +227,8 @@ namespace Ukemochi
                             kickAudio = false;
                             break;
                         case 2:
-                            anim.SetAnimationFromTo("Attack", 25, 46);
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),25,46);
+                            // anim.SetAnimationFromTo("Attack", 25, 46);
                             break;
                         default:
                             break;
@@ -224,8 +254,10 @@ namespace Ukemochi
             // which is one entity...
             auto& data = ECS::GetInstance().GetComponent<Player>(entity);
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
-
-            anim.SetAnimationUninterrupted("Hurt");
+            auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
+            
+            anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
+            // anim.SetAnimationUninterrupted("Hurt");
             data.comboState = 0;
             data.canAttack = false;
             data.comboTimer = 0.0f;
