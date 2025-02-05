@@ -474,7 +474,7 @@ namespace Ukemochi
                                     //attack
                                     if (playerObj != nullptr)
                                     {
-                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
                                         ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                                     }
                                 }
@@ -485,14 +485,14 @@ namespace Ukemochi
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                         {
-                            enemycomponent.atktimer = 3.0f;
+                            enemycomponent.atktimer = 2.0f;
                         }
                     }
                     else if (enemycomponent.type == enemycomponent.WORM)
                     {
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
                         {
-                            enemycomponent.atktimer = 3.0f;
+                            enemycomponent.atktimer = 2.0f;
                             enemycomponent.wormshoot = false;
                         }
 
@@ -509,7 +509,7 @@ namespace Ukemochi
                                     //attack
                                     if (playerObj != nullptr)
                                     {
-                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
                                         ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                                     }
                                 }

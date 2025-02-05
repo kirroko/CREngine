@@ -571,7 +571,7 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 5.0f;
+						enemy_data.atktimer = 2.0f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -595,7 +595,7 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 5.0f;
+						enemy_data.atktimer = 2.0f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -631,7 +631,7 @@ namespace Ukemochi
 					// Deal damage during the knockback kick
 					if (!enemy_data.hasDealtDamage)
 					{
-						enemy_data.atktimer = 5.0f;
+						enemy_data.atktimer = 2.0f;
 						
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -665,7 +665,7 @@ namespace Ukemochi
 			if (!enemy_data.hasDealtDamage)
 			{
 				ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-				enemy_data.atktimer = 5.0f;
+				enemy_data.atktimer = 2.0f;
 
 				// Deal 2x dmg if the player and the enemy has the same soul type
 				if (player_soul.current_soul == enemy_data.type)
@@ -703,7 +703,7 @@ namespace Ukemochi
 			{
 				auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 				// Deal damage to the player
-				enemy_data.AttackPlayer(player_data.currentHealth);
+				//enemy_data.AttackPlayer(player_data.currentHealth);
 			}
 			else if (tag2 == "EnemyProjectile" && ECS::GetInstance().HasComponent<EnemyBullet>(entity2))
 			{
