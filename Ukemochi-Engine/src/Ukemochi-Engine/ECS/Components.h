@@ -4,7 +4,7 @@
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
-\date       Nov 17, 2024
+\date       Jan 24, 2025
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -20,7 +20,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Math/Matrix4x4.h" // for Mtx44 struct
 #include "../Math/Vector2D.h"  // for Vec2 struct
 #include "../Audio/Audio.h"	   // for Audio class
-
 
 namespace Ukemochi
 {
@@ -76,7 +75,7 @@ namespace Ukemochi
 
 		int collision_flag{};	// Track the collision flags
 		bool is_trigger{false}; // If true, act as a trigger
-								// bool enabled{ true };		   // If true, box collision is enabled
+		// bool enabled{ true };// If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -136,6 +135,7 @@ namespace Ukemochi
 
 	struct AnimationClip
 	{
+		std::string spriteName{};		// Name of the spritesheet inside the atlas texture
 		std::string keyPath{};
 		std::string name{};				 // Name of the animation clip
 		Vec2 pivot = Vec2{32.0f, 32.0f}; // Pivot point of the sprite
@@ -164,7 +164,7 @@ namespace Ukemochi
 		std::string currentClip{};							  // Name of the active animation.
 		std::string defaultClip{};							  // Name of the default animation.
 		int current_frame = 0;								  // Current frame index
-		int original_frame = 0;								  // Original frame index
+		int stop_frame = 0;
 		float time_since_last_frame = 0.0f;					  // Time since the last frame
 		float original_frame_time = 0.05f;					  // Original frame time
 		bool is_playing = true;								  // Is the animation playing?
@@ -179,10 +179,46 @@ namespace Ukemochi
 			{
 				currentClip = name;
 				current_frame = 0;
+				stop_frame = 0;
 				time_since_last_frame = 0.0f;
 
 				return true;
 			}
+			return false;
+		}
+
+		bool SetAnimation(const std::string &name, const int initialFrame)
+		{
+			doNotInterrupt = false;
+			isAttacking = false;
+			if (clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt && !isAttacking)
+			{
+				currentClip = name;
+				current_frame = initialFrame;
+				stop_frame = 0;
+				time_since_last_frame = 0.0f;
+
+				return true;
+			}
+			return false;
+		}
+
+		bool SetAnimationFromTo(const std::string &name, const int initialFrame, const int untilFrame)
+		{
+			doNotInterrupt = false;
+			isAttacking = false;
+			if (clips.find(name) != clips.end() && name != currentClip && !doNotInterrupt && !isAttacking)
+			{
+				currentClip = name;
+				current_frame = initialFrame;
+				stop_frame = untilFrame;
+				time_since_last_frame = 0.0f;
+
+				doNotInterrupt = true;
+				isAttacking = true;
+				return true;
+			}
+
 			return false;
 		}
 
@@ -191,6 +227,13 @@ namespace Ukemochi
 			doNotInterrupt = false;
 			isAttacking = false;
 			return SetAnimation(name);
+		}
+
+		bool SetAnimationImmediately(const std::string &name, const int initialFrame)
+		{
+			doNotInterrupt = false;
+			isAttacking = false;
+			return SetAnimation(name,initialFrame);
 		}
 
 		bool SetAnimationUninterrupted(const std::string &name)
@@ -223,20 +266,20 @@ namespace Ukemochi
 			{
 				attackAnimationFinished = false;
 			}
-
-
+			
 			// Advance new frame
 			if (time_since_last_frame >= clip.frame_time)
 			{
 				current_frame++;
 				// time_since_last_frame -= clip.frame_time;
-				if (current_frame >= clip.total_frames)
+				if (current_frame >= clip.total_frames || (current_frame >= stop_frame && stop_frame != 0))
 				{
 					current_frame = clip.looping ? 0 : clip.total_frames - 1;
 					doNotInterrupt = false;
 					isAttacking = false;
 					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
 				}
+
 				time_since_last_frame = 0.0f; // Reset time
 			}
 			// Renderer system handles the UV coordinates for us
@@ -258,6 +301,12 @@ namespace Ukemochi
 
 			clips[currentClip].frame_time = original_frame_time;
 		}
+
+		int GetCurrentFrame() const
+		{
+			return current_frame;
+		}
+
 	};
 
 	struct SpriteRender
@@ -285,19 +334,44 @@ namespace Ukemochi
 		void *methodInstance = nullptr; // MonoMethod from client script
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Player component structure.
+	*************************************************************************/
 	struct Player
 	{
 		int maxHealth = 100;
 		int currentHealth = 100;
-		int maxComboHits = 3;
-		int currentComboHits = 0;
+		int comboState = 0;			// Tracks current combat state 
 		int comboDamage = 10;
-		float attackCooldown = 0.5f;
-		float attackTimer = 0.0f;
+		float comboTimer = 0.0f;	// Tracks time since last attack
+		float maxComboTimer = 5.0f; // Max time to continue combo 
 		float playerForce = 2500.0f;
 		bool isDead = false;
 		bool canAttack = true;
-		bool isAttacking = false;
+		bool comboIsAttacking = false;
+	};
+
+	/*!***********************************************************************
+	\brief
+	 Player soul component structure.
+	*************************************************************************/
+	enum SoulType { EMPTY = -1, FISH, WORM, NUM_OF_SOULS }; // The type of souls
+	struct PlayerSoul
+	{
+		SoulType current_soul = EMPTY;					 // The player's current active soul
+		float soul_bars[NUM_OF_SOULS]{};				 // The player's soul bars, used for soul passive attacks
+		int soul_charges[NUM_OF_SOULS]{};				 // The player's soul charges, used for soul abilities
+
+		float skill_damages[NUM_OF_SOULS]{ 50.f, 50.f }; // The damage of the skills
+		float skill_duration = 1.f;						 // The duration of the skill
+		float skill_cooldown = 5.f;						 // The cooldown of the skill
+		float skill_timer = 0.f;						 // The timer for skill ready
+		bool skill_ready = false;						 // The skill's ready state
+
+		float soul_decay_amount = 10.f;					 // The amount of soul to decay
+		float soul_decay_rate = 5.f;					 // The rate of decay for the soul bar
+		float soul_decay_timer = 0.f;					 // The timer for soul decay
 	};
 
 	/*!***********************************************************************
@@ -310,6 +384,7 @@ namespace Ukemochi
 		{
 			ROAM,
 			CHASE,
+			STANDBY,
 			ATTACK,
 			DEAD,
 		};
@@ -333,25 +408,33 @@ namespace Ukemochi
 		float attackRange;
 		float speed;
 		int nearestObj;
+		int collideObj;
 		mutable int prevObject;
+		mutable int prevObject2;
 		bool isCollide;
-		float atktimer = 5.0f;
+		bool isKick;
+		bool hasDealtDamage = false;
+		float atktimer = 3.0f;
 		bool isDead = false;
+		bool isWithPlayer = false;
+		float timeSinceTargetReached = 0.f;
+		bool wasHit = false;  // New flag for hit detection
 
 		Enemy() = default;
 
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
-			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), isCollide(false)
+			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
 			nearestObj = -1;
+			collideObj = -1;
 			switch (type)
 			{
 			case Enemy::FISH:
 				health = 50.f;
 				attackPower = 20.f;
 				attackRange = 300.f;
-				speed = 5000.f;
+				speed = 2000.f;
 				break;
 			case Enemy::WORM:
 				health = 50.f;
@@ -503,6 +586,8 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			wasHit = true;
+			atktimer = 3.f;
 			isCollide = false;
 		}
 	};

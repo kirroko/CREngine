@@ -24,9 +24,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "UIButton.h"
 #include "imgui.h"
 #include "ImGuizmo.h"
+#include "../ECS/ECS.h"
+#include "UIButton.h"
 
 using namespace Ukemochi;
 
+std::string getSpriteNameFromPath(const std::string& texturePath)
+{
+	std::string fileName = std::filesystem::path(texturePath).filename().string();
+
+	// Remove the extension if it exists
+	size_t dotIndex = fileName.find_last_of('.');
+	if (dotIndex != std::string::npos) {
+		fileName = fileName.substr(0, dotIndex);
+	}
+
+	return fileName;
+}
 /*!
  * @brief Constructor for the Renderer class.
  * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
@@ -88,7 +102,7 @@ void Renderer::init()
 
 	// Load multiple fonts into the text renderer
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
-	textRenderer->loadTextFont("Exo2", "../Assets/Fonts/Exo2-Regular.ttf");
+	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
 
 	// Add text objects
 	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
@@ -103,7 +117,7 @@ void Renderer::init()
 
 	batchRenderer->init(shaderProgram);
 
-	UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
+	//UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
 	debugBatchRenderer->init(debug_shader_program);
@@ -111,16 +125,80 @@ void Renderer::init()
 	colorBufferBatchRenderer = std::make_unique<ColorBufferBatchRenderer2D>();
 	colorBufferBatchRenderer->init(object_picking_shader_program);
 
-	// Add buttons
-	//UIRenderer->addButton(UIButton("pauseButton",
-	//	glm::vec2(100.0f, 700.0f),
-	//	glm::vec2(150.0f, 100.0f),
-	//	5,  // Replace with actual texture ID
-	//	"hi",
-	//	glm::vec3(1.0f, 0.f, 0.f),
-	//	"Exo2",
-	//	1.0f
-	//));
+	batchRendererUI = std::make_shared<BatchRenderer2D>();
+	batchRendererUI->init(UI_shader_program);
+
+}
+
+void Renderer::finding_player_ID()
+{
+	for (auto const& entity : m_Entities)
+	{
+		if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
+		{
+			playerID = entity;
+			break;
+		}
+	}
+}
+
+void Renderer::HandleInputTesting()
+{
+	if (ECS::GetInstance().HasComponent<Player>(playerID))
+	{
+		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
+		auto& soul_count = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
+
+		player.currentHealth -= 10;
+		if (player.currentHealth < 0)
+			player.currentHealth = 0;
+
+		soul_count.soul_bars[SoulType::FISH] += 1;
+		soul_count.soul_bars[SoulType::WORM] += 1;
+	
+	}
+}
+void Renderer::updatePlayerBars()
+{
+	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
+	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
+
+	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
+	
+	//// Check if soul bar is full for FISH
+	//if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
+	//{
+	//	if (soul.soul_charges[SoulType::FISH] < MAX_SOUL_CHARGES) 
+	//	{
+	//		soul.soul_charges[SoulType::FISH]++;  // Add charge
+	//	}
+	//	soul.soul_bars[SoulType::FISH] = 0;       // Reset bar
+	//}
+
+	//// Check if soul bar is full for WORM
+	//if (soul.soul_bars[SoulType::WORM] >= SOUL_BAR_THRESHOLD) 
+	//{
+	//	if (soul.soul_charges[SoulType::WORM] < MAX_SOUL_CHARGES) 
+	//	{
+	//		soul.soul_charges[SoulType::WORM]++;  // Add charge
+	//	}
+	//	soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
+	//}
+
+	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / SOUL_BAR_THRESHOLD;
+	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / SOUL_BAR_THRESHOLD;
+	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
+	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
+
+	std::unordered_map<BarType, float> barUpdates = { 
+		{BarType::Health, healthPercentage}, 
+		{BarType::Blue_Soul, blueSoul}, 
+		{BarType::Red_Soul, redSoul},
+		{BarType::Blue_Charge_Bar, blueCharge},
+		{BarType::Red_Charge_Bar, redCharge} 
+	};
+
+	ECS::GetInstance().GetSystem<UIButtonManager>()->updateBars(barUpdates);
 }
 
 /*!
@@ -443,10 +521,57 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
  * @brief Binds textures to OpenGL texture units and sets them up in the shader.
  * @param shader The shader program to bind textures to.
  */
+//void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
+//{
+//	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
+//	int textureCount = std::min(32, texture_order_count);
+//	std::vector<int> textureUnits(textureCount);
+//
+//	for (int i = 0; i < texture_order_count && i < 32; ++i) 
+//	{
+//		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
+//
+//		// Skip atlas subtextures
+//		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path)) 
+//		{
+//			//std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
+//			continue;
+//		}
+//
+//		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
+//		if (!texture || texture->ID == 0) 
+//		{
+//			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
+//			continue;
+//		}
+//
+//		// Ensure no redundant binding
+//		if (textureIDMap.find(texture->ID) == textureIDMap.end()) 
+//		{
+//			textureIDMap[texture->ID] = i;
+//			textureUnits[i] = i;
+//
+//			glActiveTexture(GL_TEXTURE0 + i);
+//			glBindTexture(GL_TEXTURE_2D, texture->ID);
+//
+//			/*std::cout << "Binding texture:\n"
+//				<< "  Path: " << path << "\n"
+//				<< "  Texture ID: " << texture->ID << "\n"
+//				<< "  Assigned Unit: " << i << std::endl;*/
+//		}
+//		else 
+//		{
+//			textureUnits[i] = textureIDMap[texture->ID];
+//		}
+//	}
+//
+//	shader->setIntArray("textures", textureUnits.data(), textureCount);
+//}
+
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
-	// Set textureCount based on the number of unique textures, limited to 32
-	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size()));
+	// Set textureCount based on the number of unique textures, limited to 32 
+	//int textureCount = std::min(32, static_cast<int>(texturePathsOrder.size())); 
 	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
 	int textureCount = std::min(32, texture_order_count);
 	std::vector<int> textureUnits(textureCount);
@@ -457,6 +582,11 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		Texture* texture = textureCache[path];*/
 
 		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
+		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path))
+		{
+			//std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
+			continue;
+		}
 		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
 
 
@@ -465,28 +595,28 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 			continue;
 		}
 
-		// Check if this texture is already mapped to a unit
+		// Check if this texture is already mapped to a unit 
 		if (textureIDMap.find(texture->ID) == textureIDMap.end()) {
-			// New texture, assign to the next available texture unit
+			// New texture, assign to the next available texture unit 
 			textureIDMap[texture->ID] = i;
 
-			// Bind the texture to the OpenGL texture unit
+			// Bind the texture to the OpenGL texture unit 
 			/*glActiveTexture(GL_TEXTURE0 + nextAvailableTextureUnit);
 			glBindTexture(GL_TEXTURE_2D, texture->ID);*/
 
 			textureUnits[i] = i;
 
-			// Increment to the next available texture unit
-			//nextAvailableTextureUnit++;
+			// Increment to the next available texture unit 
+			//nextAvailableTextureUnit++; 
 		}
 		else {
-			// Texture already mapped, retrieve existing texture unit
+			// Texture already mapped, retrieve existing texture unit 
 			textureUnits[i] = textureIDMap[texture->ID];
 		}
 	}
 	/*for (int i = 0; i < textureCount; ++i) {
-		const auto& path = texturePathsOrder[i];
-		Texture* texture = textureCache[path];*/
+	 const auto& path = texturePathsOrder[i];
+	 Texture* texture = textureCache[path];*/
 
 	for (int i{}; i < ECS::GetInstance().GetSystem<AssetManager>()->getTextureListSize(); i++)
 	{
@@ -496,16 +626,14 @@ void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, texture->ID);
 
-		// Verify that the texture is bound to the expected unit
+		// Verify that the texture is bound to the expected unit 
 		GLint boundTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
 
 	}
-	// Pass the array of texture unit indices to the shader uniform array "textures"
+	// Pass the array of texture unit indices to the shader uniform array "textures" 
 	shader->setIntArray("textures", textureUnits.data(), textureCount);
 }
-
-
 
 /*!
  * @brief Sets up and compiles shaders used by the renderer.
@@ -595,10 +723,10 @@ void Renderer::render()
 	shaderProgram->setMat4("view", view);
 	shaderProgram->setMat4("projection", projection);
 
-
 	// Render entities
 	batchRenderer->beginBatch();
 
+	
 	for (auto& entity : m_Entities)
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
@@ -606,7 +734,7 @@ void Renderer::render()
 
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
+		
 		//// Set up the model matrix
 		//glm::mat4 model{};
 		//
@@ -625,7 +753,7 @@ void Renderer::render()
 			auto& ani = ECS::GetInstance().GetComponent<Animation>(entity);
 			auto& clip = ani.clips[ani.currentClip];
 			spriteRenderer.texturePath = clip.keyPath;
-			updateAnimationFrame(ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
+			updateAnimationFrame(clip.spriteName, ani.current_frame, clip.pixel_width, clip.pixel_height, clip.total_width, clip.total_height, uvCoordinates);
 
 			glm::vec2 pos = glm::vec2(transform.position.x, transform.position.y);
 			glm::vec2 offset = glm::vec2(static_cast<float>(clip.pixel_width) * (0.5f - clip.pivot.x), static_cast<float>(clip.pixel_height) * (0.5f - clip.pivot.y));
@@ -684,27 +812,46 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
+			/*if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
 			{
 				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
 			}
 			if (textureID < 0) {
 				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
 				continue;
-			}
+			}*/
 
-			int mappedTextureUnit = textureIDMap[textureID];
+			//int mappedTextureUnit = textureIDMap[textureID];
+
+			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
+			//std::cout << spriteName << " from render() line 686" <<std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation), spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 
-
 	batchRenderer->endBatch();
 
-	UIRenderer->renderButtons(*camera);
+	if (Input::IsKeyTriggered(UME_KEY_H))
+	{
+		HandleInputTesting();
+	}	
+	updatePlayerBars(); 
 
+	batchRendererUI->setActiveShader(shaderProgram);
+	shaderProgram->Activate();
+	shaderProgram->setMat4("projection", projection);
+	shaderProgram->setMat4("view", glm::mat4(1.0f));
+
+	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
+
+	batchRendererUI->beginBatch();
+	//uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
+	ECS::GetInstance().GetSystem<InGameGUI>()->Render(glm::vec3(0.f, 0.f, 0.f));
+	batchRendererUI->endBatch();
+
+	
 	// Render debug wireframes if debug mode is enabled
 	if (debug_mode_enabled)
 	{
@@ -921,6 +1068,7 @@ void Renderer::drawCircleOutline()
 
 /*!
  * @brief Updates the UV coordinates for the current frame of an animation.
+ * @param spriteName
  * @param currentFrame The current frame index.
  * @param frameWidth Width of each frame in pixels.
  * @param frameHeight Height of each frame in pixels.
@@ -928,27 +1076,35 @@ void Renderer::drawCircleOutline()
  * @param totalHeight Total height of the sprite sheet.
  * @param uvCoordinates Output UV coordinates for the current frame.
  */
-void Renderer::updateAnimationFrame(int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
+void Renderer::updateAnimationFrame(std::string spriteName, int currentFrame, int frameWidth, int frameHeight, int totalWidth, int totalHeight, GLfloat* uvCoordinates)
 {
 	// Calculate column and row of the current frame
 	int column = currentFrame % (totalWidth / frameWidth);
 	int row = currentFrame / (totalWidth / frameWidth);
 
 	// Calculate normalized UV coordinates
-	float uvX = (column * frameWidth) / static_cast<float>(totalWidth);
-	float uvY = 1.0f - ((row + 1) * frameHeight) / static_cast<float>(totalHeight); // Adjusted to flip vertically
-	float uvWidth = frameWidth / static_cast<float>(totalWidth);
-	float uvHeight = frameHeight / static_cast<float>(totalHeight);
+	float uvX = static_cast<float>(column * frameWidth) / static_cast<float>(totalWidth);
+	float uvY = static_cast<float>(row * frameHeight) / static_cast<float>(totalHeight); // Adjusted to flip vertically
+	float uvWidth = static_cast<float>(frameWidth) / static_cast<float>(totalWidth);
+	float uvHeight = static_cast<float>(frameHeight) / static_cast<float>(totalHeight);
 
+	std::shared_ptr<AssetManager> amRef = ECS::GetInstance().GetSystem<AssetManager>();
+
+	float atlasWidth = amRef->spriteData[spriteName].uv.uMax - amRef->spriteData[spriteName].uv.uMin;
+	float atlasHeight = amRef->spriteData[spriteName].uv.vMax - amRef->spriteData[spriteName].uv.vMin;
+	
 	// Set UV coordinates with OpenGL bottom-left orientation
-	uvCoordinates[0] = uvX;                 // Bottom-left
-	uvCoordinates[1] = uvY;
-	uvCoordinates[2] = uvX + uvWidth;       // Bottom-right
-	uvCoordinates[3] = uvY;
-	uvCoordinates[4] = uvX + uvWidth;       // Top-right
-	uvCoordinates[5] = uvY + uvHeight;
-	uvCoordinates[6] = uvX;                 // Top-left
-	uvCoordinates[7] = uvY + uvHeight;
+	uvCoordinates[0] = amRef->spriteData[spriteName].uv.uMin + uvX * atlasWidth;                // Bottom-left
+	uvCoordinates[1] = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * atlasHeight;
+	
+	uvCoordinates[2] = uvCoordinates[0] + uvWidth * atlasWidth;									// Bottom-right
+	uvCoordinates[3] = amRef->spriteData[spriteName].uv.vMax - (uvY + uvHeight) * atlasHeight;
+	
+	uvCoordinates[4] = uvCoordinates[0] + uvWidth * atlasWidth;									// Top-right
+	uvCoordinates[5] = amRef->spriteData[spriteName].uv.vMax - uvY * atlasHeight;
+	
+	uvCoordinates[6] = amRef->spriteData[spriteName].uv.uMin + uvX * atlasWidth;				// Top-left
+	uvCoordinates[7] = amRef->spriteData[spriteName].uv.vMax - uvY * atlasHeight;
 }
 
 /*!
@@ -974,35 +1130,47 @@ void Renderer::drawBoxAnimation()
  * @param color Color of the text.
  * @param font_name Font to be used for rendering the text.
  */
-void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
-{
-	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
-}
+//void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+//{
+	//textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+//}
 
 /*!
  * @brief Updates the text of an existing text object.
  * @param id Identifier of the text object.
  * @param newText The new text content.
  */
-void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+//void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
 /*!
  * @brief Create a button object in the UI renderer.
  */
-void Renderer::CreateButtonObject(const std::string& id, const Ukemochi::Vec2& position, const Ukemochi::Vec2& size, int textureID, const std::string& text, const Ukemochi::Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
-{
-	UIRenderer->addButton(UIButton(id, glm::vec2(position.x, position.y), glm::vec2(size.x, size.y), GLuint(textureID), text, glm::vec3(textColor.x, textColor.y, textColor.z), fontName, textScale, alignment, interactable, on_click));
-}
+//void Renderer::CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType, std::function<void()> onClick)
+//{
+//	if (!batchRendererUI) 
+//	{
+//		std::cerr << "Error: UIRenderer is not initialized!" << std::endl;
+//		return;
+//	}
+//
+//	uiManager.addButton(id, glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, barType, onClick);
+//}
 
 /*!
  * @brief Remove a button object in the UI renderer.
  */
-void Renderer::RemoveButtonObject(const std::string& id) { UIRenderer->removeButton(id); }
+//void Renderer::RemoveButtonObject(const std::string& id) {  }
 
 /*!
  * @brief Get the list of button objects in the UI renderer.
  */
-std::vector<UIButton>& Renderer::GetButtonObjects() { return UIRenderer->GetButtons(); }
+//std::vector<UIButton>& Renderer::GetButton(const std::string& buttonID) 
+//{
+//	for (auto& button : buttons)
+//	{
+//		if(button->id == )
+//	}
+//}
 
 /*!
  * @brief Initializes animation entities, creating idle and running animations for the player entity.
@@ -1057,59 +1225,59 @@ void Renderer::toggleSlowMotion()
  */
 void Renderer::animationKeyInput()
 {
-	std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
-	if (list.empty())
-	{
-		return;
-	}
-	for (auto& GameObject : list)
-	{
-		if (GetPlayer() == GameObject->GetInstanceID())
-		{
-			// auto& playerSprite = GameObject->GetComponent<SpriteRender>();
+	//std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
+	//if (list.empty())
+	//{
+	//	return;
+	//}
+	//for (auto& GameObject : list)
+	//{
+	//	if (GetPlayer() == GameObject->GetInstanceID())
+	//	{
+	//		// auto& playerSprite = GameObject->GetComponent<SpriteRender>();
 
-			// File paths for the textures
-			std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
-			std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
+	//		// File paths for the textures
+	//		std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
+	//		std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
 
-			// if (Input::IsKeyPressed(GLFW_KEY_A)) {
-			// 	isFacingRight = false; // Moving left
-			// }
-			// else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-			// 	isFacingRight = true; // Moving right
-			// }
+	//		// if (Input::IsKeyPressed(GLFW_KEY_A)) {
+	//		// 	isFacingRight = false; // Moving left
+	//		// }
+	//		// else if (Input::IsKeyPressed(GLFW_KEY_D)) {
+	//		// 	isFacingRight = true; // Moving right
+	//		// }
 
-			// Check if any movement keys are pressed
-			// if (Input::IsKeyPressed(GLFW_KEY_W) ||
-			// 	Input::IsKeyPressed(GLFW_KEY_A) ||
-			// 	Input::IsKeyPressed(GLFW_KEY_S) ||
-			// 	Input::IsKeyPressed(GLFW_KEY_D))
-			// {
-			// 	// If we are not already in the running state, switch to the running texture
-			// 	if (playerSprite.animationIndex != 1)
-			// 	{
-			// 		playerSprite.animationIndex = 1;
-			// 		playerSprite.texturePath = runningTexturePath;
-			//
-			// 		// Set the animation index and texture path to indicate running state
-			// 		std::cout << "Switching to running animation.\n";
-			// 	}
-			// }
-			// else
-			// {
-			// 	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-			// 	if (playerSprite.animationIndex != 0)
-			// 	{
-			// 		playerSprite.animationIndex = 0;
-			// 		playerSprite.texturePath = idleTexturePath;
-			//
-			// 		// Set the animation index and texture path to indicate idle state
-			// 		std::cout << "Switching to idle animation.\n";
-			// 	}
-			// }
-			break;
-		}
-	}
+	//		// Check if any movement keys are pressed
+	//		// if (Input::IsKeyPressed(GLFW_KEY_W) ||
+	//		// 	Input::IsKeyPressed(GLFW_KEY_A) ||
+	//		// 	Input::IsKeyPressed(GLFW_KEY_S) ||
+	//		// 	Input::IsKeyPressed(GLFW_KEY_D))
+	//		// {
+	//		// 	// If we are not already in the running state, switch to the running texture
+	//		// 	if (playerSprite.animationIndex != 1)
+	//		// 	{
+	//		// 		playerSprite.animationIndex = 1;
+	//		// 		playerSprite.texturePath = runningTexturePath;
+	//		//
+	//		// 		// Set the animation index and texture path to indicate running state
+	//		// 		std::cout << "Switching to running animation.\n";
+	//		// 	}
+	//		// }
+	//		// else
+	//		// {
+	//		// 	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
+	//		// 	if (playerSprite.animationIndex != 0)
+	//		// 	{
+	//		// 		playerSprite.animationIndex = 0;
+	//		// 		playerSprite.texturePath = idleTexturePath;
+	//		//
+	//		// 		// Set the animation index and texture path to indicate idle state
+	//		// 		std::cout << "Switching to idle animation.\n";
+	//		// 	}
+	//		// }
+	//		break;
+	//	}
+	//}
 }
 
 /*!***********************************************************************

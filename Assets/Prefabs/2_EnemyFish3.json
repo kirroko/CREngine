@@ -1,0 +1,52 @@
+{
+    "GameObject": {
+        "Name": "2_EnemyFish3",
+        "Tag": "Enemy",
+        "Components": [{
+                "Name": "Transform",
+                "Position": [1612.0, 438.0, 0.0],
+                "Rotation": 0.0,
+                "Scale": [175.85714721679688, 175.85714721679688]
+            }, {
+                "Name": "Rigidbody2D",
+                "Position": [1796.7720947265625, 512.1513061523438, 0.0],
+                "Velocity": [0.0, 0.0],
+                "Acceleration": [0.0, 0.0],
+                "Force": [0.0, 0.0],
+                "Mass": 1.0,
+                "Inverse Mass": 1.0,
+                "Linear Drag": 0.8999999761581421,
+                "Angle": 0.0,
+                "Angular Velocity": 0.0,
+                "Angular Acceleration": 0.0,
+                "Torque": 0.0,
+                "Inertia Mass": 1.0,
+                "Inverse Inertia Mass": 1.0,
+                "Angular Drag": 0.8999999761581421,
+                "use_gravity": false,
+                "is_kinematic": false
+            }, {
+                "Name": "BoxCollider2D",
+                "Min": [1711.365478515625, 362.6897888183594],
+                "Max": [1882.1787109375, 661.61279296875],
+                "Collision Flag": 0,
+                "is_trigger": false
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/Enemy/Fish HUrt_SS.png",
+                "Shape": 0,
+                "Layer": 0
+            }, {
+                "Name": "Animation",
+                "Clips": {
+                    "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 0.5, 0.5, 50, 4, 374, 278, 1024, 1024, 0.05000000074505806, true],
+                    "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 0.5, 0.5, 50, 41, 515, 285, 3840, 2048, 0.05000000074505806, true]
+                },
+                "CurrentClip": "Hurt"
+            }, {
+                "Name": "EnemyComponent",
+                "Position": [250.0, 200.0],
+                "Type": 0
+            }]
+    }
+}

@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 24, 2024
+\date       Feb 02, 2025
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -40,6 +40,8 @@ namespace Ukemochi
 			// Compute the depth scale of the dynamic entities
 			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "WormAbility"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 		}
@@ -71,10 +73,7 @@ namespace Ukemochi
 		float new_scale = scaling.min_scale + flip_t * (scaling.max_scale - scaling.min_scale);
 
 		// Set the new scale
-		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
-			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
-		else
-			transform.scale = { new_scale, new_scale };
+		transform.scale = { new_scale, new_scale };
 	}
 
 	/*!***********************************************************************
@@ -85,7 +84,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void Transformation::IncreaseScale(Transform& trans)
 	{
-		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
+		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}
@@ -98,7 +97,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void Transformation::DecreaseScale(Transform& trans)
 	{
-		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetDeltaTime());
+		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
 		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}

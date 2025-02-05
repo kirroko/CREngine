@@ -21,6 +21,9 @@ namespace Ukemochi
 {
 	class InGameGUI : public System
 	{
+	private:
+		bool show_fps = false; // Show FPS debug text
+		 
 	public:
 		/*!***********************************************************************
 		\brief
@@ -48,7 +51,7 @@ namespace Ukemochi
 		\param[in] font_name
 		 The font to be used for rendering the text.
 		*************************************************************************/
-		void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
+		//void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
 
 		/*!***********************************************************************
 		\brief
@@ -58,7 +61,7 @@ namespace Ukemochi
 		\param[in] new_label
 		 The new text to set as the label.
 		*************************************************************************/
-		void UpdateText(const std::string& id, const std::string& new_label);
+		//void UpdateText(const std::string& id, const std::string& new_label);
 
 		/*!***********************************************************************
 		\brief
@@ -72,7 +75,7 @@ namespace Ukemochi
 		\param[in] textureID
 		 The ID for the image texture.
 		*************************************************************************/
-		void CreateImage(const std::string& id, const Vec2& pos, const Vec2& size, int textureID);
+		void CreateImage();
 
 		/*!***********************************************************************
 		\brief
@@ -100,7 +103,7 @@ namespace Ukemochi
 		\param[in] on_click
 		 A callback function triggered on button click.
 		*************************************************************************/
-		void CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment = TextAlignment::Center, bool interactable = true, std::function<void()> on_click = nullptr);
+		void CreateButton();
 
 		/*!***********************************************************************
 		\brief
@@ -109,6 +112,8 @@ namespace Ukemochi
 		 The ID for the GUI object.
 		*************************************************************************/
 		void RemoveElement(const std::string& id);
+
+		void Render(glm::vec3& cameraPos);
 
 	private:
 		/*!***********************************************************************

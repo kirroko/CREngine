@@ -1,0 +1,92 @@
+{"frames": {
+
+"Blue Skill SPawning_0000.png":
+{
+	"frame": {"x":2000,"y":2180,"w":1760,"h":1320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1760,"h":1320},
+	"sourceSize": {"w":1760,"h":1320}
+},
+"Blue Soul Attack_0000.png":
+{
+	"frame": {"x":0,"y":2180,"w":2000,"h":1200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1200},
+	"sourceSize": {"w":2000,"h":1200}
+},
+"Blunt Hit VFX_0000.png":
+{
+	"frame": {"x":1290,"y":0,"w":510,"h":340},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":510,"h":340},
+	"sourceSize": {"w":510,"h":340}
+},
+"Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00.png":
+{
+	"frame": {"x":1850,"y":1060,"w":1960,"h":1120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1960,"h":1120},
+	"sourceSize": {"w":1960,"h":1120}
+},
+"Mochi Complete Base Sprite-Red-RedSoulSpecial_00.png":
+{
+	"frame": {"x":0,"y":340,"w":1880,"h":705},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1880,"h":705},
+	"sourceSize": {"w":1880,"h":705}
+},
+"Projectile_0000.png":
+{
+	"frame": {"x":900,"y":0,"w":390,"h":260},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":390,"h":260},
+	"sourceSize": {"w":390,"h":260}
+},
+"Red Soul Skill-ATTACKING_00.png":
+{
+	"frame": {"x":1880,"y":340,"w":1800,"h":720},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1800,"h":720},
+	"sourceSize": {"w":1800,"h":720}
+},
+"Red Soul Skill-Spawn_00.png":
+{
+	"frame": {"x":0,"y":1060,"w":1850,"h":1110},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1850,"h":1110},
+	"sourceSize": {"w":1850,"h":1110}
+},
+"Slash hit_0000.png":
+{
+	"frame": {"x":1800,"y":0,"w":510,"h":340},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":510,"h":340},
+	"sourceSize": {"w":510,"h":340}
+},
+"Worm Projectile Hit_0000.png":
+{
+	"frame": {"x":0,"y":0,"w":900,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":180},
+	"sourceSize": {"w":900,"h":180}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Skills + VFx.png",
+	"format": "RGBA8888",
+	"size": {"w":3810,"h":3500},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a14a17f67a3f1d1628546b0b9be7b84d:27da60dac5234c5898faa307da23cef3:9a883407f3ab5d6549f129996f93e0d4$"
+}
+}

@@ -20,203 +20,223 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    void PlayerManager::PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const
+    {
+        if (Input::IsKeyPressed(UME_KEY_W))
+            rb.force.y = data.playerForce;
+        else if (Input::IsKeyPressed(UME_KEY_S))
+            rb.force.y = -data.playerForce;
+        else
+            rb.force.y = 0.f;
+
+        if (Input::IsKeyPressed(UME_KEY_A))
+        {
+            rb.force.x = -data.playerForce;
+            sr.flipX = false;
+        }
+        else if (Input::IsKeyPressed(UME_KEY_D))
+        {
+            rb.force.x = data.playerForce;
+            sr.flipX = true;
+        }
+        else
+        {
+            rb.force.x = 0.f;
+        }
+    }
+
+    std::string PlayerManager::SoulAnimation(const PlayerSoul& soulData, std::string clip) const
+    {
+        std::string temp = std::move(clip);
+        switch (soulData.current_soul)  // NOLINT(clang-diagnostic-switch-enum)
+        {
+        case EMPTY: // Grey
+            break;
+        case FISH: // Blue
+            temp.push_back('b');
+            break;
+        case WORM: // Red
+            temp.push_back('r');
+            break;
+        default:
+            break;
+        }
+
+        return temp;
+    }
+
+    bool PlayerManager::CheckIfIdle(const Animation& anim) const
+    {
+        std::string check = anim.currentClip;
+        return check.find("Idle") != std::string::npos;
+    }
+
     /**
      * @brief update the PlayerManager
      */
     void PlayerManager::Update() const
     {
-        for (auto& entity : m_Entities)
+        // Update the player manager based on the number of steps
+        for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
-            auto& data = ECS::GetInstance().GetComponent<Player>(entity);
-            // I know that this entity will have transform, rigidbody2d and spriteRender, but it's not implicitly stated when setting the signature
-            if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity))
+            for (auto& entity : m_Entities)
             {
-                UME_ENGINE_WARN("Entity {0} doesn't have Rigidbody2D component", entity);
-                return;
-            }
-            if (!ECS::GetInstance().HasComponent<Animation>(entity))
-            {
-                UME_ENGINE_WARN("Entity {0} doesn't have Animation component", entity);
-                return;
-            }
-            if (!ECS::GetInstance().HasComponent<SpriteRender>(entity))
-            {
-                UME_ENGINE_WARN("Entity {0} doesn't have SpriteRender component", entity);
-                return;
-            }
-
-            auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
-            auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
-            auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
-            auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
-            if (Input::IsKeyPressed(UME_KEY_W))
-            {
-                rb.force.y = data.playerForce;
-                anim.SetAnimation("Running");
-            }
-            else if (Input::IsKeyPressed(UME_KEY_S))
-            {
-                rb.force.y = -data.playerForce;
-                anim.SetAnimation("Running");
-            }
-            else
-            {
-                rb.force.y = 0.f;
-            }
-
-            if (Input::IsKeyPressed(UME_KEY_A))
-            {
-                rb.force.x = -data.playerForce;
-                anim.SetAnimation("Running");
-                sr.flipX = false;
-            }
-            else if (Input::IsKeyPressed(UME_KEY_D))
-            {
-                rb.force.x = data.playerForce;
-                anim.SetAnimation("Running");
-                sr.flipX = true;
-            }
-            else
-            {
-                rb.force.x = 0.f;
-            }
-
-            static bool walkingAudioPlaying = false;
-
-            // Handle walking sound
-            if (Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) ||
-                Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D)) {
-                if (!walkingAudioPlaying) {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-                    int walkingSoundIndex = audioM.GetSFXindex("Move"); // Replace "WalkingSound" with the actual sound name
-                    if (walkingSoundIndex != -1) {
-                        audioM.PlaySFX(walkingSoundIndex);
-                        walkingAudioPlaying = true;
-                    }
-                }
-            }
-            else {
-                if (walkingAudioPlaying) {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-                    int walkingSoundIndex = audioM.GetSFXindex("Move");
-                    if (walkingSoundIndex != -1) {
-                        audioM.StopSFX(walkingSoundIndex);
-                    }
-                    walkingAudioPlaying = false;
-                }
-            }
-
-
-            if (!Input::IsKeyPressed(UME_KEY_W) && !Input::IsKeyPressed(UME_KEY_S) && !Input::IsKeyPressed(UME_KEY_A) &&
-                !Input::IsKeyPressed(UME_KEY_D))
-            {
-                anim.SetAnimation("Idle");
-            }
-
-            static bool kickAudio = false;
-
-            if (data.attackTimer > 0.0f)
-            {
-                data.attackTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
-                data.canAttack = true;
-                data.isAttacking = false;
-
-
-                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
-                    AudioManager>();
-                if (data.currentComboHits == 3 && data.attackTimer < 1.f && kickAudio == false && audioM.GetSFXindex("Pattack3")!=-1)
+                auto& data = ECS::GetInstance().GetComponent<Player>(entity);
+                auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
+                
+                // I know that this entity will have transform, rigidbody2d and spriteRender, but it's not implicitly stated when setting the signature
+                if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity))
                 {
-                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                        audioM.GetSFXindex("Pattack3")))
+                    UME_ENGINE_WARN("Entity {0} doesn't have Rigidbody2D component", entity);
+                    return;
+                }
+                if (!ECS::GetInstance().HasComponent<Animation>(entity))
+                {
+                    UME_ENGINE_WARN("Entity {0} doesn't have Animation component", entity);
+                    return;
+                }
+                if (!ECS::GetInstance().HasComponent<SpriteRender>(entity))
+                {
+                    UME_ENGINE_WARN("Entity {0} doesn't have SpriteRender component", entity);
+                    return;
+                }
+
+                auto& trans = ECS::GetInstance().GetComponent<Transform>(entity);
+                auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
+                auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
+                auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
+
+                if (!data.comboIsAttacking)
+                    PlayersMovement(rb, anim, sr, data);
+
+                if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
+                    && !data.comboIsAttacking)
+                    anim.SetAnimation(SoulAnimation(soulData,"Running"));
+                    // anim.SetAnimation("Running");
+                else
+                    anim.SetAnimation(SoulAnimation(soulData,"Idle"));
+                    // anim.SetAnimation("Idle");
+
+            // Play the running sound only at frame 2
+            static bool runningSoundPlayed = false;
+            if (anim.currentClip == "Running")  // Only when running animation is active
+            {
+                int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
+
+                // 6 or 7 for current frame
+                if ((currentFrame == 2 || currentFrame == 7) && !runningSoundPlayed)
+                {
+                    // Assuming you have an audio manager and running sound index
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    int runningSoundIndex = audioM.GetSFXindex("Running"); // Replace with the actual sound name
+                    if (runningSoundIndex != -1)
                     {
-                        audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
-                        anim.attackAnimationFinished = true;
+                        audioM.PlaySFX(runningSoundIndex);
                     }
-                    kickAudio = true;
+                    runningSoundPlayed = true; // Prevent it from playing again at the same frame
+                }
+                else if ((currentFrame != 2 && currentFrame != 7))
+                {
+                    runningSoundPlayed = false; // Reset when leaving frame 2
                 }
             }
-            else
-            {
-                kickAudio = false;
-                data.currentComboHits = 0;
-                data.canAttack = false;
-                data.isAttacking = false;
-                data.attackTimer = 0.0f;
 
-                anim.isAttacking = false;
-            }
 
-            if (Input::IsKeyTriggered(UME_KEY_J))
-            {
-                // if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-                auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
-
-                // Combat logic happens?
-                if (audioObj)
+                // Update knife position
+                if (sr.flipX)
                 {
-                    AudioManager& audioM = audioObj->GetComponent<AudioManager>();
+                    auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                    knife_trans.position = Vec3{ trans.position.x + trans.scale.x, trans.position.y,0 };
+                }
+                else
+                {
+                    auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
+                    knife_trans.position = Vec3{ trans.position.x - trans.scale.x, trans.position.y,0 };
+                }
 
-                    if (data.currentComboHits == 0 || data.canAttack)
+                static bool kickAudio = false;
+                // Handle Combo timing
+                if (data.comboTimer > 0.0f)
+                {
+                    data.comboTimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+                        AudioManager>();
+                    // Kick
+                    if (data.comboState == 2 && anim.current_frame >= 29 && kickAudio == false && audioM.GetSFXindex("Pattack3") != -1)
                     {
-                        data.currentComboHits++;
-                        switch (data.currentComboHits % 4)
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                            audioM.GetSFXindex("Pattack3")))
                         {
+                            //audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+                            anim.attackAnimationFinished = true;
+                        }
+                        kickAudio = true;
+                    }
+                }
+                else
+                {
+                    kickAudio = false;
+                    data.comboState = -1;
+                }
+
+                if (data.comboIsAttacking && CheckIfIdle(anim))
+                    data.comboIsAttacking = false;
+
+                // Player input
+                if (Input::IsKeyTriggered(UME_KEY_J))
+                {
+                    auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                    UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
+
+                    AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                    if (!data.comboIsAttacking)
+                    {
+                        data.comboState = (data.comboState + 1) % 3;    // loop back after 3 hits
+                        data.comboTimer = data.maxComboTimer;           // Reset the combo timer
+                        data.comboIsAttacking = true;                        // Prevent spamming
+
+                        rb.force = Vec2(0, 0);
+
+                        UME_ENGINE_TRACE("ATTACKING! COMBO STATE: {0}", data.comboState);
+                        // Perform attack
+                        switch (data.comboState)
+                        {
+                        case 0:
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),0,14);
+                            // anim.SetAnimationFromTo("Attack", 0, 14);
+                            if (audio.GetSFXindex("Pattack1") == -1)
+                                break;
+                            if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
+                                break;
+                            audio.PlaySFX(audio.GetSFXindex("Pattack1"));
+                            // Deal damage?
+                            break;
                         case 1:
-                            anim.SetAnimationImmediately("Attack1");
-                            if (audioM.GetSFXindex("Pattack1") != -1)
-                            {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                    audioM.GetSFXindex("Pattack1")))
-                                {
-                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack1"));
-                                }
-                            }
-           
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),14,25);
+                            // anim.SetAnimationFromTo("Attack", 14, 25);
+                            if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
+                                audio.StopSFX(audio.GetSFXindex("Pattack1"));
+                            if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
+                                break;
+                            if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
+                                break;
+                            audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+                            anim.attackAnimationFinished = false;
+                            kickAudio = false;
                             break;
                         case 2:
-                            anim.SetAnimationImmediately("Attack2");
-                            if (audioM.GetSFXindex("Pattack1") != -1)
-                            {
-                                audioM.StopSFX(audioM.GetSFXindex("Pattack1"));
-                            }
-                            if (audioM.GetSFXindex("Pattack2") != -1)
-                            {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                                    audioM.GetSFXindex("Pattack2")))
-                                {
-                                    audioM.PlaySFX(audioM.GetSFXindex("Pattack2"));
-                                }
-                            }
-
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),25,46);
+                            // anim.SetAnimationFromTo("Attack", 25, 46);
                             break;
-                        case 3:
-                            anim.SetAnimationImmediately("Attack3");
+                        default:
                             break;
                         }
-                        anim.isAttacking = true;
 
-                        data.isAttacking = true;
-                        data.canAttack = false; // Prevent immediate chaining of attacks
-                        data.attackTimer = static_cast<float>(anim.clips[anim.currentClip].total_frames) * anim.clips[
-                            anim.currentClip].frame_time;
-                        // data.attackTimer = data.attackCooldown;
+                        UME_ENGINE_INFO("Current clip name: {0}", anim.currentClip);
                     }
                 }
-            }
-
-            // Update knife position
-            if (sr.flipX)
-            {
-                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec3{trans.position.x + trans.scale.x, trans.position.y,0};
-            }
-            else
-            {
-                auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
-                knife_trans.position = Vec3{trans.position.x - trans.scale.x, trans.position.y,0};
             }
         }
     }
@@ -234,11 +254,13 @@ namespace Ukemochi
             // which is one entity...
             auto& data = ECS::GetInstance().GetComponent<Player>(entity);
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
-
-            anim.SetAnimationUninterrupted("Hurt");
-            data.currentComboHits = 0;
+            auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
+            
+            anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
+            // anim.SetAnimationUninterrupted("Hurt");
+            data.comboState = 0;
             data.canAttack = false;
-            data.attackTimer = 0.0f;
+            data.comboTimer = 0.0f;
         }
     }
 }

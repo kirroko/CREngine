@@ -30,6 +30,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Graphics/Animation.h"
 #include "Game/EnemyManager.h"
 #include "Game/DungeonManager.h"
+#include "Game/SoulManager.h"
+#include "Graphics/UIButtonManager.h"
 
 namespace Ukemochi
 {
@@ -70,6 +72,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Player>();
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
+        ECS::GetInstance().RegisterComponent<PlayerSoul>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -85,6 +88,8 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<DungeonManager>();
 		ECS::GetInstance().RegisterSystem<PlayerManager>();
         ECS::GetInstance().RegisterSystem<EnemyManager>();
+        ECS::GetInstance().RegisterSystem<SoulManager>();
+        ECS::GetInstance().RegisterSystem<UIButtonManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -137,6 +142,16 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<AudioManager>());
         ECS::GetInstance().SetSystemSignature<Audio>(sig);
 
+        // For Soul system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        ECS::GetInstance().SetSystemSignature<SoulManager>(sig);
+
+        // For UIButtonManager system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
@@ -160,19 +175,19 @@ namespace Ukemochi
     {
         //load Asset Manager Texture
         /*ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_2.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-		ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_2.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
         ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
-		// ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
+        // ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
 
         //Get Scenelist
-		UME_ENGINE_TRACE("Loading Scenes...");
+        UME_ENGINE_TRACE("Loading Scenes...");
         UseImGui::LoadScene();
 
         //if fresh start
@@ -190,6 +205,10 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
         ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+        UME_ENGINE_TRACE("Initializing soul manager...");
+        ECS::GetInstance().GetSystem<SoulManager>()->Init();
+
+        ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
     }
 
     /*!***********************************************************************
@@ -214,6 +233,9 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
+
+        auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
+
     }
 
     /*!***********************************************************************
@@ -226,9 +248,10 @@ namespace Ukemochi
     void SceneManager::SceneMangerUpdate()
     {
         if (Input::IsKeyTriggered(UME_KEY_U))
+        {
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
-
+        }
         if (Input::IsKeyTriggered(GLFW_KEY_8)) 
         {
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::TRANSLATE;
@@ -244,6 +267,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
             std::cout << "Switched to Scale Mode\n";
         }
+
 
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
@@ -331,6 +355,8 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Collision>()->Init();
 			UME_ENGINE_TRACE("Initializing dungeon manager...");
 			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+            UME_ENGINE_TRACE("Initializing soul manager...");
+            ECS::GetInstance().GetSystem<SoulManager>()->Init();
 			// enemy
 			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
 			//audio
@@ -403,6 +429,7 @@ namespace Ukemochi
 	    sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<LogicSystem>()->Update();
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
+        ECS::GetInstance().GetSystem<SoulManager>()->Update();
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
@@ -713,7 +740,7 @@ namespace Ukemochi
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
-                    ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
+                    //ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
 					// if (tag == "Player")
 					// {
 					// 	newObject.GetComponent<SpriteRender>().animated = true;
@@ -746,18 +773,19 @@ namespace Ukemochi
             			for (auto itr = componentData["Clips"].MemberBegin(); itr != componentData["Clips"].MemberEnd(); ++itr)
 						{
 							AnimationClip newClip;
-            				newClip.keyPath = itr->value[0].GetString();
-							newClip.name = itr->value[1].GetString();
-							newClip.total_frames = itr->value[2].GetInt();
-            				newClip.pivot.x = itr->value[3].GetFloat();
-            				newClip.pivot.y = itr->value[4].GetFloat();
-            				newClip.pixelsPerUnit = itr->value[5].GetInt();
-							newClip.pixel_width = itr->value[6].GetInt();
-							newClip.pixel_height = itr->value[7].GetInt();
-							newClip.total_width = itr->value[8].GetInt();
-							newClip.total_height = itr->value[9].GetInt();
-							newClip.frame_time = itr->value[10].GetFloat();
-							newClip.looping = itr->value[11].GetBool();
+            			    newClip.spriteName = itr->value[0].GetString();
+            				newClip.keyPath = itr->value[1].GetString();
+							newClip.name = itr->value[2].GetString();
+							newClip.total_frames = itr->value[3].GetInt();
+            				newClip.pivot.x = itr->value[4].GetFloat();
+            				newClip.pivot.y = itr->value[5].GetFloat();
+            				newClip.pixelsPerUnit = itr->value[6].GetInt();
+							newClip.pixel_width = itr->value[7].GetInt();
+							newClip.pixel_height = itr->value[8].GetInt();
+							newClip.total_width = itr->value[9].GetInt();
+							newClip.total_height = itr->value[10].GetInt();
+							newClip.frame_time = itr->value[11].GetFloat();
+							newClip.looping = itr->value[12].GetBool();
 							anim.clips[newClip.name] = newClip;
 						}
 
@@ -784,11 +812,10 @@ namespace Ukemochi
             			Player player;
             			player.maxHealth = componentData["MaxHealth"].GetInt();
             			player.currentHealth = componentData["CurrentHealth"].GetInt();
-            			player.maxComboHits = componentData["MaxComboHits"].GetInt();
-            			player.currentComboHits = componentData["CurrentComboHits"].GetInt();
+            			player.comboState = componentData["CurrentComboHits"].GetInt();
             			player.comboDamage = componentData["ComboDamage"].GetInt();
-            			player.attackCooldown = componentData["AttackCooldown"].GetFloat();
-            			player.attackTimer = componentData["AttackTimer"].GetFloat();
+            			player.maxComboTimer = componentData["AttackCooldown"].GetFloat();
+            			player.comboTimer = componentData["AttackTimer"].GetFloat();
             			player.playerForce = componentData["PlayerForce"].GetFloat();
             			player.isDead = componentData["IsDead"].GetBool();
             			player.canAttack = componentData["CanAttack"].GetBool();
@@ -797,6 +824,34 @@ namespace Ukemochi
             			newObject.AddComponent(std::move(player));
             		}
             	}
+                else if (componentName == "PlayerSoul")
+                {
+                    if (!newObject.HasComponent<PlayerSoul>())
+                    {
+                        PlayerSoul player_soul;
+                        player_soul.current_soul = static_cast<SoulType>(componentData["CurrentSoul"].GetInt());
+
+                        player_soul.soul_bars[FISH] = componentData["SoulBars"][FISH].GetFloat();
+                        player_soul.soul_bars[WORM] = componentData["SoulBars"][WORM].GetFloat();
+
+                        player_soul.soul_charges[FISH] = componentData["SoulCharges"][FISH].GetInt();
+                        player_soul.soul_charges[WORM] = componentData["SoulCharges"][WORM].GetInt();
+
+                        player_soul.skill_damages[FISH] = componentData["SkillDamages"][FISH].GetFloat();
+                        player_soul.skill_damages[WORM] = componentData["SkillDamages"][WORM].GetFloat();
+
+                        player_soul.skill_duration = componentData["SkillDuration"].GetFloat();
+                        player_soul.skill_cooldown = componentData["SkillCooldown"].GetFloat();
+                        player_soul.skill_timer = componentData["SkillTimer"].GetFloat();
+                        player_soul.skill_ready = componentData["SkillReady"].GetBool();
+
+                        player_soul.soul_decay_amount = componentData["SoulDecayAmount"].GetFloat();
+                        player_soul.soul_decay_rate = componentData["SoulDecayRate"].GetFloat();
+                        player_soul.soul_decay_timer = componentData["SoulDecayTimer"].GetFloat();
+
+                        newObject.AddComponent(std::move(player_soul));
+                    }
+                }
                 else if (componentName == "Audio")
                 {
                     if (!newObject.HasComponent<AudioManager>())
@@ -1025,6 +1080,7 @@ namespace Ukemochi
         		{
         			Value clip(key.c_str(),allocator);
         			Value clipData(kArrayType);
+        		    clipData.PushBack(Value(value.spriteName.c_str(), allocator), allocator);
         			clipData.PushBack(Value(value.keyPath.c_str(),allocator), allocator);
         			clipData.PushBack(Value(key.c_str(),allocator), allocator);
 
@@ -1070,17 +1126,48 @@ namespace Ukemochi
         		const auto&player = gameobject->GetComponent<Player>();
         		playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
         		playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
-        		playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
-        		playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+        		playerComponent.AddMember("CurrentComboHits", player.comboState, allocator);
         		playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
-        		playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
-        		playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+        		playerComponent.AddMember("AttackCooldown", player.maxComboTimer, allocator);
+        		playerComponent.AddMember("AttackTimer", player.comboTimer, allocator);
         		playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
         		playerComponent.AddMember("IsDead", player.isDead, allocator);
         		playerComponent.AddMember("CanAttack", player.canAttack, allocator);
 
         		componentsArray.PushBack(playerComponent, allocator);
         	}
+
+            if (gameobject->HasComponent<PlayerSoul>())
+            {
+                Value playerSoulComponent(rapidjson::kObjectType);
+                playerSoulComponent.AddMember("Name", "PlayerSoul", allocator);
+
+                const auto& playerSoul = gameobject->GetComponent<PlayerSoul>();
+                playerSoulComponent.AddMember("CurrentSoul", playerSoul.current_soul, allocator);
+
+                Value soulBars(rapidjson::kArrayType);
+                soulBars.PushBack(playerSoul.soul_bars[0], allocator).PushBack(playerSoul.soul_bars[1], allocator);
+                playerSoulComponent.AddMember("SoulBars", soulBars, allocator);
+
+                Value soulCharges(rapidjson::kArrayType);
+                soulCharges.PushBack(playerSoul.soul_charges[0], allocator).PushBack(playerSoul.soul_charges[1], allocator);
+                playerSoulComponent.AddMember("SoulCharges", soulCharges, allocator);
+
+                Value skillDamages(rapidjson::kArrayType);
+                skillDamages.PushBack(playerSoul.skill_damages[0], allocator).PushBack(playerSoul.skill_damages[1], allocator);
+                playerSoulComponent.AddMember("SkillDamages", skillDamages, allocator);
+
+                playerSoulComponent.AddMember("SkillDuration", playerSoul.skill_duration, allocator);
+                playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
+                playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
+                playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+                playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
+                playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
+                playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
+
+                componentsArray.PushBack(playerSoulComponent, allocator);
+            }
+
             if (gameobject->HasComponent<AudioManager>()) {
                 Value audioComponent(rapidjson::kObjectType);
                 audioComponent.AddMember("Name", "Audio", allocator);
@@ -1371,17 +1458,48 @@ namespace Ukemochi
             const auto& player = prefabObj->GetComponent<Player>();
             playerComponent.AddMember("MaxHealth", player.maxHealth, allocator);
             playerComponent.AddMember("CurrentHealth", player.currentHealth, allocator);
-            playerComponent.AddMember("MaxComboHits", player.maxComboHits, allocator);
-            playerComponent.AddMember("CurrentComboHits", player.currentComboHits, allocator);
+            playerComponent.AddMember("CurrentComboHits", player.comboState, allocator);
             playerComponent.AddMember("ComboDamage", player.comboDamage, allocator);
-            playerComponent.AddMember("AttackCooldown", player.attackCooldown, allocator);
-            playerComponent.AddMember("AttackTimer", player.attackTimer, allocator);
+            playerComponent.AddMember("AttackCooldown", player.maxComboTimer, allocator);
+            playerComponent.AddMember("AttackTimer", player.comboTimer, allocator);
             playerComponent.AddMember("PlayerForce", player.playerForce, allocator);
             playerComponent.AddMember("IsDead", player.isDead, allocator);
             playerComponent.AddMember("CanAttack", player.canAttack, allocator);
 
             componentsArray.PushBack(playerComponent, allocator);
         }
+
+        if (prefabObj->HasComponent<PlayerSoul>())
+        {
+            Value playerSoulComponent(rapidjson::kObjectType);
+            playerSoulComponent.AddMember("Name", "PlayerSoul", allocator);
+
+            const auto& playerSoul = prefabObj->GetComponent<PlayerSoul>();
+            playerSoulComponent.AddMember("CurrentSoul", playerSoul.current_soul, allocator);
+
+            Value soulBars(rapidjson::kArrayType);
+            soulBars.PushBack(playerSoul.soul_bars[0], allocator).PushBack(playerSoul.soul_bars[1], allocator);
+            playerSoulComponent.AddMember("SoulBars", soulBars, allocator);
+
+            Value soulCharges(rapidjson::kArrayType);
+            soulCharges.PushBack(playerSoul.soul_charges[0], allocator).PushBack(playerSoul.soul_charges[1], allocator);
+            playerSoulComponent.AddMember("SoulCharges", soulCharges, allocator);
+
+            Value skillDamages(rapidjson::kArrayType);
+            skillDamages.PushBack(playerSoul.skill_damages[0], allocator).PushBack(playerSoul.skill_damages[1], allocator);
+            playerSoulComponent.AddMember("SkillDamages", skillDamages, allocator);
+
+            playerSoulComponent.AddMember("SkillDuration", playerSoul.skill_duration, allocator);
+            playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
+            playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
+            playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+            playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
+            playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
+            playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
+
+            componentsArray.PushBack(playerSoulComponent, allocator);
+        }
+
         if (prefabObj->HasComponent<AudioManager>()) {
             Value audioComponent(rapidjson::kObjectType);
             audioComponent.AddMember("Name", "Audio", allocator);

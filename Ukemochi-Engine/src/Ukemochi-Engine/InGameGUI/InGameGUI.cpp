@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Application.h"		  // for screen size
 #include "../Graphics/Camera2D.h" // for camera viewport
 #include "../Graphics/Renderer.h" // for text objects
+#include "../FrameController.h"	  // for fps text
 
 namespace Ukemochi
 {
@@ -28,24 +29,29 @@ namespace Ukemochi
 	void InGameGUI::Init()
 	{
 #ifndef _DEBUG
-		// Get the screen width and height
-		Application& app = Application::Get();
-		int screen_width = app.GetWindow().GetWidth();
-		int screen_height = app.GetWindow().GetHeight();
+		//// Get the screen width and height
+		//Application& app = Application::Get();
+		//int screen_width = app.GetWindow().GetWidth();
+		//int screen_height = app.GetWindow().GetHeight();
 
-		//Create the game UI, elements are combined temporary
+		////Create the game UI, elements are combined temporary
+		//// Create game UI screen
+		////CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 28);
 
-		CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 28);
+		////// Create main menu screen
+		////CreateImage("main_menu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
 
-		CreateImage("mainmenu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
+		////// Create start menu button
+		////CreateButton("start_button", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
+		////	[]() { Application::Get().StartGame(); });
 
-		CreateButton("startButton", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-			[]() { Application::Get().StartGame(); });
+		//// Create FPS text
+		////CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
+
+		//CreateImage(Vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", 0, Vec3(1.f, 1.f, 1.f));
+
+
 #endif // !_DEBUG
-
-		//CreateText("text1", "sample text",
-		//	Vec2{ screen_width * 0.8f, screen_height * 0.9f },
-		//	1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
 
 		//CreateButton("pauseButton", Vec2{ 1840.f, 1010.f }, Vec2{ 75.f, 75.f }, 10, "P", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 		//	[this]() { UpdateText("text1", "pause clicked!"); });
@@ -55,6 +61,8 @@ namespace Ukemochi
 
 		//CreateButton("swapButton", Vec2{ 1840.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "Q", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
 		//	[this]() { UpdateText("text1", "swap clicked!"); });
+
+		CreateImage();
 	}
 
 	/*!***********************************************************************
@@ -65,6 +73,12 @@ namespace Ukemochi
 	{
 		// Handle button inputs
 		HandleButtonInput();
+
+		// Update fps text
+		/*if(show_fps)
+			UpdateText("fps_text", std::to_string(static_cast<int>(g_FrameRateController.GetFPS())));
+		else
+			UpdateText("fps_text", "");*/
 	}
 
 	/*!***********************************************************************
@@ -81,10 +95,10 @@ namespace Ukemochi
 	\param[in] font_name
 	 The font to be used for rendering the text.
 	*************************************************************************/
-	void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
-	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
-	}
+	//void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
+	//{
+	//	//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
+	//}
 
 	/*!***********************************************************************
 	\brief
@@ -94,10 +108,10 @@ namespace Ukemochi
 	\param[in] new_label
 	 The new text to set as the label.
 	*************************************************************************/
-	void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
-	{
-		ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
-	}
+	//void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
+	//{
+	//	//ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
+	//}
 
 	/*!***********************************************************************
 	\brief
@@ -111,40 +125,101 @@ namespace Ukemochi
 	\param[in] textureID
 	 The ID for the image texture.
 	*************************************************************************/
-	void InGameGUI::CreateImage(const std::string& id, const Vec2& pos, const Vec2& size, int textureID)
+	/*void InGameGUI::CreateImage(const std::string& id, const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color, BarType barType)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, "", Vec3{ 0.f, 0.f, 0.f }, "Exo2", 1.f, TextAlignment::Center, false, nullptr);
-	}
+		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, spriteName, Vec3{ 0.f, 0.f, 0.f }, layer, barType, nullptr);
+	}*/
 
 	/*!***********************************************************************
 	\brief
 	 Create a GUI button object.
-	\param[in] id
-	 The ID for the button object.
-	\param[in] pos
-	 The position of the button.
-	\param[in] size
-	 The size of the button.
-	\param[in] textureID
-	 The ID for the button texture.
-	\param[in] text
-	 The label text displayed on the button.
-	\param[in] textColor
-	 The color of the label text (RGB format).
-	\param[in] fontName
-	 The font to be used for the label text.
-	\param[in] textScale
-	 The scale of the label text.
-	\param[in] alignment
-	 The alignment of the text within the button.
-	\param[in] interactable
-	 Whether the button can be interacted with.
-	\param[in] on_click
-	 A callback function triggered on button click.
 	*************************************************************************/
-	void InGameGUI::CreateButton(const std::string& id, const Vec2& pos, const Vec2& size, int textureID, const std::string& text, const Vec3& textColor, std::string fontName, float textScale, TextAlignment alignment, bool interactable, std::function<void()> on_click)
+	void InGameGUI::CreateImage()
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, textureID, text, textColor, fontName, textScale, alignment, interactable, on_click);
+		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+		Application& app = Application::Get(); 
+		int screen_width = app.GetWindow().GetWidth(); 
+		int screen_height = app.GetWindow().GetHeight(); 
+
+		//--Health---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+		uiManager->addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Health, []() {
+			});
+		uiManager->addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+		uiManager->addButton("health bar icon", glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//--Soul blue----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		uiManager->addButton("blue soul bar bg", glm::vec3(300.f, 941.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("blue soul bar", glm::vec3(300.f, 941.5f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Soul, []() {
+			});
+
+		uiManager->addButton("blue soul bar border", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+			});
+
+		uiManager->addButton("blue soul ability charge bg", glm::vec3(500.f, 941.5f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("blue soul ability charge bar", glm::vec3(500.f, 941.f, 0.f), glm::vec2(37.f, 17.f), "in game_soul ability charge blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Charge_Bar, []() {
+			});
+
+		uiManager->addButton("blue soul ability charge border", glm::vec3(500.5f, 944.5f, 0.f), glm::vec2(25.f, 30.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		//--Soul red----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		uiManager->addButton("red soul bar bg", glm::vec3(333.f, 881.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("red soul bar", glm::vec3(333.f, 881.f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Red_Soul, []() {
+			});
+
+		uiManager->addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+			});
+
+		uiManager->addButton("red soul ability charge bg", glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("red soul ability charge bar", glm::vec3(533.f, 881.f, 0.f), glm::vec2(25.f, 27.f), "in game_soul ability charge red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Red_Charge_Bar, []() {
+			});
+
+		uiManager->addButton("red soul ability charge border", glm::vec3(534.f, 884.75f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//--Ability and Pause----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		uiManager->addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+
+		uiManager->addButton("healthBar", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+			});
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		// Main Menu
+		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+			});
+
+		uiManager->addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, []() {
+			Application::Get().StartGame(); });
+	}
+
+	void InGameGUI::CreateButton()
+	{
+
 	}
 
 	/*!***********************************************************************
@@ -155,7 +230,12 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::RemoveElement(const std::string& id)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->RemoveButtonObject(id);
+		ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton(id);
+	}
+
+	void InGameGUI::Render(glm::vec3& cameraPos)
+	{
+		ECS::GetInstance().GetSystem<UIButtonManager>()->render(cameraPos);
 	}
 
 	/*!***********************************************************************
@@ -164,35 +244,33 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::HandleButtonInput()
 	{
-		// Check for mouse left click
-		if (Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
-		{
-			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
-			{
-				// Skip if the button is not interactable
-				if (!button.interactable)
-					continue;
+		auto [mouseX, mouseY] = Input::GetMousePosition();
+		mouseY = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y - mouseY; // Flip Y-axis
 
-				// Check if the mouse is within the button boundaries
-				if (IsInside(Vec2{ button.position.x, button.position.y }, Vec2{ button.size.x, button.size.y }))
-					button.on_click(); // Invoke the button on click event
+		for (auto& [id, button] : ECS::GetInstance().GetSystem<UIButtonManager>()->buttons)
+		{
+			// Update the isHovered state for each button
+			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
+
+			// Check for mouse left click when hovering
+			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
+			{
+				if (button->onClick) // Ensure the button has a callback
+					button->onClick(); // Trigger the button click event
+
+				break; // Only trigger one button per click
 			}
 		}
 
 		// Press enter to start game
 		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
 		{
-			for (auto const& button : ECS::GetInstance().GetSystem<Renderer>()->GetButtonObjects())
-			{
-				// Skip if the button is not interactable
-				if (!button.interactable)
-					continue;
-
-				// Check if it is the start button
-				if(button.id == "startButton")
-					button.on_click(); // Invoke the button on click event
-			}
+			Application::Get().StartGame();
 		}
+
+		//// Press F10 to toggle fps text
+		//if (Input::IsKeyTriggered(UME_KEY_F10))
+		//	show_fps = !show_fps;
 	}
 
 	/*!***********************************************************************
