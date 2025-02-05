@@ -87,6 +87,7 @@ namespace Ukemochi
             for (auto& entity : m_Entities)
             {
                 std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
                 // Skip if the entity is not active
                 if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
                     continue;
@@ -104,7 +105,6 @@ namespace Ukemochi
                     }
                 }
             }
-
 
             // Handle soul bar decay over time
             //HandleSoulDecay();
@@ -154,8 +154,6 @@ namespace Ukemochi
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         auto& soul_animator = ECS::GetInstance().GetComponent<Animation>(soul);
-
-        UME_ENGINE_TRACE("OMG HE PRESSED Q!");
 
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
@@ -371,41 +369,20 @@ namespace Ukemochi
         }
 
         // Handle the fish spawning and attacking animations, disable fish ability once completed
-        //if (player_soul.current_soul == FISH)
-        {
-            auto& fish_animator = ECS::GetInstance().GetComponent<Animation>(fish_ability);
+        auto& fish_animator = ECS::GetInstance().GetComponent<Animation>(fish_ability);
 
-            if (fish_animator.currentClip == "FishAbilitySpawn" && fish_animator.current_frame == 9)
-                fish_animator.SetAnimation("FishAbilityAttack");
-            if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 9)
-                GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
-        }
+        if (fish_animator.currentClip == "FishAbilitySpawn" && fish_animator.current_frame == 9)
+            fish_animator.SetAnimation("FishAbilityAttack");
+        if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 9)
+            GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
+
         // Handle the worm spawning and attacking animations, disable worm ability once completed
-        //if (player_soul.current_soul == WORM)
-        {
-            auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);
+        auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);
 
-            if (worm_animator.currentClip == "WormAbilitySpawn" && worm_animator.current_frame == 9)
-                worm_animator.SetAnimation("WormAbilityAttack");
-            if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame == 9)
-                GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
-        }
-
-        //else
-        //{
-        //    // If the skill duration has expired, disable the ability
-        //    if (player_soul.skill_timer > player_soul.skill_duration)
-        //    {
-        //        // Disable the skill ability
-        //        if (player_soul.current_soul == FISH)
-        //            GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
-        //        else if (player_soul.current_soul == WORM)
-        //            GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
-
-        //        // Reset the skill timer
-        //        player_soul.skill_timer = 0.f;
-        //    }
-        //}
+        if (worm_animator.currentClip == "WormAbilitySpawn" && worm_animator.current_frame == 9)
+            worm_animator.SetAnimation("WormAbilityAttack");
+        if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame == 9)
+            GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
     }
 
     /*!***********************************************************************
