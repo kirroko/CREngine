@@ -25,7 +25,9 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::Init()
 	{
-		current_room_id = 2;
+		//change when proper room structure is done
+		current_room_id = 1;
+		//current_room_wave = WAVE_NUMBER;
 		player = static_cast<EntityID>(-1);
 
 		InitDungeon();
@@ -101,6 +103,24 @@ namespace Ukemochi
 		// Check if all enemies in the room is gone
 		//if (rooms[current_room_id].enemies.size() <= 0)
 		//	UnlockRoom();
+
+		bool enemy_alive = false;
+
+		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
+		{
+			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);
+			if (enemyObj->GetActive())
+			{
+				enemy_alive = true;
+			}
+		}
+
+		//hopefully unlock room will just trigger once
+		if (!enemy_alive)
+		{
+			UnlockRoom();
+		}
+
 	}
 
 	/*!***********************************************************************
@@ -138,20 +158,30 @@ namespace Ukemochi
 					}
 					else if (tag == "Room")
 					{
-						// Store the position of the room
+						// Store the position of the room	
 						auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
 						rooms[room_id].position = Vec2(transform.position.x,transform.position.y);
 					}
 				}
+				
 			}
+
+			rooms[room_id].enemy_count = rooms[room_id].enemies.size();
 
 			// Deactivate all rooms except the current room
 			if (room_id != current_room_id)
+			{
 				ActivateRoom(room_id, false);
+			}
+			else
+			{
+				ActivateRoom(room_id, true);
+			}
+				
 		}
 
 		// Set the camera initial position
-		ECS::GetInstance().GetSystem<Camera>()->position = {};
+		ECS::GetInstance().GetSystem<Camera>()->position = {-ROOM_WIDTH, 0};
 	}
 
 	/*!***********************************************************************
@@ -165,9 +195,24 @@ namespace Ukemochi
 	void DungeonManager::ActivateRoom(int room_id, bool activate)
 	{
 		for (auto& entity : rooms[room_id].entities)
+		{
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
+			std::string room = std::to_string(room_id);
+			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
+			if (!rooms[room_id].enemy_count < 1)
+			{
+				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+			}
+			else
+			{
+				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
+			}
+		}
 
 		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+		
 	}
 
 	/*!***********************************************************************
@@ -176,6 +221,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::UnlockRoom()
 	{
+		//check for enemies
 		std::string str_id = std::to_string(current_room_id);
 
 		// Enable doors and disable blocks in the room
@@ -183,11 +229,13 @@ namespace Ukemochi
 		{
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
-
 			// Enable doors
 			if (tag == "LeftDoor" || tag == "RightDoor")
+			{
 				GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
-
+					
+			}
+					
 			// Disable blocks
 			if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
 				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);

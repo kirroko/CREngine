@@ -432,6 +432,7 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
         ECS::GetInstance().GetSystem<SoulManager>()->Update();
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
+        ECS::GetInstance().GetSystem<DungeonManager>()->UpdateRoomProgress();
 	    sys_end = std::chrono::steady_clock::now();
 	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 	    
