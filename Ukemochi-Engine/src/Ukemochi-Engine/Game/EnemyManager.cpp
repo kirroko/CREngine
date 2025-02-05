@@ -64,6 +64,7 @@ namespace Ukemochi
     {
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
+
             // Iterate through the enemyObjects list
             for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
             {
@@ -447,7 +448,7 @@ namespace Ukemochi
                             {
                                 audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
                                 wormatk = true;
-                                GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile");
+                                GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile1");
                                 std::string name = "bullet" + std::to_string(number++);
                                 std::cout << name << std::endl;
                                 GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
@@ -456,6 +457,14 @@ namespace Ukemochi
 
                                 newObject.GetComponent<Rigidbody2D>().velocity.x = enemycomponent.dirX * 500;
                                 newObject.GetComponent<Rigidbody2D>().velocity.y = enemycomponent.dirY * 500;
+                                
+                                float angleRad = atan2(enemycomponent.dirY, enemycomponent.dirX);
+
+                                // Convert to degrees
+                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
+
+                                // Apply rotation to bullet
+                                newObject.GetComponent<Transform>().rotation = angleDeg;
 
                                 if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
                                 {
@@ -465,6 +474,8 @@ namespace Ukemochi
                                 {
                                     newObject.GetComponent<SpriteRender>().flipX = false;
                                 }
+
+                                newObject.AddComponent(EnemyBullet{});
                             }
                             else
                             {

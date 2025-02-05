@@ -705,6 +705,16 @@ namespace Ukemochi
 				// Deal damage to the player
 				enemy_data.AttackPlayer(player_data.currentHealth);
 			}
+			else if (tag2 == "EnemyProjectile" && ECS::GetInstance().HasComponent<EnemyBullet>(entity2))
+			{
+				auto& bullet_data = ECS::GetInstance().GetComponent<EnemyBullet>(entity2);
+				if (!bullet_data.hit)
+				{
+					player_data.currentHealth -= 10.f;
+					bullet_data.hit = true;
+				}
+
+			}
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);

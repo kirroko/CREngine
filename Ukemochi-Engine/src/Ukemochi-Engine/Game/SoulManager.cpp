@@ -74,6 +74,29 @@ namespace Ukemochi
         // Update the soul system based on the number of steps
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
+            //place holder
+            for (auto& entity : m_Entities)
+            {
+                std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+                // Skip if the entity is not active
+                if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                    continue;
+                if (tag == "EnemyProjectile")
+                {
+                    if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                        if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
+                        {
+                            GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                            GameObjectManager::GetInstance().DestroyObject(entity);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
             // Handle soul bar decay over time
             //HandleSoulDecay();
 
