@@ -1762,24 +1762,24 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Idle": ["Idle_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Idle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "rIdle": ["Idle_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
+                        "Idle": ["Idle_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Idle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "bIdle": ["Idle_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
-                        "Running": ["Run_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Running", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
                         "rRunning": ["Run_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
+                        "Running": ["Run_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Running", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
                         "bRunning": ["Run_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
                         "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
-                        "rHurt": ["Hurt_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "bHurt": ["Hurt_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
+                        "rHurt": ["Hurt_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
-                        "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
                         "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
+                        "SwitchNR": ["Base to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
                         "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
-                        "rAttack": ["Attack_Red", "../Assets/Textures/Player/Mochi 3_Part.png", "rAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
                         "bAttack": ["Attack_Blue", "../Assets/Textures/Player/Mochi 3_Part.png", "bAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "rAttack": ["Attack_Red", "../Assets/Textures/Player/Mochi 3_Part.png", "rAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
                         "WormSkill": ["Mochi Complete Base Sprite-Red-RedSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormSkill", 19, 0.5, 0.5, 60, 235, 235, 1880, 705, 0.03999999910593033, false],
                         "FishSkill": ["Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishSkill", 24, 0.5, 0.5, 90, 280, 280, 1960, 1120, 0.03999999910593033, false],
-                        "SwitchNR": ["Base to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
                         "SwitchNB": ["Base To Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
                         "SwitchBN": ["Blue to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
                         "SwitchBR": ["Blue to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
@@ -2383,8 +2383,7 @@
                     "Shape": 0,
                     "Layer": 0
                 }]
-        },
-        {
+        }, {
             "Name": "enemybullet",
             "Tag": "EnemyProjectile1",
             "Components": [{
@@ -2428,8 +2427,7 @@
                     },
                     "CurrentClip": "Projectile"
                 }]
-        }, 
-        {
+        }, {
             "Name": "4_RightWallFront",
             "Tag": "Default",
             "Components": [{

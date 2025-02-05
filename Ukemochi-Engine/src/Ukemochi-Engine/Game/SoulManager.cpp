@@ -67,8 +67,7 @@ namespace Ukemochi
         auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
         if (player_data.currentHealth <= 0)
         {
-            // If player is dead, set soul to EMPTY and disable floating soul
-            ECS::GetInstance().GetComponent<PlayerSoul>(player).current_soul = EMPTY;
+            // If player is dead, disable floating soul
             GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             return;
         }

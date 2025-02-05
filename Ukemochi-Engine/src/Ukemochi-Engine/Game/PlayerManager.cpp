@@ -109,6 +109,13 @@ namespace Ukemochi
                 auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
+                if (data.currentHealth <= 0)
+                {
+                    // Trigger player death animation
+                    anim.SetAnimation(SoulAnimation(soulData, "Death"));
+                    return;
+                }
+
                 if (!data.comboIsAttacking)
                     PlayersMovement(rb, sr, data);
 
