@@ -475,6 +475,21 @@ namespace Ukemochi
                         {
                             //Play SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("WormAttack") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
+
+                                    //attack
+                                    if (playerObj != nullptr)
+                                    {
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                    }
+                                }
+
+                            }
 
                             //spawn bullet
                             static int number = 0;
