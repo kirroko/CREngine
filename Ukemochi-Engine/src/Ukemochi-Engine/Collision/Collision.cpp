@@ -560,7 +560,7 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
-			if (player_anim.currentClip != "Attack")
+			if (player_anim.currentClip != "Attack" || player_anim.currentClip != "bAttack" || player_anim.currentClip != "rAttack")
 				return;
 
 			switch (player_data.comboState)
@@ -653,14 +653,13 @@ namespace Ukemochi
 				break;
 			}
 		}
-		else if (tag1 == "Ability" && tag2 == "Enemy")
+		else if ((tag1 == "FishAbility" || tag1 == "WormAbility") && tag2 == "Enemy")
 		{
 			// Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
 
 			// Get references of the player and enemy
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			//auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
 			if (!enemy_data.hasDealtDamage)
@@ -682,7 +681,8 @@ namespace Ukemochi
 				enemy_data.hasDealtDamage = false;
 			}
 		}
-		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
+		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "FishAbility" && tag2 == "EnemyProjectile"
+			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
 		{
 			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
 			// Destroy enemy's projectile

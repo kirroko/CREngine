@@ -21,11 +21,10 @@ namespace Ukemochi
         /**
          * @biref Handle player movement 
          * @param rb player's rigidbody
-         * @param anim player's animation
          * @param sr player's spriteRenderer
          * @param data player's variables
          */
-        void PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const;
+        void PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const;
         
         /**
          * @brief Handle player's animation depending on the soul(color) it is on
