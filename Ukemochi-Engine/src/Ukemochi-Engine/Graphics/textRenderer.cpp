@@ -183,6 +183,14 @@ void TextRenderer::updateTextObject(const std::string& id, const std::string& ne
 		textObjects[id].text = newText;
 }
 
+void TextRenderer::updateTextColor(const std::string& id, const glm::vec3& color)
+{
+	if (textObjects.find(id) != textObjects.end())
+	{
+		textObjects[id].color = color;
+	}
+}
+
 /*!
  * @brief Updates the position of an existing text object.
  * @param id Identifier for the text object.
@@ -251,6 +259,7 @@ void TextRenderer::renderAllText()
 {
 	textShaderProgram->Activate();
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screenWidth), 0.0f, static_cast<GLfloat>(screenHeight));
+	//glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(screenWidth),static_cast<GLfloat>(screenHeight), 0.0f);  // Flipped Y-axis
 	textShaderProgram->setMat4("projection", projection);
 
 	glActiveTexture(GL_TEXTURE0);

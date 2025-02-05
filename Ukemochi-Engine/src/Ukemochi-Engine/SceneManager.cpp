@@ -338,7 +338,7 @@ namespace Ukemochi
 
 #ifndef _DEBUG
 		// Game Inputs Quick fix
-		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		if (Input::IsKeyTriggered(GLFW_KEY_T))
 		{
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{

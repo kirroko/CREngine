@@ -40,15 +40,18 @@ public:
     glm::vec3 color;
     std::string spriteName;
     std::function<void()> onClick;
+    bool enableHoverEffect = false;
 
     bool isHovered = false;
     int ui_layer;
     BarType barType = BarType::None;
+    float darkenTimer = 0.0f;          // Timer for darken effect
+    const float darkenDuration = 1.f; // Duration of the darken effect
 
     std::shared_ptr<BatchRenderer2D> batchRenderer;
 
-    UIButton(const std::string& buttonID, glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, std::function<void()> callback = nullptr)
-       : id(buttonID), originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), onClick(callback){} 
+    UIButton(const std::string& buttonID, glm::vec3 pos, glm::vec2 sz, const std::string& sprite, glm::vec3 clr, std::shared_ptr<BatchRenderer2D> renderer, int layer = 0, BarType bar = BarType::None, bool hoverEffect = false, std::function<void()> callback = nullptr)
+       : id(buttonID), originalPosition(pos), originalSize(sz), position(pos), size(sz), color(clr), spriteName(sprite), batchRenderer(std::move(renderer)), ui_layer(layer), barType(bar), enableHoverEffect(hoverEffect), onClick(callback){} 
 
     void updateBar(float percentage)
     {
@@ -69,14 +72,29 @@ public:
             onClick();
         }
     }
+    void triggerDarkenEffect() 
+    {
+        darkenTimer = darkenDuration;
+    }
 
     void render(const glm::vec3& cameraPosition)
     {
         if (batchRenderer)
         {
-            float hoverIntensity = isHovered ? 0.8f : 1.0f;
+            glm::vec3 renderColor = color;
 
-            glm::vec3 renderColor = color * hoverIntensity;
+            // Apply hover effect only if enabled
+            if (isHovered && enableHoverEffect) 
+            {
+                float hoverIntensity = 0.8f;    // Darken the button when hovered
+                renderColor *= hoverIntensity;  // Reduce brightness
+            }
+
+            if (darkenTimer > 0.0f) 
+            {
+                renderColor *= 0.5f; // Darken more when pressed
+                darkenTimer -= 0.016f; // Assuming ~60 FPS, decrease timer
+            }
 
             glm::vec3 screenPosition = position - cameraPosition + cameraPosition;
             batchRenderer->drawSprite(screenPosition, size, renderColor, spriteName, 0.0f, ui_layer);

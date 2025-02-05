@@ -154,13 +154,14 @@ public:
 	/*!
 	 * @brief Create a text object in the text renderer.
 	 */
-	//void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
+	void CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name);
 
 	/*!
 	 * @brief Update a text object in the text renderer.
 	 */
-	//void UpdateTextObject(const std::string& id, const std::string& newText);
+	void UpdateTextObject(const std::string& id, const std::string& newText);
 
+	void UpdateTextColor(const std::string& id, const glm::vec3& color); 
 	/*!
 	 * @brief Create a button object in the UI renderer.
 	 */
@@ -192,6 +193,11 @@ public:
 	void resizeFramebuffer(unsigned int width, unsigned int height) const;
 
 	EntityID playerID = (EntityID)-1;
+
+	EntityID getPlayerID()
+	{
+		return playerID;
+	}
 private:
 
 	const int MAX_SOUL_CHARGES = 1;

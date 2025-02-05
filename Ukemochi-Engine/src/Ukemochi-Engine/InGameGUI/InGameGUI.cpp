@@ -34,17 +34,6 @@ namespace Ukemochi
 		//int screen_width = app.GetWindow().GetWidth();
 		//int screen_height = app.GetWindow().GetHeight();
 
-		////Create the game UI, elements are combined temporary
-		//// Create game UI screen
-		////CreateImage("game", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 28);
-
-		////// Create main menu screen
-		////CreateImage("main_menu", Vec2{ screen_width * 0.5f, screen_height * 0.5f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, 29);
-
-		////// Create start menu button
-		////CreateButton("start_button", Vec2{ 1168.f, 478.f }, Vec2{ 464.f, 243.f }, 27, "", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-		////	[]() { Application::Get().StartGame(); });
-
 		//// Create FPS text
 		////CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 
@@ -53,16 +42,14 @@ namespace Ukemochi
 
 #endif // !_DEBUG
 
-		//CreateButton("pauseButton", Vec2{ 1840.f, 1010.f }, Vec2{ 75.f, 75.f }, 10, "P", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-		//	[this]() { UpdateText("text1", "pause clicked!"); });
 
-		//CreateButton("abilityButton", Vec2{ 1700.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "F", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-		//	[this]() { UpdateText("text1", "ability clicked!"); });
-
-		//CreateButton("swapButton", Vec2{ 1840.f, 75.f }, Vec2{ 100.f, 100.f }, 10, "Q", Vec3{ 1.f, 1.f, 1.f }, "Ukemochi", 1.f, TextAlignment::Center, true,
-		//	[this]() { UpdateText("text1", "swap clicked!"); });
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
 
 		CreateImage();
+		// Create FPS text
+		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{1.f, 1.f, 1.f}, "Ukemochi_numbers");
 	}
 
 	/*!***********************************************************************
@@ -74,11 +61,37 @@ namespace Ukemochi
 		// Handle button inputs
 		HandleButtonInput();
 
-		// Update fps text
-		/*if(show_fps)
-			UpdateText("fps_text", std::to_string(static_cast<int>(g_FrameRateController.GetFPS())));
+		auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
+
+
+		if (player.currentHealth <= 0)
+		{
+			//Application::Get().IsPaused = true;
+			ECS::GetInstance().GetSystem<InGameGUI>()->showDefeatScreen();
+			CreateText("Restart Text", "(N)", Vec2{ 770.f, 180.f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+			CreateText("Exit Text Defeat", "(M)", Vec2{ 1115.f, 180.f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+		}
+
+		// Update FPS text with color based on FPS value
+		if (show_fps)
+		{
+			int fps = static_cast<int>(g_FrameRateController.GetFPS());
+			glm::vec3 fpsColor;
+
+			if (fps > 60)
+				fpsColor = glm::vec3(0.0f, 1.0f, 0.0f);  // Green
+			else if (fps >= 30)
+				fpsColor = glm::vec3(1.0f, 1.0f, 0.0f);  // Yellow
+			else
+				fpsColor = glm::vec3(1.0f, 0.0f, 0.0f);  // Red
+
+			UpdateText("fps_text", std::to_string(fps));
+			ECS::GetInstance().GetSystem<Renderer>()->UpdateTextColor("fps_text", fpsColor);
+		}
 		else
-			UpdateText("fps_text", "");*/
+		{
+			UpdateText("fps_text", "");
+		}
 	}
 
 	/*!***********************************************************************
@@ -95,10 +108,10 @@ namespace Ukemochi
 	\param[in] font_name
 	 The font to be used for rendering the text.
 	*************************************************************************/
-	//void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
-	//{
-	//	//ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
-	//}
+	void InGameGUI::CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name)
+	{
+		ECS::GetInstance().GetSystem<Renderer>()->CreateTextObject(id, label, pos, scale, color, font_name);
+	}
 
 	/*!***********************************************************************
 	\brief
@@ -108,10 +121,10 @@ namespace Ukemochi
 	\param[in] new_label
 	 The new text to set as the label.
 	*************************************************************************/
-	//void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
-	//{
-	//	//ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
-	//}
+	void InGameGUI::UpdateText(const std::string& id, const std::string& new_label)
+	{
+		ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(id, new_label);
+	}
 
 	/*!***********************************************************************
 	\brief
@@ -142,80 +155,80 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight(); 
 
 		//--Health---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
-		uiManager->addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Health, []() {
+		uiManager->addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Health, false, []() {
 			});
-		uiManager->addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
-		uiManager->addButton("health bar icon", glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("health bar icon", glm::vec3(53.f, 1000.f, 0.f), glm::vec2(117.f, 129.f), "in game_health bar icon", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//--Soul blue----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		uiManager->addButton("blue soul bar bg", glm::vec3(300.f, 940.f, 0.f), glm::vec2(273.f, 55.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("blue soul bar bg", glm::vec3(300.f, 937.f, 0.f), glm::vec2(409.5f, 55.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("blue soul bar", glm::vec3(300.f, 941.f, 0.f), glm::vec2(238.f, 13.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Soul, []() {
+		uiManager->addButton("blue soul bar", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 13.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Soul, false, []() {
 			});
 
-		uiManager->addButton("blue soul bar border", glm::vec3(300.f, 941.f, 0.f), glm::vec2(240.f, 20.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("blue soul bar border", glm::vec3(302.f, 941.f, 0.f), glm::vec2(360.f, 20.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+		uiManager->addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
 			});
 
 		// Ability bar
-		uiManager->addButton("blue soul ability charge bg", glm::vec3(500.f, 942.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("blue soul ability charge bg", glm::vec3(499.f, 938.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("blue soul ability charge bar", glm::vec3(500.f, 942.f, 0.f), glm::vec2(25.f, 27.f), "in game_soul ability charge blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Charge_Bar, []() {
+		uiManager->addButton("blue soul ability charge bar", glm::vec3(500.f, 942.f, 0.f), glm::vec2(25.f, 27.f), "in game_soul ability charge blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Charge_Bar, false, []() {
 			});
 
-		uiManager->addButton("blue soul ability charge border", glm::vec3(500.5f, 942.f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("blue soul ability charge border", glm::vec3(500.5f, 942.f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 		//--Soul red----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		uiManager->addButton("red soul bar bg", glm::vec3(333.f, 881.f, 0.f), glm::vec2(403.f, 35.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("red soul bar bg", glm::vec3(330.5f, 879.f, 0.f), glm::vec2(409.5f, 55.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("red soul bar", glm::vec3(333.f, 881.f, 0.f), glm::vec2(357.f, 17.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Red_Soul, []() {
+		uiManager->addButton("red soul bar", glm::vec3(333.f, 885.f, 0.f), glm::vec2(357.f, 13.f), "in game_soul bar red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Red_Soul, false, []() {
 			});
 
-		uiManager->addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(357.f, 18.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("red soul bar border", glm::vec3(333.f, 883.f, 0.f), glm::vec2(360.f, 20.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+		uiManager->addButton("red fire", glm::vec3(163.f, 883.f, 0.f), glm::vec2(65.f, 71.f), "in game_red fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
 			});
 
 		// Ability bar
-		uiManager->addButton("red soul ability charge bg", glm::vec3(533.f, 881.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("red soul ability charge bg", glm::vec3(532.f, 877.f, 0.f), glm::vec2(58.f, 61.f), "in game_soul ability charge bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("red soul ability charge bar", glm::vec3(533.f, 881.f, 0.f), glm::vec2(25.f, 27.f), "in game_soul ability charge red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Red_Charge_Bar, []() {
+		uiManager->addButton("red soul ability charge bar", glm::vec3(533.f, 881.f, 0.f), glm::vec2(25.f, 27.f), "in game_soul ability charge red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Red_Charge_Bar, false, []() {
 			});
 
-		uiManager->addButton("red soul ability charge border", glm::vec3(534.f, 881.f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("red soul ability charge border", glm::vec3(534.f, 881.f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		//--Ability and Pause----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		uiManager->addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("healthBar", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, []() {
+		uiManager->addButton("pause button", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 		// Main Menu
-		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, []() {
+		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, []() {
+		uiManager->addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			Application::Get().StartGame(); });
 	}
 
@@ -264,23 +277,81 @@ namespace Ukemochi
 			}
 		}
 
-		// Toggle pause with 'R'
-		if (Input::IsKeyTriggered(UME_KEY_R))
+		if (Input::IsKeyTriggered(UME_KEY_Q)) 
 		{
-			Application::Get().IsPaused = !Application::Get().IsPaused;
-
-			if (Application::Get().IsPaused)
+			auto& qButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["soul change"];
+			if (qButton) 
 			{
-				//Application::Get().StopGame();
-				ShowPauseMenu();
+				qButton->triggerDarkenEffect();
 			}
-			else
-				HidePauseMenu();
 		}
 
+		if (Input::IsKeyTriggered(UME_KEY_F)) 
+		{
+			auto& fButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["game ability"];
+			if (fButton) 
+			{
+				fButton->triggerDarkenEffect();
+			}
+		}
+
+		// Pause
+		if (Input::IsKeyTriggered(UME_KEY_R))
+		{
+			auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
+			if (rButton)
+			{
+				rButton->triggerDarkenEffect();
+			}
+			//Application::Get().IsPaused = !Application::Get().IsPaused;
+			pause = true;
+
+			ShowPauseMenu();
+			CreateText("Resume Text", "(V)", Vec2{ 770.f, 375.f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
+		}
+
+		// Resume
+		if (Input::IsKeyTriggered(UME_KEY_V))
+		{
+			auto& vButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["resume button"];
+			if (vButton)
+			{
+				vButton->triggerDarkenEffect();
+			}
+
+			HidePauseMenu();
+			UpdateText("Resume Text", "");
+			pause = false;
+		}
+		
+		// Exit for pause menu
+		if (Input::IsKeyTriggered(UME_KEY_B) && pause)
+		{
+			Application::Get().StopGame();
+		}
+
+		// Defeat screen for restarting game
+		if (Input::IsKeyTriggered(UME_KEY_N))
+		{
+			auto& nButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["restart bg"];
+			if (nButton)
+			{
+				nButton->triggerDarkenEffect();
+			}
+			HideDefeatScreen();
+			UpdateText("Restart Text", "");
+		}
+
+		// Defeat screen for exiting game
 		if (Input::IsKeyTriggered(UME_KEY_M))
 		{
-			showDefeatScreen();
+			auto& mButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["exit button bg"];
+			if (mButton)
+			{
+				mButton->triggerDarkenEffect();
+			}
+			HideDefeatScreen();
+			UpdateText("Exit Text Defeat", "");
 		}
 
 		// Press enter to start game
@@ -289,9 +360,9 @@ namespace Ukemochi
 			Application::Get().StartGame();
 		}
 
-		//// Press F10 to toggle fps text
-		//if (Input::IsKeyTriggered(UME_KEY_F10))
-		//	show_fps = !show_fps;
+		// Press F10 to toggle fps text
+		if (Input::IsKeyTriggered(UME_KEY_F10))
+			show_fps = !show_fps;
 	}
 
 	/*!***********************************************************************
@@ -325,30 +396,30 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight();
 		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("pause overlay", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3);
+		uiManager->addButton("pause overlay", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6);
 
-		uiManager->addButton("pause bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(999.f, 869.f), "back", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
-		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
+		uiManager->addButton("pause bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(999.f, 869.f), "back", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 7);
+		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 7);
 
 		// Resume
-		uiManager->addButton("resume button bg", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 134.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, []() {
+		uiManager->addButton("resume button bg", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 134.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
+			pause = false;
+			this->HidePauseMenu();
 			});
-		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(73.f, 86.f), "return icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			Application::Get().IsPaused = false;
-			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(73.f, 86.f), "return icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, true, [this]() {
 			});
-		uiManager->addButton("resume text", glm::vec3(810.f, 450.f, 0.f), glm::vec2(118.f, 26.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			});
+		uiManager->addButton("resume text", glm::vec3(810.f, 450.f, 0.f), glm::vec2(118.f, 26.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None);
 
 		// Exit
-		uiManager->addButton("exit button bg", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, []() {
+		uiManager->addButton("exit button bg", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, true, [this]() {
+			pause = false;
+			this->HidePauseMenu();
 			});
-		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			Application::Get().IsPaused = false;
-			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+			pause = false;
+			this->HidePauseMenu();
 			});
-		uiManager->addButton("exit text", glm::vec3(1110.f, 450.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			});
+		uiManager->addButton("exit text", glm::vec3(1110.f, 450.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None);
 	}
 
 	void InGameGUI::HidePauseMenu()
@@ -363,7 +434,7 @@ namespace Ukemochi
 		uiManager->removeButton("exit button");
 		uiManager->removeButton("exit button bg");
 		uiManager->removeButton("exit text");
-
+		pause = false;
 	}
 
 	void InGameGUI::showDefeatScreen()
@@ -377,22 +448,40 @@ namespace Ukemochi
 		uiManager->addButton("defeat text", glm::vec3(screen_width * 0.5f, 800.f, 0.f), glm::vec2(499.f, 129.f), "defeat", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5);
 		uiManager->addButton("defeat bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(1920.f, 1080.f), "defeat bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
 		// Restart
-		uiManager->addButton("restart bg", glm::vec3(810.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
-		uiManager->addButton("resume button", glm::vec3(810.f, 350.f, 0.f), glm::vec2(84.f, 88.f), "restart icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			Application::Get().IsPaused = false;
-			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+		uiManager->addButton("restart bg", glm::vec3(810.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, [this]() {
+			//pause = false;
+			this->HideDefeatScreen();
+			});
+		uiManager->addButton("restart button", glm::vec3(810.f, 350.f, 0.f), glm::vec2(84.f, 88.f), "restart icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 7, BarType::None, true, [this]() {
+			//pause = false;
+			this->HideDefeatScreen();
 			});
 		uiManager->addButton("restart button text", glm::vec3(810.f, 250.f, 0.f), glm::vec2(140.f, 27.f), "restart", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6);
 
 		// Exit
-		uiManager->addButton("exit button bg", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, []() {
+		uiManager->addButton("exit button bg", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, true, []() {
+			//Application::Get().IsPaused = false;
+			ECS::GetInstance().GetSystem<InGameGUI>()->HideDefeatScreen();
 			});
-		uiManager->addButton("exit button", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			Application::Get().IsPaused = false;
-			ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+		uiManager->addButton("exit button", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, []() {
 			});
-		uiManager->addButton("exit text", glm::vec3(1160.f, 250.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, []() {
-			});
+		uiManager->addButton("exit text", glm::vec3(1160.f, 250.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None);
+	}
+
+	void InGameGUI::HideDefeatScreen()
+	{
+		auto& uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		// Remove defeat screen elements
+		uiManager->removeButton("defeat overlay");
+		uiManager->removeButton("defeat text");
+		uiManager->removeButton("defeat bg");
+		uiManager->removeButton("restart bg");
+		uiManager->removeButton("restart button");
+		uiManager->removeButton("restart button text");
+		uiManager->removeButton("exit button bg");
+		uiManager->removeButton("exit button");
+		uiManager->removeButton("exit text");
 	}
 
 }

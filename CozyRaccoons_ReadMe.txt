@@ -20,7 +20,7 @@ The collider is placed at the foot of the player and enemy to showcase the depth
 USER CONTROLS
 F11 key - Toggle full screen/window modes
 Enter key - To start game
-R key - To reset the game
+T key - To reset the game
 Escape key - To quit the game
 Left mouse click - Select UI buttons
 WASD keys - Move the player

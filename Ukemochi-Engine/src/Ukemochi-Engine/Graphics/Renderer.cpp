@@ -96,9 +96,12 @@ void Renderer::init()
 	setUpObjectPickingBuffer();
 	setupColorPickingFramebuffer();
 
+	Application& app = Application::Get();
+	int screenWidth = app.GetWindow().GetWidth();
+	int screenHeight = app.GetWindow().GetHeight();
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
-	textRenderer = new TextRenderer(screen_width, screen_height);
+	textRenderer = new TextRenderer(screenWidth, screenHeight);
 
 	// Load multiple fonts into the text renderer
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
@@ -1121,17 +1124,20 @@ void Renderer::drawBoxAnimation()
  * @param color Color of the text.
  * @param font_name Font to be used for rendering the text.
  */
-//void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
-//{
-	//textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
-//}
+void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+{
+	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+}
 
 /*!
  * @brief Updates the text of an existing text object.
  * @param id Identifier of the text object.
  * @param newText The new text content.
  */
-//void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+
+void Renderer::UpdateTextColor(const std::string& id, const glm::vec3& color){ textRenderer->updateTextColor(id, color); }
+
 
 /*!
  * @brief Create a button object in the UI renderer.
