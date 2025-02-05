@@ -323,6 +323,8 @@ namespace Ukemochi
                 showGrid = false;
                 isAnimation = false;
                 spriteChanged = true;
+
+                clipName[0] = '\0';
             }
 
             ImGui::SameLine();

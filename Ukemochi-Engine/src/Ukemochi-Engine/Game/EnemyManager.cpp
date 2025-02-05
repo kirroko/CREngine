@@ -64,11 +64,15 @@ namespace Ukemochi
     {
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
+
             // Iterate through the enemyObjects list
             for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
             {
                 GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
-                object->GetComponent<Animation>().SetAnimation("Idle");
+                //if (object->GetComponent<Animation>().currentClip != "Idle")
+                //{
+                //    object->GetComponent<Animation>().SetAnimation("Idle");
+                //}
 
                 if (object->GetActive() == false)
                 {
@@ -123,13 +127,13 @@ namespace Ukemochi
                 }
 
                 //animation
-                if (enemyphysic.force.x < 0)
+                if (enemycomponent.dirX < 0)
                 {
                     auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
                     //anim.SetAnimation("Running");
                     sr.flipX = false;
                 }
-                else if (enemyphysic.force.x > 0)
+                else if (enemycomponent.dirX > 0)
                 {
                     sr.flipX = true;
                 }
@@ -138,6 +142,11 @@ namespace Ukemochi
                 // If the enemy is in DEAD state, remove it from the list after processing DeadState
                 if (enemycomponent.state == Enemy::DEAD)
                 {
+                    if (object->GetComponent<Animation>().currentClip != "Death")
+                    {
+                        object->GetComponent<Animation>().SetAnimation("Death");
+                    }
+
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     //dont overlap kick sound
                     if (audioM.GetSFXindex("Pattack3") != -1 && audioM.GetSFXindex("EnemyKilled") != -1)
@@ -286,7 +295,10 @@ namespace Ukemochi
                 switch (enemycomponent.state)
                 {
                 case Enemy::ROAM:
-
+                    if (object->GetComponent<Animation>().currentClip != "Walk")
+                    {
+                        object->GetComponent<Animation>().SetAnimation("Walk");
+                    }
                     // Compute the direction vector to the target waypoint
                     enemycomponent.dirX = enemycomponent.targetX - enemytransform.position.x;
                     enemycomponent.dirY = enemycomponent.targetY - enemytransform.position.y;
@@ -336,6 +348,10 @@ namespace Ukemochi
                     break;
 
                 case Enemy::CHASE:
+                    if (object->GetComponent<Animation>().currentClip != "Walk")
+                    {
+                        object->GetComponent<Animation>().SetAnimation("Walk");
+                    }
                     // Compute the direction vector to the target (player)
                     enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
                     enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
@@ -384,95 +400,123 @@ namespace Ukemochi
                     break;
 
                 case Enemy::STANDBY:
+                    if (object->GetComponent<Animation>().currentClip != "Idle")
+                    {
+                        object->GetComponent<Animation>().SetAnimation("Idle");
+                    }
                     if (numEnemyTarget < 2)
                     {
-                        numEnemyTarget++;
-                        enemycomponent.state = enemycomponent.ATTACK;
+                        if (!enemycomponent.isWithPlayer)
+                        {
+                            numEnemyTarget++;
+                            enemycomponent.state = enemycomponent.ATTACK;
+                            enemycomponent.isWithPlayer = true;
+                        }
+
                     }
 
                     // Ensure other transitions (like to ROAM) don�t block the ATTACK state
                     if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
                     {
                         //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                        enemycomponent.state = enemycomponent.ROAM;
-                        numEnemyTarget--;
+                        if (enemycomponent.isWithPlayer)
+                        {
+                            numEnemyTarget--;
+                            enemycomponent.state = enemycomponent.ROAM;
+                            enemycomponent.isWithPlayer = false;
+                        }
                         break;
                     }
                     break;
 
                 case Enemy::ATTACK:
 
+                    enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+
+                    if (object->GetComponent<Animation>().currentClip != "Attack")
+                    {
+                        object->GetComponent<Animation>().SetAnimation("Attack");
+                    }
                     if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                     {
                         enemycomponent.state = enemycomponent.CHASE;
                         break;
                     }
 
-                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-
-                    if (enemycomponent.atktimer <= 1.0f)
+                    //Charge attack for fish
+                    if (enemycomponent.type == enemycomponent.FISH)
                     {
-                        //Charge attack for fish
-                        static bool attack = false;
-                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                        if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
+                        
+                        if (object->GetComponent<Animation>().current_frame == 18)
                         {
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !attack)
+                            //SFX
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("FishAttack") != -1)
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
-                                attack = true;
-                            }
-                            else
-                            {
-                                //temp
-                                if (playerObj != nullptr)
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")))
                                 {
-                                    enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
-                                    ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                    audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+
+                                    //attack
+                                    if (playerObj != nullptr)
+                                    {
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                    }
                                 }
 
-                                //std::cout << (int)enemycomponent.ID<< " player hit\n";
-                                enemycomponent.atktimer = 3.f;
-                                attack = false;
                             }
-                        }
-                        //shoot for worm
 
-                        if (enemycomponent.type == enemycomponent.WORM && audioM.GetSFXindex("FishAttack") != -1)
+                        }
+                    }
+                    else if (enemycomponent.type == enemycomponent.WORM)
+                    {
+                        if (object->GetComponent<Animation>().current_frame == 15)
                         {
-                            //worm
+                            //Play SFX
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                            //spawn bullet
                             static int number = 0;
-                            static bool wormatk = false;
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !wormatk)
-                            {
-                                audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
-                                wormatk = true;
-                                GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile");
-                                std::string name = "bullet" + std::to_string(number++);
-                                std::cout << name << std::endl;
-                                GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
-                                newObject.GetComponent<Transform>().position = enemytransform.position;
-                                newObject.GetComponent<Animation>().SetAnimation("Projectile");
+                            GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile1");
+                            std::string name = "bullet" + std::to_string(number++);
+                            std::cout << name << std::endl;
+                            GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
 
-                                newObject.GetComponent<Rigidbody2D>().velocity.x = enemycomponent.dirX * 500;
-                                newObject.GetComponent<Rigidbody2D>().velocity.y = enemycomponent.dirY * 500;
+                            newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
+                            newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
 
-                                if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
-                                {
-                                    newObject.GetComponent<SpriteRender>().flipX = true;
-                                }
-                                else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
-                                {
-                                    newObject.GetComponent<SpriteRender>().flipX = false;
-                                }
-                            }
-                            else
+                            newObject.GetComponent<Animation>().SetAnimation("Projectile");
+
+                            auto playerpos = playerObj->GetComponent<Transform>().position;
+
+                            Vec2 dir;
+                            Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
+                                                    playerpos.y - newObject.GetComponent<Transform>().position.y));
+
+                            newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
+
+                            float angleRad = atan2(dir.y, dir.x);
+
+                            // Convert to degrees
+                            float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
+
+                            if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
                             {
-                                enemycomponent.atktimer = 3.f;
-                                wormatk = false;
+                                newObject.GetComponent<SpriteRender>().flipX = true;
+                                // Apply rotation to bullet
+                                newObject.GetComponent<Transform>().rotation = angleDeg;
+ 
                             }
+                            else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                            {
+                                newObject.GetComponent<SpriteRender>().flipX = false;
+                                // Apply rotation to bullet
+                                newObject.GetComponent<Transform>().rotation = -angleDeg;
+                            }
+
+                            newObject.AddComponent(EnemyBullet{});
                         }
-
                     }
                     break;
 

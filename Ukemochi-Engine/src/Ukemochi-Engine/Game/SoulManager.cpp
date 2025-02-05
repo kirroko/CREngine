@@ -74,6 +74,29 @@ namespace Ukemochi
         // Update the soul system based on the number of steps
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
+            //place holder
+            for (auto& entity : m_Entities)
+            {
+                std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+                // Skip if the entity is not active
+                if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                    continue;
+                if (tag == "EnemyProjectile")
+                {
+                    if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                        if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
+                        {
+                            GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                            GameObjectManager::GetInstance().DestroyObject(entity);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
             // Handle soul bar decay over time
             //HandleSoulDecay();
 
@@ -117,30 +140,50 @@ namespace Ukemochi
     void SoulManager::SwitchSouls()
     {
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+        auto& anim = ECS::GetInstance().GetComponent<Animation>(player);
 
+        UME_ENGINE_TRACE("OMG HE PRESSED Q!");
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
         {
             if (player_soul.soul_bars[FISH] > 0)
+            {
                 player_soul.current_soul = FISH;
+                anim.SetAnimationUninterrupted("SwitchNB");
+            }
             else if (player_soul.soul_bars[WORM] > 0)
+            {
                 player_soul.current_soul = WORM;
+                anim.SetAnimationUninterrupted("SwitchNR");
+            }
         }
         // Currently in FISH soul, switch to WORM soul if available else EMPTY soul
         else if (player_soul.current_soul == FISH)
         {
             if (player_soul.soul_bars[WORM] > 0)
+            {
                 player_soul.current_soul = WORM;
+                anim.SetAnimationUninterrupted("SwitchBR");
+            }
             else
+            {
                 player_soul.current_soul = EMPTY;
+                anim.SetAnimationUninterrupted("SwitchBN");
+            }
         }
         // Currently in WORM soul, switch to FISH soul if available else EMPTY soul
         else if (player_soul.current_soul == WORM)
         {
             if (player_soul.soul_bars[FISH] > 0)
+            {
                 player_soul.current_soul = FISH;
+                anim.SetAnimationUninterrupted("SwitchRB");
+            }
             else
+            {
                 player_soul.current_soul = EMPTY;
+                anim.SetAnimationUninterrupted("SwitchRN");
+            }
         }
 
         UME_ENGINE_TRACE("Soul Switch: {0}", static_cast<int>(player_soul.current_soul));
