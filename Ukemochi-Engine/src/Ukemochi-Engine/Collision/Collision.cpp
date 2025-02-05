@@ -560,7 +560,7 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
-			if (player_anim.currentClip != "Attack" || player_anim.currentClip != "bAttack" || player_anim.currentClip != "rAttack")
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
 				return;
 
 			switch (player_data.comboState)
