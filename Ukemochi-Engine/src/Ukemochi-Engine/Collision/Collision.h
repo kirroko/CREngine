@@ -2,10 +2,10 @@
 /*!
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Jan 19, 2025
+\date       Feb 06, 2025
 \brief      This file contains the declaration of the Collision system.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
