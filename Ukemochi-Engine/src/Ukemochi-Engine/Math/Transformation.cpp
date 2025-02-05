@@ -40,6 +40,7 @@ namespace Ukemochi
 			// Compute the depth scale of the dynamic entities
 			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife"
+				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Soul"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "WormAbility"
 				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
@@ -75,6 +76,11 @@ namespace Ukemochi
 		// Set the new scale
 		if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Knife")
 			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
+		else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "Soul")
+			transform.scale = { new_scale * 0.1f, new_scale * 0.1f };
+		else if (GameObjectManager::GetInstance().GetGO(object)->GetTag() == "FishAbility"
+			|| GameObjectManager::GetInstance().GetGO(object)->GetTag() == "WormAbility")
+			transform.scale = { new_scale * 2.f, new_scale * 2.f };
 		else
 			transform.scale = { new_scale, new_scale };
 	}

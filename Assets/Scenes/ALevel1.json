@@ -1323,23 +1323,25 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
+                        "WormSkill": ["Mochi Complete Base Sprite-Red-RedSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormSkill", 19, 0.5, 0.5, 100, 235, 235, 1880, 705, 0.05000000074505806, true],
                         "Idle": ["Idle_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Idle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "Running": ["Run_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Running", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
+                        "FishSkill": ["Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishSkill", 24, 0.5, 0.5, 100, 280, 280, 1960, 1120, 0.05000000074505806, true],
                         "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
                         "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true]
                     },
-                    "CurrentClip": "Running"
+                    "CurrentClip": "WormSkill"
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 40,
+                    "CurrentHealth": 10,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1350,8 +1352,8 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [0.0, 0.0],
-                    "SoulCharges": [0, 0],
+                    "SoulBars": [1.0, 1.0],
+                    "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
                     "SkillCooldown": 5.0,
@@ -1395,13 +1397,34 @@
                     "is_trigger": true
                 }]
         }, {
+            "Name": "Soul",
+            "Tag": "Soul",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [847.8070068359375, 539.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [16.864286422729492, 16.864286422729492]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "BlueFlame": ["Blue Flame", "../Assets/Textures/Player/Mochi 1_Part.png", "BlueFlame", 16, 0.5, 0.5, 100, 90, 90, 450, 360, 0.05000000074505806, true],
+                        "RedFlame": ["Red Flame", "../Assets/Textures/Player/Mochi 1_Part.png", "RedFlame", 16, 0.5, 0.5, 100, 90, 90, 450, 360, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "RedFlame"
+                }]
+        }, {
             "Name": "FishAbility",
             "Tag": "FishAbility",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [0.0, 0.0, 0.0],
+                    "Position": [960.0, 539.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [200.0, 200.0]
+                    "Scale": [337.28570556640625, 337.28570556640625]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1426,15 +1449,27 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": true
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "FishAbilitySpawn": ["Blue Skill SPawning_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilitySpawn", 10, 0.5, 0.5, 100, 440, 440, 1760, 1320, 0.05000000074505806, true],
+                        "FishAbilityAttack": ["Blue Soul Attack_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilityAttack", 11, 0.5, 0.5, 100, 400, 400, 2000, 1200, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "FishAbilitySpawn"
                 }]
         }, {
             "Name": "WormAbility",
             "Tag": "WormAbility",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [0.0, 0.0, 0.0],
+                    "Position": [960.0, 539.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [200.0, 200.0]
+                    "Scale": [337.28570556640625, 337.28570556640625]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1459,6 +1494,18 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": true
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "WormAbilitySpawn": ["Red Soul Skill-Spawn_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilitySpawn", 15, 0.5, 0.5, 100, 370, 370, 1850, 1110, 0.05000000074505806, true],
+                        "WormAbilityAttack": ["Red Soul Skill-ATTACKING_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilityAttack", 10, 0.5, 0.5, 100, 360, 360, 1800, 720, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "WormAbilitySpawn"
                 }]
         }, {
             "Name": "1_RightWallFront",
@@ -1640,7 +1687,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 2
+                    "Layer": 0
                 }]
         }, {
             "Name": "3_RightWallFront",
@@ -1828,7 +1875,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "bush 2",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 0
                 }]
         }]
 }
