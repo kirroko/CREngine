@@ -594,6 +594,23 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 EnemyBullet component structure.
+	*************************************************************************/
+	struct EnemyBullet
+	{
+		float lifetime = 5.0f;
+		bool hit = false;
+		EnemyBullet() = default;
+
+		// Constructor
+		//EnemyBullet()
+		//{
+
+		//}
+	};
+
+	/*!***********************************************************************
+	\brief
 	 AudioSource component structure.
 	*************************************************************************/
 	struct AudioManager 
