@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    void PlayerManager::PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const
+    void PlayerManager::PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const
     {
         if (Input::IsKeyPressed(UME_KEY_W))
             rb.force.y = data.playerForce;
@@ -47,16 +47,19 @@ namespace Ukemochi
 
     std::string PlayerManager::SoulAnimation(const PlayerSoul& soulData, std::string clip) const
     {
-        std::string temp = std::move(clip);
+        std::string temp = "";
         switch (soulData.current_soul)  // NOLINT(clang-diagnostic-switch-enum)
         {
         case EMPTY: // Grey
+            temp += std::move(clip);
             break;
         case FISH: // Blue
             temp.push_back('b');
+            temp += std::move(clip);
             break;
         case WORM: // Red
             temp.push_back('r');
+            temp += std::move(clip);
             break;
         default:
             break;
@@ -107,7 +110,7 @@ namespace Ukemochi
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
                 if (!data.comboIsAttacking)
-                    PlayersMovement(rb, anim, sr, data);
+                    PlayersMovement(rb, sr, data);
 
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
                     && !data.comboIsAttacking)

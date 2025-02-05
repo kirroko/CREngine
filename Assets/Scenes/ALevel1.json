@@ -1763,26 +1763,35 @@
                     "Name": "Animation",
                     "Clips": {
                         "Idle": ["Idle_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Idle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
+                        "rIdle": ["Idle_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "bIdle": ["Idle_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "rIdle": ["Idle_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "Running": ["Run_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Running", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
-                        "bRunning": ["Run_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
-                        "bHurt": ["Hurt_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
-                        "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
-                        "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
-                        "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
-                        "bAttack": ["Attack_Blue", "../Assets/Textures/Player/Mochi 3_Part.png", "bAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
-                        "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
-                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
                         "rRunning": ["Run_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
+                        "bRunning": ["Run_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
+                        "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "rHurt": ["Hurt_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
-                        "rAttack": ["Attack_Red", "../Assets/Textures/Player/Mochi 3_Part.png", "rAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true]
+                        "bHurt": ["Hurt_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
+                        "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
+                        "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
+                        "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
+                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "rAttack": ["Attack_Red", "../Assets/Textures/Player/Mochi 3_Part.png", "rAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "bAttack": ["Attack_Blue", "../Assets/Textures/Player/Mochi 3_Part.png", "bAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "WormSkill": ["Mochi Complete Base Sprite-Red-RedSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormSkill", 19, 0.5, 0.5, 60, 235, 235, 1880, 705, 0.03999999910593033, false],
+                        "FishSkill": ["Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishSkill", 24, 0.5, 0.5, 90, 280, 280, 1960, 1120, 0.03999999910593033, false],
+                        "SwitchNR": ["Base to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "SwitchNB": ["Base To Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "SwitchBN": ["Blue to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "SwitchBR": ["Blue to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "SwitchRB": ["Red to Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "SwitchRN": ["Red to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false]
                     },
                     "CurrentClip": "Idle"
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 30,
+                    "CurrentHealth": 100,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1811,7 +1820,7 @@
                     "Name": "Transform",
                     "Position": [791.0, 540.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [168.57142639160156, 168.57142639160156]
+                    "Scale": [84.28571319580078, 126.42857360839844]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1838,13 +1847,34 @@
                     "is_trigger": true
                 }]
         }, {
+            "Name": "Soul",
+            "Tag": "Soul",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [847.8070068359375, 539.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [16.864286422729492, 16.864286422729492]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "BlueFlame": ["Blue Flame", "../Assets/Textures/Player/Mochi 1_Part.png", "BlueFlame", 16, 0.5, 0.5, 100, 90, 90, 450, 360, 0.05000000074505806, true],
+                        "RedFlame": ["Red Flame", "../Assets/Textures/Player/Mochi 1_Part.png", "RedFlame", 16, 0.5, 0.5, 100, 90, 90, 450, 360, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "RedFlame"
+                }]
+        }, {
             "Name": "FishAbility",
             "Tag": "FishAbility",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [0.0, 0.0, 0.0],
+                    "Position": [960.0, 539.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [200.0, 200.0]
+                    "Scale": [337.28570556640625, 337.28570556640625]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1869,15 +1899,27 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": true
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "FishAbilitySpawn": ["Blue Skill SPawning_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilitySpawn", 10, 0.5, 0.5, 100, 440, 440, 1760, 1320, 0.05000000074505806, false],
+                        "FishAbilityAttack": ["Blue Soul Attack_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilityAttack", 11, 0.5, 0.5, 100, 400, 400, 2000, 1200, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "FishAbilitySpawn"
                 }]
         }, {
             "Name": "WormAbility",
             "Tag": "WormAbility",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [0.0, 0.0, 0.0],
+                    "Position": [960.0, 539.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [200.0, 200.0]
+                    "Scale": [337.28570556640625, 337.28570556640625]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -1902,6 +1944,18 @@
                     "Max": [1.0, 1.0],
                     "Collision Flag": 0,
                     "is_trigger": true
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "WormAbilitySpawn": ["Red Soul Skill-Spawn_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilitySpawn", 15, 0.5, 0.5, 100, 370, 370, 1850, 1110, 0.05000000074505806, false],
+                        "WormAbilityAttack": ["Red Soul Skill-ATTACKING_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilityAttack", 10, 0.5, 0.5, 100, 360, 360, 1800, 720, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "WormAbilitySpawn"
                 }]
         }, {
             "Name": "1_RightWallFront",
