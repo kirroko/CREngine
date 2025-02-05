@@ -95,6 +95,13 @@ namespace Ukemochi
                 {
                     if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
                     {
+                        if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)
+                        {
+                            GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                            GameObjectManager::GetInstance().DestroyObject(entity);
+                            break;
+                        }
+
                         GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                         if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
                         {

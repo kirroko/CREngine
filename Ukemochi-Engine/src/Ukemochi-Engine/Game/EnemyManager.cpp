@@ -433,10 +433,24 @@ namespace Ukemochi
 
                     enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
 
-                    if (object->GetComponent<Animation>().currentClip != "Attack")
+                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+
+                    if (enemycomponent.atktimer < 0)
                     {
-                        object->GetComponent<Animation>().SetAnimation("Attack");
+                        if (object->GetComponent<Animation>().currentClip != "Attack")
+                        {
+                            object->GetComponent<Animation>().SetAnimation("Attack");
+                        }
                     }
+                    else
+                    {
+                        if (object->GetComponent<Animation>().currentClip != "Idle")
+                        {
+                            object->GetComponent<Animation>().SetAnimation("Idle");
+                        }
+                    }
+
+                    
                     if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                     {
                         enemycomponent.state = enemycomponent.CHASE;
@@ -447,7 +461,7 @@ namespace Ukemochi
                     if (enemycomponent.type == enemycomponent.FISH)
                     {
                         
-                        if (object->GetComponent<Animation>().current_frame == 18)
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 18)
                         {
                             //SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -468,10 +482,21 @@ namespace Ukemochi
                             }
 
                         }
+
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
+                        {
+                            enemycomponent.atktimer = 3.0f;
+                        }
                     }
                     else if (enemycomponent.type == enemycomponent.WORM)
                     {
-                        if (object->GetComponent<Animation>().current_frame == 15)
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
+                        {
+                            enemycomponent.atktimer = 3.0f;
+                            enemycomponent.wormshoot = false;
+                        }
+
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 15 && !enemycomponent.wormshoot)
                         {
                             //Play SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -533,6 +558,7 @@ namespace Ukemochi
                                 }
 
                                 newObject.AddComponent(EnemyBullet{});
+                                enemycomponent.wormshoot = true;
                             }
                             
                         }
