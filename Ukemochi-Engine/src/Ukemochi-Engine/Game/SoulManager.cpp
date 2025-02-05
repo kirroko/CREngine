@@ -375,9 +375,9 @@ namespace Ukemochi
         {
             auto& fish_animator = ECS::GetInstance().GetComponent<Animation>(fish_ability);
 
-            if (fish_animator.currentClip == "FishAbilitySpawn" && fish_animator.current_frame == 10)
+            if (fish_animator.currentClip == "FishAbilitySpawn" && fish_animator.current_frame == 9)
                 fish_animator.SetAnimation("FishAbilityAttack");
-            else if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 10)
+            if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 9)
                 GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
         }
         // Handle the worm spawning and attacking animations, disable worm ability once completed
@@ -385,9 +385,9 @@ namespace Ukemochi
         {
             auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);
 
-            if (worm_animator.currentClip == "WormAbilitySpawn" && worm_animator.current_frame == 10)
+            if (worm_animator.currentClip == "WormAbilitySpawn" && worm_animator.current_frame == 9)
                 worm_animator.SetAnimation("WormAbilityAttack");
-            if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame >= 10)
+            if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame == 9)
                 GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
         }
 

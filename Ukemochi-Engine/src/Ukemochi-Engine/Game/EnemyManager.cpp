@@ -475,47 +475,66 @@ namespace Ukemochi
                         {
                             //Play SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("WormAttack") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
+
+                                    //attack
+                                    if (playerObj != nullptr)
+                                    {
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                    }
+                                }
+
+                            }
 
                             //spawn bullet
                             static int number = 0;
                             GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile1");
-                            std::string name = "bullet" + std::to_string(number++);
-                            std::cout << name << std::endl;
-                            GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
 
-                            newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
-                            newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
-
-                            newObject.GetComponent<Animation>().SetAnimation("Projectile");
-
-                            auto playerpos = playerObj->GetComponent<Transform>().position;
-
-                            Vec2 dir;
-                            Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
-                                                    playerpos.y - newObject.GetComponent<Transform>().position.y));
-
-                            newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
-
-                            float angleRad = atan2(dir.y, dir.x);
-
-                            // Convert to degrees
-                            float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
-
-                            if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                            if (cloneObject != nullptr)
                             {
-                                newObject.GetComponent<SpriteRender>().flipX = true;
-                                // Apply rotation to bullet
-                                newObject.GetComponent<Transform>().rotation = angleDeg;
- 
-                            }
-                            else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
-                            {
-                                newObject.GetComponent<SpriteRender>().flipX = false;
-                                // Apply rotation to bullet
-                                newObject.GetComponent<Transform>().rotation = -angleDeg;
-                            }
+                                std::string name = "bullet" + std::to_string(number++);
+                                GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
 
-                            newObject.AddComponent(EnemyBullet{});
+                                newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
+                                newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
+
+                                newObject.GetComponent<Animation>().SetAnimation("Projectile");
+
+                                auto playerpos = playerObj->GetComponent<Transform>().position;
+
+                                Vec2 dir;
+                                Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
+                                    playerpos.y - newObject.GetComponent<Transform>().position.y));
+
+                                newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
+
+                                float angleRad = atan2(dir.y, dir.x);
+
+                                // Convert to degrees
+                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
+
+                                if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = true;
+                                    // Apply rotation to bullet
+                                    newObject.GetComponent<Transform>().rotation = angleDeg;
+
+                                }
+                                else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = false;
+                                    // Apply rotation to bullet
+                                    newObject.GetComponent<Transform>().rotation = -angleDeg;
+                                }
+
+                                newObject.AddComponent(EnemyBullet{});
+                            }
+                            
                         }
                     }
                     break;
