@@ -1787,14 +1787,14 @@
                 }, {
                     "Name": "Audio",
                     "Music": [{
-                            "Name": "BGMOG",
-                            "Path": "../Assets/Audio/BGM/bgm_game.wav"
-                        }, {
                             "Name": "BGM",
                             "Path": "../Assets/Audio/BGM/By_ProfBGM_GAME.wav"
                         }, {
                             "Name": "Wind_BGM",
                             "Path": "../Assets/Audio/BGM/Cold_Wind.wav"
+                        }, {
+                            "Name": "BGMOG",
+                            "Path": "../Assets/Audio/BGM/bgm_game.wav"
                         }],
                     "SFX": [{
                             "Name": "HIT",
