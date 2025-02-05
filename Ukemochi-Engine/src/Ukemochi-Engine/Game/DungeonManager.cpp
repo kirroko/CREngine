@@ -26,7 +26,7 @@ namespace Ukemochi
 	void DungeonManager::Init()
 	{
 		//change when proper room structure is done
-		current_room_id = 2;
+		current_room_id = 1;
 		//current_room_wave = WAVE_NUMBER;
 		player = static_cast<EntityID>(-1);
 
@@ -181,7 +181,7 @@ namespace Ukemochi
 		}
 
 		// Set the camera initial position
-		ECS::GetInstance().GetSystem<Camera>()->position = {};
+		ECS::GetInstance().GetSystem<Camera>()->position = {-ROOM_WIDTH, 0};
 	}
 
 	/*!***********************************************************************
