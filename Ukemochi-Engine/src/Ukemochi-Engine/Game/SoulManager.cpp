@@ -133,20 +133,22 @@ namespace Ukemochi
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         auto& soul_animator = ECS::GetInstance().GetComponent<Animation>(soul);
 
+        UME_ENGINE_TRACE("OMG HE PRESSED Q!");
+
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
         {
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                //player_animator.SetAnimation("Running");
+                player_animator.SetAnimationUninterrupted("SwitchNB");
                 soul_animator.SetAnimation("BlueFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                //animator.SetAnimation("Running");
+                player_animator.SetAnimationUninterrupted("SwitchNR");
                 soul_animator.SetAnimation("RedFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
@@ -157,12 +159,14 @@ namespace Ukemochi
             if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
+                player_animator.SetAnimationUninterrupted("SwitchBR");
                 soul_animator.SetAnimation("RedFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
+                player_animator.SetAnimationUninterrupted("SwitchBN");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
@@ -172,12 +176,14 @@ namespace Ukemochi
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
+                player_animator.SetAnimationUninterrupted("SwitchRB");
                 soul_animator.SetAnimation("BlueFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
+                player_animator.SetAnimationUninterrupted("SwitchRN");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
@@ -213,7 +219,7 @@ namespace Ukemochi
     {
         // Trigger player fish animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
-        player_animator.SetAnimation("FishSkill");
+        player_animator.SetAnimationUninterrupted("FishSkill");
 
         // Trigger fish AOE effect at the nearest enemy
         auto& fish_transform = ECS::GetInstance().GetComponent<Transform>(fish_ability);
@@ -242,7 +248,7 @@ namespace Ukemochi
     {
         // Trigger player worm animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
-        player_animator.SetAnimation("WormSkill");
+        player_animator.SetAnimationUninterrupted("WormSkill");
 
         // Trigger worm web effect at the nearest enemy
         auto& worm_transform = ECS::GetInstance().GetComponent<Transform>(worm_ability);

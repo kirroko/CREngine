@@ -74,6 +74,7 @@ namespace Ukemochi
 		auto convexCollider = m_ComponentManager->GetComponentType<ConvexCollider2D>();
 		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
 		auto script = m_ComponentManager->GetComponentType<Script>();
+		auto animation = m_ComponentManager->GetComponentType<Animation>();
 		//auto button = m_ComponentManager->GetComponentType<Button>();
 
 		// Iterate through all possible components
@@ -116,6 +117,11 @@ namespace Ukemochi
 				{
 					Script originalComponent = m_ComponentManager->GetComponent<Script>(entity);
 					AddComponent<Script>(newEntity, originalComponent);
+				}
+				else if (i == animation)
+				{
+					Animation originalComponent = m_ComponentManager->GetComponent<Animation>(entity);
+					AddComponent<Animation>(newEntity, originalComponent);
 				}
 				//else if(i == button)
 				//{

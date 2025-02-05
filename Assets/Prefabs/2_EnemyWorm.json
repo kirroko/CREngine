@@ -1,0 +1,52 @@
+{
+    "GameObject": {
+        "Name": "2_EnemyFish2",
+        "Tag": "Enemy",
+        "Components": [{
+                "Name": "Transform",
+                "Position": [270.0, 461.86175537109375, 0.0],
+                "Rotation": 0.0,
+                "Scale": [174.15274047851563, 174.15274047851563]
+            }, {
+                "Name": "Rigidbody2D",
+                "Position": [260.0066833496094, 567.8617553710938, 0.0],
+                "Velocity": [0.0, 0.0],
+                "Acceleration": [0.0, 0.0],
+                "Force": [0.0, 0.0],
+                "Mass": 1.0,
+                "Inverse Mass": 1.0,
+                "Linear Drag": 0.8999999761581421,
+                "Angle": 0.0,
+                "Angular Velocity": 0.0,
+                "Angular Acceleration": 0.0,
+                "Torque": 0.0,
+                "Inertia Mass": 1.0,
+                "Inverse Inertia Mass": 1.0,
+                "Angular Drag": 0.8999999761581421,
+                "use_gravity": false,
+                "is_kinematic": false
+            }, {
+                "Name": "BoxCollider2D",
+                "Min": [176.84230041503906, 422.3240966796875],
+                "Max": [343.17108154296875, 713.3994140625],
+                "Collision Flag": 0,
+                "is_trigger": false
+            }, {
+                "Name": "SpriteRender",
+                "Sprite": "../Assets/Textures/Enemy/fish-Idle_00_SS.png",
+                "Shape": 0,
+                "Layer": 0
+            }, {
+                "Name": "Animation",
+                "Clips": {
+                    "Idle": ["../Assets/Textures/Enemy/fish-Idle_00_SS.png", "Idle", 0.5, 0.5, 50, 41, 515, 285, 3840, 2048, 0.05000000074505806, true],
+                    "Hurt": ["../Assets/Textures/Enemy/Fish HUrt_SS.png", "Hurt", 0.5, 0.5, 50, 4, 374, 278, 1024, 1024, 0.05000000074505806, true]
+                },
+                "CurrentClip": "Idle"
+            }, {
+                "Name": "EnemyComponent",
+                "Position": [250.0, 200.0],
+                "Type": 1
+            }]
+    }
+}

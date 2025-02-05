@@ -62,7 +62,6 @@ namespace Ukemochi
     *************************************************************************/
     void EnemyManager::UpdateEnemies()
     {
-        // Update the enemy manager based on the number of steps
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
             // Iterate through the enemyObjects list
@@ -82,9 +81,41 @@ namespace Ukemochi
                 auto& enemytransform = object->GetComponent<Transform>();
                 auto& sr = object->GetComponent<SpriteRender>();
 
-                if (enemycomponent.health <= 0.f)
+                // Handle enemy hit state and sound effects
+                if (enemycomponent.wasHit)
                 {
+                    // Only play hit sound if this hit wasn't fatal (health > 0)
+                    if (enemycomponent.health > 0)
+                    {
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        // Play different hit sounds based on enemy type
+                        if (enemycomponent.type == Enemy::FISH && audioM.GetSFXindex("FishHurt") != -1)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("FishHurt"));
+                        }
+                        else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHit") != -1)
+                        {
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHit")))
+                            {
+                                audioM.PlaySFX(audioM.GetSFXindex("WormHit"));
+                            }
+                        }
+                    }
+                    enemycomponent.wasHit = false; // Reset the hit flag
+                }
+
+
+                // When enemy health reaches 0
+                if (enemycomponent.health <= 0.f && !enemycomponent.isDead)  // Add !isDead check
+                {
+                    // Play death sound immediately when health hits 0
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    if (audioM.GetSFXindex("EnemyKilled") != -1)
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                    }
                     enemycomponent.state = Enemy::DEAD;
+                    enemycomponent.isDead = true;  // Mark as dead immediately
                 }
                 else
                 {
@@ -105,7 +136,7 @@ namespace Ukemochi
 
 
                 // If the enemy is in DEAD state, remove it from the list after processing DeadState
-                if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
+                if (enemycomponent.state == Enemy::DEAD)
                 {
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     //dont overlap kick sound
@@ -138,8 +169,10 @@ namespace Ukemochi
 
                 if (enemycomponent.state != enemycomponent.ATTACK)
                 {
+                    bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
+
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1)
+                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1 && isMoving)
                     {
                         if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
                         {
@@ -161,7 +194,7 @@ namespace Ukemochi
                 if (enemycomponent.isKick)
                 {
                     if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                        enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                        enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
                     }
                     else {
                         enemycomponent.timeSinceTargetReached = 0.f;
@@ -181,26 +214,67 @@ namespace Ukemochi
                     else {
 
                         // Timer has reached 1 second, perform the object updates
-                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
-
-                        if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.nearestObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+                        auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+                        if (collidedObj->GetTag() == "Boundary")
                         {
-                            enemycomponent.prevObject2 = enemycomponent.prevObject;
-                            enemycomponent.prevObject = enemycomponent.nearestObj;
-                            enemycomponent.nearestObj = -1;
+                            enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
+                            enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+                            enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
-                            if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                            if (enemycomponent.timeSinceTargetReached > 3.0f)
                             {
-                                enemycomponent.nearestObj = FindNearestObject(object);
-                            }
-                            else
-                            {
-                                enemycomponent.isCollide = false;
-                                enemycomponent.timeSinceTargetReached = 0.f;
+                                enemycomponent.prevObject2 = enemycomponent.prevObject;
+                                enemycomponent.prevObject = enemycomponent.nearestObj;
+                                enemycomponent.nearestObj = -1;
+                                enemycomponent.collideObj = -1;
+
+                                if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                                {
+                                    enemycomponent.nearestObj = FindNearestObject(object);
+                                }
+                                else
+                                {
+                                    enemycomponent.isCollide = false;
+                                    enemycomponent.timeSinceTargetReached = 0.f;
+                                }
                             }
 
                         }
+                        else
+                        {
+                            auto& collidedTransform = ECS::GetInstance().GetComponent<Transform>(enemycomponent.collideObj);
+                            Vec2 awayDir;
+                            Vec2Normalize(awayDir, Vec2(enemytransform.position.x - collidedTransform.position.x,
+                                enemytransform.position.y - collidedTransform.position.y));
+
+                            enemycomponent.dirX = awayDir.x;
+                            enemycomponent.dirY = awayDir.y;
+                            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                            enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+
+                            if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+                            {
+                                enemycomponent.prevObject2 = enemycomponent.prevObject;
+                                enemycomponent.prevObject = enemycomponent.nearestObj;
+                                enemycomponent.nearestObj = -1;
+                                enemycomponent.collideObj = -1;
+
+                                if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                                {
+                                    enemycomponent.nearestObj = FindNearestObject(object);
+                                }
+                                else
+                                {
+                                    enemycomponent.isCollide = false;
+                                    enemycomponent.timeSinceTargetReached = 0.f;
+                                }
+
+                            }
+                        }
+
+                        //enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                        //enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
+
                     }
 
                     ++it;
@@ -310,7 +384,7 @@ namespace Ukemochi
                     break;
 
                 case Enemy::STANDBY:
-                    if (numEnemyTarget < 1)
+                    if (numEnemyTarget < 2)
                     {
                         numEnemyTarget++;
                         enemycomponent.state = enemycomponent.ATTACK;
@@ -321,6 +395,7 @@ namespace Ukemochi
                     {
                         //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
                         enemycomponent.state = enemycomponent.ROAM;
+                        numEnemyTarget--;
                         break;
                     }
                     break;
@@ -338,7 +413,6 @@ namespace Ukemochi
                     if (enemycomponent.atktimer <= 1.0f)
                     {
                         //Charge attack for fish
-                        //shoot for worm
                         static bool attack = false;
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                         if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishAttack") != -1)
@@ -357,9 +431,45 @@ namespace Ukemochi
                                     ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                                 }
 
-                                std::cout << "player hit\n";
-                                enemycomponent.atktimer = 5.f;
+                                //std::cout << (int)enemycomponent.ID<< " player hit\n";
+                                enemycomponent.atktimer = 3.f;
                                 attack = false;
+                            }
+                        }
+                        //shoot for worm
+
+                        if (enemycomponent.type == enemycomponent.WORM && audioM.GetSFXindex("FishAttack") != -1)
+                        {
+                            //worm
+                            static int number = 0;
+                            static bool wormatk = false;
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")) && !wormatk)
+                            {
+                                audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+                                wormatk = true;
+                                GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile");
+                                std::string name = "bullet" + std::to_string(number++);
+                                std::cout << name << std::endl;
+                                GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
+                                newObject.GetComponent<Transform>().position = enemytransform.position;
+                                newObject.GetComponent<Animation>().SetAnimation("Projectile");
+
+                                newObject.GetComponent<Rigidbody2D>().velocity.x = enemycomponent.dirX * 500;
+                                newObject.GetComponent<Rigidbody2D>().velocity.y = enemycomponent.dirY * 500;
+
+                                if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = true;
+                                }
+                                else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = false;
+                                }
+                            }
+                            else
+                            {
+                                enemycomponent.atktimer = 3.f;
+                                wormatk = false;
                             }
                         }
 
@@ -384,14 +494,14 @@ namespace Ukemochi
         This method processes the appropriate response when an enemy collides with another entity,
         which could include interactions with the player or other objects.
     *************************************************************************/
-    void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
+void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
     {
         auto& gameObjectManager = GameObjectManager::GetInstance();
         auto enemy = gameObjectManager.GetGO(enemyID);
         auto obj2 = gameObjectManager.GetGO(objID);
-
+ 
         auto& enemyComponent = enemy->GetComponent<Enemy>();
-
+ 
         if (obj2->HasComponent<Enemy>()) //NOT IN USED
         {
             auto& enemyComponent2 = obj2->GetComponent<Enemy>();
@@ -403,11 +513,12 @@ namespace Ukemochi
             //set collide to true then now the obj is the obj save the pathfinding obj as prev
             enemyComponent.isCollide = true;
             enemyComponent.timeSinceTargetReached = 0.f;
+            enemyComponent.collideObj = static_cast<int>(objID);
             //enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
             //enemyComponent.nearestObj = static_cast<int>(objID);
         }
     }
-
+ 
     /*!***********************************************************************
     \brief
         Determines if there is a clear path for an enemy to move to a new position.
@@ -420,12 +531,12 @@ namespace Ukemochi
     bool EnemyManager::IsClearPathToPosition(GameObject* enemy, float newX, float newY)
     {
         // Check if moving the enemy to the new position (newX, newY) is clear of obstacles
-
+ 
         for (EntityID objectID : environmentObjects)
         {
             GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
             Transform& objectTransform = object->GetComponent<Transform>();
-
+ 
             // Calculate if the potential new position collides with any other environment object
             float dx = newX - objectTransform.position.x;
             float dy = newY - objectTransform.position.y;
@@ -434,17 +545,17 @@ namespace Ukemochi
             {
                 return false;
             }
-
+ 
             // If the new position is too close to the environment object, it's not clear
             if (distance < 1.0f)  // Adjust this threshold as needed
             {
                 return false;
             }
         }
-
+ 
         return true;  // The path is clear to move
     }
-
+ 
     /*!***********************************************************************
     \brief
         Finds the nearest object to a given enemy.
@@ -457,7 +568,7 @@ namespace Ukemochi
         if (environmentObjects.empty()) {
             return -1; // No objects available
         }
-
+ 
         // Collect all eligible objects excluding the previous object
         std::vector<GameObject*> eligibleObjects;
         for (EntityID objectID : environmentObjects) {
@@ -466,23 +577,23 @@ namespace Ukemochi
                 eligibleObjects.push_back(object);
             }
         }
-
+ 
         // If there are no eligible objects, return -1
         if (eligibleObjects.empty()) {
             return -1;
         }
-
+ 
         // Select a random object from the eligible list
         int randomIndex = std::rand() % eligibleObjects.size();
         GameObject* selectedObject = eligibleObjects[randomIndex];
-
+ 
         // Set the target position for the enemy
         enemy->GetComponent<Enemy>().targetX = selectedObject->GetComponent<Transform>().position.x;
         enemy->GetComponent<Enemy>().targetY = selectedObject->GetComponent<Transform>().position.y;
-
+ 
         return static_cast<int>(selectedObject->GetInstanceID());
     }
-
+ 
     /*!***********************************************************************
     \brief
         Checks if an enemy is far enough away from a target object.
@@ -497,20 +608,20 @@ namespace Ukemochi
         if (!enemy || !targetObject) {
             return true; // Consider "away" if either is null
         }
-
+ 
         // Get positions
         const auto& enemyPos = enemy->GetComponent<Transform>().position;
         const auto& objectPos = targetObject->GetComponent<Transform>().position;
-
+ 
         // Calculate squared distance (avoids costly sqrt operation for performance)
         float dx = enemyPos.x - objectPos.x;
         float dy = enemyPos.y - objectPos.y;
         float distanceSquared = dx * dx + dy * dy;
-
+ 
         // Compare with squared threshold
         return distanceSquared > (minDistanceThreshold * minDistanceThreshold);
     }
-
+ 
     /*!***********************************************************************
     \brief
         Clears all enemy entities.
@@ -532,5 +643,5 @@ namespace Ukemochi
             enemyObjects.clear();
         }
     }
-
+ 
 }
