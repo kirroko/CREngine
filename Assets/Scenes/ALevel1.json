@@ -1785,7 +1785,7 @@
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 100,
+                    "CurrentHealth": 80,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1796,8 +1796,8 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [1.0, 1.0],
-                    "SoulCharges": [0, 0],
+                    "SoulBars": [3.0, 3.0],
+                    "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
                     "SkillCooldown": 5.0,
@@ -2371,6 +2371,24 @@
                         }, {
                             "Name": "WormAttack",
                             "Path": "../Assets/Audio/SFX/Enemy/WormAttackVR.wav"
+                        }, {
+                            "Name": "WormMove",
+                            "Path": "../Assets/Audio/SFX/Enemy/WormWalk.wav"
+                        }, {
+                            "Name": "WormHurt",
+                            "Path": "../Assets/Audio/SFX/Enemy/WormHurt2.wav"
+                        }, {
+                            "Name": "WormDead",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm Dead.wav"
+                        }, {
+                            "Name": "SwapSoul",
+                            "Path": "../Assets/Audio/SFX/Player/SwapSoul.wav"
+                        }, {
+                            "Name": "WormSpecial",
+                            "Path": "../Assets/Audio/SFX/Player/WormSpecial.wav"
+                        }, {
+                            "Name": "FishSpecial",
+                            "Path": "../Assets/Audio/SFX/Player/FishSpecial.wav"
                         }]
                 }]
         }, {

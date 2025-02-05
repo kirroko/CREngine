@@ -129,7 +129,7 @@ namespace Ukemochi
 
             // Play the running sound only at frame 2
             static bool runningSoundPlayed = false;
-            if (anim.currentClip == "Running")  // Only when running animation is active
+            if (anim.currentClip.find("Running") != std::string::npos)  // Only when running animation is active
             {
                 int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
 
@@ -267,6 +267,41 @@ namespace Ukemochi
             auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
             
             anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                if (audioM.GetSFXindex("PlayerHurt") != -1)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
+                    }
+                }
+            }
+
+            // Sync hurt audio with animation
+            static bool hurtSoundPlayed = false;
+            if (anim.currentClip == "Hurt")  // Only when hurt animation is active
+            {
+                int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
+
+                // Play hurt sound at specific frames (e.g., frame 5)
+                if (currentFrame == 5 && !hurtSoundPlayed)
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    int hurtSoundIndex = audioM.GetSFXindex("PlayerHurt"); // Replace with the actual sound name
+                    if (hurtSoundIndex != -1)
+                    {
+                        audioM.PlaySFX(hurtSoundIndex);
+                    }
+                    hurtSoundPlayed = true; // Prevent it from playing again at the same frame
+                }
+                else if (currentFrame != 5)
+                {
+                    hurtSoundPlayed = false; // Reset when leaving frame 5
+                }
+            }
             // anim.SetAnimationUninterrupted("Hurt");
             data.comboState = 0;
             data.canAttack = false;

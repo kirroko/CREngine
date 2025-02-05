@@ -162,6 +162,13 @@ namespace Ukemochi
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         auto& soul_animator = ECS::GetInstance().GetComponent<Animation>(soul);
 
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        // Play different hit sounds based on enemy type
+        if (audioM.GetSFXindex("SwapSoul") != -1)
+        {
+            audioM.PlaySFX(audioM.GetSFXindex("SwapSoul"));
+        }
+
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
         {
@@ -244,6 +251,14 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::FishAbility()
     {
+
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        // Play different hit sounds based on enemy type
+        if (audioM.GetSFXindex("FishSpecial") != -1)
+        {
+            audioM.PlaySFX(audioM.GetSFXindex("FishSpecial"));
+        }
+
         // Trigger player fish animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         player_animator.SetAnimationUninterrupted("FishSkill");
@@ -272,6 +287,14 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::WormAbility()
     {
+
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        // Play different hit sounds based on enemy type
+        if (audioM.GetSFXindex("WormSpecial") != -1)
+        {
+            audioM.PlaySFX(audioM.GetSFXindex("WormSpecial"));
+        }
+
         // Trigger player worm animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         player_animator.SetAnimationUninterrupted("WormSkill");
@@ -382,6 +405,7 @@ namespace Ukemochi
             fish_animator.SetAnimation("FishAbilityAttack");
         if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 9)
             GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
+
 
         // Handle the worm spawning and attacking animations, disable worm ability once completed
         auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);

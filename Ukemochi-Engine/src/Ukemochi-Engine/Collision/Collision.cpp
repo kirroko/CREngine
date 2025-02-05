@@ -721,16 +721,16 @@ namespace Ukemochi
 			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				
-				if (audioM.GetSFXindex("PlayerHurt") != -1)
-				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
-						audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
-				}
-			}
+			//if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			//{
+			//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			//	
+			//	if (audioM.GetSFXindex("PlayerHurt") != -1)
+			//	{
+			//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+			//			audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
+			//	}
+			//}
 		}
 		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary")
 		{

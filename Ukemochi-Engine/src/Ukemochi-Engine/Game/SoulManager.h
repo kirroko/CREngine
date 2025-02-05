@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../ECS/ECS.h" // for ECS system and components
+#include "../Factory/GameObject.h" // for game object
 
 namespace Ukemochi
 {

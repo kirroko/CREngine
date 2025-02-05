@@ -97,11 +97,11 @@ namespace Ukemochi
                         {
                             audioM.PlaySFX(audioM.GetSFXindex("FishHurt"));
                         }
-                        else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHit") != -1)
+                        else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHurt") != -1)
                         {
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHit")))
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHurt")))
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("WormHit"));
+                                audioM.PlaySFX(audioM.GetSFXindex("WormHurt"));
                             }
                         }
                     }
@@ -126,6 +126,39 @@ namespace Ukemochi
                     object->SetActive(true);
                 }
 
+                // Animation and sound synchronization
+                if (enemycomponent.type == Enemy::FISH)
+                {
+                    auto& anim = object->GetComponent<Animation>();
+                    if (anim.currentClip == "Walk")
+                    {
+                        // Play FishMove sound at specific frames
+                        if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
+                        {
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("FishMove") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
+                                }
+                            }
+                        }
+
+                        // Play FishMove sound at specific frames
+                        if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
+                        {
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("WormMove") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormMove")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("WormMove"));
+                                }
+                            }
+                        }
+                    }
+                }
                 //animation
                 if (enemycomponent.dirX < 0)
                 {
@@ -179,15 +212,6 @@ namespace Ukemochi
                 if (enemycomponent.state != enemycomponent.ATTACK)
                 {
                     bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
-
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1 && isMoving)
-                    {
-                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
-                        {
-                            audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
-                        }
-                    }
                 }
 
                 if (playerObj != nullptr)
