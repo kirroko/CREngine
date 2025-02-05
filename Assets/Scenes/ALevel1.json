@@ -1339,7 +1339,7 @@
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 40,
+                    "CurrentHealth": 30,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1350,7 +1350,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [0.0, 0.0],
+                    "SoulBars": [1.0, 1.0],
                     "SoulCharges": [0, 0],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
@@ -1640,7 +1640,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 2
+                    "Layer": 0
                 }]
         }, {
             "Name": "3_RightWallFront",
@@ -1829,6 +1829,12 @@
                         }, {
                             "Name": "FishHurt",
                             "Path": "../Assets/Audio/SFX/Enemy/FishHurtVR.wav"
+                        }, {
+                            "Name": "HoverSound",
+                            "Path": "../Assets/Audio/SFX/MainMenu/button click.wav"
+                        }, {
+                            "Name": "StartButton",
+                            "Path": "../Assets/Audio/SFX/MainMenu/MenuHoverOverSFX 2.wav"
                         }]
                 }]
         }, {
@@ -1843,9 +1849,9 @@
                     "Name": "SpriteRender",
                     "Sprite": "bush 2",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 0
                 }]
-        },{
+        }, {
             "Name": "enemybullet",
             "Tag": "EnemyProjectile",
             "Components": [{
