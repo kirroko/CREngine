@@ -406,16 +406,25 @@ namespace Ukemochi
                     }
                     if (numEnemyTarget < 2)
                     {
-                        numEnemyTarget++;
-                        enemycomponent.state = enemycomponent.ATTACK;
+                        if (!enemycomponent.isWithPlayer)
+                        {
+                            numEnemyTarget++;
+                            enemycomponent.state = enemycomponent.ATTACK;
+                            enemycomponent.isWithPlayer = true;
+                        }
+
                     }
 
                     // Ensure other transitions (like to ROAM) don�t block the ATTACK state
                     if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
                     {
                         //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                        enemycomponent.state = enemycomponent.ROAM;
-                        numEnemyTarget--;
+                        if (enemycomponent.isWithPlayer)
+                        {
+                            numEnemyTarget--;
+                            enemycomponent.state = enemycomponent.ROAM;
+                            enemycomponent.isWithPlayer = false;
+                        }
                         break;
                     }
                     break;
