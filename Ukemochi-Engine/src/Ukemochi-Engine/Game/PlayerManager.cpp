@@ -119,12 +119,15 @@ namespace Ukemochi
                         audioM.PlaySFX(audioM.GetSFXindex("PlayerDead"));
                         playerDeadSoundPlayed = true; // Prevent it from playing again
                     }
+                    // Trigger player death animation
+                    anim.SetAnimation(SoulAnimation(soulData, "Death"));
+                    data.isDead = true;
+                    
                     return;
                 }
-                else
-                {
-                    playerDeadSoundPlayed = false; // Reset the flag if the player is not dead
-                }
+                
+                playerDeadSoundPlayed = false; // Reset the flag if the player is not dead
+                
 
                 if (!data.comboIsAttacking)
                     PlayersMovement(rb, sr, data);
@@ -276,14 +279,13 @@ namespace Ukemochi
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
             auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
             
-
-            anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
-
             // Check if the player is already dead
-            if (data.currentHealth <= 0)
+            if (data.currentHealth <= 0 || data.isDead)
             {
                 return; // Exit early if the player is dead
             }
+            
+            anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
 
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
