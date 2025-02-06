@@ -144,8 +144,16 @@ namespace Ukemochi
                                 }
                             }
                         }
+                    }
+                }
 
-                        // Play FishMove sound at specific frames
+                // Animation and sound synchronization
+                else if (enemycomponent.type == Enemy::WORM)
+                {
+                    auto& anim = object->GetComponent<Animation>();
+                    if (anim.currentClip == "Walk")
+                    {
+                        // Play WormMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
                         {
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -159,6 +167,7 @@ namespace Ukemochi
                         }
                     }
                 }
+
                 //animation
                 if (enemycomponent.dirX < 0)
                 {
