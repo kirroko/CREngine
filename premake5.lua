@@ -90,7 +90,7 @@ project "Ukemochi-Engine"
 		"opengl32.lib",
 		"freetype",
 		"mono-2.0-sgen.lib",
-		"PLMpeg"
+		-- "PLMpeg"
 	}
 	filter "system:windows"
 		cppdialect "C++17"

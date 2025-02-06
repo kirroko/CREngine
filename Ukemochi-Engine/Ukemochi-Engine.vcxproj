@@ -319,9 +319,6 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ProjectReference Include="vendor\freetype\freetype.vcxproj">
       <Project>{89895BD8-7556-B6E3-9E6F-A48B8A9BEB71}</Project>
     </ProjectReference>
-    <ProjectReference Include="vendor\pl_mpeg\PLMpeg.vcxproj">
-      <Project>{6A2007C8-56C2-319E-3F7D-45F22BBEB8EE}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

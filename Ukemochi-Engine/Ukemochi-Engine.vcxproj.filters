@@ -80,6 +80,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Collision\Collision.h">
       <Filter>Ukemochi-Engine\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Collision\Quadtree.h">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Core.h">
       <Filter>Ukemochi-Engine</Filter>
     </ClInclude>
@@ -146,6 +149,9 @@
     <ClInclude Include="src\Ukemochi-Engine\Game\PlayerManager.h">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\SoulManager.h">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\Animation.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
@@ -174,6 +180,9 @@
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButton.h">
+      <Filter>Ukemochi-Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButtonManager.h">
       <Filter>Ukemochi-Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Ukemochi-Engine\Graphics\VAO.h">
@@ -245,13 +254,6 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ukemochi-Engine\Game\DungeonManager.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Game\PlayerManager.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Collision\Quadtree.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Game\SoulManager.h" />
-    <ClInclude Include="src\Ukemochi-Engine\Graphics\UIButtonManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Video\VideoManager.h">
       <Filter>Ukemochi-Engine\Video</Filter>
     </ClInclude>
@@ -271,6 +273,9 @@
       <Filter>Ukemochi-Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Collision\Collision.cpp">
+      <Filter>Ukemochi-Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Collision\Quadtree.cpp">
       <Filter>Ukemochi-Engine\Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\ECS\Component.cpp">
@@ -310,6 +315,9 @@
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Game\PlayerManager.cpp">
+      <Filter>Ukemochi-Engine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\SoulManager.cpp">
       <Filter>Ukemochi-Engine\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Ukemochi-Engine\Graphics\Animation.cpp">
@@ -399,12 +407,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Game\DungeonManager.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Game\PlayerManager.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\DebugModeBatchRendering.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Graphics\ColorBufferBatchRendering.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Collision\Quadtree.cpp" />
-    <ClCompile Include="src\Ukemochi-Engine\Game\SoulManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Video\VideoManager.cpp">
       <Filter>Ukemochi-Engine\Video</Filter>
     </ClCompile>

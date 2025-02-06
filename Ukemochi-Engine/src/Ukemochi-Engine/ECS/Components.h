@@ -703,8 +703,8 @@ namespace Ukemochi
 		std::string videoPath;  // Path to the video file
 		std::string videoName;  // Name of the video
 
-		VideoSource(std::string name, std::string path)
-			: videoName(name), videoPath(path) {}
+		VideoSource(std::string path, std::string name)
+			: videoPath(std::move(path)), videoName(std::move(name)) {}
 	};
 
 	/*!***********************************************************************
@@ -714,7 +714,10 @@ namespace Ukemochi
 	struct VideoData {
 		std::vector<VideoSource> videos;  // List of videos
 
-		VideoData() = default;
+		VideoData()
+		{
+			videos = std::vector<VideoSource>();
+		}
 	};
 
 }

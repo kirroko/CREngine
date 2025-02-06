@@ -32,6 +32,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/DungeonManager.h"
 #include "Game/SoulManager.h"
 #include "Graphics/UIButtonManager.h"
+#include "Video/VideoManager.h"
 
 namespace Ukemochi
 {
@@ -73,6 +74,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
+	    ECS::GetInstance().RegisterComponent<VideoData>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -90,6 +92,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<EnemyManager>();
         ECS::GetInstance().RegisterSystem<SoulManager>();
         ECS::GetInstance().RegisterSystem<UIButtonManager>();
+	    ECS::GetInstance().RegisterSystem<VideoManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -152,6 +155,11 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
 
+	    // For VideoManager system
+	    sig.reset();
+	    sig.set(ECS::GetInstance().GetComponentType<VideoData>());
+	    ECS::GetInstance().SetSystemSignature<VideoManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
@@ -209,6 +217,12 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+
+	    // We are gonna to play the intro video after everything has been loaded!
+	    UME_ENGINE_TRACE("Initializing video manager...");
+	    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/storyboard-for coders.mpeg"))
+	        UME_ENGINE_ERROR("Video didn't load properly!");
+	    // ECS::GetInstance().GetSystem<VideoManager>()->Init(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight());
     }
 
     /*!***********************************************************************
@@ -233,9 +247,6 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
-
-        auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
-
     }
 
     /*!***********************************************************************
@@ -267,8 +278,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
             std::cout << "Switched to Scale Mode\n";
         }
-
-
+	    
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
@@ -308,6 +318,8 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
+	    // ECS::GetInstance().GetSystem<VideoManager>()->Update();
+
         SceneManagerDraw();
     }
 
@@ -319,6 +331,8 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
+	    ECS::GetInstance().GetSystem<VideoManager>()->Update();
+	    
         loop_start = std::chrono::steady_clock::now();
 
 #ifdef _DEBUG
@@ -337,6 +351,7 @@ namespace Ukemochi
 #endif // _DEBUG
 
 #ifndef _DEBUG
+
 		// Game Inputs Quick fix
 		if (Input::IsKeyTriggered(GLFW_KEY_R))
 		{
@@ -383,8 +398,7 @@ namespace Ukemochi
 			return;
 		}
 #endif
-		
-
+	    
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
@@ -441,24 +455,22 @@ namespace Ukemochi
 		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
         // --- COLLISION UPDATE ---
+        // --- TRANSFORMATION UPDATE ---
         sys_start = std::chrono::steady_clock::now();
 		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
+        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
 		sys_end = std::chrono::steady_clock::now();
 		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
-
-        // --- TRANSFORMATION UPDATE ---
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
-
+	    
         // --- AUDIO UPDATE ---
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-
+	    
 	    // --- ANIMATION UPDATE ---
-	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
-
         // --- TURN OFF GIZMO ---
-        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
+	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 		SceneManagerDraw();
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);

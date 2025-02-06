@@ -196,11 +196,12 @@ private:
 
 	const int MAX_SOUL_CHARGES = 1;
 	const int SOUL_BAR_THRESHOLD = 5;
+public:
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/
 	std::shared_ptr<Shader> shaderProgram;
-
+private:
 	/*!
 	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.
 	 */

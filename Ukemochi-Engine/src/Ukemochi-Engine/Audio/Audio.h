@@ -266,7 +266,6 @@ namespace Ukemochi
         std::vector<FMOD::Channel *> pMusicChannels; // A list of channels playing individual sounds
 
         FMOD::System *pSystem; // Pointer to the FMOD system, which manages all sound operations
-
     private:
         std::vector<FMOD::ChannelGroup *> pChannelGroups; // A list of channel groups for managing groups of sounds
         int numOfSFX;                                     // A counter to track the number of loaded sounds
