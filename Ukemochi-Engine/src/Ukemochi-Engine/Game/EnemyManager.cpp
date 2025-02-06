@@ -248,6 +248,8 @@ namespace Ukemochi
 
                         // Timer has reached 1 second, perform the object updates
                         auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+                        if (collidedObj == nullptr)
+                            break;
                         if (collidedObj->GetTag() == "Boundary")
                         {
                             enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
