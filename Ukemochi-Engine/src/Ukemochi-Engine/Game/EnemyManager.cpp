@@ -147,7 +147,7 @@ namespace Ukemochi
                     }
                     if (enemycomponent.type == Enemy::WORM)
                     {
-                        // Play FishMove sound at specific frames
+                        // Play WormMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
                         {
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -219,6 +219,7 @@ namespace Ukemochi
 
                 if (playerObj != nullptr)
                 {
+                    //when near chase player
                     if (enemycomponent.ReachedTarget(enemytransform.position.x, enemytransform.position.y,
                         playerObj->GetComponent<Transform>().position.x,
                         playerObj->GetComponent<Transform>().position.y, 350.f) == true && enemycomponent.state == enemycomponent.ROAM)
@@ -227,6 +228,7 @@ namespace Ukemochi
                         enemycomponent.state = enemycomponent.CHASE;
                     }
                 }
+                //if player kick delay 
                 if (enemycomponent.isKick)
                 {
                     if (enemycomponent.timeSinceTargetReached < 1.0f) {
@@ -251,8 +253,12 @@ namespace Ukemochi
 
                         // Timer has reached 1 second, perform the object updates
                         auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+
+                        //saftey check
                         if (collidedObj == nullptr)
                             break;
+
+                        //if collide to wall
                         if (collidedObj->GetTag() == "Boundary")
                         {
                             enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
@@ -460,6 +466,12 @@ namespace Ukemochi
 
                 case Enemy::ATTACK:
 
+                    if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                    {
+                        enemycomponent.state = enemycomponent.CHASE;
+                        break;
+                    }
+
                     enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
 
                     enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
@@ -477,13 +489,6 @@ namespace Ukemochi
                         {
                             object->GetComponent<Animation>().SetAnimation("Idle");
                         }
-                    }
-
-                    
-                    if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
-                    {
-                        enemycomponent.state = enemycomponent.CHASE;
-                        break;
                     }
 
                     //Charge attack for fish
