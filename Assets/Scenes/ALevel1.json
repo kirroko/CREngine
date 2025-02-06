@@ -225,9 +225,14 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-1582.0, 942.0, 0.0],
+                    "Position": [-1585.0, 905.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [-611.0, 349.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/env_base_vine_4.png",
+                    "Shape": 0,
+                    "Layer": 0
                 }]
         }, {
             "Name": "1_Vine2",
@@ -352,7 +357,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-1739.0, 814.0, 0.0],
+                    "Position": [-1740.0, 796.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [226.0, 568.0]
                 }, {
@@ -795,6 +800,162 @@
                     "Layer": 0
                 }]
         }, {
+            "Name": "2_EnemyFish1",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1702.0, 594.6694946289063, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [164.6664581298828, 164.6664581298828]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [1163.6776123046875, 676.6694946289063, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1084.2841796875, 537.7310180664063],
+                    "Max": [1243.071044921875, 815.6079711914063],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
+                    },
+                    "CurrentClip": "Idle"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 0
+                }]
+        }, {
+            "Name": "2_EnemyFish2",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [802.0, 516.6694946289063, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [170.23788452148438, 170.23788452148438]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [1163.6776123046875, 676.6694946289063, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1084.2841796875, 537.7310180664063],
+                    "Max": [1243.071044921875, 815.6079711914063],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
+                    },
+                    "CurrentClip": "Idle"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 0
+                }]
+        }, {
+            "Name": "2_EnemyFish3",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [1512.0, 338.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [183.0, 183.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [1796.7720947265625, 512.1513061523438, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1711.365478515625, 362.6897888183594],
+                    "Max": [1882.1787109375, 661.61279296875],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
+                    },
+                    "CurrentClip": "Attack"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 0
+                }]
+        }, {
             "Name": "3_TopBound",
             "Tag": "Boundary",
             "Components": [{
@@ -1195,71 +1356,19 @@
                     "Layer": 0
                 }]
         }, {
-            "Name": "2_EnemyFish1",
+            "Name": "3_EnemyWorm1",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1702.0, 594.6694946289063, 0.0],
+                    "Position": [3450.0, 461.86175537109375, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [164.6664581298828, 164.6664581298828]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [1163.6776123046875, 676.6694946289063, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [-1938.7623291015625, 491.1217956542969],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1084.2841796875, 537.7310180664063],
-                    "Max": [1243.071044921875, 815.6079711914063],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
-                    "Shape": 0,
-                    "Layer": 0
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
-                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
-                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
-                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true],
-                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true]
-                    },
-                    "CurrentClip": "Idle"
-                }, {
-                    "Name": "EnemyComponent",
-                    "Position": [250.0, 200.0],
-                    "Type": 0
-                }]
-        }, {
-            "Name": "2_EnemyWorm",
-            "Tag": "Enemy",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1036.0, 270.86175537109375, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [187.79559326171875, 187.79559326171875]
+                    "Scale": [174.15274047851563, 174.15274047851563]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
-                    "Force": [-583.9249877929688, 1912.859619140625],
+                    "Force": [-1938.7623291015625, 491.1217956542969],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
                     "Linear Drag": 0.8999999761581421,
@@ -1299,16 +1408,68 @@
                     "Type": 1
                 }]
         }, {
-            "Name": "2_EnemyFish3",
+            "Name": "3_EnemyWorm2",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1612.0, 438.0, 0.0],
+                    "Position": [2920.0, 541.8617553710938, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [175.85714721679688, 175.85714721679688]
+                    "Scale": [168.43844604492188, 168.43844604492188]
                 }, {
                     "Name": "Rigidbody2D",
-                    "Position": [1796.7720947265625, 512.1513061523438, 0.0],
+                    "Position": [260.0066833496094, 567.8617553710938, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [-583.9249877929688, 1912.859619140625],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [176.84230041503906, 422.3240966796875],
+                    "Max": [343.17108154296875, 713.3994140625],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
+                        "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
+                        "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
+                        "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
+                        "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Walk"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
+                }]
+        }, {
+            "Name": "3_EnemyWorm3",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3650.0, 349.86175537109375, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [182.15272521972656, 182.15272521972656]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [260.0066833496094, 567.8617553710938, 0.0],
                     "Velocity": [0.0, 0.0],
                     "Acceleration": [0.0, 0.0],
                     "Force": [323.9331359863281, -1973.592529296875],
@@ -1326,29 +1487,29 @@
                     "is_kinematic": false
                 }, {
                     "Name": "BoxCollider2D",
-                    "Min": [1711.365478515625, 362.6897888183594],
-                    "Max": [1882.1787109375, 661.61279296875],
+                    "Min": [176.84230041503906, 422.3240966796875],
+                    "Max": [343.17108154296875, 713.3994140625],
                     "Collision Flag": 0,
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
-                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
-                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
-                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true],
-                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true]
+                        "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
+                        "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
+                        "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
+                        "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
+                        "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
-                    "CurrentClip": "Attack"
+                    "CurrentClip": "Walk"
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 0
+                    "Type": 1
                 }]
         }, {
             "Name": "4_TopBound",
@@ -1718,6 +1879,214 @@
                     "Layer": 0
                 }]
         }, {
+            "Name": "4_EnemyFish1",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4582.0, 594.6694946289063, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [164.6664581298828, 164.6664581298828]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [1163.6776123046875, 676.6694946289063, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1084.2841796875, 537.7310180664063],
+                    "Max": [1243.071044921875, 815.6079711914063],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
+                    },
+                    "CurrentClip": "Idle"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 0
+                }]
+        }, {
+            "Name": "4_EnemyFish2",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4852.0, 444.66949462890625, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [175.38075256347656, 175.38075256347656]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [1163.6776123046875, 676.6694946289063, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1084.2841796875, 537.7310180664063],
+                    "Max": [1243.071044921875, 815.6079711914063],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Death": ["Fish Death", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2048, 1024, 0.03999999910593033, true],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
+                    },
+                    "CurrentClip": "Idle"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 0
+                }]
+        }, {
+            "Name": "4_EnemyWorm1",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5202.0, 491.86175537109375, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [172.00987243652344, 172.00987243652344]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [260.0066833496094, 567.8617553710938, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [176.84230041503906, 422.3240966796875],
+                    "Max": [343.17108154296875, 713.3994140625],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
+                        "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
+                        "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
+                        "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
+                        "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Walk"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
+                }]
+        }, {
+            "Name": "4_EnemyWorm2",
+            "Tag": "Enemy",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5552.0, 391.86175537109375, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [179.15274047851563, 179.15274047851563]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [260.0066833496094, 567.8617553710938, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [176.84230041503906, 422.3240966796875],
+                    "Max": [343.17108154296875, 713.3994140625],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
+                        "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
+                        "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
+                        "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
+                        "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Walk"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 1
+                }]
+        }, {
             "Name": "Player",
             "Tag": "Player",
             "Components": [{
@@ -1766,26 +2135,26 @@
                         "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "bHurt": ["Hurt_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "rHurt": ["Hurt_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
-                        "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
-                        "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
                         "SwitchNR": ["Base to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
-                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
+                        "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
                         "bAttack": ["Attack_Blue", "../Assets/Textures/Player/Mochi 3_Part.png", "bAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
+                        "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, true],
                         "rAttack": ["Attack_Red", "../Assets/Textures/Player/Mochi 3_Part.png", "rAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.03500000014901161, true],
                         "WormSkill": ["Mochi Complete Base Sprite-Red-RedSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormSkill", 19, 0.5, 0.5, 60, 235, 235, 1880, 705, 0.03999999910593033, false],
                         "FishSkill": ["Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishSkill", 24, 0.5, 0.5, 90, 280, 280, 1960, 1120, 0.03999999910593033, false],
                         "SwitchNB": ["Base To Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
                         "SwitchBN": ["Blue to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "SwitchBR": ["Blue to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
                         "SwitchRB": ["Red to Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
+                        "SwitchBR": ["Blue to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
                         "SwitchRN": ["Red to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false]
                     },
                     "CurrentClip": "Idle"
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 80,
+                    "CurrentHealth": 100,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1796,7 +2165,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [3.0, 3.0],
+                    "SoulBars": [1.0, 1.0],
                     "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
