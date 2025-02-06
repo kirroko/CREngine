@@ -107,20 +107,11 @@ void Renderer::init()
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
 
-	// Add text objects
-	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	//textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
-
-	// initAnimationEntities();
-	
-	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
-
 	batchRenderer = std::make_unique<BatchRenderer2D>();
 	// Load shaders and create shared pointer
 
 	batchRenderer->init(shaderProgram);
 
-	//UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
 	debugBatchRenderer->init(debug_shader_program);
@@ -850,8 +841,8 @@ void Renderer::render()
 	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
 
 	batchRendererUI->beginBatch();
-	//uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
-	ECS::GetInstance().GetSystem<InGameGUI>()->Render(glm::vec3(0.f, 0.f, 0.f));
+	glm::vec3 tempCameraPos = glm::vec3(0.f, 0.f, 0.f);
+	ECS::GetInstance().GetSystem<InGameGUI>()->Render(tempCameraPos);
 	batchRendererUI->endBatch();
 
 	

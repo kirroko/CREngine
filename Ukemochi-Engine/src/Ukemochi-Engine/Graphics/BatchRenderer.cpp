@@ -258,7 +258,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
 
     GLint textureID = -1;
 
-    auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
+    auto assetManager = ECS::GetInstance().GetSystem<AssetManager>();
 
     //std::cout << "Checking spriteData for spriteName: " << spriteName << std::endl;
     //if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())

@@ -119,8 +119,13 @@ namespace Ukemochi {
 		bool GameStarted = false; // Has the game started?
 		bool IsPaused = false; // Is the game paused?
 
-	private:
+		bool Paused() const { return pause; }
+		void SetPaused(bool paused) { pause = paused; }
 
+		void QuitGame();
+
+	private:
+		bool pause = false;
 		/*!***********************************************************************
 		\brief
 		 Checks if a window close event has been triggered.

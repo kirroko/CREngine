@@ -463,10 +463,10 @@ private:
 public:
 	std::shared_ptr<BatchRenderer2D> batchRendererUI;
 	// Setter method to set the player object
-	void SetPlayerObject(GameObject& player)
+	/*void SetPlayerObject(GameObject& player)
 	{
 		playerObject = &player;
-	}
+	}*/
 
 	//int GetPlayer()
 	//{
