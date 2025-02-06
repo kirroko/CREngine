@@ -109,11 +109,21 @@ namespace Ukemochi
                 auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
+                static bool playerDeadSoundPlayed = false;
+
                 if (data.currentHealth <= 0)
                 {
-                    // Trigger player death animation
-                    anim.SetAnimation(SoulAnimation(soulData, "Death"));
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    if (!playerDeadSoundPlayed && audioM.GetSFXindex("PlayerDead") != -1)
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("PlayerDead"));
+                        playerDeadSoundPlayed = true; // Prevent it from playing again
+                    }
                     return;
+                }
+                else
+                {
+                    playerDeadSoundPlayed = false; // Reset the flag if the player is not dead
                 }
 
                 if (!data.comboIsAttacking)
@@ -134,7 +144,7 @@ namespace Ukemochi
                 int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
 
                 // 6 or 7 for current frame
-                if ((currentFrame == 2 || currentFrame == 7) && !runningSoundPlayed)
+                if ((currentFrame == 3 || currentFrame == 7) && !runningSoundPlayed)
                 {
                     // Assuming you have an audio manager and running sound index
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -145,7 +155,7 @@ namespace Ukemochi
                     }
                     runningSoundPlayed = true; // Prevent it from playing again at the same frame
                 }
-                else if ((currentFrame != 2 && currentFrame != 7))
+                else if ((currentFrame != 3 && currentFrame != 7))
                 {
                     runningSoundPlayed = false; // Reset when leaving frame 2
                 }
@@ -266,7 +276,15 @@ namespace Ukemochi
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
             auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
             
+
             anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
+
+            // Check if the player is already dead
+            if (data.currentHealth <= 0)
+            {
+                return; // Exit early if the player is dead
+            }
+
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();

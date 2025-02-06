@@ -1785,7 +1785,7 @@
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 80,
+                    "CurrentHealth": 70,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -1796,7 +1796,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [3.0, 3.0],
+                    "SoulBars": [4.0, 4.0],
                     "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
@@ -2389,6 +2389,9 @@
                         }, {
                             "Name": "FishSpecial",
                             "Path": "../Assets/Audio/SFX/Player/FishSpecial.wav"
+                        }, {
+                            "Name": "PlayerDead",
+                            "Path": "../Assets/Audio/SFX/Player/PlayerDead.wav"
                         }]
                 }]
         }, {
