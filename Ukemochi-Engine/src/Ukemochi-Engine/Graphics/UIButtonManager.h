@@ -12,9 +12,9 @@ class UIButtonManager : public Ukemochi::System {
 public:
     std::unordered_map<std::string, std::shared_ptr<UIButton>> buttons;
 
-    void addButton(const std::string& id, glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, int ui_layer, BarType barType = BarType::None, std::function<void()> callback = nullptr)
+    void addButton(const std::string& id, glm::vec3 pos, glm::vec2 size, const std::string& sprite, glm::vec3 color, std::shared_ptr<BatchRenderer2D> renderer, int ui_layer, BarType barType = BarType::None, bool hoverEffect = false, std::function<void()> callback = nullptr)
     {
-        auto button = std::make_shared<UIButton>(id, pos, size, sprite, color, std::move(renderer), ui_layer, barType, callback);
+        auto button = std::make_shared<UIButton>(id, pos, size, sprite, color, std::move(renderer), ui_layer, barType, hoverEffect, callback);
         buttons[id] = button;
     }
 
@@ -51,14 +51,6 @@ public:
                     button->updateBar(it->second);
                 }
             }
-        }
-    }
-
-    void update(glm::vec2 mousePos, bool mousePressed) 
-    {
-        for (auto& [id, button] : buttons)
-        {
-            button->update(mousePos, mousePressed);
         }
     }
 

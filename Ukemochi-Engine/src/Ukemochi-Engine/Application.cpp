@@ -412,4 +412,9 @@ namespace Ukemochi
         imguiInstance.ImGuiUpdate(); // Render ImGui elements
         //************ Render IMGUI ************
     }
+
+    void Application::QuitGame()
+    {
+        es_current = ENGINE_STATES::ES_QUIT;
+    }
 }

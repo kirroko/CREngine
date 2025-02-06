@@ -96,28 +96,22 @@ void Renderer::init()
 	setUpObjectPickingBuffer();
 	setupColorPickingFramebuffer();
 
+	Application& app = Application::Get();
+	int screenWidth = app.GetWindow().GetWidth();
+	int screenHeight = app.GetWindow().GetHeight();
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
-	textRenderer = new TextRenderer(screen_width, screen_height);
+	textRenderer = new TextRenderer(screenWidth, screenHeight);
 
 	// Load multiple fonts into the text renderer
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
-
-	// Add text objects
-	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	//textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
-
-	// initAnimationEntities();
-	
-	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 
 	batchRenderer = std::make_unique<BatchRenderer2D>();
 	// Load shaders and create shared pointer
 
 	batchRenderer->init(shaderProgram);
 
-	//UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
 	debugBatchRenderer->init(debug_shader_program);
@@ -847,8 +841,8 @@ void Renderer::render()
 	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
 
 	batchRendererUI->beginBatch();
-	//uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
-	ECS::GetInstance().GetSystem<InGameGUI>()->Render(glm::vec3(0.f, 0.f, 0.f));
+	glm::vec3 tempCameraPos = glm::vec3(0.f, 0.f, 0.f);
+	ECS::GetInstance().GetSystem<InGameGUI>()->Render(tempCameraPos);
 	batchRendererUI->endBatch();
 
 	
@@ -1130,17 +1124,20 @@ void Renderer::drawBoxAnimation()
  * @param color Color of the text.
  * @param font_name Font to be used for rendering the text.
  */
-//void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
-//{
-	//textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
-//}
+void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+{
+	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+}
 
 /*!
  * @brief Updates the text of an existing text object.
  * @param id Identifier of the text object.
  * @param newText The new text content.
  */
-//void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+
+void Renderer::UpdateTextColor(const std::string& id, const glm::vec3& color){ textRenderer->updateTextColor(id, color); }
+
 
 /*!
  * @brief Create a button object in the UI renderer.

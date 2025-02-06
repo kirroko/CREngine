@@ -23,9 +23,12 @@ namespace Ukemochi
 	class InGameGUI : public System
 	{
 	private:
+		bool pause = false;
+		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
 		 
 	public:
+
 		/*!***********************************************************************
 		\brief
 		 Initialize the in game GUI system.
@@ -52,7 +55,7 @@ namespace Ukemochi
 		\param[in] font_name
 		 The font to be used for rendering the text.
 		*************************************************************************/
-		//void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
+		void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
 
 		/*!***********************************************************************
 		\brief
@@ -62,7 +65,7 @@ namespace Ukemochi
 		\param[in] new_label
 		 The new text to set as the label.
 		*************************************************************************/
-		//void UpdateText(const std::string& id, const std::string& new_label);
+		void UpdateText(const std::string& id, const std::string& new_label);
 
 		/*!***********************************************************************
 		\brief
@@ -134,5 +137,10 @@ namespace Ukemochi
 		 True if the mouse is within the object's boundaries, false otherwise.
 		*************************************************************************/
 		bool IsInside(const Vec2& pos, const Vec2& size);
+
+		void ShowPauseMenu();
+		void HidePauseMenu();
+		void showDefeatScreen();
+		void HideDefeatScreen();
 	};
 }

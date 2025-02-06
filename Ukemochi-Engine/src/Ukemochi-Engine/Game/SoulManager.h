@@ -102,5 +102,11 @@ namespace Ukemochi
          Handle the floating soul which follows the player's position.
         *************************************************************************/
         void HandleFloatingSoul();
+
+        /*!***********************************************************************
+        \brief
+         Handle the enemy projectile logic (placeholder).
+        *************************************************************************/
+        void HandleEnemyProjectile();
     };
 }

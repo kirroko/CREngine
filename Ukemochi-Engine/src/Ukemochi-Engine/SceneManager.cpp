@@ -235,8 +235,6 @@ namespace Ukemochi
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 
-        auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
-
     }
 
     /*!***********************************************************************
@@ -339,7 +337,7 @@ namespace Ukemochi
 
 #ifndef _DEBUG
 		// Game Inputs Quick fix
-		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		if (Input::IsKeyTriggered(GLFW_KEY_T))
 		{
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -425,38 +423,39 @@ namespace Ukemochi
 
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
+        if (!Application::Get().Paused())
+        {
+            // --- GAME LOGIC UPDATE ---
+            sys_start = std::chrono::steady_clock::now();
+            ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+            ECS::GetInstance().GetSystem<PlayerManager>()->Update();
+            ECS::GetInstance().GetSystem<SoulManager>()->Update();
+            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
+            ECS::GetInstance().GetSystem<DungeonManager>()->UpdateRoomProgress();
+            sys_end = std::chrono::steady_clock::now();
+            logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+            
+            // --- PHYSICS UPDATE ---
+            sys_start = std::chrono::steady_clock::now();
+            ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
+            sys_end = std::chrono::steady_clock::now();
+            physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
-        // --- GAME LOGIC UPDATE ---
-	    sys_start = std::chrono::steady_clock::now();
-        ECS::GetInstance().GetSystem<LogicSystem>()->Update();
-		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
-        ECS::GetInstance().GetSystem<SoulManager>()->Update();
-        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
-        ECS::GetInstance().GetSystem<DungeonManager>()->UpdateRoomProgress();
-	    sys_end = std::chrono::steady_clock::now();
-	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
-	    
-        // --- PHYSICS UPDATE ---
-        sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
-		sys_end = std::chrono::steady_clock::now();
-		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+            // --- COLLISION UPDATE ---
+            sys_start = std::chrono::steady_clock::now();
+            ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
+            sys_end = std::chrono::steady_clock::now();
+            collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
-        // --- COLLISION UPDATE ---
-        sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
-		sys_end = std::chrono::steady_clock::now();
-		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+            // --- TRANSFORMATION UPDATE ---
+            ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
 
-        // --- TRANSFORMATION UPDATE ---
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
+            // --- AUDIO UPDATE ---
+            ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
-        // --- AUDIO UPDATE ---
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-
-	    // --- ANIMATION UPDATE ---
-	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
-
+            // --- ANIMATION UPDATE ---
+            ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
+        }
         // --- TURN OFF GIZMO ---
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 	    // --- RENDERER UPDATE ---
