@@ -21,14 +21,107 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+
+    std::vector<float> Audio::pcm32Data;  // Use float instead of int16_t
+    static size_t readPosition = 0;
+
+    FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
+    {
+        if (pcm32Data.empty()) {
+            return FMOD_ERR_INVALID_PARAM;  // Ensure data exists
+        }
+
+        // Calculate number of samples
+        size_t dataSizeNeeded = datalen / sizeof(float);
+        if (pcm32Data.size() < dataSizeNeeded) {
+            pcm32Data.resize(dataSizeNeeded);  // Resize if needed
+        }
+
+        size_t remainingData = pcm32Data.size() - readPosition;
+
+        // If not enough data is left, loop back to the start
+        if (remainingData < datalen / sizeof(float)) {
+            readPosition = 0;
+            remainingData = pcm32Data.size();
+        }
+
+        // Copy data into the buffer
+        memcpy(data, pcm32Data.data() + readPosition, datalen);
+        readPosition += datalen / sizeof(float);
+
+        return FMOD_OK;
+    }
+
+    void Audio::playStereoSound(float* interleavedSamples, int sampleCount)
+    {
+        if (!pSystem || !interleavedSamples) return;
+
+        // Check if audio data exists
+        if (sampleCount == 0) {
+            std::cerr << "No audio samples received!" << std::endl;
+            return;
+        }
+        // Simple Low-pass filter example
+        float previousSample = 0.0f;
+        float alpha = 0.2f;  // Cutoff factor
+
+        // Apply low-pass filter to each sample
+        for (int i = 0; i < sampleCount * 2; ++i) {
+            interleavedSamples[i] = previousSample + alpha * (interleavedSamples[i] - previousSample);
+            previousSample = interleavedSamples[i];
+        }
+
+
+        // Convert the float samples directly to PCM32 (since we're using FLOAT32 format)
+        pcm32Data.resize(sampleCount * 2);  // 2 channels for stereo sound
+        for (int i = 0; i < sampleCount * 2; i++) {
+            pcm32Data[i] = std::clamp(interleavedSamples[i], -1.0f, 1.0f); // Ensure values are within [-1.0f, 1.0f]
+        }
+
+        // Calculate buffer size in bytes
+        int dataSizeInBytes = pcm32Data.size() * sizeof(float);
+
+        // Initialize FMOD_CREATESOUNDEXINFO
+        FMOD_CREATESOUNDEXINFO exinfo = {};
+        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+        exinfo.length = dataSizeInBytes;
+        exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;  // Change to PCMFLOAT for FLOAT32
+        exinfo.numchannels = 2;
+        exinfo.defaultfrequency = 48000; // 44100 or 48000 based on your data
+        exinfo.decodebuffersize = 131072;  // Set to 0 for raw PCM
+        exinfo.pcmreadcallback = pcmReadCallback;  // Custom read callback
+
+        // Create sound using FMOD_OPENUSER
+        FMOD_RESULT result = pSystem->createStream(
+            nullptr,  // Data is provided via callback
+            FMOD_OPENUSER | FMOD_CREATECOMPRESSEDSAMPLE | FMOD_LOOP_OFF | FMOD_3D_HEADRELATIVE,
+            &exinfo,
+            &pvideosound
+        );
+
+        if (result != FMOD_OK) {
+            std::cerr << "FMOD Error (createSound): " << result << std::endl;
+            return;
+        }
+
+        // Play the sound
+        FMOD::Channel* pChannel = nullptr;
+        result = pSystem->playSound(pvideosound, nullptr, false, &pChannel);
+        if (result != FMOD_OK) {
+            std::cerr << "FMOD Error (playSound): " << result << std::endl;
+        }
+    }
+
     /*!***********************************************************************
     \brief
      Constructor for the Audio class.
      This is where system initialization and resource allocation happen.
     *************************************************************************/
     Audio::Audio()
-        : pSystem(nullptr), numOfMusic(0), numOfSFX(0)
+        : pSystem(nullptr), numOfMusic(0), numOfSFX(0),pLockedData(nullptr), pLockedDataLength(0)
     {
+        pvideosound = nullptr;
+        pvideoChannel = nullptr;
         FMOD_RESULT result;
 
         // Create FMOD system
@@ -40,12 +133,13 @@ namespace Ukemochi
         }
 
         // Initialize the FMOD system with 32 channels
-        result = pSystem->init(32, FMOD_INIT_NORMAL, nullptr);
+        result = pSystem->init(512, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
             std::cerr << "FMOD system initialization failed: " << result << std::endl;
             return;
         }
+        pSystem->setDSPBufferSize(2048, 4);
         CreateGroup();
     }
 
@@ -56,7 +150,11 @@ namespace Ukemochi
     *************************************************************************/
     Audio::~Audio()
     {
+        delete[] pLockedData;
         // Release all sounds
+        pvideosound->release();
+        pvideoChannel = nullptr;
+
         for (auto sound : pSFX)
         {
             if (sound)
@@ -671,7 +769,6 @@ namespace Ukemochi
 
         std::cout << (isSFXMuted ? "SFX muted." : "SFX unmuted.") << std::endl;
     }
-
 
     // NOT IN USED
 

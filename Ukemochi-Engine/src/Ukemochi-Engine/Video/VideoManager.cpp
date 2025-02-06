@@ -51,33 +51,9 @@ namespace Ukemochi {
 
     void VideoManager::Audio_Callback(plm_t* plm, plm_samples_t* frame, void* user)
     {
-        ECS::GetInstance().GetSystem<Audio>()-> frame->interleaved
-        // RingBuffer* rb = static_cast<RingBuffer*>(user);
-        //
-        // for (unsigned int i = 0; i < frame->count; i++)
-        // {
-        //     rb->buffer[rb->write_index] = frame->interleaved[i];
-        //     rb->write_index = (rb->write_index + 1) % rb->capacity;
-        // }
-    }
-
-    FMOD_RESULT F_CALLBACK VideoManager::pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
-    {
-        float *dest = static_cast<float*>(data);
-        unsigned int samples_requested = datalen / sizeof(float);
-
-        for (unsigned int i = 0; i < samples_requested; i++)
-        {
-            if (rb->read_index != rb->write_index)
-            {
-                dest[i] = rb->buffer[rb->read_index];
-                rb->read_index = (rb->read_index + 1) % rb->capacity;
-            }
-            else
-                dest[i] = 0.0f; // fill with silence.
+        if (frame->count > 0) {
+            Audio::GetInstance().playStereoSound(frame->interleaved, frame->count);
         }
-        
-        return FMOD_OK;
     }
 
     bool VideoManager::LoadVideo(const char* filepath)
@@ -85,11 +61,11 @@ namespace Ukemochi {
         plm = plm_create_with_filename(filepath);
         if (!plm)
         {
-            UME_ENGINE_ERROR("Failed to load video: {0]",filepath);
+            UME_ENGINE_ERROR("Failed to load video: {0]", filepath);
             return false;
         }
 
-        if (!plm_probe(plm,5000 * 1024))
+        if (!plm_probe(plm, 5000 * 1024))
         {
             UME_ENGINE_ERROR("No MPEG video or audio streams found in {0}", filepath);
             return false;
@@ -102,38 +78,24 @@ namespace Ukemochi {
             plm_get_samplerate(plm),
             plm_get_duration(plm));
 
-        video_ctx = new VideoContext(800,600);
-        plm_set_video_decode_callback(plm,Video_Callback,video_ctx);
-        plm_set_audio_decode_callback(plm,Audio_Callback,nullptr);
+        video_ctx = new VideoContext(800, 600);
+        plm_set_video_decode_callback(plm, Video_Callback, video_ctx);
+        plm_set_audio_decode_callback(plm, Audio_Callback, nullptr);
 
-        plm_set_loop(plm,true);
-        plm_set_audio_enabled(plm,true);
-        plm_set_audio_stream(plm,0);
+        plm_set_loop(plm, true);
+        plm_set_audio_enabled(plm, true);
+        plm_set_audio_stream(plm, 0);
 
         if (plm_get_num_audio_streams(plm) > 0)
         {
-            FMOD_CREATESOUNDEXINFO exinfo = {};
-            exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-            exinfo.length = 4096;
-            exinfo.numchannels = 2;             // Stereo
-            exinfo.defaultfrequency = samplerate;    // hz
-            exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
+            videoTextureID = CreateVideoTexture(plm_get_width(plm), plm_get_height(plm));
+            size_t num_pixels = static_cast<size_t>(plm_get_width(plm)) * plm_get_height(plm);
+            video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(num_pixels * 3));
 
-            FMOD_RESULT result = Audio::GetInstance().pSystem->createSound(nullptr,FMOD_OPENUSER | FMOD_CREATESTREAM, &exinfo,&fmod_sound);
-            if (result != FMOD_OK)
-                UME_ENGINE_ERROR("FMOD error (CreateSound)");
+            video_ctx->texture_crop_size = glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->shaderProgram->ID, "texture_crop_size");
 
-            // Adjust the audio lead time according to the audio_spec buffer size
-            plm_set_audio_lead_time(plm, static_cast<double>(exinfo.length) / samplerate);
+            return true;
         }
-        
-        videoTextureID = CreateVideoTexture(plm_get_width(plm),plm_get_height(plm));
-        size_t num_pixels = static_cast<size_t>(plm_get_width(plm)) * plm_get_height(plm);
-        video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(num_pixels * 3));
-
-        video_ctx->texture_crop_size = glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->shaderProgram->ID,"texture_crop_size");
-        
-        return true;
     }
 
     GLuint VideoManager::CreateVideoTexture(int width, int height)
@@ -157,8 +119,14 @@ namespace Ukemochi {
         
         do // It'll keep playing till finish
         {
-            plm_decode(plm,g_FrameRateController.GetDeltaTime());
+            plm_decode(plm, g_FrameRateController.GetDeltaTime());
+            Audio::GetInstance().Update();
         } while (!plm_has_ended(plm));
+
+
+        //if (plm_has_ended(plm))
+        //    Free();
+
         
         Free();
     }
@@ -172,17 +140,22 @@ namespace Ukemochi {
         plm_set_video_decode_callback(plm,Video_Callback,video_ctx); 
         plm_set_audio_decode_callback(plm,Audio_Callback,rb);
 
-        // Configuration for FMOD
-        FMOD_CREATESOUNDEXINFO exinfo = {};
-        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-        exinfo.length = 4096;               // buffer size
-        exinfo.numchannels = 2;             // Stereo
-        exinfo.defaultfrequency = 44100;    // hz
-        exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
 
-        FMOD_RESULT result = Audio::GetInstance().pSystem->createSound(nullptr,FMOD_OPENUSER | FMOD_CREATESTREAM, &exinfo,&fmod_sound);
+
+        //fmod
+        FMOD_CREATESOUNDEXINFO exinfo;
+
+        // Create extended sound info struct
+        memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);   // Size of the struct
+        exinfo.numchannels = 2;                                // Number of channels in the sound
+        exinfo.defaultfrequency = 44100;                            // Playback rate of sound
+        exinfo.format = FMOD_SOUND_FORMAT_PCM16;          // Data format of sound
+
+        FMOD_RESULT result = Audio::GetInstance().pSystem->createSound(nullptr,FMOD_OPENUSER | FMOD_CREATESTREAM, &exinfo,&Audio::GetInstance().pvideosound);
         if (result != FMOD_OK)
             UME_ENGINE_ERROR("FMOD error (CreateSound)");
+
     }
 
     void VideoManager::Update()

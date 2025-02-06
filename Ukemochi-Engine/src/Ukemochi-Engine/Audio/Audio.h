@@ -18,6 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <vector>
 #include "../ECS/Systems.h"
+//#include "../Video/VideoManager.h"
+//#include "pl_mpeg.h"
+
 
 namespace Ukemochi
 {
@@ -35,6 +38,10 @@ namespace Ukemochi
             static std::unique_ptr<Audio> instance(new Audio());
             return *instance;
         }
+
+        static FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
+
+        void playStereoSound(float* interleavedSamples, int sampleCount);
 
         /*!***********************************************************************
         \brief
@@ -252,6 +259,15 @@ namespace Ukemochi
 
         void RemoveSFX(int index);
 
+        /*!***********************************************************************
+        \brief
+           play audio from video
+        \param index:
+        \note
+           This function play audio from video
+        *************************************************************************/
+        //void PlayVideoAudio(plm_t* plm, plm_samples_t* frame);
+
         void StopSFX(int sfxIndex);
 
         void StopAllSFX();
@@ -265,6 +281,9 @@ namespace Ukemochi
         std::vector<FMOD::Sound *> pMusic;           // A list of loaded sounds
         std::vector<FMOD::Channel *> pMusicChannels; // A list of channels playing individual sounds
 
+        FMOD::Sound* pvideosound = nullptr;
+        FMOD::Channel*  pvideoChannel = nullptr;
+
         FMOD::System *pSystem; // Pointer to the FMOD system, which manages all sound operations
     private:
         std::vector<FMOD::ChannelGroup *> pChannelGroups; // A list of channel groups for managing groups of sounds
@@ -275,6 +294,9 @@ namespace Ukemochi
         bool isSFXMuted = false;
         float musicVolume = 0.2f; // Default music volume
         float sfxVolume = 0.2f;   // Default SFX volume
+        float* pLockedData;           // Locked data buffer for samples
+        unsigned int pLockedDataLength;
+        static std::vector<float> pcm32Data;
     };
 }
 

@@ -41,7 +41,7 @@ namespace Ukemochi {
         RingBuffer* rb = {};
         VideoContext* video_ctx = {};
         plm_t* plm = nullptr;
-        FMOD::Sound *fmod_sound = nullptr; // video sound
+        //FMOD::Sound *fmod_sound = nullptr; // video sound
 
         std::shared_ptr<Shader> video_shader_program;
         GLuint videoTextureID = 0;
@@ -67,7 +67,7 @@ namespace Ukemochi {
          */
         void UpdateAndRenderVideo(plm_t* video, const GLuint& textureID);
 
-        FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
+        //FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
     public:
         /**
          * @brief Load the MPEG file
