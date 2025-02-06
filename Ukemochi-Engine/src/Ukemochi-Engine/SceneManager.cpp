@@ -212,6 +212,7 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
 
+#ifndef _DEBUG
 	    cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
 	    cutscene.AddComponent(Transform{Mtx44{},
             Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
@@ -219,7 +220,6 @@ namespace Ukemochi
             Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
 	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
         SPRITE_SHAPE::BOX,0,true,false,false});
-#ifndef _DEBUG
 		es_current = ES_PLAY;
 #endif
     }
@@ -358,6 +358,8 @@ namespace Ukemochi
 	        {
 	            ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
 	            Application::Get().SetPaused(false);
+	            GameObjectManager::GetInstance().DestroyObject(cutscene.GetInstanceID());
+	        	es_current = ES_ENGINE;
 	        }
 	    }
 	    
