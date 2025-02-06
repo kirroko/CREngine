@@ -1251,9 +1251,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [282.0, 461.86175537109375, 0.0],
+                    "Position": [1036.0, 270.86175537109375, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [174.15274047851563, 174.15274047851563]
+                    "Scale": [187.79559326171875, 187.79559326171875]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -1970,7 +1970,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-1846.0, 540.0, 0.0],
+                    "Position": [-1846.0, 541.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [148.0, 1080.0]
                 }, {
@@ -1998,12 +1998,12 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-1060.0, 0.0, 0.0],
+                    "Position": [-1060.0, 20.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [293.0, 208.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_rock_9.png",
+                    "Sprite": "rock 8",
                     "Shape": 0,
                     "Layer": 0
                 }]
@@ -2040,7 +2040,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-1785.0, 740.0, 0.0],
+                    "Position": [-1785.0, 744.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [193.0, 158.0]
                 }, {
@@ -2208,12 +2208,12 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2980.0, 0.0, 0.0],
+                    "Position": [2980.0, 20.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [293.0, 208.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/env_base_rock_9.png",
+                    "Sprite": "rock 8",
                     "Shape": 0,
                     "Layer": 0
                 }]
@@ -2398,7 +2398,7 @@
                     "Name": "Transform",
                     "Position": [1765.0, 130.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [300.0, 300.0]
+                    "Scale": [400.0, 300.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "bush 2",

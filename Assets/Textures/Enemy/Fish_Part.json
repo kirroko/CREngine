@@ -10,11 +10,11 @@
 },
 "Fish Death.png":
 {
-	"frame": {"x":2000,"y":1750,"w":2048,"h":1024},
+	"frame": {"x":0,"y":1750,"w":2000,"h":1000},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":2048,"h":1024},
-	"sourceSize": {"w":2048,"h":1024}
+	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1000},
+	"sourceSize": {"w":2000,"h":1000}
 },
 "Fish HUrt.png":
 {
@@ -34,7 +34,7 @@
 },
 "Fish Walk.png":
 {
-	"frame": {"x":0,"y":1750,"w":2000,"h":750},
+	"frame": {"x":2000,"y":1750,"w":2000,"h":750},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":750},
@@ -45,8 +45,8 @@
 	"version": "1.0",
 	"image": "Fish.png",
 	"format": "RGBA8888",
-	"size": {"w":4048,"h":2774},
+	"size": {"w":4000,"h":2750},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:df9630c1009c7cf450518bf60286c21e:38fdcd8f0aadb0ff4409b4fbc71f6b1a:24b7027770b0854c0d8c9b03d40a3aa9$"
+	"smartupdate": "$TexturePacker:SmartUpdate:270261cb8bde79ff8faed21f3a333189:e85d67213e80abf2da883ad954d8d6f8:24b7027770b0854c0d8c9b03d40a3aa9$"
 }
 }
