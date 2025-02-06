@@ -303,7 +303,7 @@ namespace Ukemochi
 
 		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 		// Update hover cooldown timer
-		hoverTimer -= g_FrameRateController.GetDeltaTime();
+		hoverTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
 		// Handle mouse click for the highest-layer button
 		for (auto& [button_id, button] : sortedButtons) 

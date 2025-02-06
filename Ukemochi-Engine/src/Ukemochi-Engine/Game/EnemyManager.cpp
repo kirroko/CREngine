@@ -165,7 +165,7 @@ namespace Ukemochi
                 //animation
                 if (enemycomponent.dirX < 0)
                 {
-                    auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
+                    //auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
                     //anim.SetAnimation("Running");
                     sr.flipX = false;
                 }
@@ -212,10 +212,10 @@ namespace Ukemochi
                     enemycomponent.nearestObj = FindNearestObject(object);
                 }
 
-                if (enemycomponent.state != enemycomponent.ATTACK)
-                {
-                    bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
-                }
+                //if (enemycomponent.state != enemycomponent.ATTACK)
+                //{
+                //    bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
+                //}
 
                 if (playerObj != nullptr)
                 {
@@ -570,7 +570,7 @@ namespace Ukemochi
                                 float angleRad = atan2(dir.y, dir.x);
 
                                 // Convert to degrees
-                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
+                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846f);
 
                                 if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
                                 {
