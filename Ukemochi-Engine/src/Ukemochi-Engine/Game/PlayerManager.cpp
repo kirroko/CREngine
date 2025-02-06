@@ -108,11 +108,13 @@ namespace Ukemochi
                 auto& rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity);
                 auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-
+                
                 if (data.currentHealth <= 0)
                 {
                     // Trigger player death animation
                     anim.SetAnimation(SoulAnimation(soulData, "Death"));
+                    data.isDead = true;
+                    
                     return;
                 }
 
@@ -265,19 +267,23 @@ namespace Ukemochi
             auto& data = ECS::GetInstance().GetComponent<Player>(entity);
             auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
             auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
-            
-            anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
-            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-            {
-                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-                if (audioM.GetSFXindex("PlayerHurt") != -1)
+            if (!data.isDead)
+            {
+                anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                 {
-                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                    if (audioM.GetSFXindex("PlayerHurt") != -1)
                     {
-                        audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
+                        }
                     }
                 }
+                
             }
 
             // Sync hurt audio with animation

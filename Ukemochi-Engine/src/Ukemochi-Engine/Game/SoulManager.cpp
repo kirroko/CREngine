@@ -161,14 +161,20 @@ namespace Ukemochi
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                player_animator.SetAnimationUninterrupted("SwitchNB");
+                if (!player_animator.isAttacking)
+                    player_animator.SetAnimationUninterrupted("SwitchNB");
+                else
+                    return;
                 soul_animator.SetAnimation("BlueFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                player_animator.SetAnimationUninterrupted("SwitchNR");
+                if (!player_animator.isAttacking)
+                    player_animator.SetAnimationUninterrupted("SwitchNR");
+                else
+                    return;
                 soul_animator.SetAnimation("RedFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
@@ -179,14 +185,20 @@ namespace Ukemochi
             if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                player_animator.SetAnimationUninterrupted("SwitchBR");
+                if (!player_animator.isAttacking)
+                    player_animator.SetAnimationUninterrupted("SwitchBR");
+                else
+                    return;
                 soul_animator.SetAnimation("RedFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
-                player_animator.SetAnimationUninterrupted("SwitchBN");
+                if (!player_animator.isAttacking)
+                    player_animator.SetAnimationUninterrupted("SwitchBN");
+                else
+                    return;
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
@@ -196,14 +208,20 @@ namespace Ukemochi
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                player_animator.SetAnimationUninterrupted("SwitchRB");
+                if (!player_animator.isAttacking)
+                    player_animator.SetAnimationUninterrupted("SwitchRB");
+                else
+                    return;
                 soul_animator.SetAnimation("BlueFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
-                player_animator.SetAnimationUninterrupted("SwitchRN");
+                if (!player_animator.isAttacking)
+                    player_animator.SetAnimationUninterrupted("SwitchRN");
+                else
+                    return;
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
