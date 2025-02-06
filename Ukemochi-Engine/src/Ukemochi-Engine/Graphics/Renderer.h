@@ -201,6 +201,8 @@ public:
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/
 	std::shared_ptr<Shader> shaderProgram;
+
+	std::shared_ptr<Shader> video_shader_program;
 private:
 	/*!
 	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.
@@ -449,8 +451,9 @@ private:
 	GameObject* playerObject = nullptr;
 	int player = -1;
 
+public:
 	std::shared_ptr<BatchRenderer2D> batchRenderer;
-
+private:
 	UIButtonManager uiManager;
 
 	

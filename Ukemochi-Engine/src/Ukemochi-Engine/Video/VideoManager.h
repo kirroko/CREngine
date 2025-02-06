@@ -44,8 +44,10 @@ namespace Ukemochi {
         //FMOD::Sound *fmod_sound = nullptr; // video sound
 
         std::shared_ptr<Shader> video_shader_program;
+    public:
         GLuint videoTextureID = 0;
-
+        int currentFrame = 0;
+    private:
         bool isPlaying = true;
 
         static void Video_Callback(plm_t *plm, plm_frame_t *frame, void *user);
@@ -56,16 +58,16 @@ namespace Ukemochi {
          * @brief Create an OpenGL texture to store the video
          * @param width width of texture
          * @param height height of texture
+         * @param num_frames
          * @return texture ID
          */
-        GLuint CreateVideoTexture(int width, int height);
+        GLuint CreateVideoTexture(int width, int height, int num_frames);
         
         /**
          * @brief decode and display the video
          * @param video the video to display
-         * @param textureID a textureID
          */
-        void UpdateAndRenderVideo(plm_t* video, const GLuint& textureID);
+        void UpdateAndRenderVideo(plm_t* video);
 
         //FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
     public:
