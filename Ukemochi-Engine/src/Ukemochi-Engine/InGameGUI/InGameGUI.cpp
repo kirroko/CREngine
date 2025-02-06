@@ -19,9 +19,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h" // for camera viewport
 #include "../Graphics/Renderer.h" // for text objects
 #include "../FrameController.h"	  // for fps text
+#include "../Factory/GameObjectManager.h"
+
 
 namespace Ukemochi
 {
+	bool startButtonHovered = false;
 	/*!***********************************************************************
 	\brief
 	 Initialize the in game GUI system.
@@ -46,6 +49,7 @@ namespace Ukemochi
 		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
+
 
 		CreateImage();
 		// Create FPS text
@@ -209,7 +213,7 @@ namespace Ukemochi
 		uiManager->addButton("red soul ability charge border", glm::vec3(534.f, 881.f, 0.f), glm::vec2(31.f, 31.f), "in game_soul ability charge border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		
+
 		//--Ability and Pause----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		uiManager->addButton("soul change", glm::vec3(1825.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_soul change", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
@@ -223,9 +227,35 @@ namespace Ukemochi
 
 		// Main Menu
 		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
+			//// Get the AudioManager
+			//auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+			//// Start playing main menu music if it exists
+			//if (audioM.GetMusicIndex("BGMOG") != -1)
+			//{
+			//	if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+			//	{
+			//		audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+			//	}
+			//}
 			});
 
 		uiManager->addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+			// Get the AudioManager
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+			// Check if the StartButton SFX exists and play it
+			if (audioM.GetSFXindex("StartButton") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("StartButton"));
+			}
+			// Stop the main menu music when starting the game
+			if (audioM.GetMusicIndex("BGMOG") != -1)
+			{
+				audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+			}
+
+			// Start the game
 			Application::Get().StartGame(); });
 	}
 
@@ -274,7 +304,24 @@ namespace Ukemochi
 		{
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
 
-			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1)) 
+			// Check for mouse hover on the start button
+			if (button_id == "start button" && button->isHovered && !startButtonHovered)
+			{
+				// Play hover sound
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("HoverSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
+				}
+				startButtonHovered = true;
+			}
+			else if (button_id == "start button" && !button->isHovered)
+			{
+				startButtonHovered = false;
+			}
+
+			// Check for mouse left click when hovering
+			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
 			{
 				if (button->onClick) {
 					button->onClick();  // Trigger the callback

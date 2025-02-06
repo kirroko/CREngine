@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "Audio.h"
+#include "../Input/Input.h"
 
 namespace Ukemochi
 {
@@ -114,51 +115,6 @@ namespace Ukemochi
         numOfMusic = numOfSFX = 0;
     }
 
-    // NOT IN USED
-
-    /*!***********************************************************************
-    \brief
-        Create a new ChannelGroup for managing sound channels.
-        ChannelGroups help manage a group of channels as one unit.
-    *************************************************************************/
-    void Audio::CreateGroup()
-    {
-        FMOD::ChannelGroup *group = nullptr;
-        FMOD_RESULT result = FMOD_ERR_UNINITIALIZED;
-
-        // Loop through all predefined channel groups
-        for (int i = 0; i < LAST; i++)
-        {
-            ChannelGroups channel = static_cast<ChannelGroups>(i);
-
-            // Create different groups based on their enum value
-            switch (channel)
-            {
-            case Ukemochi::ENGINEAUDIO:
-                result = pSystem->createChannelGroup("ENGINE", &group);
-                break;
-            case Ukemochi::MENUAUDIO:
-                result = pSystem->createChannelGroup("MENU", &group);
-                break;
-            case Ukemochi::LEVEL1:
-                result = pSystem->createChannelGroup("LEVEL1", &group);
-                break;
-            case Ukemochi::LAST:
-                break;
-            default:
-                break;
-            }
-
-            if (result != FMOD_OK)
-            {
-                std::cerr << "Failed to create music channel group: " << result << std::endl;
-                return;
-            }
-
-            // Add the group to the vector
-            pChannelGroups.push_back(group);
-        }
-    }
     /*!***********************************************************************
     \brief
         Delete a sound from the loaded audio.
@@ -353,39 +309,6 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
-    Play a sound in a specified group.
-    \param soundIndex: Index of the sound to play.
-    \param groupIndex: Index of the group in which the sound should be played.
-    *************************************************************************/
-    // void Audio::PlaySoundInGroup(int soundIndex, int groupIndex)
-    //{
-    //     if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
-    //     {
-    //         FMOD_RESULT result;
-    //         FMOD::Channel* channel = nullptr;
-
-    //        // Play the sound
-    //        result = pSystem->playSound(pSounds[soundIndex], nullptr, false, &channel);
-    //        if (result != FMOD_OK)
-    //        {
-    //            std::cerr << "Failed to play sound: " << result << std::endl;
-    //            return;
-    //        }
-
-    //        // Store the channel and assign it to the specific group
-    //        pChannels[soundIndex] = channel;
-    //        pChannels[soundIndex]->setChannelGroup(pChannelGroups[groupIndex]);
-
-    //        std::cout << "Sound " << soundIndex << " is playing in group " << groupIndex << std::endl;
-    //    }
-    //    else
-    //    {
-    //        std::cerr << "Invalid sound or group index!" << std::endl;
-    //    }
-    //}
-
-    /*!***********************************************************************
-    \brief
        Stop a sound based on its index and type (SFX or Music).
     \param soundIndex
        The index of the sound to be stopped.
@@ -468,6 +391,60 @@ namespace Ukemochi
     }
 
     /*!***********************************************************************
+\brief
+    Stop a sound effect based on its index.
+\param sfxIndex
+    The index of the sound effect to be stopped.
+\return
+    None.
+\note
+    Stops the sound effect if it is currently playing.
+*************************************************************************/
+    void Audio::StopSFX(int sfxIndex)
+    {
+        if (sfxIndex < 0 || sfxIndex >= numOfSFX)
+        {
+            std::cerr << "Invalid SFX index: " << sfxIndex << std::endl;
+            return;
+        }
+
+        bool isPlaying = false;
+        if (pSFXChannels[sfxIndex])
+        {
+            pSFXChannels[sfxIndex]->isPlaying(&isPlaying);
+
+            if (isPlaying)
+            {
+                pSFXChannels[sfxIndex]->stop();  // Stop the sound effect if it's playing
+                std::cout << "Stopped SFX at index " << sfxIndex << std::endl;
+            }
+        }
+        else
+        {
+            std::cerr << "SFX channel not initialized for index " << sfxIndex << std::endl;
+        }
+    }
+
+    /*!***********************************************************************
+    \brief
+        Stop all sound effects currently playing.
+    \param None.
+    \return
+        None.
+    \note
+        Stops all active sound effects.
+    *************************************************************************/
+    void Audio::StopAllSFX()
+    {
+        for (size_t i = 0; i < pSFXChannels.size(); ++i)
+        {
+            StopSFX(i);  // Stop each individual SFX
+        }
+    }
+
+
+
+    /*!***********************************************************************
     \brief
     Toggle a sound in a group (play or pause).
     \param soundIndex: Index of the sound to toggle.
@@ -528,58 +505,6 @@ namespace Ukemochi
         }
     }
 
-    // NOT IN USED
-    /*!***********************************************************************
-    \brief
-    Set the volume for an entire group of sounds.
-    \param groupIndex: Index of the group whose volume is being set.
-    \param volume: The volume level (0.0 to 1.0).
-    *************************************************************************/
-    void Audio::SetGroupVolume(int groupIndex, float volume)
-    {
-        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
-        {
-            pChannelGroups[groupIndex]->setVolume(volume); // Set the volume for the specific group
-        }
-    }
-
-    // NOT IN USED
-    /*!***********************************************************************
-    \brief
-    Stop all sounds within a specific group.
-    \param groupIndex: Index of the group whose sounds are being stopped.
-    *************************************************************************/
-    void Audio::StopAllSoundsInGroup(int groupIndex)
-    {
-        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
-        {
-            pChannelGroups[groupIndex]->setVolume(0.0f); // Stop all sounds in the specified group
-            // pChannelGroups[groupIndex]->stop();
-        }
-    }
-    // NOT IN USED
-    void Audio::StopAudioGroup(int groupIndex)
-    {
-        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
-        {
-            pChannelGroups[groupIndex]->stop();
-        }
-    }
-
-    // NOT IN USED
-    /*!***********************************************************************
-    \brief
-    Play all sounds within a specific group.
-    \param groupIndex: Index of the group whose sounds should start playing.
-    *************************************************************************/
-    void Audio::PlayAllSoundsInGroup(int groupIndex)
-    {
-        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
-        {
-            pChannelGroups[groupIndex]->setVolume(1.0f); // play all sounds in the specified group
-        }
-    }
-
     /*!***********************************************************************
     \brief
     Regular update function for the FMOD system.
@@ -589,6 +514,24 @@ namespace Ukemochi
     {
         // Update the FMOD system regularly
         pSystem->update();
+
+        // Handle muting/unmuting music and SFX
+        static bool musicKeyPressed = false;
+        static bool sfxKeyPressed = false;
+
+        // Check if the 'K' key is pressed for muting/unmuting music
+        if (Input::IsKeyPressed(UME_KEY_K))
+        {
+            if (!musicKeyPressed)
+            {
+                MuteMusic(); // Call the method to toggle mute for music
+                musicKeyPressed = true;
+            }
+        }
+        else
+        {
+            musicKeyPressed = false;
+        }
     }
 
     /*!***********************************************************************
@@ -696,4 +639,169 @@ namespace Ukemochi
             pSFXChannels.clear();
         }
     }
+
+    void Audio::MuteMusic()
+    {
+        isMusicMuted = !isMusicMuted; // Toggle mute state
+
+        // Update the volume of all music channels
+        for (auto* channel : pMusicChannels)
+        {
+            if (channel)
+            {
+                channel->setVolume(isMusicMuted ? 0.0f : musicVolume);
+            }
+        }
+
+        std::cout << (isMusicMuted ? "Music muted." : "Music unmuted.") << std::endl;
+    }
+
+    void Audio::MuteSFX()
+    {
+        isSFXMuted = !isSFXMuted; // Toggle mute state
+
+        // Update the volume of all SFX channels
+        for (auto* channel : pSFXChannels)
+        {
+            if (channel)
+            {
+                channel->setVolume(isSFXMuted ? 0.0f : sfxVolume);
+            }
+        }
+
+        std::cout << (isSFXMuted ? "SFX muted." : "SFX unmuted.") << std::endl;
+    }
+
+
+    // NOT IN USED
+
+    /*!***********************************************************************
+    \brief
+        Create a new ChannelGroup for managing sound channels.
+        ChannelGroups help manage a group of channels as one unit.
+    *************************************************************************/
+    void Audio::CreateGroup()
+    {
+        FMOD::ChannelGroup* group = nullptr;
+        FMOD_RESULT result = FMOD_ERR_UNINITIALIZED;
+
+        // Loop through all predefined channel groups
+        for (int i = 0; i < LAST; i++)
+        {
+            ChannelGroups channel = static_cast<ChannelGroups>(i);
+
+            // Create different groups based on their enum value
+            switch (channel)
+            {
+            case Ukemochi::ENGINEAUDIO:
+                result = pSystem->createChannelGroup("ENGINE", &group);
+                break;
+            case Ukemochi::MENUAUDIO:
+                result = pSystem->createChannelGroup("MENU", &group);
+                break;
+            case Ukemochi::LEVEL1:
+                result = pSystem->createChannelGroup("LEVEL1", &group);
+                break;
+            case Ukemochi::LAST:
+                break;
+            default:
+                break;
+            }
+
+            if (result != FMOD_OK)
+            {
+                std::cerr << "Failed to create music channel group: " << result << std::endl;
+                return;
+            }
+
+            // Add the group to the vector
+            pChannelGroups.push_back(group);
+        }
+    }
+
+        // NOT IN USED
+    /*!***********************************************************************
+    \brief
+    Set the volume for an entire group of sounds.
+    \param groupIndex: Index of the group whose volume is being set.
+    \param volume: The volume level (0.0 to 1.0).
+    *************************************************************************/
+    void Audio::SetGroupVolume(int groupIndex, float volume)
+    {
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
+        {
+            pChannelGroups[groupIndex]->setVolume(volume); // Set the volume for the specific group
+        }
+    }
+
+    /*!***********************************************************************
+    \brief
+    Play a sound in a specified group.
+    \param soundIndex: Index of the sound to play.
+    \param groupIndex: Index of the group in which the sound should be played.
+    *************************************************************************/
+    // void Audio::PlaySoundInGroup(int soundIndex, int groupIndex)
+    //{
+    //     if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
+    //     {
+    //         FMOD_RESULT result;
+    //         FMOD::Channel* channel = nullptr;
+
+    //        // Play the sound
+    //        result = pSystem->playSound(pSounds[soundIndex], nullptr, false, &channel);
+    //        if (result != FMOD_OK)
+    //        {
+    //            std::cerr << "Failed to play sound: " << result << std::endl;
+    //            return;
+    //        }
+
+    //        // Store the channel and assign it to the specific group
+    //        pChannels[soundIndex] = channel;
+    //        pChannels[soundIndex]->setChannelGroup(pChannelGroups[groupIndex]);
+
+    //        std::cout << "Sound " << soundIndex << " is playing in group " << groupIndex << std::endl;
+    //    }
+    //    else
+    //    {
+    //        std::cerr << "Invalid sound or group index!" << std::endl;
+    //    }
+    //}
+
+    // NOT IN USED
+    /*!***********************************************************************
+    \brief
+    Stop all sounds within a specific group.
+    \param groupIndex: Index of the group whose sounds are being stopped.
+    *************************************************************************/
+    void Audio::StopAllSoundsInGroup(int groupIndex)
+    {
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
+        {
+            pChannelGroups[groupIndex]->setVolume(0.0f); // Stop all sounds in the specified group
+            // pChannelGroups[groupIndex]->stop();
+        }
+    }
+    // NOT IN USED
+    void Audio::StopAudioGroup(int groupIndex)
+    {
+        if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
+        {
+            pChannelGroups[groupIndex]->stop();
+        }
+    }
+
+    // NOT IN USED
+    /*!***********************************************************************
+    \brief
+    Play all sounds within a specific group.
+    \param groupIndex: Index of the group whose sounds should start playing.
+    *************************************************************************/
+        void Audio::PlayAllSoundsInGroup(int groupIndex)
+        {
+            if (groupIndex < pChannelGroups.size() && pChannelGroups[groupIndex] != nullptr)
+            {
+                pChannelGroups[groupIndex]->setVolume(1.0f); // play all sounds in the specified group
+            }
+        }
 }
+

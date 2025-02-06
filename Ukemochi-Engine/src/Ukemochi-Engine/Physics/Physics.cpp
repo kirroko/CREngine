@@ -90,8 +90,8 @@ namespace Ukemochi
         Vec2 knockback_direction{};
 
         // Get the knockback direction
-        Vec3 newValue = target_trans.position - source_trans.position;
-        Vec2Normalize(knockback_direction, Vec2(newValue.x,newValue.y));
+        Vec3 new_value = target_trans.position - source_trans.position;
+        Vec2Normalize(knockback_direction, Vec2(new_value.x, new_value.y));
         knockback_direction *= source_force;
 
         // Apply the knockback force
@@ -175,25 +175,21 @@ namespace Ukemochi
             rb.velocity.y *= scale;
         }
 
-        // Apply linear drag to the velocity of the player
-        //if (tag == "Player")
+        // Apply linear drag to the velocity of the entity
+        if (tag != "EnemyProjectile")
         {
             rb.velocity.x *= rb.linear_drag;
-
-            // Complete stop if almost still
             if (abs(rb.velocity.x) < 0.01f)
-                rb.velocity.x = 0.f;
+                rb.velocity.x = 0.f; // Complete stop if almost still
 
             rb.velocity.y *= rb.linear_drag;
-
-            // Complete stop if almost still
             if (abs(rb.velocity.y) < 0.01f)
-                rb.velocity.y = 0.f;
+                rb.velocity.y = 0.f; // Complete stop if almost still
         }
 
         // Apply velocity to the position (dx = v * dt)
-		Vec2 newValue = rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-		rb.position = rb.position + Vec3(newValue.x, newValue.y, 0.f);
+        Vec2 new_value = rb.velocity * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+        rb.position = rb.position + Vec3(new_value.x, new_value.y, 0.f);
 
         // Update transform position with the physics position
         trans.position = rb.position;
@@ -223,14 +219,12 @@ namespace Ukemochi
         // Clamp the angular velocity to prevent exceeding max angular velocity
         rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
 
-        // Apply angular drag to the angular velocity of the player
-        if (tag == "Player")
+        // Apply angular drag to the angular velocity of the entity
+        if (tag != "EnemyProjectile")
         {
             rb.angular_velocity *= rb.angular_drag;
-
-            // Complete stop if almost still
             if (abs(rb.angular_velocity) < 0.01f)
-                rb.angular_velocity = 0.f;
+                rb.angular_velocity = 0.f; // Complete stop if almost still
         }
 
         // Apply angular velocity to the angle

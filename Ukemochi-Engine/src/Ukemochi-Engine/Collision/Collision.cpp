@@ -2,10 +2,10 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Jan 19, 2025
+\date       Feb 06, 2025
 \brief      This file contains the definition of the Collision system.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -91,42 +91,6 @@ namespace Ukemochi
 			// Perform broad-phase collision checks
 			for (auto const& entity1 : m_Entities)
 			{
-				// Skip if the entity is not active
-				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
-					continue;
-
-				// Get references of the first entity components
-				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
-				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
-
-				// Get the vector of potential collisions within the quad
-				std::vector<EntityID> potential_collisions;
-				quadtree->Retrieve(potential_collisions, box1);
-
-				for (auto const& entity2 : potential_collisions)
-				{
-					// Skip self collision
-					if (entity1 == entity2)
-						continue;
-
-					// Get references of the second entity components
-					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
-					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
-
-					// Perform narrow-phase collision checks, check collision between two box objects
-					float tLast{};
-					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
-						BoxBox_Response(entity1, entity2, tLast);
-				}
-			}
-		}
-
-		/* OLD IMPLEMENTATION
-		// Update the collision based on the number of steps
-		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
-		{
-			for (auto const& entity1 : m_Entities)
-			{
 				// Skip if the first entity is not active
 				if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
 					continue;
@@ -142,7 +106,11 @@ namespace Ukemochi
 				// Update the bounding box size
 				UpdateBoundingBox(box1, trans1, tag1);
 
-				for (auto const& entity2 : m_Entities)
+				// Get the vector of potential collisions within the quad
+				std::vector<EntityID> potential_collisions;
+				quadtree->Retrieve(potential_collisions, box1);
+
+				for (auto const& entity2 : potential_collisions)
 				{
 					// Skip self collision
 					if (entity1 == entity2)
@@ -152,17 +120,67 @@ namespace Ukemochi
 					if (!GameObjectManager::GetInstance().GetGO(entity2)->GetActive())
 						continue;
 
+					// Get the tag of the second entity
+					std::string tag2 = GameObjectManager::GetInstance().GetGO(entity2)->GetTag();
+
 					// Get references of the second entity components
+					auto& trans2 = ECS::GetInstance().GetComponent<Transform>(entity2);
 					auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 					auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
-					// Check collision between two box objects
+					// Update the bounding box size
+					UpdateBoundingBox(box2, trans2, tag2);
+
+					// Perform narrow-phase collision checks, check collision between two box objects
 					float tLast{};
 					if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
 						BoxBox_Response(entity1, entity2, tLast);
 				}
 			}
-		}*/
+		}
+
+		// OLD IMPLEMENTATION
+		// Update the collision based on the number of steps
+		//for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
+		//{
+		//	for (auto const& entity1 : m_Entities)
+		//	{
+		//		// Skip if the first entity is not active
+		//		if (!GameObjectManager::GetInstance().GetGO(entity1)->GetActive())
+		//			continue;
+
+		//		// Get the tag of the first entity
+		//		std::string tag1 = GameObjectManager::GetInstance().GetGO(entity1)->GetTag();
+
+		//		// Get references of the first entity components
+		//		auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity1);
+		//		auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+		//		auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
+
+		//		// Update the bounding box size
+		//		UpdateBoundingBox(box1, trans1, tag1);
+
+		//		for (auto const& entity2 : m_Entities)
+		//		{
+		//			// Skip self collision
+		//			if (entity1 == entity2)
+		//				continue;
+
+		//			// Skip if the second entity is not active
+		//			if (!GameObjectManager::GetInstance().GetGO(entity2)->GetActive())
+		//				continue;
+
+		//			// Get references of the second entity components
+		//			auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
+		//			auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
+
+		//			// Check collision between two box objects
+		//			float tLast{};
+		//			if (BoxBox_Intersection(box1, rb1.velocity, box2, rb2.velocity, tLast))
+		//				BoxBox_Response(entity1, entity2, tLast);
+		//		}
+		//	}
+		//}
 	}
 
 	/*!***********************************************************************
@@ -181,16 +199,16 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
 		else if (tag == "Knife")
 		{
-			box.min = { -BOUNDING_BOX_SIZE  * 1.f* trans.scale.x + trans.position.x,
-						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * 1.f * trans.scale.x + trans.position.x,
-						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
+						-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+			box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
+						BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
 		}
 		else
 		{
@@ -560,7 +578,7 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
-			if (player_anim.currentClip != "Attack")
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
 				return;
 
 			switch (player_data.comboState)
@@ -568,10 +586,10 @@ namespace Ukemochi
 			case 0: // First combo state
 				if (player_anim.current_frame == 8)
 				{
-					if (!enemy_data.hasDealtDamage)
+					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 5.0f;
+						enemy_data.atktimer = 2.0f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -595,7 +613,7 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 5.0f;
+						enemy_data.atktimer = 2.0f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -631,7 +649,7 @@ namespace Ukemochi
 					// Deal damage during the knockback kick
 					if (!enemy_data.hasDealtDamage)
 					{
-						enemy_data.atktimer = 5.0f;
+						enemy_data.atktimer = 2.0f;
 						
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -653,20 +671,19 @@ namespace Ukemochi
 				break;
 			}
 		}
-		else if (tag1 == "Ability" && tag2 == "Enemy")
+		else if ((tag1 == "FishAbility" || tag1 == "WormAbility") && tag2 == "Enemy")
 		{
 			// Mochi's Ability and Enemy
 			// Enemy takes damage and knockback
 
 			// Get references of the player and enemy
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			//auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 
 			if (!enemy_data.hasDealtDamage)
 			{
 				ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-				enemy_data.atktimer = 5.0f;
+				enemy_data.atktimer = 2.0f;
 
 				// Deal 2x dmg if the player and the enemy has the same soul type
 				if (player_soul.current_soul == enemy_data.type)
@@ -682,7 +699,8 @@ namespace Ukemochi
 				enemy_data.hasDealtDamage = false;
 			}
 		}
-		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "Ability" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
+		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "FishAbility" && tag2 == "EnemyProjectile"
+			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile")
 		{
 			// Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
 			// Destroy enemy's projectile
@@ -699,26 +717,38 @@ namespace Ukemochi
 
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
-			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			if (tag2 == "Enemy")
+			{
+				//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+				// Deal damage to the player
+				//enemy_data.AttackPlayer(player_data.currentHealth);
+			}
+			else if (tag2 == "EnemyProjectile" && ECS::GetInstance().HasComponent<EnemyBullet>(entity2))
+			{
+				auto& bullet_data = ECS::GetInstance().GetComponent<EnemyBullet>(entity2);
+				if (!bullet_data.hit)
+				{
+					player_data.currentHealth -= 10;
+					bullet_data.hit = true;
+				}
 
-			// Deal damage to the player
-			enemy_data.AttackPlayer(player_data.currentHealth);
+			}
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
 			// Play a sound effect on collision
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-				if (audioM.GetSFXindex("HIT") != -1)
-				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-						audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-				}
-			}
+			//if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			//{
+			//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			//	
+			//	if (audioM.GetSFXindex("PlayerHurt") != -1)
+			//	{
+			//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+			//			audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
+			//	}
+			//}
 		}
 		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary")
 		{
@@ -755,21 +785,21 @@ namespace Ukemochi
 		{
 			// Enemy and Enemy
 			// Block each other
-			return;
-			ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
-			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-			ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
+
+			//ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
+			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
 
 			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
 			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (audioM.GetSFXindex("HIT") != -1)
-			{
-				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-					audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-			}
+			//auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			//if (audioM.GetSFXindex("HIT") != -1)
+			//{
+			//	if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+			//		audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+			//}
 		}
 	}
 
@@ -796,17 +826,15 @@ namespace Ukemochi
 		// Move objects to the point of collision
 		if (!rb1.is_kinematic)
 		{
-			Vec2 newValue = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-			trans1.position.x += newValue.x;
-			trans1.position.y += newValue.y;
-			/*trans1.position += rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());*/
+			Vec2 new_value = rb1.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans1.position.x += new_value.x;
+			trans1.position.y += new_value.y;
 		}
 		if (!rb2.is_kinematic)
 		{
-			Vec2 newValue = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-			trans2.position.x += newValue.x;
-			trans2.position.y += newValue.y;
-			//trans2.position += rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			Vec2 new_value = rb2.velocity * firstTimeOfCollision * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			trans2.position.x += new_value.x;
+			trans2.position.y += new_value.y;
 		}
 
 		// Check collision flags and adjust velocities based on impact direction
@@ -879,6 +907,27 @@ namespace Ukemochi
 			if (!rb2.is_kinematic)
 				trans2.position.x = box1.max.x + trans2.scale.x * 0.5f + MIN_OFFSET; // Move box2 to the right
 		}
+
+		//// Box 1 top and box 2 bottom collision response
+		//if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
+		//{
+		//	// To simulate floor/ceiling collision
+		//	if (!rb1.is_kinematic)
+		//		trans1.position.y = box2.max.y + trans1.scale.y * 0.5f + MIN_OFFSET; // Move box1 upwards
+		//	if (!rb2.is_kinematic)
+		//		trans2.position.y = box1.min.y - trans2.scale.y * 0.5f - MIN_OFFSET; // Move box2 downwards
+		//}
+
+		//// Box 1 bottom and box 2 top collision response
+		//if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
+		//{
+		//	// To simulate floor/ceiling collision
+		//	if (!rb1.is_kinematic)
+		//		trans1.position.y = box2.min.y - trans1.scale.y * 0.5f - MIN_OFFSET; // Move box1 downwards
+		//	if (!rb2.is_kinematic)
+		//		trans2.position.y = box1.max.y + trans2.scale.y * 0.5f + MIN_OFFSET; // Move box2 upwards
+		//}
+
 
 		// Box 1 top and box 2 bottom collision response
 		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)

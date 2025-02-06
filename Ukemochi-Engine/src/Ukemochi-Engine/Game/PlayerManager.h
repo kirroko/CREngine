@@ -18,8 +18,31 @@ namespace Ukemochi
 {
     class PlayerManager : public System
     {
-        void PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const;
+        /**
+         * @biref Handle player movement 
+         * @param rb player's rigidbody
+         * @param sr player's spriteRenderer
+         * @param data player's variables
+         */
+        void PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const;
         
+        /**
+         * @brief Handle player's animation depending on the soul(color) it is on
+         * @param soulData player's soulData
+         * @param clip the clip that's gonna to be played
+         * @return the clip with marked soul flag
+         */
+        std::string SoulAnimation(const PlayerSoul& soulData, std::string clip) const;
+
+        /**
+         * @brief Handle if player animation is idle, depending on the current soul
+         * @param anim player's animation
+         * @param soulData player's soulData
+         * @param clip the clip that's gonna to be played
+         * @return true if animation is idle, not otherwise
+         */
+        bool CheckIfIdle(const Animation& anim) const;
+
     public:
         /**
          * @brief Update the player manager

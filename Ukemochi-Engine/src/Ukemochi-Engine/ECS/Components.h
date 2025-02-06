@@ -135,6 +135,7 @@ namespace Ukemochi
 
 	struct AnimationClip
 	{
+		std::string spriteName{};		// Name of the spritesheet inside the atlas texture
 		std::string keyPath{};
 		std::string name{};				 // Name of the animation clip
 		Vec2 pivot = Vec2{32.0f, 32.0f}; // Pivot point of the sprite
@@ -300,6 +301,12 @@ namespace Ukemochi
 
 			clips[currentClip].frame_time = original_frame_time;
 		}
+
+		int GetCurrentFrame() const
+		{
+			return current_frame;
+		}
+
 	};
 
 	struct SpriteRender
@@ -401,15 +408,18 @@ namespace Ukemochi
 		float attackRange;
 		float speed;
 		int nearestObj;
+		int collideObj;
 		mutable int prevObject;
 		mutable int prevObject2;
 		bool isCollide;
 		bool isKick;
 		bool hasDealtDamage = false;
-		float atktimer = 5.0f;
+		bool wormshoot = false;
+		float atktimer = 0.0f;
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
+		bool wasHit = false;  // New flag for hit detection
 
 		Enemy() = default;
 
@@ -417,7 +427,10 @@ namespace Ukemochi
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
 			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
+			wormshoot = false;
+			hasDealtDamage = false;
 			nearestObj = -1;
+			collideObj = -1;
 			switch (type)
 			{
 			case Enemy::FISH:
@@ -576,8 +589,27 @@ namespace Ukemochi
 			{
 				health = 0.0f; // Ensure health does not go negative
 			}
+			wasHit = true;
+			atktimer = 3.f;
 			isCollide = false;
 		}
+	};
+
+	/*!***********************************************************************
+	\brief
+	 EnemyBullet component structure.
+	*************************************************************************/
+	struct EnemyBullet
+	{
+		float lifetime = 5.0f;
+		bool hit = false;
+		EnemyBullet() = default;
+
+		// Constructor
+		//EnemyBullet()
+		//{
+
+		//}
 	};
 
 	/*!***********************************************************************
