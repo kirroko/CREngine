@@ -161,6 +161,7 @@ namespace Ukemochi
                         }
                     }
                 }
+
                 //animation
                 if (enemycomponent.dirX < 0)
                 {

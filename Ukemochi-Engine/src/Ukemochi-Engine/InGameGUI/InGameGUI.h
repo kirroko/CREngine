@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"			  // for ECS system and components
 #include "../Graphics/UIButton.h" // for TextAlignment
 #include "../Factory/GameObject.h"
+#include <unordered_map> // Include this for std::unordered_map
 
 namespace Ukemochi
 {
@@ -26,6 +27,9 @@ namespace Ukemochi
 		bool pause = false;
 		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
+		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
+		float hoverCooldown = 0.5f;  // cooldown for hover sound
+		float hoverTimer = 0.0f;     // Tracks time since last hover sound
 		 
 	public:
 

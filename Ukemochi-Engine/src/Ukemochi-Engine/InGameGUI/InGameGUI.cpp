@@ -244,11 +244,6 @@ namespace Ukemochi
 			// Get the AudioManager
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-			// Check if the StartButton SFX exists and play it
-			if (audioM.GetSFXindex("StartButton") != -1)
-			{
-				audioM.PlaySFX(audioM.GetSFXindex("StartButton"));
-			}
 			// Stop the main menu music when starting the game
 			if (audioM.GetMusicIndex("BGMOG") != -1)
 			{
@@ -256,7 +251,14 @@ namespace Ukemochi
 			}
 
 			// Start the game
-			Application::Get().StartGame(); });
+			Application::Get().StartGame();
+
+			// Check if the StartButton SFX exists and play it
+			if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}
+			});
 	}
 
 	void InGameGUI::CreateButton()
@@ -299,33 +301,35 @@ namespace Ukemochi
 			return a.second->ui_layer > b.second->ui_layer;  // Higher layer first
 			});
 
+		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+		// Update hover cooldown timer
+		hoverTimer -= g_FrameRateController.GetDeltaTime();
+
 		// Handle mouse click for the highest-layer button
 		for (auto& [button_id, button] : sortedButtons) 
 		{
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
 
-			// Check for mouse hover on the start button
-			if (button_id == "start button" && button->isHovered && !startButtonHovered)
+			// Check if hover state has changed
+			if (button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
-				// Play hover sound
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				if (audioM.GetSFXindex("HoverSound") != -1)
 				{
 					audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
 				}
-				startButtonHovered = true;
-			}
-			else if (button_id == "start button" && !button->isHovered)
-			{
-				startButtonHovered = false;
+				hoverTimer = hoverCooldown; // Reset cooldown timer
 			}
 
-			// Check for mouse left click when hovering
+			// Update hover state
+			buttonHoverState[button_id] = button->isHovered;
+
+			// Check for mouse click
 			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
 			{
-				if (button->onClick) {
-					button->onClick();  // Trigger the callback
-					break;             // Stop after handling the first clickable button
+				if (button->onClick)
+				{
+					button->onClick();
+					break; // Stop after handling the first clickable button
 				}
 			}
 		}
@@ -419,6 +423,13 @@ namespace Ukemochi
 		uiManager->addButton("resume button bg", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 134.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, []() {
 			});
 		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(73.f, 86.f), "return icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, true, [this]() {
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+			// Check if the StartButton SFX exists and play it
+			if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}
 			Application::Get().SetPaused(false);
 			this->HidePauseMenu();
 			});
@@ -430,6 +441,11 @@ namespace Ukemochi
 		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
 			//Application::Get().StopGame();  // Stop the game
 			//Application::Get().SetPaused(false);  // Ensure it's unpaused
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}
 			Application::Get().QuitGame();
 			});
 		uiManager->addButton("exit text", glm::vec3(1110.f, 450.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None);
