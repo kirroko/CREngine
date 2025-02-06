@@ -210,6 +210,8 @@ namespace Ukemochi
     *************************************************************************/
     void Application::StartGame()
     {
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSound();
+
         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         if (audioM.GetMusicIndex("BGM") != -1)
         {
@@ -281,6 +283,16 @@ namespace Ukemochi
         SceneManager sceneManager = SceneManager::GetInstance();
         sceneManager.SceneMangerInit();
         sceneManager.SceneMangerLoad();
+
+        // Initialize main menu music
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        if (audioM.GetMusicIndex("BGMOG") != -1)
+        {
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+            {
+                audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+        }
 
         while (es_current != ENGINE_STATES::ES_QUIT)
         {

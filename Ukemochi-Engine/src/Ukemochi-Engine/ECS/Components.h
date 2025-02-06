@@ -414,7 +414,8 @@ namespace Ukemochi
 		bool isCollide;
 		bool isKick;
 		bool hasDealtDamage = false;
-		float atktimer = 3.0f;
+		bool wormshoot = false;
+		float atktimer = 0.0f;
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
@@ -426,6 +427,8 @@ namespace Ukemochi
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
 			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
+			wormshoot = false;
+			hasDealtDamage = false;
 			nearestObj = -1;
 			collideObj = -1;
 			switch (type)

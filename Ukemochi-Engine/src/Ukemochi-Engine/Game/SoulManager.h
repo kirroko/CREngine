@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../ECS/ECS.h" // for ECS system and components
+#include "../Factory/GameObject.h" // for game object
 
 namespace Ukemochi
 {
@@ -24,6 +25,7 @@ namespace Ukemochi
         const int MAX_SOUL_CHARGES = 1; // Maximum number of soul charges.
 
         EntityID player;       // Keep track of the player ID
+        EntityID soul;         // Keep track of the floating soul ID
         EntityID fish_ability; // Keep track of the player's fish ability ID
         EntityID worm_ability; // Keep track of the player's worm ability ID
 
@@ -65,6 +67,26 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
+         Contain the logic for the fish ability.
+        *************************************************************************/
+        void FishAbility();
+
+        /*!***********************************************************************
+        \brief
+         Contain the logic for the worm ability.
+        *************************************************************************/
+        void WormAbility();
+
+        /*!***********************************************************************
+        \brief
+         Find the position of the nearest enemy relative to the player.
+        \return
+         The position of the nearest enemy or the player's position if no enemy exist.
+        *************************************************************************/
+        Vector3D FindNearestEnemyPosition();
+
+        /*!***********************************************************************
+        \brief
          Handle soul decay over time, reducing the non-active soul bars periodically.
         *************************************************************************/
         void HandleSoulDecay();
@@ -77,10 +99,8 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Find the position of the nearest enemy relative to the player.
-        \return
-         The position of the nearest enemy or the player's position if no enemy exist.
+         Handle the floating soul which follows the player's position.
         *************************************************************************/
-        Vector3D FindNearestEnemyPosition();
+        void HandleFloatingSoul();
     };
 }

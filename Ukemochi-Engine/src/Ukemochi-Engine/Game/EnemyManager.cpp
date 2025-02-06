@@ -97,11 +97,11 @@ namespace Ukemochi
                         {
                             audioM.PlaySFX(audioM.GetSFXindex("FishHurt"));
                         }
-                        else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHit") != -1)
+                        else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHurt") != -1)
                         {
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHit")))
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHurt")))
                             {
-                                audioM.PlaySFX(audioM.GetSFXindex("WormHit"));
+                                audioM.PlaySFX(audioM.GetSFXindex("WormHurt"));
                             }
                         }
                     }
@@ -126,6 +126,39 @@ namespace Ukemochi
                     object->SetActive(true);
                 }
 
+                // Animation and sound synchronization
+                if (enemycomponent.type == Enemy::FISH)
+                {
+                    auto& anim = object->GetComponent<Animation>();
+                    if (anim.currentClip == "Walk")
+                    {
+                        // Play FishMove sound at specific frames
+                        if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
+                        {
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("FishMove") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
+                                }
+                            }
+                        }
+
+                        // Play FishMove sound at specific frames
+                        if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
+                        {
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("WormMove") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormMove")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("WormMove"));
+                                }
+                            }
+                        }
+                    }
+                }
                 //animation
                 if (enemycomponent.dirX < 0)
                 {
@@ -179,15 +212,6 @@ namespace Ukemochi
                 if (enemycomponent.state != enemycomponent.ATTACK)
                 {
                     bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
-
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (enemycomponent.type == enemycomponent.FISH && audioM.GetSFXindex("FishMove") != -1 && isMoving)
-                    {
-                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishMove")))
-                        {
-                            audioM.PlaySFX(audioM.GetSFXindex("FishMove"));
-                        }
-                    }
                 }
 
                 if (playerObj != nullptr)
@@ -433,10 +457,24 @@ namespace Ukemochi
 
                     enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
 
-                    if (object->GetComponent<Animation>().currentClip != "Attack")
+                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+
+                    if (enemycomponent.atktimer < 0)
                     {
-                        object->GetComponent<Animation>().SetAnimation("Attack");
+                        if (object->GetComponent<Animation>().currentClip != "Attack")
+                        {
+                            object->GetComponent<Animation>().SetAnimation("Attack");
+                        }
                     }
+                    else
+                    {
+                        if (object->GetComponent<Animation>().currentClip != "Idle")
+                        {
+                            object->GetComponent<Animation>().SetAnimation("Idle");
+                        }
+                    }
+
+                    
                     if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                     {
                         enemycomponent.state = enemycomponent.CHASE;
@@ -447,7 +485,7 @@ namespace Ukemochi
                     if (enemycomponent.type == enemycomponent.FISH)
                     {
                         
-                        if (object->GetComponent<Animation>().current_frame == 18)
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 18)
                         {
                             //SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -460,7 +498,7 @@ namespace Ukemochi
                                     //attack
                                     if (playerObj != nullptr)
                                     {
-                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().maxHealth);
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
                                         ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                                     }
                                 }
@@ -468,54 +506,85 @@ namespace Ukemochi
                             }
 
                         }
+
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
+                        {
+                            enemycomponent.atktimer = 2.0f;
+                        }
                     }
                     else if (enemycomponent.type == enemycomponent.WORM)
                     {
-                        if (object->GetComponent<Animation>().current_frame == 15)
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
+                        {
+                            enemycomponent.atktimer = 2.0f;
+                            enemycomponent.wormshoot = false;
+                        }
+
+                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 15 && !enemycomponent.wormshoot)
                         {
                             //Play SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            if (audioM.GetSFXindex("WormAttack") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
+                                {
+                                    audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
+
+                                    //attack
+                                    if (playerObj != nullptr)
+                                    {
+                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
+                                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                    }
+                                }
+
+                            }
 
                             //spawn bullet
                             static int number = 0;
                             GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile1");
-                            std::string name = "bullet" + std::to_string(number++);
-                            std::cout << name << std::endl;
-                            GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
 
-                            newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
-                            newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
-
-                            newObject.GetComponent<Animation>().SetAnimation("Projectile");
-
-                            auto playerpos = playerObj->GetComponent<Transform>().position;
-
-                            Vec2 dir;
-                            Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
-                                                    playerpos.y - newObject.GetComponent<Transform>().position.y));
-
-                            newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
-
-                            float angleRad = atan2(dir.y, dir.x);
-
-                            // Convert to degrees
-                            float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
-
-                            if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                            if (cloneObject != nullptr)
                             {
-                                newObject.GetComponent<SpriteRender>().flipX = true;
-                                // Apply rotation to bullet
-                                newObject.GetComponent<Transform>().rotation = angleDeg;
- 
-                            }
-                            else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
-                            {
-                                newObject.GetComponent<SpriteRender>().flipX = false;
-                                // Apply rotation to bullet
-                                newObject.GetComponent<Transform>().rotation = -angleDeg;
-                            }
+                                std::string name = "bullet" + std::to_string(number++);
+                                GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
 
-                            newObject.AddComponent(EnemyBullet{});
+                                newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
+                                newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
+
+                                newObject.GetComponent<Animation>().SetAnimation("Projectile");
+
+                                auto playerpos = playerObj->GetComponent<Transform>().position;
+
+                                Vec2 dir;
+                                Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
+                                    playerpos.y - newObject.GetComponent<Transform>().position.y));
+
+                                newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
+
+                                float angleRad = atan2(dir.y, dir.x);
+
+                                // Convert to degrees
+                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
+
+                                if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = true;
+                                    // Apply rotation to bullet
+                                    newObject.GetComponent<Transform>().rotation = angleDeg;
+
+                                }
+                                else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                {
+                                    newObject.GetComponent<SpriteRender>().flipX = false;
+                                    // Apply rotation to bullet
+                                    newObject.GetComponent<Transform>().rotation = -angleDeg;
+                                }
+
+                                newObject.AddComponent(EnemyBullet{});
+                                enemycomponent.wormshoot = true;
+                            }
+                            
                         }
                     }
                     break;

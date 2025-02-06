@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    void PlayerManager::PlayersMovement(Rigidbody2D& rb, Animation& anim, SpriteRender& sr, const Player& data) const
+    void PlayerManager::PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const
     {
         if (Input::IsKeyPressed(UME_KEY_W))
             rb.force.y = data.playerForce;
@@ -47,16 +47,19 @@ namespace Ukemochi
 
     std::string PlayerManager::SoulAnimation(const PlayerSoul& soulData, std::string clip) const
     {
-        std::string temp = std::move(clip);
+        std::string temp = "";
         switch (soulData.current_soul)  // NOLINT(clang-diagnostic-switch-enum)
         {
         case EMPTY: // Grey
+            temp += std::move(clip);
             break;
         case FISH: // Blue
             temp.push_back('b');
+            temp += std::move(clip);
             break;
         case WORM: // Red
             temp.push_back('r');
+            temp += std::move(clip);
             break;
         default:
             break;
@@ -106,8 +109,15 @@ namespace Ukemochi
                 auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
+                if (data.currentHealth <= 0)
+                {
+                    // Trigger player death animation
+                    anim.SetAnimation(SoulAnimation(soulData, "Death"));
+                    return;
+                }
+
                 if (!data.comboIsAttacking)
-                    PlayersMovement(rb, anim, sr, data);
+                    PlayersMovement(rb, sr, data);
 
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
                     && !data.comboIsAttacking)
@@ -119,7 +129,7 @@ namespace Ukemochi
 
             // Play the running sound only at frame 2
             static bool runningSoundPlayed = false;
-            if (anim.currentClip == "Running")  // Only when running animation is active
+            if (anim.currentClip.find("Running") != std::string::npos)  // Only when running animation is active
             {
                 int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
 
@@ -257,6 +267,41 @@ namespace Ukemochi
             auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
             
             anim.SetAnimationUninterrupted(SoulAnimation(soulData,"Hurt"));
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                if (audioM.GetSFXindex("PlayerHurt") != -1)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
+                    {
+                        audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
+                    }
+                }
+            }
+
+            // Sync hurt audio with animation
+            static bool hurtSoundPlayed = false;
+            if (anim.currentClip == "Hurt")  // Only when hurt animation is active
+            {
+                int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
+
+                // Play hurt sound at specific frames (e.g., frame 5)
+                if (currentFrame == 5 && !hurtSoundPlayed)
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    int hurtSoundIndex = audioM.GetSFXindex("PlayerHurt"); // Replace with the actual sound name
+                    if (hurtSoundIndex != -1)
+                    {
+                        audioM.PlaySFX(hurtSoundIndex);
+                    }
+                    hurtSoundPlayed = true; // Prevent it from playing again at the same frame
+                }
+                else if (currentFrame != 5)
+                {
+                    hurtSoundPlayed = false; // Reset when leaving frame 5
+                }
+            }
             // anim.SetAnimationUninterrupted("Hurt");
             data.comboState = 0;
             data.canAttack = false;
