@@ -2678,7 +2678,82 @@
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
+        },
+        {
+            "Name": "3_waypoint1",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2256.76 , 662.212 , 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
         }, {
+            "Name": "3_waypoint2",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2256.76, 146.077, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        }, {
+            "Name": "3_waypoint3",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3446.1 , 185.148, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        }, {
+            "Name": "3_waypoint4",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3510.23, 658.667, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        },
+        {
+            "Name": "4_waypoint1",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4250.36 ,679.447 , 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        }, {
+            "Name": "4_waypoint2",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4460.36 , 169.57, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        }, {
+            "Name": "4_waypoint3",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5408.43 , 169.57 , 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        }, {
+            "Name": "4_waypoint4",
+            "Tag": "WayPoint",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5234.77 , 700.267, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }]
+        }, 
+        {
             "Name": "2_AudioManager",
             "Tag": "AudioManager",
             "Components": [{

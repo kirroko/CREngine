@@ -434,16 +434,16 @@ namespace Ukemochi
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 50.f;
-				attackPower = 20.f;
+				health = 60.f;
+				attackPower = 15.f;
 				attackRange = 300.f;
-				speed = 2000.f;
+				speed = 4000.f;
 				break;
 			case Enemy::WORM:
 				health = 50.f;
-				attackPower = 10.f;
-				attackRange = 300.f;
-				speed = 5000.f;
+				attackPower = 5.f;
+				attackRange = 400.f;
+				speed = 3000.f;
 				break;
 			case Enemy::DEFAULT:
 				break;
@@ -590,7 +590,7 @@ namespace Ukemochi
 				health = 0.0f; // Ensure health does not go negative
 			}
 			wasHit = true;
-			atktimer = 3.f;
+			atktimer = 1.5f;
 			isCollide = false;
 		}
 	};

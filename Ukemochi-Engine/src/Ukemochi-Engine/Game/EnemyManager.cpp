@@ -127,10 +127,10 @@ namespace Ukemochi
                 }
 
                 // Animation and sound synchronization
-                if (enemycomponent.type == Enemy::FISH)
+                auto& anim = object->GetComponent<Animation>();
+                if (anim.currentClip == "Walk")
                 {
-                    auto& anim = object->GetComponent<Animation>();
-                    if (anim.currentClip == "Walk")
+                    if (enemycomponent.type == Enemy::FISH)
                     {
                         // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
@@ -144,7 +144,9 @@ namespace Ukemochi
                                 }
                             }
                         }
-
+                    }
+                    if (enemycomponent.type == Enemy::WORM)
+                    {
                         // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
                         {
@@ -511,14 +513,14 @@ namespace Ukemochi
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                         {
-                            enemycomponent.atktimer = 2.0f;
+                            enemycomponent.atktimer = 1.5f;
                         }
                     }
                     else if (enemycomponent.type == enemycomponent.WORM)
                     {
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
                         {
-                            enemycomponent.atktimer = 2.0f;
+                            enemycomponent.atktimer = 1.5f;
                             enemycomponent.wormshoot = false;
                         }
 

@@ -589,7 +589,7 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 2.0f;
+						enemy_data.atktimer = 1.5f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -613,7 +613,7 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 2.0f;
+						enemy_data.atktimer = 1.5f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -649,7 +649,7 @@ namespace Ukemochi
 					// Deal damage during the knockback kick
 					if (!enemy_data.hasDealtDamage)
 					{
-						enemy_data.atktimer = 2.0f;
+						enemy_data.atktimer = 1.5f;
 						
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -683,7 +683,7 @@ namespace Ukemochi
 			if (!enemy_data.hasDealtDamage)
 			{
 				ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-				enemy_data.atktimer = 2.0f;
+				enemy_data.atktimer = 1.5f;
 
 				// Deal 2x dmg if the player and the enemy has the same soul type
 				if (player_soul.current_soul == enemy_data.type)
