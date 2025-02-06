@@ -23,11 +23,30 @@ namespace Ukemochi {
     {
         VideoContext *video_ctx = static_cast<VideoContext*>(user);
         plm_frame_to_rgb(frame,video_ctx->rgb_buffer,static_cast<int>(frame->width) * 3);
+        
+        if (!video_ctx->rgb_buffer)
+        {
+            UME_ENGINE_ERROR("Error: Rgb_buffer is nullptr for frame");
+            return;
+        }
+        
+        glBindTexture(GL_TEXTURE_2D_ARRAY, ECS::GetInstance().GetSystem<VideoManager>()->videoTextureID);
+        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "frameIndex"),
+            ECS::GetInstance().GetSystem<VideoManager>()->currentFrame);
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, ECS::GetInstance().GetSystem<VideoManager>()->currentFrame, 
+static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
 
-        glBindTexture(GL_TEXTURE_2D, ECS::GetInstance().GetSystem<VideoManager>()->videoTextureID);
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB, static_cast<int>(frame->width), static_cast<int>(frame->height),0,
-            GL_RGB,GL_UNSIGNED_BYTE,video_ctx->rgb_buffer);
-        glUniform2d(static_cast<GLint>(video_ctx->texture_crop_size),1.0,1.0);
+        glm::vec3 pos = glm::vec3(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight(),0);
+        
+        ECS::GetInstance().GetSystem<Renderer>()->batchRenderer->drawVideoFrame(pos,glm::vec2(frame->width,frame->height),glm::vec3(1,1,1),
+            ECS::GetInstance().GetSystem<VideoManager>()->videoTextureID,0,0);
+
+        ECS::GetInstance().GetSystem<Renderer>()->batchRenderer->endBatch();
+        
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        // glTexImage2D(GL_TEXTURE_2D,0,GL_RGB, static_cast<int>(frame->width), static_cast<int>(frame->height),0,
+        //     GL_RGB,GL_UNSIGNED_BYTE,video_ctx->rgb_buffer);
+        // glUniform2d(static_cast<GLint>(video_ctx->texture_crop_size),1.0,1.0);
         
         // VideoContext *video_ctx = static_cast<VideoContext*>(user);
         //
@@ -51,7 +70,6 @@ namespace Ukemochi {
 
     void VideoManager::Audio_Callback(plm_t* plm, plm_samples_t* frame, void* user)
     {
-        ECS::GetInstance().GetSystem<Audio>()-> frame->interleaved
         // RingBuffer* rb = static_cast<RingBuffer*>(user);
         //
         // for (unsigned int i = 0; i < frame->count; i++)
@@ -126,8 +144,14 @@ namespace Ukemochi {
             // Adjust the audio lead time according to the audio_spec buffer size
             plm_set_audio_lead_time(plm, static_cast<double>(exinfo.length) / samplerate);
         }
+
+        ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
+        glm::mat4 projection = glm::ortho(0.f, static_cast<float>(Application::Get().GetWindow().GetWidth()), 0.f, static_cast<float>(Application::Get().GetWindow().GetHeight()), -1.f, 1.f);
+        ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->setMat4("projection",projection);
         
-        videoTextureID = CreateVideoTexture(plm_get_width(plm),plm_get_height(plm));
+        
+        int frames = static_cast<int>(plm_get_framerate(plm) * plm_get_duration(plm));
+        CreateVideoTexture(plm_get_width(plm),plm_get_height(plm), frames);
         size_t num_pixels = static_cast<size_t>(plm_get_width(plm)) * plm_get_height(plm);
         video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(num_pixels * 3));
 
@@ -136,36 +160,47 @@ namespace Ukemochi {
         return true;
     }
 
-    GLuint VideoManager::CreateVideoTexture(int width, int height)
+    GLuint VideoManager::CreateVideoTexture(int width, int height, int num_frames)
     {
-        GLuint texture;
-        glCreateTextures(GL_TEXTURE_2D,1,&texture);
+        glGenTextures(1, &videoTextureID);
+        glBindTexture(GL_TEXTURE_2D_ARRAY,videoTextureID);
 
-        glBindTexture(GL_TEXTURE_2D,texture);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY,1,GL_RGB8 ,width,height,num_frames);
 
-        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->shaderProgram->ID, "texture_rgb"), 0);
-        return texture;
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        return videoTextureID;
     }
 
-    void VideoManager::UpdateAndRenderVideo(plm_t* video, const GLuint& textureID)
+    void VideoManager::UpdateAndRenderVideo(plm_t* video)
     {
         if (!video) return;
         
-        do // It'll keep playing till finish
-        {
-            plm_decode(plm,g_FrameRateController.GetDeltaTime());
-        } while (!plm_has_ended(plm));
+        plm_decode(plm,g_FrameRateController.GetDeltaTime());
+        ++currentFrame;
         
-        Free();
+        if (plm_has_ended(plm))
+            Free();
+        
+        // if (!video) return;
+        // currentFrame = -1;
+        // do // It'll keep playing till finish
+        // {
+        //     ++currentFrame;
+        //     plm_decode(plm,g_FrameRateController.GetDeltaTime());
+        // } while (!plm_has_ended(plm));
+        //
+        // Free();
     }
 
     void VideoManager::Init(int width, int height)
     {
-        videoTextureID = CreateVideoTexture(width,height); // creating the video texture
+        // videoTextureID = CreateVideoTexture(width,height, TODO); // creating the video texture
         // Install the video & audio decode callbacks
         video_ctx = new VideoContext{400,600};
         rb = new RingBuffer();
@@ -187,7 +222,7 @@ namespace Ukemochi {
 
     void VideoManager::Update()
     {
-        UpdateAndRenderVideo(plm,videoTextureID);
+        UpdateAndRenderVideo(plm);
     }
 
     void VideoManager::Free() const

@@ -1,16 +1,20 @@
-// pl_mpeg.vert
-#ifdef GL_ES
-precision mediump float;
-#endif
+#version 450 core
 
-// Attributes: vertex position and texture coordinate.
-attribute vec4 a_position;
-attribute vec2 a_texCoord;
+layout (location = 0) in vec3 aPos;        // Vertex position
+layout (location = 1) in vec3 aColor;      // Color
+layout (location = 2) in vec2 aTexCoord;   // Texture coordinates
+layout (location = 3) in int aFrameIndex;  // Frame index in texture array
 
-// Pass the texture coordinate to the fragment shader.
-varying vec2 v_texCoord;
+out vec3 fragColor;
+out vec2 TexCoord;
+flat out int FrameIndex;
 
-void main() {
-    gl_Position = a_position;
-    v_texCoord = a_texCoord;
+uniform mat4 projection;  // Projection matrix
+
+void main()
+{
+    gl_Position = projection * vec4(aPos, 1.0);  // Transform vertex position
+    fragColor = aColor;
+    TexCoord = aTexCoord;
+    FrameIndex = aFrameIndex;  // Pass frame index to fragment shader
 }
