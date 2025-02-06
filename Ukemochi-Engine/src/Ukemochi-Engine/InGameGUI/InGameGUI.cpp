@@ -330,23 +330,23 @@ namespace Ukemochi
 			}
 		}
 
-		if (Input::IsKeyTriggered(UME_KEY_Q)) 
-		{
-			auto& qButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["soul change"];
-			if (qButton) 
-			{
-				qButton->triggerDarkenEffect();
-			}
-		}
+		//if (Input::IsKeyTriggered(UME_KEY_Q)) 
+		//{
+		//	auto& qButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["soul change"];
+		//	if (qButton) 
+		//	{
+		//		qButton->triggerDarkenEffect();
+		//	}
+		//}
 
-		if (Input::IsKeyTriggered(UME_KEY_F)) 
-		{
-			auto& fButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["game ability"];
-			if (fButton) 
-			{
-				fButton->triggerDarkenEffect();
-			}
-		}
+		//if (Input::IsKeyTriggered(UME_KEY_F)) 
+		//{
+		//	auto& fButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["game ability"];
+		//	if (fButton) 
+		//	{
+		//		fButton->triggerDarkenEffect();
+		//	}
+		//}
 
 		// Pause
 		if (Input::IsKeyTriggered(UME_KEY_R))
