@@ -520,18 +520,18 @@ namespace Ukemochi
         static bool sfxKeyPressed = false;
 
         // Check if the 'K' key is pressed for muting/unmuting music
-        if (Input::IsKeyPressed(UME_KEY_K))
-        {
-            if (!musicKeyPressed)
-            {
-                MuteMusic(); // Call the method to toggle mute for music
-                musicKeyPressed = true;
-            }
-        }
-        else
-        {
-            musicKeyPressed = false;
-        }
+        //if (Input::IsKeyPressed(UME_KEY_K))
+        //{
+        //    if (!musicKeyPressed)
+        //    {
+        //        MuteMusic(); // Call the method to toggle mute for music
+        //        musicKeyPressed = true;
+        //    }
+        //}
+        //else
+        //{
+        //    musicKeyPressed = false;
+        //}
     }
 
     /*!***********************************************************************
