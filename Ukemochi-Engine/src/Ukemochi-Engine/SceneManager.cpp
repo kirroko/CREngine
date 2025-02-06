@@ -329,10 +329,29 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
+	    
+        loop_start = std::chrono::steady_clock::now();
+
+#ifdef _DEBUG
+        // Debug mode
+        if (Input::IsKeyTriggered(UME_KEY_U))
+            ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
+                GetSystem<Renderer>()->debug_mode_enabled);
+
+        // Select entity
+        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
+                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
+        }
+#endif // _DEBUG
+
+#ifndef _DEBUG
         static double elapsedTime = 0.0;
 	    static int current_frame_index = 0;
 	    elapsedTime += g_FrameRateController.GetDeltaTime();
-	    if (elapsedTime > 2.0 && Application::Get().Paused())
+	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 5)
 	    {
 	        auto& sr = cutscene.GetComponent<SpriteRender>();
 	        switch (current_frame_index)
@@ -362,25 +381,6 @@ namespace Ukemochi
 	        	es_current = ES_ENGINE;
 	        }
 	    }
-	    
-        loop_start = std::chrono::steady_clock::now();
-
-#ifdef _DEBUG
-        // Debug mode
-        if (Input::IsKeyTriggered(UME_KEY_U))
-            ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
-                GetSystem<Renderer>()->debug_mode_enabled);
-
-        // Select entity
-        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
-        {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(
-                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
-                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
-        }
-#endif // _DEBUG
-
-#ifndef _DEBUG
 		// Game Inputs Quick fix
 		if (Input::IsKeyTriggered(GLFW_KEY_T))
 		{
