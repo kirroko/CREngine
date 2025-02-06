@@ -127,10 +127,10 @@ namespace Ukemochi
                 }
 
                 // Animation and sound synchronization
-                if (enemycomponent.type == Enemy::FISH)
+                auto& anim = object->GetComponent<Animation>();
+                if (anim.currentClip == "Walk")
                 {
-                    auto& anim = object->GetComponent<Animation>();
-                    if (anim.currentClip == "Walk")
+                    if (enemycomponent.type == Enemy::FISH)
                     {
                         // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
@@ -144,7 +144,9 @@ namespace Ukemochi
                                 }
                             }
                         }
-
+                    }
+                    if (enemycomponent.type == Enemy::WORM)
+                    {
                         // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
                         {
@@ -159,10 +161,11 @@ namespace Ukemochi
                         }
                     }
                 }
+
                 //animation
                 if (enemycomponent.dirX < 0)
                 {
-                    auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
+                    //auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
                     //anim.SetAnimation("Running");
                     sr.flipX = false;
                 }
@@ -209,10 +212,10 @@ namespace Ukemochi
                     enemycomponent.nearestObj = FindNearestObject(object);
                 }
 
-                if (enemycomponent.state != enemycomponent.ATTACK)
-                {
-                    bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
-                }
+                //if (enemycomponent.state != enemycomponent.ATTACK)
+                //{
+                //    bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
+                //}
 
                 if (playerObj != nullptr)
                 {
@@ -511,14 +514,14 @@ namespace Ukemochi
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                         {
-                            enemycomponent.atktimer = 2.0f;
+                            enemycomponent.atktimer = 1.5f;
                         }
                     }
                     else if (enemycomponent.type == enemycomponent.WORM)
                     {
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
                         {
-                            enemycomponent.atktimer = 2.0f;
+                            enemycomponent.atktimer = 1.5f;
                             enemycomponent.wormshoot = false;
                         }
 
@@ -567,7 +570,7 @@ namespace Ukemochi
                                 float angleRad = atan2(dir.y, dir.x);
 
                                 // Convert to degrees
-                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846);
+                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846f);
 
                                 if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
                                 {
