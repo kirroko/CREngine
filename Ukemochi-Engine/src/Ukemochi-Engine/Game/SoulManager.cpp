@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Input/Input.h"               // for button inputs
 #include "../Factory/GameObjectManager.h" // for game object tag
 #include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
+#include "../Graphics/UIButtonManager.h"  // for button effect
 
 namespace Ukemochi
 {
@@ -74,44 +75,31 @@ namespace Ukemochi
 
         // Soul Switch Key Press
         if (Input::IsKeyTriggered(UME_KEY_Q))
+        {
             SwitchSouls();
+
+            // Trigger button darken effect
+            auto& qButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["soul change"];
+            if (qButton)
+                qButton->triggerDarkenEffect();
+        }
 
         // Soul Ability Key Press
         if (Input::IsKeyTriggered(UME_KEY_F))
+        {
             UseSoulAbility();
+
+            // Trigger button darken effect
+            auto& fButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["game ability"];
+            if (fButton)
+                fButton->triggerDarkenEffect();
+        }
 
         // Update the soul system based on the number of steps
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
-            //place holder
-            for (auto& entity : m_Entities)
-            {
-                std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
-
-                // Skip if the entity is not active
-                if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
-                    continue;
-                if (tag == "EnemyProjectile")
-                {
-                    if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
-                    {
-                        if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)
-                        {
-                            GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
-                            GameObjectManager::GetInstance().DestroyObject(entity);
-                            break;
-                        }
-
-                        GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-                        if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
-                        {
-                            GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
-                            GameObjectManager::GetInstance().DestroyObject(entity);
-                            break;
-                        }
-                    }
-                }
-            }
+            // Handle enemy projectile (placeholder)
+            HandleEnemyProjectile();
 
             // Handle soul bar decay over time
             //HandleSoulDecay();
@@ -162,12 +150,10 @@ namespace Ukemochi
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         auto& soul_animator = ECS::GetInstance().GetComponent<Animation>(soul);
 
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         // Play different hit sounds based on enemy type
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         if (audioM.GetSFXindex("SwapSoul") != -1)
-        {
             audioM.PlaySFX(audioM.GetSFXindex("SwapSoul"));
-        }
 
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
@@ -251,13 +237,10 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::FishAbility()
     {
-
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         // Play different hit sounds based on enemy type
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         if (audioM.GetSFXindex("FishSpecial") != -1)
-        {
             audioM.PlaySFX(audioM.GetSFXindex("FishSpecial"));
-        }
 
         // Trigger player fish animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
@@ -287,13 +270,10 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::WormAbility()
     {
-
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         // Play different hit sounds based on enemy type
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         if (audioM.GetSFXindex("WormSpecial") != -1)
-        {
             audioM.PlaySFX(audioM.GetSFXindex("WormSpecial"));
-        }
 
         // Trigger player worm animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
@@ -431,5 +411,42 @@ namespace Ukemochi
             soul_transform.position = Vec3{ player_transform.position.x - player_transform.scale.x * 0.25f, player_transform.position.y + player_transform.scale.y * 0.5f, 0 };
         else
             soul_transform.position = Vec3{ player_transform.position.x + player_transform.scale.x * 0.25f, player_transform.position.y + player_transform.scale.y * 0.5f, 0 };
+    }
+
+    /*!***********************************************************************
+    \brief
+     Handle the enemy projectile logic (placeholder).
+    *************************************************************************/
+    void SoulManager::HandleEnemyProjectile()
+    {
+        for (auto& entity : m_Entities)
+        {
+            std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
+            // Skip if the entity is not active
+            if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                continue;
+
+            if (tag == "EnemyProjectile")
+            {
+                if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
+                {
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                        GameObjectManager::GetInstance().DestroyObject(entity);
+                        break;
+                    }
+
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                        GameObjectManager::GetInstance().DestroyObject(entity);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
