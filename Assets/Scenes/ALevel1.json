@@ -2758,6 +2758,9 @@
                         }, {
                             "Name": "FishSpecial",
                             "Path": "../Assets/Audio/SFX/Player/FishSpecial.wav"
+                        }, {
+                            "Name": "PlayerDead",
+                            "Path": "../Assets/Audio/SFX/Player/PlayerDead.wav"
                         }]
                 }]
         }, {
