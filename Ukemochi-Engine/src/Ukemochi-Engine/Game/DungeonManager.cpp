@@ -2,6 +2,7 @@
 /*!
 \file       DungeonManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
+\co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
 \date       Nov 24, 2024
 \brief      This file contains the definition of the DungeonManager which handles the game dungeon.
 
@@ -76,6 +77,7 @@ namespace Ukemochi
 		if (next_room_id == -1)
 		{
 			//ECS::GetInstance().GetSystem<Camera>()->position.x -= ROOM_WIDTH;
+			//
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
 
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
@@ -90,7 +92,7 @@ namespace Ukemochi
 			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
 		}
 
-		// Activate next room
+		// Activate current room
 		ActivateRoom(current_room_id, true);
 	}
 
@@ -165,7 +167,7 @@ namespace Ukemochi
 				}
 				
 			}
-
+			// Storing enemy count to check whether room is cleared (So that door remains open as to allow backtracking)
 			rooms[room_id].enemy_count = rooms[room_id].enemies.size();
 
 			// Deactivate all rooms except the current room
@@ -199,13 +201,16 @@ namespace Ukemochi
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 			std::string room = std::to_string(room_id);
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
-			if (!rooms[room_id].enemy_count < 1)
+			// Checking current enemy count in the room
+			if (rooms[room_id].enemy_count > 0)
 			{
+				// If room has enemies doors are disabled
 				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
 					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
 			}
 			else
 			{
+				// Vice versa if there are no enemies doors are enabled
 				if (name == room + "_LeftDoor" || name == room + "_RightDoor")
 					GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
 			}
