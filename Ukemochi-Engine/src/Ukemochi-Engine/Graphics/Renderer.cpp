@@ -1914,19 +1914,20 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		glm::vec2 entityCenter(transform.position.x, transform.position.y);
 
 		float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
-
+		float yOffset = 15.0f;  // Move Y-axis click area **higher**
+		float xOffset = 10.0f;
 		// Check X-axis handle
-		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
-		if (glm::length(mousePosition - xHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
+		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength + xOffset, 0.0f);
+		if (glm::length(mousePosition - xHandleEnd) <= 12.5f)
 		{
 			scalingAxis = ScalingAxis::X;
 			isScaling = true;
 			return true;
 		}
 
-		// Check Y-axis handle
-		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
-		if (glm::length(mousePosition - yHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
+		// **Check Y-axis handle** (shifted higher)
+		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength + yOffset);
+		if (glm::length(mousePosition - yHandleEnd) <= 12.5f)
 		{
 			scalingAxis = ScalingAxis::Y;
 			isScaling = true;
@@ -1934,7 +1935,7 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		}
 
 		// Check Uniform handle (center box)
-		if (glm::length(mousePosition - entityCenter) <= 20.0f) // Match uniform box size (40.f / 2)
+		if (glm::length(mousePosition - entityCenter) <= 20.0f)
 		{
 			scalingAxis = ScalingAxis::UNIFORM;
 			isScaling = true;
@@ -1944,6 +1945,7 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 
 	return false;
 }
+
 
 /*!***********************************************************************
 \brief
@@ -1962,21 +1964,19 @@ void Renderer::handleScaling(int mouseX, int mouseY)
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 		glm::vec2 mousePosition(mouseX, mouseY);
 		glm::vec2 entityCenter(transform.position.x, transform.position.y);
-
-		// Calculate the delta from the entity center
 		glm::vec2 delta = mousePosition - entityCenter;
 
 		if (scalingAxis == ScalingAxis::X)
 		{
-			transform.scale.x = glm::abs(delta.x); // Scale based on X-axis distance
+			transform.scale.x = glm::max(10.0f, transform.scale.x + delta.x * 0.01f);
 		}
 		else if (scalingAxis == ScalingAxis::Y)
 		{
-			transform.scale.y = glm::abs(delta.y); // Scale based on Y-axis distance
+			transform.scale.y = glm::max(10.0f, transform.scale.y + delta.y * 0.01f);
 		}
 		else if (scalingAxis == ScalingAxis::UNIFORM)
 		{
-			float uniformScale = glm::length(delta);
+			float uniformScale = glm::max(10.0f, transform.scale.x + glm::length(delta) * 0.01f);
 			transform.scale.x = uniformScale;
 			transform.scale.y = uniformScale;
 		}
