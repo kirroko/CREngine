@@ -227,17 +227,17 @@ namespace Ukemochi
 
 		// Main Menu
 		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
-			//// Get the AudioManager
-			//auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			// Get the AudioManager
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-			//// Start playing main menu music if it exists
-			//if (audioM.GetMusicIndex("BGMOG") != -1)
-			//{
-			//	if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
-			//	{
-			//		audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
-			//	}
-			//}
+			// Start playing main menu music if it exists
+			if (audioM.GetMusicIndex("BGMOG") != -1)
+			{
+				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+				{
+					audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+				}
+			}
 			});
 
 		uiManager->addButton("start button", glm::vec3{ 1168.f, 478.f, 0.f }, glm::vec2{ 464.f, 243.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
