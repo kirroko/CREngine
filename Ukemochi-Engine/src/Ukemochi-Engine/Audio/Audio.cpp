@@ -438,7 +438,7 @@ namespace Ukemochi
     {
         for (size_t i = 0; i < pSFXChannels.size(); ++i)
         {
-            StopSFX(i);  // Stop each individual SFX
+            StopSFX(static_cast<int>(i));  // Stop each individual SFX
         }
     }
 
