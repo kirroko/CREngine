@@ -1933,8 +1933,10 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		float xOffset = 10.0f;
 		// Check X-axis handle
 		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength + xOffset, 0.0f);
-		if (glm::length(mousePosition - xHandleEnd) <= 12.5f)
+		if (glm::abs(mousePosition.x - xHandleEnd.x) <= 15.0f &&
+			glm::abs(mousePosition.y - xHandleEnd.y) <= 10.0f)
 		{
+			std::cout << "[DEBUG] Clicked on X-axis handle" << std::endl;
 			scalingAxis = ScalingAxis::X;
 			isScaling = true;
 			return true;
