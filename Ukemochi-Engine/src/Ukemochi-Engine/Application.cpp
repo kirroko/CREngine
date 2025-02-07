@@ -413,6 +413,14 @@ namespace Ukemochi
         //************ Render IMGUI ************
     }
 
+    /*!***********************************************************************
+    \brief
+    Terminates the game by setting the engine state to quit.
+    \details
+    This function updates the engine state (`es_current`) to `ES_QUIT`,
+    indicating that the game should close. It ensures a clean exit from
+    the application loop.
+    *************************************************************************/
     void Application::QuitGame()
     {
         es_current = ENGINE_STATES::ES_QUIT;
