@@ -351,7 +351,7 @@ namespace Ukemochi
         static double elapsedTime = 0.0;
 	    static int current_frame_index = 0;
 	    elapsedTime += g_FrameRateController.GetDeltaTime();
-	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 5)
+	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 6)
 	    {
 	        auto& sr = cutscene.GetComponent<SpriteRender>();
 	        switch (current_frame_index)
@@ -373,7 +373,7 @@ namespace Ukemochi
 	        }
 	        ++current_frame_index;
 	        elapsedTime = 0;
-	        if (current_frame_index > 4)
+	        if (current_frame_index > 5)
 	        {
 	            ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
 	            Application::Get().SetPaused(false);
