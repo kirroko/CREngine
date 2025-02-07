@@ -1,7 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       PlayerManager.cpp
-\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
 \date       Nov 21, 2024
 \brief      This file is a temporary solution to manage player's logic and should replace to the C# script as soon as possible. 
 

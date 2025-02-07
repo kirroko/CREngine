@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       InGameGUI.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\co-author	TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (50%)
+\co-author	TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu (40%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
 \date       Feb 6, 2025
 \brief      This file contains the definition of the in game GUI system which handles GUI
 			elements such as text, images and buttons within the game.

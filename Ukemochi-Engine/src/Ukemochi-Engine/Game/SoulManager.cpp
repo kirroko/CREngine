@@ -1,7 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       SoulManager.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
 \date       Feb 02, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
