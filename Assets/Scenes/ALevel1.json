@@ -2102,14 +2102,14 @@
                     "Force": [-2500.0, 0.0],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
+                    "Linear Drag": 0.85,
                     "Angle": 0.0,
                     "Angular Velocity": 0.0,
                     "Angular Acceleration": 0.0,
                     "Torque": 0.0,
                     "Inertia Mass": 1.0,
                     "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
+                    "Angular Drag": 0.85,
                     "use_gravity": false,
                     "is_kinematic": false
                 }, {
