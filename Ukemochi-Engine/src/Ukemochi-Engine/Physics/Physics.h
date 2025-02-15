@@ -2,7 +2,7 @@
 /*!
 \file       Physics.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 17, 2024
+\date       Feb 15, 2025
 \brief      This file contains the declaration of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -17,26 +17,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    /*!***********************************************************************
-    \brief
-     Gravity constant to simulate gravity for physics.
-    *************************************************************************/
-    const Vec2 GRAVITY{ 0.0f, 9.8f };
-
-    /*!***********************************************************************
-    \brief
-     Maximum velocity constant for all entities.
-    *************************************************************************/
-    const float MAX_VELOCITY = 300.0f; // Adjust this value for your desired max velocity
-
-    /*!***********************************************************************
-    \brief
-     Normalize factor for diagonal movement.
-    *************************************************************************/
-    const float NORMALIZATION_FACTOR = 1.0f / std::sqrt(2.0f); // = ~0.7071
-
     class Physics : public System
     {
+    private:
+        const Vec2 GRAVITY{ 0.0f, 9.8f };                          // Gravity constant to simulate gravity for physics.
+
+        const float PLAYER_MAX_VELOCITY = 600.0f;                  // Maximum linear velocity constant for the player.
+        const float ENEMY_MAX_VELOCITY = 300.0f;                   // Maximum linear velocity constant for the enemy.
+        const float MAX_ANGULAR_VELOCITY = 300.0f;                 // Maximum angular velocity constant for all entities.
+
+        const float NORMALIZATION_FACTOR = 1.0f / std::sqrt(2.0f); // Normalize factor for diagonal movement, ~0.7071
+
     public:
         /*!***********************************************************************
         \brief
