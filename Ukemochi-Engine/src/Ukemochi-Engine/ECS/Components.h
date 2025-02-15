@@ -368,6 +368,7 @@ namespace Ukemochi
 		float skill_cooldown = 5.f;						 // The cooldown of the skill
 		float skill_timer = 0.f;						 // The timer for skill ready
 		bool skill_ready = false;						 // The skill's ready state
+		bool is_casting = false;						 // The soul animation casting state
 
 		float soul_decay_amount = 10.f;					 // The amount of soul to decay
 		float soul_decay_rate = 5.f;					 // The rate of decay for the soul bar
