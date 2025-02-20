@@ -421,11 +421,11 @@ namespace Ukemochi
 			return;
 		}
 
-		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
-		{
-			es_current = ES_QUIT;
-			return;
-		}
+		//if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
+		//{
+		//	es_current = ES_QUIT;
+		//	return;
+		//}
 #endif
 		
 

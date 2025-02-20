@@ -12,7 +12,7 @@ Tan Shun Zhi Tomy (Graphics Champion)
 Chia Naomi Maidison Yu Ning (Animation Champion)
 
 HOW TO PLAY
-Control Mochi using the WASD keys, press the Q key to switch between souls, press the J key to use basic attacks and the F key to use soul abilities. Mochi can attack nearby enemies and enter other rooms using the doors on the far left and right of the room, unless there is a blockage. Defeat all enemies in the room to unlock the blockages.
+Control Mochi using the WASD keys, press the Q key to switch between souls, press the J key to use basic attacks and the K key to use soul abilities. Mochi can attack nearby enemies and enter other rooms using the doors on the far left and right of the room, unless there is a blockage. Defeat all enemies in the room to unlock the blockages.
 
 NOTE
 The collider is placed at the foot of the player and enemy to showcase the depth effect, and they will also scale up when they are nearer to the screen and scale down when they are further away.
@@ -26,8 +26,8 @@ Escape key - To quit the game
 Left mouse click - Select UI buttons
 WASD keys - Move the player
 Q key - To switch between souls
-J key - Use the knife attack
-F key - To use soul ability
+J key - To use the knife attack
+K key - To use soul ability
 
 EDITOR CONTROLS
 Arrow keys - Move the camera

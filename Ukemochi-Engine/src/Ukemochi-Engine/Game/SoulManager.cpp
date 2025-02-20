@@ -86,7 +86,7 @@ namespace Ukemochi
         }
 
         // Soul Ability Key Press
-        if (Input::IsKeyTriggered(UME_KEY_F))
+        if (Input::IsKeyTriggered(UME_KEY_K))
         {
             UseSoulAbility();
 

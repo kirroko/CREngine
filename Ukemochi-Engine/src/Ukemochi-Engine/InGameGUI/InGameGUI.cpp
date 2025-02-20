@@ -333,7 +333,7 @@ namespace Ukemochi
 		}
 
 		// Pause
-		if (Input::IsKeyTriggered(UME_KEY_R))
+		if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
 		{
 			auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
 			if (rButton)
