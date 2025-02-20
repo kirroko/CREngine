@@ -195,7 +195,7 @@ namespace Ukemochi
                     }
 
                     // Harvest the soul of the dead enemy
-                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 1);
+                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 20.f);
 
                     object->SetActive(false);
                     enemycomponent.isDead = true;

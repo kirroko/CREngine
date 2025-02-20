@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Physics/Physics.h"					// for knockback effect
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
 #include "../Game/EnemyManager.h"				// for enemy data
+#include "../Game/SoulManager.h"				// for HarvestSoul
 
 namespace Ukemochi
 {
@@ -597,6 +598,9 @@ namespace Ukemochi
 						else
 							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 
+						// Harvest some soul whenever mochi hits an enemy
+						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
+
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
 					}
 				}
@@ -620,6 +624,9 @@ namespace Ukemochi
 							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
 						else
 							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+						// Harvest some soul whenever mochi hits an enemy
+						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
 					}
@@ -657,6 +664,9 @@ namespace Ukemochi
 						else
 							enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
 
+						// Harvest some soul whenever mochi hits an enemy
+						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
+
 						enemy_data.hasDealtDamage = true;
 					}
 				}
@@ -690,6 +700,9 @@ namespace Ukemochi
 					enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul] * 2.f);
 				else
 					enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+
+				// Harvest some soul whenever mochi hits an enemy
+				ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 				
 				enemy_data.hasDealtDamage = true; // Prevent multiple applications
 			}

@@ -14,16 +14,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma once
 
 #include "../ECS/ECS.h" // for ECS system and components
-#include "../Factory/GameObject.h" // for game object
 
 namespace Ukemochi
 {
+    const float MAX_SOUL_BAR = 100.f; // Maximum amount for a full soul bar.
+    const int MAX_SOUL_CHARGES = 1;   // Maximum number of soul charges.
+
     class SoulManager : public System
     {
     private:
-        const float MAX_SOUL_BAR = 5.f; // Maximum amount for a full soul bar.
-        const int MAX_SOUL_CHARGES = 1; // Maximum number of soul charges.
-
         EntityID player;       // Keep track of the player ID
         EntityID soul;         // Keep track of the floating soul ID
         EntityID fish_ability; // Keep track of the player's fish ability ID
