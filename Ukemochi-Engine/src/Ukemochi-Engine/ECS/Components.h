@@ -309,6 +309,16 @@ namespace Ukemochi
 
 	};
 
+	enum RenderLayer // The type of render layers
+	{
+		BACKGROUND,    // to render background objects
+		SKILL_BACK,    // to render soul skills behind dynamic and static objects
+		DYNAMIC_BACK,  // to render player and enemy objects behind static objects
+		STATIC,		   // to render static objects
+		SKILL_FRONT,   // to render soul skills behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT, // to render player and enemy objects infront of static objects
+		FOREGROUND	   // to render foreground objects
+	};
 	struct SpriteRender
 	{
 		std::string texturePath{};				// The path acting as a key to the texture

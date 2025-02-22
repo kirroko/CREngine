@@ -780,9 +780,10 @@ namespace Ukemochi
                     SPRITE_SHAPE shape = componentData["Shape"].GetInt() == 0
                                              ? SPRITE_SHAPE::BOX
                                              : SPRITE_SHAPE::CIRCLE;
+                    int layer = componentData["Layer"].GetInt();
                     if (!newObject.HasComponent<SpriteRender>())
                     {
-                        SpriteRender sr = {texturePath, shape};
+                        SpriteRender sr = { texturePath, shape, layer };
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
