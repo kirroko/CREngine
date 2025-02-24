@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGuizmo.h"
 #include "../ECS/ECS.h"
 #include "UIButton.h"
+#include "../Game/SoulManager.h" // for MAX_SOUL_BAR, MAX_SOUL_CHARGES
 
 using namespace Ukemochi;
 
@@ -177,8 +178,8 @@ void Renderer::HandleInputTesting()
 		if (player_data.currentHealth < 0)
 			player_data.currentHealth = 0;
 
-		soul_count.soul_bars[SoulType::FISH] += 1;
-		soul_count.soul_bars[SoulType::WORM] += 1;
+		soul_count.soul_bars[SoulType::FISH] += 10.f;
+		soul_count.soul_bars[SoulType::WORM] += 10.f;
 	
 	}
 }
@@ -193,9 +194,9 @@ void Renderer::updatePlayerBars()
 	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
-	
-	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / SOUL_BAR_THRESHOLD;
-	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / SOUL_BAR_THRESHOLD;
+
+	float blueSoul = soul.soul_bars[SoulType::FISH] / MAX_SOUL_BAR;
+	float redSoul = soul.soul_bars[SoulType::WORM] / MAX_SOUL_BAR;
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 
@@ -1933,8 +1934,10 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		float xOffset = 10.0f;
 		// Check X-axis handle
 		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength + xOffset, 0.0f);
-		if (glm::length(mousePosition - xHandleEnd) <= 12.5f)
+		if (glm::abs(mousePosition.x - xHandleEnd.x) <= 15.0f &&
+			glm::abs(mousePosition.y - xHandleEnd.y) <= 10.0f)
 		{
+			std::cout << "[DEBUG] Clicked on X-axis handle" << std::endl;
 			scalingAxis = ScalingAxis::X;
 			isScaling = true;
 			return true;

@@ -421,11 +421,11 @@ namespace Ukemochi
 			return;
 		}
 
-		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
-		{
-			es_current = ES_QUIT;
-			return;
-		}
+		//if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
+		//{
+		//	es_current = ES_QUIT;
+		//	return;
+		//}
 #endif
 		
 
@@ -780,9 +780,10 @@ namespace Ukemochi
                     SPRITE_SHAPE shape = componentData["Shape"].GetInt() == 0
                                              ? SPRITE_SHAPE::BOX
                                              : SPRITE_SHAPE::CIRCLE;
+                    int layer = componentData["Layer"].GetInt();
                     if (!newObject.HasComponent<SpriteRender>())
                     {
-                        SpriteRender sr = {texturePath, shape};
+                        SpriteRender sr = { texturePath, shape, layer };
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
@@ -890,6 +891,7 @@ namespace Ukemochi
                         player_soul.skill_cooldown = componentData["SkillCooldown"].GetFloat();
                         player_soul.skill_timer = componentData["SkillTimer"].GetFloat();
                         player_soul.skill_ready = componentData["SkillReady"].GetBool();
+                        player_soul.is_casting = componentData["IsCasting"].GetBool();
 
                         player_soul.soul_decay_amount = componentData["SoulDecayAmount"].GetFloat();
                         player_soul.soul_decay_rate = componentData["SoulDecayRate"].GetFloat();
@@ -1207,6 +1209,7 @@ namespace Ukemochi
                 playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
                 playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
                 playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+                playerSoulComponent.AddMember("IsCasting", playerSoul.is_casting, allocator);
                 playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
                 playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
                 playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
@@ -1539,6 +1542,7 @@ namespace Ukemochi
             playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
             playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
             playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+            playerSoulComponent.AddMember("IsCasting", playerSoul.is_casting, allocator);
             playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
             playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
             playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
