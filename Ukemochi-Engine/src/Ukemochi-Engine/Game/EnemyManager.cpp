@@ -512,6 +512,7 @@ namespace Ukemochi
                             if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                             {
                                 enemycomponent.state = enemycomponent.STANDBY;
+                                enemycomponent.atktimer = 0.f;
                                 break;
                             }
                             else
@@ -528,6 +529,8 @@ namespace Ukemochi
                             if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                             {
                                 enemycomponent.state = enemycomponent.STANDBY;
+                                enemycomponent.atktimer = 0.f;
+                                enemycomponent.wormshoot = false;
                                 break;
                             }
                             else

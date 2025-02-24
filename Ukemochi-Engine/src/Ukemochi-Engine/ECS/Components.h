@@ -520,9 +520,15 @@ namespace Ukemochi
 		{
 			float dx = player.position.x - enemy.position.x;
 			float dy = player.position.y - enemy.position.y;
-			float distance = dx * dx + dy * dy;
 
-			return distance <= attackRange * attackRange;
+			if (dx * dx <= attackRange * attackRange && std::abs(dy) <= 20)
+			{
+				return true;
+			}
+			return false;
+			//float distance = dx * dx + dy * dy;
+
+			//return distance <= attackRange * attackRange;
 		}
 
 		//wrap to target when collide
