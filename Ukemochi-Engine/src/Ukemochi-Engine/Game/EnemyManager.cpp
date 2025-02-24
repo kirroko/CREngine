@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       EnemyManager.h
-\author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu
-\date       Sept 20, 2024
+\author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
+\date       Feb 05, 2024
 \brief      This file contains the definition of the EnemyManager class and related methods.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -147,7 +148,7 @@ namespace Ukemochi
                     }
                     if (enemycomponent.type == Enemy::WORM)
                     {
-                        // Play WormMove sound at specific frames
+                        // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
                         {
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -194,7 +195,7 @@ namespace Ukemochi
                     }
 
                     // Harvest the soul of the dead enemy
-                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 1);
+                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 20.f);
 
                     object->SetActive(false);
                     enemycomponent.isDead = true;
@@ -219,7 +220,6 @@ namespace Ukemochi
 
                 if (playerObj != nullptr)
                 {
-                    //when near chase player
                     if (enemycomponent.ReachedTarget(enemytransform.position.x, enemytransform.position.y,
                         playerObj->GetComponent<Transform>().position.x,
                         playerObj->GetComponent<Transform>().position.y, 350.f) == true && enemycomponent.state == enemycomponent.ROAM)
@@ -228,7 +228,6 @@ namespace Ukemochi
                         enemycomponent.state = enemycomponent.CHASE;
                     }
                 }
-                //if player kick delay 
                 if (enemycomponent.isKick)
                 {
                     if (enemycomponent.timeSinceTargetReached < 1.0f) {
@@ -253,12 +252,8 @@ namespace Ukemochi
 
                         // Timer has reached 1 second, perform the object updates
                         auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
-
-                        //saftey check
                         if (collidedObj == nullptr)
                             break;
-
-                        //if collide to wall
                         if (collidedObj->GetTag() == "Boundary")
                         {
                             enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
@@ -466,14 +461,6 @@ namespace Ukemochi
 
                 case Enemy::ATTACK:
 
-                    if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
-                    {
-                        enemycomponent.state = enemycomponent.CHASE;
-                        break;
-                    }
-
-                    enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-
                     enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
                     if (enemycomponent.atktimer < 0)
@@ -494,7 +481,7 @@ namespace Ukemochi
                     //Charge attack for fish
                     if (enemycomponent.type == enemycomponent.FISH)
                     {
-                        
+
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 18)
                         {
                             //SFX
@@ -505,11 +492,15 @@ namespace Ukemochi
                                 {
                                     audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
 
-                                    //attack
-                                    if (playerObj != nullptr)
+                                    //check attack
+                                    if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                                     {
-                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
-                                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                        //attack
+                                        if (playerObj != nullptr)
+                                        {
+                                            enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
+                                            ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                        }
                                     }
                                 }
 
@@ -519,15 +510,36 @@ namespace Ukemochi
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                         {
-                            enemycomponent.atktimer = 1.5f;
+                            if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                            {
+                                enemycomponent.state = enemycomponent.STANDBY;
+                                enemycomponent.atktimer = 0.f;
+                                break;
+                            }
+                            else
+                            {
+                                enemycomponent.atktimer = 1.5f;
+                            }
+
                         }
                     }
                     else if (enemycomponent.type == enemycomponent.WORM)
                     {
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
                         {
-                            enemycomponent.atktimer = 1.5f;
-                            enemycomponent.wormshoot = false;
+                            if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                            {
+                                enemycomponent.state = enemycomponent.STANDBY;
+                                enemycomponent.atktimer = 0.f;
+                                enemycomponent.wormshoot = false;
+                                break;
+                            }
+                            else
+                            {
+                                enemycomponent.atktimer = 1.5f;
+                                enemycomponent.wormshoot = false;
+                            }
+
                         }
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 15 && !enemycomponent.wormshoot)
@@ -539,13 +551,6 @@ namespace Ukemochi
                                 if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
                                 {
                                     audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
-
-                                    //attack
-                                    if (playerObj != nullptr)
-                                    {
-                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
-                                        ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
-                                    }
                                 }
 
                             }
@@ -594,7 +599,7 @@ namespace Ukemochi
                                 newObject.AddComponent(EnemyBullet{});
                                 enemycomponent.wormshoot = true;
                             }
-                            
+
                         }
                     }
                     break;

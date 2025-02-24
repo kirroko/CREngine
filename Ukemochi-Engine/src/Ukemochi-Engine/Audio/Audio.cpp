@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Audio.cpp
-\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
-\date       Dec 1, 2024
+\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
+\date       Feb 01, 2025
 \brief      This file contains the definition of the Audio system.
 
 This Audio system handles loading, playing, and managing sound effects
@@ -438,7 +439,7 @@ namespace Ukemochi
     {
         for (size_t i = 0; i < pSFXChannels.size(); ++i)
         {
-            StopSFX(i);  // Stop each individual SFX
+            StopSFX(static_cast<int>(i));  // Stop each individual SFX
         }
     }
 

@@ -298,7 +298,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_box_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "1_Box1",
@@ -336,7 +336,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "1_RightWallBack",
@@ -731,7 +731,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "env_base_box_2",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "2_Box1",
@@ -769,7 +769,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "env_base_box_1",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "2_RightWallBack",
@@ -835,7 +835,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -887,7 +887,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -939,7 +939,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1287,7 +1287,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_box_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "3_Box1",
@@ -1325,7 +1325,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "3_RightWallBack",
@@ -1391,7 +1391,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1443,14 +1443,14 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
                         "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
-                        "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
+                        "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
+                        "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Walk"
@@ -1495,7 +1495,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1810,7 +1810,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_box_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "4_Box1",
@@ -1848,7 +1848,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_box_1.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }]
         }, {
             "Name": "4_RightWallBack",
@@ -1914,7 +1914,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1966,7 +1966,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2018,7 +2018,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2070,7 +2070,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2102,14 +2102,14 @@
                     "Force": [-2500.0, 0.0],
                     "Mass": 1.0,
                     "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
+                    "Linear Drag": 0.8500000238418579,
                     "Angle": 0.0,
                     "Angular Velocity": 0.0,
                     "Angular Acceleration": 0.0,
                     "Torque": 0.0,
                     "Inertia Mass": 1.0,
                     "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
+                    "Angular Drag": 0.8500000238418579,
                     "use_gravity": false,
                     "is_kinematic": false
                 }, {
@@ -2122,7 +2122,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2172,6 +2172,7 @@
                     "SkillCooldown": 5.0,
                     "SkillTimer": 0.0,
                     "SkillReady": false,
+                    "IsCasting": false,
                     "SoulDecayAmount": 10.0,
                     "SoulDecayRate": 5.0,
                     "SoulDecayTimer": 0.0
@@ -2221,7 +2222,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2266,7 +2267,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 4
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2311,7 +2312,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 4
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2332,7 +2333,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "1_LeftWallFront",
@@ -2346,7 +2347,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "1_Bush4",
@@ -2360,7 +2361,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_bush_4.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "1_Rock9",
@@ -2374,7 +2375,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "1_Rock8",
@@ -2388,7 +2389,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_rock_8.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "1_Vine5",
@@ -2402,7 +2403,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_vine_5.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "1_LeftBlock_Perma",
@@ -2416,7 +2417,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_RightWallFront",
@@ -2430,7 +2431,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock wall 1",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_LeftWallFront",
@@ -2444,7 +2445,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "cave wall 3",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_Bush4",
@@ -2458,7 +2459,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "bush 3",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_RightBlock",
@@ -2472,7 +2473,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_LeftBlock",
@@ -2486,7 +2487,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_Rock9",
@@ -2500,7 +2501,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_Rock8",
@@ -2514,7 +2515,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_Rock5",
@@ -2528,7 +2529,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_RightWallFront",
@@ -2542,7 +2543,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_LeftWallFront",
@@ -2556,7 +2557,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_Bush4",
@@ -2570,7 +2571,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_bush_4.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_Rock9",
@@ -2584,7 +2585,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_Rock8",
@@ -2598,7 +2599,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_rock_8.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_Vine5",
@@ -2612,7 +2613,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_vine_5.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_RightBlock",
@@ -2626,7 +2627,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "3_LeftBlock",
@@ -2640,7 +2641,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "2_waypoint1",
@@ -2678,13 +2679,12 @@
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
-        },
-        {
+        }, {
             "Name": "3_waypoint1",
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2256.76 , 662.212 , 0.0],
+                    "Position": [2256.760009765625, 662.2119750976563, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
@@ -2693,7 +2693,7 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2256.76, 146.077, 0.0],
+                    "Position": [2256.760009765625, 146.07699584960938, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
@@ -2702,7 +2702,7 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3446.1 , 185.148, 0.0],
+                    "Position": [3446.10009765625, 185.1479949951172, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
@@ -2711,17 +2711,16 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3510.23, 658.667, 0.0],
+                    "Position": [3510.22998046875, 658.6669921875, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
-        },
-        {
+        }, {
             "Name": "4_waypoint1",
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [4250.36 ,679.447 , 0.0],
+                    "Position": [4250.35986328125, 679.447021484375, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
@@ -2730,7 +2729,7 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [4460.36 , 169.57, 0.0],
+                    "Position": [4460.35986328125, 169.57000732421875, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
@@ -2739,7 +2738,7 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [5408.43 , 169.57 , 0.0],
+                    "Position": [5408.43017578125, 169.57000732421875, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
@@ -2748,12 +2747,11 @@
             "Tag": "WayPoint",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [5234.77 , 700.267, 0.0],
+                    "Position": [5234.77001953125, 700.2670288085938, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 50.0]
                 }]
-        }, 
-        {
+        }, {
             "Name": "2_AudioManager",
             "Tag": "AudioManager",
             "Components": [{
@@ -2850,7 +2848,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "bush 2",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "enemybullet",
@@ -2888,7 +2886,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2908,7 +2906,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_1_front.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_LeftWallFront",
@@ -2922,7 +2920,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_wall_2_front.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_Bush4",
@@ -2936,7 +2934,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_bush_4.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_Rock9",
@@ -2950,7 +2948,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_rock_9.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_Rock8",
@@ -2964,7 +2962,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_rock_8.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_Vine5",
@@ -2978,7 +2976,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_vine_5.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_RightBlock_Perma",
@@ -2992,7 +2990,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_1.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }, {
             "Name": "4_LeftBlock",
@@ -3006,7 +3004,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 6
                 }]
         }]
 }

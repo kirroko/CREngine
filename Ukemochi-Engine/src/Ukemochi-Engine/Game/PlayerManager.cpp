@@ -1,7 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       PlayerManager.cpp
-\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
+\author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
 \date       Nov 21, 2024
 \brief      This file is a temporary solution to manage player's logic and should replace to the C# script as soon as possible. 
 
@@ -111,6 +112,7 @@ namespace Ukemochi
 
                 static bool playerDeadSoundPlayed = false;
 
+                // Check if Mochi is dead
                 if (data.currentHealth <= 0)
                 {
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -122,14 +124,18 @@ namespace Ukemochi
                     // Trigger player death animation
                     anim.SetAnimation(SoulAnimation(soulData, "Death"));
                     data.isDead = true;
+
+                    // Stop Mochi's movement
+                    rb.force = Vec2{ 0,0 };
+                    rb.velocity = Vec2{ 0,0 };
                     
                     return;
                 }
                 
                 playerDeadSoundPlayed = false; // Reset the flag if the player is not dead
                 
-
-                if (!data.comboIsAttacking)
+                // Allow Mochi to move if not attacking or casting an ability
+                if (!data.comboIsAttacking && !soulData.is_casting)
                     PlayersMovement(rb, sr, data);
 
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))

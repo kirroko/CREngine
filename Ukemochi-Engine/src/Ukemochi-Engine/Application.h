@@ -125,7 +125,12 @@ namespace Ukemochi {
 		void QuitGame();
 
 	private:
+#ifndef _DEBUG
+		bool pause = true;
+#endif
+#ifdef  _DEBUG
 		bool pause = false;
+#endif
 		/*!***********************************************************************
 		\brief
 		 Checks if a window close event has been triggered.

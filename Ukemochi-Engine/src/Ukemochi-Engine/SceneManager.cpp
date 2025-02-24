@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGui/ImGuiCore.h"
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
+#include "FrameController.h"
 #include "Game/PlayerManager.h"
 #include "Graphics/Animation.h"
 #include "Game/EnemyManager.h"
@@ -210,6 +211,17 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+
+#ifndef _DEBUG
+	    cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
+	    cutscene.AddComponent(Transform{Mtx44{},
+            Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
+            0,
+            Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
+	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
+        SPRITE_SHAPE::BOX,0,true,false,false});
+		es_current = ES_PLAY;
+#endif
     }
 
     /*!***********************************************************************
@@ -234,7 +246,6 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
-
     }
 
     /*!***********************************************************************
@@ -318,6 +329,7 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
+	    
         loop_start = std::chrono::steady_clock::now();
 
 #ifdef _DEBUG
@@ -336,6 +348,39 @@ namespace Ukemochi
 #endif // _DEBUG
 
 #ifndef _DEBUG
+        static double elapsedTime = 0.0;
+	    static int current_frame_index = 0;
+	    elapsedTime += g_FrameRateController.GetDeltaTime();
+	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 6)
+	    {
+	        auto& sr = cutscene.GetComponent<SpriteRender>();
+	        switch (current_frame_index)
+	        {
+	        case 1:
+	            sr.texturePath = "../Assets/Storyboard 2.png";
+	            break;
+	        case 2:
+	            sr.texturePath = "../Assets/Storyboard 3.png";
+	            break;
+	        case 3:
+	            sr.texturePath = "../Assets/Storyboard 4.png";
+	            break;
+	        case 4:
+	            sr.texturePath = "../Assets/Storyboard 5.png";
+	            break;
+	        default:
+	            break;
+	        }
+	        ++current_frame_index;
+	        elapsedTime = 0;
+	        if (current_frame_index > 5)
+	        {
+	            ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+	            Application::Get().SetPaused(false);
+	            GameObjectManager::GetInstance().DestroyObject(cutscene.GetInstanceID());
+	        	es_current = ES_ENGINE;
+	        }
+	    }
 		// Game Inputs Quick fix
 		if (Input::IsKeyTriggered(GLFW_KEY_T))
 		{
@@ -376,11 +421,11 @@ namespace Ukemochi
 			return;
 		}
 
-		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
-		{
-			es_current = ES_QUIT;
-			return;
-		}
+		//if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
+		//{
+		//	es_current = ES_QUIT;
+		//	return;
+		//}
 #endif
 		
 
@@ -735,9 +780,10 @@ namespace Ukemochi
                     SPRITE_SHAPE shape = componentData["Shape"].GetInt() == 0
                                              ? SPRITE_SHAPE::BOX
                                              : SPRITE_SHAPE::CIRCLE;
+                    int layer = componentData["Layer"].GetInt();
                     if (!newObject.HasComponent<SpriteRender>())
                     {
-                        SpriteRender sr = {texturePath, shape};
+                        SpriteRender sr = { texturePath, shape, layer };
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
@@ -845,6 +891,7 @@ namespace Ukemochi
                         player_soul.skill_cooldown = componentData["SkillCooldown"].GetFloat();
                         player_soul.skill_timer = componentData["SkillTimer"].GetFloat();
                         player_soul.skill_ready = componentData["SkillReady"].GetBool();
+                        player_soul.is_casting = componentData["IsCasting"].GetBool();
 
                         player_soul.soul_decay_amount = componentData["SoulDecayAmount"].GetFloat();
                         player_soul.soul_decay_rate = componentData["SoulDecayRate"].GetFloat();
@@ -1162,6 +1209,7 @@ namespace Ukemochi
                 playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
                 playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
                 playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+                playerSoulComponent.AddMember("IsCasting", playerSoul.is_casting, allocator);
                 playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
                 playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
                 playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
@@ -1494,6 +1542,7 @@ namespace Ukemochi
             playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
             playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
             playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+            playerSoulComponent.AddMember("IsCasting", playerSoul.is_casting, allocator);
             playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
             playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
             playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);

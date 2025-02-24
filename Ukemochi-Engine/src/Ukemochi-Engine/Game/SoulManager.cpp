@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       SoulManager.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 02, 2025
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
+\date       Feb 15, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -85,7 +86,7 @@ namespace Ukemochi
         }
 
         // Soul Ability Key Press
-        if (Input::IsKeyTriggered(UME_KEY_F))
+        if (Input::IsKeyTriggered(UME_KEY_K))
         {
             UseSoulAbility();
 
@@ -136,8 +137,6 @@ namespace Ukemochi
         // Gain a soul charge if the soul bar is filled
         if (player_soul.soul_bars[soul_type] >= MAX_SOUL_BAR && player_soul.soul_charges[soul_type] < MAX_SOUL_CHARGES)
             ++player_soul.soul_charges[soul_type];
-
-        UME_ENGINE_TRACE("Soul Harvest: {0}", static_cast<int>(soul_type));
     }
 
     /*!***********************************************************************
@@ -150,6 +149,10 @@ namespace Ukemochi
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         auto& soul_animator = ECS::GetInstance().GetComponent<Animation>(soul);
 
+        // Skip if Mochi is still casting an animation
+        if (player_soul.is_casting || player_animator.isAttacking)
+            return;
+
         // Play different hit sounds based on enemy type
         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
         if (audioM.GetSFXindex("SwapSoul") != -1)
@@ -161,20 +164,14 @@ namespace Ukemochi
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                if (!player_animator.isAttacking)
-                    player_animator.SetAnimationUninterrupted("SwitchNB");
-                else
-                    return;
+                player_animator.SetAnimationUninterrupted("SwitchNB");
                 soul_animator.SetAnimation("BlueFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                if (!player_animator.isAttacking)
-                    player_animator.SetAnimationUninterrupted("SwitchNR");
-                else
-                    return;
+                player_animator.SetAnimationUninterrupted("SwitchNR");
                 soul_animator.SetAnimation("RedFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
@@ -185,20 +182,14 @@ namespace Ukemochi
             if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                if (!player_animator.isAttacking)
-                    player_animator.SetAnimationUninterrupted("SwitchBR");
-                else
-                    return;
+                player_animator.SetAnimationUninterrupted("SwitchBR");
                 soul_animator.SetAnimation("RedFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
-                if (!player_animator.isAttacking)
-                    player_animator.SetAnimationUninterrupted("SwitchBN");
-                else
-                    return;
+                player_animator.SetAnimationUninterrupted("SwitchBN");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
@@ -208,25 +199,21 @@ namespace Ukemochi
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                if (!player_animator.isAttacking)
-                    player_animator.SetAnimationUninterrupted("SwitchRB");
-                else
-                    return;
+                player_animator.SetAnimationUninterrupted("SwitchRB");
                 soul_animator.SetAnimation("BlueFlame");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
-                if (!player_animator.isAttacking)
-                    player_animator.SetAnimationUninterrupted("SwitchRN");
-                else
-                    return;
+                player_animator.SetAnimationUninterrupted("SwitchRN");
                 GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
 
-        UME_ENGINE_TRACE("Soul Switch: {0}", static_cast<int>(player_soul.current_soul));
+        // Don't let Mochi move while switching souls
+        player_soul.is_casting = true;
+        ECS::GetInstance().GetComponent<Rigidbody2D>(player).force = Vec2{ 0,0 };
     }
 
     /*!***********************************************************************
@@ -237,8 +224,8 @@ namespace Ukemochi
     {
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 
-        // Check if the skill is ready
-        if (!player_soul.skill_ready)
+        // Check if the skill is ready or casting an ability
+        if (!player_soul.skill_ready || player_soul.is_casting)
             return;
 
         // Use the FISH ability if there are enough FISH charges
@@ -260,7 +247,7 @@ namespace Ukemochi
         if (audioM.GetSFXindex("FishSpecial") != -1)
             audioM.PlaySFX(audioM.GetSFXindex("FishSpecial"));
 
-        // Trigger player fish animation
+        // Trigger player fish casting animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         player_animator.SetAnimationUninterrupted("FishSkill");
 
@@ -279,7 +266,9 @@ namespace Ukemochi
         player_soul.skill_ready = false;
         player_soul.skill_timer = 0.f;
 
-        UME_ENGINE_TRACE("Soul Ability: FISH");
+        // Don't let Mochi move while casting soul ability
+        player_soul.is_casting = true;
+        ECS::GetInstance().GetComponent<Rigidbody2D>(player).force = Vec2{ 0,0 };
     }
 
     /*!***********************************************************************
@@ -293,7 +282,7 @@ namespace Ukemochi
         if (audioM.GetSFXindex("WormSpecial") != -1)
             audioM.PlaySFX(audioM.GetSFXindex("WormSpecial"));
 
-        // Trigger player worm animation
+        // Trigger player worm casting animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
         player_animator.SetAnimationUninterrupted("WormSkill");
 
@@ -312,7 +301,9 @@ namespace Ukemochi
         player_soul.skill_ready = false;
         player_soul.skill_timer = 0.f;
 
-        UME_ENGINE_TRACE("Soul Ability: WORM");
+        // Don't let Mochi move while casting soul ability
+        player_soul.is_casting = true;
+        ECS::GetInstance().GetComponent<Rigidbody2D>(player).force = Vec2{ 0,0 };
     }
 
     /*!***********************************************************************
@@ -412,6 +403,14 @@ namespace Ukemochi
             worm_animator.SetAnimation("WormAbilityAttack");
         if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame == 9)
             GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
+
+        // Handle the player casting animation
+        auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+        if (player_animator.currentClip != "SwitchNB" && player_animator.currentClip != "SwitchNR"
+            && player_animator.currentClip != "SwitchBR" && player_animator.currentClip != "SwitchBN"
+            && player_animator.currentClip != "SwitchRB" && player_animator.currentClip != "SwitchRN"
+            && player_animator.currentClip != "FishSkill" && player_animator.currentClip != "WormSkill")
+            player_soul.is_casting = false;
     }
 
     /*!***********************************************************************

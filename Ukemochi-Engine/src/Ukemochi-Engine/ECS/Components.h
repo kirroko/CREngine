@@ -309,6 +309,16 @@ namespace Ukemochi
 
 	};
 
+	enum RenderLayer // The type of render layers
+	{
+		BACKGROUND,    // to render background objects
+		SKILL_BACK,    // to render soul skills behind dynamic and static objects
+		DYNAMIC_BACK,  // to render player and enemy objects behind static objects
+		STATIC,		   // to render static objects
+		SKILL_FRONT,   // to render soul skills behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT, // to render player and enemy objects infront of static objects
+		FOREGROUND	   // to render foreground objects
+	};
 	struct SpriteRender
 	{
 		std::string texturePath{};				// The path acting as a key to the texture
@@ -368,6 +378,7 @@ namespace Ukemochi
 		float skill_cooldown = 5.f;						 // The cooldown of the skill
 		float skill_timer = 0.f;						 // The timer for skill ready
 		bool skill_ready = false;						 // The skill's ready state
+		bool is_casting = false;						 // The soul animation casting state
 
 		float soul_decay_amount = 10.f;					 // The amount of soul to decay
 		float soul_decay_rate = 5.f;					 // The rate of decay for the soul bar
@@ -520,9 +531,15 @@ namespace Ukemochi
 		{
 			float dx = player.position.x - enemy.position.x;
 			float dy = player.position.y - enemy.position.y;
-			float distance = dx * dx + dy * dy;
 
-			return distance <= attackRange * attackRange;
+			if (dx * dx <= attackRange * attackRange && std::abs(dy) <= 20)
+			{
+				return true;
+			}
+			return false;
+			//float distance = dx * dx + dy * dy;
+
+			//return distance <= attackRange * attackRange;
 		}
 
 		//wrap to target when collide

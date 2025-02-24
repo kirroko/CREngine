@@ -4,7 +4,7 @@
 \author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
 \co-authors Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (%)
-\date       Sept 25, 2024
+\date       Feb 6, 2025
 \brief      This file contains the implementation of the Renderer class responsible for
 			handling OpenGL rendering, including setting up shaders, buffers, textures,
 			and rendering 2D objects like boxes and circles.
@@ -26,9 +26,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGuizmo.h"
 #include "../ECS/ECS.h"
 #include "UIButton.h"
+#include "../Game/SoulManager.h" // for MAX_SOUL_BAR, MAX_SOUL_CHARGES
 
 using namespace Ukemochi;
 
+/*!***********************************************************************
+\brief
+ Extracts the sprite name from a given texture path by removing the file
+ extension and returning only the base filename.
+
+\param[in] texturePath
+ The full path of the texture file.
+
+\return
+ The extracted sprite name without the file extension.
+*************************************************************************/
 std::string getSpriteNameFromPath(const std::string& texturePath)
 {
 	std::string fileName = std::filesystem::path(texturePath).filename().string();
@@ -41,10 +53,12 @@ std::string getSpriteNameFromPath(const std::string& texturePath)
 
 	return fileName;
 }
-/*!
- * @brief Constructor for the Renderer class.
- * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
- */
+
+/*!***********************************************************************
+\brief
+ Constructor for the Renderer class.
+ Initializes OpenGL-related pointers and clears VAO, VBO, and EBO lists.
+*************************************************************************/
 Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
@@ -63,10 +77,11 @@ Renderer::Renderer()
 	playerObject = nullptr;
 };
 
-/*!
- * @brief Destructor for the Renderer class.
- * Calls the cleanUp() method to release all allocated OpenGL resources.
- */
+/*!***********************************************************************
+\brief
+ Destructor for the Renderer class.
+ Cleans up OpenGL resources and terminates GLFW before exiting.
+*************************************************************************/
 Renderer::~Renderer()
 {
 	cleanUp();
@@ -74,9 +89,17 @@ Renderer::~Renderer()
 
 }
 
-/*!
- * @brief Initializes the renderer, including buffers, and text renderer.
- */
+/*!***********************************************************************
+\brief
+ Initializes the renderer by setting up buffers, framebuffers, object
+ picking, and the text renderer.
+
+\details
+ This function initializes buffers for debug wireframe drawing, circles,
+ object picking, and UI rendering. It also sets up the text rendering
+ system and loads fonts used in the game.
+
+*************************************************************************/
 void Renderer::init()
 {
 
@@ -124,6 +147,10 @@ void Renderer::init()
 
 }
 
+/*!***********************************************************************
+\brief
+ Finds the player entity ID by iterating through all game objects.
+*************************************************************************/
 void Renderer::finding_player_ID()
 {
 	for (auto const& entity : m_Entities)
@@ -136,51 +163,40 @@ void Renderer::finding_player_ID()
 	}
 }
 
+/*!***********************************************************************
+\brief
+ Handles input testing by modifying the player's health and soul values.
+*************************************************************************/
 void Renderer::HandleInputTesting()
 {
 	if (ECS::GetInstance().HasComponent<Player>(playerID))
 	{
-		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
+		auto& player_data = ECS::GetInstance().GetComponent<Player>(playerID);
 		auto& soul_count = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
-		player.currentHealth -= 10;
-		if (player.currentHealth < 0)
-			player.currentHealth = 0;
+		player_data.currentHealth -= 10;
+		if (player_data.currentHealth < 0)
+			player_data.currentHealth = 0;
 
-		soul_count.soul_bars[SoulType::FISH] += 1;
-		soul_count.soul_bars[SoulType::WORM] += 1;
+		soul_count.soul_bars[SoulType::FISH] += 10.f;
+		soul_count.soul_bars[SoulType::WORM] += 10.f;
 	
 	}
 }
+
+/*!***********************************************************************
+\brief
+ Updates the player's health and soul bars in the UI based on current values.
+*************************************************************************/
 void Renderer::updatePlayerBars()
 {
 	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
 	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
-	
-	//// Check if soul bar is full for FISH
-	//if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
-	//{
-	//	if (soul.soul_charges[SoulType::FISH] < MAX_SOUL_CHARGES) 
-	//	{
-	//		soul.soul_charges[SoulType::FISH]++;  // Add charge
-	//	}
-	//	soul.soul_bars[SoulType::FISH] = 0;       // Reset bar
-	//}
 
-	//// Check if soul bar is full for WORM
-	//if (soul.soul_bars[SoulType::WORM] >= SOUL_BAR_THRESHOLD) 
-	//{
-	//	if (soul.soul_charges[SoulType::WORM] < MAX_SOUL_CHARGES) 
-	//	{
-	//		soul.soul_charges[SoulType::WORM]++;  // Add charge
-	//	}
-	//	soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
-	//}
-
-	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / SOUL_BAR_THRESHOLD;
-	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / SOUL_BAR_THRESHOLD;
+	float blueSoul = soul.soul_bars[SoulType::FISH] / MAX_SOUL_BAR;
+	float redSoul = soul.soul_bars[SoulType::WORM] / MAX_SOUL_BAR;
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 
@@ -1918,8 +1934,10 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		float xOffset = 10.0f;
 		// Check X-axis handle
 		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength + xOffset, 0.0f);
-		if (glm::length(mousePosition - xHandleEnd) <= 12.5f)
+		if (glm::abs(mousePosition.x - xHandleEnd.x) <= 15.0f &&
+			glm::abs(mousePosition.y - xHandleEnd.y) <= 10.0f)
 		{
+			std::cout << "[DEBUG] Clicked on X-axis handle" << std::endl;
 			scalingAxis = ScalingAxis::X;
 			isScaling = true;
 			return true;

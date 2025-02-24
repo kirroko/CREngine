@@ -621,13 +621,40 @@ namespace Ukemochi
 
 	}
 
-	// Update this to be more dynamic
+	/*!***********************************************************************
+	\brief
+	 Determines if a given texture file is part of a sprite atlas.
+
+	\details
+	 This function checks if the provided file path contains "_Part",
+	 which is used to identify textures that belong to an atlas.
+
+	\param[in] file_path
+	 The path of the texture file.
+
+	\return
+	 True if the texture is part of an atlas, false otherwise.
+	*************************************************************************/
 	bool AssetManager::isAtlasTexture(const std::string& file_path)
 	{
 		// Check if the file path contains "_Part", indicating it's part of an atlas
 		return file_path.find("_Part") != std::string::npos;
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Retrieves the metadata JSON file associated with a sprite atlas.
+
+	\details
+	 This function replaces the extension of the provided atlas path with
+	 ".json" and checks if the JSON file exists.
+
+	\param[in] atlasPath
+	 The path of the atlas texture.
+
+	\return
+	 The file path of the corresponding JSON metadata file, or an empty string if not found.
+	*************************************************************************/
 	std::string AssetManager::getAtlasMetaData(const std::string& atlasPath)
 	{
 		std::filesystem::path jsonPath = atlasPath;
@@ -640,6 +667,20 @@ namespace Ukemochi
 		return ""; // Return empty string if no JSON metadata is found
 	}
 	
+	/*!***********************************************************************
+	\brief
+	 Parses a sprite atlas JSON file and extracts sprite data.
+
+	\details
+	 This function reads a JSON file containing metadata about individual
+	 sprites within a sprite atlas and stores their UV coordinates, dimensions, and positions.
+
+	\param[in] jsonPath
+	 The path of the JSON file.
+
+	\param[in] sheetName
+	 The name of the sprite sheet associated with the atlas.
+	*************************************************************************/
 	void AssetManager::parseAtlasJSON(const std::string& jsonPath, const std::string& sheetName)
 	{
 		int atlasWidth = 0, atlasHeight = 0, channels = 0;
@@ -693,17 +734,6 @@ namespace Ukemochi
 				Vec2 dimension = Vec2(static_cast<float>(frame["w"].GetInt()), static_cast<float>(frame["h"].GetInt()));
 				Vec2 position = Vec2(static_cast<float>(frame["x"].GetInt()),static_cast<float>(frame["y"].GetInt()));
 				
-				//std::cout << "Atlas Dimensions: " << atlasWidth << "x" << atlasHeight << std::endl;
-				//std::cout << "Sprite: " << spriteName
-				//	<< ", x: " << frame["x"].GetInt()
-				//	<< ", y: " << frame["y"].GetInt()
-				//	<< ", w: " << frame["w"].GetInt()
-				//	<< ", h: " << frame["h"].GetInt() << std::endl;
-
-				//std::cout << "UV Coordinates for " << spriteName << ": "
-				//	<< "uMin=" << uv.uMin << ", vMin=" << uv.vMin
-				//	<< ", uMax=" << uv.uMax << ", vMax=" << uv.vMax << std::endl;
-
 				// Store UV
 				spriteData[standardizedSpriteName] = { uv, sheetName, dimension, position };
 			}
@@ -712,9 +742,21 @@ namespace Ukemochi
 	// Add the atlas texture to the system
 	addTexture(atlasFilePath);
 }
+	/*!***********************************************************************
+	\brief
+	 Retrieves a list of sprite names from a sprite atlas JSON file.
 
-	std::vector<std::string> AssetManager::getAtlasJSONData(
-		const std::string& jsonPath)
+	\details
+	 This function reads the JSON metadata file associated with a sprite atlas
+	 and extracts the names of all sprites contained within it.
+
+	\param[in] jsonPath
+	 The path of the JSON file.
+
+	\return
+	 A vector containing the names of all sprites found in the JSON file.
+	*************************************************************************/
+	std::vector<std::string> AssetManager::getAtlasJSONData(const std::string& jsonPath)
 	{
 		std::string convertedExtension = jsonPath;
 		size_t pos = convertedExtension.find(".png");
@@ -749,12 +791,35 @@ namespace Ukemochi
 		return payload;
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Loads a sprite sheet texture and stores it in memory.
 
+	\details
+	 This function creates a new texture from the provided atlas file path
+	 and stores it in the spriteSheets map.
+
+	\param[in] sheetName
+	 The name to associate with the sprite sheet.
+
+	\param[in] atlasPath
+	 The file path of the sprite sheet texture.
+	*************************************************************************/
 	void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
 	{
 		spriteSheets[sheetName] = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Binds a sprite sheet texture for rendering.
+
+	\details
+	 This function checks if the sprite sheet exists and binds it for rendering.
+
+	\param[in] sheetName
+	 The name of the sprite sheet to bind.
+	*************************************************************************/
 	void AssetManager::bindSpriteSheet(const std::string& sheetName) 
 	{
 		if (spriteSheets.find(sheetName) != spriteSheets.end()) 
@@ -763,6 +828,13 @@ namespace Ukemochi
 		}
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Prints the names of all sprites stored in the asset manager.
+
+	\details
+	 This function is used for debugging purposes to verify the loaded sprite data.
+	*************************************************************************/
 	void AssetManager::debugPrintSpriteData() const
 	{
 		std::cout << "SpriteData contains the following keys:" << std::endl;
@@ -771,6 +843,23 @@ namespace Ukemochi
 		}
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Retrieves the sprite data associated with a given sprite name.
+
+	\details
+	 This function looks up the sprite name in the asset manager and returns
+	 its corresponding UV coordinates, sheet name, and dimensions.
+
+	\param[in] spriteName
+	 The name of the sprite to retrieve.
+
+	\return
+	 A reference to the sprite's data.
+
+	\throws std::out_of_range
+	 If the sprite name does not exist in the asset manager.
+	*************************************************************************/
 	const AssetManager::SpriteInfo& AssetManager::getSpriteData(const std::string& spriteName)
 	{
 		auto it = spriteData.find(spriteName);
@@ -781,6 +870,16 @@ namespace Ukemochi
 		return it->second;
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Checks whether a given texture exists in the sprite atlas.
+
+	\param[in] texturePath
+	 The path of the texture to check.
+
+	\return
+	 True if the texture exists in the sprite atlas, false otherwise.
+	*************************************************************************/
 	bool AssetManager::isTextureInAtlas(const std::string& texturePath) const
 	{
 		// Extract the file name without the extension

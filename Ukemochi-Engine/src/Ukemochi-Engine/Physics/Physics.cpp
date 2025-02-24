@@ -2,7 +2,7 @@
 /*!
 \file       Physics.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 17, 2024
+\date       Feb 15, 2025
 \brief      This file contains the definition of the Physics system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -167,12 +167,27 @@ namespace Ukemochi
 
         // Clamp the velocity to prevent exceeding max velocity
         float current_vel = Vec2Length(rb.velocity);
-        if (current_vel > MAX_VELOCITY)
+        if (tag == "Player")
         {
-            // Normalize the velocity and scale it to the max velocity
-            float scale = MAX_VELOCITY / current_vel;
-            rb.velocity.x *= scale;
-            rb.velocity.y *= scale;
+            // Check player's max velocity
+            if (current_vel > PLAYER_MAX_VELOCITY)
+            {
+                // Normalize the velocity and scale it to the max velocity
+                float scale = PLAYER_MAX_VELOCITY / current_vel;
+                rb.velocity.x *= scale;
+                rb.velocity.y *= scale;
+            }
+        }
+        else
+        {
+            // Check enemy's max velocity
+            if (current_vel > ENEMY_MAX_VELOCITY)
+            {
+                // Normalize the velocity and scale it to the max velocity
+                float scale = ENEMY_MAX_VELOCITY / current_vel;
+                rb.velocity.x *= scale;
+                rb.velocity.y *= scale;
+            }
         }
 
         // Apply linear drag to the velocity of the entity
@@ -217,7 +232,7 @@ namespace Ukemochi
         rb.angular_velocity = rb.angular_velocity + rb.angular_acceleration * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
         // Clamp the angular velocity to prevent exceeding max angular velocity
-        rb.angular_velocity = clamp(rb.angular_velocity, -MAX_VELOCITY, MAX_VELOCITY);
+        rb.angular_velocity = clamp(rb.angular_velocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
 
         // Apply angular drag to the angular velocity of the entity
         if (tag != "EnemyProjectile")
