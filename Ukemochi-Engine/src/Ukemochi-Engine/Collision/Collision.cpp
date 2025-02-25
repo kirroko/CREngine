@@ -585,7 +585,7 @@ namespace Ukemochi
 			switch (player_data.comboState)
 			{
 			case 0: // First combo state
-				if (player_anim.current_frame == 8)
+				if (player_anim.current_frame == 13)
 				{
 					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
@@ -612,7 +612,7 @@ namespace Ukemochi
 				break;
 
 			case 1: // Second combo state
-				if (player_anim.current_frame == 23)
+				if (player_anim.current_frame == 15)
 				{
 					if (!enemy_data.hasDealtDamage)
 					{
@@ -639,7 +639,7 @@ namespace Ukemochi
 				break;
 
 			case 2: // Knockback kick combo
-				if (player_anim.current_frame == 29)
+				if (player_anim.current_frame == 31)
 				{
 					// Apply knockback and play sound effects
 					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<

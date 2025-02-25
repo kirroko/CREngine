@@ -835,7 +835,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -887,7 +887,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -939,7 +939,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1391,7 +1391,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1443,7 +1443,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1495,14 +1495,14 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
                         "Death": ["Worm Death", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, true],
-                        "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
+                        "Attack": ["Worm Attack", "../Assets/Textures/Enemy/Worm 1_Part.png", "Attack", 22, 0.5, 0.5, 120, 380, 380, 1900, 1900, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
+                        "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Walk"
@@ -1914,7 +1914,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1966,7 +1966,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2018,7 +2018,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2070,7 +2070,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2222,7 +2222,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2267,7 +2267,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 4
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2312,7 +2312,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 4
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -3005,6 +3005,20 @@
                     "Sprite": "../Assets/Textures/Environment/env_base_block_2.png",
                     "Shape": 0,
                     "Layer": 6
+                }]
+        }, {
+            "Name": "Player_Shadow",
+            "Tag": "Player_Shadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-1003.0, 449.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/aShadow.png",
+                    "Shape": 0,
+                    "Layer": 4
                 }]
         }]
 }
