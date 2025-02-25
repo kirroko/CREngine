@@ -500,6 +500,16 @@ namespace Ukemochi
                                         {
                                             enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
                                             ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                            int injuries = (playerObj->GetComponent<Player>().postInjuriesMaxHealth - playerObj->GetComponent<Player>().currentHealth) / 2;
+                                            if (playerObj->GetComponent<Player>().postInjuriesMaxHealth > 0)
+                                            {
+                                                playerObj->GetComponent<Player>().postInjuriesMaxHealth -= injuries;
+                                                if (playerObj->GetComponent<Player>().postInjuriesMaxHealth <= 0)
+                                                {
+                                                    playerObj->GetComponent<Player>().postInjuriesMaxHealth = 10;
+                                                }
+                                            }
+
                                         }
                                     }
                                 }

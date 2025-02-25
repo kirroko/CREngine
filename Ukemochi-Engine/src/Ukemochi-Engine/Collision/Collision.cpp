@@ -742,6 +742,15 @@ namespace Ukemochi
 				if (!bullet_data.hit)
 				{
 					player_data.currentHealth -= 10;
+					int injuries = (player_data.postInjuriesMaxHealth - player_data.currentHealth) / 2;
+					if (player_data.postInjuriesMaxHealth > 0)
+					{
+						player_data.postInjuriesMaxHealth -= injuries;
+						if (player_data.postInjuriesMaxHealth <= 0)
+						{
+							player_data.postInjuriesMaxHealth = 10;
+						}
+					}
 					bullet_data.hit = true;
 				}
 
