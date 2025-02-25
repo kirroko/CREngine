@@ -252,6 +252,17 @@ namespace Ukemochi
 			return false;
 		}
 
+		bool RestartAnimation()
+		{
+			if (clips.find(currentClip) == clips.end())
+				return false;
+
+			current_frame = 0;
+			time_since_last_frame = 0.0f;
+
+			return true;
+		}
+
 		void update(float dt)
 		{
 			if (clips.find(currentClip) == clips.end()) // Don't update if the clip doesn't exist
@@ -371,7 +382,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
 		float maxComboTimer = 5.0f; // Max time to continue combo 
-		float playerForce = 2500.0f;
+		float playerForce = 4500.0f;
 		bool isDead = false;
 		bool canAttack = true;
 		bool comboIsAttacking = false;

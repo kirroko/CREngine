@@ -22,7 +22,7 @@ namespace Ukemochi
     private:
         const Vec2 GRAVITY{ 0.0f, 9.8f };                          // Gravity constant to simulate gravity for physics.
 
-        const float PLAYER_MAX_VELOCITY = 600.0f;                  // Maximum linear velocity constant for the player.
+        const float PLAYER_MAX_VELOCITY = 1800.0f;                  // Maximum linear velocity constant for the player.
         const float ENEMY_MAX_VELOCITY = 300.0f;                   // Maximum linear velocity constant for the enemy.
         const float MAX_ANGULAR_VELOCITY = 300.0f;                 // Maximum angular velocity constant for all entities.
 

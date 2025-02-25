@@ -111,7 +111,7 @@ namespace Ukemochi
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
                 auto& shadow_trans = GameObjectManager::GetInstance().GetGOByName("Player_Shadow")->GetComponent<Transform>();
-
+                
                 static bool playerDeadSoundPlayed = false;
 
                 // Check if Mochi is dead
@@ -243,6 +243,7 @@ namespace Ukemochi
                         case 0:
                             anim.isReverse = true;
                             anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),11,0);
+                            
                             // anim.SetAnimationFromTo("Attack", 0, 14);
                             if (audio.GetSFXindex("Pattack1") == -1)
                                 break;

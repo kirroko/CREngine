@@ -574,10 +574,14 @@ namespace Ukemochi
 			// Enemy takes damage and knockback
 
 			// Get references of the player and enemy
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
 
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
 				return;
@@ -585,7 +589,7 @@ namespace Ukemochi
 			switch (player_data.comboState)
 			{
 			case 0: // First combo state
-				if (player_anim.current_frame == 13)
+				if (player_anim.current_frame == 10)
 				{
 					if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
 					{
@@ -602,6 +606,17 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
 					}
 				}
 				else
@@ -629,6 +644,17 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+						
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
 					}
 				}
 				else
@@ -656,6 +682,7 @@ namespace Ukemochi
 					// Deal damage during the knockback kick
 					if (!enemy_data.hasDealtDamage)
 					{
+						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
 						enemy_data.atktimer = 1.5f;
 						
 						// Deal 2x dmg if the player and the enemy has the same soul type
@@ -668,6 +695,17 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true;
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
 					}
 				}
 				else
