@@ -2222,7 +2222,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
-                    "Layer": 2
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -3013,7 +3013,7 @@
                     "Name": "Transform",
                     "Position": [-1003.0, 449.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [175.07142639160156, 175.07142639160156]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/aShadow.png",

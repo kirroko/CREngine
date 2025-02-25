@@ -203,6 +203,8 @@ namespace Ukemochi
             LoadSaveFile(UseImGui::GetStartScene());
         }
 
+        UME_ENGINE_TRACE("Initializing Transformation...");
+        ECS::GetInstance().GetSystem<Transformation>()->Init();
         UME_ENGINE_TRACE("Initializing Collision...");
         ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
@@ -395,6 +397,8 @@ namespace Ukemochi
 
 			LoadSaveFile(GetCurrScene() + ".json");
 
+            UME_ENGINE_TRACE("Initializing Transformation...");
+            ECS::GetInstance().GetSystem<Transformation>()->Init();
 			UME_ENGINE_TRACE("Initializing Collision...");
 			ECS::GetInstance().GetSystem<Collision>()->Init();
 			UME_ENGINE_TRACE("Initializing dungeon manager...");
