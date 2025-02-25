@@ -448,7 +448,7 @@ namespace Ukemochi
             {
                 if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
                 {
-                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)//if bullet hit detroy
                     {
                         GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
                         GameObjectManager::GetInstance().DestroyObject(entity);

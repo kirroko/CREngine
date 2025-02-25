@@ -402,11 +402,31 @@ namespace Ukemochi
                         // Check if the player is within attack range
                         if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                         {
+                            if (enemycomponent.type == enemycomponent.FISH)
+                            {
+                                if (std::abs(playerObj->GetComponent<Transform>().position.x - enemytransform.position.x) < 150.f)
+                                {
+                                    enemyphysic.velocity.x = 0.0f;
+                                    enemyphysic.velocity.y = 0.0f;
+                                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
+                                    enemycomponent.state = enemycomponent.STANDBY;
+                                }
+                            }
+                            if (enemycomponent.type == enemycomponent.WORM)
+                            {
+                                if (std::abs(playerObj->GetComponent<Transform>().position.x - enemytransform.position.x) < 3000.f)
+                                {
+                                    enemyphysic.velocity.x = 0.0f;
+                                    enemyphysic.velocity.y = 0.0f;
+                                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
+                                    enemycomponent.state = enemycomponent.STANDBY;
+                                }
+                            }
                             // Stop movement and transition to ATTACK state
-                            enemyphysic.velocity.x = 0.0f;
-                            enemyphysic.velocity.y = 0.0f;
-                            enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                            enemycomponent.state = enemycomponent.STANDBY;
+                            //enemyphysic.velocity.x = 0.0f;
+                            //enemyphysic.velocity.y = 0.0f;
+                            //enemyphysic.force.x = enemyphysic.force.y = 0.f;
+
                             break;
                         }
                     }
