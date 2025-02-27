@@ -684,12 +684,15 @@ namespace Ukemochi
 
 			// Deal damage to the enemy
 			enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+
+			// Harvest some soul whenever mochi hits an enemy
+			//ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 		}
 		else if (tag1 == "WormAbility" && tag2 == "Enemy") // Mochi's Worm Ability and Enemy (Enemy gets trap in the web)
 		{
 			// Get references of the player and enemy
 			//auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 			auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
 			// Trigger enemy hurt animation
@@ -703,7 +706,7 @@ namespace Ukemochi
 			//enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
 
 			// Harvest some soul whenever mochi hits an enemy
-			ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
+			//ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "FishAbility" && tag2 == "EnemyProjectile"
 			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile") // Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
