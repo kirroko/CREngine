@@ -221,7 +221,7 @@ namespace Ukemochi
             0,
             Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
 	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
-        SPRITE_SHAPE::BOX,0,true,false,false});
+        SPRITE_SHAPE::BOX,10,true,false,false});
 		es_current = ES_PLAY;
 #endif
     }
