@@ -110,6 +110,8 @@ namespace Ukemochi
                 auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
+                auto& shadow_trans = GameObjectManager::GetInstance().GetGOByName("Player_Shadow")->GetComponent<Transform>();
+                
                 static bool playerDeadSoundPlayed = false;
 
                 // Check if Mochi is dead
@@ -137,6 +139,12 @@ namespace Ukemochi
                 // Allow Mochi to move if not attacking or casting an ability
                 if (!data.comboIsAttacking && !soulData.is_casting)
                     PlayersMovement(rb, sr, data);
+
+                // Move the offset player's shadow
+                if (!sr.flipX)
+                    shadow_trans.position = Vector3D(trans.position.x - 40.0f, trans.position.y - 90.0f,trans.position.z);
+                else
+                    shadow_trans.position = Vector3D(trans.position.x + 40.0f, trans.position.y - 90.0f,trans.position.z);
 
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
                     && !data.comboIsAttacking)
@@ -233,7 +241,9 @@ namespace Ukemochi
                         switch (data.comboState)
                         {
                         case 0:
-                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),0,14);
+                            anim.isReverse = true;
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),11,0);
+                            
                             // anim.SetAnimationFromTo("Attack", 0, 14);
                             if (audio.GetSFXindex("Pattack1") == -1)
                                 break;
@@ -256,7 +266,7 @@ namespace Ukemochi
                             kickAudio = false;
                             break;
                         case 2:
-                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),25,46);
+                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),30,46);
                             // anim.SetAnimationFromTo("Attack", 25, 46);
                             break;
                         default:

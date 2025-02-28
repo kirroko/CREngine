@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 21, 2025
+\date       Feb 25, 2025
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -19,6 +19,23 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/*!***********************************************************************
+	\brief
+	 Initialize the transformation system.
+	*************************************************************************/
+	void Transformation::Init()
+	{
+		// Find the player's shadow and floating soul entities
+		soul = shadow = static_cast<EntityID>(-1);
+		for (auto const& entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Soul")
+				soul = entity; // Floating soul ID is found
+			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player_Shadow")
+				shadow = entity; // Player's shadow ID is found
+		}
+	}
+
 	/*!***********************************************************************
 	\brief
 	 Compute the transformations of all the entities.
@@ -45,11 +62,12 @@ namespace Ukemochi
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
 			// Compute the depth scale of the dynamic entities
-			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "Player_Shadow"
+				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 
 			// Compute the layer of the dynamic entities
-			if (tag == "Player" || tag == "Soul" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+			if (tag == "Player" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
 				ComputeObjectLayer(entity);
 		}
 	}
@@ -135,7 +153,16 @@ namespace Ukemochi
 		std::string tag = GameObjectManager::GetInstance().GetGO(object)->GetTag();
 
 		// Set the layer based on whether the object is behind or infront the static objects
-		if (tag == "Player" || tag == "Soul" || tag == "Enemy")
+		if (tag == "Player")
+		{
+			auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
+			auto& shadow_sr = ECS::GetInstance().GetComponent<SpriteRender>(shadow);
+
+			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
+		}
+		else if (tag == "Enemy")
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
 		else if (tag == "FishAbility" || tag == "WormAbility")
 			sprite_renderer.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
