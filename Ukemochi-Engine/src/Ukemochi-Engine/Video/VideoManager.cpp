@@ -19,9 +19,62 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 namespace Ukemochi {
+
+    void VideoManager::RenderVideoFrame()
+    {
+        if (!plm) return;  // No video loaded
+
+        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID); // Bind the video texture
+
+        // Activate the shader specifically for the video
+        ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
+
+        // Define a simple quad for rendering the video
+        static GLuint VAO = 0, VBO;
+        if (VAO == 0)
+        {
+            float vertices[] = {
+                // Positions   // Colors (white) // Texture Coords  // Frame Index
+                -1.0f, -1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f,        currentFrame, // Bottom-left  (White)
+                 
+                 1.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f,        currentFrame, // Bottom-right (White)
+                 
+                -1.0f,  1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f,        currentFrame, // Top-left     (White)
+                 
+                 1.0f,  1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f,        currentFrame  // Top-right    (White)
+                 
+            };
+
+            glGenVertexArrays(1, &VAO);
+            glGenBuffers(1, &VBO);
+            glBindVertexArray(VAO);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(2 * sizeof(float))); // Color
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float))); // UV
+            glEnableVertexAttribArray(2);
+            glVertexAttribIPointer(3, 1, GL_INT, 8 * sizeof(float), (void*)(7 * sizeof(float))); // Frame Index
+            glEnableVertexAttribArray(3);
+        }
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        // Unbind
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+    }
+
+
     void VideoManager::Video_Callback(plm_t* plm, plm_frame_t* frame, void* user)
     {
         VideoContext *video_ctx = static_cast<VideoContext*>(user);
+        UME_ENGINE_TRACE("Video Callback Triggered! Frame Width: {0}, Height: {1}", frame->width, frame->height);
+
         plm_frame_to_rgb(frame,video_ctx->rgb_buffer,static_cast<int>(frame->width) * 3);
         
         if (!video_ctx->rgb_buffer)
@@ -29,43 +82,15 @@ namespace Ukemochi {
             UME_ENGINE_ERROR("Error: Rgb_buffer is nullptr for frame");
             return;
         }
-        
+        UME_ENGINE_TRACE("RGB Buffer Populated. Uploading frame to OpenGL...");
         glBindTexture(GL_TEXTURE_2D_ARRAY, ECS::GetInstance().GetSystem<VideoManager>()->videoTextureID);
         glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "frameIndex"),
             ECS::GetInstance().GetSystem<VideoManager>()->currentFrame);
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, ECS::GetInstance().GetSystem<VideoManager>()->currentFrame, 
 static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
 
-        glm::vec3 pos = glm::vec3(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight(),0);
-        
-        ECS::GetInstance().GetSystem<Renderer>()->batchRenderer->drawVideoFrame(pos,glm::vec2(frame->width,frame->height),glm::vec3(1,1,1),
-            ECS::GetInstance().GetSystem<VideoManager>()->videoTextureID,0,0);
-
-        ECS::GetInstance().GetSystem<Renderer>()->batchRenderer->endBatch();
-        
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-        // glTexImage2D(GL_TEXTURE_2D,0,GL_RGB, static_cast<int>(frame->width), static_cast<int>(frame->height),0,
-        //     GL_RGB,GL_UNSIGNED_BYTE,video_ctx->rgb_buffer);
-        // glUniform2d(static_cast<GLint>(video_ctx->texture_crop_size),1.0,1.0);
-        
-        // VideoContext *video_ctx = static_cast<VideoContext*>(user);
-        //
-        // int buffer_size = static_cast<int>(frame->width) * static_cast<int>(frame->height) * 3; // 3 bytes per pixel
-        //
-        // // Allocate the RGB buffer on the first callback if it hasn't been allocated
-        // if (!video_ctx->rgb_buffer)
-        // {
-        //     video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(buffer_size));
-        //     if (!video_ctx->rgb_buffer)
-        //     {
-        //         UME_ENGINE_ERROR("Failed to allocate RGB buffer.");
-        //         return;
-        //     }
-        // }
-        //
-        // uint8_t *rgb_buffer = (uint8_t*)malloc(frame->width * frame->height * 3);
-        // plm_frame_to_rgb(frame,rgb_buffer,static_cast<int>(video_ctx->width)* 3);
-        // video_ctx->rgb_buffer = rgb_buffer;
+
     }
 
     void VideoManager::Audio_Callback(plm_t* plm, plm_samples_t* frame, void* user)
@@ -77,7 +102,7 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
     bool VideoManager::LoadVideo(const char* filepath)
     {
-        plm = plm_create_with_filename(filepath);
+        /*plm = plm_create_with_filename(filepath);
         if (!plm)
         {
             UME_ENGINE_ERROR("Failed to load video: {0]", filepath);
@@ -118,6 +143,75 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         video_ctx->texture_crop_size = glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->shaderProgram->ID,"texture_crop_size");
         
+        return true;*/
+
+        plm = plm_create_with_filename(filepath);
+        if (!plm)
+        {
+            UME_ENGINE_ERROR("Failed to load video: {0}", filepath);
+            return false;
+        }
+
+        if (!plm_probe(plm, 5000 * 1024))
+        {
+            UME_ENGINE_ERROR("No MPEG video or audio streams found in {0}", filepath);
+            return false;
+        }
+
+        int width = plm_get_width(plm);
+        int height = plm_get_height(plm);
+        int frameRate = plm_get_framerate(plm);
+        int numFrames = static_cast<int>(plm_get_duration(plm) * frameRate); // Total frames
+
+        UME_ENGINE_INFO("Total expected frames to load: {0}", numFrames);
+
+        UME_ENGINE_INFO("Opened {0} - framerate: {1}, duration: {2}, total frames: {3}",
+            filepath, frameRate, plm_get_duration(plm), numFrames);
+
+        // Allocate storage for texture array
+        CreateVideoTexture(width, height, numFrames);
+
+        // Allocate RGB buffer
+        video_ctx = new VideoContext(width, height);
+        video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(width * height * 3));
+
+        // **Preload all frames into the texture array**
+        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID);
+        for (int i = 0; i < numFrames; ++i)
+        {
+            // Decode the next frame
+            plm_frame_t* frame = plm_decode_video(plm);
+            if (!frame) break;
+
+            // Convert to RGB
+            plm_frame_to_rgb(frame, video_ctx->rgb_buffer, width * 3);
+
+            // Upload to the 2D texture array at layer `i`
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1,
+                GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
+
+            UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, numFrames, i);
+        }
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        // Enable looping for playback
+        //plm_set_loop(plm, true);
+
+        int storedLayers = 0;
+        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &storedLayers);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        UME_ENGINE_INFO("Total stored frames in OpenGL texture array: {0}", storedLayers);
+
+        // Debug check
+        if (storedLayers != numFrames)
+        {
+            UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", numFrames, storedLayers);
+            return false;
+        }
+
+
         return true;
     }
 
@@ -125,6 +219,12 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
     {
         glGenTextures(1, &videoTextureID);
         glBindTexture(GL_TEXTURE_2D_ARRAY,videoTextureID);
+
+        if (!videoTextureID)
+        {
+            UME_ENGINE_ERROR("Failed to generate video texture!");
+            return 0;
+        }
 
         glTexStorage3D(GL_TEXTURE_2D_ARRAY,1,GL_RGB8 ,width,height,num_frames);
 
@@ -135,17 +235,26 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
+        UME_ENGINE_TRACE("Created Video Texture - ID: {0}, Width: {1}, Height: {2}, Frames: {3}", videoTextureID, width, height, num_frames);
         return videoTextureID;
     }
 
     void VideoManager::UpdateAndRenderVideo(plm_t* video)
     {
-        if (!video) return;
-        
-        plm_decode(plm,g_FrameRateController.GetDeltaTime());
+        if (!video)
+        {
+            UME_ENGINE_ERROR("Video object is null!");
+            return;
+        }
+        float deltaTime = g_FrameRateController.GetDeltaTime();
+        UME_ENGINE_TRACE("Decoding Video - DeltaTime: {0}", deltaTime);
+
+        plm_decode(plm, deltaTime);
+
         Audio::GetInstance().Update(); //update audio
         ++currentFrame;
         
+        RenderVideoFrame();
         if (plm_has_ended(plm))
             Free();
         

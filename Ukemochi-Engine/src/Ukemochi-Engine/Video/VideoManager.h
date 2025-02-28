@@ -50,6 +50,8 @@ namespace Ukemochi {
     private:
         bool isPlaying = true;
 
+        void RenderVideoFrame();
+
         static void Video_Callback(plm_t *plm, plm_frame_t *frame, void *user);
 
         static void Audio_Callback(plm_t *plm, plm_samples_t *frame, void *user);

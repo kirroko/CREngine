@@ -318,7 +318,7 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
-	    // ECS::GetInstance().GetSystem<VideoManager>()->Update();
+	    //ECS::GetInstance().GetSystem<VideoManager>()->Update();
 
         SceneManagerDraw();
     }
