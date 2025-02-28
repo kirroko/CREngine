@@ -210,6 +210,12 @@ namespace Ukemochi
 						-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
 			box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
 						BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+
+			//// Lower half of the object (legs or bottom part)
+			//box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+			//			trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+			//box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+			//			trans.position.y };  // Max Y stops at the object's center
 		}
 		else
 		{

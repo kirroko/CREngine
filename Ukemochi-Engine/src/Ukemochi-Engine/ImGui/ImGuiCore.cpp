@@ -1423,8 +1423,9 @@ namespace Ukemochi
                 ImGui::Text("Target Y: %.2f", enemy.targetY);
 
                 ImGui::Text("State: %s",
-                    enemy.state == Enemy::ROAM ? "ROAM" :
-                    enemy.state == Enemy::CHASE ? "CHASE" :
+                    enemy.state == Enemy::MOVE ? "MOVE" :
+                    enemy.state == Enemy::STANDBY ? "STANDBY" :
+                    enemy.state == Enemy::STUN ? "STUN" :
                     enemy.state == Enemy::ATTACK ? "ATTACK" : "DEAD");
 
                 ImGui::Text("Type: %s",

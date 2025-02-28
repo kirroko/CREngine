@@ -65,28 +65,55 @@ namespace Ukemochi
     {
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
-
             // Iterate through the enemyObjects list
             for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
             {
+                //get enemyobj
                 GameObject* object = GameObjectManager::GetInstance().GetGO(*it);
-                //if (object->GetComponent<Animation>().currentClip != "Idle")
-                //{
-                //    object->GetComponent<Animation>().SetAnimation("Idle");
-                //}
 
+    //if no player, enemy wont work
+                if (!playerObj)
+                    break;
+
+                //skip non active enemy
                 if (object->GetActive() == false)
                 {
                     it++;
                     continue;
                 }
 
+                //init components
                 auto& enemycomponent = object->GetComponent<Enemy>();
                 auto& enemyphysic = object->GetComponent<Rigidbody2D>();
                 auto& enemytransform = object->GetComponent<Transform>();
                 auto& sr = object->GetComponent<SpriteRender>();
+    //WAIT TIME HANDLE
+                if (enemycomponent.iswaiting)
+                {
+                    if (enemycomponent.waitTime > 0.f)
+                    {
+                        enemycomponent.waitTime -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                    }
+                    else
+                    { 
 
-                // Handle enemy hit state and sound effects
+                        if (enemycomponent.state == Enemy::MOVE && enemycomponent.iswaiting)
+                        {
+                            enemycomponent.state = Enemy::ATTACK;
+                            enemycomponent.iswaiting = false;
+                            enemycomponent.waitTime = 0.f;
+                            enemycomponent.atktimer = 0.f;
+                        }
+                        if (enemycomponent.state == Enemy::ATTACK && enemycomponent.iswaiting)
+                        {
+                            enemycomponent.state = Enemy::MOVE;
+                            enemycomponent.iswaiting = false;
+                            enemycomponent.waitTime = 0.f;
+                        }
+                    }
+                }
+
+    // Handle enemy hit state and sound effects
                 if (enemycomponent.wasHit)
                 {
                     // Only play hit sound if this hit wasn't fatal (health > 0)
@@ -109,8 +136,7 @@ namespace Ukemochi
                     enemycomponent.wasHit = false; // Reset the hit flag
                 }
 
-
-                // When enemy health reaches 0
+    // When enemy health reaches 0
                 if (enemycomponent.health <= 0.f && !enemycomponent.isDead)  // Add !isDead check
                 {
                     // Play death sound immediately when health hits 0
@@ -127,7 +153,7 @@ namespace Ukemochi
                     object->SetActive(true);
                 }
 
-                // Animation and sound synchronization
+    // Animation and sound synchronization
                 auto& anim = object->GetComponent<Animation>();
                 if (anim.currentClip == "Walk")
                 {
@@ -163,7 +189,7 @@ namespace Ukemochi
                     }
                 }
 
-                //animation
+    //animation
                 if (enemycomponent.dirX < 0)
                 {
                     //auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
@@ -175,8 +201,7 @@ namespace Ukemochi
                     sr.flipX = true;
                 }
 
-
-                // If the enemy is in DEAD state, remove it from the list after processing DeadState
+    // If the enemy is in DEAD state, remove it from the list after processing DeadState
                 if (enemycomponent.state == Enemy::DEAD)
                 {
                     if (object->GetComponent<Animation>().currentClip != "Death")
@@ -207,44 +232,90 @@ namespace Ukemochi
                     continue;
                 }
 
-                //if there no nearest obj, find neareast obj
-                if (enemycomponent.nearestObj == -1)
-                {
-                    enemycomponent.nearestObj = FindNearestObject(object);
-                }
+    //PLAYER KICK ENEMY
 
-                //if (enemycomponent.state != enemycomponent.ATTACK)
-                //{
-                //    bool isMoving = (std::abs(enemyphysic.force.x) > 0.1f || std::abs(enemyphysic.force.y) > 0.1f);
-                //}
-
-                if (playerObj != nullptr)
-                {
-                    if (enemycomponent.ReachedTarget(enemytransform.position.x, enemytransform.position.y,
-                        playerObj->GetComponent<Transform>().position.x,
-                        playerObj->GetComponent<Transform>().position.y, 350.f) == true && enemycomponent.state == enemycomponent.ROAM)
-                    {
-                        //std::cout << object->GetInstanceID() << " Chase" << std::endl;
-                        enemycomponent.state = enemycomponent.CHASE;
-                    }
-                }
                 if (enemycomponent.isKick)
                 {
-                    if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                        enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetDeltaTime());
+                    if (enemycomponent.kicktime > 0.f) {
+                        enemycomponent.kicktime -= static_cast<float>(g_FrameRateController.GetDeltaTime());
                     }
                     else {
-                        enemycomponent.timeSinceTargetReached = 0.f;
+                        enemycomponent.kicktime = 0.f;
                         enemycomponent.isKick = false;
                     }
+
+                    //if timer reach 1s and no collision is detected enemy is back
+                    if (enemycomponent.kicktime <= 1.f && !enemycomponent.isCollide)
+                    {
+                        enemycomponent.kicktime = 0.f;
+                        enemycomponent.isKick = false;
+                    }
+
+                    if (enemycomponent.isCollide)
+                    {
+                        // Start the timer for 1 second if not already running
+                        if (enemycomponent.timeSinceTargetReached < 1.0f) {
+                            enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                        }
+                        else {
+                            // Timer has reached 1 second, perform the object updates
+                            auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+                            if (collidedObj == nullptr)
+                                break;
+                    //WHEN COLLIDE TO WALL
+                            if (collidedObj->GetTag() == "Boundary")
+                            {
+                                enemycomponent.dirX = enemytransform.position.x - collidedObj->GetComponent<Transform>().position.x;
+                                enemycomponent.dirY = enemytransform.position.y - collidedObj->GetComponent<Transform>().position.y;
+
+                                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+
+                                if (enemycomponent.timeSinceTargetReached > 3.0f)
+                                {
+                                    enemyphysic.force.x = 0;
+                                    enemyphysic.force.y = 0;
+                                    if (enemycomponent.timeSinceTargetReached > 4.0f)
+                                    {
+                                        enemycomponent.state = Enemy::MOVE;
+                                        enemycomponent.isCollide = false;
+                                        enemycomponent.timeSinceTargetReached = 0.f;
+                                    }
+                                }
+                            }
+                    //WHEN COLLIDE BOX
+                            if (collidedObj->GetTag() == "Environment")
+                            {
+                                enemycomponent.dirX = collidedObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+                                enemycomponent.dirY = collidedObj->GetComponent<Transform>().position.y - enemytransform.position.y;
+
+                                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+
+                                //break boxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                                if (enemycomponent.timeSinceTargetReached > 3.0f)
+                                {
+                                    enemyphysic.force.x = 0;
+                                    enemyphysic.force.y = 0;
+                                    if (enemycomponent.timeSinceTargetReached > 4.0f)
+                                    {
+                                        enemycomponent.state = Enemy::MOVE;
+                                        enemycomponent.isCollide = false;
+                                        enemycomponent.timeSinceTargetReached = 0.f;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     ++it;
                     continue;
                 }
 
-                // Skip collision handling for dead enemies
+    //ENEMY COLLISION RESPONSE
                 if (enemycomponent.isCollide)
                 {
-                    // Start the timer for 1 second if not already running
+                    // Start the timer for 1 second if not already running //////////////////////////////////REMOVE THIS
                     if (enemycomponent.timeSinceTargetReached < 1.0f) {
                         enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                     }
@@ -252,385 +323,436 @@ namespace Ukemochi
 
                         // Timer has reached 1 second, perform the object updates
                         auto* collidedObj = GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj);
+                        if (collidedObj->GetTag() != "Environment")
+                        {
+                            enemycomponent.state = Enemy::MOVE;
+                            enemycomponent.isCollide = false;
+                            enemycomponent.timeSinceTargetReached = 0.f;
+                        }
                         if (collidedObj == nullptr)
                             break;
-                        if (collidedObj->GetTag() == "Boundary")
+    //ENEMY TO COLLIDE OBJ
+                        float enemyX = enemytransform.position.x;
+                        float enemyY = enemytransform.position.y;
+                        float objX = collidedObj->GetComponent<Transform>().position.x;
+                        float objY = collidedObj->GetComponent<Transform>().position.y;
+                        float objWidth = collidedObj->GetComponent<Transform>().scale.x * 0.5f;
+                        float objHeight = collidedObj->GetComponent<Transform>().scale.y * 0.5f;
+
+                        // Calculate collision direction
+                        float deltaX = enemyX - objX;
+                        float deltaY = enemyY - objY;
+                        float absDeltaX = std::abs(deltaX);
+                        float absDeltaY = std::abs(deltaY);
+
+                        // If enemy has line of sight to the player, reset its movement state
+                        if (HasClearLineOfSight(object, playerObj->GetComponent<Transform>()))
                         {
-                            enemyphysic.force.x = -enemycomponent.dirX * enemycomponent.speed;
-                            enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
-                            enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                            enemycomponent.state = Enemy::MOVE;
+                            enemycomponent.isCollide = false;
+                            enemycomponent.timeSinceTargetReached = 0.f;
+                            break;
+                        }
 
-                            if (enemycomponent.timeSinceTargetReached > 3.0f)
+                        // Collision handling
+                        if (absDeltaX > absDeltaY)  // More horizontal collision
+                        {
+                            enemyphysic.force.x = 0;  // Stop horizontal movement
+
+                            if (deltaY > 0)  // Enemy is on top of the object
                             {
-                                enemycomponent.prevObject2 = enemycomponent.prevObject;
-                                enemycomponent.prevObject = enemycomponent.nearestObj;
-                                enemycomponent.nearestObj = -1;
-                                enemycomponent.collideObj = -1;
-
-                                if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
+                                if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 1000.0f)) // Move right if possible
                                 {
-                                    enemycomponent.nearestObj = FindNearestObject(object);
+                                    enemycomponent.dirX = 1.0f;
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
-                                else
+                                else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 1000.0f)) // Move left if possible
                                 {
-                                    enemycomponent.isCollide = false;
-                                    enemycomponent.timeSinceTargetReached = 0.f;
+                                    enemycomponent.dirX = -1.0f;
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                }
+                                else // Both left and right blocked, force downward movement
+                                {
+                                    enemyphysic.force.y = enemycomponent.speed;  // Move up
+                                }
+                            }
+                            else if (deltaY < 0)  // Enemy is at the bottom of the object
+                            {
+                                if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 1000.0f)) // Move right if possible
+                                {
+                                    enemycomponent.dirX = 1.0f;
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                }
+                                else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 1000.0f)) // Move left if possible
+                                {
+                                    enemycomponent.dirX = -1.0f;
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                }
+                                else // Both left and right blocked, force down movement
+                                {
+                                    enemyphysic.force.y = -enemycomponent.speed;  // Move down
+                                }
+                            }
+                        }
+                        else  // More vertical collision
+                        {
+                            enemyphysic.force.y = 0;  // Stop vertical movement
+
+                            if (enemytransform.position.y < collidedObj->GetComponent<Transform>().position.y - 0.5f * collidedObj->GetComponent<Transform>().scale.y ||
+                                enemytransform.position.y > collidedObj->GetComponent<Transform>().position.y + 0.5f * collidedObj->GetComponent<Transform>().scale.y)
+                            {
+                                enemycomponent.state = Enemy::MOVE;
+                                enemycomponent.isCollide = false;
+                                enemycomponent.timeSinceTargetReached = 0.f;
+                                break;
+                            }
+
+                            if (deltaX < 0)  // Enemy is on the left side of the object
+                            {
+                                if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 1000.0f)) // Move up if possible
+                                {
+                                    enemyphysic.force.y = enemycomponent.speed;
+                                }
+                                else if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 1000.0f)) // Move down if possible
+                                {
+                                    enemyphysic.force.y = -enemycomponent.speed;
+                                }
+                                else // Both up and down blocked, force movement to the left
+                                {
+                                    enemycomponent.dirX = -1.0f;
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                }
+                            }
+                            else if (deltaX > 0)  // Enemy is on the right side of the object
+                            {
+                                if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 1000.0f)) // Move up if possible
+                                {
+                                    enemyphysic.force.y = enemycomponent.speed;
+                                }
+                                else if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 1000.0f)) // Move down if possible
+                                {
+                                    enemyphysic.force.y = -enemycomponent.speed;
+                                }
+                                else // Both up and down blocked, force movement to the right
+                                {
+                                    enemycomponent.dirX = 1.0f;
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                }
+                            }
+                        }
+                    }
+                    ++it;
+                    continue;
+                }
+
+    //ENEMY STATE MACHINE
+                switch (enemycomponent.state)
+                {
+    //MOVE
+                    case Enemy::MOVE:
+
+                        // Compute the direction vector to the target (player)
+                        enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+                        enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
+
+                        if (enemycomponent.IsPlayerInAttackRange(playerObj->GetComponent<Transform>(),enemytransform) == false)
+                        {
+                            if (enemycomponent.iswaiting)
+                                break;
+
+                            if (object->GetComponent<Animation>().currentClip != "Walk")
+                            {
+                                object->GetComponent<Animation>().SetAnimation("Walk");
+                            }
+                            if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform) == false)
+                            {
+                                // Calculate the magnitude of the direction vector (distance to player)
+                                enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
+
+                                if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
+                                {
+                                    // Normalize the direction vector
+                                    enemycomponent.dirX /= enemycomponent.magnitude;
+                                    enemycomponent.dirY /= enemycomponent.magnitude;
+
+                                    // Scale the normalized direction by the enemy's speed to compute velocity
+                                    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                                    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+                                }
+                            }
+                            else
+                            {
+                                float distY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
+                                if (distY* distY  > 400.f)
+                                {
+                                    enemycomponent.dirY = distY;
+                                    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
                                 }
                             }
 
                         }
                         else
                         {
-                            auto& collidedTransform = ECS::GetInstance().GetComponent<Transform>(enemycomponent.collideObj);
-                            Vec2 awayDir;
-                            Vec2Normalize(awayDir, Vec2(enemytransform.position.x - collidedTransform.position.x,
-                                enemytransform.position.y - collidedTransform.position.y));
-
-                            enemycomponent.dirX = awayDir.x;
-                            enemycomponent.dirY = awayDir.y;
-                            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                            enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                            if (IsEnemyAwayFromObject(object, GameObjectManager::GetInstance().GetGO(enemycomponent.collideObj), 300.f) && enemycomponent.state == enemycomponent.ROAM)
+                            if (object->GetComponent<Animation>().currentClip != "Idle")
                             {
-                                enemycomponent.prevObject2 = enemycomponent.prevObject;
-                                enemycomponent.prevObject = enemycomponent.nearestObj;
-                                enemycomponent.nearestObj = -1;
-                                enemycomponent.collideObj = -1;
-
-                                if (enemycomponent.nearestObj == enemycomponent.prevObject2 && enemycomponent.nearestObj == enemycomponent.prevObject)
-                                {
-                                    enemycomponent.nearestObj = FindNearestObject(object);
-                                }
-                                else
-                                {
-                                    enemycomponent.isCollide = false;
-                                    enemycomponent.timeSinceTargetReached = 0.f;
-                                }
-
+                                object->GetComponent<Animation>().SetAnimation("Idle");
                             }
-                        }
-
-                        //enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //enemyphysic.force.y = -enemycomponent.dirY * enemycomponent.speed;
-
-                    }
-
-                    ++it;
-                    continue;
-                }
-
-
-                // Handle other states
-                switch (enemycomponent.state)
-                {
-                case Enemy::ROAM:
-                    if (object->GetComponent<Animation>().currentClip != "Walk")
-                    {
-                        object->GetComponent<Animation>().SetAnimation("Walk");
-                    }
-                    // Compute the direction vector to the target waypoint
-                    enemycomponent.dirX = enemycomponent.targetX - enemytransform.position.x;
-                    enemycomponent.dirY = enemycomponent.targetY - enemytransform.position.y;
-
-                    // Calculate the distance to normalize the direction
-                    enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
-
-                    if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
-                    {
-                        // Normalize the direction vector
-                        enemycomponent.dirX /= enemycomponent.magnitude;
-                        enemycomponent.dirY /= enemycomponent.magnitude;
-
-                        // Scale the normalized direction by the enemy's speed
-                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                        if (enemycomponent.ReachedTarget(enemyphysic.position.x, enemyphysic.position.y, enemycomponent.targetX, enemycomponent.targetY, 20.f))
-                        {
                             enemyphysic.velocity.x = 0.0f;
                             enemyphysic.velocity.y = 0.0f;
                             enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                            // Start the timer for 1 second if not already running
-                            if (enemycomponent.timeSinceTargetReached < 1.0f) {
-                                enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-                            }
-                            else {
-                                // Timer has reached 1 second, perform the object updates
-                                enemycomponent.prevObject = enemycomponent.nearestObj;
-                                enemycomponent.nearestObj = -1;
-
-                                // Reset the timer after execution
-                                enemycomponent.timeSinceTargetReached = 0.0f;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // If the target position is reached or very close, set velocity to zero
-                        enemyphysic.velocity.x = 0.0f;
-                        enemyphysic.velocity.y = 0.0f;
-                        enemyphysic.force.x = enemyphysic.force.y = 0.f;
-
-                        enemycomponent.prevObject = enemycomponent.nearestObj;
-                        enemycomponent.nearestObj = -1;
-                    }
-                    break;
-
-                case Enemy::CHASE:
-                    if (object->GetComponent<Animation>().currentClip != "Walk")
-                    {
-                        object->GetComponent<Animation>().SetAnimation("Walk");
-                    }
-                    // Compute the direction vector to the target (player)
-                    enemycomponent.dirX = playerObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-                    enemycomponent.dirY = playerObj->GetComponent<Transform>().position.y - enemytransform.position.y;
-
-                    // Calculate the magnitude of the direction vector (distance to player)
-                    enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
-
-                    if (enemycomponent.magnitude > 0.0f) // Avoid division by zero
-                    {
-                        // Normalize the direction vector
-                        enemycomponent.dirX /= enemycomponent.magnitude;
-                        enemycomponent.dirY /= enemycomponent.magnitude;
-
-                        // Scale the normalized direction by the enemy's speed to compute velocity
-                        enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                        // Check if the player is within attack range
-                        if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
-                        {
-                            if (enemycomponent.type == enemycomponent.FISH)
+                            if (!enemycomponent.iswaiting)
                             {
-                                if (std::abs(playerObj->GetComponent<Transform>().position.x - enemytransform.position.x) < 150.f)
-                                {
-                                    enemyphysic.velocity.x = 0.0f;
-                                    enemyphysic.velocity.y = 0.0f;
-                                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                                    enemycomponent.state = enemycomponent.STANDBY;
-                                }
+                                enemycomponent.waitTime = 1.0f;
+                                enemycomponent.iswaiting = true;
                             }
-                            if (enemycomponent.type == enemycomponent.WORM)
-                            {
-                                if (std::abs(playerObj->GetComponent<Transform>().position.x - enemytransform.position.x) < 3000.f)
-                                {
-                                    enemyphysic.velocity.x = 0.0f;
-                                    enemyphysic.velocity.y = 0.0f;
-                                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                                    enemycomponent.state = enemycomponent.STANDBY;
-                                }
-                            }
-                            // Stop movement and transition to ATTACK state
-                            //enemyphysic.velocity.x = 0.0f;
-                            //enemyphysic.velocity.y = 0.0f;
-                            //enemyphysic.force.x = enemyphysic.force.y = 0.f;
 
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        // If the magnitude is zero (enemy is on top of the player), go to ATTACK
-                        enemyphysic.velocity.x = 0.0f;
-                        enemyphysic.velocity.y = 0.0f;
-                        enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                        enemycomponent.state = enemycomponent.STANDBY;
-                        break;
-                    }
 
-                    // Ensure other transitions (like to ROAM) don�t block the ATTACK state
-                    if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
-                    {
-                        //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                        enemycomponent.state = enemycomponent.ROAM;
-                        break;
-                    }
-                    break;
-
-                case Enemy::STANDBY:
-                    if (object->GetComponent<Animation>().currentClip != "Idle")
-                    {
-                        object->GetComponent<Animation>().SetAnimation("Idle");
-                    }
-                    if (numEnemyTarget < 2)
-                    {
-                        if (!enemycomponent.isWithPlayer)
-                        {
-                            numEnemyTarget++;
-                            enemycomponent.state = enemycomponent.ATTACK;
-                            enemycomponent.isWithPlayer = true;
-                        }
-
-                    }
-
-                    // Ensure other transitions (like to ROAM) don�t block the ATTACK state
-                    if (IsEnemyAwayFromObject(object, playerObj, 350.0f))
-                    {
-                        //std::cout << "Transitioning to ROAM state for enemy: " << object->GetInstanceID() << std::endl;
-                        if (enemycomponent.isWithPlayer)
-                        {
-                            numEnemyTarget--;
-                            enemycomponent.state = enemycomponent.ROAM;
-                            enemycomponent.isWithPlayer = false;
                         }
                         break;
-                    }
-                    break;
 
-                case Enemy::ATTACK:
+                    case Enemy::STUN:
+                        break;
 
-                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                    case Enemy::STANDBY:
+                        break;
 
-                    if (enemycomponent.atktimer < 0)
-                    {
-                        if (object->GetComponent<Animation>().currentClip != "Attack")
+                    case Enemy::ATTACK:
+                        enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+
+                        if (enemycomponent.atktimer < 0)
                         {
-                            object->GetComponent<Animation>().SetAnimation("Attack");
-                        }
-                    }
-                    else
-                    {
-                        if (object->GetComponent<Animation>().currentClip != "Idle")
-                        {
-                            object->GetComponent<Animation>().SetAnimation("Idle");
-                        }
-                    }
-
-                    //Charge attack for fish
-                    if (enemycomponent.type == enemycomponent.FISH)
-                    {
-
-                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 18)
-                        {
-                            //SFX
-                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                            if (audioM.GetSFXindex("FishAttack") != -1)
+                            if (object->GetComponent<Animation>().currentClip != "Attack")
                             {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")))
-                                {
-                                    audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+                                object->GetComponent<Animation>().SetAnimation("Attack");
+                            }
+                        }
+                        else
+                        {
+                            if (object->GetComponent<Animation>().currentClip != "Idle")
+                            {
+                                object->GetComponent<Animation>().SetAnimation("Idle");
+                            }
+                        }
 
-                                    //check attack
-                                    if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                        //Charge attack for fish
+                        if (enemycomponent.type == enemycomponent.FISH)
+                        {
+
+                            if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 18)
+                            {
+                                //SFX
+                                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                                if (audioM.GetSFXindex("FishAttack") != -1)
+                                {
+                                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")))
                                     {
-                                        //attack
-                                        if (playerObj != nullptr)
+                                        audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+
+                                        //check attack
+                                        if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                                         {
-                                            enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
-                                            ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                            //attack
+                                            if (playerObj != nullptr)
+                                            {
+                                                enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
+                                                ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
+                                            }
                                         }
                                     }
+
                                 }
 
                             }
 
-                        }
-
-                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
-                        {
-                            if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                            if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                             {
-                                enemycomponent.state = enemycomponent.STANDBY;
-                                enemycomponent.atktimer = 0.f;
-                                break;
-                            }
-                            else
-                            {
-                                enemycomponent.atktimer = 1.5f;
-                            }
-
-                        }
-                    }
-                    else if (enemycomponent.type == enemycomponent.WORM)
-                    {
-                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
-                        {
-                            if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
-                            {
-                                enemycomponent.state = enemycomponent.STANDBY;
-                                enemycomponent.atktimer = 0.f;
-                                enemycomponent.wormshoot = false;
-                                break;
-                            }
-                            else
-                            {
-                                enemycomponent.atktimer = 1.5f;
-                                enemycomponent.wormshoot = false;
-                            }
-
-                        }
-
-                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 15 && !enemycomponent.wormshoot)
-                        {
-                            //Play SFX
-                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                            if (audioM.GetSFXindex("WormAttack") != -1)
-                            {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
+                                if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                                 {
-                                    audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
+                                    enemycomponent.iswaiting = true;
+                                    enemycomponent.atktimer = 0.f;
+                                    break;
+                                }
+                                else
+                                {
+                                    enemycomponent.atktimer = 1.5f;
                                 }
 
                             }
-
-                            //spawn bullet
-                            static int number = 0;
-                            GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile1");
-
-                            if (cloneObject != nullptr)
-                            {
-                                std::string name = "bullet" + std::to_string(number++);
-                                GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
-
-                                newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
-                                newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
-
-                                newObject.GetComponent<Animation>().SetAnimation("Projectile");
-
-                                auto playerpos = playerObj->GetComponent<Transform>().position;
-
-                                Vec2 dir;
-                                Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
-                                    playerpos.y - newObject.GetComponent<Transform>().position.y));
-
-                                newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
-
-                                float angleRad = atan2(dir.y, dir.x);
-
-                                // Convert to degrees
-                                float angleDeg = angleRad * (180.0f / 3.14159265358979323846f);
-
-                                if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
-                                {
-                                    newObject.GetComponent<SpriteRender>().flipX = true;
-                                    // Apply rotation to bullet
-                                    newObject.GetComponent<Transform>().rotation = angleDeg;
-
-                                }
-                                else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
-                                {
-                                    newObject.GetComponent<SpriteRender>().flipX = false;
-                                    // Apply rotation to bullet
-                                    newObject.GetComponent<Transform>().rotation = -angleDeg;
-                                }
-
-                                newObject.AddComponent(EnemyBullet{});
-                                enemycomponent.wormshoot = true;
-                            }
-
                         }
-                    }
-                    break;
+                        else if (enemycomponent.type == enemycomponent.WORM)
+                        {
+                            if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 19)
+                            {
+                                if (!enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
+                                {
+                                    enemycomponent.state = enemycomponent.STANDBY;
+                                    enemycomponent.atktimer = 0.f;
+                                    enemycomponent.wormshoot = false;
+                                    break;
+                                }
+                                else
+                                {
+                                    enemycomponent.atktimer = 1.5f;
+                                    enemycomponent.wormshoot = false;
+                                }
 
-                default:
-                    break;
+                            }
+
+                            if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 15 && !enemycomponent.wormshoot)
+                            {
+                                //Play SFX
+                                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                                if (audioM.GetSFXindex("WormAttack") != -1)
+                                {
+                                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
+                                    {
+                                        audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
+                                    }
+
+                                }
+
+                                //spawn bullet
+                                static int number = 0;
+                                GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyProjectile1");
+
+                                if (cloneObject != nullptr)
+                                {
+                                    std::string name = "bullet" + std::to_string(number++);
+                                    GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "EnemyProjectile");
+
+                                    newObject.GetComponent<Transform>().position.x = enemytransform.position.x;
+                                    newObject.GetComponent<Transform>().position.y = enemytransform.position.y + 50.f;
+
+                                    newObject.GetComponent<Animation>().SetAnimation("Projectile");
+
+                                    auto playerpos = playerObj->GetComponent<Transform>().position;
+
+                                    Vec2 dir;
+                                    Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
+                                        playerpos.y - newObject.GetComponent<Transform>().position.y));
+
+                                    newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
+
+                                    float angleRad = atan2(dir.y, dir.x);
+
+                                    // Convert to degrees
+                                    float angleDeg = angleRad * (180.0f / 3.14159265358979323846f);
+
+                                    if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                    {
+                                        newObject.GetComponent<SpriteRender>().flipX = true;
+                                        // Apply rotation to bullet
+                                        newObject.GetComponent<Transform>().rotation = angleDeg;
+
+                                    }
+                                    else if (newObject.GetComponent<Rigidbody2D>().velocity.x > 0)
+                                    {
+                                        newObject.GetComponent<SpriteRender>().flipX = false;
+                                        // Apply rotation to bullet
+                                        newObject.GetComponent<Transform>().rotation = -angleDeg;
+                                    }
+
+                                    newObject.AddComponent(EnemyBullet{});
+                                    enemycomponent.wormshoot = true;
+                                }
+
+                            }
+                        }
+                        break;
                 }
-
-                ++it; // Move to the next enemy
+                ++it;
+    //END OF FOR LOOP
             }
         }
+    }
+
+    bool EnemyManager::HasClearLineOfSight(GameObject* enemy, const Transform& player)
+    {
+        // Calculate direction without Normalize()
+        
+        float dx = player.position.x - enemy->GetComponent<Transform>().position.x;
+        float dy = player.position.y - enemy->GetComponent<Transform>().position.y;
+        float length = std::sqrt(dx * dx + dy * dy);
+
+        // Avoid division by zero
+        float dirX = (length != 0) ? dx / length : 0;
+        float dirY = (length != 0) ? dy / length : 0;
+
+        for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
+        {
+            if (enemy->GetInstanceID() == objectID)
+            {
+                continue;
+            }
+
+            GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
+
+            if (object->GetTag() == "Environment" || object->GetTag() == "Boundary")
+            {
+                float objX = object->GetComponent<Transform>().position.x;
+                float objY = object->GetComponent<Transform>().position.y;
+                float objWidth = object->GetComponent<Transform>().scale.x;
+                float objHeight = object->GetComponent<Transform>().scale.y;
+
+                if (enemy->GetComponent<Enemy>().LineIntersectsRect(enemy->GetComponent<Transform>().position.x, enemy->GetComponent<Transform>().position.y, dirX, dirY, length, objX, objY, objWidth, objHeight))
+                {
+                    return false; // Obstacle blocks view
+                }
+            }
+        }
+        return true;
+    }
+
+    bool EnemyManager::IsObstacleInFront(float startX, float startY, float dirX, float dirY, float range)
+    {
+        // Normalize direction vector (important for consistent checks)
+        float length = std::sqrt(dirX * dirX + dirY * dirY);
+        if (length == 0) return false; // Avoid division by zero
+
+        float normDirX = dirX / length;
+        float normDirY = dirY / length;
+
+        // Compute the endpoint of the check line
+        float endX = startX + normDirX * range;
+        float endY = startY + normDirY * range;
+
+        for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
+        {
+            GameObject* object = GameObjectManager::GetInstance().GetGO(objectID);
+            if (!object) continue;
+
+            if (object->GetTag() == "Environment" || object->GetTag() == "Boundary")
+            {
+                Transform& objTransform = object->GetComponent<Transform>();
+                float objX = objTransform.position.x;
+                float objY = objTransform.position.y;
+                float objWidth = objTransform.scale.x * 0.5f;  // Half-width for AABB check
+                float objHeight = objTransform.scale.y * 0.5f; // Half-height for AABB check
+
+                // Compute bounding box
+                float minX = objX - objWidth;
+                float maxX = objX + objWidth;
+                float minY = objY - objHeight;
+                float maxY = objY + objHeight;
+
+                // Compute direction vector
+                float dirX = endX - startX;
+                float dirY = endY - startY;
+                float length = std::sqrt(dirX * dirX + dirY * dirY);
+
+                // Normalize direction vector
+                if (length > 0.0f) {
+                    dirX /= length;
+                    dirY /= length;
+                }
+
+                if (Enemy::LineIntersectsRect(startX, startY, dirX, dirY, length, objX, objY, objWidth * 2, objHeight * 2))
+                {
+                    return true; // Obstacle detected
+                }
+            }
+        }
+        return false; // No obstacles found
     }
 
     /*!***********************************************************************
@@ -660,7 +782,7 @@ void EnemyManager::EnemyCollisionResponse(EntityID enemyID, EntityID objID)
         {
             //set collide to true then now the obj is the obj save the pathfinding obj as prev
             enemyComponent.isCollide = true;
-            enemyComponent.timeSinceTargetReached = 0.f;
+            enemyComponent.timeSinceTargetReached = 1.f;
             enemyComponent.collideObj = static_cast<int>(objID);
             //enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
             //enemyComponent.nearestObj = static_cast<int>(objID);
