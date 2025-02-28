@@ -63,6 +63,10 @@ namespace Ukemochi
     *************************************************************************/
     void EnemyManager::UpdateEnemies()
     {
+        GameObject* player = GameObjectManager::GetInstance().GetGOByTag("Player");
+        auto& playerTransform = player->GetComponent<Transform>();
+        float soundRange = 750.0f; // Maximum distance for sound to play
+
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
 
@@ -85,6 +89,12 @@ namespace Ukemochi
                 auto& enemyphysic = object->GetComponent<Rigidbody2D>();
                 auto& enemytransform = object->GetComponent<Transform>();
                 auto& sr = object->GetComponent<SpriteRender>();
+                // Check if the enemy is within range of the player
+                float deltaX = playerTransform.position.x - enemytransform.position.x;
+                float deltaY = playerTransform.position.y - enemytransform.position.y;
+
+                // Euclidean distance (Pythagorean theorem)
+                float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
 
                 // Handle enemy hit state and sound effects
                 if (enemycomponent.wasHit)
@@ -129,7 +139,7 @@ namespace Ukemochi
 
                 // Animation and sound synchronization
                 auto& anim = object->GetComponent<Animation>();
-                if (anim.currentClip == "Walk")
+                if (anim.currentClip == "Walk" && distance <= soundRange)
                 {
                     if (enemycomponent.type == Enemy::FISH)
                     {
@@ -146,7 +156,7 @@ namespace Ukemochi
                             }
                         }
                     }
-                    if (enemycomponent.type == Enemy::WORM)
+                    if (enemycomponent.type == Enemy::WORM && distance <= soundRange)
                     {
                         // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
