@@ -681,6 +681,117 @@ namespace Ukemochi
 				break;
 			}
 		}
+		else if (tag1 == "Knife" && tag2 == "Environment")
+		{
+			// Mochi interacting with the environment
+			// Make space and get healing items?
+			
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			// Placeholder, wait for when animations is complete so that we can break the box
+			//switch (player_data.comboState)
+			//{
+			//case 0: // First combo state
+			//	if (player_anim.current_frame == 8)
+			//	{
+			//		if (!enemy_data.hasDealtDamage) //HAS TAKEN DMG
+			//		{
+			//			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+			//			enemy_data.atktimer = 1.5f;
+
+			//			// Deal 2x dmg if the player and the enemy has the same soul type
+			//			if (player_soul.current_soul == enemy_data.type)
+			//				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+			//			else
+			//				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+			//			// Harvest some soul whenever mochi hits an enemy
+			//			ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
+
+			//			enemy_data.hasDealtDamage = true; // Prevent multiple applications
+			//		}
+			//	}
+			//	else
+			//	{
+			//		// Reset damage flag for the kick combo if not at the damage frame
+			//		enemy_data.hasDealtDamage = false;
+			//	}
+			//	break;
+
+			//case 1: // Second combo state
+			//	if (player_anim.current_frame == 23)
+			//	{
+			//		if (!enemy_data.hasDealtDamage)
+			//		{
+			//			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
+			//			enemy_data.atktimer = 1.5f;
+
+			//			// Deal 2x dmg if the player and the enemy has the same soul type
+			//			if (player_soul.current_soul == enemy_data.type)
+			//				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+			//			else
+			//				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+			//			// Harvest some soul whenever mochi hits an enemy
+			//			ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
+
+			//			enemy_data.hasDealtDamage = true; // Prevent multiple applications
+			//		}
+			//	}
+			//	else
+			//	{
+			//		// Reset damage flag for the kick combo if not at the damage frame
+			//		enemy_data.hasDealtDamage = false;
+			//	}
+			//	break;
+
+			//case 2: // Knockback kick combo
+			//	if (player_anim.current_frame == 29)
+			//	{
+			//		// Apply knockback and play sound effects
+			//		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+			//			AudioManager>();
+			//		ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 150000, trans2, rb2);
+
+			//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+			//			audioM.GetSFXindex("Pattack3")))
+			//		{
+			//			audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+			//		}
+			//		enemy_data.isKick = true;
+
+			//		// Deal damage during the knockback kick
+			//		if (!enemy_data.hasDealtDamage)
+			//		{
+			//			enemy_data.atktimer = 1.5f;
+
+			//			// Deal 2x dmg if the player and the enemy has the same soul type
+			//			if (player_soul.current_soul == enemy_data.type)
+			//				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage * 2.f));
+			//			else
+			//				enemy_data.TakeDamage(static_cast<float>(player_data.comboDamage));
+
+			//			// Harvest some soul whenever mochi hits an enemy
+			//			ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
+
+			//			enemy_data.hasDealtDamage = true;
+			//		}
+			//	}
+			//	else
+			//	{
+			//		// Reset damage flag for the kick combo if not at the damage frame
+			//		enemy_data.hasDealtDamage = false;
+			//	}
+			//	break;
+
+			//default:
+			//	break;
+			//}
+		}
 		else if ((tag1 == "FishAbility" || tag1 == "WormAbility") && tag2 == "Enemy")
 		{
 			// Mochi's Ability and Enemy
