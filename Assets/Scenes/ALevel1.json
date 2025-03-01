@@ -3465,5 +3465,25 @@
                     },
                     "CurrentClip": "BluntHit"
                 }]
+        }, {
+            "Name": "Projectile_Hit_Effect",
+            "Tag": "VFX",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [900.0, 600.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 50.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
+                    "Shape": 0,
+                    "Layer": 5
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Projectile": ["Worm Projectile Hit_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "Projectile", 6, 0.5, 0.5, 180, 180, 180, 900, 180, 0.009999999776482582, false]
+                    },
+                    "CurrentClip": "Projectile"
+                }]
         }]
 }
