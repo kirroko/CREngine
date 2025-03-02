@@ -615,7 +615,7 @@ namespace Ukemochi
                 }
 
                 // Handle the UV here
-                UME_ENGINE_ASSERT(pixelSize[0] < spriteWidth && pixelSize[1] < spriteHeight,
+                UME_ENGINE_ASSERT(pixelSize[0] <= spriteWidth && pixelSize[1] <= spriteHeight,
                     "Pixel size is larger than texture size")
                     int col = currentFrame % (spriteWidth / pixelSize[0]);
                 int row = currentFrame / (spriteWidth / pixelSize[0]);

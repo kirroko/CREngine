@@ -727,6 +727,11 @@ namespace Ukemochi
 		{
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& vfx_trans = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<Transform>();
+			auto& vfx_sr = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<SpriteRender>();
+			auto& vfx_anim = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<Animation>();
+			
 			if (tag2 == "Enemy")
 			{
 				//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
@@ -736,9 +741,27 @@ namespace Ukemochi
 			else if (tag2 == "EnemyProjectile" && ECS::GetInstance().HasComponent<EnemyBullet>(entity2))
 			{
 				auto& bullet_data = ECS::GetInstance().GetComponent<EnemyBullet>(entity2);
+				auto& bullet_trans = ECS::GetInstance().GetComponent<Transform>(entity2);
+				
 				if (!bullet_data.hit)
 				{
-					player_data.currentHealth -= 10;
+					if (!player_data.isDead)
+					{
+						ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(player);
+						if (bullet_trans.position.x < player_trans.position.x)
+						{
+							vfx_trans.position = Vector3D(player_trans.position.x - 80.0f, player_trans.position.y, 0);
+							vfx_sr.flipX = true;
+						}
+						else if (bullet_trans.position.x > player_trans.position.x)
+						{
+							vfx_trans.position = Vector3D(player_trans.position.x + 80.0f, player_trans.position.y, 0);
+							vfx_sr.flipX = false;
+						}
+					
+						vfx_anim.RestartAnimation();
+						player_data.currentHealth -= 10;
+					}
 					bullet_data.hit = true;
 				}
 			}

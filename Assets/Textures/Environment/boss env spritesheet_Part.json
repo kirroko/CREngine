@@ -1,0 +1,68 @@
+{"frames": {
+
+"ane 1.png":
+{
+	"frame": {"x":5,"y":351,"w":1564,"h":336},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1564,"h":336},
+	"sourceSize": {"w":1564,"h":336}
+},
+"ane 2.png":
+{
+	"frame": {"x":1238,"y":120,"w":787,"h":226},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":787,"h":226},
+	"sourceSize": {"w":787,"h":226}
+},
+"bg.png":
+{
+	"frame": {"x":5,"y":1249,"w":1920,"h":725},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":725},
+	"sourceSize": {"w":1920,"h":725}
+},
+"blobs 3.png":
+{
+	"frame": {"x":5,"y":5,"w":648,"h":99},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":648,"h":99},
+	"sourceSize": {"w":648,"h":99}
+},
+"blobs 4.png":
+{
+	"frame": {"x":5,"y":120,"w":1228,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1228,"h":170},
+	"sourceSize": {"w":1228,"h":170}
+},
+"ground.png":
+{
+	"frame": {"x":5,"y":692,"w":1920,"h":552},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":552},
+	"sourceSize": {"w":1920,"h":552}
+},
+"hair hitbox.png":
+{
+	"frame": {"x":658,"y":5,"w":853,"h":110},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":853,"h":110},
+	"sourceSize": {"w":853,"h":110}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "boss env spritesheet.png",
+	"format": "RGBA8888",
+	"size": {"w":2030,"h":1979},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b5865fd85536700d927a854ab1c439e5:1a0fc42e144492a91effd5d91f9bdff8:e9a1494cff565abbe6d0c6ef1c48f52b$"
+}
+}
