@@ -157,7 +157,7 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y};  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
@@ -169,10 +169,10 @@ namespace Ukemochi
 			//			BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
 
 			// Lower half of the object (legs or bottom part)
-			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
-			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y };  // Max Y stops at the object's center
+			box.min = { -BOUNDING_BOX_SIZE * (1.5f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y};  // Min Y is halfway down the object 1.5f
+			box.max = { BOUNDING_BOX_SIZE * (1.8f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.8f };  // Max Y stops at the object's center
 		}
 		else
 		{
