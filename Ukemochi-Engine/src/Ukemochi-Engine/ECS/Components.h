@@ -420,7 +420,6 @@ namespace Ukemochi
 		enum EnemyStates
 		{
 			MOVE,
-			STUN,
 			STANDBY,
 			ATTACK,
 			DEAD,
@@ -450,7 +449,7 @@ namespace Ukemochi
 		mutable int prevObject2;
 		bool isCollide;
 		bool isKick;
-		float kicktime = 2.f;
+		float kicktime = 1.f;
 		bool hasDealtDamage = false;
 		bool wormshoot = false;
 		float atktimer = 0.0f;
@@ -460,6 +459,7 @@ namespace Ukemochi
 		bool wasHit = false;  // New flag for hit detection
 		float waitTime = 0.f;
 		bool iswaiting = false;
+		int move = 5;
 
 		Enemy() = default;
 
@@ -497,16 +497,16 @@ namespace Ukemochi
 		{
 		float minX = objX - 0.5f * objWidth;
 		float maxX = objX + 0.5f * objWidth;
-		float minY = objY - 0.5f * objHeight; // Bottom boundary
-		float maxY = objY + 0.5f * objHeight; // Top boundary
+		float minY = objY - 0.5f * objHeight;
+		float maxY = objY + 0.5f * objHeight;
 
-		// If the start point is already inside the rectangle, return true
-		if (startX >= minX && startX <= maxX && startY >= minY && startY <= maxY)
+		// Ensure the start point is INSIDE the rectangle
+		if (startX > minX && startX < maxX && startY > minY && startY < maxY)
 			return true;
 
 		float tMin = 0.0f, tMax = length;
 
-		// Check X axis
+		// Check intersection along X-axis
 		if (dirX != 0.0f)
 		{
 			float invD = 1.0f / dirX;
@@ -516,12 +516,12 @@ namespace Ukemochi
 			tMin = std::max(tMin, t0);
 			tMax = std::min(tMax, t1);
 		}
-		else if (startX < minX || startX > maxX) // Line is vertical but outside X bounds
+		else if (startX <= minX || startX >= maxX)
 		{
-			return false;
+			return false; // Line is vertical but outside X bounds
 		}
 
-		// Check Y axis
+		// Check intersection along Y-axis
 		if (dirY != 0.0f)
 		{
 			float invD = 1.0f / dirY;
@@ -531,13 +531,13 @@ namespace Ukemochi
 			tMin = std::max(tMin, t0);
 			tMax = std::min(tMax, t1);
 		}
-		else if (startY < minY || startY > maxY) // Line is horizontal but outside Y bounds
+		else if (startY <= minY || startY >= maxY)
 		{
-			return false;
+			return false; // Line is horizontal but outside Y bounds
 		}
 
-		// The ray intersects the AABB only if tMin <= tMax and tMin is within segment length
-		return (tMin <= tMax) && (tMin <= length);
+		// Ensure intersection occurs within the given length and is non-negative
+		return (tMin <= tMax) && (tMax >= 0) && (tMin <= length);
 	}
 
 		// Check if two points are within a threshold distance
