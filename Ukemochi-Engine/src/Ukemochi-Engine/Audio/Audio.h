@@ -165,6 +165,9 @@ namespace Ukemochi
         *************************************************************************/
         void SetAudioVolume(int soundIndex, float volume, std::string type);
 
+        void DecreaseMusicMasterVolume(float step);
+        void IncreaseMusicMasterVolume(float step);
+
         void SetSFXMasterVolume(float volume);
        
 		void IncreaseSFXMasterVolume(float step);

@@ -508,6 +508,32 @@ namespace Ukemochi
         }
     }
 
+    void Audio::DecreaseMusicMasterVolume(float step)
+    {
+        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        {
+            if (pMusicChannels[i] != nullptr)
+            {
+                float currentVolume = 0.0f;
+                pMusicChannels[i]->getVolume(&currentVolume);
+                SetAudioVolume(i, currentVolume - step, "Music");
+            }
+        }
+    }
+
+    void Audio::IncreaseMusicMasterVolume(float step)
+    {
+        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        {
+            if (pMusicChannels[i] != nullptr)
+            {
+                float currentVolume = 0.0f;
+                pMusicChannels[i]->getVolume(&currentVolume);
+                SetAudioVolume(i, currentVolume + step, "Music");
+            }
+        }
+    }
+
     void Audio::SetSFXMasterVolume(float volume)
     {
         // Clamp volume between 0.0 and 1.0
@@ -586,7 +612,7 @@ namespace Ukemochi
         {
             if (!decreaseKeyPressed)
             {
-                DecreaseVolume(0, 0.05f, "Music"); // Decrease by 5%
+                DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
                 decreaseKeyPressed = true;
             }
         }
@@ -599,7 +625,7 @@ namespace Ukemochi
         {
             if (!increaseKeyPressed)
             {
-                IncreaseVolume(0, 0.05f, "Music"); // Increase by 5%
+				IncreaseMusicMasterVolume(0.05f); // Increase by 5%
                 increaseKeyPressed = true;
             }
         }
