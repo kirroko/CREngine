@@ -20,53 +20,71 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi {
 
+    void CheckGLError(const char* file, int line)
+    {
+        GLenum err;
+        while ((err = glGetError()) != GL_NO_ERROR)
+        {
+            std::cerr << "OpenGL ERROR [" << file << ":" << line << "]: " << err << std::endl;
+        }
+    }
+    #define CHECK_GL_ERROR() CheckGLError(__FILE__, __LINE__)
+
     void VideoManager::RenderVideoFrame()
     {
-        if (!plm) return;  // No video loaded
+        if (!plm) return;
 
-        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID); // Bind the video texture
+        UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
 
-        // Activate the shader specifically for the video
+        // Activate shader
         ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
 
-        // Define a simple quad for rendering the video
-        static GLuint VAO = 0, VBO;
-        if (VAO == 0)
-        {
-            float vertices[] = {
-                // Positions   // Colors (white) // Texture Coords  // Frame Index
-                -1.0f, -1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f,        currentFrame, // Bottom-left  (White)
-                 
-                 1.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f,        currentFrame, // Bottom-right (White)
-                 
-                -1.0f,  1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f,        currentFrame, // Top-left     (White)
-                 
-                 1.0f,  1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f,        currentFrame  // Top-right    (White)
-                 
-            };
+        // Get projection and view matrices from the camera
+        glm::mat4 projection = ECS::GetInstance().GetSystem<Camera>()->getCameraProjectionMatrix();
+        glm::mat4 view = ECS::GetInstance().GetSystem<Camera>()->getCameraViewMatrix();
 
-            glGenVertexArrays(1, &VAO);
-            glGenBuffers(1, &VBO);
-            glBindVertexArray(VAO);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        // Get screen dimensions (assuming full-size video)
+        float screenWidth = ECS::GetInstance().GetSystem<Camera>()->viewport_size.x;
+        float screenHeight = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y;
 
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(2 * sizeof(float))); // Color
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float))); // UV
-            glEnableVertexAttribArray(2);
-            glVertexAttribIPointer(3, 1, GL_INT, 8 * sizeof(float), (void*)(7 * sizeof(float))); // Frame Index
-            glEnableVertexAttribArray(3);
-        }
+        // Get video dimensions
+        float videoWidth = static_cast<float>(plm_get_width(plm));
+        float videoHeight = static_cast<float>(plm_get_height(plm));
 
+        // Calculate the position for centering
+        float posX = (screenWidth - videoWidth) / 2.0f;
+        float posY = (screenHeight - videoHeight) / 2.0f;
+
+        // Apply translation and scaling
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(posX, posY, 0.0f));  // Move to center
+        model = glm::scale(model, glm::vec3(videoWidth, videoHeight, 1.0f)); // Scale to full size
+
+        // Final MVP matrix
+        glm::mat4 mvp = projection * view * model;
+
+        // Pass it to the shader
+        glUniformMatrix4fv(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "mvp"),
+            1, GL_FALSE, glm::value_ptr(mvp));
+
+        
+        // Bind VAO
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        // Check currently bound VAO
+        GLint currentVAO = 0;
+        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+        UME_ENGINE_INFO("Current Bound VAO: {0}", currentVAO);
+
+        // Check currently active shader
+        GLint currentProgram = 0;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+        UME_ENGINE_INFO("Current Active Shader Program: {0}", currentProgram);
+
+        // Draw the quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // Unbind
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
 
@@ -186,16 +204,20 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
             // Convert to RGB
             plm_frame_to_rgb(frame, video_ctx->rgb_buffer, width * 3);
 
-            // Upload to the 2D texture array at layer `i`
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1,
-                GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
+            if (!video_ctx->rgb_buffer) {
+                UME_ENGINE_ERROR("Error: RGB buffer is null at frame {0}", i);
+            }
 
-            UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, numFrames, i);
+            // Upload to the 2D texture array at layer `i`
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
+
+            //UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, numFrames, i);
         }
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         // Enable looping for playback
         //plm_set_loop(plm, true);
+        totalFrames = static_cast<int>(plm_get_framerate(plm) * plm_get_duration(plm)); // Calculate total frames
 
         int storedLayers = 0;
         glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID);
@@ -211,13 +233,51 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
             return false;
         }
 
+        float videoWidth = static_cast<float>(plm_get_width(plm));
+        float videoHeight = static_cast<float>(plm_get_height(plm));
+
+        // **Setup VAO & VBO once**
+        float vertices[] = {
+            // Positions (X, Y, Z)    // Colors       // Texture Coords  // Frame Index
+            0.0f,         0.0f,        0.f, 1.0f,1.0f,1.0f,   0.0f, 0.0f,    0,  // Bottom-left
+            videoWidth,   0.0f,        0.f, 1.0f,1.0f,1.0f,   1.0f, 0.0f,    0,  // Bottom-right
+            0.0f,         videoHeight, 0.f,  1.0f,1.0f,1.0f,   0.0f, 1.0f,    0,  // Top-left
+            videoWidth,   videoHeight, 0.f,  1.0f,1.0f,1.0f,   1.0f, 1.0f,    0   // Top-right
+        };
+
+
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+
+        if (VAO == 0 || VBO == 0)
+        {
+            UME_ENGINE_ERROR("VAO or VBO creation failed!");
+        }
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float))); // Color
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float))); // UV
+        glEnableVertexAttribArray(2);
+        glVertexAttribIPointer(3, 1, GL_INT, 9 * sizeof(float), (void*)(8 * sizeof(float))); // Frame Index
+        glEnableVertexAttribArray(3);
+
+        glBindVertexArray(0);
 
         return true;
     }
 
-    GLuint VideoManager::CreateVideoTexture(int width, int height, int num_frames)
+    Texture VideoManager::CreateVideoTexture(int width, int height, int num_frames)
     {
-        glGenTextures(1, &videoTextureID);
+        /*glGenTextures(1, &videoTextureID);
         glBindTexture(GL_TEXTURE_2D_ARRAY,videoTextureID);
 
         if (!videoTextureID)
@@ -236,7 +296,14 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         UME_ENGINE_TRACE("Created Video Texture - ID: {0}, Width: {1}, Height: {2}, Frames: {3}", videoTextureID, width, height, num_frames);
-        return videoTextureID;
+        return videoTextureID;*/
+
+        // Use the Texture class to create a 2D array texture
+        Texture newTexture(GL_TEXTURE_2D_ARRAY, width, height, GL_RGB, GL_UNSIGNED_BYTE);
+
+        UME_ENGINE_TRACE("Created Video Texture - Width: {0}, Height: {1}, Frames: {2}", width, height, num_frames);
+
+        return newTexture;
     }
 
     void VideoManager::UpdateAndRenderVideo(plm_t* video)
@@ -252,7 +319,9 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         plm_decode(plm, deltaTime);
 
         Audio::GetInstance().Update(); //update audio
-        ++currentFrame;
+
+        // Update the current frame index (ensuring it loops correctly)
+        currentFrame = (currentFrame + 1) % totalFrames;
         
         RenderVideoFrame();
         if (plm_has_ended(plm))

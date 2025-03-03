@@ -307,6 +307,7 @@ namespace Ukemochi
             {
                 if (!IsPaused)
                 {
+                    sceneManager.SceneMangerUpdateCamera(deltaTime);
                     //Run all the systems using ECS
                     //************ Update & Draw ************
                     sceneManager.SceneMangerRunSystems();

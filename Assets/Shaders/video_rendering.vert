@@ -9,11 +9,12 @@ out vec3 fragColor;
 out vec2 TexCoord;
 flat out int FrameIndex;
 
-uniform mat4 projection;  // Projection matrix
+uniform mat4 mvp;  // Projection matrix
+
 
 void main()
 {
-    gl_Position = projection * vec4(aPos, 1.0);  // Transform vertex position
+    gl_Position = mvp * vec4(aPos, 1.0);  // Transform vertex position
     fragColor = aColor;
     TexCoord = aTexCoord;
     FrameIndex = aFrameIndex;  // Pass frame index to fragment shader

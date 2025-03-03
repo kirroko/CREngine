@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"
 #include "pl_mpeg.h"
 #include "Ukemochi-Engine/Graphics/shaderClass.h"
-
+#include "Ukemochi-Engine/Graphics/Texture.h"
 namespace Ukemochi {
     class VideoManager : public System
     {
@@ -44,10 +44,15 @@ namespace Ukemochi {
         //FMOD::Sound *fmod_sound = nullptr; // video sound
 
         std::shared_ptr<Shader> video_shader_program;
+
     public:
         GLuint videoTextureID = 0;
+        //std::unique_ptr<Texture> videoAtlas;
+        Texture videoTexture;
         int currentFrame = 0;
+        int totalFrames;
     private:
+        GLuint VAO{}, VBO{};
         bool isPlaying = true;
 
         void RenderVideoFrame();
@@ -63,7 +68,7 @@ namespace Ukemochi {
          * @param num_frames
          * @return texture ID
          */
-        GLuint CreateVideoTexture(int width, int height, int num_frames);
+        Texture CreateVideoTexture(int width, int height, int num_frames);
         
         /**
          * @brief decode and display the video
