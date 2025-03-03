@@ -432,15 +432,16 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
                     "Shape": 0,
                     "Layer": 3
                 }, {
                     "Name": "Animation",
                     "Clips": {
+                        "Box_1": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box_1", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
                         "Box_1_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_1_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
                     },
-                    "CurrentClip": "Box_1_Break"
+                    "CurrentClip": "Box_1"
                 }]
         }, {
             "Name": "1_Box2",
@@ -476,15 +477,16 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
                     "Shape": 0,
                     "Layer": 3
                 }, {
                     "Name": "Animation",
                     "Clips": {
+                        "Box_2": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box_2", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false],
                         "Box_2_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_2_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false]
                     },
-                    "CurrentClip": "Box_2_Break"
+                    "CurrentClip": "Box_2"
                 }]
         }, {
             "Name": "1_Box3",
@@ -520,15 +522,16 @@
                     "is_trigger": false
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
                     "Shape": 0,
                     "Layer": 3
                 }, {
                     "Name": "Animation",
                     "Clips": {
+                        "Box_3": ["env_base_box_3", "../Assets/Textures/Environment/base env static_Part.png", "Box_3", 1, 0.5, 0.5, 100, 131, 200, 131, 200, 0.05000000074505806, false],
                         "Box_3_Break": ["env_base_box_3_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_3_Break", 4, 0.5, 0.5, 100, 131, 200, 393, 400, 0.05000000074505806, false]
                     },
-                    "CurrentClip": "Box_3_Break"
+                    "CurrentClip": "Box_3"
                 }]
         }, {
             "Name": "1_RightWallBack",
@@ -2030,6 +2033,39 @@
                     "is_trigger": true
                 }]
         }, {
+            "Name": "4_RightDoor",
+            "Tag": "RightDoor",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5735.0, 540.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [50.0, 500.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1915.0, 0.0],
+                    "Max": [1925.0, 1080.0],
+                    "Collision Flag": 0,
+                    "is_trigger": true
+                }]
+        }, {
             "Name": "4_Background",
             "Tag": "Room",
             "Components": [{
@@ -2218,7 +2254,7 @@
                     "Layer": 6
                 }]
         }, {
-            "Name": "4_RightBlock_Perma",
+            "Name": "4_RightBlock",
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
@@ -2834,6 +2870,34 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "cave wall 3",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
+            "Name": "5_RightBlock",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [7560.0, 770.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [218.0, 243.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "block 2",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
+            "Name": "5_LeftBlock",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5895.0, 750.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [193.0, 158.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "block 1",
                     "Shape": 0,
                     "Layer": 6
                 }]

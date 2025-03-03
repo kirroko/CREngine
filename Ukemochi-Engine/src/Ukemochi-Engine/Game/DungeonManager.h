@@ -22,7 +22,7 @@ namespace Ukemochi
 	 Dungeon room constants.
 	*************************************************************************/
 	const int ROOM_WIDTH = 1920, ROOM_HEIGHT = 1080, PLAYER_OFFSET = 800;
-	const int NUM_OF_ROOMS = 4;
+	const int NUM_OF_ROOMS = 6;
 	//const int WAVE_NUMBER = 0;
 	//const size_t MAX_WAVE_SIZE = 3;
 
