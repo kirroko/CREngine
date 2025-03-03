@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 25, 2025
+\date       Mar 02, 2025
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -526,9 +526,23 @@ namespace Ukemochi
 		auto& box2 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity2);
 		auto& rb2 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
-		if (tag1 == "Player" && box2.is_trigger) // Mochi and Door / Other Triggers
+		if (tag1 == "Player" && tag2 == "LeftDoor" || tag1 == "Player" && tag2 == "RightDoor") // Mochi and Doors
 		{
-			Trigger_Response(tag2);
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			if (audioM.GetSFXindex("LevelChange") != -1)
+			{
+				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+					audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+			}
+			if (tag2 == "LeftDoor")
+				ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1); // Move to the left room
+			else if (tag2 == "RightDoor")
+				ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(1); // Move to the right room
+
+			//else if (tag2 == "TopDoor")
+			//	// Move to the top room
+			//else if (tag2 == "BtmDoor")
+			//	// Move to the bottom room
 		}
 		else if (tag1 == "Knife" && tag2 == "Enemy") // Mochi's Knife and Enemy (Enemy takes damage and knockback)
 		{
@@ -1081,43 +1095,6 @@ namespace Ukemochi
 				}
 			}
 		}
-	}
-
-	/*!***********************************************************************
-	\brief
-	 Collision response between the player and a trigger object.
-	\param[in] trigger_tag
-	 The tag of the trigger object.
-	*************************************************************************/
-	void Collision::Trigger_Response(const std::string& trigger_tag)
-	{
-		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-		if (audioM.GetSFXindex("LevelChange") != -1)
-		{
-			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
-				audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
-		}
-		// PLAYER AND DOORS
-		if (trigger_tag == "LeftDoor")
-		{
-			// Move to the left room
-			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1);
-		}
-		else if (trigger_tag == "RightDoor")
-		{
-			// Move to the right room
-			ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(1);
-		}
-		//else if (trigger_tag == "TopDoor")
-		//{
-		//	// Move to the top room
-		//}
-		//else if (trigger_tag == "BtmDoor")
-		//{
-		//	// Move to the bottom room
-		//}
-
-		// PLAYER AND OTHER TRIGGERS (coins, checkpoints, etc..)
 	}
 
 	/*!***********************************************************************
