@@ -160,16 +160,39 @@ namespace Ukemochi
                 {
                     int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
 
+                    static int lastRunningSoundIndex = 0;
+
                     // 6 or 7 for current frame
                     if ((currentFrame == 3 || currentFrame == 7) && !runningSoundPlayed)
                     {
                         // Assuming you have an audio manager and running sound index
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                        int runningSoundIndex = audioM.GetSFXindex("Running"); // Replace with the actual sound name
-                        if (runningSoundIndex != -1)
-                        {
-                            audioM.PlaySFX(runningSoundIndex);
+                        std::vector<int> runningSounds = {
+                            audioM.GetSFXindex("Running1"),
+                            audioM.GetSFXindex("Running2"),
+                            audioM.GetSFXindex("Running3"),
+							audioM.GetSFXindex("Running4"),
+							audioM.GetSFXindex("Running5"),
+							audioM.GetSFXindex("Running6")
+                        };
+                        // Filter out any invalid indices (-1)
+                        std::vector<int> validSounds;
+                        for (int index : runningSounds) {
+                            if (index != -1) {
+                                validSounds.push_back(index);
+                            }
                         }
+
+                        if (!validSounds.empty()) {
+
+                            // Option 2: Random selection (alternative approach)
+                            int randomIndex = rand() % validSounds.size();
+                            lastRunningSoundIndex = randomIndex;
+
+                            // Play the selected sound
+                            audioM.PlaySFX(validSounds[lastRunningSoundIndex]);
+                        }
+
                         runningSoundPlayed = true; // Prevent it from playing again at the same frame
                     }
                     else if ((currentFrame != 3 && currentFrame != 7))
