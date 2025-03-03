@@ -1025,7 +1025,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1860.0, 540.0, 0.0],
+                    "Position": [1860.0, 541.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [122.0, 1080.0]
                 }, {
@@ -3356,7 +3356,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Projectile": ["Projectile_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "Projectile", 5, 0.5, 0.5, 130, 130, 130, 390, 260, 0.05000000074505806, true]
+                        "Projectile": ["Projectile_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "Projectile", 5, 0.8500000238418579, 0.8500000238418579, 130, 130, 130, 390, 260, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Projectile"
                 }]
