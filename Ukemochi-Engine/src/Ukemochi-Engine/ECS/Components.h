@@ -482,7 +482,7 @@ namespace Ukemochi
 			case Enemy::WORM:
 				health = 50.f;
 				attackPower = 5.f;
-				attackRange = 800.f;
+				attackRange = 700.f;
 				speed = 3000.f;
 				break;
 			case Enemy::DEFAULT:

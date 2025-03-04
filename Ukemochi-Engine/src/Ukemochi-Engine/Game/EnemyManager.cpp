@@ -227,6 +227,10 @@ namespace Ukemochi
                     if (enemycomponent.isWithPlayer && numEnemyTarget >= 1)
                     {
                         numEnemyTarget--;
+                        if (numEnemyTarget < 0)
+                        {
+                            numEnemyTarget = 0;
+                        }
                     }
                     ++it;
                     continue;
@@ -833,6 +837,11 @@ namespace Ukemochi
                             }
                             if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform) == false)
                             {
+                                //small movement?
+
+
+
+                                //BIG movement
                                 // Calculate the magnitude of the direction vector (distance to player)
                                 enemycomponent.magnitude = std::sqrt(enemycomponent.dirX * enemycomponent.dirX + enemycomponent.dirY * enemycomponent.dirY);
 
@@ -911,9 +920,13 @@ namespace Ukemochi
                         {
                             if (enemycomponent.IsPlayerInAttackRange(playerObj->GetComponent<Transform>(), enemytransform) == false)
                             {
-                                enemycomponent.isWithPlayer = false;
-                                --numEnemyTarget;
-                                break;
+                                if (enemycomponent.isWithPlayer == true)
+                                {
+                                    enemycomponent.isWithPlayer = false;
+                                    --numEnemyTarget;
+                                    break;
+                                }
+
                             }
                             else
                             {
