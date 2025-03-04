@@ -1092,42 +1092,42 @@ namespace Ukemochi
                                 }
                             }
                         }
-                        if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 7)
-                        {
-                            // SFX for fish in air
-                            auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        //if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 7)
+                        //{
+                        //    // SFX for fish in air
+                        //    auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-                            // Create an array to hold our fish jump/air sound indices
-                            std::vector<int> fishAirSounds;
+                        //    // Create an array to hold our fish jump/air sound indices
+                        //    std::vector<int> fishAirSounds;
 
-                            // Add all available fish air sounds to the array
-                            int fishAir1 = audioM.GetSFXindex("FishAir1");
-                            if (fishAir1 != -1)
-                                fishAirSounds.push_back(fishAir1);
+                        //    // Add all available fish air sounds to the array
+                        //    int fishAir1 = audioM.GetSFXindex("FishAir1");
+                        //    if (fishAir1 != -1)
+                        //        fishAirSounds.push_back(fishAir1);
 
-                            int fishAir2 = audioM.GetSFXindex("FishAir2");
-                            if (fishAir2 != -1)
-                                fishAirSounds.push_back(fishAir2);
+                        //    int fishAir2 = audioM.GetSFXindex("FishAir2");
+                        //    if (fishAir2 != -1)
+                        //        fishAirSounds.push_back(fishAir2);
 
-                            // Add the original sound as fallback if you have one
-                            int fishAirOriginal = audioM.GetSFXindex("FishAir");
-                            if (fishAirOriginal != -1)
-                                fishAirSounds.push_back(fishAirOriginal);
+                        //    // Add the original sound as fallback if you have one
+                        //    int fishAirOriginal = audioM.GetSFXindex("FishAir");
+                        //    if (fishAirOriginal != -1)
+                        //        fishAirSounds.push_back(fishAirOriginal);
 
-                            // If we have fish air sounds available, play a random one
-                            if (!fishAirSounds.empty())
-                            {
-                                // Generate a random index into our array of sounds
-                                int randomIndex = rand() % fishAirSounds.size();
-                                int selectedSoundIndex = fishAirSounds[randomIndex];
+                        //    // If we have fish air sounds available, play a random one
+                        //    if (!fishAirSounds.empty())
+                        //    {
+                        //        // Generate a random index into our array of sounds
+                        //        int randomIndex = rand() % fishAirSounds.size();
+                        //        int selectedSoundIndex = fishAirSounds[randomIndex];
 
-                                // Check if the selected sound is already playing
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSoundIndex))
-                                {
-                                    audioM.PlaySFX(selectedSoundIndex);
-                                }
-                            }
-                        }
+                        //        // Check if the selected sound is already playing
+                        //        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSoundIndex))
+                        //        {
+                        //            audioM.PlaySFX(selectedSoundIndex);
+                        //        }
+                        //    }
+                        //}
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                         {
