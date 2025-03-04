@@ -862,12 +862,15 @@ namespace Ukemochi
                 {
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                     audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+                    audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
+                    //ECS::GetInstance().GetSystem<Audio>()->StopAllSound();
                 }
             }
 
             SceneManager::GetInstance().LoadSaveFile(SceneManager::GetInstance().GetCurrScene() + ".json");
             es_current = ENGINE_STATES::ES_ENGINE;
             UME_ENGINE_INFO("Simulation (Game is stopping) stopped");
+            //ECS::GetInstance().GetSystem<Audio>()->StopAllSound();
         }
 
         ImGui::End();
