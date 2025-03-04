@@ -52,13 +52,14 @@ namespace Ukemochi {
         float videoHeight = static_cast<float>(plm_get_height(plm));
 
         // Calculate the position for centering
-        float posX = (screenWidth - videoWidth) / 2.0f;
-        float posY = (screenHeight - videoHeight) / 2.0f;
+        float posX = screenWidth * 0.5f;
+        float posY = screenHeight * 0.5f;
 
         // Apply translation and scaling
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(posX, posY, 0.0f));  // Move to center
-        model = glm::scale(model, glm::vec3(videoWidth, videoHeight, 1.0f)); // Scale to full size
+        model = glm::translate(model, glm::vec3(posX, posY, 0.0f));
+        model = glm::scale(model, glm::vec3(videoWidth, videoHeight, 1.0f));
+
 
         // Final MVP matrix
         glm::mat4 mvp = projection * view * model;
@@ -67,24 +68,21 @@ namespace Ukemochi {
         glUniformMatrix4fv(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "mvp"),
             1, GL_FALSE, glm::value_ptr(mvp));
 
-        
         // Bind VAO
         glBindVertexArray(VAO);
-        // Check currently bound VAO
-        GLint currentVAO = 0;
-        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
-        UME_ENGINE_INFO("Current Bound VAO: {0}", currentVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID); 
+        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "videoTextures"), 0); 
 
-        // Check currently active shader
-        GLint currentProgram = 0;
-        glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
-        UME_ENGINE_INFO("Current Active Shader Program: {0}", currentProgram);
+        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "frameIndex"),
+            ECS::GetInstance().GetSystem<VideoManager>()->currentFrame); 
 
         // Draw the quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
+        
         // Unbind
         glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
 
@@ -120,49 +118,6 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
     bool VideoManager::LoadVideo(const char* filepath)
     {
-        /*plm = plm_create_with_filename(filepath);
-        if (!plm)
-        {
-            UME_ENGINE_ERROR("Failed to load video: {0]", filepath);
-            return false;
-        }
-
-        if (!plm_probe(plm, 5000 * 1024))
-        {
-            UME_ENGINE_ERROR("No MPEG video or audio streams found in {0}", filepath);
-            return false;
-        }
-
-        int samplerate = plm_get_samplerate(plm);
-        UME_ENGINE_INFO("Opened {0} - framerate: {1}, samplerate: {2}, duration: {3}",
-            filepath,
-            plm_get_framerate(plm),
-            plm_get_samplerate(plm),
-            plm_get_duration(plm));
-
-        video_ctx = new VideoContext(800, 600);
-        plm_set_video_decode_callback(plm, Video_Callback, video_ctx);
-        plm_set_audio_decode_callback(plm, Audio_Callback, nullptr);
-
-        plm_set_loop(plm, true);
-        plm_set_audio_enabled(plm, true);
-        plm_set_audio_stream(plm, 0);
-
-
-        ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
-        glm::mat4 projection = glm::ortho(0.f, static_cast<float>(Application::Get().GetWindow().GetWidth()), 0.f, static_cast<float>(Application::Get().GetWindow().GetHeight()), -1.f, 1.f);
-        ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->setMat4("projection",projection);
-        
-        
-        int frames = static_cast<int>(plm_get_framerate(plm) * plm_get_duration(plm));
-        CreateVideoTexture(plm_get_width(plm),plm_get_height(plm), frames);
-        size_t num_pixels = static_cast<size_t>(plm_get_width(plm)) * plm_get_height(plm);
-        video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(num_pixels * 3));
-
-        video_ctx->texture_crop_size = glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->shaderProgram->ID,"texture_crop_size");
-        
-        return true;*/
-
         plm = plm_create_with_filename(filepath);
         if (!plm)
         {
@@ -236,48 +191,49 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         float videoWidth = static_cast<float>(plm_get_width(plm));
         float videoHeight = static_cast<float>(plm_get_height(plm));
 
-        // **Setup VAO & VBO once**
         float vertices[] = {
-            // Positions (X, Y, Z)    // Colors       // Texture Coords  // Frame Index
-            0.0f,         0.0f,        0.f, 1.0f,1.0f,1.0f,   0.0f, 0.0f,    0,  // Bottom-left
-            videoWidth,   0.0f,        0.f, 1.0f,1.0f,1.0f,   1.0f, 0.0f,    0,  // Bottom-right
-            0.0f,         videoHeight, 0.f,  1.0f,1.0f,1.0f,   0.0f, 1.0f,    0,  // Top-left
-            videoWidth,   videoHeight, 0.f,  1.0f,1.0f,1.0f,   1.0f, 1.0f,    0   // Top-right
+            // Positions         // Colors      // Texture Coords
+            -0.5f, -0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 1.0f,  // Bottom-left (Y flipped)
+             0.5f, -0.5f, 0.0f,  1.0f,1.0f,1.0f,   1.0f, 1.0f,  // Bottom-right (Y flipped)
+             0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   1.0f, 0.0f,  // Top-right (Y flipped)
+
+            -0.5f, -0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 1.0f,  // Bottom-left (Y flipped)
+             0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   1.0f, 0.0f,  // Top-right (Y flipped)
+            -0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 0.0f   // Top-left (Y flipped)
         };
 
-
-
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
-
-        if (VAO == 0 || VBO == 0)
-        {
-            UME_ENGINE_ERROR("VAO or VBO creation failed!");
-        }
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float))); // Color
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // Color
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float))); // UV
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
         glEnableVertexAttribArray(2);
-        glVertexAttribIPointer(3, 1, GL_INT, 9 * sizeof(float), (void*)(8 * sizeof(float))); // Frame Index
-        glEnableVertexAttribArray(3);
 
         glBindVertexArray(0);
+
+        //// Enable audio
+        //plm_set_audio_enabled(plm, true);
+        //plm_set_audio_stream(plm, 0);  // Select the first audio stream
+
+        //// Set the audio callback function
+        //plm_set_audio_decode_callback(plm, Audio_Callback, this); 
 
         return true;
     }
 
-    Texture VideoManager::CreateVideoTexture(int width, int height, int num_frames)
+    GLuint VideoManager::CreateVideoTexture(int width, int height, int num_frames)
     {
-        /*glGenTextures(1, &videoTextureID);
+        stbi_set_flip_vertically_on_load(true);
+        glGenTextures(1, &videoTextureID);
         glBindTexture(GL_TEXTURE_2D_ARRAY,videoTextureID);
 
         if (!videoTextureID)
@@ -296,14 +252,8 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         UME_ENGINE_TRACE("Created Video Texture - ID: {0}, Width: {1}, Height: {2}, Frames: {3}", videoTextureID, width, height, num_frames);
-        return videoTextureID;*/
-
-        // Use the Texture class to create a 2D array texture
-        Texture newTexture(GL_TEXTURE_2D_ARRAY, width, height, GL_RGB, GL_UNSIGNED_BYTE);
-
-        UME_ENGINE_TRACE("Created Video Texture - Width: {0}, Height: {1}, Frames: {2}", width, height, num_frames);
-
-        return newTexture;
+        return videoTextureID;
+      
     }
 
     void VideoManager::UpdateAndRenderVideo(plm_t* video)
@@ -320,22 +270,23 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         Audio::GetInstance().Update(); //update audio
 
-        // Update the current frame index (ensuring it loops correctly)
-        currentFrame = (currentFrame + 1) % totalFrames;
-        
+        // Get the elapsed time since the last frame
+        accumulatedTime += deltaTime;
+
+        // Compute the required time per frame (1 / FPS)
+        double frameDuration = 1.0 / plm_get_framerate(plm);
+
+        // Only update the video frame if enough time has passed
+        if (accumulatedTime >= frameDuration)
+        {
+            accumulatedTime -= frameDuration; // Subtract frame time to stay in sync
+            currentFrame = (currentFrame + 1) % totalFrames;
+        }
+
         RenderVideoFrame();
+        
         if (plm_has_ended(plm))
             Free();
-        
-        // if (!video) return;
-        // currentFrame = -1;
-        // do // It'll keep playing till finish
-        // {
-        //     ++currentFrame;
-        //     plm_decode(plm,g_FrameRateController.GetDeltaTime());
-        // } while (!plm_has_ended(plm));
-        //
-        // Free();
     }
 
     void VideoManager::Init(int width, int height)

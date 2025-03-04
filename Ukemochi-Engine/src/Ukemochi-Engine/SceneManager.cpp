@@ -318,9 +318,13 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
-	    //ECS::GetInstance().GetSystem<VideoManager>()->Update();
+        ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+        ECS::GetInstance().GetSystem<VideoManager>()->Update(); 
+        ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender(); 
 
-        SceneManagerDraw();
+        //SceneManagerDraw();
+
+        
     }
 
     /*!***********************************************************************
@@ -331,7 +335,7 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
-	    ECS::GetInstance().GetSystem<VideoManager>()->Update();
+	    //ECS::GetInstance().GetSystem<VideoManager>()->Update();
 	    
         loop_start = std::chrono::steady_clock::now();
 
@@ -471,7 +475,7 @@ namespace Ukemochi
         sys_start = std::chrono::steady_clock::now();
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
-		SceneManagerDraw();
+		//SceneManagerDraw();
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 

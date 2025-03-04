@@ -48,10 +48,10 @@ namespace Ukemochi {
     public:
         GLuint videoTextureID = 0;
         //std::unique_ptr<Texture> videoAtlas;
-        Texture videoTexture;
         int currentFrame = 0;
         int totalFrames;
     private:
+        float accumulatedTime = 0.0f;
         GLuint VAO{}, VBO{};
         bool isPlaying = true;
 
@@ -68,7 +68,7 @@ namespace Ukemochi {
          * @param num_frames
          * @return texture ID
          */
-        Texture CreateVideoTexture(int width, int height, int num_frames);
+        GLuint CreateVideoTexture(int width, int height, int num_frames);
         
         /**
          * @brief decode and display the video
