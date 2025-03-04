@@ -963,7 +963,7 @@ namespace Ukemochi
                         enemyphysic.force.x = enemyphysic.force.y = 0.f;
                         if (!enemycomponent.iswaiting)
                         {
-                            enemycomponent.waitTime = .5f;
+                            enemycomponent.waitTime = .2f;
                             enemycomponent.iswaiting = true;
                         }
                     }
@@ -993,7 +993,7 @@ namespace Ukemochi
                             if (!enemycomponent.iswaiting)
                             {
                                 enemycomponent.iswaiting = true;
-                                enemycomponent.waitTime = 0.5f;
+                                enemycomponent.waitTime = 0.25f;
                                 break;
                             }
                         }
