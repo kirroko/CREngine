@@ -203,6 +203,8 @@ namespace Ukemochi
             LoadSaveFile(UseImGui::GetStartScene());
         }
 
+        UME_ENGINE_TRACE("Initializing Transformation...");
+        ECS::GetInstance().GetSystem<Transformation>()->Init();
         UME_ENGINE_TRACE("Initializing Collision...");
         ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
@@ -219,7 +221,7 @@ namespace Ukemochi
             0,
             Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
 	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
-        SPRITE_SHAPE::BOX,0,true,false,false});
+        SPRITE_SHAPE::BOX,10,true,false,false});
 		es_current = ES_PLAY;
 #endif
     }
@@ -395,6 +397,8 @@ namespace Ukemochi
 
 			LoadSaveFile(GetCurrScene() + ".json");
 
+            UME_ENGINE_TRACE("Initializing Transformation...");
+            ECS::GetInstance().GetSystem<Transformation>()->Init();
 			UME_ENGINE_TRACE("Initializing Collision...");
 			ECS::GetInstance().GetSystem<Collision>()->Init();
 			UME_ENGINE_TRACE("Initializing dungeon manager...");

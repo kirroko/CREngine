@@ -169,6 +169,7 @@ namespace Ukemochi
 		float original_frame_time = 0.05f;					  // Original frame time
 		bool is_playing = true;								  // Is the animation playing?
 		bool doNotInterrupt = false;						  // Do not interrupt the current animation
+		bool isReverse = false;
 
 		bool isAttacking = false;
 		bool attackAnimationFinished = false;
@@ -251,6 +252,17 @@ namespace Ukemochi
 			return false;
 		}
 
+		bool RestartAnimation()
+		{
+			if (clips.find(currentClip) == clips.end())
+				return false;
+
+			current_frame = 0;
+			time_since_last_frame = 0.0f;
+
+			return true;
+		}
+
 		void update(float dt)
 		{
 			if (clips.find(currentClip) == clips.end()) // Don't update if the clip doesn't exist
@@ -270,14 +282,28 @@ namespace Ukemochi
 			// Advance new frame
 			if (time_since_last_frame >= clip.frame_time)
 			{
-				current_frame++;
-				// time_since_last_frame -= clip.frame_time;
-				if (current_frame >= clip.total_frames || (current_frame >= stop_frame && stop_frame != 0))
+				if (!isReverse)
 				{
-					current_frame = clip.looping ? 0 : clip.total_frames - 1;
-					doNotInterrupt = false;
-					isAttacking = false;
-					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
+					current_frame++;
+				
+					if (current_frame >= clip.total_frames || (current_frame >= stop_frame && stop_frame != 0))
+					{
+						current_frame = clip.looping ? 0 : clip.total_frames - 1;
+						doNotInterrupt = false;
+						isAttacking = false;
+					}
+				}
+				else
+				{
+					current_frame--;
+
+					if (current_frame < 0 || current_frame <= stop_frame)
+                    {
+                        current_frame = clip.looping ? clip.total_frames - 1 : 0;
+                        doNotInterrupt = false;
+                        isAttacking = false;
+						isReverse = false; // reset animation to forward
+                    }
 				}
 
 				time_since_last_frame = 0.0f; // Reset time
@@ -357,7 +383,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
 		float maxComboTimer = 5.0f; // Max time to continue combo 
-		float playerForce = 2500.0f;
+		float playerForce = 4500.0f;
 		bool isDead = false;
 		bool canAttack = true;
 		bool comboIsAttacking = false;

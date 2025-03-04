@@ -87,7 +87,7 @@ namespace Ukemochi
             {
                 auto& data = ECS::GetInstance().GetComponent<Player>(entity);
                 auto& soulData = ECS::GetInstance().GetComponent<PlayerSoul>(entity);
-                
+
                 // I know that this entity will have transform, rigidbody2d and spriteRender, but it's not implicitly stated when setting the signature
                 if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity))
                 {
@@ -110,6 +110,8 @@ namespace Ukemochi
                 auto& anim = ECS::GetInstance().GetComponent<Animation>(entity);
                 auto& sr = ECS::GetInstance().GetComponent<SpriteRender>(entity);
 
+                auto& shadow_trans = GameObjectManager::GetInstance().GetGOByName("Player_Shadow")->GetComponent<Transform>();
+
                 static bool playerDeadSoundPlayed = false;
 
                 // Check if Mochi is dead
@@ -128,60 +130,83 @@ namespace Ukemochi
                     // Stop Mochi's movement
                     rb.force = Vec2{ 0,0 };
                     rb.velocity = Vec2{ 0,0 };
-                    
+
                     return;
                 }
-                
+
                 playerDeadSoundPlayed = false; // Reset the flag if the player is not dead
-                
+
                 // Allow Mochi to move if not attacking or casting an ability
                 if (!data.comboIsAttacking && !soulData.is_casting)
                     PlayersMovement(rb, sr, data);
 
+                // Move the offset player's shadow
+                if (!sr.flipX)
+                    shadow_trans.position = Vector3D(trans.position.x - shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.55f, trans.position.z);
+                else
+                    shadow_trans.position = Vector3D(trans.position.x + shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.55f, trans.position.z);
+
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
                     && !data.comboIsAttacking)
-                    anim.SetAnimation(SoulAnimation(soulData,"Running"));
-                    // anim.SetAnimation("Running");
+                    anim.SetAnimation(SoulAnimation(soulData, "Running"));
+                // anim.SetAnimation("Running");
                 else
-                    anim.SetAnimation(SoulAnimation(soulData,"Idle"));
-                    // anim.SetAnimation("Idle");
+                    anim.SetAnimation(SoulAnimation(soulData, "Idle"));
+                // anim.SetAnimation("Idle");
 
-            // Play the running sound only at frame 2
-            static bool runningSoundPlayed = false;
-            if (anim.currentClip.find("Running") != std::string::npos)  // Only when running animation is active
-            {
-                int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
-
-                // 6 or 7 for current frame
-                if ((currentFrame == 3 || currentFrame == 7) && !runningSoundPlayed)
+                // Play the running sound only at frame 2
+                static bool runningSoundPlayed = false;
+                if (anim.currentClip.find("Running") != std::string::npos)  // Only when running animation is active
                 {
-                    // Assuming you have an audio manager and running sound index
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    int runningSoundIndex = audioM.GetSFXindex("Running"); // Replace with the actual sound name
-                    if (runningSoundIndex != -1)
+                    int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
+
+                    static int lastRunningSoundIndex = 0;
+
+                    // 6 or 7 for current frame
+                    if ((currentFrame == 3 || currentFrame == 7) && !runningSoundPlayed)
                     {
-                        audioM.PlaySFX(runningSoundIndex);
-                    }
-                    runningSoundPlayed = true; // Prevent it from playing again at the same frame
-                }
-                else if ((currentFrame != 3 && currentFrame != 7))
-                {
-                    runningSoundPlayed = false; // Reset when leaving frame 2
-                }
-            }
+                        // Assuming you have an audio manager and running sound index
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        std::vector<int> runningSounds = {
+                            audioM.GetSFXindex("Running1"),
+                            audioM.GetSFXindex("Running2"),
+                            audioM.GetSFXindex("Running3"),
+							audioM.GetSFXindex("Running4"),
+							audioM.GetSFXindex("Running5"),
+							audioM.GetSFXindex("Running6")
+                        };
+                        // Filter out any invalid indices (-1)
+                        std::vector<int> validSounds;
+                        for (int index : runningSounds) {
+                            if (index != -1) {
+                                validSounds.push_back(index);
+                            }
+                        }
 
+                        if (!validSounds.empty()) {
+
+                            // Option 2: Random selection (alternative approach)
+                            int randomIndex = rand() % validSounds.size();
+                            lastRunningSoundIndex = randomIndex;
+
+                            // Play the selected sound
+                            audioM.PlaySFX(validSounds[lastRunningSoundIndex]);
+                        }
+
+                        runningSoundPlayed = true; // Prevent it from playing again at the same frame
+                    }
+                    else if ((currentFrame != 3 && currentFrame != 7))
+                    {
+                        runningSoundPlayed = false; // Reset when leaving frame 2
+                    }
+                }
 
                 // Update knife position
+                auto& knife_trans = GameObjectManager::GetInstance().GetGOByName("Knife")->GetComponent<Transform>();
                 if (sr.flipX)
-                {
-                    auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
                     knife_trans.position = Vec3{ trans.position.x + trans.scale.x, trans.position.y,0 };
-                }
                 else
-                {
-                    auto& knife_trans = ECS::GetInstance().GetComponent<Transform>(entity + 1);
                     knife_trans.position = Vec3{ trans.position.x - trans.scale.x, trans.position.y,0 };
-                }
 
                 static bool kickAudio = false;
                 // Handle Combo timing
@@ -218,7 +243,7 @@ namespace Ukemochi
                     auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
                     UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
 
-                    AudioManager& audio = audioObj->GetComponent<AudioManager>();
+                        AudioManager& audio = audioObj->GetComponent<AudioManager>();
 
                     if (!data.comboIsAttacking)
                     {
@@ -233,7 +258,9 @@ namespace Ukemochi
                         switch (data.comboState)
                         {
                         case 0:
-                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),0,14);
+                            anim.isReverse = true;
+                            anim.SetAnimationFromTo(SoulAnimation(soulData, "Attack"), 11, 0);
+
                             // anim.SetAnimationFromTo("Attack", 0, 14);
                             if (audio.GetSFXindex("Pattack1") == -1)
                                 break;
@@ -243,7 +270,7 @@ namespace Ukemochi
                             // Deal damage?
                             break;
                         case 1:
-                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),14,25);
+                            anim.SetAnimationFromTo(SoulAnimation(soulData, "Attack"), 14, 25);
                             // anim.SetAnimationFromTo("Attack", 14, 25);
                             if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
                                 audio.StopSFX(audio.GetSFXindex("Pattack1"));
@@ -256,7 +283,7 @@ namespace Ukemochi
                             kickAudio = false;
                             break;
                         case 2:
-                            anim.SetAnimationFromTo(SoulAnimation(soulData,"Attack"),25,46);
+                            anim.SetAnimationFromTo(SoulAnimation(soulData, "Attack"), 30, 46);
                             // anim.SetAnimationFromTo("Attack", 25, 46);
                             break;
                         default:

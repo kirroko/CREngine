@@ -63,6 +63,10 @@ namespace Ukemochi
     *************************************************************************/
     void EnemyManager::UpdateEnemies()
     {
+        GameObject* player = GameObjectManager::GetInstance().GetGOByTag("Player");
+        auto& playerTransform = player->GetComponent<Transform>();
+        float soundRange = 750.0f; // Maximum distance for sound to play
+
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
 
@@ -85,6 +89,12 @@ namespace Ukemochi
                 auto& enemyphysic = object->GetComponent<Rigidbody2D>();
                 auto& enemytransform = object->GetComponent<Transform>();
                 auto& sr = object->GetComponent<SpriteRender>();
+                // Check if the enemy is within range of the player
+                float deltaX = playerTransform.position.x - enemytransform.position.x;
+                float deltaY = playerTransform.position.y - enemytransform.position.y;
+
+                // Euclidean distance (Pythagorean theorem)
+                float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
 
                 // Handle enemy hit state and sound effects
                 if (enemycomponent.wasHit)
@@ -94,9 +104,34 @@ namespace Ukemochi
                     {
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                         // Play different hit sounds based on enemy type
-                        if (enemycomponent.type == Enemy::FISH && audioM.GetSFXindex("FishHurt") != -1)
+                        if (enemycomponent.type == Enemy::FISH)
                         {
-                            audioM.PlaySFX(audioM.GetSFXindex("FishHurt"));
+                            std::vector<int> fishHurtSounds;
+                            // Add all available fish hurt sounds to the array
+                            int fishHurt1 = audioM.GetSFXindex("FishHurt1");
+                            if (fishHurt1 != -1) fishHurtSounds.push_back(fishHurt1);
+
+                            int fishHurt2 = audioM.GetSFXindex("FishHurt2");
+                            if (fishHurt2 != -1) fishHurtSounds.push_back(fishHurt2);
+
+                            int fishHurt3 = audioM.GetSFXindex("FishHurt3");
+                            if (fishHurt3 != -1) fishHurtSounds.push_back(fishHurt3);
+
+                            int fishHurt4 = audioM.GetSFXindex("FishHurt4");
+                            if (fishHurt4 != -1) fishHurtSounds.push_back(fishHurt4);
+
+                            // Original sound as fallback
+                            int fishHurtOriginal = audioM.GetSFXindex("FishHurt1");
+                            if (fishHurtOriginal != -1) fishHurtSounds.push_back(fishHurtOriginal);
+
+                            // If we have fish hurt sounds available, play a random one
+                            if (!fishHurtSounds.empty())
+                            {
+                                // Generate a random index into our array of sounds
+                                int randomIndex = rand() % fishHurtSounds.size();
+                                audioM.PlaySFX(fishHurtSounds[randomIndex]);
+                            }
+
                         }
                         else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHurt") != -1)
                         {
@@ -115,10 +150,54 @@ namespace Ukemochi
                 {
                     // Play death sound immediately when health hits 0
                     auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (audioM.GetSFXindex("EnemyKilled") != -1)
+
+                    // Play different death sounds based on enemy type
+                    if (enemycomponent.type == Enemy::FISH)
                     {
-                        audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                        // Create an array of available fish death sound indices
+                        std::vector<int> fishDeadSounds;
+
+                        // Add all available fish death sounds to the array
+                        int fishDead1 = audioM.GetSFXindex("FishDead1");
+                        if (fishDead1 != -1) fishDeadSounds.push_back(fishDead1);
+
+                        int fishDead2 = audioM.GetSFXindex("FishDead2");
+                        if (fishDead2 != -1) fishDeadSounds.push_back(fishDead2);
+
+                        int fishDead3 = audioM.GetSFXindex("FishDead3");
+                        if (fishDead3 != -1) fishDeadSounds.push_back(fishDead3);
+
+                        // If we have fish death sounds available, play a random one
+                        if (!fishDeadSounds.empty())
+                        {
+                            // Generate a random index into our array of sounds
+                            int randomIndex = rand() % fishDeadSounds.size();
+                            audioM.PlaySFX(fishDeadSounds[randomIndex]);
+                        }
                     }
+                    else if (enemycomponent.type == Enemy::WORM)
+                    {
+                        // Use a specific worm death sound if available
+                        int wormDead = audioM.GetSFXindex("WormDead");
+                        if (wormDead != -1)
+                        {
+                            audioM.PlaySFX(wormDead);
+                        }
+                        // If WormDead sound isn't available, fall back to generic death sound
+                        else if (audioM.GetSFXindex("EnemyKilled") != -1)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                        }
+                    }
+                    else
+                    {
+                        // For any other enemy types, use the generic death sound
+                        if (audioM.GetSFXindex("EnemyKilled") != -1)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+                        }
+                    }
+
                     enemycomponent.state = Enemy::DEAD;
                     enemycomponent.isDead = true;  // Mark as dead immediately
                 }
@@ -129,7 +208,7 @@ namespace Ukemochi
 
                 // Animation and sound synchronization
                 auto& anim = object->GetComponent<Animation>();
-                if (anim.currentClip == "Walk")
+                if (anim.currentClip == "Walk" && distance <= soundRange)
                 {
                     if (enemycomponent.type == Enemy::FISH)
                     {
@@ -146,7 +225,7 @@ namespace Ukemochi
                             }
                         }
                     }
-                    if (enemycomponent.type == Enemy::WORM)
+                    if (enemycomponent.type == Enemy::WORM && distance <= soundRange)
                     {
                         // Play FishMove sound at specific frames
                         if (anim.GetCurrentFrame() == 2 || anim.GetCurrentFrame() == 6)
@@ -402,11 +481,31 @@ namespace Ukemochi
                         // Check if the player is within attack range
                         if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
                         {
+                            if (enemycomponent.type == enemycomponent.FISH)
+                            {
+                                if (std::abs(playerObj->GetComponent<Transform>().position.x - enemytransform.position.x) < 150.f)
+                                {
+                                    enemyphysic.velocity.x = 0.0f;
+                                    enemyphysic.velocity.y = 0.0f;
+                                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
+                                    enemycomponent.state = enemycomponent.STANDBY;
+                                }
+                            }
+                            if (enemycomponent.type == enemycomponent.WORM)
+                            {
+                                if (std::abs(playerObj->GetComponent<Transform>().position.x - enemytransform.position.x) < 3000.f)
+                                {
+                                    enemyphysic.velocity.x = 0.0f;
+                                    enemyphysic.velocity.y = 0.0f;
+                                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
+                                    enemycomponent.state = enemycomponent.STANDBY;
+                                }
+                            }
                             // Stop movement and transition to ATTACK state
-                            enemyphysic.velocity.x = 0.0f;
-                            enemyphysic.velocity.y = 0.0f;
-                            enemyphysic.force.x = enemyphysic.force.y = 0.f;
-                            enemycomponent.state = enemycomponent.STANDBY;
+                            //enemyphysic.velocity.x = 0.0f;
+                            //enemyphysic.velocity.y = 0.0f;
+                            //enemyphysic.force.x = enemyphysic.force.y = 0.f;
+
                             break;
                         }
                     }
@@ -486,11 +585,33 @@ namespace Ukemochi
                         {
                             //SFX
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                            if (audioM.GetSFXindex("FishAttack") != -1)
+                            std::vector<int> fishAttackSounds;
+
+                            // Add all available fish attack sounds to the array
+                            int fishAttack1 = audioM.GetSFXindex("FishAttack1");
+                            if (fishAttack1 != -1) fishAttackSounds.push_back(fishAttack1);
+
+                            int fishAttack2 = audioM.GetSFXindex("FishAttack2");
+                            if (fishAttack2 != -1) fishAttackSounds.push_back(fishAttack2);
+
+                            int fishAttack3 = audioM.GetSFXindex("FishAttack3");
+                            if (fishAttack3 != -1) fishAttackSounds.push_back(fishAttack3);
+
+                            // Add the original sound as fallback
+                            int fishAttackOriginal = audioM.GetSFXindex("FishAttack1");
+                            if (fishAttackOriginal != -1) fishAttackSounds.push_back(fishAttackOriginal);
+
+                            // If we have fish attack sounds available, play a random one
+                            if (!fishAttackSounds.empty())
                             {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("FishAttack")))
+                                // Generate a random index into our array of sounds
+                                int randomIndex = rand() % fishAttackSounds.size();
+                                int selectedSoundIndex = fishAttackSounds[randomIndex];
+
+                                // Check if the selected sound is already playing
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSoundIndex))
                                 {
-                                    audioM.PlaySFX(audioM.GetSFXindex("FishAttack"));
+                                    audioM.PlaySFX(selectedSoundIndex);
 
                                     //check attack
                                     if (enemycomponent.IsPlayerInRange(playerObj->GetComponent<Transform>(), enemytransform))
@@ -516,6 +637,40 @@ namespace Ukemochi
 
                             }
 
+                        }
+
+                        else if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 7)
+                        {
+                            // SFX for fish in air
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                            // Create an array to hold our fish jump/air sound indices
+                            std::vector<int> fishAirSounds;
+
+                            // Add all available fish air sounds to the array
+                            int fishAir1 = audioM.GetSFXindex("FishAir1");
+                            if (fishAir1 != -1) fishAirSounds.push_back(fishAir1);
+
+                            int fishAir2 = audioM.GetSFXindex("FishAir2");
+                            if (fishAir2 != -1) fishAirSounds.push_back(fishAir2);
+
+                            // Add the original sound as fallback if you have one
+                            int fishAirOriginal = audioM.GetSFXindex("FishAir");
+                            if (fishAirOriginal != -1) fishAirSounds.push_back(fishAirOriginal);
+
+                            // If we have fish air sounds available, play a random one
+                            if (!fishAirSounds.empty())
+                            {
+                                // Generate a random index into our array of sounds
+                                int randomIndex = rand() % fishAirSounds.size();
+                                int selectedSoundIndex = fishAirSounds[randomIndex];
+
+                                // Check if the selected sound is already playing
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSoundIndex))
+                                {
+                                    audioM.PlaySFX(selectedSoundIndex);
+                                }
+                            }
                         }
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)

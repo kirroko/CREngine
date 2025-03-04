@@ -1,0 +1,28 @@
+{"frames": {
+
+"bush 3.png":
+{
+	"frame": {"x":5,"y":5,"w":3780,"h":1620},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":3780,"h":1620},
+	"sourceSize": {"w":3780,"h":1620}
+},
+"env_base_vine_1.png":
+{
+	"frame": {"x":5,"y":1630,"w":1650,"h":1650},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1650,"h":1650},
+	"sourceSize": {"w":1650,"h":1650}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "base env moving_2.png",
+	"format": "RGBA8888",
+	"size": {"w":3790,"h":3285},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:38194f07a8ed4d23bde31ce7eb2c4d5d:a5125a119f4daf59cdd452a9ee23a086:a75c8bf7fa307b808e8a130e43fc4ce2$"
+}
+}

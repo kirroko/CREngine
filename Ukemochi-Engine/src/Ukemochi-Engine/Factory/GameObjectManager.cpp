@@ -79,6 +79,24 @@ void GameObjectManager::DestroyObject(EntityID id)
 }
 
 /**
+ * @brief Get a gameobject by its name
+ * @param name a name to search for
+ * @return a gameobject
+ */
+GameObject* GameObjectManager::GetGOByName(const std::string& name) const
+{
+    for (auto& go : m_GOs)
+    {
+        if (go.second->GetName() != name)
+            continue;
+
+        return go.second.get();
+    }
+
+    return nullptr;
+}
+
+/**
  * @brief Get a GameObject by its tag
  * @param tag The tag of the GameObject
  * @return GameObject* The GameObject with the tag

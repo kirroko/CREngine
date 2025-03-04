@@ -165,6 +165,19 @@ namespace Ukemochi
         *************************************************************************/
         void SetAudioVolume(int soundIndex, float volume, std::string type);
 
+        void DecreaseMusicMasterVolume(float step);
+        void IncreaseMusicMasterVolume(float step);
+
+        void SetSFXMasterVolume(float volume);
+       
+		void IncreaseSFXMasterVolume(float step);
+		void DecreaseSFXMasterVolume(float step);
+
+        void IncreaseVolume(int soundIndex, float step, std::string type);
+
+		void DecreaseVolume(int soundIndex, float step, std::string type);
+
+
         /*!***********************************************************************
         \brief
          Set the volume for an entire group of sounds.
@@ -276,6 +289,7 @@ namespace Ukemochi
         bool isSFXMuted = false;
         float musicVolume = 0.2f; // Default music volume
         float sfxVolume = 0.2f;   // Default SFX volume
+        float sfxMasterVolume = 0.2f;
     };
 }
 
