@@ -694,14 +694,45 @@ namespace Ukemochi
 			
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
-			//auto& box_data = 
 			auto& box_anim = ECS::GetInstance().GetComponent<Animation>(entity2);
-
 			
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
 				return;
 
 
+			if (player_anim.current_frame == 10 || player_anim.current_frame == 15 || player_anim.current_frame == 31)
+			{
+				
+				if (box_anim.is_playing)
+				{
+					box_anim.SetAnimation("Box_Break");
+					box_anim.is_playing = false;
+					return;
+				}
+				static int prev_frame =
+					/*if (prev_frame != box_anim.current_frame)
+					{
+						return;
+					}*/
+
+					/*prev_frame =*/ box_anim.current_frame;
+				box_anim.current_frame++;
+				if (box_anim.current_frame > 3)
+				{
+					box_anim.current_frame = 3;
+				}
+				if (prev_frame == 2 && box_anim.current_frame == 3)
+				{
+					player_data.currentHealth += 20;
+					player_data.postInjuriesMaxHealth += 20;
+					if (player_data.currentHealth > player_data.maxHealth || player_data.postInjuriesMaxHealth > player_data.maxHealth)
+					{
+						player_data.currentHealth = player_data.maxHealth;
+						player_data.postInjuriesMaxHealth = player_data.maxHealth;
+					}
+				}
+			}
+			return;
 			// Placeholder, wait for when animations is complete so that we can break the box
 			// Play Animation
 

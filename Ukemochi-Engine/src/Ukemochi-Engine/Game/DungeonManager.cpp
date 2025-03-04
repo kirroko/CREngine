@@ -123,7 +123,7 @@ namespace Ukemochi
 		{
 			UnlockRoom();
 			//healing to post injuries max health here
-			while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+			while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
 			{
 				GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
 				if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)

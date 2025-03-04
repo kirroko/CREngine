@@ -361,44 +361,6 @@
                     "CurrentClip": "Grass_1"
                 }]
         }, {
-            "Name": "1_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [-1200.0, 650.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [138.0, 285.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [-559.0, 367.5],
-                    "Max": [-421.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_2",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
             "Name": "1_Box1",
             "Tag": "Environment",
             "Components": [{
@@ -438,7 +400,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Box_1_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_1_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false],
                         "Box_1": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box_1", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false]
                     },
                     "CurrentClip": "Box_1"
@@ -484,7 +446,7 @@
                     "Name": "Animation",
                     "Clips": {
                         "Box_2": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box_2", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false],
-                        "Box_2_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_2_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false]
+                        "Box_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false]
                     },
                     "CurrentClip": "Box_2"
                 }]
@@ -529,7 +491,7 @@
                     "Name": "Animation",
                     "Clips": {
                         "Box_3": ["env_base_box_3", "../Assets/Textures/Environment/base env static_Part.png", "Box_3", 1, 0.5, 0.5, 100, 131, 200, 131, 200, 0.05000000074505806, false],
-                        "Box_3_Break": ["env_base_box_3_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_3_Break", 4, 0.5, 0.5, 100, 131, 200, 393, 400, 0.05000000074505806, false]
+                        "Box_Break": ["env_base_box_3_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 131, 200, 393, 400, 0.05000000074505806, false]
                     },
                     "CurrentClip": "Box_3"
                 }]
@@ -920,82 +882,6 @@
                     "Layer": 0
                 }]
         }, {
-            "Name": "2_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1300.0, 750.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [138.0, 285.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [-0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1361.0, 367.5],
-                    "Max": [1499.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_2",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
-            "Name": "2_Box1",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1650.0, 190.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [156.0, 200.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, -0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1180.0, 320.0],
-                    "Max": [1336.0, 520.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_1",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
             "Name": "2_RightWallBack",
             "Tag": "Default",
             "Components": [{
@@ -1195,7 +1081,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1554,44 +1440,6 @@
                     "Layer": 0
                 }]
         }, {
-            "Name": "3_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [3150.0, 510.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [138.0, 285.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [-0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1361.0, 367.5],
-                    "Max": [1499.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_2",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
             "Name": "3_RightWallBack",
             "Tag": "Default",
             "Components": [{
@@ -1711,7 +1559,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1815,7 +1663,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2122,82 +1970,6 @@
                     "Layer": 0
                 }]
         }, {
-            "Name": "4_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [4360.0, 200.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [138.0, 285.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [-559.0, 367.5],
-                    "Max": [-421.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_2",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
-            "Name": "4_Box1",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [5350.0, 650.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [156.0, 200.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [-1378.0, 320.0],
-                    "Max": [-1222.0, 520.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_1",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
             "Name": "4_RightWallBack",
             "Tag": "Default",
             "Components": [{
@@ -2369,7 +2141,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2421,7 +2193,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2473,7 +2245,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2778,44 +2550,6 @@
                     "Sprite": "env_base_cave-drawings",
                     "Shape": 0,
                     "Layer": 0
-                }]
-        }, {
-            "Name": "5_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [6990.0, 510.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [138.0, 285.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [-0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1361.0, 367.5],
-                    "Max": [1499.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_2",
-                    "Shape": 0,
-                    "Layer": 3
                 }]
         }, {
             "Name": "5_RightWallBack",
@@ -3312,7 +3046,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 4
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -3357,7 +3091,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 4
+                    "Layer": 1
                 }, {
                     "Name": "Animation",
                     "Clips": {
