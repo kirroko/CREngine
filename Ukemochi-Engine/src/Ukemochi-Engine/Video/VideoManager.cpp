@@ -34,8 +34,14 @@ namespace Ukemochi {
     {
         if (!plm) return;
 
-        UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
+        plm_samples_t* samples = plm_decode_audio(plm);
+        if (samples)
+        {
+            Audio::GetInstance().playStereoSound(samples->interleaved, samples->count);
+        }
 
+
+        UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
         // Activate shader
         ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
 
@@ -220,12 +226,14 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         glBindVertexArray(0);
 
-        //// Enable audio
+        /// Enable audio
         //plm_set_audio_enabled(plm, true);
         //plm_set_audio_stream(plm, 0);  // Select the first audio stream
 
         //// Set the audio callback function
         //plm_set_audio_decode_callback(plm, Audio_Callback, this); 
+        //rb = new RingBuffer();
+        //plm_set_audio_decode_callback(plm, Audio_Callback, rb);
 
         return true;
     }
@@ -283,10 +291,15 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
             currentFrame = (currentFrame + 1) % totalFrames;
         }
 
+        // Enable audio
+        //plm_set_audio_enabled(plm, true);
+        //plm_set_audio_stream(plm, 0);  // Select the first audio stream
+        // Set the audio callback function
+
         RenderVideoFrame();
-        
-        if (plm_has_ended(plm))
-            Free();
+
+        //if (plm_has_ended(plm))
+            //Free();
     }
 
     void VideoManager::Init(int width, int height)

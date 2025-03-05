@@ -63,7 +63,7 @@ namespace Ukemochi
         }
         // Simple Low-pass filter example
         float previousSample = 0.0f;
-        float alpha = 0.2f;  // Cutoff factor
+        float alpha = 0.01f;  // Cutoff factor
 
         // Apply low-pass filter to each sample
         for (int i = 0; i < sampleCount * 2; ++i) {
@@ -107,6 +107,7 @@ namespace Ukemochi
         // Play the sound
         FMOD::Channel* pChannel = nullptr;
         result = pSystem->playSound(pvideosound, nullptr, false, &pChannel);
+        std::cout << "PLAYING" << std::endl;
         if (result != FMOD_OK) {
             std::cerr << "FMOD Error (playSound): " << result << std::endl;
         }
