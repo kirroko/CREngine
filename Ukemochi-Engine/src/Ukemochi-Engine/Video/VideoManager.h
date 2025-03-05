@@ -51,9 +51,11 @@ namespace Ukemochi {
         int currentFrame = 0;
         int totalFrames;
     private:
-        float accumulatedTime = 0.0f;
+        double elapsedTime = 0.0f;
+        double lastFrameTime = 0.0f;
         GLuint VAO{}, VBO{};
         bool isPlaying = true;
+        double frameDuration = 0.f;
 
         void RenderVideoFrame();
 

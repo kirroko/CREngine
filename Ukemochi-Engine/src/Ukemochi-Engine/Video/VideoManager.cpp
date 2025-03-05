@@ -176,8 +176,8 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         }
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
-        // Enable looping for playback
-        //plm_set_loop(plm, true);
+        // Disable looping for playback
+        plm_set_loop(plm, false);
         totalFrames = static_cast<int>(plm_get_framerate(plm) * plm_get_duration(plm)); // Calculate total frames
 
         int storedLayers = 0;
@@ -226,7 +226,10 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         glBindVertexArray(0);
 
-        /// Enable audio
+        // Compute the required time per frame
+        frameDuration = (double)(1.0 / totalFrames) * plm_get_duration(plm);
+
+        //// Enable audio
         //plm_set_audio_enabled(plm, true);
         //plm_set_audio_stream(plm, 0);  // Select the first audio stream
 
@@ -279,16 +282,21 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         Audio::GetInstance().Update(); //update audio
 
         // Get the elapsed time since the last frame
-        accumulatedTime += deltaTime;
-
-        // Compute the required time per frame (1 / FPS)
-        double frameDuration = 1.0 / plm_get_framerate(plm);
-
+        elapsedTime += deltaTime;
+        
         // Only update the video frame if enough time has passed
-        if (accumulatedTime >= frameDuration)
+        if (currentFrame < totalFrames - 1) 
         {
-            accumulatedTime -= frameDuration; // Subtract frame time to stay in sync
-            currentFrame = (currentFrame + 1) % totalFrames;
+            if (elapsedTime >= frameDuration)
+            {
+                elapsedTime = 0.f; // Subtract frame time to stay in sync 
+                currentFrame = (currentFrame + 1) % totalFrames;
+            }
+        }
+        else
+        {
+            Free();
+            return;
         }
 
         // Enable audio
@@ -342,8 +350,8 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         if (video_ctx->rgb_buffer)
             free(video_ctx->rgb_buffer);
 
-        if (rb->buffer)
-            free(rb->buffer);
+        /*if (rb->buffer)
+            free(rb->buffer);*/
 
         delete video_ctx;
         delete rb;
