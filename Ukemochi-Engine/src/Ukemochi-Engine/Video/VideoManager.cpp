@@ -34,13 +34,6 @@ namespace Ukemochi {
     {
         if (!plm) return;
 
-        plm_samples_t* samples = plm_decode_audio(plm);
-        if (samples)
-        {
-            Audio::GetInstance().playStereoSound(samples->interleaved, samples->count);
-        }
-
-
         UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
         // Activate shader
         ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
@@ -274,40 +267,45 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
             UME_ENGINE_ERROR("Video object is null!");
             return;
         }
+
         float deltaTime = g_FrameRateController.GetDeltaTime();
         UME_ENGINE_TRACE("Decoding Video - DeltaTime: {0}", deltaTime);
 
         plm_decode(plm, deltaTime);
 
-        Audio::GetInstance().Update(); //update audio
+        Audio::GetInstance().Update(); // Update audio
 
         // Get the elapsed time since the last frame
         elapsedTime += deltaTime;
-        
+
         // Only update the video frame if enough time has passed
-        if (currentFrame < totalFrames - 1) 
+        if (currentFrame < totalFrames - 1)
         {
             if (elapsedTime >= frameDuration)
             {
-                elapsedTime = 0.f; // Subtract frame time to stay in sync 
+                // Reset elapsed time to stay in sync with video playback
+                elapsedTime = 0.f;
+
+                // Decode audio samples for the current frame
+                plm_samples_t* samples = plm_decode_audio(plm);
+                if (samples)
+                {
+                    // Play audio corresponding to the current video frame
+                    Audio::GetInstance().playStereoSound(samples->interleaved, samples->count);
+                }
+
+                // Move to the next frame
                 currentFrame = (currentFrame + 1) % totalFrames;
             }
         }
         else
         {
-            Free();
+            Free();  // Free resources once the video has ended
             return;
         }
 
-        // Enable audio
-        //plm_set_audio_enabled(plm, true);
-        //plm_set_audio_stream(plm, 0);  // Select the first audio stream
-        // Set the audio callback function
-
+        // Render the current video frame
         RenderVideoFrame();
-
-        //if (plm_has_ended(plm))
-            //Free();
     }
 
     void VideoManager::Init(int width, int height)

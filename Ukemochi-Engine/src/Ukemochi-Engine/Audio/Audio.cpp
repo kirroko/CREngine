@@ -27,74 +27,104 @@ namespace Ukemochi
 
     FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
     {
+        std::cout << "PCM Read Callback Triggered. Data Size: " << datalen << std::endl;
+
         if (pcm32Data.empty()) {
-            return FMOD_ERR_INVALID_PARAM;  // Ensure data exists
+            return FMOD_ERR_INVALID_PARAM;
         }
 
-        // Calculate number of samples
         size_t dataSizeNeeded = datalen / sizeof(float);
         if (pcm32Data.size() < dataSizeNeeded) {
-            pcm32Data.resize(dataSizeNeeded);  // Resize if needed
+            pcm32Data.resize(dataSizeNeeded);
         }
 
         size_t remainingData = pcm32Data.size() - readPosition;
 
-        // If not enough data is left, loop back to the start
-        if (remainingData < datalen / sizeof(float)) {
+        if (remainingData < dataSizeNeeded) {
             readPosition = 0;
             remainingData = pcm32Data.size();
         }
 
-        // Copy data into the buffer
         memcpy(data, pcm32Data.data() + readPosition, datalen);
-        readPosition += datalen / sizeof(float);
+        readPosition += dataSizeNeeded;
 
         return FMOD_OK;
     }
 
     void Audio::playStereoSound(float* interleavedSamples, int sampleCount)
     {
-        if (!pSystem || !interleavedSamples) return;
-
-        // Check if audio data exists
-        if (sampleCount == 0) {
-            std::cerr << "No audio samples received!" << std::endl;
+        if (!pSystem) {
+            std::cerr << "FMOD system is not initialized!" << std::endl;
             return;
         }
-        // Simple Low-pass filter example
-        float previousSample = 0.0f;
-        float alpha = 0.01f;  // Cutoff factor
 
-        // Apply low-pass filter to each sample
-        for (int i = 0; i < sampleCount * 2; ++i) {
-            interleavedSamples[i] = previousSample + alpha * (interleavedSamples[i] - previousSample);
-            previousSample = interleavedSamples[i];
+        if (!interleavedSamples) {
+            std::cerr << "Error: interleavedSamples is nullptr!" << std::endl;
+            return;
         }
 
-
-        // Convert the float samples directly to PCM32 (since we're using FLOAT32 format)
-        pcm32Data.resize(sampleCount * 2);  // 2 channels for stereo sound
-        for (int i = 0; i < sampleCount * 2; i++) {
-            pcm32Data[i] = std::clamp(interleavedSamples[i], -1.0f, 1.0f); // Ensure values are within [-1.0f, 1.0f]
+        if (sampleCount <= 0) {
+            std::cerr << "Error: sampleCount is invalid (" << sampleCount << ")!" << std::endl;
+            return;
         }
 
-        // Calculate buffer size in bytes
-        int dataSizeInBytes = pcm32Data.size() * sizeof(float);
+        // Compute total samples (stereo has 2 channels)
+        size_t totalSamples = static_cast<size_t>(sampleCount) * 2;
 
-        // Initialize FMOD_CREATESOUNDEXINFO
+
+        // Ensure pcm32Data is large enough
+        pcm32Data.resize(totalSamples, 0.0f);
+
+        // Low-pass filter parameters
+        float previousSampleL = 0.0f;
+        float previousSampleR = 0.0f;
+        float alpha = 0.01f;
+
+        // Apply low-pass filter while copying samples
+        for (size_t i = 0; i < totalSamples; i += 2) {
+            // Check if index is valid before accessing
+            if (i >= totalSamples || (i + 1) >= totalSamples) {
+                return;
+            }
+
+            // Verify interleavedSamples contains valid data
+            if (!std::isfinite(interleavedSamples[i]) || !std::isfinite(interleavedSamples[i + 1])) {
+                return;
+            }
+
+            // Left channel
+            pcm32Data[i] = previousSampleL + alpha * (interleavedSamples[i] - previousSampleL);
+            previousSampleL = pcm32Data[i];
+
+            // Right channel
+            pcm32Data[i + 1] = previousSampleR + alpha * (interleavedSamples[i + 1] - previousSampleR);
+            previousSampleR = pcm32Data[i + 1];
+        }
+
+        // Ensure PCM data is within range [-1.0f, 1.0f]
+        for (auto& sample : pcm32Data) {
+            sample = std::clamp(sample, -1.0f, 1.0f);
+        }
+
+        // If a sound is already playing, release it before creating a new one
+        if (pvideosound) {
+            pvideosound->release();
+            pvideosound = nullptr;
+        }
+
+        // Configure FMOD sound settings
         FMOD_CREATESOUNDEXINFO exinfo = {};
         exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-        exinfo.length = dataSizeInBytes;
-        exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;  // Change to PCMFLOAT for FLOAT32
+        exinfo.length = totalSamples * sizeof(float);
+        exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
         exinfo.numchannels = 2;
-        exinfo.defaultfrequency = 48000; // 44100 or 48000 based on your data
-        exinfo.decodebuffersize = 131072;  // Set to 0 for raw PCM
-        exinfo.pcmreadcallback = pcmReadCallback;  // Custom read callback
+        exinfo.defaultfrequency = 48000; // Adjust based on your source audio
+        exinfo.pcmreadcallback = pcmReadCallback; // Custom PCM read callback
 
-        // Create sound using FMOD_OPENUSER
-        FMOD_RESULT result = pSystem->createStream(
+        // Create a user-defined FMOD sound
+        FMOD_RESULT result = pSystem->createSound(
             nullptr,  // Data is provided via callback
-            FMOD_OPENUSER | FMOD_CREATECOMPRESSEDSAMPLE | FMOD_LOOP_OFF | FMOD_3D_HEADRELATIVE,
+            FMOD_OPENUSER | FMOD_LOOP_OFF | FMOD_3D_HEADRELATIVE,
             &exinfo,
             &pvideosound
         );
@@ -107,9 +137,11 @@ namespace Ukemochi
         // Play the sound
         FMOD::Channel* pChannel = nullptr;
         result = pSystem->playSound(pvideosound, nullptr, false, &pChannel);
-        std::cout << "PLAYING" << std::endl;
         if (result != FMOD_OK) {
             std::cerr << "FMOD Error (playSound): " << result << std::endl;
+        }
+        else {
+            std::cout << "Playing audio!" << std::endl;
         }
     }
 
