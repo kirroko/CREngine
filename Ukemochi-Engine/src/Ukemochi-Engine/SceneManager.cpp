@@ -479,7 +479,7 @@ namespace Ukemochi
         {
             // --- GAME LOGIC UPDATE ---
             sys_start = std::chrono::steady_clock::now();
-            ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+            // ECS::GetInstance().GetSystem<LogicSystem>()->Update();
             ECS::GetInstance().GetSystem<PlayerManager>()->Update();
             ECS::GetInstance().GetSystem<SoulManager>()->Update();
             ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
