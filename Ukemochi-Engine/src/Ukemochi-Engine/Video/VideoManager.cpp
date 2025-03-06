@@ -111,7 +111,7 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
     void VideoManager::Audio_Callback(plm_t* plm, plm_samples_t* frame, void* user)
     {
         if (frame->count > 0) {
-            Audio::GetInstance().playStereoSound(frame->interleaved, frame->count);
+            Audio::GetInstance().playStereoSound(frame->interleaved, frame->count,1.f);
         }
     }
 
@@ -222,6 +222,22 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         // Compute the required time per frame
         frameDuration = (double)(1.0 / totalFrames) * plm_get_duration(plm);
 
+        std::string filename = filepath;
+        size_t lastDot = filename.find_last_of(".");
+        if (lastDot != std::string::npos) {
+            filename = filename.substr(0, lastDot);  // Remove extension
+        }
+
+        // Add your own file extension (.wav)
+        std::string newFilename = filename + ".wav";
+
+        // Print for verification
+        std::cout << "Original Filepath: " << filepath << std::endl;
+        std::cout << "Extracted Filename: " << filename << std::endl;
+        std::cout << "Modified Filename: " << newFilename << std::endl;
+
+        ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, newFilename.c_str(), "SFX");
+
         //// Enable audio
         //plm_set_audio_enabled(plm, true);
         //plm_set_audio_stream(plm, 0);  // Select the first audio stream
@@ -277,22 +293,30 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         // Get the elapsed time since the last frame
         elapsedTime += deltaTime;
+        static double audioDuration = (double)(1.0 / totalFrames) * 14;
+
 
         // Only update the video frame if enough time has passed
         if (currentFrame < totalFrames - 1)
         {
+            if (elapsedTime >= audioDuration)
+            {
+                if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
+                {
+                    ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
+                }
+                // Decode audio samples for the current frame
+                //plm_samples_t* samples = plm_decode_audio(plm);
+                //if (samples)
+                {
+                    // Play audio corresponding to the current video frame
+                    //Audio::GetInstance().playStereoSound(samples->interleaved, samples->count,1.2f);
+                }
+            }
             if (elapsedTime >= frameDuration)
             {
                 // Reset elapsed time to stay in sync with video playback
                 elapsedTime = 0.f;
-
-                // Decode audio samples for the current frame
-                plm_samples_t* samples = plm_decode_audio(plm);
-                if (samples)
-                {
-                    // Play audio corresponding to the current video frame
-                    Audio::GetInstance().playStereoSound(samples->interleaved, samples->count);
-                }
 
                 // Move to the next frame
                 currentFrame = (currentFrame + 1) % totalFrames;
@@ -342,6 +366,7 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
     void VideoManager::Free() const
     {
+        ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
         if (plm)
             plm_destroy(plm);
 

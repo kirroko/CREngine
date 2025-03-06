@@ -41,7 +41,7 @@ namespace Ukemochi
 
         static FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
 
-        void playStereoSound(float* interleavedSamples, int sampleCount);
+        void playStereoSound(float* interleavedSamples, int sampleCount ,float speedMultiplier);
 
         /*!***********************************************************************
         \brief

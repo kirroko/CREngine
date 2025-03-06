@@ -33,9 +33,15 @@ namespace Ukemochi
             return FMOD_ERR_INVALID_PARAM;
         }
 
+        // Skip the first 10 sets of data (if pcm32Data is large enough)
+        size_t skipCount = 10 * 2;  // 10 sets * 2 channels
+        if (pcm32Data.size() > skipCount) {
+            readPosition = skipCount;  // Move the read position to skip the first 10 sets of data
+        }
+
         size_t dataSizeNeeded = datalen / sizeof(float);
-        if (pcm32Data.size() < dataSizeNeeded) {
-            pcm32Data.resize(dataSizeNeeded);
+        if (pcm32Data.size() < readPosition + dataSizeNeeded) {
+            pcm32Data.resize(readPosition + dataSizeNeeded);
         }
 
         size_t remainingData = pcm32Data.size() - readPosition;
@@ -51,7 +57,7 @@ namespace Ukemochi
         return FMOD_OK;
     }
 
-    void Audio::playStereoSound(float* interleavedSamples, int sampleCount)
+    void Audio::playStereoSound(float* interleavedSamples, int sampleCount, float speedMultiplier)
     {
         if (!pSystem) {
             std::cerr << "FMOD system is not initialized!" << std::endl;
@@ -71,40 +77,37 @@ namespace Ukemochi
         // Compute total samples (stereo has 2 channels)
         size_t totalSamples = static_cast<size_t>(sampleCount) * 2;
 
-
         // Ensure pcm32Data is large enough
         pcm32Data.resize(totalSamples, 0.0f);
 
-        // Low-pass filter parameters
+        // Low-pass filter parameters (tuned for better smoothing)
         float previousSampleL = 0.0f;
         float previousSampleR = 0.0f;
-        float alpha = 0.01f;
+        float alpha = 0.01f;  // Adjust alpha to a smaller value to avoid high-frequency noise
 
-        // Apply low-pass filter while copying samples
+        // Apply a simple low-pass filter while copying samples
         for (size_t i = 0; i < totalSamples; i += 2) {
-            // Check if index is valid before accessing
-            if (i >= totalSamples || (i + 1) >= totalSamples) {
-                return;
-            }
-
-            // Verify interleavedSamples contains valid data
-            if (!std::isfinite(interleavedSamples[i]) || !std::isfinite(interleavedSamples[i + 1])) {
-                return;
-            }
-
-            // Left channel
+            // Left channel smoothing
             pcm32Data[i] = previousSampleL + alpha * (interleavedSamples[i] - previousSampleL);
             previousSampleL = pcm32Data[i];
 
-            // Right channel
+            // Right channel smoothing
             pcm32Data[i + 1] = previousSampleR + alpha * (interleavedSamples[i + 1] - previousSampleR);
             previousSampleR = pcm32Data[i + 1];
         }
 
         // Ensure PCM data is within range [-1.0f, 1.0f]
+        float compressionThreshold = 0.8f; // Set threshold where compression starts
+        float compressionRatio = 0.5f;    // Amount of compression, 1.0 = no compression, < 1.0 = more compression
+
         for (auto& sample : pcm32Data) {
+            if (std::abs(sample) > compressionThreshold) {
+                // Apply compression to the sample if it exceeds the threshold
+                sample = compressionThreshold + (sample - compressionThreshold) * compressionRatio;
+            }
             sample = std::clamp(sample, -1.0f, 1.0f);
         }
+        
 
         // If a sound is already playing, release it before creating a new one
         if (pvideosound) {
@@ -118,7 +121,7 @@ namespace Ukemochi
         exinfo.length = totalSamples * sizeof(float);
         exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
         exinfo.numchannels = 2;
-        exinfo.defaultfrequency = 48000; // Adjust based on your source audio
+        exinfo.defaultfrequency = 48000 * speedMultiplier;  // Adjust for speed multiplier 48000
         exinfo.pcmreadcallback = pcmReadCallback; // Custom PCM read callback
 
         // Create a user-defined FMOD sound
@@ -141,7 +144,11 @@ namespace Ukemochi
             std::cerr << "FMOD Error (playSound): " << result << std::endl;
         }
         else {
-            std::cout << "Playing audio!" << std::endl;
+            std::cout << "Playing audio at " << speedMultiplier * 100 << "% speed!" << std::endl;
+        }
+        // Adjust pitch to maintain the correct playback speed without stretching
+        if (pChannel) {
+            pChannel->setPitch(speedMultiplier);  // Adjust pitch instead of frequency
         }
     }
 
