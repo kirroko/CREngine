@@ -63,11 +63,11 @@ namespace Ukemochi
 
 			// Compute the depth scale of the dynamic entities
 			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "Player_Shadow"
-				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 
 			// Compute the layer of the dynamic entities
-			if (tag == "Player" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+			if (tag == "Player" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile")
 				ComputeObjectLayer(entity);
 		}
 	}
@@ -102,11 +102,13 @@ namespace Ukemochi
 
 		// Set the new scale
 		if (tag == "Knife")
-			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
+			transform.scale = { new_scale * KNIFE_SCALE_FACTOR.x, new_scale * KNIFE_SCALE_FACTOR.y };
 		else if (tag == "Soul")
-			transform.scale = { new_scale * 0.1f, new_scale * 0.1f };
+			transform.scale = { new_scale * SOUL_SCALE_FACTOR.x, new_scale * SOUL_SCALE_FACTOR.y };
+		else if (tag == "EnemyProjectile")
+			transform.scale = { new_scale * PROJECTILE_SCALE_FACTOR.x, new_scale * PROJECTILE_SCALE_FACTOR.y };
 		else if (tag == "FishAbility" || tag == "WormAbility")
-			transform.scale = { new_scale * 2.f, new_scale * 2.f };
+			transform.scale = { new_scale * SKILL_SCALE_FACTOR.x, new_scale * SKILL_SCALE_FACTOR.y };
 		else
 			transform.scale = { new_scale, new_scale };
 	}
@@ -163,35 +165,9 @@ namespace Ukemochi
 			soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
 			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
 		}
-		else if (tag == "Enemy")
+		else if (tag == "Enemy" || tag == "EnemyProjectile")
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
 		else if (tag == "FishAbility" || tag == "WormAbility")
 			sprite_renderer.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
-	}
-
-	/*!***********************************************************************
-	\brief
-	 Increase the scale of the object.
-	\param[out] trans
-	 The transform component to scale.
-	*************************************************************************/
-	void Transformation::IncreaseScale(Transform& trans)
-	{
-		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
-		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
-	}
-
-	/*!***********************************************************************
-	\brief
-	 Decrease the scale of the object.
-	\param[out] trans
-	 The transform component to scale.
-	*************************************************************************/
-	void Transformation::DecreaseScale(Transform& trans)
-	{
-		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
-		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
 	}
 }
