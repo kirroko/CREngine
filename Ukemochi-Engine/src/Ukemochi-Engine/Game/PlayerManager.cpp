@@ -178,7 +178,10 @@ namespace Ukemochi
                             audioM.GetSFXindex("Running8"),
                             audioM.GetSFXindex("Running9"),
                             audioM.GetSFXindex("Running10"),
-                            audioM.GetSFXindex("Running11")
+                            audioM.GetSFXindex("Running11"),
+							audioM.GetSFXindex("Running12"),
+							audioM.GetSFXindex("Running13"),
+							audioM.GetSFXindex("Running14")
                         };
                         // Add this to track when sounds were last played (initialize this elsewhere)
                         static std::vector<int> lastPlayedCounts(runningSounds.size(), 0);

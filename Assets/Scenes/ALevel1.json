@@ -3199,7 +3199,7 @@
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 70,
+                    "CurrentHealth": 20,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -3210,7 +3210,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [220.0, 220.0],
+                    "SoulBars": [350.0, 350.0],
                     "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
@@ -3553,9 +3553,6 @@
                             "Name": "FishAttack3",
                             "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_3.wav"
                         }, {
-                            "Name": "FishAir",
-                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Jump-Movement_4.wav"
-                        }, {
                             "Name": "FishAir1",
                             "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Jump-Movement_5.wav"
                         }, {
@@ -3585,6 +3582,48 @@
                         }, {
                             "Name": "Running11",
                             "Path": "../Assets/Audio/SFX/Player/Player Run/DR16.wav"
+                        }, {
+                            "Name": "Running12",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DW3.wav"
+                        }, {
+                            "Name": "Running13",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DW3p2.wav"
+                        }, {
+                            "Name": "Running14",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DW13.wav"
+                        }, {
+                            "Name": "FishAttack4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_4.wav"
+                        }, {
+                            "Name": "FishAttack5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_5.wav"
+                        }, {
+                            "Name": "FishAttack6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_6.wav"
+                        }, {
+                            "Name": "FishAttack7",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_7.1.wav"
+                        }, {
+                            "Name": "FishAttack8",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_7.wav"
+                        }, {
+                            "Name": "FishDead4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-4.wav"
+                        }, {
+                            "Name": "FishDead5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-5.wav"
+                        }, {
+                            "Name": "FishDead6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-6.wav"
+                        }, {
+                            "Name": "FishDead7",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-7.wav"
+                        }, {
+                            "Name": "FishHurt5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishHurt/Slash-Impact_5.wav"
+                        }, {
+                            "Name": "FishHurt6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishHurt/Slash-Impact_6.wav"
                         }]
                 }]
         }, {

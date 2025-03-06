@@ -135,35 +135,70 @@ namespace Ukemochi
                         // Play different hit sounds based on enemy type
                         if (enemycomponent.type == Enemy::FISH)
                         {
-                            std::vector<int> fishHurtSounds;
-                            // Add all available fish hurt sounds to the array
-                            int fishHurt1 = audioM.GetSFXindex("FishHurt1");
-                            if (fishHurt1 != -1)
-                                fishHurtSounds.push_back(fishHurt1);
+                            std::vector<int> fishHurtSounds = {
+                            audioM.GetSFXindex("FishHurt1"),
+                            audioM.GetSFXindex("FishHurt2"),
+                            audioM.GetSFXindex("FishHurt3"),
+                            audioM.GetSFXindex("FishHurt4"),
+							audioM.GetSFXindex("FishHurt5"),
+							audioM.GetSFXindex("FishHurt6")
+                            };
 
-                            int fishHurt2 = audioM.GetSFXindex("FishHurt2");
-                            if (fishHurt2 != -1)
-                                fishHurtSounds.push_back(fishHurt2);
+                            // Remove invalid (-1) sounds
+                            fishHurtSounds.erase(
+                                std::remove(fishHurtSounds.begin(), fishHurtSounds.end(), -1),
+                                fishHurtSounds.end()
+                            );
 
-                            int fishHurt3 = audioM.GetSFXindex("FishHurt3");
-                            if (fishHurt3 != -1)
-                                fishHurtSounds.push_back(fishHurt3);
+                            // If no valid sounds found, try to use the original as fallback
+                            if (fishHurtSounds.empty()) {
+                                int fishHurtOriginal = audioM.GetSFXindex("FishHurt1");
+                                if (fishHurtOriginal != -1) {
+                                    fishHurtSounds.push_back(fishHurtOriginal);
+                                }
+                            }
 
-                            int fishHurt4 = audioM.GetSFXindex("FishHurt4");
-                            if (fishHurt4 != -1)
-                                fishHurtSounds.push_back(fishHurt4);
+                            // Keep track of which sounds have been played (static at class level)
+                            static std::vector<bool> hurtSoundsPlayed;
 
-                            // Original sound as fallback
-                            int fishHurtOriginal = audioM.GetSFXindex("FishHurt1");
-                            if (fishHurtOriginal != -1)
-                                fishHurtSounds.push_back(fishHurtOriginal);
+                            // Initialize if first time or size changed
+                            if (hurtSoundsPlayed.size() != fishHurtSounds.size()) {
+                                hurtSoundsPlayed.resize(fishHurtSounds.size(), false);
+                            }
 
-                            // If we have fish hurt sounds available, play a random one
-                            if (!fishHurtSounds.empty())
-                            {
-                                // Generate a random index into our array of sounds
-                                int randomIndex = rand() % fishHurtSounds.size();
-                                audioM.PlaySFX(fishHurtSounds[randomIndex]);
+                            // Check if all sounds have been played
+                            bool allPlayed = true;
+                            for (bool played : hurtSoundsPlayed) {
+                                if (!played) {
+                                    allPlayed = false;
+                                    break;
+                                }
+                            }
+
+                            // If all sounds have been played, reset all to unplayed
+                            if (allPlayed) {
+                                std::fill(hurtSoundsPlayed.begin(), hurtSoundsPlayed.end(), false);
+                            }
+
+                            // Get sounds that haven't been played yet
+                            std::vector<int> availableSoundIndices;
+                            for (size_t i = 0; i < fishHurtSounds.size(); i++) {
+                                if (!hurtSoundsPlayed[i]) {
+                                    availableSoundIndices.push_back(i);
+                                }
+                            }
+
+                            if (!availableSoundIndices.empty()) {
+                                // Random selection from available sounds
+                                int randomIndex = rand() % availableSoundIndices.size();
+                                int selectedSoundIndex = availableSoundIndices[randomIndex];
+                                int selectedSound = fishHurtSounds[selectedSoundIndex];
+
+                                // Mark this sound as played
+                                hurtSoundsPlayed[selectedSoundIndex] = true;
+
+                                // Play the selected sound
+                                audioM.PlaySFX(selectedSound);
                             }
                         }
                         else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHurt") != -1)
@@ -186,28 +221,63 @@ namespace Ukemochi
                     // Play different death sounds based on enemy type
                     if (enemycomponent.type == Enemy::FISH)
                     {
-                        // Create an array of available fish death sound indices
-                        std::vector<int> fishDeadSounds;
+                        std::vector<int> fishDeadSounds = {
+                        audioM.GetSFXindex("FishDead1"),
+                        audioM.GetSFXindex("FishDead2"),
+                        audioM.GetSFXindex("FishDead3"),
+						audioM.GetSFXindex("FishDead4"),
+						audioM.GetSFXindex("FishDead5"),
+						audioM.GetSFXindex("FishDead6"),
+						audioM.GetSFXindex("FishDead7")
+                        };
 
-                        // Add all available fish death sounds to the array
-                        int fishDead1 = audioM.GetSFXindex("FishDead1");
-                        if (fishDead1 != -1)
-                            fishDeadSounds.push_back(fishDead1);
+                        // Remove invalid (-1) sounds
+                        fishDeadSounds.erase(
+                            std::remove(fishDeadSounds.begin(), fishDeadSounds.end(), -1),
+                            fishDeadSounds.end()
+                        );
 
-                        int fishDead2 = audioM.GetSFXindex("FishDead2");
-                        if (fishDead2 != -1)
-                            fishDeadSounds.push_back(fishDead2);
+                        // Keep track of which sounds have been played (static at class level)
+                        static std::vector<bool> deadSoundsPlayed;
 
-                        int fishDead3 = audioM.GetSFXindex("FishDead3");
-                        if (fishDead3 != -1)
-                            fishDeadSounds.push_back(fishDead3);
+                        // Initialize if first time or size changed
+                        if (deadSoundsPlayed.size() != fishDeadSounds.size()) {
+                            deadSoundsPlayed.resize(fishDeadSounds.size(), false);
+                        }
 
-                        // If we have fish death sounds available, play a random one
-                        if (!fishDeadSounds.empty())
-                        {
-                            // Generate a random index into our array of sounds
-                            int randomIndex = rand() % fishDeadSounds.size();
-                            audioM.PlaySFX(fishDeadSounds[randomIndex]);
+                        // Check if all sounds have been played
+                        bool allPlayed = true;
+                        for (bool played : deadSoundsPlayed) {
+                            if (!played) {
+                                allPlayed = false;
+                                break;
+                            }
+                        }
+
+                        // If all sounds have been played, reset all to unplayed
+                        if (allPlayed) {
+                            std::fill(deadSoundsPlayed.begin(), deadSoundsPlayed.end(), false);
+                        }
+
+                        // Get sounds that haven't been played yet
+                        std::vector<int> availableSoundIndices;
+                        for (size_t i = 0; i < fishDeadSounds.size(); i++) {
+                            if (!deadSoundsPlayed[i]) {
+                                availableSoundIndices.push_back(i);
+                            }
+                        }
+
+                        if (!availableSoundIndices.empty()) {
+                            // Random selection from available sounds
+                            int randomIndex = rand() % availableSoundIndices.size();
+                            int selectedSoundIndex = availableSoundIndices[randomIndex];
+                            int selectedSound = fishDeadSounds[selectedSoundIndex];
+
+                            // Mark this sound as played
+                            deadSoundsPlayed[selectedSoundIndex] = true;
+
+                            // Play the selected sound
+                            audioM.PlaySFX(selectedSound);
                         }
                     }
                     else if (enemycomponent.type == Enemy::WORM)
@@ -1047,37 +1117,66 @@ namespace Ukemochi
                         {
                             // SFX
                             auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                            std::vector<int> fishAttackSounds;
+                            std::vector<int> fishAttackSounds = {
+                            audioM.GetSFXindex("FishAttack1"),
+                            audioM.GetSFXindex("FishAttack2"),
+                            audioM.GetSFXindex("FishAttack3"),
+                            audioM.GetSFXindex("FishAttack4"),
+                            audioM.GetSFXindex("FishAttack5"),
+                            audioM.GetSFXindex("FishAttack6"),
+                            audioM.GetSFXindex("FishAttack7"),
+                            audioM.GetSFXindex("FishAttack8")
+                            };
 
-                            // Add all available fish attack sounds to the array
-                            int fishAttack1 = audioM.GetSFXindex("FishAttack1");
-                            if (fishAttack1 != -1)
-                                fishAttackSounds.push_back(fishAttack1);
+                            // Remove invalid (-1) sounds
+                            fishAttackSounds.erase(
+                                std::remove(fishAttackSounds.begin(), fishAttackSounds.end(), -1),
+                                fishAttackSounds.end()
+                            );
 
-                            int fishAttack2 = audioM.GetSFXindex("FishAttack2");
-                            if (fishAttack2 != -1)
-                                fishAttackSounds.push_back(fishAttack2);
+                            // Keep track of which sounds have been played (static at class level)
+                            static std::vector<bool> hasBeenPlayed;
 
-                            int fishAttack3 = audioM.GetSFXindex("FishAttack3");
-                            if (fishAttack3 != -1)
-                                fishAttackSounds.push_back(fishAttack3);
+                            // Initialize if first time or size changed
+                            if (hasBeenPlayed.size() != fishAttackSounds.size()) {
+                                hasBeenPlayed.resize(fishAttackSounds.size(), false);
+                            }
 
-                            // Add the original sound as fallback
-                            int fishAttackOriginal = audioM.GetSFXindex("FishAttack1");
-                            if (fishAttackOriginal != -1)
-                                fishAttackSounds.push_back(fishAttackOriginal);
+                            // Check if all sounds have been played
+                            bool allPlayed = true;
+                            for (bool played : hasBeenPlayed) {
+                                if (!played) {
+                                    allPlayed = true;
+                                    break;
+                                }
+                            }
 
-                            // If we have fish attack sounds available, play a random one
-                            if (!fishAttackSounds.empty())
-                            {
-                                // Generate a random index into our array of sounds
-                                int randomIndex = rand() % fishAttackSounds.size();
-                                int selectedSoundIndex = fishAttackSounds[randomIndex];
+                            // If all sounds have been played, reset all to unplayed
+                            if (allPlayed) {
+                                std::fill(hasBeenPlayed.begin(), hasBeenPlayed.end(), false);
+                            }
+
+                            // Get sounds that haven't been played yet
+                            std::vector<int> availableSoundIndices;
+                            for (size_t i = 0; i < fishAttackSounds.size(); i++) {
+                                if (!hasBeenPlayed[i]) {
+                                    availableSoundIndices.push_back(i);
+                                }
+                            }
+
+                            if (!availableSoundIndices.empty()) {
+                                // Random selection from available sounds
+                                int randomIndex = rand() % availableSoundIndices.size();
+                                int selectedSoundIndex = availableSoundIndices[randomIndex];
+                                int selectedSound = fishAttackSounds[selectedSoundIndex];
 
                                 // Check if the selected sound is already playing
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSoundIndex))
-                                {
-                                    audioM.PlaySFX(selectedSoundIndex);
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSound)) {
+                                    // Mark this sound as played
+                                    hasBeenPlayed[selectedSoundIndex] = true;
+
+                                    // Play the selected sound
+                                    audioM.PlaySFX(selectedSound);
 
                                     // check attack
                                     if (enemycomponent.IsPlayerInAttackRange(playerObj->GetComponent<Transform>(), enemytransform))
