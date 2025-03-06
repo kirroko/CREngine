@@ -251,6 +251,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\BossManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -401,6 +402,8 @@
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp">
       <Filter>Ukemochi-Engine\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\TEST.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\BossManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

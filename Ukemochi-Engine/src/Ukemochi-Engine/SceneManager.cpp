@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/DungeonManager.h"
 #include "Game/SoulManager.h"
 #include "Graphics/UIButtonManager.h"
+#include "Game/BossManager.h"
 
 namespace Ukemochi
 {
@@ -75,6 +76,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
         ECS::GetInstance().RegisterComponent<EnemyBullet>();
+        ECS::GetInstance().RegisterComponent<Boss>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -92,6 +94,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<EnemyManager>();
         ECS::GetInstance().RegisterSystem<SoulManager>();
         ECS::GetInstance().RegisterSystem<UIButtonManager>();
+        ECS::GetInstance().RegisterSystem<BossManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -476,7 +479,7 @@ namespace Ukemochi
         {
             // --- GAME LOGIC UPDATE ---
             sys_start = std::chrono::steady_clock::now();
-            ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+            // ECS::GetInstance().GetSystem<LogicSystem>()->Update();
             ECS::GetInstance().GetSystem<PlayerManager>()->Update();
             ECS::GetInstance().GetSystem<SoulManager>()->Update();
             ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
