@@ -131,7 +131,8 @@ namespace Ukemochi
 		// Search through the entity list for the nearest static object
 		for (auto const& static_entity : m_Entities)
 		{
-			if (GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Environment"
+			if ((GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Environment"
+				|| GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Dummy")
 				&& GameObjectManager::GetInstance().GetGO(static_entity)->GetActive())
 			{
 				Vec3 static_position = ECS::GetInstance().GetComponent<Transform>(static_entity).position;
