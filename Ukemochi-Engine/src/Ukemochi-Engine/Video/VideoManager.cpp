@@ -34,7 +34,10 @@ namespace Ukemochi {
     {
         if (!plm) return;
 
+#ifdef _DEBUG
         UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
+#endif
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // Activate shader
         ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
 
