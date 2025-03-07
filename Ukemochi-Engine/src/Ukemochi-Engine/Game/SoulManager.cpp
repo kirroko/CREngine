@@ -3,7 +3,7 @@
 \file       SoulManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
-\date       Feb 15, 2025
+\date       Mar 07, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -103,7 +103,7 @@ namespace Ukemochi
             HandleEnemyProjectile();
 
             // Handle soul bar decay over time
-            //HandleSoulDecay();
+            HandleSoulDecay();
 
             // Handle skill effects over time
             HandleSkillEffects();
@@ -340,21 +340,46 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
-     Handle soul decay over time, reducing the non-active soul bars periodically.
+     Handle soul decay over time, reducing the soul bars periodically.
     *************************************************************************/
     void SoulManager::HandleSoulDecay()
     {
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+        auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
 
-        // Decay non-active soul bar over time
+        // Decay soul bar over time
         player_soul.soul_decay_timer += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
         if (player_soul.soul_decay_timer >= player_soul.soul_decay_rate)
         {
+            // Decay all soul bars
             for (int i = 0; i < NUM_OF_SOULS; i++)
             {
-                // Decay non-active soul bars
-                if (player_soul.current_soul != i && player_soul.soul_bars[i] > player_soul.soul_decay_amount)
+                // Skip if soul bar is empty
+                if (player_soul.soul_bars[i] <= 0.f)
+                    continue;
+
+                // Decay soul from the soul bar
+                if (player_soul.soul_bars[i] - player_soul.soul_decay_amount <= 0.f)
+                {
+                    player_soul.soul_bars[i] = 0.f;
+
+                    // Currently in FISH soul, switch to EMPTY soul
+                    if (player_soul.current_soul == FISH)
+                    {
+                        player_soul.current_soul = EMPTY;
+                        player_animator.SetAnimationUninterrupted("SwitchBN");
+                        GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
+                    }
+                    // Currently in WORM soul, switch to FISH soul if available else EMPTY soul
+                    else if (player_soul.current_soul == WORM)
+                    {
+                        player_soul.current_soul = EMPTY;
+                        player_animator.SetAnimationUninterrupted("SwitchRN");
+                        GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
+                    }
+                }
+                else
                     player_soul.soul_bars[i] -= player_soul.soul_decay_amount;
             }
 
