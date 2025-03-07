@@ -695,48 +695,177 @@ namespace Ukemochi
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& box_anim = ECS::GetInstance().GetComponent<Animation>(entity2);
-			
+
+			// Skip if Mochi is not attacking
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
 				return;
 
-
-			if (player_anim.current_frame == 10 || player_anim.current_frame == 15 || player_anim.current_frame == 31)
+			switch (player_data.comboState)
 			{
-				
-				if (box_anim.is_playing)
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
 				{
-					box_anim.SetAnimation("Box_Break");
-					box_anim.is_playing = false;
-					return;
-				}
-				static int prev_frame =
-					/*if (prev_frame != box_anim.current_frame)
+					if (!check_collision_once)
 					{
-						return;
-					}*/
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
 
-					/*prev_frame =*/ box_anim.current_frame;
-				box_anim.current_frame++;
-				if (box_anim.current_frame > 3)
-				{
-					box_anim.current_frame = 3;
-				}
-				if (prev_frame == 2 && box_anim.current_frame == 3)
-				{
-					player_data.currentHealth += 20;
-					player_data.postInjuriesMaxHealth += 20;
-					if (player_data.currentHealth > player_data.maxHealth || player_data.postInjuriesMaxHealth > player_data.maxHealth)
-					{
-						player_data.currentHealth = player_data.maxHealth;
-						player_data.postInjuriesMaxHealth = player_data.maxHealth;
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+							}
+						}
+						check_collision_once = true;
 					}
+					else
+						check_collision_once = false;
 				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+							}
+						}
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+								std::cout << "hit" << std::endl;
+							}
+						}
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			default:
+				break;
 			}
-			return;
+
+			//if (player_anim.current_frame == 10 || player_anim.current_frame == 15 || player_anim.current_frame == 31)
+			//{
+			//	
+			//	if (box_anim.is_playing)
+			//	{
+			//		box_anim.SetAnimation("Box_Break");
+			//		box_anim.is_playing = false;
+			//		box_anim.current_frame = 0;
+			//		std::cout << "switch clip" << std::endl;
+			//	}
+			//	else 
+			//	{
+			//		int prev_frame = box_anim.current_frame;
+			//		box_anim.current_frame++;
+			//		std::cout << "hit" << std::endl;
+			//		if (box_anim.current_frame > 3)
+			//		{
+			//			box_anim.current_frame = 3;
+			//		}
+			//		if (prev_frame == 2 && box_anim.current_frame == 3)
+			//		{
+			//			player_data.currentHealth += 10;
+			//			player_data.postInjuriesMaxHealth += 10;
+			//			if (player_data.currentHealth > player_data.maxHealth)
+			//			{
+			//				player_data.currentHealth = player_data.maxHealth;
+
+			//			}
+			//			if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+			//			{
+			//				player_data.postInjuriesMaxHealth = player_data.maxHealth;
+			//			}
+			//		}
+			//	}
+			//}
+			//return;
 			// Placeholder, wait for when animations is complete so that we can break the box
 			// Play Animation
-
-			
 		}
 		else if ((tag1 == "FishAbility" || tag1 == "WormAbility") && tag2 == "Enemy")
 		{
