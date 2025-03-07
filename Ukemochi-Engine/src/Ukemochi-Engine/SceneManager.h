@@ -23,6 +23,9 @@ namespace Ukemochi
 	class SceneManager
 	{
 	public:
+		GameObject cutscene;
+		
+		
 		/*!***********************************************************************
 		\brief
 		 Making SceneManger class object as a Singleton object

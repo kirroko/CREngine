@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Audio.cpp
-\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu
-\date       Dec 1, 2024
+\author     Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
+\date       Feb 01, 2025
 \brief      This file contains the definition of the Audio system.
 
 This Audio system handles loading, playing, and managing sound effects
@@ -409,7 +410,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pSFXChannels[soundIndex] = channel;
-                pSFXChannels[soundIndex]->setVolume(0.2f);
+                pSFXChannels[soundIndex]->setVolume(sfxMasterVolume);
 
                 // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
@@ -576,7 +577,7 @@ namespace Ukemochi
     {
         for (size_t i = 0; i < pSFXChannels.size(); ++i)
         {
-            StopSFX(i);  // Stop each individual SFX
+            StopSFX(static_cast<int>(i));  // Stop each individual SFX
         }
     }
 
@@ -627,6 +628,8 @@ namespace Ukemochi
     *************************************************************************/
     void Audio::SetAudioVolume(int soundIndex, float volume, std::string type)
     {
+        volume = std::max(0.0f, std::min(1.0f, volume));
+
         if (type == "SFX")
         {
             if (soundIndex < pSFXChannels.size() && pSFXChannels[soundIndex] != nullptr)
@@ -643,6 +646,87 @@ namespace Ukemochi
         }
     }
 
+    void Audio::DecreaseMusicMasterVolume(float step)
+    {
+        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        {
+            if (pMusicChannels[i] != nullptr)
+            {
+                float currentVolume = 0.0f;
+                pMusicChannels[i]->getVolume(&currentVolume);
+                SetAudioVolume(i, currentVolume - step, "Music");
+            }
+        }
+    }
+
+    void Audio::IncreaseMusicMasterVolume(float step)
+    {
+        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        {
+            if (pMusicChannels[i] != nullptr)
+            {
+                float currentVolume = 0.0f;
+                pMusicChannels[i]->getVolume(&currentVolume);
+                SetAudioVolume(i, currentVolume + step, "Music");
+            }
+        }
+    }
+
+    void Audio::SetSFXMasterVolume(float volume)
+    {
+        // Clamp volume between 0.0 and 1.0
+        sfxMasterVolume = std::max(0.0f, std::min(1.0f, volume));
+        std::cout << "SFX Master Volume set to: " << sfxMasterVolume << std::endl;
+
+        // Update any currently playing SFX
+        for (size_t i = 0; i < pSFXChannels.size(); ++i)
+        {
+            if (pSFXChannels[i] != nullptr)
+            {
+                bool isPlaying = false;
+                pSFXChannels[i]->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    pSFXChannels[i]->setVolume(sfxMasterVolume);
+                }
+            }
+        }
+    }
+
+    void Audio::IncreaseSFXMasterVolume(float step)
+    {
+        SetSFXMasterVolume(sfxMasterVolume + step);
+    }
+
+    void Audio::DecreaseSFXMasterVolume(float step)
+    {
+        SetSFXMasterVolume(sfxMasterVolume - step);
+    }
+
+    void Audio::IncreaseVolume(int soundIndex, float step, std::string type)
+    {
+        float currentVolume = 0.0f;
+
+        if (type == "SFX" && soundIndex < pSFXChannels.size() && pSFXChannels[soundIndex] != nullptr)
+        {
+            pSFXChannels[soundIndex]->getVolume(&currentVolume);
+            SetAudioVolume(soundIndex, currentVolume + step, "SFX");
+            std::cout << "Current SFX Volume: " << currentVolume << std::endl;
+        }
+        else if (type == "Music" && soundIndex < pMusicChannels.size() && pMusicChannels[soundIndex] != nullptr)
+        {
+            pMusicChannels[soundIndex]->getVolume(&currentVolume);
+            std::cout << "Current Music Volume: " << currentVolume << std::endl;
+            SetAudioVolume(soundIndex, currentVolume + step, "Music");
+
+        }
+    }
+
+    void Audio::DecreaseVolume(int soundIndex, float step, std::string type)
+    {
+        IncreaseVolume(soundIndex, -step, type); // Reuse IncreaseVolume with negative step
+    }
+
     /*!***********************************************************************
     \brief
     Regular update function for the FMOD system.
@@ -656,20 +740,65 @@ namespace Ukemochi
         // Handle muting/unmuting music and SFX
         static bool musicKeyPressed = false;
         static bool sfxKeyPressed = false;
+        static bool decreaseKeyPressed = false;
+        static bool increaseKeyPressed = false;
+        static bool decreaseSFXKeyPressed = false;
+        static bool increaseSFXKeyPressed = false;
 
-        // Check if the 'K' key is pressed for muting/unmuting music
-        if (Input::IsKeyPressed(UME_KEY_K))
+        // Adjust music volume using '-' and '+' keys
+        if (Input::IsKeyPressed(UME_KEY_MINUS)) // Decrease volume
         {
-            if (!musicKeyPressed)
+            if (!decreaseKeyPressed)
             {
-                MuteMusic(); // Call the method to toggle mute for music
-                musicKeyPressed = true;
+                DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
+                decreaseKeyPressed = true;
             }
         }
         else
         {
-            musicKeyPressed = false;
+            decreaseKeyPressed = false;
         }
+
+        if (Input::IsKeyPressed(UME_KEY_EQUAL)) // Increase volume ('+' is usually UME_KEY_EQUAL)
+        {
+            if (!increaseKeyPressed)
+            {
+				IncreaseMusicMasterVolume(0.05f); // Increase by 5%
+                increaseKeyPressed = true;
+            }
+        }
+        else
+        {
+            increaseKeyPressed = false;
+        }
+
+        // Adjust SFX volume using '9' and '0' keys
+        if (Input::IsKeyPressed(UME_KEY_9)) // Decrease SFX volume
+        {
+            if (!decreaseSFXKeyPressed)
+            {
+                DecreaseSFXMasterVolume(0.05f); // Decrease by 5%
+                decreaseSFXKeyPressed = true;
+            }
+        }
+        else
+        {
+            decreaseSFXKeyPressed = false;
+        }
+
+        if (Input::IsKeyPressed(UME_KEY_0)) // Increase SFX volume
+        {
+            if (!increaseSFXKeyPressed)
+            {
+                IncreaseSFXMasterVolume(0.05f); // Increase by 5%
+                increaseSFXKeyPressed = true;
+            }
+        }
+        else
+        {
+            increaseSFXKeyPressed = false;
+        }
+
     }
 
     /*!***********************************************************************

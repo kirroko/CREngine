@@ -2,10 +2,10 @@
 /*!
 \file       Collision.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Jan 19, 2025
+\date       Mar 02, 2025
 \brief      This file contains the declaration of the Collision system.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -23,12 +23,6 @@ namespace Ukemochi
     private:
         /*!***********************************************************************
         \brief
-         Normalized bounding box (width and height) sizes.
-        *************************************************************************/
-        const float BOUNDING_BOX_SIZE = 0.5f;
-
-        /*!***********************************************************************
-        \brief
          Collision flags for left, right, top and bottom.
         *************************************************************************/
         const unsigned int COLLISION_LEFT = 0x00000001;   //0001
@@ -36,11 +30,8 @@ namespace Ukemochi
         const unsigned int COLLISION_TOP = 0x00000004;    //0100
         const unsigned int COLLISION_BOTTOM = 0x00000008; //1000
 
-        /*!***********************************************************************
-        \brief
-         Minimum offset for static collision.
-        *************************************************************************/
-        const float MIN_OFFSET = 0.001f;
+        const float BOUNDING_BOX_SIZE = 0.5f;         // Normalized bounding box (width and height) sizes.
+        const float MIN_OFFSET = 0.001f;              // Minimum offset for static collision.
 
         int screen_width{}, screen_height{};          // Screen size for box and screen collision
         EntityID player;                              // Get the player for player data
@@ -213,14 +204,6 @@ namespace Ukemochi
          The Rigidbody2D component attached to the second collided object.
         *************************************************************************/
         void Dynamic_Response(Transform& trans1, Rigidbody2D& rb1, Transform& trans2, Rigidbody2D& rb2);
-
-        /*!***********************************************************************
-        \brief
-         Collision response between the player and a trigger object.
-        \param[in] trigger_tag
-         The tag of the trigger object.
-        *************************************************************************/
-        void Trigger_Response(const std::string& trigger_tag);
 
         /*!***********************************************************************
         \brief

@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 02, 2025
+\date       Feb 25, 2025
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2024 DigiPen Institute of Technology.
@@ -14,11 +14,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "Transformation.h"				  // for forward declaration
 #include "../Math/MathUtils.h"			  // for radian, clamp
-#include "../FrameController.h"			  // for delta time
-#include "../Factory/GameObjectManager.h" // for player game object
+#include "../FrameController.h"			  // for fixed delta time
+#include "../Factory/GameObjectManager.h" // for game object tag
 
 namespace Ukemochi
 {
+	/*!***********************************************************************
+	\brief
+	 Initialize the transformation system.
+	*************************************************************************/
+	void Transformation::Init()
+	{
+		// Find the player's shadow and floating soul entities
+		soul = shadow = static_cast<EntityID>(-1);
+		for (auto const& entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Soul")
+				soul = entity; // Floating soul ID is found
+			else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player_Shadow")
+				shadow = entity; // Player's shadow ID is found
+		}
+	}
+
 	/*!***********************************************************************
 	\brief
 	 Compute the transformations of all the entities.
@@ -37,25 +54,33 @@ namespace Ukemochi
 
 			transform.transform_matrix = trans * rot * scale;
 
+			// Skip if the entity is not active
+			if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+				continue;
+
+			// Get the tag of the entity
+			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
 			// Compute the depth scale of the dynamic entities
-			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player"
-				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Knife"
-				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility"
-				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "WormAbility"
-				|| GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
+			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "Player_Shadow"
+				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
 				ComputeObjectScale(entity, OBJECT_SCALING);
+
+			// Compute the layer of the dynamic entities
+			if (tag == "Player" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+				ComputeObjectLayer(entity);
 		}
 	}
 
 	/*!***********************************************************************
 	\brief
 	 Compute the scale of a object based on its y-axis position.
-	\param[out] object
+	\param[in/out] object
 	 The object to scale.
 	\param[in] scaling
 	 The DepthScaling range.
 	*************************************************************************/
-	void Transformation::ComputeObjectScale(EntityID object, const DepthScaling& scaling)
+	void Transformation::ComputeObjectScale(const EntityID& object, const DepthScaling& scaling)
 	{
 		// Get the object's transform component
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(object);
@@ -72,8 +97,75 @@ namespace Ukemochi
 		// Interpolate the scale
 		float new_scale = scaling.min_scale + flip_t * (scaling.max_scale - scaling.min_scale);
 
+		// Get the tag of the object
+		std::string tag = GameObjectManager::GetInstance().GetGO(object)->GetTag();
+
 		// Set the new scale
-		transform.scale = { new_scale, new_scale };
+		if (tag == "Knife")
+			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
+		else if (tag == "Soul")
+			transform.scale = { new_scale * 0.1f, new_scale * 0.1f };
+		else if (tag == "FishAbility" || tag == "WormAbility")
+			transform.scale = { new_scale * 2.f, new_scale * 2.f };
+		else
+			transform.scale = { new_scale, new_scale };
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Compute the layer of a object based on its y-axis position.
+	\param[in/out] object
+	 The object to compute the layer for.
+	*************************************************************************/
+	void Transformation::ComputeObjectLayer(const EntityID& object)
+	{
+		auto& transform = ECS::GetInstance().GetComponent<Transform>(object);
+		auto& sprite_renderer = ECS::GetInstance().GetComponent<SpriteRender>(object);
+
+		bool is_behind = false;
+
+		Vec3 object_position = transform.position;
+		Vec3 nearest_static_position{};
+		float min_distance = std::numeric_limits<float>::max();
+
+		// Search through the entity list for the nearest static object
+		for (auto const& static_entity : m_Entities)
+		{
+			if (GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Environment"
+				&& GameObjectManager::GetInstance().GetGO(static_entity)->GetActive())
+			{
+				Vec3 static_position = ECS::GetInstance().GetComponent<Transform>(static_entity).position;
+				float distance = Vec3Length(static_position - object_position);
+
+				if (distance < min_distance)
+				{
+					min_distance = distance;
+					nearest_static_position = static_position;
+				}
+			}
+		}
+
+		// Compare the Y positions of the dynamic object and the nearest static object
+		if (object_position.y > nearest_static_position.y)
+			is_behind = true;
+
+		// Get the tag of the object
+		std::string tag = GameObjectManager::GetInstance().GetGO(object)->GetTag();
+
+		// Set the layer based on whether the object is behind or infront the static objects
+		if (tag == "Player")
+		{
+			auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
+			auto& shadow_sr = ECS::GetInstance().GetComponent<SpriteRender>(shadow);
+
+			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
+		}
+		else if (tag == "Enemy")
+			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+		else if (tag == "FishAbility" || tag == "WormAbility")
+			sprite_renderer.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
 	}
 
 	/*!***********************************************************************

@@ -26,6 +26,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGui/ImGuiCore.h"
 #include "InGameGUI/InGameGUI.h"
 #include "Application.h"
+#include "FrameController.h"
 #include "Game/PlayerManager.h"
 #include "Graphics/Animation.h"
 #include "Game/EnemyManager.h"
@@ -33,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/SoulManager.h"
 #include "Graphics/UIButtonManager.h"
 #include "Video/VideoManager.h"
+#include "Game/BossManager.h"
 
 namespace Ukemochi
 {
@@ -75,6 +77,8 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
 	    ECS::GetInstance().RegisterComponent<VideoData>();
+        ECS::GetInstance().RegisterComponent<EnemyBullet>();
+        ECS::GetInstance().RegisterComponent<Boss>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -93,6 +97,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<SoulManager>();
         ECS::GetInstance().RegisterSystem<UIButtonManager>();
 	    ECS::GetInstance().RegisterSystem<VideoManager>();
+        ECS::GetInstance().RegisterSystem<BossManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -209,6 +214,8 @@ namespace Ukemochi
             LoadSaveFile(UseImGui::GetStartScene());
         }
 
+        UME_ENGINE_TRACE("Initializing Transformation...");
+        ECS::GetInstance().GetSystem<Transformation>()->Init();
         UME_ENGINE_TRACE("Initializing Collision...");
         ECS::GetInstance().GetSystem<Collision>()->Init();
         UME_ENGINE_TRACE("Initializing dungeon manager...");
@@ -223,6 +230,16 @@ namespace Ukemochi
 	    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/storyboard-for coders.mpeg"))
 	        UME_ENGINE_ERROR("Video didn't load properly!");
 	    // ECS::GetInstance().GetSystem<VideoManager>()->Init(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight());
+#ifndef _DEBUG
+	    cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
+	    cutscene.AddComponent(Transform{Mtx44{},
+            Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
+            0,
+            Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
+	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
+        SPRITE_SHAPE::BOX,10,true,false,false});
+		es_current = ES_PLAY;
+#endif
     }
 
     /*!***********************************************************************
@@ -363,9 +380,41 @@ namespace Ukemochi
 #endif // _DEBUG
 
 #ifndef _DEBUG
-
+        static double elapsedTime = 0.0;
+	    static int current_frame_index = 0;
+	    elapsedTime += g_FrameRateController.GetDeltaTime();
+	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 6)
+	    {
+	        auto& sr = cutscene.GetComponent<SpriteRender>();
+	        switch (current_frame_index)
+	        {
+	        case 1:
+	            sr.texturePath = "../Assets/Storyboard 2.png";
+	            break;
+	        case 2:
+	            sr.texturePath = "../Assets/Storyboard 3.png";
+	            break;
+	        case 3:
+	            sr.texturePath = "../Assets/Storyboard 4.png";
+	            break;
+	        case 4:
+	            sr.texturePath = "../Assets/Storyboard 5.png";
+	            break;
+	        default:
+	            break;
+	        }
+	        ++current_frame_index;
+	        elapsedTime = 0;
+	        if (current_frame_index > 5)
+	        {
+	            ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+	            Application::Get().SetPaused(false);
+	            GameObjectManager::GetInstance().DestroyObject(cutscene.GetInstanceID());
+	        	es_current = ES_ENGINE;
+	        }
+	    }
 		// Game Inputs Quick fix
-		if (Input::IsKeyTriggered(GLFW_KEY_R))
+		if (Input::IsKeyTriggered(GLFW_KEY_T))
 		{
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -378,6 +427,8 @@ namespace Ukemochi
 
 			LoadSaveFile(GetCurrScene() + ".json");
 
+            UME_ENGINE_TRACE("Initializing Transformation...");
+            ECS::GetInstance().GetSystem<Transformation>()->Init();
 			UME_ENGINE_TRACE("Initializing Collision...");
 			ECS::GetInstance().GetSystem<Collision>()->Init();
 			UME_ENGINE_TRACE("Initializing dungeon manager...");
@@ -404,11 +455,11 @@ namespace Ukemochi
 			return;
 		}
 
-		if (Input::IsKeyTriggered(GLFW_KEY_ESCAPE))
-		{
-			es_current = ES_QUIT;
-			return;
-		}
+		//if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
+		//{
+		//	es_current = ES_QUIT;
+		//	return;
+		//}
 #endif
 	    
         /*
@@ -450,34 +501,39 @@ namespace Ukemochi
 
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
+        if (!Application::Get().Paused())
+        {
+            // --- GAME LOGIC UPDATE ---
+            sys_start = std::chrono::steady_clock::now();
+            ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+            ECS::GetInstance().GetSystem<PlayerManager>()->Update();
+            ECS::GetInstance().GetSystem<SoulManager>()->Update();
+            ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
+            ECS::GetInstance().GetSystem<DungeonManager>()->UpdateRoomProgress();
+            sys_end = std::chrono::steady_clock::now();
+            logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+            
+            // --- PHYSICS UPDATE ---
+            sys_start = std::chrono::steady_clock::now();
+            ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
+            sys_end = std::chrono::steady_clock::now();
+            physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
-        // --- GAME LOGIC UPDATE ---
-	    sys_start = std::chrono::steady_clock::now();
-        ECS::GetInstance().GetSystem<LogicSystem>()->Update();
-		ECS::GetInstance().GetSystem<PlayerManager>()->Update();
-        ECS::GetInstance().GetSystem<SoulManager>()->Update();
-        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
-	    sys_end = std::chrono::steady_clock::now();
-	    logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
-	    
-        // --- PHYSICS UPDATE ---
-        sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
-		sys_end = std::chrono::steady_clock::now();
-		physics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+            // --- COLLISION UPDATE ---
+            sys_start = std::chrono::steady_clock::now();
+            ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
+            sys_end = std::chrono::steady_clock::now();
+            collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
-        // --- COLLISION UPDATE ---
-        // --- TRANSFORMATION UPDATE ---
-        sys_start = std::chrono::steady_clock::now();
-		ECS::GetInstance().GetSystem<Collision>()->CheckCollisions(); // Check the collisions between the entities
-        ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
-		sys_end = std::chrono::steady_clock::now();
-		collision_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
-	    
-        // --- AUDIO UPDATE ---
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-	    
-	    // --- ANIMATION UPDATE ---
+            // --- TRANSFORMATION UPDATE ---
+            ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations(); // Compute the entities transformations
+
+            // --- AUDIO UPDATE ---
+            ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
+
+            // --- ANIMATION UPDATE ---
+            ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
+        }
         // --- TURN OFF GIZMO ---
 	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
@@ -758,9 +814,10 @@ namespace Ukemochi
                     SPRITE_SHAPE shape = componentData["Shape"].GetInt() == 0
                                              ? SPRITE_SHAPE::BOX
                                              : SPRITE_SHAPE::CIRCLE;
+                    int layer = componentData["Layer"].GetInt();
                     if (!newObject.HasComponent<SpriteRender>())
                     {
-                        SpriteRender sr = {texturePath, shape};
+                        SpriteRender sr = { texturePath, shape, layer };
                         newObject.AddComponent<SpriteRender>(sr);
                     }
 
@@ -868,6 +925,7 @@ namespace Ukemochi
                         player_soul.skill_cooldown = componentData["SkillCooldown"].GetFloat();
                         player_soul.skill_timer = componentData["SkillTimer"].GetFloat();
                         player_soul.skill_ready = componentData["SkillReady"].GetBool();
+                        player_soul.is_casting = componentData["IsCasting"].GetBool();
 
                         player_soul.soul_decay_amount = componentData["SoulDecayAmount"].GetFloat();
                         player_soul.soul_decay_rate = componentData["SoulDecayRate"].GetFloat();
@@ -1185,6 +1243,7 @@ namespace Ukemochi
                 playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
                 playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
                 playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+                playerSoulComponent.AddMember("IsCasting", playerSoul.is_casting, allocator);
                 playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
                 playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
                 playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
@@ -1517,6 +1576,7 @@ namespace Ukemochi
             playerSoulComponent.AddMember("SkillCooldown", playerSoul.skill_cooldown, allocator);
             playerSoulComponent.AddMember("SkillTimer", playerSoul.skill_timer, allocator);
             playerSoulComponent.AddMember("SkillReady", playerSoul.skill_ready, allocator);
+            playerSoulComponent.AddMember("IsCasting", playerSoul.is_casting, allocator);
             playerSoulComponent.AddMember("SoulDecayAmount", playerSoul.soul_decay_amount, allocator);
             playerSoulComponent.AddMember("SoulDecayRate", playerSoul.soul_decay_rate, allocator);
             playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);

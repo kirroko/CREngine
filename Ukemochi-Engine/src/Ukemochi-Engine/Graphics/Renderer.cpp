@@ -4,7 +4,7 @@
 \author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
 \co-authors Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (%)
-\date       Sept 25, 2024
+\date       Feb 6, 2025
 \brief      This file contains the implementation of the Renderer class responsible for
 			handling OpenGL rendering, including setting up shaders, buffers, textures,
 			and rendering 2D objects like boxes and circles.
@@ -26,9 +26,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "ImGuizmo.h"
 #include "../ECS/ECS.h"
 #include "UIButton.h"
+#include "../Game/SoulManager.h" // for MAX_SOUL_BAR, MAX_SOUL_CHARGES
 
 using namespace Ukemochi;
 
+/*!***********************************************************************
+\brief
+ Extracts the sprite name from a given texture path by removing the file
+ extension and returning only the base filename.
+
+\param[in] texturePath
+ The full path of the texture file.
+
+\return
+ The extracted sprite name without the file extension.
+*************************************************************************/
 std::string getSpriteNameFromPath(const std::string& texturePath)
 {
 	std::string fileName = std::filesystem::path(texturePath).filename().string();
@@ -41,10 +53,12 @@ std::string getSpriteNameFromPath(const std::string& texturePath)
 
 	return fileName;
 }
-/*!
- * @brief Constructor for the Renderer class.
- * Initializes pointers to OpenGL objects (e.g., shaderProgram, VAOs, VBOs, EBOs) to nullptr.
- */
+
+/*!***********************************************************************
+\brief
+ Constructor for the Renderer class.
+ Initializes OpenGL-related pointers and clears VAO, VBO, and EBO lists.
+*************************************************************************/
 Renderer::Renderer()
 {
 	// Pointers to OpenGL objects are set to nullptr initially
@@ -63,10 +77,11 @@ Renderer::Renderer()
 	playerObject = nullptr;
 };
 
-/*!
- * @brief Destructor for the Renderer class.
- * Calls the cleanUp() method to release all allocated OpenGL resources.
- */
+/*!***********************************************************************
+\brief
+ Destructor for the Renderer class.
+ Cleans up OpenGL resources and terminates GLFW before exiting.
+*************************************************************************/
 Renderer::~Renderer()
 {
 	cleanUp();
@@ -74,9 +89,17 @@ Renderer::~Renderer()
 
 }
 
-/*!
- * @brief Initializes the renderer, including buffers, and text renderer.
- */
+/*!***********************************************************************
+\brief
+ Initializes the renderer by setting up buffers, framebuffers, object
+ picking, and the text renderer.
+
+\details
+ This function initializes buffers for debug wireframe drawing, circles,
+ object picking, and UI rendering. It also sets up the text rendering
+ system and loads fonts used in the game.
+
+*************************************************************************/
 void Renderer::init()
 {
 
@@ -96,28 +119,22 @@ void Renderer::init()
 	setUpObjectPickingBuffer();
 	setupColorPickingFramebuffer();
 
+	Application& app = Application::Get();
+	int screenWidth = app.GetWindow().GetWidth();
+	int screenHeight = app.GetWindow().GetHeight();
 	// Text Rendering (Test)
 	// Initialize text renderer with screen dimensions
-	textRenderer = new TextRenderer(screen_width, screen_height);
+	textRenderer = new TextRenderer(screenWidth, screenHeight);
 
 	// Load multiple fonts into the text renderer
 	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
 	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
-
-	// Add text objects
-	//textRenderer->addTextObject("title", TextObject("Ukemochi!", glm::vec2(50.0f, 800.f), 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), "Ukemochi"));
-	//textRenderer->addTextObject("subtitle", TextObject("Exo2!", glm::vec2(50.0f, 750.f), 1.0f, glm::vec3(0.5f, 0.8f, 0.2f), "Exo2"));
-
-	// initAnimationEntities();
-	
-	//particleSystem = std::make_unique<ParticleSystem>(particleShader, );
 
 	batchRenderer = std::make_unique<BatchRenderer2D>();
 	// Load shaders and create shared pointer
 
 	batchRenderer->init(shaderProgram);
 
-	//UIRenderer = std::make_unique<UIButtonRenderer>(batchRenderer, textRenderer, screen_width, screen_height, UI_shader_program);
 
 	debugBatchRenderer = std::make_unique<DebugBatchRenderer2D>();
 	debugBatchRenderer->init(debug_shader_program);
@@ -130,6 +147,10 @@ void Renderer::init()
 
 }
 
+/*!***********************************************************************
+\brief
+ Finds the player entity ID by iterating through all game objects.
+*************************************************************************/
 void Renderer::finding_player_ID()
 {
 	for (auto const& entity : m_Entities)
@@ -142,51 +163,40 @@ void Renderer::finding_player_ID()
 	}
 }
 
+/*!***********************************************************************
+\brief
+ Handles input testing by modifying the player's health and soul values.
+*************************************************************************/
 void Renderer::HandleInputTesting()
 {
 	if (ECS::GetInstance().HasComponent<Player>(playerID))
 	{
-		auto& player = ECS::GetInstance().GetComponent<Player>(playerID);
+		auto& player_data = ECS::GetInstance().GetComponent<Player>(playerID);
 		auto& soul_count = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
-		player.currentHealth -= 10;
-		if (player.currentHealth < 0)
-			player.currentHealth = 0;
+		player_data.currentHealth -= 10;
+		if (player_data.currentHealth < 0)
+			player_data.currentHealth = 0;
 
-		soul_count.soul_bars[SoulType::FISH] += 1;
-		soul_count.soul_bars[SoulType::WORM] += 1;
+		soul_count.soul_bars[SoulType::FISH] += 10.f;
+		soul_count.soul_bars[SoulType::WORM] += 10.f;
 	
 	}
 }
+
+/*!***********************************************************************
+\brief
+ Updates the player's health and soul bars in the UI based on current values.
+*************************************************************************/
 void Renderer::updatePlayerBars()
 {
 	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
 	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 
 	float healthPercentage = static_cast<float>(character.currentHealth) / character.maxHealth;
-	
-	//// Check if soul bar is full for FISH
-	//if (soul.soul_bars[SoulType::FISH] >= SOUL_BAR_THRESHOLD) 
-	//{
-	//	if (soul.soul_charges[SoulType::FISH] < MAX_SOUL_CHARGES) 
-	//	{
-	//		soul.soul_charges[SoulType::FISH]++;  // Add charge
-	//	}
-	//	soul.soul_bars[SoulType::FISH] = 0;       // Reset bar
-	//}
 
-	//// Check if soul bar is full for WORM
-	//if (soul.soul_bars[SoulType::WORM] >= SOUL_BAR_THRESHOLD) 
-	//{
-	//	if (soul.soul_charges[SoulType::WORM] < MAX_SOUL_CHARGES) 
-	//	{
-	//		soul.soul_charges[SoulType::WORM]++;  // Add charge
-	//	}
-	//	soul.soul_bars[SoulType::WORM] = 0;       // Reset bar
-	//}
-
-	float blueSoul = (float)(soul.soul_bars[SoulType::FISH]) / SOUL_BAR_THRESHOLD;
-	float redSoul = (float)(soul.soul_bars[SoulType::WORM]) / SOUL_BAR_THRESHOLD;
+	float blueSoul = soul.soul_bars[SoulType::FISH] / MAX_SOUL_BAR;
+	float redSoul = soul.soul_bars[SoulType::WORM] / MAX_SOUL_BAR;
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 
@@ -849,8 +859,8 @@ void Renderer::render()
 	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
 
 	batchRendererUI->beginBatch();
-	//uiManager.render(glm::vec3(0.f, 0.f, 0.f)); // Keep UI static
-	ECS::GetInstance().GetSystem<InGameGUI>()->Render(glm::vec3(0.f, 0.f, 0.f));
+	glm::vec3 tempCameraPos = glm::vec3(0.f, 0.f, 0.f);
+	ECS::GetInstance().GetSystem<InGameGUI>()->Render(tempCameraPos);
 	batchRendererUI->endBatch();
 
 	
@@ -1132,17 +1142,20 @@ void Renderer::drawBoxAnimation()
  * @param color Color of the text.
  * @param font_name Font to be used for rendering the text.
  */
-//void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
-//{
-	//textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
-//}
+void Renderer::CreateTextObject(const std::string& id, const std::string& label, const Ukemochi::Vec2& pos, const float scale, const Ukemochi::Vec3& color, const std::string& font_name)
+{
+	textRenderer->addTextObject(id, TextObject(label, glm::vec2(pos.x, pos.y), scale, glm::vec3(color.x, color.y, color.z), font_name));
+}
 
 /*!
  * @brief Updates the text of an existing text object.
  * @param id Identifier of the text object.
  * @param newText The new text content.
  */
-//void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
+
+void Renderer::UpdateTextColor(const std::string& id, const glm::vec3& color){ textRenderer->updateTextColor(id, color); }
+
 
 /*!
  * @brief Create a button object in the UI renderer.
@@ -1919,19 +1932,22 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		glm::vec2 entityCenter(transform.position.x, transform.position.y);
 
 		float handleLength = glm::max(transform.scale.x, transform.scale.y) * 0.5f;
-
+		float yOffset = 15.0f;  // Move Y-axis click area **higher**
+		float xOffset = 10.0f;
 		// Check X-axis handle
-		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength, 0.0f);
-		if (glm::length(mousePosition - xHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
+		glm::vec2 xHandleEnd = entityCenter + glm::vec2(handleLength + xOffset, 0.0f);
+		if (glm::abs(mousePosition.x - xHandleEnd.x) <= 15.0f &&
+			glm::abs(mousePosition.y - xHandleEnd.y) <= 10.0f)
 		{
+			std::cout << "[DEBUG] Clicked on X-axis handle" << std::endl;
 			scalingAxis = ScalingAxis::X;
 			isScaling = true;
 			return true;
 		}
 
-		// Check Y-axis handle
-		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength);
-		if (glm::length(mousePosition - yHandleEnd) <= 12.5f) // Match handle size (25.f / 2)
+		// **Check Y-axis handle** (shifted higher)
+		glm::vec2 yHandleEnd = entityCenter + glm::vec2(0.0f, handleLength + yOffset);
+		if (glm::length(mousePosition - yHandleEnd) <= 12.5f)
 		{
 			scalingAxis = ScalingAxis::Y;
 			isScaling = true;
@@ -1939,7 +1955,7 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 		}
 
 		// Check Uniform handle (center box)
-		if (glm::length(mousePosition - entityCenter) <= 20.0f) // Match uniform box size (40.f / 2)
+		if (glm::length(mousePosition - entityCenter) <= 20.0f)
 		{
 			scalingAxis = ScalingAxis::UNIFORM;
 			isScaling = true;
@@ -1949,6 +1965,7 @@ bool Renderer::handleMouseClickForScaling(int mouseX, int mouseY)
 
 	return false;
 }
+
 
 /*!***********************************************************************
 \brief
@@ -1967,21 +1984,19 @@ void Renderer::handleScaling(int mouseX, int mouseY)
 		auto& transform = ECS::GetInstance().GetComponent<Transform>(selectedEntityID);
 		glm::vec2 mousePosition(mouseX, mouseY);
 		glm::vec2 entityCenter(transform.position.x, transform.position.y);
-
-		// Calculate the delta from the entity center
 		glm::vec2 delta = mousePosition - entityCenter;
 
 		if (scalingAxis == ScalingAxis::X)
 		{
-			transform.scale.x = glm::abs(delta.x); // Scale based on X-axis distance
+			transform.scale.x = glm::max(10.0f, transform.scale.x + delta.x * 0.01f);
 		}
 		else if (scalingAxis == ScalingAxis::Y)
 		{
-			transform.scale.y = glm::abs(delta.y); // Scale based on Y-axis distance
+			transform.scale.y = glm::max(10.0f, transform.scale.y + delta.y * 0.01f);
 		}
 		else if (scalingAxis == ScalingAxis::UNIFORM)
 		{
-			float uniformScale = glm::length(delta);
+			float uniformScale = glm::max(10.0f, transform.scale.x + glm::length(delta) * 0.01f);
 			transform.scale.x = uniformScale;
 			transform.scale.y = uniformScale;
 		}

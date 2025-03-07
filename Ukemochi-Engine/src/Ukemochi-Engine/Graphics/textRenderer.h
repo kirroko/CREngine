@@ -100,6 +100,7 @@ public:
 	 * @param newText New text content.
 	 */
 	void updateTextObject(const std::string& id, const std::string& newText);
+	void updateTextColor(const std::string& id, const glm::vec3& color);
 	/*!
 	 * @brief Updates the position of an existing text object.
 	 * @param id Identifier for the text object.

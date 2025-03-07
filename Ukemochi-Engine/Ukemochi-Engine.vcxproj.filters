@@ -257,6 +257,7 @@
     <ClInclude Include="src\Ukemochi-Engine\Video\VideoManager.h">
       <Filter>Ukemochi-Engine\Video</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ukemochi-Engine\Game\BossManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp">
@@ -410,6 +411,8 @@
     <ClCompile Include="src\Ukemochi-Engine\Video\VideoManager.cpp">
       <Filter>Ukemochi-Engine\Video</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ukemochi-Engine\Game\TEST.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Game\BossManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp">

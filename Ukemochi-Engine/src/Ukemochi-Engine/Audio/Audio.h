@@ -172,6 +172,19 @@ namespace Ukemochi
         *************************************************************************/
         void SetAudioVolume(int soundIndex, float volume, std::string type);
 
+        void DecreaseMusicMasterVolume(float step);
+        void IncreaseMusicMasterVolume(float step);
+
+        void SetSFXMasterVolume(float volume);
+       
+		void IncreaseSFXMasterVolume(float step);
+		void DecreaseSFXMasterVolume(float step);
+
+        void IncreaseVolume(int soundIndex, float step, std::string type);
+
+		void DecreaseVolume(int soundIndex, float step, std::string type);
+
+
         /*!***********************************************************************
         \brief
          Set the volume for an entire group of sounds.
@@ -297,6 +310,7 @@ namespace Ukemochi
         float* pLockedData;           // Locked data buffer for samples
         unsigned int pLockedDataLength;
         static std::vector<float> pcm32Data;
+        float sfxMasterVolume = 0.2f;
     };
 }
 

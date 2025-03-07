@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Input/Input.h"
 #include "Ukemochi-Engine/Application.h"
 #include "Ukemochi-Engine/Audio/Audio.h"
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include <glad/glad.h>
 
 namespace Ukemochi {
@@ -230,11 +231,38 @@ namespace Ukemochi {
 
 		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow*, int focused)
 			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
 				if (focused) // Window gain focus
 				{
 					Application::Get().IsPaused = false;
 #ifndef _DEBUG
-					Audio::GetInstance().PlayGameBGM();
+					if (Application::Get().GameStarted)
+					{
+						// Stop main menu music if playing
+						if (audioM.GetMusicIndex("BGMOG") != -1 && Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+						{
+							audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+						}
+						// Play in-game BGM if not already playing
+						if (audioM.GetMusicIndex("BGM") != -1 && !Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+						{
+							audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+						}
+					}
+					else
+					{
+						// Stop in-game BGM if playing
+						if (audioM.GetMusicIndex("BGM") != -1 && Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+						{
+							audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+						}
+						// Play main menu BGM if not already playing
+						if (audioM.GetMusicIndex("BGMOG") != -1 && !Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+						{
+							audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+						}
+					}
 #endif // !_DEBUG
 				}
 				else // Window lost focus
@@ -246,6 +274,8 @@ namespace Ukemochi {
 
 		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow*, int iconified)
 			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
 				if (iconified) // Window is minimized
 				{
 					Application::Get().IsPaused = true;
@@ -255,11 +285,35 @@ namespace Ukemochi {
 				{
 					Application::Get().IsPaused = false;
 #ifndef _DEBUG
-					Audio::GetInstance().PlayGameBGM();
+					if (Application::Get().GameStarted)
+					{
+						// Stop main menu music if playing
+						if (audioM.GetMusicIndex("BGMOG") != -1 && Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+						{
+							audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+						}
+						// Play in-game BGM if not already playing
+						if (audioM.GetMusicIndex("BGM") != -1 && !Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+						{
+							audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+						}
+					}
+					else
+					{
+						// Stop in-game BGM if playing
+						if (audioM.GetMusicIndex("BGM") != -1 && Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+						{
+							audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+						}
+						// Play main menu BGM if not already playing
+						if (audioM.GetMusicIndex("BGMOG") != -1 && !Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+						{
+							audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+						}
+					}
 #endif // !_DEBUG
 				}
-			});
-	}
+			});	}
 	/*!***********************************************************************
 	\brief
 	Shuts down the window and releases resources.

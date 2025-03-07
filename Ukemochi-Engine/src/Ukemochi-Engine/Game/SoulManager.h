@@ -2,7 +2,7 @@
 /*!
 \file       SoulManager.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 02, 2025
+\date       Feb 15, 2025
 \brief      This file contains the declaration of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -17,13 +17,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    const float MAX_SOUL_BAR = 100.f; // Maximum amount for a full soul bar.
+    const int MAX_SOUL_CHARGES = 1;   // Maximum number of soul charges.
+
     class SoulManager : public System
     {
     private:
-        const float MAX_SOUL_BAR = 5.f; // Maximum amount for a full soul bar.
-        const int MAX_SOUL_CHARGES = 1; // Maximum number of soul charges.
-
         EntityID player;       // Keep track of the player ID
+        EntityID soul;         // Keep track of the floating soul ID
         EntityID fish_ability; // Keep track of the player's fish ability ID
         EntityID worm_ability; // Keep track of the player's worm ability ID
 
@@ -65,6 +66,26 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
+         Contain the logic for the fish ability.
+        *************************************************************************/
+        void FishAbility();
+
+        /*!***********************************************************************
+        \brief
+         Contain the logic for the worm ability.
+        *************************************************************************/
+        void WormAbility();
+
+        /*!***********************************************************************
+        \brief
+         Find the position of the nearest enemy relative to the player.
+        \return
+         The position of the nearest enemy or the player's position if no enemy exist.
+        *************************************************************************/
+        Vector3D FindNearestEnemyPosition();
+
+        /*!***********************************************************************
+        \brief
          Handle soul decay over time, reducing the non-active soul bars periodically.
         *************************************************************************/
         void HandleSoulDecay();
@@ -77,10 +98,14 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Find the position of the nearest enemy relative to the player.
-        \return
-         The position of the nearest enemy or the player's position if no enemy exist.
+         Handle the floating soul which follows the player's position.
         *************************************************************************/
-        Vector3D FindNearestEnemyPosition();
+        void HandleFloatingSoul();
+
+        /*!***********************************************************************
+        \brief
+         Handle the enemy projectile logic (placeholder).
+        *************************************************************************/
+        void HandleEnemyProjectile();
     };
 }

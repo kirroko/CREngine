@@ -246,6 +246,30 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
+/*!***********************************************************************
+\brief
+ Draws a sprite using the batch renderer. The function handles both
+ standalone textures and sprites within an atlas.
+
+\param[in] position
+ The world position where the sprite should be drawn.
+
+\param[in] size
+ The size of the sprite.
+
+\param[in] color
+ The color tint applied to the sprite.
+
+\param[in] spriteName
+ The name of the sprite to be rendered.
+
+\param[in] rotation
+ The rotation angle (in radians) applied to the sprite.
+
+\param[in] layer
+ The layer at which the sprite should be rendered.
+
+*************************************************************************/
 void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer)
 {
     // Check if the batch is full and flush it
@@ -258,20 +282,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
 
     GLint textureID = -1;
 
-    auto& assetManager = ECS::GetInstance().GetSystem<AssetManager>();
-
-    //std::cout << "Checking spriteData for spriteName: " << spriteName << std::endl;
-    //if (assetManager->spriteData.find(spriteName) == assetManager->spriteData.end())
-    //{
-    //    std::cerr << "Sprite '" << spriteName << "' not found in spriteData." << std::endl;
-
-    //    // Print all keys in spriteData for verification
-    //    for (const auto& [key, value] : assetManager->spriteData)
-    //    {
-    //        std::cout << "Available key in spriteData: " << key << std::endl;
-    //    }
-    //    return;
-    //}
+    auto assetManager = ECS::GetInstance().GetSystem<AssetManager>();
 
 
     // Check if the sprite exists in the atlas
@@ -351,8 +362,6 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         return;
     }
 
-
-    //ECS::GetInstance().GetSystem<AssetManager>()->debugPrintSpriteData();
     // Retrieve UV coordinates for the sprite from AssetManager
     const auto& spriteInfo = ECS::GetInstance().GetSystem<AssetManager>()->getSpriteData(spriteName);
     const auto& uv = spriteInfo.uv;
@@ -448,6 +457,14 @@ void BatchRenderer2D::drawVideoFrame(const glm::vec3& position, const glm::vec2&
     vertices.push_back({ pos4, color, {uv4}, frameIndex });
 }
 
+/*!***********************************************************************
+\brief
+ Flushes the batched sprites and renders them in proper layer order.
+
+\details
+ The function iterates through the layers, binds the necessary buffers,
+ updates vertex data, and issues draw calls to render the batch.
+*************************************************************************/
 void BatchRenderer2D::flush()
 {
     std::vector<int> layers;
@@ -488,6 +505,13 @@ void BatchRenderer2D::flush()
     layerBatches.clear();
 }
 
+/*!***********************************************************************
+\brief
+ Sets the active shader for rendering sprites.
+
+\param[in] ashader
+ The shader to be used for rendering the batch.
+*************************************************************************/
 void BatchRenderer2D::setActiveShader(std::shared_ptr<Shader> ashader)
 {
     activeShader = ashader; // Assign the new shader

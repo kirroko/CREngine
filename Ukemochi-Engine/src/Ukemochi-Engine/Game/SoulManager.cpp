@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       SoulManager.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 02, 2025
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
+\co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
+\date       Feb 15, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -16,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Input/Input.h"               // for button inputs
 #include "../Factory/GameObjectManager.h" // for game object tag
 #include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
+#include "../Graphics/UIButtonManager.h"  // for button effect
 
 namespace Ukemochi
 {
@@ -32,6 +34,11 @@ namespace Ukemochi
             if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
             {
                 player = entity; // Player ID is found
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Soul")
+            {
+                soul = entity; // Floating soul ID is found
+                GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
             }
             else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility")
             {
@@ -54,31 +61,55 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::Update()
     {
-        // Check if player, fish and worm IDs is valid
-        if (player == -1 || fish_ability == -1 || worm_ability == -1)
+        // Check if player, floating soul, fish and worm IDs is valid
+        if (player == -1 || soul == -1 || fish_ability == -1 || worm_ability == -1)
             return;
 
         // Check if player is alive
         auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
         if (player_data.currentHealth <= 0)
+        {
+            // If player is dead, disable floating soul
+            GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             return;
+        }
 
         // Soul Switch Key Press
         if (Input::IsKeyTriggered(UME_KEY_Q))
+        {
             SwitchSouls();
 
+            // Trigger button darken effect
+            auto& qButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["soul change"];
+            if (qButton)
+                qButton->triggerDarkenEffect();
+        }
+
         // Soul Ability Key Press
-        if (Input::IsKeyTriggered(UME_KEY_F))
+        if (Input::IsKeyTriggered(UME_KEY_K))
+        {
             UseSoulAbility();
+
+            // Trigger button darken effect
+            auto& fButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["game ability"];
+            if (fButton)
+                fButton->triggerDarkenEffect();
+        }
 
         // Update the soul system based on the number of steps
         for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
         {
+            // Handle enemy projectile (placeholder)
+            HandleEnemyProjectile();
+
             // Handle soul bar decay over time
             //HandleSoulDecay();
 
             // Handle skill effects over time
             HandleSkillEffects();
+
+            // Handle floating soul
+            HandleFloatingSoul();
         }
     }
 
@@ -106,8 +137,6 @@ namespace Ukemochi
         // Gain a soul charge if the soul bar is filled
         if (player_soul.soul_bars[soul_type] >= MAX_SOUL_BAR && player_soul.soul_charges[soul_type] < MAX_SOUL_CHARGES)
             ++player_soul.soul_charges[soul_type];
-
-        UME_ENGINE_TRACE("Soul Harvest: {0}", static_cast<int>(soul_type));
     }
 
     /*!***********************************************************************
@@ -117,21 +146,34 @@ namespace Ukemochi
     void SoulManager::SwitchSouls()
     {
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-        auto& anim = ECS::GetInstance().GetComponent<Animation>(player);
+        auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+        auto& soul_animator = ECS::GetInstance().GetComponent<Animation>(soul);
 
-        UME_ENGINE_TRACE("OMG HE PRESSED Q!");
+        // Skip if Mochi is still casting an animation
+        if (player_soul.is_casting || player_animator.isAttacking)
+            return;
+
+        // Play different hit sounds based on enemy type
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        if (audioM.GetSFXindex("SwapSoul") != -1)
+            audioM.PlaySFX(audioM.GetSFXindex("SwapSoul"));
+
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
         {
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                anim.SetAnimationUninterrupted("SwitchNB");
+                player_animator.SetAnimationUninterrupted("SwitchNB");
+                soul_animator.SetAnimation("BlueFlame");
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                anim.SetAnimationUninterrupted("SwitchNR");
+                player_animator.SetAnimationUninterrupted("SwitchNR");
+                soul_animator.SetAnimation("RedFlame");
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
         }
         // Currently in FISH soul, switch to WORM soul if available else EMPTY soul
@@ -140,12 +182,15 @@ namespace Ukemochi
             if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
-                anim.SetAnimationUninterrupted("SwitchBR");
+                player_animator.SetAnimationUninterrupted("SwitchBR");
+                soul_animator.SetAnimation("RedFlame");
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
-                anim.SetAnimationUninterrupted("SwitchBN");
+                player_animator.SetAnimationUninterrupted("SwitchBN");
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
         // Currently in WORM soul, switch to FISH soul if available else EMPTY soul
@@ -154,16 +199,21 @@ namespace Ukemochi
             if (player_soul.soul_bars[FISH] > 0)
             {
                 player_soul.current_soul = FISH;
-                anim.SetAnimationUninterrupted("SwitchRB");
+                player_animator.SetAnimationUninterrupted("SwitchRB");
+                soul_animator.SetAnimation("BlueFlame");
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
             }
             else
             {
                 player_soul.current_soul = EMPTY;
-                anim.SetAnimationUninterrupted("SwitchRN");
+                player_animator.SetAnimationUninterrupted("SwitchRN");
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
 
-        UME_ENGINE_TRACE("Soul Switch: {0}", static_cast<int>(player_soul.current_soul));
+        // Don't let Mochi move while switching souls
+        player_soul.is_casting = true;
+        ECS::GetInstance().GetComponent<Rigidbody2D>(player).force = Vec2{ 0,0 };
     }
 
     /*!***********************************************************************
@@ -174,38 +224,118 @@ namespace Ukemochi
     {
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 
-        // Check if the skill is ready
-        if (!player_soul.skill_ready)
+        // Check if the skill is ready or casting an ability
+        if (!player_soul.skill_ready || player_soul.is_casting)
             return;
 
         // Use the FISH ability if there are enough FISH charges
         if (player_soul.current_soul == FISH && player_soul.soul_charges[FISH] > 0)
-        {
-            // Trigger fish AOE effect at the nearest enemy
-            auto& fish_transform = ECS::GetInstance().GetComponent<Transform>(fish_ability);
-            fish_transform.position = FindNearestEnemyPosition();
-            GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(true);
-
-            --player_soul.soul_charges[player_soul.current_soul];
-            player_soul.skill_ready = false;
-            player_soul.skill_timer = 0.f;
-
-            UME_ENGINE_TRACE("Soul Ability: FISH");
-        }
+            FishAbility();
         // Use the WORM ability if there are enough WORM charges
         else if (player_soul.current_soul == WORM && player_soul.soul_charges[WORM] > 0)
+            WormAbility();
+    }
+
+    /*!***********************************************************************
+    \brief
+     Contain the logic for the fish ability.
+    *************************************************************************/
+    void SoulManager::FishAbility()
+    {
+        // Play different hit sounds based on enemy type
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        if (audioM.GetSFXindex("FishSpecial") != -1)
+            audioM.PlaySFX(audioM.GetSFXindex("FishSpecial"));
+
+        // Trigger player fish casting animation
+        auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+        player_animator.SetAnimationUninterrupted("FishSkill");
+
+        // Trigger fish AOE effect at the nearest enemy
+        auto& fish_transform = ECS::GetInstance().GetComponent<Transform>(fish_ability);
+        fish_transform.position = FindNearestEnemyPosition();
+
+        // Trigger fish animation and enable GO
+        auto& fish_animator = ECS::GetInstance().GetComponent<Animation>(fish_ability);
+        fish_animator.SetAnimation("FishAbilitySpawn");
+        GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(true);
+
+        // Decrease soul charge and reset skill stats
+        auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+        --player_soul.soul_charges[player_soul.current_soul];
+        player_soul.skill_ready = false;
+        player_soul.skill_timer = 0.f;
+
+        // Don't let Mochi move while casting soul ability
+        player_soul.is_casting = true;
+        ECS::GetInstance().GetComponent<Rigidbody2D>(player).force = Vec2{ 0,0 };
+    }
+
+    /*!***********************************************************************
+    \brief
+     Contain the logic for the worm ability.
+    *************************************************************************/
+    void SoulManager::WormAbility()
+    {
+        // Play different hit sounds based on enemy type
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        if (audioM.GetSFXindex("WormSpecial") != -1)
+            audioM.PlaySFX(audioM.GetSFXindex("WormSpecial"));
+
+        // Trigger player worm casting animation
+        auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+        player_animator.SetAnimationUninterrupted("WormSkill");
+
+        // Trigger worm web effect at the nearest enemy
+        auto& worm_transform = ECS::GetInstance().GetComponent<Transform>(worm_ability);
+        worm_transform.position = FindNearestEnemyPosition();
+
+        // Trigger worm animation and enable GO
+        auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);
+        worm_animator.SetAnimation("WormAbilitySpawn");
+        GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(true);
+
+        // Decrease soul charge and reset skill stats
+        auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+        --player_soul.soul_charges[player_soul.current_soul];
+        player_soul.skill_ready = false;
+        player_soul.skill_timer = 0.f;
+
+        // Don't let Mochi move while casting soul ability
+        player_soul.is_casting = true;
+        ECS::GetInstance().GetComponent<Rigidbody2D>(player).force = Vec2{ 0,0 };
+    }
+
+    /*!***********************************************************************
+    \brief
+     Find the position of the nearest enemy relative to the player.
+    \return
+     The position of the nearest enemy or the player's position if no enemy exist.
+    *************************************************************************/
+    Vector3D SoulManager::FindNearestEnemyPosition()
+    {
+        Vec3 player_position = ECS::GetInstance().GetComponent<Transform>(player).position;
+        Vec3 nearest_enemy_position = player_position;
+        float min_distance = std::numeric_limits<float>::max();
+
+        // Search through the entity list for the nearest enemy
+        for (auto const& entity : m_Entities)
         {
-            // Trigger worm web effect at the nearest enemy
-            auto& worm_transform = ECS::GetInstance().GetComponent<Transform>(worm_ability);
-            worm_transform.position = FindNearestEnemyPosition();
-            GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(true);
+            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy" && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+            {
+                Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                float distance = Vec3Length(enemy_position - player_position);
 
-            --player_soul.soul_charges[player_soul.current_soul];
-            player_soul.skill_ready = false;
-            player_soul.skill_timer = 0.f;
-
-            UME_ENGINE_TRACE("Soul Ability: WORM");
+                if (distance < min_distance)
+                {
+                    min_distance = distance;
+                    nearest_enemy_position = enemy_position;
+                }
+            }
         }
+
+        // Return the nearest enemy position
+        return nearest_enemy_position;
     }
 
     /*!***********************************************************************
@@ -229,7 +359,7 @@ namespace Ukemochi
             }
 
             // Reset soul decay timer
-            player_soul.soul_decay_timer = 0;
+            player_soul.soul_decay_timer = 0.f;
         }
     }
 
@@ -256,51 +386,84 @@ namespace Ukemochi
                 player_soul.skill_timer = 0.f;
             }
         }
-        else
-        {
-            // If the skill duration has expired, disable the ability
-            if (player_soul.skill_timer > player_soul.skill_duration)
-            {
-                // Disable the skill ability
-                if (player_soul.current_soul == FISH)
-                    GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
-                else if (player_soul.current_soul == WORM)
-                    GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
 
-                // Reset the skill timer
-                player_soul.skill_timer = 0.f;
-            }
-        }
+        // Handle the fish spawning and attacking animations, disable fish ability once completed
+        auto& fish_animator = ECS::GetInstance().GetComponent<Animation>(fish_ability);
+
+        if (fish_animator.currentClip == "FishAbilitySpawn" && fish_animator.current_frame == 9)
+            fish_animator.SetAnimation("FishAbilityAttack");
+        if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 9)
+            GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
+
+
+        // Handle the worm spawning and attacking animations, disable worm ability once completed
+        auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);
+
+        if (worm_animator.currentClip == "WormAbilitySpawn" && worm_animator.current_frame == 9)
+            worm_animator.SetAnimation("WormAbilityAttack");
+        if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame == 9)
+            GameObjectManager::GetInstance().GetGO(worm_ability)->SetActive(false);
+
+        // Handle the player casting animation
+        auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+        if (player_animator.currentClip != "SwitchNB" && player_animator.currentClip != "SwitchNR"
+            && player_animator.currentClip != "SwitchBR" && player_animator.currentClip != "SwitchBN"
+            && player_animator.currentClip != "SwitchRB" && player_animator.currentClip != "SwitchRN"
+            && player_animator.currentClip != "FishSkill" && player_animator.currentClip != "WormSkill")
+            player_soul.is_casting = false;
     }
 
     /*!***********************************************************************
     \brief
-     Find the position of the nearest enemy relative to the player.
-    \return
-     The position of the nearest enemy or the player's position if no enemy exist.
+     Handle the floating soul which follows the player's position.
     *************************************************************************/
-    Vector3D SoulManager::FindNearestEnemyPosition()
+    void SoulManager::HandleFloatingSoul()
     {
-        Vec3 player_position = ECS::GetInstance().GetComponent<Transform>(player).position;
-        Vec3 closest_enemy_position = player_position;
-        float min_distance = std::numeric_limits<float>::max();
+        auto& player_transform = ECS::GetInstance().GetComponent<Transform>(player);
+        auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
+        auto& soul_transform = ECS::GetInstance().GetComponent<Transform>(soul);
 
-        // Search through the entity list for the nearest enemy
-        for (auto const& entity : m_Entities)
+        // Update floating soul position to the player's position
+        if (player_sr.flipX)
+            soul_transform.position = Vec3{ player_transform.position.x - player_transform.scale.x * 0.25f, player_transform.position.y + player_transform.scale.y * 0.5f, 0 };
+        else
+            soul_transform.position = Vec3{ player_transform.position.x + player_transform.scale.x * 0.25f, player_transform.position.y + player_transform.scale.y * 0.5f, 0 };
+    }
+
+    /*!***********************************************************************
+    \brief
+     Handle the enemy projectile logic (placeholder).
+    *************************************************************************/
+    void SoulManager::HandleEnemyProjectile()
+    {
+        for (auto& entity : m_Entities)
         {
-            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
-            {
-                Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
-                float distance = Vec3Length(enemy_position - player_position);
+            std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
-                if (distance < min_distance)
+            // Skip if the entity is not active
+            if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+                continue;
+
+            if (tag == "EnemyProjectile")
+            {
+                if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
                 {
-                    min_distance = distance;
-                    closest_enemy_position = enemy_position;
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)//if bullet hit detroy
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                        GameObjectManager::GetInstance().DestroyObject(entity);
+                        break;
+                    }
+
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                        GameObjectManager::GetInstance().DestroyObject(entity);
+                        break;
+                    }
                 }
             }
         }
-
-        return closest_enemy_position;
     }
 }

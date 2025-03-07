@@ -58,6 +58,13 @@ namespace Ukemochi
         void DestroyObject(EntityID id);
 
         /**
+         * @brief Get a gameobject by its name
+         * @param name a name to search for
+         * @return a gameobject
+         */
+        GameObject* GetGOByName(const std::string& name) const;
+
+        /**
          * @brief Get a gameobject by its tag
          * @param tag a tag to search for
          * @return a gameobject

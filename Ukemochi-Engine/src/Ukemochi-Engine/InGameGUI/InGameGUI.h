@@ -2,7 +2,8 @@
 /*!
 \file       InGameGUI.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 27, 2024
+\co-author	TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu
+\date       Feb 6, 2025
 \brief      This file contains the declaration of the in game GUI system which handles GUI
 			elements such as text, images and buttons within the game.
 
@@ -16,15 +17,24 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../ECS/ECS.h"			  // for ECS system and components
 #include "../Graphics/UIButton.h" // for TextAlignment
+#include "../Factory/GameObject.h"
+#include "../Game/GSM.h"
+#include <unordered_map> // Include this for std::unordered_map
 
 namespace Ukemochi
 {
 	class InGameGUI : public System
 	{
 	private:
+		bool pause = false;
+		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
+		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
+		float hoverCooldown = 0.5f;  // cooldown for hover sound
+		float hoverTimer = 0.0f;     // Tracks time since last hover sound
 		 
 	public:
+
 		/*!***********************************************************************
 		\brief
 		 Initialize the in game GUI system.
@@ -51,7 +61,7 @@ namespace Ukemochi
 		\param[in] font_name
 		 The font to be used for rendering the text.
 		*************************************************************************/
-		//void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
+		void CreateText(const std::string& id, const std::string& label, const Vec2& pos, const float scale, const Vec3& color, const std::string& font_name);
 
 		/*!***********************************************************************
 		\brief
@@ -61,49 +71,13 @@ namespace Ukemochi
 		\param[in] new_label
 		 The new text to set as the label.
 		*************************************************************************/
-		//void UpdateText(const std::string& id, const std::string& new_label);
+		void UpdateText(const std::string& id, const std::string& new_label);
 
 		/*!***********************************************************************
 		\brief
-		 Create a GUI image object.
-		\param[in] id
-		 The ID for the image object.
-		\param[in] pos
-		 The position of the image.
-		\param[in] size
-		 The size of the image.
-		\param[in] textureID
-		 The ID for the image texture.
+		 Creates various GUI images (e.g., health bar, icons, etc.).
 		*************************************************************************/
 		void CreateImage();
-
-		/*!***********************************************************************
-		\brief
-		 Create a GUI button object.
-		\param[in] id
-		 The ID for the button object.
-		\param[in] pos
-		 The position of the button.
-		\param[in] size
-		 The size of the button.
-		\param[in] textureID
-		 The ID for the button texture.
-		\param[in] text
-		 The label text displayed on the button.
-		\param[in] textColor
-		 The color of the label text (RGB format).
-		\param[in] fontName
-		 The font to be used for the label text.
-		\param[in] textScale
-		 The scale of the label text.
-		\param[in] alignment
-		 The alignment of the text within the button.
-		\param[in] interactable
-		 Whether the button can be interacted with.
-		\param[in] on_click
-		 A callback function triggered on button click.
-		*************************************************************************/
-		void CreateButton();
 
 		/*!***********************************************************************
 		\brief
@@ -113,6 +87,12 @@ namespace Ukemochi
 		*************************************************************************/
 		void RemoveElement(const std::string& id);
 
+		/*!***********************************************************************
+		\brief
+		 Renders the GUI elements based on the current camera position.
+		\param[in] cameraPos
+		 The current position of the camera.
+		*************************************************************************/
 		void Render(glm::vec3& cameraPos);
 
 	private:
@@ -133,5 +113,29 @@ namespace Ukemochi
 		 True if the mouse is within the object's boundaries, false otherwise.
 		*************************************************************************/
 		bool IsInside(const Vec2& pos, const Vec2& size);
+
+		/*!***********************************************************************
+		\brief
+		 Displays the in-game pause menu.
+		*************************************************************************/
+		void ShowPauseMenu();
+
+		/*!***********************************************************************
+		\brief
+		 Hides the in-game pause menu.
+		*************************************************************************/
+		void HidePauseMenu();
+
+		/*!***********************************************************************
+		\brief
+		 Displays the defeat screen when the player loses.
+		*************************************************************************/
+		//void showDefeatScreen();
+
+		/*!***********************************************************************
+		\brief
+		 Hides the defeat screen and resumes gameplay.
+		*************************************************************************/
+		//void HideDefeatScreen();
 	};
 }

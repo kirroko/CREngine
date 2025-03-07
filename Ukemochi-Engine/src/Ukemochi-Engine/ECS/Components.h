@@ -169,6 +169,7 @@ namespace Ukemochi
 		float original_frame_time = 0.05f;					  // Original frame time
 		bool is_playing = true;								  // Is the animation playing?
 		bool doNotInterrupt = false;						  // Do not interrupt the current animation
+		bool isReverse = false;
 
 		bool isAttacking = false;
 		bool attackAnimationFinished = false;
@@ -251,6 +252,17 @@ namespace Ukemochi
 			return false;
 		}
 
+		bool RestartAnimation()
+		{
+			if (clips.find(currentClip) == clips.end())
+				return false;
+
+			current_frame = 0;
+			time_since_last_frame = 0.0f;
+
+			return true;
+		}
+
 		void update(float dt)
 		{
 			if (clips.find(currentClip) == clips.end()) // Don't update if the clip doesn't exist
@@ -270,14 +282,28 @@ namespace Ukemochi
 			// Advance new frame
 			if (time_since_last_frame >= clip.frame_time)
 			{
-				current_frame++;
-				// time_since_last_frame -= clip.frame_time;
-				if (current_frame >= clip.total_frames || (current_frame >= stop_frame && stop_frame != 0))
+				if (!isReverse)
 				{
-					current_frame = clip.looping ? 0 : clip.total_frames - 1;
-					doNotInterrupt = false;
-					isAttacking = false;
-					// current_frame = clip.looping ? 0 : SetAnimation(defaultClip);
+					current_frame++;
+				
+					if (current_frame >= clip.total_frames || (current_frame >= stop_frame && stop_frame != 0))
+					{
+						current_frame = clip.looping ? 0 : clip.total_frames - 1;
+						doNotInterrupt = false;
+						isAttacking = false;
+					}
+				}
+				else
+				{
+					current_frame--;
+
+					if (current_frame < 0 || current_frame <= stop_frame)
+                    {
+                        current_frame = clip.looping ? clip.total_frames - 1 : 0;
+                        doNotInterrupt = false;
+                        isAttacking = false;
+						isReverse = false; // reset animation to forward
+                    }
 				}
 
 				time_since_last_frame = 0.0f; // Reset time
@@ -309,6 +335,16 @@ namespace Ukemochi
 
 	};
 
+	enum RenderLayer // The type of render layers
+	{
+		BACKGROUND,    // to render background objects
+		SKILL_BACK,    // to render soul skills behind dynamic and static objects
+		DYNAMIC_BACK,  // to render player and enemy objects behind static objects
+		STATIC,		   // to render static objects
+		SKILL_FRONT,   // to render soul skills behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT, // to render player and enemy objects infront of static objects
+		FOREGROUND	   // to render foreground objects
+	};
 	struct SpriteRender
 	{
 		std::string texturePath{};				// The path acting as a key to the texture
@@ -346,7 +382,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
 		float maxComboTimer = 5.0f; // Max time to continue combo 
-		float playerForce = 2500.0f;
+		float playerForce = 4500.0f;
 		bool isDead = false;
 		bool canAttack = true;
 		bool comboIsAttacking = false;
@@ -368,10 +404,20 @@ namespace Ukemochi
 		float skill_cooldown = 5.f;						 // The cooldown of the skill
 		float skill_timer = 0.f;						 // The timer for skill ready
 		bool skill_ready = false;						 // The skill's ready state
+		bool is_casting = false;						 // The soul animation casting state
 
 		float soul_decay_amount = 10.f;					 // The amount of soul to decay
 		float soul_decay_rate = 5.f;					 // The rate of decay for the soul bar
 		float soul_decay_timer = 0.f;					 // The timer for soul decay
+	};
+
+	/*!***********************************************************************
+	\brief
+	 Boss component structure.
+	*************************************************************************/
+	struct Boss
+	{
+
 	};
 
 	/*!***********************************************************************
@@ -382,8 +428,7 @@ namespace Ukemochi
 	{
 		enum EnemyStates
 		{
-			ROAM,
-			CHASE,
+			MOVE,
 			STANDBY,
 			ATTACK,
 			DEAD,
@@ -413,34 +458,41 @@ namespace Ukemochi
 		mutable int prevObject2;
 		bool isCollide;
 		bool isKick;
+		float kicktime = 1.f;
 		bool hasDealtDamage = false;
-		float atktimer = 3.0f;
+		bool wormshoot = false;
+		float atktimer = 0.0f;
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
 		bool wasHit = false;  // New flag for hit detection
+		float waitTime = 0.f;
+		bool iswaiting = false;
+		int move = 5;
 
 		Enemy() = default;
 
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
-			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
+			: ID(ID), state(EnemyStates::MOVE), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
+			wormshoot = false;
+			hasDealtDamage = false;
 			nearestObj = -1;
 			collideObj = -1;
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 50.f;
-				attackPower = 20.f;
+				health = 60.f;
+				attackPower = 15.f;
 				attackRange = 300.f;
-				speed = 2000.f;
+				speed = 4000.f;
 				break;
 			case Enemy::WORM:
 				health = 50.f;
-				attackPower = 10.f;
-				attackRange = 300.f;
-				speed = 5000.f;
+				attackPower = 5.f;
+				attackRange = 700.f;
+				speed = 3000.f;
 				break;
 			case Enemy::DEFAULT:
 				break;
@@ -448,6 +500,54 @@ namespace Ukemochi
 				break;
 			}
 		}
+
+	static	bool LineIntersectsRect(float startX, float startY, float dirX, float dirY,
+			float length, float objX, float objY, float objWidth, float objHeight)
+		{
+		float minX = objX - 0.5f * objWidth;
+		float maxX = objX + 0.5f * objWidth;
+		float minY = objY - 0.5f * objHeight;
+		float maxY = objY + 0.5f * objHeight;
+
+		// Ensure the start point is INSIDE the rectangle
+		if (startX > minX && startX < maxX && startY > minY && startY < maxY)
+			return true;
+
+		float tMin = 0.0f, tMax = length;
+
+		// Check intersection along X-axis
+		if (dirX != 0.0f)
+		{
+			float invD = 1.0f / dirX;
+			float t0 = (minX - startX) * invD;
+			float t1 = (maxX - startX) * invD;
+			if (invD < 0.0f) std::swap(t0, t1);
+			tMin = std::max(tMin, t0);
+			tMax = std::min(tMax, t1);
+		}
+		else if (startX <= minX || startX >= maxX)
+		{
+			return false; // Line is vertical but outside X bounds
+		}
+
+		// Check intersection along Y-axis
+		if (dirY != 0.0f)
+		{
+			float invD = 1.0f / dirY;
+			float t0 = (minY - startY) * invD;
+			float t1 = (maxY - startY) * invD;
+			if (invD < 0.0f) std::swap(t0, t1);
+			tMin = std::max(tMin, t0);
+			tMax = std::min(tMax, t1);
+		}
+		else if (startY <= minY || startY >= maxY)
+		{
+			return false; // Line is horizontal but outside Y bounds
+		}
+
+		// Ensure intersection occurs within the given length and is non-negative
+		return (tMin <= tMax) && (tMax >= 0) && (tMin <= length);
+	}
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
@@ -517,9 +617,25 @@ namespace Ukemochi
 		{
 			float dx = player.position.x - enemy.position.x;
 			float dy = player.position.y - enemy.position.y;
+
 			float distance = dx * dx + dy * dy;
 
 			return distance <= attackRange * attackRange;
+		}
+
+		bool IsPlayerInAttackRange(Transform& player, Transform& enemy) const
+		{
+			float dx = player.position.x - enemy.position.x;
+			float dy = player.position.y - enemy.position.y;
+
+			if (dx * dx <= attackRange * attackRange && std::abs(dy) <= 20)
+			{
+				return true;
+			}
+			return false;
+			//float distance = dx * dx + dy * dy;
+
+			//return distance <= attackRange * attackRange;
 		}
 
 		//wrap to target when collide
@@ -587,9 +703,26 @@ namespace Ukemochi
 				health = 0.0f; // Ensure health does not go negative
 			}
 			wasHit = true;
-			atktimer = 3.f;
+			atktimer = 1.5f;
 			isCollide = false;
 		}
+	};
+
+	/*!***********************************************************************
+	\brief
+	 EnemyBullet component structure.
+	*************************************************************************/
+	struct EnemyBullet
+	{
+		float lifetime = 5.0f;
+		bool hit = false;
+		EnemyBullet() = default;
+
+		// Constructor
+		//EnemyBullet()
+		//{
+
+		//}
 	};
 
 	/*!***********************************************************************

@@ -41,6 +41,16 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
+            Raytracing for enemy to see player
+        \details
+            This method is called to update each enemy's behavior and logic during the game's update phase.
+        *************************************************************************/
+        bool HasClearLineOfSight(GameObject* enemy, const Transform& player);
+
+        bool IsObstacleInFront(float startX, float startY, float dirX, float dirY, float range);
+
+        /*!***********************************************************************
+        \brief
             Handles the collision response when an enemy collides with another object.
         \param enemyID: The ID of the enemy involved in the collision.
         \param objID: The ID of the object involved in the collision.
@@ -88,6 +98,15 @@ namespace Ukemochi
             This method removes all enemies from the enemy list and performs any necessary cleanup.
         *************************************************************************/
         void ClearEnemies();
+
+        /*!***********************************************************************
+        \brief
+            Flag to track when enemy is killed
+        \param tracker: bool that toggles when enemmies die
+        \return
+            bool that act as a flag
+        *************************************************************************/
+        //bool KillEnemyFlag(bool& killTracker);
 
     private:
         GameObject *playerObj;

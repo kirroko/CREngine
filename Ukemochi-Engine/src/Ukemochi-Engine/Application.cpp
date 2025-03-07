@@ -209,12 +209,30 @@ namespace Ukemochi
     *************************************************************************/
     void Application::StartGame()
     {
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSound();
         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+        // Play BGM at 0.2 volume
         if (audioM.GetMusicIndex("BGM") != -1)
         {
-            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+            int bgmIndex = audioM.GetMusicIndex("BGM");
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(bgmIndex))
             {
-                audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                audioM.PlayMusic(bgmIndex);
+                // Set volume for BGM
+                ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(bgmIndex, 0.2f, "Music");
+            }
+        }
+
+        // Play Wind_BGM at 0.3 volume
+        if (audioM.GetMusicIndex("Wind_BGM") != -1)
+        {
+            int windBgmIndex = audioM.GetMusicIndex("Wind_BGM");
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(windBgmIndex))
+            {
+                audioM.PlayMusic(windBgmIndex);
+                // Set volume for Wind_BGM
+                ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.3f, "Music");
             }
         }
 
@@ -280,6 +298,16 @@ namespace Ukemochi
         SceneManager sceneManager = SceneManager::GetInstance();
         sceneManager.SceneMangerInit();
         sceneManager.SceneMangerLoad();
+
+        // Initialize main menu music
+        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+        if (audioM.GetMusicIndex("BGMOG") != -1)
+        {
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+            {
+                audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+        }
 
         while (es_current != ENGINE_STATES::ES_QUIT)
         {
@@ -399,5 +427,18 @@ namespace Ukemochi
         //imguiInstance.RenderGizmo2d();
         imguiInstance.ImGuiUpdate(); // Render ImGui elements
         //************ Render IMGUI ************
+    }
+
+    /*!***********************************************************************
+    \brief
+    Terminates the game by setting the engine state to quit.
+    \details
+    This function updates the engine state (`es_current`) to `ES_QUIT`,
+    indicating that the game should close. It ensures a clean exit from
+    the application loop.
+    *************************************************************************/
+    void Application::QuitGame()
+    {
+        es_current = ENGINE_STATES::ES_QUIT;
     }
 }
