@@ -293,6 +293,13 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         elapsedTime += deltaTime;
         static double audioDuration = (double)(1.0 / totalFrames) * 14;
 
+        if (currentFrame >= 400)
+        {
+            if (ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
+            {
+                ECS::GetInstance().GetSystem<Audio>()->StopSFX(0);
+            }
+        }
 
         // Only update the video frame if enough time has passed
         if (currentFrame < totalFrames - 1)
