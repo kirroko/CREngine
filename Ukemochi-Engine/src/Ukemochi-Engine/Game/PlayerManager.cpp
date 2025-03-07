@@ -142,9 +142,9 @@ namespace Ukemochi
 
                 // Move the offset player's shadow
                 if (!sr.flipX)
-                    shadow_trans.position = Vector3D(trans.position.x - shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.55f, trans.position.z);
+                    shadow_trans.position = Vector3D(trans.position.x - shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.2f, trans.position.z);
                 else
-                    shadow_trans.position = Vector3D(trans.position.x + shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.55f, trans.position.z);
+                    shadow_trans.position = Vector3D(trans.position.x + shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.2f, trans.position.z);
 
                 if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
                     && !data.comboIsAttacking)

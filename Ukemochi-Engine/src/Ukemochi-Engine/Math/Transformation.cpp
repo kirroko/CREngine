@@ -63,7 +63,7 @@ namespace Ukemochi
 
 			// Compute the depth scale of the dynamic entities
 			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "Player_Shadow"
-				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile")
+				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile" || tag == "EnemyShadow")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 
 			// Compute the layer of the dynamic entities
@@ -165,8 +165,18 @@ namespace Ukemochi
 			soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
 			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
 		}
-		else if (tag == "Enemy" || tag == "EnemyProjectile")
+		else if (tag == "Enemy")
+		{
+			std::string enemy_shadow_name = GameObjectManager::GetInstance().GetGO(object)->GetName() + "_Shadow";
+			auto& shadow_sr = GameObjectManager::GetInstance().GetGOByName(enemy_shadow_name)->GetComponent<SpriteRender>();
+
+			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+		}
+		else if (tag == "EnemyProjectile")
+		{
+			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+		}
 		else if (tag == "FishAbility" || tag == "WormAbility")
 			sprite_renderer.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
 	}
