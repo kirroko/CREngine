@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/SoulManager.h"
 #include "Graphics/UIButtonManager.h"
 #include "Game/BossManager.h"
+#include "Video/VideoManager.h"
 
 namespace Ukemochi
 {
@@ -77,6 +78,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
         ECS::GetInstance().RegisterComponent<EnemyBullet>();
         ECS::GetInstance().RegisterComponent<Boss>();
+        ECS::GetInstance().RegisterComponent<VideoData>();
 
         // TODO: Register your systems, No limit for systems
         ECS::GetInstance().RegisterSystem<Physics>();
@@ -95,6 +97,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<SoulManager>();
         ECS::GetInstance().RegisterSystem<UIButtonManager>();
         ECS::GetInstance().RegisterSystem<BossManager>();
+        ECS::GetInstance().RegisterSystem<VideoManager>();
 
         // TODO: Set a signature to your system
         // Each system will have a signature to determine which entities it will process
@@ -157,6 +160,17 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
 
+        // For VideoManager system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<VideoData>());
+        ECS::GetInstance().SetSystemSignature<VideoManager>(sig);
+
+        // For UIButtonManager system
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Transform>());
+        sig.set(ECS::GetInstance().GetComponentType<Boss>());
+        ECS::GetInstance().SetSystemSignature<BossManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
@@ -216,6 +230,12 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+
+        // We are gonna to play the intro video after everything has been loaded!
+        UME_ENGINE_TRACE("Initializing video manager...");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/storyboard-for coders.mpeg"))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+
 
 #ifndef _DEBUG
 	    cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
@@ -323,7 +343,16 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
-        SceneManagerDraw();
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+            ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+        }
+        else
+        {
+            SceneManagerDraw();
+        }
     }
 
     /*!***********************************************************************

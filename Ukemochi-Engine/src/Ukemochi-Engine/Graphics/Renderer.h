@@ -198,6 +198,9 @@ public:
 	{
 		return playerID;
 	}
+
+	std::shared_ptr<Shader> shaderProgram;
+	std::shared_ptr<Shader> video_shader_program;
 private:
 
 	//const int MAX_SOUL_CHARGES = 1;
@@ -205,7 +208,9 @@ private:
 	/*!
 	* @brief Pointer to the Shader object, which handles the OpenGL shaders.
 	*/
-	std::shared_ptr<Shader> shaderProgram;
+	//td::shared_ptr<Shader> shaderProgram;
+
+
 
 	/*!
 	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.

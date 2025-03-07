@@ -22,14 +22,146 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+    std::vector<float> Audio::pcm32Data;  // Use float instead of int16_t
+    static size_t readPosition = 0;
+
+    FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
+    {
+        std::cout << "PCM Read Callback Triggered. Data Size: " << datalen << std::endl;
+
+        if (pcm32Data.empty()) {
+            return FMOD_ERR_INVALID_PARAM;
+        }
+
+        // Skip the first 10 sets of data (if pcm32Data is large enough)
+        size_t skipCount = 10 * 2;  // 10 sets * 2 channels
+        if (pcm32Data.size() > skipCount) {
+            readPosition = skipCount;  // Move the read position to skip the first 10 sets of data
+        }
+
+        size_t dataSizeNeeded = datalen / sizeof(float);
+        if (pcm32Data.size() < readPosition + dataSizeNeeded) {
+            pcm32Data.resize(readPosition + dataSizeNeeded);
+        }
+
+        size_t remainingData = pcm32Data.size() - readPosition;
+
+        if (remainingData < dataSizeNeeded) {
+            readPosition = 0;
+            remainingData = pcm32Data.size();
+        }
+
+        memcpy(data, pcm32Data.data() + readPosition, datalen);
+        readPosition += dataSizeNeeded;
+
+        return FMOD_OK;
+    }
+
+    void Audio::playStereoSound(float* interleavedSamples, int sampleCount, float speedMultiplier)
+    {
+        if (!pSystem) {
+            std::cerr << "FMOD system is not initialized!" << std::endl;
+            return;
+        }
+
+        if (!interleavedSamples) {
+            std::cerr << "Error: interleavedSamples is nullptr!" << std::endl;
+            return;
+        }
+
+        if (sampleCount <= 0) {
+            std::cerr << "Error: sampleCount is invalid (" << sampleCount << ")!" << std::endl;
+            return;
+        }
+
+        // Compute total samples (stereo has 2 channels)
+        size_t totalSamples = static_cast<size_t>(sampleCount) * 2;
+
+        // Ensure pcm32Data is large enough
+        pcm32Data.resize(totalSamples, 0.0f);
+
+        // Low-pass filter parameters (tuned for better smoothing)
+        float previousSampleL = 0.0f;
+        float previousSampleR = 0.0f;
+        float alpha = 0.01f;  // Adjust alpha to a smaller value to avoid high-frequency noise
+
+        // Apply a simple low-pass filter while copying samples
+        for (size_t i = 0; i < totalSamples; i += 2) {
+            // Left channel smoothing
+            pcm32Data[i] = previousSampleL + alpha * (interleavedSamples[i] - previousSampleL);
+            previousSampleL = pcm32Data[i];
+
+            // Right channel smoothing
+            pcm32Data[i + 1] = previousSampleR + alpha * (interleavedSamples[i + 1] - previousSampleR);
+            previousSampleR = pcm32Data[i + 1];
+        }
+
+        // Ensure PCM data is within range [-1.0f, 1.0f]
+        float compressionThreshold = 0.8f; // Set threshold where compression starts
+        float compressionRatio = 0.5f;    // Amount of compression, 1.0 = no compression, < 1.0 = more compression
+
+        for (auto& sample : pcm32Data) {
+            if (std::abs(sample) > compressionThreshold) {
+                // Apply compression to the sample if it exceeds the threshold
+                sample = compressionThreshold + (sample - compressionThreshold) * compressionRatio;
+            }
+            sample = std::clamp(sample, -1.0f, 1.0f);
+        }
+
+
+        // If a sound is already playing, release it before creating a new one
+        if (pvideosound) {
+            pvideosound->release();
+            pvideosound = nullptr;
+        }
+
+        // Configure FMOD sound settings
+        FMOD_CREATESOUNDEXINFO exinfo = {};
+        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+        exinfo.length = totalSamples * sizeof(float);
+        exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
+        exinfo.numchannels = 2;
+        exinfo.defaultfrequency = 48000 * speedMultiplier;  // Adjust for speed multiplier 48000
+        exinfo.pcmreadcallback = pcmReadCallback; // Custom PCM read callback
+
+        // Create a user-defined FMOD sound
+        FMOD_RESULT result = pSystem->createSound(
+            nullptr,  // Data is provided via callback
+            FMOD_OPENUSER | FMOD_LOOP_OFF | FMOD_3D_HEADRELATIVE,
+            &exinfo,
+            &pvideosound
+        );
+
+        if (result != FMOD_OK) {
+            std::cerr << "FMOD Error (createSound): " << result << std::endl;
+            return;
+        }
+
+        // Play the sound
+        FMOD::Channel* pChannel = nullptr;
+        result = pSystem->playSound(pvideosound, nullptr, false, &pChannel);
+        if (result != FMOD_OK) {
+            std::cerr << "FMOD Error (playSound): " << result << std::endl;
+        }
+        else {
+            std::cout << "Playing audio at " << speedMultiplier * 100 << "% speed!" << std::endl;
+        }
+        // Adjust pitch to maintain the correct playback speed without stretching
+        if (pChannel) {
+            pChannel->setPitch(speedMultiplier);  // Adjust pitch instead of frequency
+        }
+    }
+
     /*!***********************************************************************
     \brief
      Constructor for the Audio class.
      This is where system initialization and resource allocation happen.
     *************************************************************************/
     Audio::Audio()
-        : pSystem(nullptr), numOfMusic(0), numOfSFX(0)
+        : pSystem(nullptr), numOfMusic(0), numOfSFX(0), pLockedData(nullptr), pLockedDataLength(0)
     {
+        pvideosound = nullptr;
+        pvideoChannel = nullptr;
         FMOD_RESULT result;
 
         // Create FMOD system
@@ -40,13 +172,15 @@ namespace Ukemochi
             return;
         }
 
-        // Initialize the FMOD system with 32 channels
-        result = pSystem->init(32, FMOD_INIT_NORMAL, nullptr);
+        // Initialize the FMOD system with 512 channels
+        result = pSystem->init(512, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
             std::cerr << "FMOD system initialization failed: " << result << std::endl;
             return;
         }
+
+        pSystem->setDSPBufferSize(2048, 4);
         CreateGroup();
     }
 
@@ -57,6 +191,11 @@ namespace Ukemochi
     *************************************************************************/
     Audio::~Audio()
     {
+        delete[] pLockedData;
+        // Release all sounds
+        pvideosound->release();
+        pvideoChannel = nullptr;
+
         // Release all sounds
         for (auto sound : pSFX)
         {
