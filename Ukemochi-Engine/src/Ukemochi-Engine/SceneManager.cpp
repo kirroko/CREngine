@@ -318,11 +318,19 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
-        ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
-        ECS::GetInstance().GetSystem<VideoManager>()->Update(); 
-        ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender(); 
 
-        //SceneManagerDraw();
+
+
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
+        {
+            ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+            ECS::GetInstance().GetSystem<VideoManager>()->Update(); 
+            ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+        }
+        else
+        {
+            SceneManagerDraw();
+        }
 
         
     }

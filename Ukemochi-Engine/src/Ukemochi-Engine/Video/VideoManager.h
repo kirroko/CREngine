@@ -50,6 +50,7 @@ namespace Ukemochi {
         //std::unique_ptr<Texture> videoAtlas;
         int currentFrame = 0;
         int totalFrames;
+        bool done = false;
     private:
         double elapsedTime = 0.0f;
         double lastFrameTime = 0.0f;
@@ -102,6 +103,6 @@ namespace Ukemochi {
         /**
          * @brief Release resources
          */
-        void Free() const;
+        void Free();
     };
 }

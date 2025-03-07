@@ -231,11 +231,6 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         // Add your own file extension (.wav)
         std::string newFilename = filename + ".wav";
 
-        // Print for verification
-        std::cout << "Original Filepath: " << filepath << std::endl;
-        std::cout << "Extracted Filename: " << filename << std::endl;
-        std::cout << "Modified Filename: " << newFilename << std::endl;
-
         ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, newFilename.c_str(), "SFX");
 
         //// Enable audio
@@ -287,7 +282,10 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         float deltaTime = g_FrameRateController.GetDeltaTime();
         UME_ENGINE_TRACE("Decoding Video - DeltaTime: {0}", deltaTime);
 
-        plm_decode(plm, deltaTime);
+        //if (plm)
+        //{
+        //    plm_decode(plm, deltaTime);
+        //}
 
         Audio::GetInstance().Update(); // Update audio
 
@@ -361,22 +359,51 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
     void VideoManager::Update()
     {
-        UpdateAndRenderVideo(plm);
+        if (plm!=nullptr)
+        {
+            UpdateAndRenderVideo(plm);
+        }
     }
 
-    void VideoManager::Free() const
+    void VideoManager::Free()
     {
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
+
+        //if (video_ctx->rgb_buffer)
+        //    free(video_ctx->rgb_buffer);
+
+        ///*if (rb->buffer)
+        //    free(rb->buffer);*/
+
+        //if (plm != nullptr)
+        //{
+        //    plm_destroy(plm);
+        //}
+
+        if (video_ctx)
+        {
+            if (video_ctx->rgb_buffer)
+            {
+                free(video_ctx->rgb_buffer); // Ensure correct allocation type
+            }
+            delete video_ctx;
+        }
+
+        if (rb)
+        {
+            // if (rb->buffer)
+            //     free(rb->buffer); // Uncomment if allocated with malloc()
+
+            delete rb;
+        }
+
         if (plm)
+        {
             plm_destroy(plm);
-
-        if (video_ctx->rgb_buffer)
-            free(video_ctx->rgb_buffer);
-
-        /*if (rb->buffer)
-            free(rb->buffer);*/
-
-        delete video_ctx;
-        delete rb;
+            plm = nullptr; // Avoid dangling pointer
+        }
+        done = true;
+        //delete video_ctx;
+        //delete rb;
     }
 }
