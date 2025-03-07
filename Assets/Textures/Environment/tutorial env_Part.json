@@ -1,0 +1,44 @@
+{"frames": {
+
+"button 1.png":
+{
+	"frame": {"x":512,"y":5,"w":622,"h":226},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":622,"h":226},
+	"sourceSize": {"w":622,"h":226}
+},
+"button 2.png":
+{
+	"frame": {"x":5,"y":1065,"w":1238,"h":411},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1238,"h":411},
+	"sourceSize": {"w":1238,"h":411}
+},
+"side wall.png":
+{
+	"frame": {"x":239,"y":5,"w":268,"h":1055},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":268,"h":1055},
+	"sourceSize": {"w":268,"h":1055}
+},
+"wack.png":
+{
+	"frame": {"x":5,"y":5,"w":229,"h":404},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":229,"h":404},
+	"sourceSize": {"w":229,"h":404}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "tutorial env.png",
+	"format": "RGBA8888",
+	"size": {"w":1248,"h":1481},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6861a1b493d21acf9b4f1cf4dfb7cca5:0f1a9880a808e2c9153efd05aa4c9d7a:21a62ee1599087b4b7f30f4921cc570c$"
+}
+}
