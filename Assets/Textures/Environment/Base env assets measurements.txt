@@ -2,7 +2,7 @@ Base env moving_1 sprite sheet:
 
 branch 5:580 x245
 
-bush 1:240 x 240
+bush 1:240 x 240, bush 1:240 x 203
 
 bush 2:400 x 400
 

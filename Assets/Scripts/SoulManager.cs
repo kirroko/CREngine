@@ -15,7 +15,7 @@ using Ukemochi;
 
 public enum SoulType { Empty, Fish, Worm };
 
-public class SoulManager
+public class SoulManager : BaseScript
 {
     const float MAX_SOUL_BAR = 100;
     const int MAX_SOUL_CHARGES = 3;

@@ -157,16 +157,30 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y};  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.5f};  // Max Y stops at the object's center
+		}
+		else if (tag == "Dummy")
+		{
+			// Lower half of the object (legs or bottom part)
+			box.min = { -BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+			box.max = { BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
 						trans.position.y };  // Max Y stops at the object's center
 		}
 		else if (tag == "Knife")
 		{
-			box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
-						-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
-						BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+			//box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
+			//			-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+			//box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
+			//			BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
+
+			// Lower half of the object (legs or bottom part)
+			box.min = { -BOUNDING_BOX_SIZE * (1.5f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*1.25f};  // Min Y is halfway down the object 1.5f
+			box.max = { BOUNDING_BOX_SIZE * (1.8f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.8f };  // Max Y stops at the object's center
 		}
 		else
 		{
@@ -600,7 +614,6 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 1.5f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -651,7 +664,7 @@ namespace Ukemochi
 					if (!enemy_data.hasDealtDamage)
 					{
 						ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-						enemy_data.atktimer = 1.5f;
+						//enemy_data.atktimer = 1.5f;
 
 						// Deal 2x dmg if the player and the enemy has the same soul type
 						if (player_soul.current_soul == enemy_data.type)
@@ -907,6 +920,82 @@ namespace Ukemochi
 		{
 			// Destroy enemy's projectile
 		}
+		else if (tag1 == "Knife" && tag2 == "Dummy") // Mochi's Knife and Dummy
+		{
+			// Get references of the player and enemy
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+
+			// Skip if Mochi is not attacking
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+
+					// Apply knockback and play sound effects
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+						AudioManager>();
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+						audioM.GetSFXindex("Pattack3")))
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
 
 		// Skip trigger objects
 		if (box1.is_trigger || box2.is_trigger)
@@ -971,7 +1060,7 @@ namespace Ukemochi
 			//	}
 			//}
 		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Boundaries (Acts as a wall)
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Dummy" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Dummy / Boundaries (Acts as a wall)
 		{
 			// STATIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);

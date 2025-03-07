@@ -163,7 +163,7 @@ namespace Ukemochi
                     static int lastRunningSoundIndex = 0;
 
                     // 6 or 7 for current frame
-                    if ((currentFrame == 3 || currentFrame == 7) && !runningSoundPlayed)
+                    if ((currentFrame == 3 || currentFrame == 8) && !runningSoundPlayed)
                     {
                         // Assuming you have an audio manager and running sound index
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -171,31 +171,63 @@ namespace Ukemochi
                             audioM.GetSFXindex("Running1"),
                             audioM.GetSFXindex("Running2"),
                             audioM.GetSFXindex("Running3"),
-							audioM.GetSFXindex("Running4"),
-							audioM.GetSFXindex("Running5"),
-							audioM.GetSFXindex("Running6")
+                            audioM.GetSFXindex("Running4"),
+                            audioM.GetSFXindex("Running5"),
+                            audioM.GetSFXindex("Running6"),
+                            audioM.GetSFXindex("Running7"),
+                            audioM.GetSFXindex("Running8"),
+                            audioM.GetSFXindex("Running9"),
+                            audioM.GetSFXindex("Running10"),
+                            audioM.GetSFXindex("Running11"),
+							audioM.GetSFXindex("Running12"),
+							audioM.GetSFXindex("Running13"),
+							audioM.GetSFXindex("Running14")
                         };
-                        // Filter out any invalid indices (-1)
+                        // Add this to track when sounds were last played (initialize this elsewhere)
+                        static std::vector<int> lastPlayedCounts(runningSounds.size(), 0);
+
+                        // Filter out any invalid indices (-1) and recently played sounds
                         std::vector<int> validSounds;
-                        for (int index : runningSounds) {
-                            if (index != -1) {
-                                validSounds.push_back(index);
+                        for (int i = 0; i < runningSounds.size(); i++) {
+                            // Add only valid sounds that haven't been played in the last 5 rounds
+                            if (runningSounds[i] != -1 && lastPlayedCounts[i] >= 5) {
+                                validSounds.push_back(runningSounds[i]);
+                            }
+                        }
+
+                        // If no valid sounds are available, use any that aren't -1
+                        if (validSounds.empty()) {
+                            for (int i = 0; i < runningSounds.size(); i++) {
+                                if (runningSounds[i] != -1) {
+                                    validSounds.push_back(runningSounds[i]);
+                                }
                             }
                         }
 
                         if (!validSounds.empty()) {
-
-                            // Option 2: Random selection (alternative approach)
+                            // Random selection
                             int randomIndex = rand() % validSounds.size();
-                            lastRunningSoundIndex = randomIndex;
+                            int selectedSound = validSounds[randomIndex];
+
+                            // Find the original index to update the counter
+                            for (int i = 0; i < runningSounds.size(); i++) {
+                                if (runningSounds[i] == selectedSound) {
+                                    lastPlayedCounts[i] = 0; // Reset counter for the played sound
+                                }
+                            }
 
                             // Play the selected sound
-                            audioM.PlaySFX(validSounds[lastRunningSoundIndex]);
+                            audioM.PlaySFX(selectedSound);
+
+                            // Increment counters for all sounds
+                            for (int i = 0; i < lastPlayedCounts.size(); i++) {
+                                lastPlayedCounts[i]++;
+                            }
                         }
 
                         runningSoundPlayed = true; // Prevent it from playing again at the same frame
                     }
-                    else if ((currentFrame != 3 && currentFrame != 7))
+                    else if ((currentFrame != 3 && currentFrame != 8))
                     {
                         runningSoundPlayed = false; // Reset when leaving frame 2
                     }

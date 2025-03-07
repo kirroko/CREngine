@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"			  // for ECS system and components
 #include "../Graphics/UIButton.h" // for TextAlignment
 #include "../Factory/GameObject.h"
+#include "../Game/GSM.h"
 #include <unordered_map> // Include this for std::unordered_map
 
 namespace Ukemochi

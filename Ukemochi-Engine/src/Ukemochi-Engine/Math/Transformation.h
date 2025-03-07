@@ -37,9 +37,17 @@ namespace Ukemochi
          Minimum and maximum Y position and scale constant for all entities.
         *************************************************************************/
         const float MIN_Y_POS = 100.0f, MAX_Y_POS = 800.0f;
-        const float MIN_SCALE = 150.0f, MAX_SCALE = 200.0f;
-        const float SCALE_FACTOR = 100.f;
-        const DepthScaling OBJECT_SCALING = { MIN_Y_POS, MAX_Y_POS, MIN_SCALE, MAX_SCALE }; // Object scaling constant for the depth effect.
+        const float MIN_SCALE = 150.0f, MAX_SCALE = 250.0f;
+
+        /*!***********************************************************************
+        \brief
+         Depth object scaling constant for the dynamic entities.
+        *************************************************************************/
+        const Vec2 KNIFE_SCALE_FACTOR{ 0.5f, 0.75f };
+        const Vec2 SOUL_SCALE_FACTOR{ 0.1f, 0.1f };
+        const Vec2 PROJECTILE_SCALE_FACTOR{ 0.15f, 0.15f };
+        const Vec2 SKILL_SCALE_FACTOR{ 2.f, 2.f };
+        const DepthScaling OBJECT_SCALING{ MIN_Y_POS, MAX_Y_POS, MIN_SCALE, MAX_SCALE }; // Object scaling constant for the depth effect.
 
         EntityID soul;   // Keep track of the floating soul ID
         EntityID shadow; // Keep track of the player's shadow ID
@@ -75,21 +83,5 @@ namespace Ukemochi
          The object to compute the layer for.
         *************************************************************************/
         void ComputeObjectLayer(const EntityID& object);
-
-        /*!***********************************************************************
-        \brief
-         Increase the scale of the object.
-        \param[out] trans
-         The transform component to scale.
-        *************************************************************************/
-        void IncreaseScale(Transform& trans);
-
-        /*!***********************************************************************
-        \brief
-         Decrease the scale of the object.
-        \param[out] trans
-         The transform component to scale.
-        *************************************************************************/
-        void DecreaseScale(Transform& trans);
     };
 }

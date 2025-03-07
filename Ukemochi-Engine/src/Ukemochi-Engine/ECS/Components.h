@@ -414,14 +414,22 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 Boss component structure.
+	*************************************************************************/
+	struct Boss
+	{
+
+	};
+
+	/*!***********************************************************************
+	\brief
 	 Enemy component structure.
 	*************************************************************************/
 	struct Enemy
 	{
 		enum EnemyStates
 		{
-			ROAM,
-			CHASE,
+			MOVE,
 			STANDBY,
 			ATTACK,
 			DEAD,
@@ -451,6 +459,7 @@ namespace Ukemochi
 		mutable int prevObject2;
 		bool isCollide;
 		bool isKick;
+		float kicktime = 1.f;
 		bool hasDealtDamage = false;
 		bool wormshoot = false;
 		float atktimer = 0.0f;
@@ -458,12 +467,15 @@ namespace Ukemochi
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;
 		bool wasHit = false;  // New flag for hit detection
+		float waitTime = 0.f;
+		bool iswaiting = false;
+		int move = 5;
 
 		Enemy() = default;
 
 		// Constructor
 		Enemy(float startX, float startY, EnemyTypes type, EntityID ID)
-			: ID(ID), state(EnemyStates::ROAM), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
+			: ID(ID), state(EnemyStates::MOVE), type(type), posX(startX), posY(startY), targetX(startX), targetY(startY), prevObject(-1), prevObject2(-1), isCollide(false), isKick(false)
 		{
 			wormshoot = false;
 			hasDealtDamage = false;
@@ -480,7 +492,7 @@ namespace Ukemochi
 			case Enemy::WORM:
 				health = 50.f;
 				attackPower = 5.f;
-				attackRange = 400.f;
+				attackRange = 700.f;
 				speed = 3000.f;
 				break;
 			case Enemy::DEFAULT:
@@ -489,6 +501,54 @@ namespace Ukemochi
 				break;
 			}
 		}
+
+	static	bool LineIntersectsRect(float startX, float startY, float dirX, float dirY,
+			float length, float objX, float objY, float objWidth, float objHeight)
+		{
+		float minX = objX - 0.5f * objWidth;
+		float maxX = objX + 0.5f * objWidth;
+		float minY = objY - 0.5f * objHeight;
+		float maxY = objY + 0.5f * objHeight;
+
+		// Ensure the start point is INSIDE the rectangle
+		if (startX > minX && startX < maxX && startY > minY && startY < maxY)
+			return true;
+
+		float tMin = 0.0f, tMax = length;
+
+		// Check intersection along X-axis
+		if (dirX != 0.0f)
+		{
+			float invD = 1.0f / dirX;
+			float t0 = (minX - startX) * invD;
+			float t1 = (maxX - startX) * invD;
+			if (invD < 0.0f) std::swap(t0, t1);
+			tMin = std::max(tMin, t0);
+			tMax = std::min(tMax, t1);
+		}
+		else if (startX <= minX || startX >= maxX)
+		{
+			return false; // Line is vertical but outside X bounds
+		}
+
+		// Check intersection along Y-axis
+		if (dirY != 0.0f)
+		{
+			float invD = 1.0f / dirY;
+			float t0 = (minY - startY) * invD;
+			float t1 = (maxY - startY) * invD;
+			if (invD < 0.0f) std::swap(t0, t1);
+			tMin = std::max(tMin, t0);
+			tMax = std::min(tMax, t1);
+		}
+		else if (startY <= minY || startY >= maxY)
+		{
+			return false; // Line is horizontal but outside Y bounds
+		}
+
+		// Ensure intersection occurs within the given length and is non-negative
+		return (tMin <= tMax) && (tMax >= 0) && (tMin <= length);
+	}
 
 		// Check if two points are within a threshold distance
 		bool ReachedTarget(float x1, float y1, float x2, float y2, float threshold) const
@@ -555,6 +615,16 @@ namespace Ukemochi
 
 		// Check if the enemy can attack the player
 		bool IsPlayerInRange(Transform& player, Transform& enemy) const
+		{
+			float dx = player.position.x - enemy.position.x;
+			float dy = player.position.y - enemy.position.y;
+
+			float distance = dx * dx + dy * dy;
+
+			return distance <= attackRange * attackRange;
+		}
+
+		bool IsPlayerInAttackRange(Transform& player, Transform& enemy) const
 		{
 			float dx = player.position.x - enemy.position.x;
 			float dy = player.position.y - enemy.position.y;
