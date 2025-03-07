@@ -591,6 +591,8 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
+
+						player_data.HitStopAnimation();
 					}
 				}
 				else
@@ -628,6 +630,8 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
+
+						player_data.HitStopAnimation();
 					}
 				}
 				else
@@ -679,6 +683,8 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
+
+						player_data.HitStopAnimation();
 					}
 				}
 				else

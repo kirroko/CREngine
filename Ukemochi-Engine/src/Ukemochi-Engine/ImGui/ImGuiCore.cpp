@@ -2193,6 +2193,7 @@ namespace Ukemochi
                     animation.clips.clear();
                     animation.currentClip = "";
                 }
+                ImGui::Checkbox("Is_Playing", &animation.is_playing);
                 ImGui::Checkbox("Looping", &animation.clips[animation.currentClip].looping);
             }
         }

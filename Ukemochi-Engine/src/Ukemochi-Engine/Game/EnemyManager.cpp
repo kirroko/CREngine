@@ -75,6 +75,10 @@ namespace Ukemochi
                 // get enemyobj
                 GameObject *object = GameObjectManager::GetInstance().GetGO(*it);
 
+                // Get enemy shadow's object
+                std::string shadowName = object->GetName() + "_Shadow";
+                GameObject *shadow_Object = GameObjectManager::GetInstance().GetGOByName(shadowName);
+                
                 // if no player, enemy wont work
                 if (!playerObj)
                     break;
@@ -91,6 +95,25 @@ namespace Ukemochi
                 auto &enemyphysic = object->GetComponent<Rigidbody2D>();
                 auto &enemytransform = object->GetComponent<Transform>();
                 auto &sr = object->GetComponent<SpriteRender>();
+
+                auto& shadow_trans = shadow_Object->GetComponent<Transform>();
+
+                if (object->GetName().find("Worm") != std::string::npos)
+                {
+                    if (!sr.flipX)
+                        shadow_trans.position = Vector3D(enemytransform.position.x, enemytransform.position.y - shadow_trans.scale.y * 0.35f, enemytransform.position.z);
+                    else
+                        shadow_trans.position = Vector3D(enemytransform.position.x, enemytransform.position.y - shadow_trans.scale.y * 0.35f, enemytransform.position.z);
+                }
+                else if (object->GetName().find("Fish") != std::string::npos)
+                {
+                    if (!sr.flipX)
+                        shadow_trans.position = Vector3D(enemytransform.position.x - shadow_trans.scale.x * 0.2f, enemytransform.position.y - shadow_trans.scale.y * 0.1f, enemytransform.position.z);
+                    else
+                        shadow_trans.position = Vector3D(enemytransform.position.x + shadow_trans.scale.x * 0.2f, enemytransform.position.y - shadow_trans.scale.y * 0.1f, enemytransform.position.z);
+                }
+                    
+                
 
                 // Check if the enemy is within range of the player
                 float deltaX = playerTransform.position.x - enemytransform.position.x;
@@ -311,6 +334,7 @@ namespace Ukemochi
                     ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 20.f);
 
                     object->SetActive(false);
+                    GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
                     enemycomponent.isDead = true;
                     if (enemycomponent.isWithPlayer && numEnemyTarget >= 1)
                     {

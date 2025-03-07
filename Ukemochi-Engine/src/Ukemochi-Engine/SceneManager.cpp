@@ -334,7 +334,6 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
-	    
         loop_start = std::chrono::steady_clock::now();
 
 #ifdef _DEBUG
@@ -434,49 +433,23 @@ namespace Ukemochi
 		//	return;
 		//}
 #endif
-		
 
-        /*
-        // Audio Inputs
-        //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
-        //{
-        //	audioVolume -= 0.02f;
-        //	audioVolume = audioVolume < 0.f ? 0.f : audioVolume;
-        //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
-        //}
-        //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_O))
-        //{
-        //	audioVolume += 0.02f;
-        //	audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
-        //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
-        //}
-        */
-        
-		/*if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
-		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(HIT, 0.04f);
-		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(READY))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::READY, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(READY, 0.04f);
-		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(CONFIRMCLICK))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
-		}*/
-
+	    auto& player_ref_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
         if (!Application::Get().Paused())
         {
+            if (player_ref_data.isHitStopActive)
+            {
+                player_ref_data.hitStopTimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                if (player_ref_data.hitStopTimer <= 0.0f)
+                {
+                    player_ref_data.isHitStopActive = false;
+                    player_ref_data.hitStopTimer = 0.0f;
+                }
+                else
+                    return; // Skip the rest of the update loop to freeze game temporarily
+            }
             // --- GAME LOGIC UPDATE ---
             sys_start = std::chrono::steady_clock::now();
             // ECS::GetInstance().GetSystem<LogicSystem>()->Update();
