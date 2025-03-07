@@ -816,10 +816,10 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Box_1_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_1_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false],
-                        "Box_1": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box_1", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false]
+                        "Box": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
                     },
-                    "CurrentClip": "Box_1"
+                    "CurrentClip": "Box"
                 }]
         }, {
             "Name": "2_Box2",
@@ -861,10 +861,10 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Box_2": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box_2", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false],
-                        "Box_2_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_2_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false]
+                        "Box": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false]
                     },
-                    "CurrentClip": "Box_2"
+                    "CurrentClip": "Box"
                 }]
         }, {
             "Name": "2_Box3",
@@ -906,86 +906,10 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Box_3": ["env_base_box_3", "../Assets/Textures/Environment/base env static_Part.png", "Box_3", 1, 0.5, 0.5, 100, 131, 200, 131, 200, 0.05000000074505806, false],
-                        "Box_3_Break": ["env_base_box_3_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_3_Break", 4, 0.5, 0.5, 100, 131, 200, 393, 400, 0.05000000074505806, false]
+                        "Box": ["env_base_box_3", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 131, 200, 131, 200, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_3_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 131, 200, 393, 400, 0.05000000074505806, false]
                     },
-                    "CurrentClip": "Box_3"
-                }]
-        }, {
-            "Name": "2_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1300.0, 750.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [138.0, 285.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [-0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1361.0, 367.5],
-                    "Max": [1499.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_2",
-                    "Shape": 0,
-                    "Layer": 3
-                }]
-        }, {
-            "Name": "2_Box1",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1650.0, 190.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [156.0, 200.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, -0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [1180.0, 320.0],
-                    "Max": [1336.0, 520.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "env_base_box_1",
-                    "Shape": 0,
-                    "Layer": 3
+                    "CurrentClip": "Box"
                 }]
         }, {
             "Name": "2_RightWallBack",
@@ -1126,7 +1050,7 @@
                     "Name": "Transform",
                     "Position": [1702.0, 594.6694946289063, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [161.66616821289063, 161.66616821289063]
+                    "Scale": [179.3329315185547, 179.3329315185547]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -1178,7 +1102,7 @@
                     "Name": "Transform",
                     "Position": [802.0, 516.6694946289063, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [175.5947265625, 175.5947265625]
+                    "Scale": [190.4757843017578, 190.4757843017578]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -1230,7 +1154,7 @@
                     "Name": "Transform",
                     "Position": [1512.0, 338.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [207.5, 207.5]
+                    "Scale": [216.0, 216.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438, 0.0],
@@ -1656,7 +1580,7 @@
                     "Name": "Transform",
                     "Position": [3450.0, 461.86175537109375, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [185.3818359375, 185.3818359375]
+                    "Scale": [198.3054656982422, 198.3054656982422]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -1708,7 +1632,7 @@
                     "Name": "Transform",
                     "Position": [2920.0, 541.8617553710938, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [171.0961151123047, 171.0961151123047]
+                    "Scale": [186.87689208984375, 186.87689208984375]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -1760,7 +1684,7 @@
                     "Name": "Transform",
                     "Position": [3650.0, 349.86175537109375, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [205.3818359375, 205.3818359375]
+                    "Scale": [214.30545043945313, 214.30545043945313]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -2186,7 +2110,7 @@
                     "Name": "Transform",
                     "Position": [4582.0, 594.6694946289063, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [161.66616821289063, 161.66616821289063]
+                    "Scale": [179.3329315185547, 179.3329315185547]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -2238,7 +2162,7 @@
                     "Name": "Transform",
                     "Position": [4852.0, 444.66949462890625, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [188.45187377929688, 188.45187377929688]
+                    "Scale": [200.76150512695313, 200.76150512695313]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -2290,7 +2214,7 @@
                     "Name": "Transform",
                     "Position": [5202.0, 491.86175537109375, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [180.02468872070313, 180.02468872070313]
+                    "Scale": [194.01974487304688, 194.01974487304688]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -2342,7 +2266,7 @@
                     "Name": "Transform",
                     "Position": [5552.0, 391.86175537109375, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [197.8818359375, 197.8818359375]
+                    "Scale": [208.3054656982422, 208.3054656982422]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -3172,7 +3096,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 4
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -3217,7 +3141,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 4
                 }, {
                     "Name": "Animation",
                     "Clips": {
