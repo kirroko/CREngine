@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
 #include "../Game/EnemyManager.h"		  // for updating enemy list
+#include "../FrameController.h"
 
 namespace Ukemochi
 {
@@ -29,7 +30,7 @@ namespace Ukemochi
 		//change when proper room structure is done
 		current_room_id = 1;
 		//current_room_wave = WAVE_NUMBER;
-		player = static_cast<EntityID>(-1);
+		player = static_cast<EntityID>(-1); 
 
 		InitDungeon();
 	}
@@ -121,6 +122,15 @@ namespace Ukemochi
 		if (!enemy_alive)
 		{
 			UnlockRoom();
+			//healing to post injuries max health here
+			while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
+			{
+				GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
+				if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+				{
+					GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
+				}
+			}
 		}
 
 	}

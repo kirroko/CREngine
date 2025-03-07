@@ -37,6 +37,8 @@ namespace Ukemochi
         EntityID player;                              // Get the player for player data
         std::unique_ptr<QuadTree> quadtree = nullptr; // Quadtree instance for broad-phase collision
 
+        bool check_collision_once = false;
+
     public:
         /*!***********************************************************************
         \brief

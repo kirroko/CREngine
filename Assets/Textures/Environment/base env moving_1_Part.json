@@ -2,7 +2,7 @@
 
 "branch 5.png":
 {
-	"frame": {"x":5,"y":1045,"w":1740,"h":1024},
+	"frame": {"x":5,"y":934,"w":1740,"h":1024},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1740,"h":1024},
@@ -10,15 +10,15 @@
 },
 "bush 1.png":
 {
-	"frame": {"x":1853,"y":320,"w":960,"h":720},
+	"frame": {"x":1853,"y":320,"w":1920,"h":609},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":720},
-	"sourceSize": {"w":960,"h":720}
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":609},
+	"sourceSize": {"w":1920,"h":609}
 },
 "bush 2.png":
 {
-	"frame": {"x":1870,"y":2310,"w":2000,"h":1600},
+	"frame": {"x":1870,"y":2199,"w":2000,"h":1600},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1600},
@@ -50,7 +50,7 @@
 },
 "env_base_vine_4.png":
 {
-	"frame": {"x":5,"y":2310,"w":1860,"h":1560},
+	"frame": {"x":5,"y":2199,"w":1860,"h":1560},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1860,"h":1560},
@@ -58,7 +58,7 @@
 },
 "env_base_vine_7.png":
 {
-	"frame": {"x":1750,"y":1045,"w":1680,"h":1260},
+	"frame": {"x":1750,"y":934,"w":1680,"h":1260},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1680,"h":1260},
@@ -117,8 +117,8 @@
 	"version": "1.0",
 	"image": "base env moving_1.png",
 	"format": "RGBA8888",
-	"size": {"w":3875,"h":3915},
+	"size": {"w":3875,"h":3804},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:ff5e4242710cf1993e266edf5b323b0c:1d716063df7d05beccfa609ab19c6758:dec5c5b1dc3cad3cc497bae7d32f66bf$"
+	"smartupdate": "$TexturePacker:SmartUpdate:8916c616e229e33209abec08a8bd1488:66f483cf4a90e1d9a9c43cc027d89627:dec5c5b1dc3cad3cc497bae7d32f66bf$"
 }
 }

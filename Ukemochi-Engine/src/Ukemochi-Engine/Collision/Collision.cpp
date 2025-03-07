@@ -161,6 +161,14 @@ namespace Ukemochi
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.5f};  // Max Y stops at the object's center
 		}
+		else if (tag == "Dummy")
+		{
+			// Lower half of the object (legs or bottom part)
+			box.min = { -BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+			box.max = { BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
+						trans.position.y };  // Max Y stops at the object's center
+		}
 		else if (tag == "Knife")
 		{
 			//box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
@@ -698,7 +706,187 @@ namespace Ukemochi
 				break;
 			}
 		}
-		else if (tag1 == "FishAbility" && tag2 == "Enemy") // Mochi's Fish Ability and Enemy (Enemy takes huge damage)
+		else if (tag1 == "Knife" && tag2 == "Environment")
+		{
+			// Mochi interacting with the environment
+			// Make space and get healing items?
+			
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& box_anim = ECS::GetInstance().GetComponent<Animation>(entity2);
+
+			// Skip if Mochi is not attacking
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+							}
+						}
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+							}
+						}
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+								std::cout << "hit" << std::endl;
+							}
+						}
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			//if (player_anim.current_frame == 10 || player_anim.current_frame == 15 || player_anim.current_frame == 31)
+			//{
+			//	
+			//	if (box_anim.is_playing)
+			//	{
+			//		box_anim.SetAnimation("Box_Break");
+			//		box_anim.is_playing = false;
+			//		box_anim.current_frame = 0;
+			//		std::cout << "switch clip" << std::endl;
+			//	}
+			//	else 
+			//	{
+			//		int prev_frame = box_anim.current_frame;
+			//		box_anim.current_frame++;
+			//		std::cout << "hit" << std::endl;
+			//		if (box_anim.current_frame > 3)
+			//		{
+			//			box_anim.current_frame = 3;
+			//		}
+			//		if (prev_frame == 2 && box_anim.current_frame == 3)
+			//		{
+			//			player_data.currentHealth += 10;
+			//			player_data.postInjuriesMaxHealth += 10;
+			//			if (player_data.currentHealth > player_data.maxHealth)
+			//			{
+			//				player_data.currentHealth = player_data.maxHealth;
+
+			//			}
+			//			if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+			//			{
+			//				player_data.postInjuriesMaxHealth = player_data.maxHealth;
+			//			}
+			//		}
+			//	}
+			//}
+			//return;
+			// Placeholder, wait for when animations is complete so that we can break the box
+			// Play Animation
+		}
+		else if ((tag1 == "FishAbility" || tag1 == "WormAbility") && tag2 == "Enemy")
 		{
 			// Get references of the player and enemy
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
@@ -737,6 +925,82 @@ namespace Ukemochi
 			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile") // Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
 		{
 			// Destroy enemy's projectile
+		}
+		else if (tag1 == "Knife" && tag2 == "Dummy") // Mochi's Knife and Dummy
+		{
+			// Get references of the player and enemy
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+
+			// Skip if Mochi is not attacking
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+
+					// Apply knockback and play sound effects
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
+						AudioManager>();
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+						audioM.GetSFXindex("Pattack3")))
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		// Skip trigger objects
@@ -802,7 +1066,7 @@ namespace Ukemochi
 			//	}
 			//}
 		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Boundaries (Acts as a wall)
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Dummy" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Dummy / Boundaries (Acts as a wall)
 		{
 			// STATIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);

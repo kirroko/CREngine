@@ -378,6 +378,7 @@ namespace Ukemochi
 	{
 		int maxHealth = 100;
 		int currentHealth = 100;
+		int postInjuriesMaxHealth = 100;
 		int comboState = 0;			// Tracks current combat state 
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
