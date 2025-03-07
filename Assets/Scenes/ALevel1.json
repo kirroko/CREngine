@@ -3199,7 +3199,7 @@
                 }, {
                     "Name": "Player",
                     "MaxHealth": 100,
-                    "CurrentHealth": 20,
+                    "CurrentHealth": 100,
                     "CurrentComboHits": 0,
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
@@ -3210,7 +3210,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [350.0, 350.0],
+                    "SoulBars": [420.0, 420.0],
                     "SoulCharges": [1, 1],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
@@ -3481,17 +3481,8 @@
                             "Name": "ButtonClickSound",
                             "Path": "../Assets/Audio/SFX/MainMenu/MenuHoverOverSFX 2.wav"
                         }, {
-                            "Name": "WormAttack",
-                            "Path": "../Assets/Audio/SFX/Enemy/WormAttackVR.wav"
-                        }, {
                             "Name": "WormMove",
                             "Path": "../Assets/Audio/SFX/Enemy/WormWalk.wav"
-                        }, {
-                            "Name": "WormHurt",
-                            "Path": "../Assets/Audio/SFX/Enemy/WormHurt2.wav"
-                        }, {
-                            "Name": "WormDead",
-                            "Path": "../Assets/Audio/SFX/Enemy/Worm Dead.wav"
                         }, {
                             "Name": "SwapSoul",
                             "Path": "../Assets/Audio/SFX/Player/SwapSoul.wav"
@@ -3624,6 +3615,60 @@
                         }, {
                             "Name": "FishHurt6",
                             "Path": "../Assets/Audio/SFX/Enemy/Fish/FishHurt/Slash-Impact_6.wav"
+                        }, {
+                            "Name": "WormAttack1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack1.wav"
+                        }, {
+                            "Name": "WormAttack2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack2.wav"
+                        }, {
+                            "Name": "WormAttack3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack3.wav"
+                        }, {
+                            "Name": "WormAttack4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack4.wav"
+                        }, {
+                            "Name": "WormAttack5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack5.wav"
+                        }, {
+                            "Name": "WormAttack6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack6.wav"
+                        }, {
+                            "Name": "WormHurt1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_1.wav"
+                        }, {
+                            "Name": "WormHurt2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_2.wav"
+                        }, {
+                            "Name": "WormHurt3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_3.wav"
+                        }, {
+                            "Name": "WormHurt4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_4.wav"
+                        }, {
+                            "Name": "WormHurt5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_5.wav"
+                        }, {
+                            "Name": "WormHurt6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_6.wav"
+                        }, {
+                            "Name": "WormDead1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_1.wav"
+                        }, {
+                            "Name": "WormDead2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_2.wav"
+                        }, {
+                            "Name": "WormDead3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_3.wav"
+                        }, {
+                            "Name": "WormDead4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_4.wav"
+                        }, {
+                            "Name": "WormDead5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_5.wav"
+                        }, {
+                            "Name": "WormDead6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_6.wav"
                         }]
                 }]
         }, {

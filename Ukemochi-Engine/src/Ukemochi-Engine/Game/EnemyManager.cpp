@@ -201,11 +201,74 @@ namespace Ukemochi
                                 audioM.PlaySFX(selectedSound);
                             }
                         }
-                        else if (enemycomponent.type == Enemy::WORM && audioM.GetSFXindex("WormHurt") != -1)
+                        else if (enemycomponent.type == Enemy::WORM)
                         {
-                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormHurt")))
-                            {
-                                audioM.PlaySFX(audioM.GetSFXindex("WormHurt"));
+                            // Define all worm hurt sounds in a vector
+                            std::vector<int> wormHurtSounds = {
+                                audioM.GetSFXindex("WormHurt1"),
+                                audioM.GetSFXindex("WormHurt2"),
+                                audioM.GetSFXindex("WormHurt3"),
+                                audioM.GetSFXindex("WormHurt4"),
+                                audioM.GetSFXindex("WormHurt5"),
+                                audioM.GetSFXindex("WormHurt6")
+                            };
+
+                            // Remove invalid (-1) sounds
+                            wormHurtSounds.erase(
+                                std::remove(wormHurtSounds.begin(), wormHurtSounds.end(), -1),
+                                wormHurtSounds.end()
+                            );
+
+                            // Keep track of which sounds have been played (static at class level)
+                            static std::vector<bool> wormHurtSoundsPlayed;
+
+                            // Initialize if first time or size changed
+                            if (wormHurtSoundsPlayed.size() != wormHurtSounds.size()) {
+                                wormHurtSoundsPlayed.resize(wormHurtSounds.size(), false);
+                            }
+
+                            // Check if all sounds have been played
+                            bool allPlayed = true;
+                            for (bool played : wormHurtSoundsPlayed) {
+                                if (!played) {
+                                    allPlayed = false;
+                                    break;
+                                }
+                            }
+
+                            // If all sounds have been played, reset all to unplayed
+                            if (allPlayed) {
+                                std::fill(wormHurtSoundsPlayed.begin(), wormHurtSoundsPlayed.end(), false);
+                            }
+
+                            // Get sounds that haven't been played yet
+                            std::vector<int> availableSoundIndices;
+                            for (size_t i = 0; i < wormHurtSounds.size(); i++) {
+                                if (!wormHurtSoundsPlayed[i]) {
+                                    availableSoundIndices.push_back(i);
+                                }
+                            }
+
+                            // Only play if no hurt sound is currently playing
+                            bool isHurtSoundPlaying = false;
+                            for (int soundIdx : wormHurtSounds) {
+                                if (soundIdx != -1 && ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(soundIdx)) {
+                                    isHurtSoundPlaying = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isHurtSoundPlaying && !availableSoundIndices.empty()) {
+                                // Random selection from available sounds
+                                int randomIndex = rand() % availableSoundIndices.size();
+                                int selectedSoundIndex = availableSoundIndices[randomIndex];
+                                int selectedSound = wormHurtSounds[selectedSoundIndex];
+
+                                // Mark this sound as played
+                                wormHurtSoundsPlayed[selectedSoundIndex] = true;
+
+                                // Play the selected sound
+                                audioM.PlaySFX(selectedSound);
                             }
                         }
                     }
@@ -282,16 +345,63 @@ namespace Ukemochi
                     }
                     else if (enemycomponent.type == Enemy::WORM)
                     {
-                        // Use a specific worm death sound if available
-                        int wormDead = audioM.GetSFXindex("WormDead");
-                        if (wormDead != -1)
-                        {
-                            audioM.PlaySFX(wormDead);
+                        // Define all worm death sounds in a vector
+                        std::vector<int> wormDeadSounds = {
+                            audioM.GetSFXindex("WormDead1"),
+                            audioM.GetSFXindex("WormDead2"),
+                            audioM.GetSFXindex("WormDead3"),
+                            audioM.GetSFXindex("WormDead4"),
+                            audioM.GetSFXindex("WormDead5"),
+                            audioM.GetSFXindex("WormDead6")
+                        };
+
+                        // Remove invalid (-1) sounds
+                        wormDeadSounds.erase(
+                            std::remove(wormDeadSounds.begin(), wormDeadSounds.end(), -1),
+                            wormDeadSounds.end()
+                        );
+
+                        // Keep track of which sounds have been played (static at class level)
+                        static std::vector<bool> wormDeadSoundsPlayed;
+
+                        // Initialize if first time or size changed
+                        if (wormDeadSoundsPlayed.size() != wormDeadSounds.size()) {
+                            wormDeadSoundsPlayed.resize(wormDeadSounds.size(), false);
                         }
-                        // If WormDead sound isn't available, fall back to generic death sound
-                        else if (audioM.GetSFXindex("EnemyKilled") != -1)
-                        {
-                            audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
+
+                        // Check if all sounds have been played
+                        bool allPlayed = true;
+                        for (bool played : wormDeadSoundsPlayed) {
+                            if (!played) {
+                                allPlayed = false;
+                                break;
+                            }
+                        }
+
+                        // If all sounds have been played, reset all to unplayed
+                        if (allPlayed) {
+                            std::fill(wormDeadSoundsPlayed.begin(), wormDeadSoundsPlayed.end(), false);
+                        }
+
+                        // Get sounds that haven't been played yet
+                        std::vector<int> availableSoundIndices;
+                        for (size_t i = 0; i < wormDeadSounds.size(); i++) {
+                            if (!wormDeadSoundsPlayed[i]) {
+                                availableSoundIndices.push_back(i);
+                            }
+                        }
+
+                        if (!availableSoundIndices.empty()) {
+                            // Random selection from available sounds
+                            int randomIndex = rand() % availableSoundIndices.size();
+                            int selectedSoundIndex = availableSoundIndices[randomIndex];
+                            int selectedSound = wormDeadSounds[selectedSoundIndex];
+
+                            // Mark this sound as played
+                            wormDeadSoundsPlayed[selectedSoundIndex] = true;
+
+                            // Play the selected sound
+                            audioM.PlaySFX(selectedSound);
                         }
                     }
                     else
@@ -1266,12 +1376,62 @@ namespace Ukemochi
                         {
                             // Play SFX
                             auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                            if (audioM.GetSFXindex("WormAttack") != -1)
-                            {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormAttack")))
-                                {
-                                    audioM.PlaySFX(audioM.GetSFXindex("WormAttack"));
+                            std::vector<int> WormAttackSounds = {
+                            audioM.GetSFXindex("WormAttack1"),
+                            audioM.GetSFXindex("WormAttack2"),
+                            audioM.GetSFXindex("WormAttack3"),
+                            audioM.GetSFXindex("WormAttack4"),
+                            audioM.GetSFXindex("WormAttack5"),
+                            audioM.GetSFXindex("WormAttack6")
+                            };
+
+                            // Remove invalid (-1) sounds
+                            WormAttackSounds.erase(
+                                std::remove(WormAttackSounds.begin(), WormAttackSounds.end(), -1),
+                                WormAttackSounds.end()
+                            );
+
+                            // Keep track of which sounds have been played (static at class level)
+                            static std::vector<bool> attackSoundsPlayed;
+
+                            // Initialize if first time or size changed
+                            if (attackSoundsPlayed.size() != WormAttackSounds.size()) {
+                                attackSoundsPlayed.resize(WormAttackSounds.size(), false);
+                            }
+
+                            // Check if all sounds have been played
+                            bool allPlayed = true;
+                            for (bool played : attackSoundsPlayed) {
+                                if (!played) {
+                                    allPlayed = false;
+                                    break;
                                 }
+                            }
+
+                            // If all sounds have been played, reset all to unplayed
+                            if (allPlayed) {
+                                std::fill(attackSoundsPlayed.begin(), attackSoundsPlayed.end(), false);
+                            }
+
+                            // Get sounds that haven't been played yet
+                            std::vector<int> availableSoundIndices;
+                            for (size_t i = 0; i < WormAttackSounds.size(); i++) {
+                                if (!attackSoundsPlayed[i]) {
+                                    availableSoundIndices.push_back(i);
+                                }
+                            }
+
+                            if (!availableSoundIndices.empty()) {
+                                // Random selection from available sounds
+                                int randomIndex = rand() % availableSoundIndices.size();
+                                int selectedSoundIndex = availableSoundIndices[randomIndex];
+                                int selectedSound = WormAttackSounds[selectedSoundIndex];
+
+                                // Mark this sound as played
+                                attackSoundsPlayed[selectedSoundIndex] = true;
+
+                                // Play the selected sound
+                                audioM.PlaySFX(selectedSound);
                             }
 
                             // spawn bullet
