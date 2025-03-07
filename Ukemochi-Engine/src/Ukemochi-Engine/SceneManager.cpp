@@ -229,13 +229,17 @@ namespace Ukemochi
 	    UME_ENGINE_TRACE("Initializing video manager...");
 	    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/intro-cutscene.mpeg"))
 	        UME_ENGINE_ERROR("Video didn't load properly!");
+
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+
 	    // ECS::GetInstance().GetSystem<VideoManager>()->Init(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight());
 #ifndef _DEBUG
                 // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/intro-cutscene.mpeg"))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        es_current = ES_ENGINE;
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+        es_current = ES_PLAY;
 	    //cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
 	    //cutscene.AddComponent(Transform{Mtx44{},
      //       Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
