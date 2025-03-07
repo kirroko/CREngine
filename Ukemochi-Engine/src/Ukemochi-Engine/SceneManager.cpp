@@ -231,14 +231,18 @@ namespace Ukemochi
 	        UME_ENGINE_ERROR("Video didn't load properly!");
 	    // ECS::GetInstance().GetSystem<VideoManager>()->Init(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight());
 #ifndef _DEBUG
-	    cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
-	    cutscene.AddComponent(Transform{Mtx44{},
-            Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
-            0,
-            Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
-	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
-        SPRITE_SHAPE::BOX,10,true,false,false});
-		es_current = ES_PLAY;
+                // We are gonna to play the intro video after everything has been loaded!
+        UME_ENGINE_TRACE("Initializing video manager...");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/storyboard-for coders.mpeg"))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        es_current = ES_ENGINE;
+	    //cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
+	    //cutscene.AddComponent(Transform{Mtx44{},
+     //       Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
+     //       0,
+     //       Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
+	    //cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
+     //   SPRITE_SHAPE::BOX,10,true,false,false});
 #endif
     }
 
@@ -339,16 +343,35 @@ namespace Ukemochi
 
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
-        {
-            ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+        {		
+            auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+            audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+
+            //ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
             ECS::GetInstance().GetSystem<VideoManager>()->Update(); 
-            ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+            //ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
         }
         else
         {
+            //// Set the camera initial position
+            //ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
             SceneManagerDraw();
         }
+#ifndef _DEBUG
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
+        {
+            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+            audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
 
+            //ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+            ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            //ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+        }
+        else
+        {
+            es_current = ES_PLAY;
+        }
+#endif
         
     }
 
@@ -380,39 +403,40 @@ namespace Ukemochi
 #endif // _DEBUG
 
 #ifndef _DEBUG
-        static double elapsedTime = 0.0;
-	    static int current_frame_index = 0;
-	    elapsedTime += g_FrameRateController.GetDeltaTime();
-	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 6)
-	    {
-	        auto& sr = cutscene.GetComponent<SpriteRender>();
-	        switch (current_frame_index)
-	        {
-	        case 1:
-	            sr.texturePath = "../Assets/Storyboard 2.png";
-	            break;
-	        case 2:
-	            sr.texturePath = "../Assets/Storyboard 3.png";
-	            break;
-	        case 3:
-	            sr.texturePath = "../Assets/Storyboard 4.png";
-	            break;
-	        case 4:
-	            sr.texturePath = "../Assets/Storyboard 5.png";
-	            break;
-	        default:
-	            break;
-	        }
-	        ++current_frame_index;
-	        elapsedTime = 0;
-	        if (current_frame_index > 5)
-	        {
-	            ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
-	            Application::Get().SetPaused(false);
-	            GameObjectManager::GetInstance().DestroyObject(cutscene.GetInstanceID());
-	        	es_current = ES_ENGINE;
-	        }
-	    }
+
+     //   static double elapsedTime = 0.0;
+	    //static int current_frame_index = 0;
+	    //elapsedTime += g_FrameRateController.GetDeltaTime();
+	    //if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 6)
+	    //{
+	    //    auto& sr = cutscene.GetComponent<SpriteRender>();
+	    //    switch (current_frame_index)
+	    //    {
+	    //    case 1:
+	    //        sr.texturePath = "../Assets/Storyboard 2.png";
+	    //        break;
+	    //    case 2:
+	    //        sr.texturePath = "../Assets/Storyboard 3.png";
+	    //        break;
+	    //    case 3:
+	    //        sr.texturePath = "../Assets/Storyboard 4.png";
+	    //        break;
+	    //    case 4:
+	    //        sr.texturePath = "../Assets/Storyboard 5.png";
+	    //        break;
+	    //    default:
+	    //        break;
+	    //    }
+	    //    ++current_frame_index;
+	    //    elapsedTime = 0;
+	    //    if (current_frame_index > 5)
+	    //    {
+	    //        ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+	    //        Application::Get().SetPaused(false);
+	    //        GameObjectManager::GetInstance().DestroyObject(cutscene.GetInstanceID());
+	    //    	es_current = ES_ENGINE;
+	    //    }
+	    //}
 		// Game Inputs Quick fix
 		if (Input::IsKeyTriggered(GLFW_KEY_T))
 		{
@@ -539,7 +563,9 @@ namespace Ukemochi
         sys_start = std::chrono::steady_clock::now();
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
-		//SceneManagerDraw();
+
+        SceneManagerDraw();
+
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 

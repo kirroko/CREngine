@@ -346,7 +346,8 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         plm_set_video_decode_callback(plm,Video_Callback,video_ctx); 
         plm_set_audio_decode_callback(plm,Audio_Callback,rb);
 
-
+        // Set the camera initial position
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 
         //fmod
         FMOD_CREATESOUNDEXINFO exinfo;
@@ -375,6 +376,8 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
     void VideoManager::Free()
     {
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
+        // Set the camera initial position
+        ECS::GetInstance().GetSystem<Camera>()->position = { -1920, 0 };
 
         //if (video_ctx->rgb_buffer)
         //    free(video_ctx->rgb_buffer);

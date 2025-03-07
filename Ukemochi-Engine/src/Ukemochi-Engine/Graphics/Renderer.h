@@ -198,7 +198,7 @@ public:
 	{
 		return playerID;
 	}
-private:
+public:
 
 	//const int MAX_SOUL_CHARGES = 1;
 	//const int SOUL_BAR_THRESHOLD = 5;
