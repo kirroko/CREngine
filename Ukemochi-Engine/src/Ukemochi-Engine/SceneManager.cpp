@@ -362,21 +362,6 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
             SceneManagerDraw();
         }
-#ifndef _DEBUG
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
-        {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
-
-            //ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
-            ECS::GetInstance().GetSystem<VideoManager>()->Update();
-            //ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
-        }
-        else
-        {
-            es_current = ES_PLAY;
-        }
-#endif
         
     }
 
@@ -568,21 +553,21 @@ namespace Ukemochi
         sys_start = std::chrono::steady_clock::now();
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
-
         if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
         {
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
             audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
 
+            //ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
             ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            //ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
         }
         else
         {
-            //// Set the camera initial position
-            ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
             SceneManagerDraw();
         }
+
 
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
