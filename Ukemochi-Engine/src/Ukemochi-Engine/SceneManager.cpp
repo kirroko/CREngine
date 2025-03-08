@@ -440,13 +440,11 @@ namespace Ukemochi
                         player_ref_data.hitStopTimer = 0.0f;
                     }
                     else
+                    {
+                        // Let the draw run
+                        SceneManagerDraw();
                         return; // Skip the rest of the update loop to freeze game temporarily
-                }
-                else
-                {
-                    // Let the draw run
-                    SceneManagerDraw();
-                    return; // Skip the rest of the update loop to freeze game temporarily
+                    }
                 }
             }
             // --- GAME LOGIC UPDATE ---
