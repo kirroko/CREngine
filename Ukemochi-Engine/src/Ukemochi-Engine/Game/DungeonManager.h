@@ -2,10 +2,10 @@
 /*!
 \file       DungeonManager.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Nov 24, 2024
+\date       Mar 08, 2025
 \brief      This file contains the declaration of the DungeonManager which handles the game dungeon.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */

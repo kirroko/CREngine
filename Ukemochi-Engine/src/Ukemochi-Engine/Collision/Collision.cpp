@@ -157,17 +157,17 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y};  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y };  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.5f};  // Max Y stops at the object's center
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.5f };  // Max Y stops at the object's center
 		}
 		else if (tag == "Dummy")
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y / 1.25f };  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y };
 			box.max = { BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
-						trans.position.y };  // Max Y stops at the object's center
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.5f };
 		}
 		else if (tag == "Knife")
 		{
@@ -178,9 +178,9 @@ namespace Ukemochi
 
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * (1.5f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*1.25f};  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 1.25f };  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * (1.8f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.8f };  // Max Y stops at the object's center
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.8f };  // Max Y stops at the object's center
 		}
 		else
 		{
@@ -710,10 +710,15 @@ namespace Ukemochi
 		{
 			// Mochi interacting with the environment
 			// Make space and get healing items?
-			
+
+			// Get references of the player and box
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& box_anim = ECS::GetInstance().GetComponent<Animation>(entity2);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
 
 			// Skip if Mochi is not attacking
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
@@ -755,6 +760,20 @@ namespace Ukemochi
 								}
 							}
 						}
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+
+						player_data.HitStopAnimation();
+
 						check_collision_once = true;
 					}
 					else
@@ -795,6 +814,20 @@ namespace Ukemochi
 								}
 							}
 						}
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+
+						player_data.HitStopAnimation();
+
 						check_collision_once = true;
 					}
 					else
@@ -836,6 +869,20 @@ namespace Ukemochi
 								std::cout << "hit" << std::endl;
 							}
 						}
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+
+						player_data.HitStopAnimation();
+
 						check_collision_once = true;
 					}
 					else
@@ -886,7 +933,7 @@ namespace Ukemochi
 			// Placeholder, wait for when animations is complete so that we can break the box
 			// Play Animation
 		}
-		else if ((tag1 == "FishAbility" || tag1 == "WormAbility") && tag2 == "Enemy")
+		else if (tag1 == "FishAbility" && tag2 == "Enemy") // Mochi's Fish Ability and Enemy (Enemy takes huge damage)
 		{
 			// Get references of the player and enemy
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
@@ -897,15 +944,10 @@ namespace Ukemochi
 
 			// Deal damage to the enemy
 			enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
-
-			// Harvest some soul whenever mochi hits an enemy
-			//ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 		}
 		else if (tag1 == "WormAbility" && tag2 == "Enemy") // Mochi's Worm Ability and Enemy (Enemy gets trap in the web)
 		{
-			// Get references of the player and enemy
-			//auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			// Get reference of the enemy
 			auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
 			// Trigger enemy hurt animation
@@ -914,12 +956,6 @@ namespace Ukemochi
 			// Stop the enemy's movement
 			enemy_rb.force = Vec2{ 0,0 };
 			enemy_rb.velocity = Vec2{ 0,0 };
-
-			// Deal damage to the enemy
-			//enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
-
-			// Harvest some soul whenever mochi hits an enemy
-			//ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "FishAbility" && tag2 == "EnemyProjectile"
 			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile") // Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
@@ -932,7 +968,6 @@ namespace Ukemochi
 			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
 			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
-			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
@@ -947,7 +982,8 @@ namespace Ukemochi
 				if (player_anim.current_frame == 10)
 				{
 					// Harvest some soul whenever mochi hits the dummy
-					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
 					if (player_sr.flipX)
 					{
@@ -966,7 +1002,8 @@ namespace Ukemochi
 				if (player_anim.current_frame == 15)
 				{
 					// Harvest some soul whenever mochi hits the dummy
-					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
 					if (player_sr.flipX)
 					{
@@ -985,7 +1022,8 @@ namespace Ukemochi
 				if (player_anim.current_frame == 31)
 				{
 					// Harvest some soul whenever mochi hits the dummy
-					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(player_soul.current_soul, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
 					// Apply knockback and play sound effects
 					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
@@ -1091,23 +1129,23 @@ namespace Ukemochi
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 		}
-		else if (tag1 == "Enemy" && tag2 == "Enemy") // Enemy and Enemy (Block each other)
-		{
-			//ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
-			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
+		//else if (tag1 == "Enemy" && tag2 == "Enemy") // Enemy and Enemy (Block each other)
+		//{
+		//	ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
+		//	ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
+		//	ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
 
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
+		//	// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
+		//	Static_Response(trans1, box1, rb1, trans2, box2, rb2);
+		//	StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 
-			//auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			//if (audioM.GetSFXindex("HIT") != -1)
-			//{
-			//	if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-			//		audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-			//}
-		}
+		//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+		//	if (audioM.GetSFXindex("HIT") != -1)
+		//	{
+		//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
+		//			audioM.PlaySFX(audioM.GetSFXindex("HIT"));
+		//	}
+		//}
 	}
 
 	/*!***********************************************************************
