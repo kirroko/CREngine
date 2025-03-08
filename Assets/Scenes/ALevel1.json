@@ -1294,6 +1294,20 @@
                     "Type": 0
                 }]
         }, {
+            "Name": "2_EnemyFish1_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Fish_Shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
+                }]
+        }, {
             "Name": "2_EnemyFish2",
             "Tag": "Enemy",
             "Components": [{
@@ -1346,6 +1360,20 @@
                     "Type": 0
                 }]
         }, {
+            "Name": "2_EnemyFish2_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Fish_Shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
+                }]
+        }, {
             "Name": "2_EnemyFish3",
             "Tag": "Enemy",
             "Components": [{
@@ -1396,6 +1424,20 @@
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
                     "Type": 0
+                }]
+        }, {
+            "Name": "2_EnemyFish3_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Fish_Shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
                 }]
         }, {
             "Name": "2_waypoint1",
@@ -1862,6 +1904,20 @@
                     "Type": 1
                 }]
         }, {
+            "Name": "3_EnemyWorm1_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm_shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
+                }]
+        }, {
             "Name": "3_EnemyWorm2",
             "Tag": "Enemy",
             "Components": [{
@@ -1914,6 +1970,20 @@
                     "Type": 1
                 }]
         }, {
+            "Name": "3_EnemyWorm2_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm_shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
+                }]
+        }, {
             "Name": "3_EnemyWorm3",
             "Tag": "Enemy",
             "Components": [{
@@ -1964,6 +2034,20 @@
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
                     "Type": 1
+                }]
+        }, {
+            "Name": "3_EnemyWorm3_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm_shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
                 }]
         }, {
             "Name": "3_waypoint1",
@@ -2468,6 +2552,20 @@
                     "Type": 0
                 }]
         }, {
+            "Name": "4_EnemyFish1_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Fish_Shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
+                }]
+        }, {
             "Name": "4_EnemyFish2",
             "Tag": "Enemy",
             "Components": [{
@@ -2518,6 +2616,20 @@
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
                     "Type": 0
+                }]
+        }, {
+            "Name": "4_EnemyFish2_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Fish_Shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
                 }]
         }, {
             "Name": "4_EnemyWorm1",
@@ -2572,6 +2684,20 @@
                     "Type": 1
                 }]
         }, {
+            "Name": "4_EnemyWorm1_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm_shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
+                }]
+        }, {
             "Name": "4_EnemyWorm2",
             "Tag": "Enemy",
             "Components": [{
@@ -2622,6 +2748,20 @@
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
                     "Type": 1
+                }]
+        }, {
+            "Name": "4_EnemyWorm2_Shadow",
+            "Tag": "EnemyShadow",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [250.0, 250.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Worm_shadow.png",
+                    "Shape": 0,
+                    "Layer": 4
                 }]
         }, {
             "Name": "4_waypoint1",
@@ -3305,29 +3445,29 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "bIdle": ["Idle_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "Idle": ["Idle_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Idle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "rIdle": ["Idle_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
-                        "bRunning": ["Run_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
+                        "bIdle": ["Idle_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bIdle", 24, 0.5, 0.5, 45, 200, 200, 1024, 1024, 0.03999999910593033, true],
                         "Running": ["Run_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Running", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
                         "rRunning": ["Run_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
-                        "bHurt": ["Hurt_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
+                        "bRunning": ["Run_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bRunning", 10, 0.5, 0.5, 55, 220, 220, 880, 720, 0.04500000178813934, true],
                         "Hurt": ["Hurt_Base", "../Assets/Textures/Player/Mochi 1_Part.png", "Hurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "rHurt": ["Hurt_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
-                        "SwitchNR": ["Base to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, false],
+                        "bHurt": ["Hurt_Blue", "../Assets/Textures/Player/Mochi 1_Part.png", "bHurt", 4, 0.5, 0.5, 65, 250, 250, 512, 512, 0.03999999910593033, true],
                         "Death": ["Death_Base", "../Assets/Textures/Player/Mochi 2_Part.png", "Death", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, false],
-                        "bAttack": ["Attack_Blue", "../Assets/Textures/Player/Mochi 3_Part.png", "bAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.02500000037252903, true],
-                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.02500000037252903, true],
                         "rDeath": ["Death_Red", "../Assets/Textures/Player/Mochi 1_Part.png", "rDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, false],
+                        "bDeath": ["Death_Blue", "../Assets/Textures/Player/Mochi 2_Part.png", "bDeath", 36, 0.4000000059604645, 0.6000000238418579, 125, 350, 350, 3850, 1400, 0.03999999910593033, false],
+                        "Attack": ["Attack_Base", "../Assets/Textures/Player/Mochi 3_Part.png", "Attack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.02500000037252903, true],
                         "rAttack": ["Attack_Red", "../Assets/Textures/Player/Mochi 3_Part.png", "rAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.02500000037252903, true],
-                        "WormSkill": ["Mochi Complete Base Sprite-Red-RedSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormSkill", 19, 0.5, 0.5, 60, 235, 235, 1880, 705, 0.03999999910593033, false],
-                        "FishSkill": ["Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishSkill", 24, 0.5, 0.5, 90, 280, 280, 1960, 1120, 0.03999999910593033, false],
-                        "SwitchNB": ["Base To Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "SwitchBN": ["Blue to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "SwitchRB": ["Red to Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "SwitchBR": ["Blue to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false],
-                        "SwitchRN": ["Red to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03999999910593033, false]
+                        "bAttack": ["Attack_Blue", "../Assets/Textures/Player/Mochi 3_Part.png", "bAttack", 46, 0.4000000059604645, 0.5, 125, 340, 340, 4096, 1360, 0.02500000037252903, true],
+                        "WormSkill": ["Mochi Complete Base Sprite-Red-RedSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormSkill", 19, 0.5, 0.5, 60, 235, 235, 1880, 705, 0.03, false],
+                        "FishSkill": ["Mochi Complete Base Sprite-Blue-BlueSoulSpecial_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishSkill", 24, 0.5, 0.5, 90, 280, 280, 1960, 1120, 0.03, false],
+                        "SwitchNR": ["Base to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03, false],
+                        "SwitchNB": ["Base To Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchNB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03, false],
+                        "SwitchBN": ["Blue to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03, false],
+                        "SwitchBR": ["Blue to Red_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchBR", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03, false],
+                        "SwitchRB": ["Red to Blue_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRB", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03, false],
+                        "SwitchRN": ["Red to Base_0000", "../Assets/Textures/Player/Switching_Part.png", "SwitchRN", 16, 0.44999998807907104, 0.550000011920929, 55, 220, 220, 880, 880, 0.03, false]
                     },
                     "CurrentClip": "Idle"
                 }, {
@@ -3344,7 +3484,7 @@
                 }, {
                     "Name": "PlayerSoul",
                     "CurrentSoul": -1,
-                    "SoulBars": [10.0, 10.0],
+                    "SoulBars": [0.0, 0.0],
                     "SoulCharges": [0, 0],
                     "SkillDamages": [50.0, 50.0],
                     "SkillDuration": 1.0,
@@ -3510,7 +3650,7 @@
                     "Scale": [250.0, 250.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/aShadow.png",
+                    "Sprite": "../Assets/Textures/Mochi_Shadow.png",
                     "Shape": 0,
                     "Layer": 4
                 }]
@@ -3615,17 +3755,8 @@
                             "Name": "ButtonClickSound",
                             "Path": "../Assets/Audio/SFX/MainMenu/MenuHoverOverSFX 2.wav"
                         }, {
-                            "Name": "WormAttack",
-                            "Path": "../Assets/Audio/SFX/Enemy/WormAttackVR.wav"
-                        }, {
                             "Name": "WormMove",
                             "Path": "../Assets/Audio/SFX/Enemy/WormWalk.wav"
-                        }, {
-                            "Name": "WormHurt",
-                            "Path": "../Assets/Audio/SFX/Enemy/WormHurt2.wav"
-                        }, {
-                            "Name": "WormDead",
-                            "Path": "../Assets/Audio/SFX/Enemy/Worm Dead.wav"
                         }, {
                             "Name": "SwapSoul",
                             "Path": "../Assets/Audio/SFX/Player/SwapSoul.wav"
@@ -3687,9 +3818,6 @@
                             "Name": "FishAttack3",
                             "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_3.wav"
                         }, {
-                            "Name": "FishAir",
-                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Jump-Movement_4.wav"
-                        }, {
                             "Name": "FishAir1",
                             "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Jump-Movement_5.wav"
                         }, {
@@ -3704,6 +3832,117 @@
                         }, {
                             "Name": "FishMove32",
                             "Path": "../Assets/Audio/SFX/Enemy/Fish/FishMove/FishWalkCut1.wav"
+                        }, {
+                            "Name": "Running7",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DR1.wav"
+                        }, {
+                            "Name": "Running8",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DR12.wav"
+                        }, {
+                            "Name": "Running9",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DR15.wav"
+                        }, {
+                            "Name": "Running10",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DR14.wav"
+                        }, {
+                            "Name": "Running11",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DR16.wav"
+                        }, {
+                            "Name": "Running12",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DW3.wav"
+                        }, {
+                            "Name": "Running13",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DW3p2.wav"
+                        }, {
+                            "Name": "Running14",
+                            "Path": "../Assets/Audio/SFX/Player/Player Run/DW13.wav"
+                        }, {
+                            "Name": "FishAttack4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_4.wav"
+                        }, {
+                            "Name": "FishAttack5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_5.wav"
+                        }, {
+                            "Name": "FishAttack6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_6.wav"
+                        }, {
+                            "Name": "FishAttack7",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_7.1.wav"
+                        }, {
+                            "Name": "FishAttack8",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishAttack/Enemy_Fish_Attack_7.wav"
+                        }, {
+                            "Name": "FishDead4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-4.wav"
+                        }, {
+                            "Name": "FishDead5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-5.wav"
+                        }, {
+                            "Name": "FishDead6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-6.wav"
+                        }, {
+                            "Name": "FishDead7",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishDeath/Enemy_Death-7.wav"
+                        }, {
+                            "Name": "FishHurt5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishHurt/Slash-Impact_5.wav"
+                        }, {
+                            "Name": "FishHurt6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Fish/FishHurt/Slash-Impact_6.wav"
+                        }, {
+                            "Name": "WormAttack1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack1.wav"
+                        }, {
+                            "Name": "WormAttack2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack2.wav"
+                        }, {
+                            "Name": "WormAttack3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack3.wav"
+                        }, {
+                            "Name": "WormAttack4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack4.wav"
+                        }, {
+                            "Name": "WormAttack5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack5.wav"
+                        }, {
+                            "Name": "WormAttack6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Attack/Worm-Attack6.wav"
+                        }, {
+                            "Name": "WormHurt1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_1.wav"
+                        }, {
+                            "Name": "WormHurt2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_2.wav"
+                        }, {
+                            "Name": "WormHurt3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_3.wav"
+                        }, {
+                            "Name": "WormHurt4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_4.wav"
+                        }, {
+                            "Name": "WormHurt5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_5.wav"
+                        }, {
+                            "Name": "WormHurt6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Hurt/Worm Hurt_6.wav"
+                        }, {
+                            "Name": "WormDead1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_1.wav"
+                        }, {
+                            "Name": "WormDead2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_2.wav"
+                        }, {
+                            "Name": "WormDead3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_3.wav"
+                        }, {
+                            "Name": "WormDead4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_4.wav"
+                        }, {
+                            "Name": "WormDead5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_5.wav"
+                        }, {
+                            "Name": "WormDead6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Death/Worm Death_6.wav"
                         }]
                 }]
         }, {

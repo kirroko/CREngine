@@ -378,14 +378,27 @@ namespace Ukemochi
 	{
 		int maxHealth = 100;
 		int currentHealth = 100;
+		int postInjuriesMaxHealth = 100;
 		int comboState = 0;			// Tracks current combat state 
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
-		float maxComboTimer = 5.0f; // Max time to continue combo 
+		float maxComboTimer = 5.0f; // Max time to continue combo
+		float hitStopDuration = 0.2f; // Duration of hit stop in seconds
+		float hitStopTimer = 0.0f; // Timer for hit stop
 		float playerForce = 4500.0f;
+		bool isHitStopActive = false; // Flag to check if hit stop is active
 		bool isDead = false;
 		bool canAttack = true;
 		bool comboIsAttacking = false;
+
+		/**
+		 * @brief Handle player's attack animation to stop for a certain while
+		 */
+		void HitStopAnimation()
+		{
+			hitStopTimer = hitStopDuration;
+			isHitStopActive = true;
+		}
 	};
 
 	/*!***********************************************************************
