@@ -365,14 +365,14 @@ namespace Ukemochi
                     player_soul.soul_bars[i] = 0.f;
 
                     // Currently in FISH soul, switch to EMPTY soul
-                    if (player_soul.current_soul == FISH)
+                    if (player_soul.current_soul == FISH && player_soul.current_soul == i)
                     {
                         player_soul.current_soul = EMPTY;
                         player_animator.SetAnimationUninterrupted("SwitchBN");
                         GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
                     }
-                    // Currently in WORM soul, switch to FISH soul if available else EMPTY soul
-                    else if (player_soul.current_soul == WORM)
+                    // Currently in WORM soul, switch to EMPTY soul
+                    else if (player_soul.current_soul == WORM && player_soul.current_soul == i)
                     {
                         player_soul.current_soul = EMPTY;
                         player_animator.SetAnimationUninterrupted("SwitchRN");
