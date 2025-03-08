@@ -3284,7 +3284,7 @@
                     "ComboDamage": 10,
                     "AttackCooldown": 5.0,
                     "AttackTimer": 0.0,
-                    "PlayerForce": 4500.0,
+                    "PlayerForce": 5000.0,
                     "IsDead": false,
                     "CanAttack": true
                 }, {
