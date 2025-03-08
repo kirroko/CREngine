@@ -22,13 +22,12 @@ namespace Ukemochi
 
     class SoulManager : public System
     {
-    private:
+    public:
         EntityID player;       // Keep track of the player ID
         EntityID soul;         // Keep track of the floating soul ID
         EntityID fish_ability; // Keep track of the player's fish ability ID
         EntityID worm_ability; // Keep track of the player's worm ability ID
 
-    public:
         /*!***********************************************************************
         \brief
          Initialize the soul manager, finding the player and ability-related entities.

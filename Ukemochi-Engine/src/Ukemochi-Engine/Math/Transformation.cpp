@@ -2,10 +2,10 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 25, 2025
+\date       Mar 09, 2025
 \brief      This file contains the definition of the Transformation system.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -158,26 +158,30 @@ namespace Ukemochi
 		// Set the layer based on whether the object is behind or infront the static objects
 		if (tag == "Player")
 		{
-			auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
-			auto& shadow_sr = ECS::GetInstance().GetComponent<SpriteRender>(shadow);
-
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
-			soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
-			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
+
+			if (soul != -1)
+			{
+				auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
+				soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			}
+			if (shadow != -1)
+			{
+				auto& shadow_sr = ECS::GetInstance().GetComponent<SpriteRender>(shadow);
+				shadow_sr.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
+			}
 		}
 		else if (tag == "Enemy")
 		{
 			std::string enemy_shadow_name = GameObjectManager::GetInstance().GetGO(object)->GetName() + "_Shadow";
 			auto& shadow_sr = GameObjectManager::GetInstance().GetGOByName(enemy_shadow_name)->GetComponent<SpriteRender>();
 
-			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
+			shadow_sr.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
 		}
 		else if (tag == "EnemyProjectile")
-		{
-			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
-		}
+			sprite_renderer.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
 		else if (tag == "FishAbility" || tag == "WormAbility")
-			sprite_renderer.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
+			sprite_renderer.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
 	}
 }

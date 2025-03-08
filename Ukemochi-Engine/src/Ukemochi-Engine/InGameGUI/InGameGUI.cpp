@@ -231,35 +231,41 @@ namespace Ukemochi
 		// Main Menu
 		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
 			// Get the AudioManager
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-			// Start playing main menu music if it exists
-			if (audioM.GetMusicIndex("BGMOG") != -1)
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
-				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				// Start playing main menu music if it exists
+				if (audioM.GetMusicIndex("BGMOG") != -1)
 				{
-					audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+					{
+						audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+					}
 				}
 			}
 			});
 
 		uiManager->addButton("start button", glm::vec3{ 1138.f, 538.f, 0.f }, glm::vec2{ 422.f, 343.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
-			// Get the AudioManager
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-			// Stop the main menu music when starting the game
-			if (audioM.GetMusicIndex("BGMOG") != -1)
-			{
-				audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
-			}
-
 			// Start the game
 			Application::Get().StartGame();
-
-			// Check if the StartButton SFX exists and play it
-			if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			
+			// Get the AudioManager
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
-				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				// Stop the main menu music when starting the game
+				if (audioM.GetMusicIndex("BGMOG") != -1)
+				{
+					audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+				}
+
+				// Check if the StartButton SFX exists and play it
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			});
 	}
@@ -299,7 +305,6 @@ namespace Ukemochi
 			return a.second->ui_layer > b.second->ui_layer;  // Higher layer first
 			});
 
-		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 		// Update hover cooldown timer
 		hoverTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
@@ -311,9 +316,14 @@ namespace Ukemochi
 			// Check if hover state has changed
 			if (button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
-				if (audioM.GetSFXindex("HoverSound") != -1)
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 				{
-					audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+					if (audioM.GetSFXindex("HoverSound") != -1)
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
+					}
 				}
 				hoverTimer = hoverCooldown; // Reset cooldown timer
 			}
@@ -407,12 +417,15 @@ namespace Ukemochi
 		uiManager->addButton("resume button bg", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 134.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, []() {
 			});
 		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(73.f, 86.f), "return icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, true, [this]() {
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-			// Check if the StartButton SFX exists and play it
-			if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
-				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				// Check if the StartButton SFX exists and play it
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			Application::Get().SetPaused(false);
 			this->HidePauseMenu();
@@ -425,10 +438,13 @@ namespace Ukemochi
 		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
 			//Application::Get().StopGame();  // Stop the game
 			//Application::Get().SetPaused(false);  // Ensure it's unpaused
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
-				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			Application::Get().QuitGame();
 			});

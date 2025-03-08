@@ -2,10 +2,10 @@
 /*!
 \file       Transformation.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 25, 2025
+\date       Mar 09, 2025
 \brief      This file contains the declaration of the Transformation system.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -49,10 +49,10 @@ namespace Ukemochi
         const Vec2 SKILL_SCALE_FACTOR{ 2.f, 2.f };
         const DepthScaling OBJECT_SCALING{ MIN_Y_POS, MAX_Y_POS, MIN_SCALE, MAX_SCALE }; // Object scaling constant for the depth effect.
 
+    public:
         EntityID soul;   // Keep track of the floating soul ID
         EntityID shadow; // Keep track of the player's shadow ID
 
-    public:
         /*!***********************************************************************
         \brief
          Initialize the transformation system.

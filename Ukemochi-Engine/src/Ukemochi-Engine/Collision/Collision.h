@@ -34,12 +34,12 @@ namespace Ukemochi
         const float MIN_OFFSET = 0.001f;              // Minimum offset for static collision.
 
         int screen_width{}, screen_height{};          // Screen size for box and screen collision
-        EntityID player;                              // Get the player for player data
         std::unique_ptr<QuadTree> quadtree = nullptr; // Quadtree instance for broad-phase collision
-
-        bool check_collision_once = false;
+        bool check_collision_once = false;            // Boolean flag for checking collision once
 
     public:
+        EntityID player;                              // Get the player for player data
+
         /*!***********************************************************************
         \brief
          Initialize the collision system.

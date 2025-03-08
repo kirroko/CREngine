@@ -1,8 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       DungeonManager.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (75%)
+\co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (25%)
 \date       Mar 08, 2025
 \brief      This file contains the definition of the DungeonManager which handles the game dungeon.
 
@@ -148,12 +148,15 @@ namespace Ukemochi
 			UnlockRoom();
 
 			//healing to post injuries max health here
-			while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
+			if (player != -1)
 			{
-				GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
-				if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+				while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
 				{
-					GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
+					GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
+					if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+					{
+						GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
+					}
 				}
 			}
 		}

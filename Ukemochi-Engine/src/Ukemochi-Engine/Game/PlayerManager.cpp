@@ -117,12 +117,16 @@ namespace Ukemochi
                 // Check if Mochi is dead
                 if (data.currentHealth <= 0)
                 {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (!playerDeadSoundPlayed && audioM.GetSFXindex("PlayerDead") != -1)
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                     {
-                        audioM.PlaySFX(audioM.GetSFXindex("PlayerDead"));
-                        playerDeadSoundPlayed = true; // Prevent it from playing again
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        if (!playerDeadSoundPlayed && audioM.GetSFXindex("PlayerDead") != -1)
+                        {
+                            audioM.PlaySFX(audioM.GetSFXindex("PlayerDead"));
+                            playerDeadSoundPlayed = true; // Prevent it from playing again
+                        }
                     }
+
                     // Trigger player death animation
                     anim.SetAnimation(SoulAnimation(soulData, "Death"));
                     data.isDead = true;
@@ -155,81 +159,84 @@ namespace Ukemochi
                 // anim.SetAnimation("Idle");
 
                 // Play the running sound only at frame 2
-                static bool runningSoundPlayed = false;
-                if (anim.currentClip.find("Running") != std::string::npos)  // Only when running animation is active
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                 {
-                    int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
-
-                    static int lastRunningSoundIndex = 0;
-
-                    // 6 or 7 for current frame
-                    if ((currentFrame == 3 || currentFrame == 8) && !runningSoundPlayed)
+                    static bool runningSoundPlayed = false;
+                    if (anim.currentClip.find("Running") != std::string::npos)  // Only when running animation is active
                     {
-                        // Assuming you have an audio manager and running sound index
-                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                        std::vector<int> runningSounds = {
-                            audioM.GetSFXindex("Running1"),
-                            audioM.GetSFXindex("Running2"),
-                            audioM.GetSFXindex("Running3"),
-                            audioM.GetSFXindex("Running4"),
-                            audioM.GetSFXindex("Running5"),
-                            audioM.GetSFXindex("Running6"),
-                            audioM.GetSFXindex("Running7"),
-                            audioM.GetSFXindex("Running8"),
-                            audioM.GetSFXindex("Running9"),
-                            audioM.GetSFXindex("Running10"),
-                            audioM.GetSFXindex("Running11"),
-							audioM.GetSFXindex("Running12"),
-							audioM.GetSFXindex("Running13"),
-							audioM.GetSFXindex("Running14")
-                        };
-                        // Add this to track when sounds were last played (initialize this elsewhere)
-                        static std::vector<int> lastPlayedCounts(runningSounds.size(), 0);
+                        int currentFrame = anim.GetCurrentFrame(); // Assuming you have a GetCurrentFrame method
 
-                        // Filter out any invalid indices (-1) and recently played sounds
-                        std::vector<int> validSounds;
-                        for (int i = 0; i < runningSounds.size(); i++) {
-                            // Add only valid sounds that haven't been played in the last 5 rounds
-                            if (runningSounds[i] != -1 && lastPlayedCounts[i] >= 5) {
-                                validSounds.push_back(runningSounds[i]);
-                            }
-                        }
+                        static int lastRunningSoundIndex = 0;
 
-                        // If no valid sounds are available, use any that aren't -1
-                        if (validSounds.empty()) {
+                        // 6 or 7 for current frame
+                        if ((currentFrame == 3 || currentFrame == 8) && !runningSoundPlayed)
+                        {
+                            // Assuming you have an audio manager and running sound index
+                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                            std::vector<int> runningSounds = {
+                                audioM.GetSFXindex("Running1"),
+                                audioM.GetSFXindex("Running2"),
+                                audioM.GetSFXindex("Running3"),
+                                audioM.GetSFXindex("Running4"),
+                                audioM.GetSFXindex("Running5"),
+                                audioM.GetSFXindex("Running6"),
+                                audioM.GetSFXindex("Running7"),
+                                audioM.GetSFXindex("Running8"),
+                                audioM.GetSFXindex("Running9"),
+                                audioM.GetSFXindex("Running10"),
+                                audioM.GetSFXindex("Running11"),
+                                audioM.GetSFXindex("Running12"),
+                                audioM.GetSFXindex("Running13"),
+                                audioM.GetSFXindex("Running14")
+                            };
+                            // Add this to track when sounds were last played (initialize this elsewhere)
+                            static std::vector<int> lastPlayedCounts(runningSounds.size(), 0);
+
+                            // Filter out any invalid indices (-1) and recently played sounds
+                            std::vector<int> validSounds;
                             for (int i = 0; i < runningSounds.size(); i++) {
-                                if (runningSounds[i] != -1) {
+                                // Add only valid sounds that haven't been played in the last 5 rounds
+                                if (runningSounds[i] != -1 && lastPlayedCounts[i] >= 5) {
                                     validSounds.push_back(runningSounds[i]);
                                 }
                             }
-                        }
 
-                        if (!validSounds.empty()) {
-                            // Random selection
-                            int randomIndex = rand() % validSounds.size();
-                            int selectedSound = validSounds[randomIndex];
-
-                            // Find the original index to update the counter
-                            for (int i = 0; i < runningSounds.size(); i++) {
-                                if (runningSounds[i] == selectedSound) {
-                                    lastPlayedCounts[i] = 0; // Reset counter for the played sound
+                            // If no valid sounds are available, use any that aren't -1
+                            if (validSounds.empty()) {
+                                for (int i = 0; i < runningSounds.size(); i++) {
+                                    if (runningSounds[i] != -1) {
+                                        validSounds.push_back(runningSounds[i]);
+                                    }
                                 }
                             }
 
-                            // Play the selected sound
-                            audioM.PlaySFX(selectedSound);
+                            if (!validSounds.empty()) {
+                                // Random selection
+                                int randomIndex = rand() % validSounds.size();
+                                int selectedSound = validSounds[randomIndex];
 
-                            // Increment counters for all sounds
-                            for (int i = 0; i < lastPlayedCounts.size(); i++) {
-                                lastPlayedCounts[i]++;
+                                // Find the original index to update the counter
+                                for (int i = 0; i < runningSounds.size(); i++) {
+                                    if (runningSounds[i] == selectedSound) {
+                                        lastPlayedCounts[i] = 0; // Reset counter for the played sound
+                                    }
+                                }
+
+                                // Play the selected sound
+                                audioM.PlaySFX(selectedSound);
+
+                                // Increment counters for all sounds
+                                for (int i = 0; i < lastPlayedCounts.size(); i++) {
+                                    lastPlayedCounts[i]++;
+                                }
                             }
-                        }
 
-                        runningSoundPlayed = true; // Prevent it from playing again at the same frame
-                    }
-                    else if ((currentFrame != 3 && currentFrame != 8))
-                    {
-                        runningSoundPlayed = false; // Reset when leaving frame 2
+                            runningSoundPlayed = true; // Prevent it from playing again at the same frame
+                        }
+                        else if ((currentFrame != 3 && currentFrame != 8))
+                        {
+                            runningSoundPlayed = false; // Reset when leaving frame 2
+                        }
                     }
                 }
 
@@ -246,18 +253,20 @@ namespace Ukemochi
                 {
                     data.comboTimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
-                        AudioManager>();
-                    // Kick
-                    if (data.comboState == 2 && anim.current_frame >= 29 && kickAudio == false && audioM.GetSFXindex("Pattack3") != -1)
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                     {
-                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-                            audioM.GetSFXindex("Pattack3")))
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        // Kick
+                        if (data.comboState == 2 && anim.current_frame >= 29 && kickAudio == false && audioM.GetSFXindex("Pattack3") != -1)
                         {
-                            //audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
-                            anim.attackAnimationFinished = true;
+                            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
+                                audioM.GetSFXindex("Pattack3")))
+                            {
+                                //audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+                                anim.attackAnimationFinished = true;
+                            }
+                            kickAudio = true;
                         }
-                        kickAudio = true;
                     }
                 }
                 else
@@ -272,11 +281,6 @@ namespace Ukemochi
                 // Player input
                 if (Input::IsKeyTriggered(UME_KEY_J))
                 {
-                    auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
-                    UME_ENGINE_ASSERT(audioObj != nullptr, "Audio Manager missing")
-
-                        AudioManager& audio = audioObj->GetComponent<AudioManager>();
-
                     if (!data.comboIsAttacking)
                     {
                         data.comboState = (data.comboState + 1) % 3;    // loop back after 3 hits
@@ -292,27 +296,40 @@ namespace Ukemochi
                         case 0:
                             anim.isReverse = true;
                             anim.SetAnimationFromTo(SoulAnimation(soulData, "Attack"), 11, 0);
-
                             // anim.SetAnimationFromTo("Attack", 0, 14);
-                            if (audio.GetSFXindex("Pattack1") == -1)
-                                break;
-                            if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
-                                break;
-                            audio.PlaySFX(audio.GetSFXindex("Pattack1"));
-                            // Deal damage?
+
+                            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                            {
+                                auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                                AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                                if (audio.GetSFXindex("Pattack1") == -1)
+                                    break;
+                                if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack1")))
+                                    break;
+                                audio.PlaySFX(audio.GetSFXindex("Pattack1"));
+                            }
                             break;
                         case 1:
                             anim.SetAnimationFromTo(SoulAnimation(soulData, "Attack"), 14, 25);
                             // anim.SetAnimationFromTo("Attack", 14, 25);
-                            if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
-                                audio.StopSFX(audio.GetSFXindex("Pattack1"));
-                            if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
-                                break;
-                            if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
-                                break;
-                            audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+
+                            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                            {
+                                auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                                AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                                if (audio.GetSFXindex("Pattack1") != -1) // check if it does exist
+                                    audio.StopSFX(audio.GetSFXindex("Pattack1"));
+                                if (audio.GetSFXindex("Pattack2") == -1) // Check if it doesn't exist
+                                    break;
+                                if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("Pattack2")))
+                                    break;
+                                audio.PlaySFX(audio.GetSFXindex("Pattack2"));
+                                kickAudio = false;
+                            }
+
                             anim.attackAnimationFinished = false;
-                            kickAudio = false;
                             break;
                         case 2:
                             anim.SetAnimationFromTo(SoulAnimation(soulData, "Attack"), 30, 46);
@@ -374,11 +391,14 @@ namespace Ukemochi
                 // Play hurt sound at specific frames (e.g., frame 5)
                 if (currentFrame == 5 && !hurtSoundPlayed)
                 {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    int hurtSoundIndex = audioM.GetSFXindex("PlayerHurt"); // Replace with the actual sound name
-                    if (hurtSoundIndex != -1)
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                     {
-                        audioM.PlaySFX(hurtSoundIndex);
+                        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                        int hurtSoundIndex = audioM.GetSFXindex("PlayerHurt"); // Replace with the actual sound name
+                        if (hurtSoundIndex != -1)
+                        {
+                            audioM.PlaySFX(hurtSoundIndex);
+                        }
                     }
                     hurtSoundPlayed = true; // Prevent it from playing again at the same frame
                 }

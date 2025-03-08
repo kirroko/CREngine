@@ -536,11 +536,14 @@ namespace Ukemochi
 
 		if (tag1 == "Player" && tag2 == "LeftDoor" || tag1 == "Player" && tag2 == "RightDoor") // Mochi and Doors
 		{
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (audioM.GetSFXindex("LevelChange") != -1)
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
-				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
-					audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("LevelChange") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				}
 			}
 			if (tag2 == "LeftDoor")
 				ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1); // Move to the left room
@@ -627,7 +630,7 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
-						
+
 						if (player_sr.flipX)
 						{
 							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
@@ -653,14 +656,16 @@ namespace Ukemochi
 				if (player_anim.current_frame == 31)
 				{
 					// Apply knockback and play sound effects
-					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
-						AudioManager>();
 					ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 150000, trans2, rb2);
-
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-						audioM.GetSFXindex("Pattack3")))
+					
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
-						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+						if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+						{
+							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						}
 					}
 					enemy_data.isKick = true;
 
@@ -1025,13 +1030,14 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
-					// Apply knockback and play sound effects
-					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
-						AudioManager>();
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-						audioM.GetSFXindex("Pattack3")))
+					// Play sound effects
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
-						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+						{
+							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						}
 					}
 				}
 				break;
@@ -1053,7 +1059,7 @@ namespace Ukemochi
 			auto& vfx_trans = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<Transform>();
 			auto& vfx_sr = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<SpriteRender>();
 			auto& vfx_anim = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<Animation>();
-			
+
 			if (tag2 == "Enemy")
 			{
 				//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
@@ -1064,7 +1070,7 @@ namespace Ukemochi
 			{
 				auto& bullet_data = ECS::GetInstance().GetComponent<EnemyBullet>(entity2);
 				auto& bullet_trans = ECS::GetInstance().GetComponent<Transform>(entity2);
-				
+
 				if (!bullet_data.hit)
 				{
 					if (!player_data.isDead)
@@ -1080,29 +1086,13 @@ namespace Ukemochi
 							vfx_trans.position = Vector3D(player_trans.position.x + 80.0f, player_trans.position.y, 0);
 							vfx_sr.flipX = false;
 						}
-					
+
 						vfx_anim.RestartAnimation();
 						player_data.currentHealth -= 10;
 					}
 					bullet_data.hit = true;
 				}
 			}
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			//if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			//{
-			//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			//	
-			//	if (audioM.GetSFXindex("PlayerHurt") != -1)
-			//	{
-			//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
-			//			audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
-			//	}
-			//}
 		}
 		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Dummy" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Dummy / Boundaries (Acts as a wall)
 		{
@@ -1131,20 +1121,6 @@ namespace Ukemochi
 		}
 		//else if (tag1 == "Enemy" && tag2 == "Enemy") // Enemy and Enemy (Block each other)
 		//{
-		//	ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
-		//	ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-		//	ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
-
-		//	// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-		//	Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-		//	StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-		//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-		//	if (audioM.GetSFXindex("HIT") != -1)
-		//	{
-		//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-		//			audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-		//	}
 		//}
 	}
 

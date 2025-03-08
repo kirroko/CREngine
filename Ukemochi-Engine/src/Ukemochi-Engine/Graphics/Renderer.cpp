@@ -169,6 +169,10 @@ void Renderer::finding_player_ID()
 *************************************************************************/
 void Renderer::HandleInputTesting()
 {
+	// Skip if player not found
+	if (playerID == -1)
+		return;
+
 	if (ECS::GetInstance().HasComponent<Player>(playerID))
 	{
 		auto& player_data = ECS::GetInstance().GetComponent<Player>(playerID);
@@ -190,6 +194,10 @@ void Renderer::HandleInputTesting()
 *************************************************************************/
 void Renderer::updatePlayerBars()
 {
+	// Skip if player not found
+	if (playerID == -1)
+		return;
+
 	auto& character = ECS::GetInstance().GetComponent<Player>(playerID);
 	auto& soul = ECS::GetInstance().GetComponent<PlayerSoul>(playerID);
 

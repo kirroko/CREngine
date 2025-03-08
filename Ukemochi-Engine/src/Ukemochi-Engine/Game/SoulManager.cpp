@@ -154,9 +154,12 @@ namespace Ukemochi
             return;
 
         // Play different hit sounds based on enemy type
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        if (audioM.GetSFXindex("SwapSoul") != -1)
-            audioM.PlaySFX(audioM.GetSFXindex("SwapSoul"));
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+            if (audioM.GetSFXindex("SwapSoul") != -1)
+                audioM.PlaySFX(audioM.GetSFXindex("SwapSoul"));
+        }
 
         // Currently in EMPTY soul, switch to FISH or WORM souls if available
         if (player_soul.current_soul == SoulType::EMPTY)
@@ -243,9 +246,12 @@ namespace Ukemochi
     void SoulManager::FishAbility()
     {
         // Play different hit sounds based on enemy type
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        if (audioM.GetSFXindex("FishSpecial") != -1)
-            audioM.PlaySFX(audioM.GetSFXindex("FishSpecial"));
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+            if (audioM.GetSFXindex("FishSpecial") != -1)
+                audioM.PlaySFX(audioM.GetSFXindex("FishSpecial"));
+        }
 
         // Trigger player fish casting animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
@@ -278,9 +284,12 @@ namespace Ukemochi
     void SoulManager::WormAbility()
     {
         // Play different hit sounds based on enemy type
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        if (audioM.GetSFXindex("WormSpecial") != -1)
-            audioM.PlaySFX(audioM.GetSFXindex("WormSpecial"));
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+            if (audioM.GetSFXindex("WormSpecial") != -1)
+                audioM.PlaySFX(audioM.GetSFXindex("WormSpecial"));
+        }
 
         // Trigger player worm casting animation
         auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
