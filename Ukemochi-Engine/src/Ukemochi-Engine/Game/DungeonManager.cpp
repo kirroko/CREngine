@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
 #include "../Game/EnemyManager.h"		  // for updating enemy list
+#include "../Game/BossManager.h"		  // for init boss
 
 namespace Ukemochi
 {
@@ -140,6 +141,13 @@ namespace Ukemochi
 
 			if (enemyObj->GetActive())
 				enemy_alive = true;
+		}
+
+		if (current_room_id == 5 && !enemy_alive)
+		{
+			//init bosss
+			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
+
 		}
 
 		// Unlock the room if all enemies are not active
