@@ -430,6 +430,27 @@ namespace Ukemochi
 	*************************************************************************/
 	struct Boss
 	{
+		enum BossStates
+		{
+			ATTACK1,
+			ATTACK2,
+			DEAD1,
+			DEAD2,
+
+		};
+		int BossPhase = 1;
+		EntityID ID;
+		BossStates state;
+		float health;
+		float attackPower;
+
+		Boss() = default;
+		Boss(EntityID ID)
+			: ID(ID), state(BossStates::ATTACK1)
+		{
+			health = 60.f;
+			attackPower = 15.f;
+		}
 
 	};
 
