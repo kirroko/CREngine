@@ -293,7 +293,7 @@ namespace Ukemochi
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
 
 			// Check if hover state has changed
-			if (ECS::GetInstance().GetSystem<VideoManager>()->done && button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
+			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
 				if (audioM.GetSFXindex("HoverSound") != -1)
 				{
@@ -306,7 +306,7 @@ namespace Ukemochi
 			buttonHoverState[button_id] = button->isHovered;
 
 			// Check for mouse click
-			if (ECS::GetInstance().GetSystem<VideoManager>()->done && button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
+			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
 			{
 				if (button->onClick)
 				{

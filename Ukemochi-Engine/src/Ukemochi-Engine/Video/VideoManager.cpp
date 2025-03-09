@@ -30,12 +30,24 @@ namespace Ukemochi {
     }
     #define CHECK_GL_ERROR() CheckGLError(__FILE__, __LINE__)
 
+    bool VideoManager::IsVideoDonePlaying(const std::string& videoName)
+    {
+        return videos[videoName].done;
+    }
+
     void VideoManager::RenderVideoFrame()
     {
-        if (!plm) return;
+        if (currentVideo.empty() || videos.find(currentVideo) == videos.end()) 
+        {
+            return; // No video selected
+        }
+
+        VideoData& video = videos[currentVideo];
+
+        if (!video.plm) return;
 
 #ifdef _DEBUG
-        UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
+        UME_ENGINE_TRACE("Rendering frame {0}/{1}", video.currentFrame, video.totalFrames);
 #else
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
@@ -51,8 +63,8 @@ namespace Ukemochi {
         float screenHeight = ECS::GetInstance().GetSystem<Camera>()->viewport_size.y;
 
         // Get video dimensions
-        float videoWidth = static_cast<float>(plm_get_width(plm));
-        float videoHeight = static_cast<float>(plm_get_height(plm));
+        float videoWidth = static_cast<float>(plm_get_width(video.plm));
+        float videoHeight = static_cast<float>(plm_get_height(video.plm));
 
         // Calculate the position for centering
         float posX = screenWidth * 0.5f;
@@ -74,11 +86,11 @@ namespace Ukemochi {
         // Bind VAO
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID); 
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
         glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "videoTextures"), 0); 
 
         glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "frameIndex"),
-            ECS::GetInstance().GetSystem<VideoManager>()->currentFrame); 
+            video.currentFrame);
 
         // Draw the quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -88,30 +100,6 @@ namespace Ukemochi {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-
-    void VideoManager::Video_Callback(plm_t* plm, plm_frame_t* frame, void* user)
-    {
-        VideoContext *video_ctx = static_cast<VideoContext*>(user);
-        UME_ENGINE_TRACE("Video Callback Triggered! Frame Width: {0}, Height: {1}", frame->width, frame->height);
-
-        plm_frame_to_rgb(frame,video_ctx->rgb_buffer,static_cast<int>(frame->width) * 3);
-        
-        if (!video_ctx->rgb_buffer)
-        {
-            UME_ENGINE_ERROR("Error: Rgb_buffer is nullptr for frame");
-            return;
-        }
-        UME_ENGINE_TRACE("RGB Buffer Populated. Uploading frame to OpenGL...");
-        glBindTexture(GL_TEXTURE_2D_ARRAY, ECS::GetInstance().GetSystem<VideoManager>()->videoTextureID);
-        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "frameIndex"),
-            ECS::GetInstance().GetSystem<VideoManager>()->currentFrame);
-        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, ECS::GetInstance().GetSystem<VideoManager>()->currentFrame, 
-static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
-
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-    }
-
     void VideoManager::Audio_Callback(plm_t* plm, plm_samples_t* frame, void* user)
     {
         if (frame->count > 0) {
@@ -119,44 +107,49 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         }
     }
 
-    bool VideoManager::LoadVideo(const char* filepath)
+    bool VideoManager::LoadVideo(const std::string& name, const char* filepath)
     {
-        plm = plm_create_with_filename(filepath);
-        if (!plm)
+        VideoData video;
+        video.plm = plm_create_with_filename(filepath);
+        if (!video.plm)
         {
             UME_ENGINE_ERROR("Failed to load video: {0}", filepath);
             return false;
         }
 
-        if (!plm_probe(plm, 5000 * 1024))
+        if (!plm_probe(video.plm, 5000 * 1024))
         {
             UME_ENGINE_ERROR("No MPEG video or audio streams found in {0}", filepath);
             return false;
         }
 
-        int width = plm_get_width(plm);
-        int height = plm_get_height(plm);
-        int frameRate = plm_get_framerate(plm);
-        int numFrames = static_cast<int>(plm_get_duration(plm) * frameRate); // Total frames
+        int width = plm_get_width(video.plm);
+        int height = plm_get_height(video.plm);
+        int frameRate = plm_get_framerate(video.plm);
+        video.totalFrames = static_cast<int>(plm_get_duration(video.plm) * frameRate); // Total frames
+        // Compute the required time per frame
+        video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm);
 
-        UME_ENGINE_INFO("Total expected frames to load: {0}", numFrames);
+#ifdef _DEBUG
+        UME_ENGINE_INFO("Total expected frames to load: {0}", video.totalFrames);
 
         UME_ENGINE_INFO("Opened {0} - framerate: {1}, duration: {2}, total frames: {3}",
-            filepath, frameRate, plm_get_duration(plm), numFrames);
+            filepath, frameRate, plm_get_duration(video.plm), video.totalFrames);
+#endif
 
         // Allocate storage for texture array
-        CreateVideoTexture(width, height, numFrames);
+        video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
 
         // Allocate RGB buffer
         video_ctx = new VideoContext(width, height);
         video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(width * height * 3));
 
         // **Preload all frames into the texture array**
-        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID);
-        for (int i = 0; i < numFrames; ++i)
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+        for (int i = 0; i < video.totalFrames; ++i)
         {
             // Decode the next frame
-            plm_frame_t* frame = plm_decode_video(plm);
+            plm_frame_t* frame = plm_decode_video(video.plm);
             if (!frame) break;
 
             // Convert to RGB
@@ -169,30 +162,29 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
             // Upload to the 2D texture array at layer `i`
             glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
 
-            //UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, numFrames, i);
+            UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, video.totalFrames, i);
         }
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         // Disable looping for playback
-        plm_set_loop(plm, false);
-        totalFrames = static_cast<int>(plm_get_framerate(plm) * plm_get_duration(plm)); // Calculate total frames
+        plm_set_loop(video.plm, false);
 
         int storedLayers = 0;
-        glBindTexture(GL_TEXTURE_2D_ARRAY, videoTextureID);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
         glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &storedLayers);
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         UME_ENGINE_INFO("Total stored frames in OpenGL texture array: {0}", storedLayers);
 
         // Debug check
-        if (storedLayers != numFrames)
+        if (storedLayers != video.totalFrames)
         {
-            UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", numFrames, storedLayers);
+            UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", video.totalFrames, storedLayers);
             return false;
         }
 
-        float videoWidth = static_cast<float>(plm_get_width(plm));
-        float videoHeight = static_cast<float>(plm_get_height(plm));
+        float videoWidth = static_cast<float>(plm_get_width(video.plm));
+        float videoHeight = static_cast<float>(plm_get_height(video.plm));
 
         float vertices[] = {
             // Positions         // Colors      // Texture Coords
@@ -223,9 +215,6 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         glBindVertexArray(0);
 
-        // Compute the required time per frame
-        frameDuration = (double)(1.0 / totalFrames) * plm_get_duration(plm);
-
         std::string filename = filepath;
         size_t lastDot = filename.find_last_of(".");
         if (lastDot != std::string::npos) {
@@ -237,16 +226,19 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, newFilename.c_str(), "SFX");
 
+        videos[name] = video;  // Store the video in the map
+
         return true;
     }
 
-    GLuint VideoManager::CreateVideoTexture(int width, int height, int num_frames)
+    GLuint VideoManager::CreateVideoTexture(const std::string& videoName, int width, int height, int num_frames)
     {
         stbi_set_flip_vertically_on_load(true);
-        glGenTextures(1, &videoTextureID);
-        glBindTexture(GL_TEXTURE_2D_ARRAY,videoTextureID);
+        GLuint textureID; 
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
 
-        if (!videoTextureID)
+        if (!textureID)
         {
             UME_ENGINE_ERROR("Failed to generate video texture!");
             return 0;
@@ -261,34 +253,42 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
-        UME_ENGINE_TRACE("Created Video Texture - ID: {0}, Width: {1}, Height: {2}, Frames: {3}", videoTextureID, width, height, num_frames);
-        return videoTextureID;
+        UME_ENGINE_TRACE("Created Video Texture - ID: {0}, Width: {1}, Height: {2}, Frames: {3}", textureID, width, height, num_frames);
+
+        // Store texture ID in the map
+        videos[videoName].textureID = textureID;
+
+        return textureID;
       
     }
 
-    void VideoManager::UpdateAndRenderVideo(plm_t* video)
+    void VideoManager::UpdateAndRenderVideo()
     {
-        if (!video)
+        if (currentVideo.empty() || videos.find(currentVideo) == videos.end()) 
         {
-            UME_ENGINE_ERROR("Video object is null!");
+            UME_ENGINE_ERROR("No video selected or video not found!");
+            return;
+        }
+
+        VideoData& video = videos[currentVideo];
+
+        if (!video.plm) 
+        {
+            UME_ENGINE_ERROR("Current video object is null!");
             return;
         }
 
         float deltaTime = g_FrameRateController.GetDeltaTime();
+#ifdef _DEBUG
         UME_ENGINE_TRACE("Decoding Video - DeltaTime: {0}", deltaTime);
-
-        //if (plm)
-        //{
-        //    plm_decode(plm, deltaTime);
-        //}
-
+#endif
         Audio::GetInstance().Update(); // Update audio
 
         // Get the elapsed time since the last frame
-        elapsedTime += deltaTime;
-        static double audioDuration = (double)(1.0 / totalFrames) * 14;
+        video.elapsedTime += deltaTime;
+        static double audioDuration = (double)(1.0 / video.totalFrames) * 14;
 
-        if (currentFrame >= 400)
+        if (video.currentFrame >= 400)
         {
             if (ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
             {
@@ -297,34 +297,28 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         }
 
         // Only update the video frame if enough time has passed
-        if (currentFrame < totalFrames - 1)
+        if (video.currentFrame < video.totalFrames - 1)
         {
-            if (elapsedTime >= audioDuration)
+            if (video.elapsedTime >= audioDuration)
             {
                 if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
                 {
                     ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
                 }
-                // Decode audio samples for the current frame
-                //plm_samples_t* samples = plm_decode_audio(plm);
-                //if (samples)
-                {
-                    // Play audio corresponding to the current video frame
-                    //Audio::GetInstance().playStereoSound(samples->interleaved, samples->count,1.2f);
-                }
+
             }
-            if (elapsedTime >= frameDuration)
+            if (video.elapsedTime >= video.frameDuration)
             {
                 // Reset elapsed time to stay in sync with video playback
-                elapsedTime = 0.f;
+                video.elapsedTime = 0.f;
 
                 // Move to the next frame
-                currentFrame = (currentFrame + 1) % totalFrames;
+                video.currentFrame = (video.currentFrame + 1) % video.totalFrames;
             }
         }
         else
         {
-            Free();  // Free resources once the video has ended
+            Free();
             return;
         }
 
@@ -332,12 +326,20 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         RenderVideoFrame();
     }
 
+    void VideoManager::SetCurrentVideo(const std::string& name)
+    {
+        if (videos.find(name) == videos.end()) 
+        {
+            UME_ENGINE_ERROR("Video {0} not found!", name);
+            return;
+        }
+        currentVideo = name;
+    }
+
+
     void VideoManager::Update()
     {
-        if (plm!=nullptr)
-        {
-            UpdateAndRenderVideo(plm);
-        }
+        UpdateAndRenderVideo();  
     }
     void VideoManager::SkipVideo()
     {
@@ -352,20 +354,30 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
     void VideoManager::Free()
     {
+        VideoData& video = videos[currentVideo];
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
         // Set the camera initial position
         ECS::GetInstance().GetSystem<Camera>()->position = { -1920, 0 };
 
-        //if (video_ctx->rgb_buffer)
-        //    free(video_ctx->rgb_buffer);
+        // Free PLM object
+        if (video.plm)
+        {
+            plm_destroy(video.plm);
+            video.plm = nullptr;
+        }
 
-        ///*if (rb->buffer)
-        //    free(rb->buffer);*/
+        // Delete OpenGL texture
+        if (video.textureID)
+        {
+            glDeleteTextures(1, &video.textureID);
+            video.textureID = 0;
+        }
+        // Remove video entry from map
+        videos.erase(currentVideo);
+        currentVideo.clear(); // No active video
+        
 
-        //if (plm != nullptr)
-        //{
-        //    plm_destroy(plm);
-        //}
+
 
         if (video_ctx)
         {
@@ -384,12 +396,7 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
             delete rb;
         }
 
-        if (plm)
-        {
-            plm_destroy(plm);
-            plm = nullptr; // Avoid dangling pointer
-        }
-        done = true;
+        video.done = true;
         //delete video_ctx;
         //delete rb;
     }

@@ -38,6 +38,16 @@ namespace Ukemochi {
             VideoContext(const int w, const int h) : width(w), height(h), texture_crop_size(0), rgb_buffer(nullptr) {}
         };
 
+        struct VideoData {
+            plm_t* plm = nullptr;
+            GLuint textureID = 0;
+            int currentFrame = 0;
+            int totalFrames = 0;
+            double frameDuration = 0.0;
+            double elapsedTime = 0.0f;
+            bool done = false;
+        };
+
         RingBuffer* rb = {};
         VideoContext* video_ctx = {};
         plm_t* plm = nullptr;
@@ -45,17 +55,19 @@ namespace Ukemochi {
         std::shared_ptr<Shader> video_shader_program;
 
     public:
-        GLuint videoTextureID = 0;
-        //std::unique_ptr<Texture> videoAtlas;
-        int currentFrame = 0;
-        int totalFrames;
-        bool done = false;
+
+        std::unordered_map<std::string, VideoData> videos; 
+        std::string currentVideo; // Name of the currently playing video
+
+        bool IsVideoDonePlaying(const std::string& videoName);
+        //bool done = false;
     private:
-        double elapsedTime = 0.0f;
+        
         double lastFrameTime = 0.0f;
         GLuint VAO{}, VBO{};
-        bool isPlaying = true;
-        double frameDuration = 0.f;
+
+        //bool isPlaying = true;
+        //double frameDuration = 0.f;
 
 
         // Main Menu
@@ -76,22 +88,28 @@ namespace Ukemochi {
          * @param num_frames
          * @return texture ID
          */
-        GLuint CreateVideoTexture(int width, int height, int num_frames);
+        GLuint CreateVideoTexture(const std::string& videoName, int width, int height, int num_frames);
         
         /**
          * @brief decode and display the video
          * @param video the video to display
          */
-        void UpdateAndRenderVideo(plm_t* video);
+        void UpdateAndRenderVideo();
 
         //FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
     public:
+        /**
+         * @brief Set current video to play
+         * @param Name of the video
+         */
+        void SetCurrentVideo(const std::string& name);
+
         /**
          * @brief Load the MPEG file
          * @param filepath filepath to the video
          * @return a pointer to MPEGStream
          */
-        bool LoadVideo(const char* filepath);
+        bool LoadVideo(const std::string& name, const char* filepath);
         
         /**
          * @brief Update video player system
