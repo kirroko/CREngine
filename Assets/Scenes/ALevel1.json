@@ -3199,7 +3199,7 @@
                 }]
         }, {
             "Name": "6_HairHitbox",
-            "Tag": "Default",
+            "Tag": "HitBox",
             "Components": [{
                     "Name": "Transform",
                     "Position": [8100.0, 300.0, 0.0],
@@ -3798,7 +3798,7 @@
                     "Name": "Transform",
                     "Position": [8515.0, 790.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [200.0, 225.0]
+                    "Scale": [225.0, 225.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
@@ -3809,7 +3809,6 @@
                     "Clips": {
                         "Idle1": ["Boss Phase 1 Idle", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle1", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
                         "Idle2": ["Boss Idle Phase 2", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle2", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
-                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "HairAtk", 34, 0.5, 0.5, 625, 625, 625, 3750, 3750, 0.05000000074505806, true],
                         "Change": ["Boss Transform", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Change", 25, 0.5, 0.5, 860, 860, 860, 7740, 2580, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle1"
@@ -3827,6 +3826,47 @@
                     "Sprite": "../Assets/Textures/Enemy/Branch.png",
                     "Shape": 0,
                     "Layer": 0
+                }]
+        }, {
+            "Name": "6_Hair",
+            "Tag": "Hair",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [7955.0, 700.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [225.0, 225.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "HairAtk", 34, 0.5, 0.5, 625, 625, 625, 3750, 3750, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "HairAtk"
+                }]
+        }, {
+            "Name": "6_Blob",
+            "Tag": "Blob",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [8000.0, 500.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 100.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Blob 1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Idle": ["Blob 1 Idle_00", "../Assets/Textures/Enemy/Blob 1_Part.png", "Idle", 20, 0.5, 0.5, 320, 320, 320, 1920, 1280, 0.05000000074505806, true],
+                        "Explode": ["Blob 1_Explode", "../Assets/Textures/Enemy/Blob 1_Part.png", "Explode", 20, 0.5, 0.5, 320, 320, 320, 1920, 1280, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Idle"
                 }]
         }]
 }
