@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Renderer.h" // for text objects
 #include "../FrameController.h"	  // for fps text
 #include "../Factory/GameObjectManager.h"
-
+#include "../Video/VideoManager.h"
 
 namespace Ukemochi
 {
@@ -33,28 +33,11 @@ namespace Ukemochi
 	*************************************************************************/
 	void InGameGUI::Init()
 	{
-#ifndef _DEBUG
-		//// Get the screen width and height
-		//Application& app = Application::Get();
-		//int screen_width = app.GetWindow().GetWidth();
-		//int screen_height = app.GetWindow().GetHeight();
-
-		//// Create FPS text
-		////CreateText("fps_text", "", Vec2{ screen_width * 0.01f, screen_height * 0.95f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
-
-		//CreateImage(Vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, Vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", 0, Vec3(1.f, 1.f, 1.f));
-
-
-#endif // !_DEBUG
-
-
 		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
 
-#ifdef _DEBUG
 		CreateImage();
-#endif
 		// Create FPS text
 		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{1.f, 1.f, 1.f}, "Ukemochi_numbers");
 	}
@@ -261,6 +244,7 @@ namespace Ukemochi
 			{
 				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
 			}
+
 			});
 	}
 
@@ -309,7 +293,7 @@ namespace Ukemochi
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
 
 			// Check if hover state has changed
-			if (button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
+			if (ECS::GetInstance().GetSystem<VideoManager>()->done && button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
 				if (audioM.GetSFXindex("HoverSound") != -1)
 				{
@@ -322,7 +306,7 @@ namespace Ukemochi
 			buttonHoverState[button_id] = button->isHovered;
 
 			// Check for mouse click
-			if (button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
+			if (ECS::GetInstance().GetSystem<VideoManager>()->done && button->isHovered && Input::IsMouseButtonPressed(UME_MOUSE_BUTTON_1))
 			{
 				if (button->onClick)
 				{
@@ -333,7 +317,7 @@ namespace Ukemochi
 		}
 
 		// Pause
-		if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
+		if (Input::IsKeyTriggered(UME_KEY_ESCAPE) && Application::Get().GameStarted)
 		{
 			auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
 			if (rButton)

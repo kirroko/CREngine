@@ -36,8 +36,9 @@ namespace Ukemochi {
 
 #ifdef _DEBUG
         UME_ENGINE_TRACE("Rendering frame {0}/{1}", currentFrame, totalFrames);
+#else
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // Activate shader
         ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
 
@@ -236,15 +237,6 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
 
         ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, newFilename.c_str(), "SFX");
 
-        //// Enable audio
-        //plm_set_audio_enabled(plm, true);
-        //plm_set_audio_stream(plm, 0);  // Select the first audio stream
-
-        //// Set the audio callback function
-        //plm_set_audio_decode_callback(plm, Audio_Callback, this); 
-        //rb = new RingBuffer();
-        //plm_set_audio_decode_callback(plm, Audio_Callback, rb);
-
         return true;
     }
 
@@ -340,40 +332,22 @@ static_cast<int>(frame->width), static_cast<int>(frame->height), 1, GL_RGB, GL_U
         RenderVideoFrame();
     }
 
-    void VideoManager::Init(int width, int height)
-    {
-        // videoTextureID = CreateVideoTexture(width,height, TODO); // creating the video texture
-        // Install the video & audio decode callbacks
-        video_ctx = new VideoContext{400,600};
-        rb = new RingBuffer();
-        plm_set_video_decode_callback(plm,Video_Callback,video_ctx); 
-        plm_set_audio_decode_callback(plm,Audio_Callback,rb);
-
-        // Set the camera initial position
-        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-
-        //fmod
-        FMOD_CREATESOUNDEXINFO exinfo;
-
-        // Create extended sound info struct
-        memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
-        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);   // Size of the struct
-        exinfo.numchannels = 2;                                // Number of channels in the sound
-        exinfo.defaultfrequency = 44100;                            // Playback rate of sound
-        exinfo.format = FMOD_SOUND_FORMAT_PCM16;          // Data format of sound
-
-        FMOD_RESULT result = Audio::GetInstance().pSystem->createSound(nullptr,FMOD_OPENUSER | FMOD_CREATESTREAM, &exinfo,&Audio::GetInstance().pvideosound);
-        if (result != FMOD_OK)
-            UME_ENGINE_ERROR("FMOD error (CreateSound)");
-
-    }
-
     void VideoManager::Update()
     {
         if (plm!=nullptr)
         {
             UpdateAndRenderVideo(plm);
         }
+    }
+    void VideoManager::SkipVideo()
+    {
+        UME_ENGINE_TRACE("Skipping video...");
+
+        // Stop any playing audio
+        ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
+
+        // Free video resources
+        Free();
     }
 
     void VideoManager::Free()

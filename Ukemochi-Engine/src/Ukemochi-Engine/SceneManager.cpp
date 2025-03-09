@@ -225,14 +225,6 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
 
-	    // We are gonna to play the intro video after everything has been loaded!
-	    UME_ENGINE_TRACE("Initializing video manager...");
-	    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/intro-cutscene.mpeg"))
-	        UME_ENGINE_ERROR("Video didn't load properly!");
-
-        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-
-	    // ECS::GetInstance().GetSystem<VideoManager>()->Init(Application::Get().GetWindow().GetWidth(),Application::Get().GetWindow().GetHeight());
 #ifndef _DEBUG
                 // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
@@ -240,13 +232,13 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
         es_current = ES_PLAY;
-	    //cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
-	    //cutscene.AddComponent(Transform{Mtx44{},
-     //       Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
-     //       0,
-     //       Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
-	    //cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
-     //   SPRITE_SHAPE::BOX,10,true,false,false});
+#else
+        // We are gonna to play the intro video after everything has been loaded!
+        UME_ENGINE_TRACE("Initializing video manager...");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("../Assets/Video/intro-cutscene.mpeg"))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
     }
 
@@ -348,6 +340,13 @@ namespace Ukemochi
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
         {	
+            // Check if the user pressed a key to skip
+            if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
+                ECS::GetInstance().GetSystem<VideoManager>()->done = true;
+            }
+
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
             auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
             audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
@@ -475,7 +474,6 @@ namespace Ukemochi
 		//	return;
 		//}
 #endif
-	    
         /*
         // Audio Inputs
         //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
@@ -555,16 +553,22 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
         if (!ECS::GetInstance().GetSystem<VideoManager>()->done)
         {
+            // Check if the user pressed a key to skip
+            if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
+                ECS::GetInstance().GetSystem<VideoManager>()->done = true;
+            }
+
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
             audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
 
-            //ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
             ECS::GetInstance().GetSystem<VideoManager>()->Update();
-            //ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
         }
         else
         {
+            ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
             SceneManagerDraw();
         }
 

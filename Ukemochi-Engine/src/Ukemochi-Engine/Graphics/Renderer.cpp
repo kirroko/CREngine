@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/ECS.h"
 #include "UIButton.h"
 #include "../Game/SoulManager.h" // for MAX_SOUL_BAR, MAX_SOUL_CHARGES
+#include "../Video/VideoManager.h"
 
 using namespace Ukemochi;
 
@@ -845,11 +846,12 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	if (Input::IsKeyTriggered(UME_KEY_H))
+	/*if (Input::IsKeyTriggered(UME_KEY_H))
 	{
 		HandleInputTesting();
-	}	
-	updatePlayerBars(); 
+	}	*/
+
+	updatePlayerBars();
 
 	batchRendererUI->setActiveShader(shaderProgram);
 	shaderProgram->Activate();

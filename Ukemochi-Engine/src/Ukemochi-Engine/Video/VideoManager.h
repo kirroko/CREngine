@@ -101,6 +101,11 @@ namespace Ukemochi {
         void Update();
 
         /**
+         * @brief Skips cut scene
+         */
+        void SkipVideo();
+
+        /**
          * @brief Release resources
          */
         void Free();
