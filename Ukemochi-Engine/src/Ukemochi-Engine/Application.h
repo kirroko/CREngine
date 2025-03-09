@@ -126,7 +126,7 @@ namespace Ukemochi {
 
 	private:
 #ifndef _DEBUG
-		bool pause = true;
+		bool pause = false;
 #endif
 #ifdef  _DEBUG
 		bool pause = false;

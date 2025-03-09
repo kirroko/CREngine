@@ -846,10 +846,10 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	/*if (Input::IsKeyTriggered(UME_KEY_H))
+	if (Input::IsKeyTriggered(UME_KEY_H))
 	{
 		HandleInputTesting();
-	}	*/
+	}
 
 	updatePlayerBars();
 

@@ -41,7 +41,6 @@ namespace Ukemochi {
         RingBuffer* rb = {};
         VideoContext* video_ctx = {};
         plm_t* plm = nullptr;
-        //FMOD::Sound *fmod_sound = nullptr; // video sound
 
         std::shared_ptr<Shader> video_shader_program;
 
@@ -57,6 +56,12 @@ namespace Ukemochi {
         GLuint VAO{}, VBO{};
         bool isPlaying = true;
         double frameDuration = 0.f;
+
+
+        // Main Menu
+        plm_t* plm_mainMenu = nullptr;
+        GLuint mainMenuTextureID;         // Texture for the main menu video
+        bool isCutscenePlaying = false;   // Flag to track if a cutscene is playing
 
         void RenderVideoFrame();
 
@@ -87,13 +92,6 @@ namespace Ukemochi {
          * @return a pointer to MPEGStream
          */
         bool LoadVideo(const char* filepath);
-        
-        /**
-         * @brief Init the video manager by creating a textureID
-         * @param width width of the video texture
-         * @param height height of the video texture
-         */
-        void Init(int width, int height);
         
         /**
          * @brief Update video player system

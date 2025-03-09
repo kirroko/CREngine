@@ -130,12 +130,12 @@ namespace Ukemochi
 		\brief
 		 Displays the defeat screen when the player loses.
 		*************************************************************************/
-		//void showDefeatScreen();
+		void showDefeatScreen();
 
 		/*!***********************************************************************
 		\brief
 		 Hides the defeat screen and resumes gameplay.
 		*************************************************************************/
-		//void HideDefeatScreen();
+		void HideDefeatScreen();
 	};
 }
