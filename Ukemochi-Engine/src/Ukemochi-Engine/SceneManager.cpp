@@ -157,6 +157,10 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
 
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Boss>());
+        ECS::GetInstance().SetSystemSignature<BossManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }

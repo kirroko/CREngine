@@ -1,0 +1,28 @@
+{"frames": {
+
+"Blob 1 Idle_00.png":
+{
+	"frame": {"x":0,"y":0,"w":1920,"h":1280},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1280},
+	"sourceSize": {"w":1920,"h":1280}
+},
+"Blob 1_Explode.png":
+{
+	"frame": {"x":0,"y":1280,"w":1920,"h":1280},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1280},
+	"sourceSize": {"w":1920,"h":1280}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Blob 1.png",
+	"format": "RGBA8888",
+	"size": {"w":2560,"h":2560},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b97a2c43b14f19805d0d11deddabbbd7:dae306f8ec7351952b2a33446f0c6a6d:2bd8ffb0e7ed9f785a0a7d98e90f2982$"
+}
+}
