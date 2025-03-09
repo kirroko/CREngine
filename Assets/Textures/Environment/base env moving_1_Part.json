@@ -1,16 +1,8 @@
 {"frames": {
 
-"branch 5.png":
-{
-	"frame": {"x":5,"y":934,"w":1740,"h":1024},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1740,"h":1024},
-	"sourceSize": {"w":1740,"h":1024}
-},
 "bush 1.png":
 {
-	"frame": {"x":1853,"y":320,"w":1920,"h":609},
+	"frame": {"x":5,"y":5,"w":1920,"h":609},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":609},
@@ -18,15 +10,15 @@
 },
 "bush 2.png":
 {
-	"frame": {"x":1870,"y":2199,"w":2000,"h":1600},
+	"frame": {"x":1930,"y":5,"w":2000,"h":1040},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1600},
-	"sourceSize": {"w":2000,"h":1600}
+	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1040},
+	"sourceSize": {"w":2000,"h":1040}
 },
 "env_base_box_1_break.png":
 {
-	"frame": {"x":1368,"y":320,"w":480,"h":422},
+	"frame": {"x":5,"y":1050,"w":480,"h":422},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":422},
@@ -34,7 +26,7 @@
 },
 "env_base_box_2_break.png":
 {
-	"frame": {"x":2460,"y":5,"w":745,"h":310},
+	"frame": {"x":490,"y":1050,"w":745,"h":310},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":745,"h":310},
@@ -42,83 +34,75 @@
 },
 "env_base_box_3_break.png":
 {
-	"frame": {"x":970,"y":320,"w":393,"h":400},
+	"frame": {"x":1240,"y":1050,"w":393,"h":400},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":393,"h":400},
 	"sourceSize": {"w":393,"h":400}
 },
-"env_base_vine_4.png":
-{
-	"frame": {"x":5,"y":2199,"w":1860,"h":1560},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1860,"h":1560},
-	"sourceSize": {"w":1860,"h":1560}
-},
 "env_base_vine_7.png":
 {
-	"frame": {"x":1750,"y":934,"w":1680,"h":1260},
+	"frame": {"x":5,"y":1477,"w":3780,"h":1260},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1680,"h":1260},
-	"sourceSize": {"w":1680,"h":1260}
+	"spriteSourceSize": {"x":0,"y":0,"w":3780,"h":1260},
+	"sourceSize": {"w":3780,"h":1260}
 },
 "grass 1.png":
 {
-	"frame": {"x":1450,"y":5,"w":500,"h":300},
+	"frame": {"x":5,"y":2742,"w":500,"h":375},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":300},
-	"sourceSize": {"w":500,"h":300}
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":375},
+	"sourceSize": {"w":500,"h":375}
 },
 "grass 2.png":
 {
-	"frame": {"x":995,"y":5,"w":450,"h":270},
+	"frame": {"x":510,"y":2742,"w":430,"h":335},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":450,"h":270},
-	"sourceSize": {"w":450,"h":270}
+	"spriteSourceSize": {"x":0,"y":0,"w":430,"h":335},
+	"sourceSize": {"w":430,"h":335}
 },
 "grass 3.png":
 {
-	"frame": {"x":5,"y":5,"w":490,"h":140},
+	"frame": {"x":945,"y":2742,"w":490,"h":280},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":490,"h":140},
-	"sourceSize": {"w":490,"h":140}
+	"spriteSourceSize": {"x":0,"y":0,"w":490,"h":280},
+	"sourceSize": {"w":490,"h":280}
 },
 "grass 4.png":
 {
-	"frame": {"x":1955,"y":5,"w":500,"h":300},
+	"frame": {"x":1440,"y":2742,"w":500,"h":500},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":300},
-	"sourceSize": {"w":500,"h":300}
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":500},
+	"sourceSize": {"w":500,"h":500}
 },
 "grass 5.png":
 {
-	"frame": {"x":500,"y":5,"w":490,"h":140},
+	"frame": {"x":1945,"y":2742,"w":490,"h":280},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":490,"h":140},
-	"sourceSize": {"w":490,"h":140}
+	"spriteSourceSize": {"x":0,"y":0,"w":490,"h":280},
+	"sourceSize": {"w":490,"h":280}
 },
 "grass 6.png":
 {
-	"frame": {"x":5,"y":320,"w":960,"h":356},
+	"frame": {"x":2440,"y":2742,"w":960,"h":414},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":356},
-	"sourceSize": {"w":960,"h":356}
+	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":414},
+	"sourceSize": {"w":960,"h":414}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "base env moving_1.png",
 	"format": "RGBA8888",
-	"size": {"w":3875,"h":3804},
+	"size": {"w":3935,"h":3247},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:8916c616e229e33209abec08a8bd1488:66f483cf4a90e1d9a9c43cc027d89627:dec5c5b1dc3cad3cc497bae7d32f66bf$"
+	"smartupdate": "$TexturePacker:SmartUpdate:5d852533e3223509c5c2172f3c523eb3:603aabb4b5e62a03c220381d0e6c259c:dec5c5b1dc3cad3cc497bae7d32f66bf$"
 }
 }

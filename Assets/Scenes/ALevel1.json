@@ -352,7 +352,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-1600.0, 700.0, 0.0],
+                    "Position": [-1620.0, 690.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [240.0, 76.125]
                 }, {
@@ -363,7 +363,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Bush_1": ["bush 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_1", 21, 0.5, 0.5, 100, 240, 203, 1920, 609, 0.10000000149011612, true]
+                        "Bush_1": ["bush 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_1", 21, 0.5, 0.5, 100, 240, 203, 1920, 609, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Bush_1"
                 }]
@@ -374,7 +374,7 @@
                     "Name": "Transform",
                     "Position": [-1300.0, 500.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [31.25, 18.75]
+                    "Scale": [15.0, 10.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -383,7 +383,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_1": ["grass 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_1", 15, 0.5, 0.5, 100, 100, 100, 500, 300, 0.05000000074505806, true]
+                        "Grass_1": ["grass 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_1", 22, 0.5, 0.5, 100, 100, 75, 500, 375, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_1"
                 }]
@@ -424,6 +424,51 @@
                     "Sprite": "wack",
                     "Shape": 0,
                     "Layer": 3
+                }]
+        }, {
+            "Name": "1_Box1",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-375.0, 725.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 155.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false],
+                        "Box": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
                 }]
         }, {
             "Name": "1_LeftWall",
@@ -707,7 +752,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1060.0, 380.0, 0.0],
+                    "Position": [910.0, 380.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [732.0, 262.0]
                 }, {
@@ -735,18 +780,18 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1450.0, 1010.0, 0.0],
+                    "Position": [1480.0, 1010.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [217.5, 128.0]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_3_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Branch_5": ["branch 5", "../Assets/Textures/Environment/base env moving_1_Part.png", "Branch_5", 12, 0.5, 0.5, 100, 580, 245, 1740, 1024, 0.05000000074505806, true]
+                        "Branch_5": ["branch 5", "../Assets/Textures/Environment/base env moving_3_Part.png", "Branch_5", 22, 0.5, 0.5, 100, 580, 240, 1740, 1920, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Branch_5"
                 }]
@@ -757,7 +802,7 @@
                     "Name": "Transform",
                     "Position": [1375.0, 880.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [600.0, 600.0]
+                    "Scale": [962.5, 550.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
@@ -766,7 +811,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Vine_1": ["env_base_vine_1", "../Assets/Textures/Environment/base env moving_2_Part.png", "Vine_1", 9, 0.5, 0.5, 100, 550, 550, 1650, 1650, 0.05000000074505806, true]
+                        "Vine_1": ["env_base_vine_1", "../Assets/Textures/Environment/base env moving_2_Part.png", "Vine_1", 22, 0.5, 0.5, 100, 550, 550, 3850, 2200, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Vine_1"
                 }]
@@ -775,18 +820,18 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [525.0, 830.0, 0.0],
+                    "Position": [500.0, 830.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [465.0, 300.0]
+                    "Scale": [697.5, 328.5]
                 }, {
                     "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_3_Part.png",
                     "Shape": 0,
                     "Layer": 0
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Vine_4": ["env_base_vine_4", "../Assets/Textures/Environment/base env moving_1_Part.png", "Vine_4", 10, 0.5, 0.5, 100, 620, 390, 1860, 1560, 0.05000000074505806, true]
+                        "Vine_4": ["env_base_vine_4", "../Assets/Textures/Environment/base env moving_3_Part.png", "Vine_4", 22, 0.5, 0.5, 100, 620, 438, 3720, 1752, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Vine_4"
                 }]
@@ -806,7 +851,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Vine_7": ["env_base_vine_7", "../Assets/Textures/Environment/base env moving_1_Part.png", "Vine_7", 11, 0.5, 0.5, 100, 420, 420, 1680, 1260, 0.05000000074505806, true]
+                        "Vine_7": ["env_base_vine_7", "../Assets/Textures/Environment/base env moving_1_Part.png", "Vine_7", 22, 0.5, 0.5, 100, 420, 420, 3780, 1260, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Vine_7"
                 }]
@@ -826,7 +871,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Bush_1": ["bush 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_1", 21, 0.5, 0.5, 100, 240, 203, 1920, 609, 0.10000000149011612, true]
+                        "Bush_1": ["bush 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_1", 21, 0.5, 0.5, 100, 240, 203, 1920, 609, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Bush_1"
                 }]
@@ -835,9 +880,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [750.0, 750.0, 0.0],
+                    "Position": [755.0, 750.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [375.0, 300.0]
+                    "Scale": [200.0, 104.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -846,7 +891,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Bush_2": ["bush 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_2", 16, 0.5, 0.5, 100, 400, 400, 2000, 1600, 0.05000000074505806, true]
+                        "Bush_2": ["bush 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_2", 19, 0.5, 0.5, 100, 400, 260, 2000, 1040, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Bush_2"
                 }]
@@ -857,7 +902,7 @@
                     "Name": "Transform",
                     "Position": [240.0, 440.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [31.25, 18.75]
+                    "Scale": [15.0, 10.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -866,7 +911,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_1": ["grass 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_1", 15, 0.5, 0.5, 100, 100, 100, 500, 300, 0.05000000074505806, true]
+                        "Grass_1": ["grass 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_1", 22, 0.5, 0.5, 100, 100, 75, 500, 375, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_1"
                 }]
@@ -875,9 +920,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1150.0, 150.0, 0.0],
+                    "Position": [1250.0, 75.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [28.125, 16.875]
+                    "Scale": [13.5, 10.5]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -886,7 +931,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_2": ["grass 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_2", 13, 0.5, 0.5, 100, 90, 90, 450, 270, 0.05000000074505806, true]
+                        "Grass_2": ["grass 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_2", 22, 0.5, 0.5, 100, 86, 67, 430, 335, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_2"
                 }]
@@ -897,7 +942,7 @@
                     "Name": "Transform",
                     "Position": [1750.0, 500.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [30.625, 8.75]
+                    "Scale": [15.5, 8.75]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -906,7 +951,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_3": ["grass 3", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_3", 14, 0.5, 0.5, 100, 70, 70, 490, 140, 0.05000000074505806, true]
+                        "Grass_3": ["grass 3", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_3", 22, 0.5, 0.5, 100, 70, 70, 490, 280, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_3"
                 }]
@@ -915,9 +960,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [750.0, 440.0, 0.0],
+                    "Position": [1750.0, 215.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [31.25, 18.75]
+                    "Scale": [15.600000381469727, 15.600000381469727]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -926,7 +971,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_4": ["grass 4", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_4", 14, 0.5, 0.5, 100, 100, 100, 500, 300, 0.05000000074505806, true]
+                        "Grass_4": ["grass 4", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_4", 22, 0.5, 0.5, 100, 100, 100, 500, 500, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_4"
                 }]
@@ -935,9 +980,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1750.0, 215.0, 0.0],
+                    "Position": [600.0, 120.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [30.625, 8.75]
+                    "Scale": [15.300000190734863, 8.75]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -946,7 +991,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_5": ["grass 5", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_5", 13, 0.5, 0.5, 100, 70, 70, 490, 140, 0.05000000074505806, true]
+                        "Grass_5": ["grass 5", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_5", 22, 0.5, 0.5, 100, 70, 70, 490, 280, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_5"
                 }]
@@ -955,9 +1000,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1150.0, 700.0, 0.0],
+                    "Position": [1120.0, 695.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [60.0, 22.25]
+                    "Scale": [30.0, 13.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
@@ -966,7 +1011,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Grass_6": ["grass 6", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_6", 13, 0.5, 0.5, 100, 240, 89, 960, 356, 0.05000000074505806, true]
+                        "Grass_6": ["grass 6", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_6", 22, 0.5, 0.5, 100, 240, 69, 960, 414, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Grass_6"
                 }]
@@ -1017,9 +1062,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [660.0, 780.0, 0.0],
+                    "Position": [670.0, 780.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [182.0, 329.0]
+                    "Scale": [163.8000030517578, 296.1000061035156]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "env_base_rock_7",
@@ -1033,7 +1078,7 @@
                     "Name": "Transform",
                     "Position": [1330.0, 735.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [433.0, 228.0]
+                    "Scale": [389.70001220703125, 205.1999969482422]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "env_base_rock_10",
@@ -1053,141 +1098,6 @@
                     "Sprite": "env_base_rock_2",
                     "Shape": 0,
                     "Layer": 0
-                }]
-        }, {
-            "Name": "2_Box1",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [720.0, 350.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [80.0, 105.5]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [-559.0, 367.5],
-                    "Max": [-421.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
-                    "Shape": 0,
-                    "Layer": 3
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Box": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
-                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
-                    },
-                    "CurrentClip": "Box"
-                }]
-        }, {
-            "Name": "2_Box2",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1020.0, 350.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [74.5, 155.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [-559.0, 367.5],
-                    "Max": [-421.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
-                    "Shape": 0,
-                    "Layer": 3
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Box_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false],
-                        "Box": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false]
-                    },
-                    "CurrentClip": "Box"
-                }]
-        }, {
-            "Name": "2_Box3",
-            "Tag": "Environment",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [1320.0, 350.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [65.5, 100.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": true
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [-559.0, 367.5],
-                    "Max": [-421.0, 652.5],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
-                    "Shape": 0,
-                    "Layer": 3
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Box_Break": ["env_base_box_3_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 131, 200, 393, 400, 0.05000000074505806, false],
-                        "Box": ["env_base_box_3", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 131, 200, 131, 200, 0.05000000074505806, false]
-                    },
-                    "CurrentClip": "Box"
                 }]
         }, {
             "Name": "2_RightWallFront",
@@ -1250,9 +1160,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [120.0, 175.0, 0.0],
+                    "Position": [160.0, 175.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [945.0, 405.0]
+                    "Scale": [472.5, 176.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
@@ -1261,7 +1171,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Bush_3": ["bush 3", "../Assets/Textures/Environment/base env moving_2_Part.png", "Bush_3", 16, 0.5, 0.5, 100, 540, 540, 3780, 1620, 0.05000000074505806, true]
+                        "Bush_3": ["bush 3", "../Assets/Textures/Environment/base env moving_2_Part.png", "Bush_3", 22, 0.5, 0.5, 100, 540, 352, 3780, 1408, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Bush_3"
                 }]
@@ -1312,9 +1222,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1702.0, 594.6694946289063, 0.0],
+                    "Position": [1500.0, 580.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [179.3329315185547, 179.3329315185547]
+                    "Scale": [181.42857360839844, 181.42857360839844]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -1343,7 +1253,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 2
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1371,16 +1281,16 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Fish_Shadow.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 4
                 }]
         }, {
             "Name": "2_EnemyFish2",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [802.0, 516.6694946289063, 0.0],
+                    "Position": [850.0, 450.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [190.4757843017578, 190.4757843017578]
+                    "Scale": [200.0, 200.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -1409,7 +1319,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
                     "Shape": 0,
-                    "Layer": 2
+                    "Layer": 5
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1437,16 +1347,16 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Fish_Shadow.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 4
                 }]
         }, {
             "Name": "2_EnemyFish3",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1512.0, 338.0, 0.0],
+                    "Position": [1250.0, 250.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [216.0, 216.0]
+                    "Scale": [228.57142639160156, 228.57142639160156]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1796.7720947265625, 512.1513061523438, 0.0],
@@ -1764,7 +1674,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2995.0, 380.0, 0.0],
+                    "Position": [3130.0, 380.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [732.0, 262.0]
                 }, {
@@ -1786,6 +1696,375 @@
                     "Sprite": "env_base_cave-drawings_2",
                     "Shape": 0,
                     "Layer": 0
+                }]
+        }, {
+            "Name": "3_Branch5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3450.0, 1010.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [217.5, 128.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_3_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Branch_5": ["branch 5", "../Assets/Textures/Environment/base env moving_3_Part.png", "Branch_5", 22, 0.5, 0.5, 100, 580, 240, 1740, 1920, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Branch_5"
+                }]
+        }, {
+            "Name": "3_Vine1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3330.0, 880.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [962.5, 550.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Vine_1": ["env_base_vine_1", "../Assets/Textures/Environment/base env moving_2_Part.png", "Vine_1", 22, 0.5, 0.5, 100, 550, 550, 3850, 2200, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Vine_1"
+                }]
+        }, {
+            "Name": "3_Vine4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2460.0, 830.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [697.5, 328.5]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_3_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Vine_4": ["env_base_vine_4", "../Assets/Textures/Environment/base env moving_3_Part.png", "Vine_4", 22, 0.5, 0.5, 100, 620, 438, 3720, 1752, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Vine_4"
+                }]
+        }, {
+            "Name": "3_Vine7",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2690.0, 900.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [420.0, 350.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Vine_7": ["env_base_vine_7", "../Assets/Textures/Environment/base env moving_1_Part.png", "Vine_7", 22, 0.5, 0.5, 100, 420, 420, 3780, 1260, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Vine_7"
+                }]
+        }, {
+            "Name": "3_Bush1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2270.0, 710.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [240.0, 76.125]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Bush_1": ["bush 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_1", 21, 0.5, 0.5, 100, 240, 203, 1920, 609, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Bush_1"
+                }]
+        }, {
+            "Name": "3_Bush2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2675.0, 750.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [200.0, 104.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Bush_2": ["bush 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_2", 19, 0.5, 0.5, 100, 400, 260, 2000, 1040, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Bush_2"
+                }]
+        }, {
+            "Name": "3_Grass1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2300.0, 500.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.0, 10.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_1": ["grass 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_1", 22, 0.5, 0.5, 100, 100, 75, 500, 375, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_1"
+                }]
+        }, {
+            "Name": "3_Grass2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3250.0, 175.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [13.5, 10.5]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_2": ["grass 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_2", 22, 0.5, 0.5, 100, 86, 67, 430, 335, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_2"
+                }]
+        }, {
+            "Name": "3_Grass3",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3470.0, 550.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.5, 8.75]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_3": ["grass 3", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_3", 22, 0.5, 0.5, 100, 70, 70, 490, 280, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_3"
+                }]
+        }, {
+            "Name": "3_Grass4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3670.0, 215.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.600000381469727, 15.600000381469727]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_4": ["grass 4", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_4", 22, 0.5, 0.5, 100, 100, 100, 500, 500, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_4"
+                }]
+        }, {
+            "Name": "3_Grass5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2600.0, 110.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.300000190734863, 8.75]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_5": ["grass 5", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_5", 22, 0.5, 0.5, 100, 70, 70, 490, 280, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_5"
+                }]
+        }, {
+            "Name": "3_Grass6",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3040.0, 695.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [30.0, 13.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_6": ["grass 6", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_6", 22, 0.5, 0.5, 100, 240, 69, 960, 414, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_6"
+                }]
+        }, {
+            "Name": "3_Plant1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3550.0, 660.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [54.0, 60.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_plant_1",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "3_Plant2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2420.0, 680.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [97.0, 97.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_plant_2",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "3_Rock5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2765.0, 670.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [134.0, 75.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_5",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "3_Rock7",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2590.0, 780.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [163.8000030517578, 296.1000061035156]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_7",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "3_Rock6",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3230.0, 735.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [184.0, 177.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_6",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "3_Rock2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3400.0, 670.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [134.0, 75.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_2",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "3_Box1",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [3550.0, 170.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [160.0, 105.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
                 }]
         }, {
             "Name": "3_RightWallFront",
@@ -1844,13 +2123,61 @@
                     "Layer": 6
                 }]
         }, {
+            "Name": "3_Bush3",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2080.0, 175.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [472.5, 176.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
+                    "Shape": 0,
+                    "Layer": 6
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Bush_3": ["bush 3", "../Assets/Textures/Environment/base env moving_2_Part.png", "Bush_3", 22, 0.5, 0.5, 100, 540, 352, 3780, 1408, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Bush_3"
+                }]
+        }, {
+            "Name": "3_Rock8",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2900.0, 10.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [368.0, 151.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "rock 8",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
+            "Name": "3_Rock5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [2180.0, 80.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [518.0, 166.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "rock 5",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
             "Name": "3_EnemyWorm1",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3450.0, 461.86175537109375, 0.0],
+                    "Position": [3450.0, 490.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [198.3054656982422, 198.3054656982422]
+                    "Scale": [194.28570556640625, 194.28570556640625]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -1914,9 +2241,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [2920.0, 541.8617553710938, 0.0],
+                    "Position": [2900.0, 540.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [186.87689208984375, 186.87689208984375]
+                    "Scale": [187.14285278320313, 187.14285278320313]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -1980,9 +2307,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3650.0, 349.86175537109375, 0.0],
+                    "Position": [3120.0, 330.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [214.30545043945313, 214.30545043945313]
+                    "Scale": [217.14285278320313, 217.14285278320313]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -2011,7 +2338,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Worm 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 2
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2039,7 +2366,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm_shadow.png",
                     "Shape": 0,
-                    "Layer": 4
+                    "Layer": 1
                 }]
         }, {
             "Name": "4_TopBound",
@@ -2300,7 +2627,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [4935.0, 380.0, 0.0],
+                    "Position": [4800.0, 380.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [732.0, 262.0]
                 }, {
@@ -2314,12 +2641,336 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [4840.0, 895.0, 0.0],
+                    "Position": [4840.0, 860.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [243.0, 230.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "Layer 1",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "4_Branch5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5320.0, 1010.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [217.5, 128.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_3_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Branch_5": ["branch 5", "../Assets/Textures/Environment/base env moving_3_Part.png", "Branch_5", 22, 0.5, 0.5, 100, 580, 240, 1740, 1920, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Branch_5"
+                }]
+        }, {
+            "Name": "4_Vine1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5215.0, 880.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [962.5, 550.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Vine_1": ["env_base_vine_1", "../Assets/Textures/Environment/base env moving_2_Part.png", "Vine_1", 22, 0.5, 0.5, 100, 550, 550, 3850, 2200, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Vine_1"
+                }]
+        }, {
+            "Name": "4_Vine4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4340.0, 830.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [697.5, 328.5]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_3_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Vine_4": ["env_base_vine_4", "../Assets/Textures/Environment/base env moving_3_Part.png", "Vine_4", 22, 0.5, 0.5, 100, 620, 438, 3720, 1752, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Vine_4"
+                }]
+        }, {
+            "Name": "4_Vine7",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4660.0, 900.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [420.0, 350.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Vine_7": ["env_base_vine_7", "../Assets/Textures/Environment/base env moving_1_Part.png", "Vine_7", 22, 0.5, 0.5, 100, 420, 420, 3780, 1260, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Vine_7"
+                }]
+        }, {
+            "Name": "4_Bush1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4190.0, 710.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [240.0, 76.125]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Bush_1": ["bush 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_1", 21, 0.5, 0.5, 100, 240, 203, 1920, 609, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Bush_1"
+                }]
+        }, {
+            "Name": "4_Bush2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4620.0, 750.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [200.0, 104.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Bush_2": ["bush 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Bush_2", 19, 0.5, 0.5, 100, 400, 260, 2000, 1040, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Bush_2"
+                }]
+        }, {
+            "Name": "4_Grass1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5000.0, 440.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.0, 10.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_1": ["grass 1", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_1", 22, 0.5, 0.5, 100, 100, 75, 500, 375, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_1"
+                }]
+        }, {
+            "Name": "4_Grass2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5000.0, 75.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [13.5, 10.5]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_2": ["grass 2", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_2", 22, 0.5, 0.5, 100, 86, 67, 430, 335, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_2"
+                }]
+        }, {
+            "Name": "4_Grass3",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4190.0, 540.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.5, 8.75]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_3": ["grass 3", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_3", 22, 0.5, 0.5, 100, 70, 70, 490, 280, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_3"
+                }]
+        }, {
+            "Name": "4_Grass4",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5490.0, 215.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.600000381469727, 15.600000381469727]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_4": ["grass 4", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_4", 22, 0.5, 0.5, 100, 100, 100, 500, 500, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_4"
+                }]
+        }, {
+            "Name": "4_Grass5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4440.0, 300.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [15.300000190734863, 8.75]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_5": ["grass 5", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_5", 22, 0.5, 0.5, 100, 70, 70, 490, 280, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_5"
+                }]
+        }, {
+            "Name": "4_Grass6",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4910.0, 695.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [30.0, 13.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_1_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Grass_6": ["grass 6", "../Assets/Textures/Environment/base env moving_1_Part.png", "Grass_6", 22, 0.5, 0.5, 100, 240, 69, 960, 414, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Grass_6"
+                }]
+        }, {
+            "Name": "4_Plant1",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5310.0, 665.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [54.0, 60.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_plant_1",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "4_Plant2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4680.0, 685.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [97.0, 97.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_plant_2",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "4_Rock7",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5190.0, 780.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [163.8000030517578, 296.1000061035156]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_7",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "4_Rock10",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4430.0, 730.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [324.75, 171.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_10",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "4_Rock2",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5430.0, 680.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [134.0, 75.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_2",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "4_Rock5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4270.0, 655.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [134.0, 75.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_rock_5",
                     "Shape": 0,
                     "Layer": 0
                 }]
@@ -2380,13 +3031,75 @@
                     "Layer": 6
                 }]
         }, {
+            "Name": "4_Bush3",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4000.0, 175.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [472.5, 176.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
+                    "Shape": 0,
+                    "Layer": 6
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Bush_3": ["bush 3", "../Assets/Textures/Environment/base env moving_2_Part.png", "Bush_3", 22, 0.5, 0.5, 100, 540, 352, 3780, 1408, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Bush_3"
+                }]
+        }, {
+            "Name": "4_Rock5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [5510.0, 80.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [-518.0, 166.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "rock 5",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
+            "Name": "4_Rock8",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4760.0, 72.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [368.0, 151.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "rock 8",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
+            "Name": "4_Rock5",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [4100.0, 80.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [518.0, 166.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "rock 5",
+                    "Shape": 0,
+                    "Layer": 6
+                }]
+        }, {
             "Name": "4_EnemyFish1",
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [4582.0, 594.6694946289063, 0.0],
+                    "Position": [4600.0, 550.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [179.3329315185547, 179.3329315185547]
+                    "Scale": [185.71429443359375, 185.71429443359375]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -2450,9 +3163,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [4852.0, 444.66949462890625, 0.0],
+                    "Position": [4850.0, 300.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [200.76150512695313, 200.76150512695313]
+                    "Scale": [221.42857360839844, 221.42857360839844]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [1163.6776123046875, 676.6694946289063, 0.0],
@@ -2516,9 +3229,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [5202.0, 491.86175537109375, 0.0],
+                    "Position": [5202.0, 630.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [194.01974487304688, 194.01974487304688]
+                    "Scale": [174.2857208251953, 174.2857208251953]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -2582,9 +3295,9 @@
             "Tag": "Enemy",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [5552.0, 391.86175537109375, 0.0],
+                    "Position": [5400.0, 310.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [208.3054656982422, 208.3054656982422]
+                    "Scale": [220.0, 220.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [260.0066833496094, 567.8617553710938, 0.0],
@@ -2926,6 +3639,231 @@
                     "Layer": 0
                 }]
         }, {
+            "Name": "5_Box1",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [6300.0, 200.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [160.0, 105.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
+                }]
+        }, {
+            "Name": "5_Box2",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [6740.0, 200.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [160.0, 105.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
+                }]
+        }, {
+            "Name": "5_Box3",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [7180.0, 200.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [160.0, 105.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box": ["env_base_box_1", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 160, 211, 160, 211, 0.05000000074505806, false],
+                        "Box_Break": ["env_base_box_1_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 160, 211, 480, 422, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
+                }]
+        }, {
+            "Name": "5_Box4",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [6400.0, 650.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 155.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false],
+                        "Box": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
+                }]
+        }, {
+            "Name": "5_Box5",
+            "Tag": "Environment",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [7100.0, 650.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [100.0, 155.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": true
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [-559.0, 367.5],
+                    "Max": [-421.0, 652.5],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Environment/base env static_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Box_Break": ["env_base_box_2_break", "../Assets/Textures/Environment/base env moving_1_Part.png", "Box_Break", 4, 0.5, 0.5, 100, 149, 310, 745, 310, 0.05000000074505806, false],
+                        "Box": ["env_base_box_2", "../Assets/Textures/Environment/base env static_Part.png", "Box", 1, 0.5, 0.5, 100, 149, 310, 149, 310, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "Box"
+                }]
+        }, {
             "Name": "5_RightWallFront",
             "Tag": "Default",
             "Components": [{
@@ -3170,20 +4108,6 @@
                     "Layer": 0
                 }]
         }, {
-            "Name": "6_Blob3",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [8500.0, 520.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [648.0, 99.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "blobs 3",
-                    "Shape": 0,
-                    "Layer": 0
-                }]
-        }, {
             "Name": "6_Blob4",
             "Tag": "Default",
             "Components": [{
@@ -3194,6 +4118,20 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "blobs 4",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "6_Blob3",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [8500.0, 520.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [648.0, 99.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "blobs 3",
                     "Shape": 0,
                     "Layer": 0
                 }]
