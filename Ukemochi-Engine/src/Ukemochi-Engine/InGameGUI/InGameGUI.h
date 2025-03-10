@@ -32,8 +32,10 @@ namespace Ukemochi
 		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
 		float hoverCooldown = 0.5f;  // cooldown for hover sound
 		float hoverTimer = 0.0f;     // Tracks time since last hover sound
-		 
+		
+		float scrollSpeed = 250.f; // Pixels per second (adjust speed)
 	public:
+		bool showCredits = false;
 
 		/*!***********************************************************************
 		\brief
@@ -80,6 +82,10 @@ namespace Ukemochi
 		void CreateImage();
 
 		void CreateMainMenuUI();
+
+		void ShowCredits();
+
+		void UpdateCredits();
 
 		/*!***********************************************************************
 		\brief

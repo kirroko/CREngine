@@ -378,8 +378,11 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                if (ECS::GetInstance().GetSystem<InGameGUI>()->showCredits)
+                    ECS::GetInstance().GetSystem<InGameGUI>()->UpdateCredits();
                 ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
                 ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+
             }
         }
         else
@@ -618,6 +621,8 @@ namespace Ukemochi
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                if (ECS::GetInstance().GetSystem<InGameGUI>()->showCredits)
+                    ECS::GetInstance().GetSystem<InGameGUI>()->UpdateCredits();
                 ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
             }
         }
