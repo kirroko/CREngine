@@ -917,6 +917,24 @@ void Renderer::render()
 	textRenderer->renderAllText();
 }
 
+void Renderer::RenderMainMenuUI()
+{
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	batchRendererUI->setActiveShader(shaderProgram);
+	shaderProgram->Activate();
+	shaderProgram->setMat4("projection", ECS::GetInstance().GetSystem<Camera>()->getCameraProjectionMatrix());
+	shaderProgram->setMat4("view", glm::mat4(1.0f));
+
+	bindTexturesToUnits(shaderProgram); // Ensure textures are bound before rendering
+
+	batchRendererUI->beginBatch();
+	glm::vec3 tempCameraPos = glm::vec3(0.f, 0.f, 0.f);
+	ECS::GetInstance().GetSystem<InGameGUI>()->Render(tempCameraPos);
+	batchRendererUI->endBatch();
+}
+
 /*!
  * @brief Cleans up and releases all OpenGL resources (VAOs, VBOs, EBOs, textures, shaders).
  */

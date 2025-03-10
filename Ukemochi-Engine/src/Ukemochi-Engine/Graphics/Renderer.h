@@ -91,6 +91,8 @@ public:
 	 */
 	void render();
 
+	void RenderMainMenuUI();
+
 
 	/*!
 	 * @brief Cleans up and releases all OpenGL resources (e.g., VAOs, VBOs, EBOs, textures, shaders).

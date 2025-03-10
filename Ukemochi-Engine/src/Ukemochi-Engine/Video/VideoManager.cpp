@@ -107,7 +107,7 @@ namespace Ukemochi {
         }
     }
 
-    bool VideoManager::LoadVideo(const std::string& name, const char* filepath)
+    bool VideoManager::LoadVideo(const std::string& name, const char* filepath, bool loop)
     {
         VideoData video;
         video.plm = plm_create_with_filename(filepath);
@@ -129,6 +129,8 @@ namespace Ukemochi {
         video.totalFrames = static_cast<int>(plm_get_duration(video.plm) * frameRate); // Total frames
         // Compute the required time per frame
         video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm);
+        
+        video.loop = loop;
 
 #ifdef _DEBUG
         UME_ENGINE_INFO("Total expected frames to load: {0}", video.totalFrames);
@@ -167,7 +169,7 @@ namespace Ukemochi {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         // Disable looping for playback
-        plm_set_loop(video.plm, false);
+        plm_set_loop(video.plm, false); // Handled manually in `UpdateAndRenderVideo()
 
         int storedLayers = 0;
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
@@ -318,8 +320,17 @@ namespace Ukemochi {
         }
         else
         {
-            Free();
-            return;
+            if (video.loop)
+            {
+                // Restart the video if it's a looping video
+                video.currentFrame = 0;
+                video.elapsedTime = 0.f;
+            }
+            else
+            {
+                Free(); // Free resources if not looping 
+                return;
+            }
         }
 
         // Render the current video frame

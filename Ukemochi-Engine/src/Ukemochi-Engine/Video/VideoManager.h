@@ -47,6 +47,7 @@ namespace Ukemochi {
             double elapsedTime = 0.0f;
             bool done = false;
             VideoContext* video_ctx = {};
+            bool loop = false;
         };
 
         RingBuffer* rb = {};
@@ -100,7 +101,7 @@ namespace Ukemochi {
          * @param filepath filepath to the video
          * @return a pointer to MPEGStream
          */
-        bool LoadVideo(const std::string& name, const char* filepath);
+        bool LoadVideo(const std::string& name, const char* filepath, bool loop);
         
         /**
          * @brief Update video player system

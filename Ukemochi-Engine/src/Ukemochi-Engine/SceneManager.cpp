@@ -230,18 +230,18 @@ namespace Ukemochi
 #ifndef _DEBUG
                 // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg"))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg"))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true))
             UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
         es_current = ES_PLAY;
 #else
         // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg"))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg"))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true))
             UME_ENGINE_ERROR("Video didn't load properly!");
 
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
@@ -378,6 +378,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
                 ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
             }
         }
@@ -388,6 +389,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
                 setCamera = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
             }
             SceneManagerDraw();
         }
@@ -582,7 +584,7 @@ namespace Ukemochi
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
         {
             // Check if the user pressed a key to skip
             if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
@@ -602,7 +604,7 @@ namespace Ukemochi
 
             ECS::GetInstance().GetSystem<VideoManager>()->Update();
         }
-        else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
+        else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu")) // Checks if main menu is done
         {
             if (!setMainMenu)
             {
@@ -612,9 +614,8 @@ namespace Ukemochi
 
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
             {
-                ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
-                ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+                ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
             }
         }
         else
@@ -623,6 +624,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
                 setCamera = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
             }
 
             SceneManagerDraw();

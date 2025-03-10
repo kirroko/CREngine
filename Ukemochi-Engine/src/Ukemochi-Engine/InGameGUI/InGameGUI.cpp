@@ -37,7 +37,8 @@ namespace Ukemochi
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
 
-		CreateImage();
+		//CreateImage();
+		CreateMainMenuUI();
 		// Create FPS text
 		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{1.f, 1.f, 1.f}, "Ukemochi_numbers");
 	}
@@ -211,20 +212,27 @@ namespace Ukemochi
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-		// Main Menu
-		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
-			// Get the AudioManager
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+		//// Main Menu
+		//uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
+		//	// Get the AudioManager
+		//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-			// Start playing main menu music if it exists
-			if (audioM.GetMusicIndex("BGMOG") != -1)
-			{
-				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
-				{
-					audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
-				}
-			}
-			});
+		//	// Start playing main menu music if it exists
+		//	if (audioM.GetMusicIndex("BGMOG") != -1)
+		//	{
+		//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+		//		{
+		//			audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+		//		}
+		//	}
+		//	});
+
+		
+	}
+
+	void InGameGUI::CreateMainMenuUI()
+	{
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
 		uiManager->addButton("start button", glm::vec3{ 1138.f, 538.f, 0.f }, glm::vec2{ 422.f, 343.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			// Get the AudioManager
@@ -245,6 +253,8 @@ namespace Ukemochi
 				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
 			}
 
+			ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
+			ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
 			});
 	}
 
