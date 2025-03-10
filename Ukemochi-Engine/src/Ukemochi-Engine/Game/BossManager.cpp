@@ -3,6 +3,7 @@
 #include "../Factory/GameObjectManager.h"
 #include "DungeonManager.h"
 #include "../FrameController.h"
+#include "../Game/EnemyManager.h"
 
 namespace Ukemochi
 {
@@ -18,6 +19,7 @@ namespace Ukemochi
 		blobsize = blob->GetComponent<Transform>().scale.x;
 		blob->GetComponent<Transform>().scale = Vec2();
 		spawnBlob = false;
+		numOfBlob = 0;
 
 		playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
 
@@ -59,18 +61,22 @@ namespace Ukemochi
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle1");
 		//attack
 		//timer end play attack
-		if (boss.waitTime < 2.0f)
+		if (boss.waitTime < 7.f)
 		{
 			boss.waitTime += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		}
 		else
 		{
-			spawnBlob = true;
+			if (numOfBlob <= 3)
+			{
+				spawnBlob = true;
+				numOfBlob++;
+			}
 			boss.waitTime = 0;
 		}
 		//spawn blob blob
 		//scale from 0 - orignal size
-		if (spawnBlob)
+		if (spawnBlob && numOfBlob <= 3)
 		{
 			//spawn blob blob
 			static int number = 0;
@@ -86,38 +92,6 @@ namespace Ukemochi
 			spawnBlob = false;
 		}
 
-		for (auto& entity : m_Entities)
-		{
-			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
-
-			// Skip if the entity is not active
-			if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
-				continue;
-
-			if (tag == "Blob")
-			{
-				if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x < blobsize)
-				{
-					GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 100.f;
-					GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.y += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 100.f;
-				}
-				else
-				{
-					blob->GetComponent<Animation>().SetAnimation("Explode");
-
-					if (blob->GetComponent<Animation>().GetCurrentFrame() == 19)
-					{
-						GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
-						GameObjectManager::GetInstance().DestroyObject(entity);
-
-						//spawn monster
-
-						break;
-					}
-				}
-			}
-		}
-
 	}
 	void BossManager::Phase2()
 	{
@@ -127,5 +101,85 @@ namespace Ukemochi
 			std::cout << "RESTART" << std::endl;
 			hair->GetComponent<Animation>().RestartAnimation();
 		}
+	}
+	void BossManager::SpawnMonster(float x, float y)
+	{
+		//spawn monster
+		static int number = 0;
+
+		for (int i = 0; i < 3; i++)
+		{
+			GameObject* cloneObject;
+			if (numOfBlob % 2 == 0)
+			{
+				cloneObject = GameObjectManager::GetInstance().GetGOByTag("Enemy");
+			}
+			else
+			{
+				cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyClone");
+			}
+
+			if (cloneObject != nullptr)
+			{
+				std::string name = "6_Enemy" + std::to_string(number++);
+				std::string name2 = name + "_Shadow";
+
+				GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Enemy");
+				GameObject& shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject, name2, "EnemyShadow");
+
+				newObject.GetComponent<Transform>().position.x = x;
+				newObject.GetComponent<Transform>().position.y = y;
+
+				if (numOfBlob % 2 == 0)
+				{
+					if (newObject.HasComponent<Enemy>())
+					{
+						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::FISH, newObject.GetInstanceID());
+					}
+					else
+					{
+						newObject.AddComponent(Enemy{ x, y, Enemy::FISH, newObject.GetInstanceID() });
+					}
+
+					if (shadow.HasComponent<SpriteRender>())
+					{
+						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Fish_Shadow.png";
+						shadow.GetComponent<SpriteRender>().layer = 1;
+					}
+					else
+					{
+						SpriteRender sr = { "../Assets/Textures/Fish_Shadow.png", SPRITE_SHAPE::BOX, 1 };
+						shadow.AddComponent<SpriteRender>(sr);
+					}
+				}
+				else
+				{
+					if (newObject.HasComponent<Enemy>())
+					{
+						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::WORM, newObject.GetInstanceID());
+					}
+					else
+					{
+						newObject.AddComponent(Enemy{ x, y, Enemy::WORM, newObject.GetInstanceID() });
+					}
+
+					if (shadow.HasComponent<SpriteRender>())
+					{
+						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Worm_shadow.png";
+						shadow.GetComponent<SpriteRender>().layer = 1;
+					}
+					else
+					{
+						SpriteRender sr = { "../Assets/Textures/Worm_shadow.png", SPRITE_SHAPE::BOX, 1 };
+						shadow.AddComponent<SpriteRender>(sr);
+					}
+				}
+				newObject.GetComponent<Enemy>().health = 60.f;
+				ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
+			}
+		
+		}
+
+		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
 	}
 }

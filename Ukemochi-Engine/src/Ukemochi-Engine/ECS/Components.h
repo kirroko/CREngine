@@ -451,7 +451,7 @@ namespace Ukemochi
 		{
 			health = 60.f;
 			attackPower = 15.f;
-			waitTime = 0.f;
+			waitTime = 1000.f;
 		}
 
 	};

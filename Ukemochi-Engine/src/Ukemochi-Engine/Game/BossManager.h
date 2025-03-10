@@ -15,6 +15,8 @@ namespace Ukemochi
 
 		void Phase2();
 
+		void SpawnMonster(float x, float y);
+
 	private:
 		GameObject* playerObj;
 		GameObject* hair;
@@ -22,6 +24,7 @@ namespace Ukemochi
 		GameObject* blob;
 		Boss boss;
 		float blobsize;
+		int numOfBlob;
 		bool spawnBlob;
 	};
 }
