@@ -593,6 +593,7 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
             }
 
+            // Sets the video to play the cutscene
             if (!setCutscene)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
@@ -606,12 +607,14 @@ namespace Ukemochi
         }
         else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu")) // Checks if main menu is done
         {
+            // Sets the video to play the main menu video
             if (!setMainMenu)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
                 setMainMenu = true;
             }
 
+            // Plays video as long as it is not done, main menu will loop
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
