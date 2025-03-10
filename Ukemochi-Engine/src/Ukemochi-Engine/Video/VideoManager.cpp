@@ -141,8 +141,8 @@ namespace Ukemochi {
         video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
 
         // Allocate RGB buffer
-        video_ctx = new VideoContext(width, height);
-        video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(width * height * 3));
+        video.video_ctx = new VideoContext(width, height);
+        video.video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(width * height * 3));
 
         // **Preload all frames into the texture array**
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
@@ -153,14 +153,14 @@ namespace Ukemochi {
             if (!frame) break;
 
             // Convert to RGB
-            plm_frame_to_rgb(frame, video_ctx->rgb_buffer, width * 3);
+            plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer, width * 3);
 
-            if (!video_ctx->rgb_buffer) {
+            if (!video.video_ctx->rgb_buffer) {
                 UME_ENGINE_ERROR("Error: RGB buffer is null at frame {0}", i);
             }
 
             // Upload to the 2D texture array at layer `i`
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video_ctx->rgb_buffer);
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.video_ctx->rgb_buffer);
 
             UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, video.totalFrames, i);
         }
@@ -376,21 +376,13 @@ namespace Ukemochi {
         //videos.erase(currentVideo);
         //currentVideo.clear(); // No active video
         
-        if (video_ctx)
+        if (video.video_ctx)
         {
-            if (video_ctx->rgb_buffer)
+            if (video.video_ctx->rgb_buffer)
             {
-                free(video_ctx->rgb_buffer); // Ensure correct allocation type
+                free(video.video_ctx->rgb_buffer); // Ensure correct allocation type
             }
-            delete video_ctx;
-        }
-
-        if (rb)
-        {
-            // if (rb->buffer)
-            //     free(rb->buffer); // Uncomment if allocated with malloc()
-
-            delete rb;
+            delete video.video_ctx;
         }
 
         video.done = true;

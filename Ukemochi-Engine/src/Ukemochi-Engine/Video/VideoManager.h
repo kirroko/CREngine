@@ -46,11 +46,11 @@ namespace Ukemochi {
             double frameDuration = 0.0;
             double elapsedTime = 0.0f;
             bool done = false;
+            VideoContext* video_ctx = {};
         };
 
         RingBuffer* rb = {};
-        VideoContext* video_ctx = {};
-        plm_t* plm = nullptr;
+        
 
         std::shared_ptr<Shader> video_shader_program;
 
@@ -60,20 +60,11 @@ namespace Ukemochi {
         std::string currentVideo; // Name of the currently playing video
 
         bool IsVideoDonePlaying(const std::string& videoName);
-        //bool done = false;
+
     private:
         
         double lastFrameTime = 0.0f;
         GLuint VAO{}, VBO{};
-
-        //bool isPlaying = true;
-        //double frameDuration = 0.f;
-
-
-        // Main Menu
-        plm_t* plm_mainMenu = nullptr;
-        GLuint mainMenuTextureID;         // Texture for the main menu video
-        bool isCutscenePlaying = false;   // Flag to track if a cutscene is playing
 
         void RenderVideoFrame();
 
