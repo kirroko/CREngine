@@ -351,7 +351,6 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
-                //ECS::GetInstance().GetSystem<VideoManager>()->done = true;
             }
 
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
@@ -362,10 +361,12 @@ namespace Ukemochi
             }
             auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
             audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
-
-            ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
-            ECS::GetInstance().GetSystem<VideoManager>()->Update(); 
-            ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
+            {
+                ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+            }
         }
         else
         {

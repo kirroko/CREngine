@@ -373,12 +373,9 @@ namespace Ukemochi {
             video.textureID = 0;
         }
         // Remove video entry from map
-        videos.erase(currentVideo);
-        currentVideo.clear(); // No active video
+        //videos.erase(currentVideo);
+        //currentVideo.clear(); // No active video
         
-
-
-
         if (video_ctx)
         {
             if (video_ctx->rgb_buffer)
