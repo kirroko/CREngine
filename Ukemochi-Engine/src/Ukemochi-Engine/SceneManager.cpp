@@ -232,7 +232,7 @@ namespace Ukemochi
         UME_ENGINE_TRACE("Initializing video manager...");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg"))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/main_menu_video.mpeg"))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg"))
             UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
         es_current = ES_PLAY;
@@ -340,8 +340,6 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<Transformation>()->ComputeTransformations();
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
-
-
 
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
@@ -583,6 +581,7 @@ namespace Ukemochi
         sys_start = std::chrono::steady_clock::now();
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
+
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
         {
             // Check if the user pressed a key to skip
@@ -602,6 +601,21 @@ namespace Ukemochi
             audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
 
             ECS::GetInstance().GetSystem<VideoManager>()->Update();
+        }
+        else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
+        {
+            if (!setMainMenu)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                setMainMenu = true;
+            }
+
+            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
+            {
+                ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+            }
         }
         else
         {
