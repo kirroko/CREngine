@@ -50,8 +50,8 @@ namespace Ukemochi
 
 	//bool func_toggle = false;
     bool setCamera = false;
-    bool loadMainMenu = false;
-    bool setVideo = false;
+    bool setMainMenu = false;
+    bool setCutscene = false;
     /*!***********************************************************************
     \brief
         Constructor for SceneManager class.
@@ -241,8 +241,8 @@ namespace Ukemochi
         UME_ENGINE_TRACE("Initializing video manager...");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg"))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        /*if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg"))
-            UME_ENGINE_ERROR("Video didn't load properly!");*/
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg"))
+            UME_ENGINE_ERROR("Video didn't load properly!");
 
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
@@ -354,14 +354,29 @@ namespace Ukemochi
             }
 
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-            if (!setVideo)
+            if (!setCutscene)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
-                setVideo = true;
+                setCutscene = true;
             }
             auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
             audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
+            {
+                ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+            }
+        }
+        else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
+        {
+            if (!setMainMenu)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                setMainMenu = true;
+            }
+
+            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
             {
                 ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
@@ -577,10 +592,10 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
             }
 
-            if (!setVideo)
+            if (!setCutscene)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
-                setVideo = true;
+                setCutscene = true;
             }
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();

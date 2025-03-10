@@ -357,7 +357,7 @@ namespace Ukemochi {
         VideoData& video = videos[currentVideo];
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
         // Set the camera initial position
-        ECS::GetInstance().GetSystem<Camera>()->position = { -1920, 0 };
+        //ECS::GetInstance().GetSystem<Camera>()->position = { -1920, 0 };
 
         // Free PLM object
         if (video.plm)
