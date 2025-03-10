@@ -443,6 +443,7 @@ namespace Ukemochi
 		BossStates state;
 		float health;
 		float attackPower;
+		float waitTime;
 
 		Boss() = default;
 		Boss(EntityID ID)
@@ -450,6 +451,7 @@ namespace Ukemochi
 		{
 			health = 60.f;
 			attackPower = 15.f;
+			waitTime = 0.f;
 		}
 
 	};
