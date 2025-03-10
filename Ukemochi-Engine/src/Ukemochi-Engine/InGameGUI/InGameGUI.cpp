@@ -234,7 +234,7 @@ namespace Ukemochi
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("start button", glm::vec3{ 1138.f, 538.f, 0.f }, glm::vec2{ 422.f, 343.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("start button", glm::vec3{ 1138.f, 538.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			// Get the AudioManager
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
