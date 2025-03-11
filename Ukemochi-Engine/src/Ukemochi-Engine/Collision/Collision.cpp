@@ -990,6 +990,65 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						std::vector<int> DummyHitSounds = {
+							audioM.GetSFXindex("DuHurt1"),
+							audioM.GetSFXindex("DuHurt2"),
+							audioM.GetSFXindex("DuHurt3")
+						};
+
+						// Remove invalid (-1) sounds
+						DummyHitSounds.erase(
+							std::remove(DummyHitSounds.begin(), DummyHitSounds.end(), -1),
+							DummyHitSounds.end()
+						);
+
+						// Keep track of which sounds have been played (static at class level)
+						static std::vector<bool> dummyHitSoundsPlayed;
+
+						// Initialize if first time or size changed
+						if (dummyHitSoundsPlayed.size() != DummyHitSounds.size()) {
+							dummyHitSoundsPlayed.resize(DummyHitSounds.size(), false);
+						}
+
+						// Check if all sounds have been played
+						bool allPlayed = true;
+						for (bool played : dummyHitSoundsPlayed) {
+							if (!played) {
+								allPlayed = false;
+								break;
+							}
+						}
+
+						// If all sounds have been played, reset all to unplayed
+						if (allPlayed) {
+							std::fill(dummyHitSoundsPlayed.begin(), dummyHitSoundsPlayed.end(), false);
+						}
+
+						// Get sounds that haven't been played yet
+						std::vector<int> availableSoundIndices;
+						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+							if (!dummyHitSoundsPlayed[i]) {
+								availableSoundIndices.push_back(i);
+							}
+						}
+
+						if (!availableSoundIndices.empty()) {
+							// Random selection from available sounds
+							int randomIndex = rand() % availableSoundIndices.size();
+							int selectedSoundIndex = availableSoundIndices[randomIndex];
+							int selectedSound = DummyHitSounds[selectedSoundIndex];
+
+							// Mark this sound as played
+							dummyHitSoundsPlayed[selectedSoundIndex] = true;
+
+							// Play the selected sound
+							audioM.PlaySFX(selectedSound);
+						}
+					}
+
 					if (player_sr.flipX)
 					{
 						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
@@ -1009,6 +1068,65 @@ namespace Ukemochi
 					// Harvest some soul whenever mochi hits the dummy
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						std::vector<int> DummyHitSounds = {
+							audioM.GetSFXindex("DuHurt1"),
+							audioM.GetSFXindex("DuHurt2"),
+							audioM.GetSFXindex("DuHurt3")
+						};
+
+						// Remove invalid (-1) sounds
+						DummyHitSounds.erase(
+							std::remove(DummyHitSounds.begin(), DummyHitSounds.end(), -1),
+							DummyHitSounds.end()
+						);
+
+						// Keep track of which sounds have been played (static at class level)
+						static std::vector<bool> dummyHitSoundsPlayed;
+
+						// Initialize if first time or size changed
+						if (dummyHitSoundsPlayed.size() != DummyHitSounds.size()) {
+							dummyHitSoundsPlayed.resize(DummyHitSounds.size(), false);
+						}
+
+						// Check if all sounds have been played
+						bool allPlayed = true;
+						for (bool played : dummyHitSoundsPlayed) {
+							if (!played) {
+								allPlayed = false;
+								break;
+							}
+						}
+
+						// If all sounds have been played, reset all to unplayed
+						if (allPlayed) {
+							std::fill(dummyHitSoundsPlayed.begin(), dummyHitSoundsPlayed.end(), false);
+						}
+
+						// Get sounds that haven't been played yet
+						std::vector<int> availableSoundIndices;
+						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+							if (!dummyHitSoundsPlayed[i]) {
+								availableSoundIndices.push_back(i);
+							}
+						}
+
+						if (!availableSoundIndices.empty()) {
+							// Random selection from available sounds
+							int randomIndex = rand() % availableSoundIndices.size();
+							int selectedSoundIndex = availableSoundIndices[randomIndex];
+							int selectedSound = DummyHitSounds[selectedSoundIndex];
+
+							// Mark this sound as played
+							dummyHitSoundsPlayed[selectedSoundIndex] = true;
+
+							// Play the selected sound
+							audioM.PlaySFX(selectedSound);
+						}
+					}
 
 					if (player_sr.flipX)
 					{
