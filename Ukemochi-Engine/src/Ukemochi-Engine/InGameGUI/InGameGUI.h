@@ -87,6 +87,8 @@ namespace Ukemochi
 
 		void UpdateCredits();
 
+		void UpdateTitleAnimation();
+
 		/*!***********************************************************************
 		\brief
 		 Remove a GUI object.

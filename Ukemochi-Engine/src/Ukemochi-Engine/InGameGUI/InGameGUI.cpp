@@ -234,7 +234,7 @@ namespace Ukemochi
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("start button", glm::vec3{ 1138.f, 538.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("start button", glm::vec3{ 1170.f, 508.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			// Get the AudioManager
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
@@ -270,7 +270,7 @@ namespace Ukemochi
 			showCredits = true;
 			});
 
-		uiManager->addButton("exit button", glm::vec3{ 1738.f, 438.f, 0.f }, glm::vec2{ 101.f, 168.f }, "exit button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("exit button", glm::vec3{ 1663.f, 338.f, 0.f }, glm::vec2{ 101.f, 168.f }, "exit button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 			if (audioM.GetSFXindex("ButtonClickSound") != -1)
 			{
@@ -278,14 +278,19 @@ namespace Ukemochi
 			}
 			Application::Get().QuitGame();
 			});
+
+		uiManager->addButton("title", glm::vec3{ 1440.f, 1300.f, 0.f }, glm::vec2{ 845.6f, 380.f },
+			"logo", glm::vec3(1.0f, 1.0f, 1.0f),
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
 	}
 
 	void InGameGUI::ShowCredits()
 	{
 		// Hide main menu buttons
-		ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("start button");
-		ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("credit button");
-		ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("exit button");
+		RemoveElement("start button"); 
+		RemoveElement("credit button"); 
+		RemoveElement("exit button"); 
+		RemoveElement("title");
 
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
@@ -295,7 +300,20 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
 
 		// Add the back button to return to main menu
-		
+		uiManager->addButton("main menu return", glm::vec3{ 118.f, 1000.f, 0.f }, glm::vec2{ 73.f, 86.f },
+			"Storyboard 1", glm::vec3(1.0f, 1.0f, 1.0f),
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, [this]() {
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
+				
+				this->RemoveElement("credits");
+				this->RemoveElement("main menu return");
+
+				this->CreateMainMenuUI();
+			});
 	}
 
 	void InGameGUI::UpdateCredits()
@@ -317,6 +335,28 @@ namespace Ukemochi
 		}
 	}
 
+	void InGameGUI::UpdateTitleAnimation()
+	{
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+		auto titleButton = uiManager->getButtonByID("title");
+
+		float deltaTime = g_FrameRateController.GetDeltaTime();
+
+		if (!titleButton) return; // Ensure the button exists
+
+		float targetY = 850.f; // Final position
+		float fallSpeed = 600.f; // Pixels per second
+
+		// Move down until it reaches the target position
+		if (titleButton->position.y > targetY)
+		{
+			titleButton->position.y -= fallSpeed * deltaTime;
+
+			// Clamp the position so it doesn't go past the target
+			if (titleButton->position.y < targetY)
+				titleButton->position.y = targetY;
+		}
+	}
 
 	/*!***********************************************************************
 	\brief
