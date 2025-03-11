@@ -101,6 +101,8 @@ namespace Ukemochi
 		*************************************************************************/
 		void RemoveElement(const std::string& id);
 
+		void RemoveText(const std::string& id);
+
 		/*!***********************************************************************
 		\brief
 		 Renders the GUI elements based on the current camera position.

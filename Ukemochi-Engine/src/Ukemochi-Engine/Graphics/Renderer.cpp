@@ -1184,6 +1184,10 @@ void Renderer::UpdateTextObject(const std::string& id, const std::string& newTex
 
 void Renderer::UpdateTextColor(const std::string& id, const glm::vec3& color){ textRenderer->updateTextColor(id, color); }
 
+void Renderer::RemoveTextObject(const std::string& id)
+{
+	textRenderer->removeTextObject(id);
+}
 
 /*!
  * @brief Create a button object in the UI renderer.
