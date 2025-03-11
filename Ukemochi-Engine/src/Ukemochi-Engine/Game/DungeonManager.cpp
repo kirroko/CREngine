@@ -134,7 +134,7 @@ namespace Ukemochi
 	void DungeonManager::UpdateRoomProgress()
 	{
 		// Check if all enemies in the room is active
-		bool enemy_alive = false;
+		enemy_alive = false;
 		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
 		{
 			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);

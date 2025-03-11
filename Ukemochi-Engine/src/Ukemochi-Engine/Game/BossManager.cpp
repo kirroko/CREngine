@@ -32,10 +32,11 @@ namespace Ukemochi
 
 		if (boss.BossPhase == 1)
 		{
-			if (boss.health <= 0)
+			//CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
+			if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
 			{
 				//play animation
-				GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Change");
+				GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
 				//animation finish then proceed
 				boss.BossPhase = 2;
 			}
@@ -70,9 +71,10 @@ namespace Ukemochi
 			if (numOfBlob <= 3)
 			{
 				spawnBlob = true;
+				//play animation
+				GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
 				numOfBlob++;
 			}
-			boss.waitTime = 0;
 		}
 		//spawn blob blob
 		//scale from 0 - orignal size
@@ -90,11 +92,13 @@ namespace Ukemochi
 				newObject.GetComponent<Transform>().position.y = playerObj->GetComponent<Transform>().position.y;
 			}
 			spawnBlob = false;
+			boss.waitTime = 0;
 		}
 
 	}
 	void BossManager::Phase2()
 	{
+		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle2");
 		//hair attack
 		if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
 		{
