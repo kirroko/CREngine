@@ -1779,4 +1779,44 @@ namespace Ukemochi
 		UME_ENGINE_INFO("Graphics: {0}%", graphics_percent);
 
 	}
+    void SceneManager::ResetGame()
+    {
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+            }
+        }
+
+        LoadSaveFile(GetCurrScene() + ".json");
+
+        //UME_ENGINE_TRACE("Initializing Transformation...");
+        ECS::GetInstance().GetSystem<Transformation>()->Init();
+        //UME_ENGINE_TRACE("Initializing Collision...");
+        ECS::GetInstance().GetSystem<Collision>()->Init();
+        //UME_ENGINE_TRACE("Initializing dungeon manager...");
+        ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+        //UME_ENGINE_TRACE("Initializing soul manager...");
+        ECS::GetInstance().GetSystem<SoulManager>()->Init();
+        ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+        // enemy
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+        //audio
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (audioM.GetMusicIndex("BGM") != -1)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+                    {
+                        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                    }
+                }
+            }
+        }
+    }
 }

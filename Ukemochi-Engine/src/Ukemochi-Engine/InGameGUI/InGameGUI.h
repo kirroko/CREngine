@@ -26,7 +26,7 @@ namespace Ukemochi
 	class InGameGUI : public System
 	{
 	private:
-		bool pause = false;
+
 		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
 		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
@@ -34,6 +34,9 @@ namespace Ukemochi
 		float hoverTimer = 0.0f;     // Tracks time since last hover sound
 		
 		float scrollSpeed = 250.f; // Pixels per second (adjust speed)
+
+		float deathTimer = 0.f;
+		const float deathScreenDelay = 3.f;
 	public:
 		bool showCredits = false;
 

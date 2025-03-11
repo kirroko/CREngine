@@ -23,6 +23,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"	  // for fps text
 #include "../Factory/GameObjectManager.h"
 #include "../Video/VideoManager.h"
+#include "../Math/Transformation.h"
+#include "../Collision/Collision.h"
+#include "../Game/DungeonManager.h"
+#include "../Game/SoulManager.h"
+#include "../Game/EnemyManager.h"
+#include "../SceneManager.h"
 
 namespace Ukemochi
 {
@@ -54,10 +60,25 @@ namespace Ukemochi
 
 		auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
 
-
+		// Check if player health is 0
 		if (player.currentHealth <= 0)
 		{
-			ECS::GetInstance().GetSystem<InGameGUI>()->showDefeatScreen();
+			// Start the timer
+			deathTimer += (float)g_FrameRateController.GetDeltaTime();
+
+			// If the timer exceeds the delay, show the defeat screen
+			if (deathTimer >= deathScreenDelay)
+			{
+				// Pause the game once
+				if (!Application::Get().Paused())
+				{
+					Application::Get().SetPaused(true);
+				}
+
+				// Show the defeat screen
+				showDefeatScreen();
+				deathTimer = 0.f;
+			}
 		}
 
 		// Update FPS text with color based on FPS value
@@ -624,26 +645,28 @@ namespace Ukemochi
 		uiManager->addButton("defeat text", glm::vec3(screen_width * 0.5f, 800.f, 0.f), glm::vec2(499.f, 129.f), "defeat", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5);
 		uiManager->addButton("defeat bg", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(1920.f, 1080.f), "defeat bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
 		// Restart
-		uiManager->addButton("restart bg", glm::vec3(810.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, true, [this]() {
-			//pause = false;
-			this->HideDefeatScreen();
-			});
-		uiManager->addButton("restart button", glm::vec3(810.f, 350.f, 0.f), glm::vec2(84.f, 88.f), "restart icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, [this]() {
-			pause = false;
+		uiManager->addButton("restart button", glm::vec3(810.f, 350.f, 0.f), glm::vec2(147.f, 177.f), "restart", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, [this]() {
+
 			std::this_thread::sleep_for(std::chrono::milliseconds(50)); 
 			this->HideDefeatScreen();
+
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+				}
+			}
+			
+			SceneManager::GetInstance().ResetGame();
+			Application::Get().SetPaused(false);
 			});
-		uiManager->addButton("restart button text", glm::vec3(810.f, 250.f, 0.f), glm::vec2(140.f, 27.f), "restart", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4);
 
 		// Exit
-		uiManager->addButton("exit button bg", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 135.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, true, [this]() {
-			//Application::Get().IsPaused = false;
-			pause = false;
-			ECS::GetInstance().GetSystem<InGameGUI>()->HideDefeatScreen();
+		uiManager->addButton("exit button defeat", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 175.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, []() {
+			Application::Get().QuitGame();
 			});
-		uiManager->addButton("exit button", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, []() {
-			});
-		uiManager->addButton("exit text", glm::vec3(1160.f, 250.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None);
 	}
 
 	void InGameGUI::HideDefeatScreen()
@@ -654,12 +677,12 @@ namespace Ukemochi
 		uiManager->removeButton("defeat overlay");
 		uiManager->removeButton("defeat text");
 		uiManager->removeButton("defeat bg");
-		uiManager->removeButton("restart bg");
+		//uiManager->removeButton("restart bg");
 		uiManager->removeButton("restart button");
-		uiManager->removeButton("restart button text");
-		uiManager->removeButton("exit button bg");
-		uiManager->removeButton("exit button");
-		uiManager->removeButton("exit text");
+		//uiManager->removeButton("restart button text");
+		//uiManager->removeButton("exit button bg");
+		uiManager->removeButton("exit button defeat");
+		//uiManager->removeButton("exit text");
 	}
 
 }
