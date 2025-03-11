@@ -234,7 +234,7 @@ namespace Ukemochi
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("start button", glm::vec3{ 1170.f, 508.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("start button", glm::vec3{ 1170.f, 508.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start_button_main", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			// Get the AudioManager
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
@@ -260,7 +260,7 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
 			});
 
-		uiManager->addButton("credit button", glm::vec3{1538.f, 488.f, 0.f }, glm::vec2{ 238.f, 169.f }, "credits button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, [this]() {
+		uiManager->addButton("credit button", glm::vec3{1538.f, 488.f, 0.f }, glm::vec2{ 238.f, 169.f }, "credits_button_main", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, [this]() {
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 			if (audioM.GetSFXindex("ButtonClickSound") != -1)
 			{
@@ -271,7 +271,7 @@ namespace Ukemochi
 			showCredits = true;
 			});
 
-		uiManager->addButton("exit button", glm::vec3{ 1663.f, 338.f, 0.f }, glm::vec2{ 101.f, 168.f }, "exit button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("exit button", glm::vec3{ 1663.f, 338.f, 0.f }, glm::vec2{ 101.f, 168.f }, "exit_button_main", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 			if (audioM.GetSFXindex("ButtonClickSound") != -1)
 			{
@@ -302,7 +302,7 @@ namespace Ukemochi
 
 		// Add the back button to return to main menu
 		uiManager->addButton("main menu return", glm::vec3{ 118.f, 1000.f, 0.f }, glm::vec2{ 73.f, 86.f },
-			"Storyboard 1", glm::vec3(1.0f, 1.0f, 1.0f),
+			"return", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, [this]() {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				if (audioM.GetSFXindex("ButtonClickSound") != -1)
@@ -499,9 +499,7 @@ namespace Ukemochi
 		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 7);
 
 		// Resume
-		uiManager->addButton("resume button bg", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 134.f), "button2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, []() {
-			});
-		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(73.f, 86.f), "return icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, true, [this]() {
+		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 172.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
 			// Check if the StartButton SFX exists and play it
@@ -512,14 +510,9 @@ namespace Ukemochi
 			Application::Get().SetPaused(false);
 			this->HidePauseMenu();
 			});
-		uiManager->addButton("resume text", glm::vec3(810.f, 450.f, 0.f), glm::vec2(118.f, 26.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None);
 
 		// Exit
-		uiManager->addButton("exit button bg", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 135.f), "button1", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, []() {
-			});
-		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(75.f, 85.f), "exit icon", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
-			//Application::Get().StopGame();  // Stop the game
-			//Application::Get().SetPaused(false);  // Ensure it's unpaused
+		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 175.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
 			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 			if (audioM.GetSFXindex("ButtonClickSound") != -1)
 			{
@@ -527,7 +520,46 @@ namespace Ukemochi
 			}
 			Application::Get().QuitGame();
 			});
-		uiManager->addButton("exit text", glm::vec3(1110.f, 450.f, 0.f), glm::vec2(74.f, 35.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None);
+
+		uiManager->addButton("music", glm::vec3(730.f, 350.f, 0.f), glm::vec2(51.f, 53.f), "music", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
+
+		uiManager->addButton("music minus", glm::vec3(810.f, 350.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}*/
+			ECS::GetInstance().GetSystem<Audio>()->DecreaseMusicMasterVolume(1.f);
+			});
+
+		uiManager->addButton("music plus", glm::vec3(1110.f, 350.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}*/
+			ECS::GetInstance().GetSystem<Audio>()->IncreaseMusicMasterVolume(1.f);
+			});
+
+		uiManager->addButton("sfx", glm::vec3(730.f, 250.f, 0.f), glm::vec2(51.f, 53.f), "music2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
+
+		uiManager->addButton("sfx minus", glm::vec3(810.f, 250.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}*/
+			ECS::GetInstance().GetSystem<Audio>()->DecreaseSFXMasterVolume(0.1f);
+			});
+
+		uiManager->addButton("sfx plus", glm::vec3(1110.f, 250.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
+			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+			/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
+			{
+				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+			}*/
+			ECS::GetInstance().GetSystem<Audio>()->IncreaseSFXMasterVolume(0.1f);
+			});
 	}
 
 	/*!***********************************************************************
@@ -542,12 +574,18 @@ namespace Ukemochi
 		uiManager->removeButton("pause overlay");
 		uiManager->removeButton("pause bg");
 		uiManager->removeButton("pause");
-		uiManager->removeButton("resume button bg");
+
 		uiManager->removeButton("resume button");
-		uiManager->removeButton("resume text");
+
 		uiManager->removeButton("exit button");
-		uiManager->removeButton("exit button bg");
-		uiManager->removeButton("exit text");
+
+		uiManager->removeButton("music");
+		uiManager->removeButton("music minus");
+		uiManager->removeButton("music plus");
+
+		uiManager->removeButton("sfx");
+		uiManager->removeButton("sfx minus");
+		uiManager->removeButton("sfx plus");
 	}
 
 	void InGameGUI::showDefeatScreen()

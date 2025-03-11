@@ -1,8 +1,40 @@
 {"frames": {
 
+"back.png":
+{
+	"frame": {"x":886,"y":247,"w":997,"h":868},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":997,"h":868},
+	"sourceSize": {"w":997,"h":868}
+},
+"credits button.png":
+{
+	"frame": {"x":3612,"y":73,"w":238,"h":169},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":169},
+	"sourceSize": {"w":238,"h":169}
+},
+"defeat bg.png":
+{
+	"frame": {"x":5,"y":1127,"w":1920,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
+	"sourceSize": {"w":1920,"h":1080}
+},
+"defeat.png":
+{
+	"frame": {"x":2223,"y":73,"w":499,"h":129},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":499,"h":129},
+	"sourceSize": {"w":499,"h":129}
+},
 "dmg number_10.png":
 {
-	"frame": {"x":530,"y":5,"w":119,"h":106},
+	"frame": {"x":1527,"y":73,"w":119,"h":106},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":106},
@@ -10,7 +42,7 @@
 },
 "dmg number_20_blue.png":
 {
-	"frame": {"x":905,"y":5,"w":155,"h":109},
+	"frame": {"x":1779,"y":73,"w":155,"h":109},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":155,"h":109},
@@ -18,23 +50,55 @@
 },
 "dmg number_20_red.png":
 {
-	"frame": {"x":1065,"y":5,"w":155,"h":109},
+	"frame": {"x":1939,"y":73,"w":155,"h":109},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":155,"h":109},
 	"sourceSize": {"w":155,"h":109}
 },
-"in game_abilities.png":
+"exit button.png":
 {
-	"frame": {"x":778,"y":5,"w":122,"h":107},
+	"frame": {"x":3506,"y":73,"w":101,"h":168},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":122,"h":107},
-	"sourceSize": {"w":122,"h":107}
+	"spriteSourceSize": {"x":0,"y":0,"w":101,"h":168},
+	"sourceSize": {"w":101,"h":168}
+},
+"exit.png":
+{
+	"frame": {"x":157,"y":247,"w":145,"h":175},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":145,"h":175},
+	"sourceSize": {"w":145,"h":175}
+},
+"fire blue collect.png":
+{
+	"frame": {"x":3285,"y":5,"w":44,"h":63},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":44,"h":63},
+	"sourceSize": {"w":44,"h":63}
+},
+"fire red collect.png":
+{
+	"frame": {"x":3334,"y":5,"w":45,"h":63},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":63},
+	"sourceSize": {"w":45,"h":63}
+},
+"in game_abilities.png":
+{
+	"frame": {"x":1651,"y":73,"w":123,"h":107},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":123,"h":107},
+	"sourceSize": {"w":123,"h":107}
 },
 "in game_blue fire.png":
 {
-	"frame": {"x":164,"y":5,"w":65,"h":71},
+	"frame": {"x":1269,"y":73,"w":65,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
@@ -42,7 +106,7 @@
 },
 "in game_border shadow.png":
 {
-	"frame": {"x":5,"y":281,"w":1920,"h":1080},
+	"frame": {"x":1930,"y":1127,"w":1920,"h":1080},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
@@ -50,7 +114,7 @@
 },
 "in game_health bar bg.png":
 {
-	"frame": {"x":1127,"y":139,"w":627,"h":66},
+	"frame": {"x":5,"y":73,"w":627,"h":66},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
@@ -58,7 +122,7 @@
 },
 "in game_health bar border.png":
 {
-	"frame": {"x":528,"y":139,"w":594,"h":31},
+	"frame": {"x":2129,"y":5,"w":594,"h":31},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":594,"h":31},
@@ -66,7 +130,7 @@
 },
 "in game_health bar icon.png":
 {
-	"frame": {"x":408,"y":5,"w":117,"h":129},
+	"frame": {"x":2727,"y":73,"w":117,"h":129},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":117,"h":129},
@@ -74,7 +138,7 @@
 },
 "in game_health bar.png":
 {
-	"frame": {"x":5,"y":210,"w":627,"h":66},
+	"frame": {"x":637,"y":73,"w":627,"h":66},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
@@ -82,15 +146,15 @@
 },
 "in game_pause.png":
 {
-	"frame": {"x":304,"y":5,"w":99,"h":87},
+	"frame": {"x":1409,"y":73,"w":113,"h":92},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":99,"h":87},
-	"sourceSize": {"w":99,"h":87}
+	"spriteSourceSize": {"x":0,"y":0,"w":113,"h":92},
+	"sourceSize": {"w":113,"h":92}
 },
 "in game_red fire.png":
 {
-	"frame": {"x":234,"y":5,"w":65,"h":71},
+	"frame": {"x":1339,"y":73,"w":65,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
@@ -98,7 +162,7 @@
 },
 "in game_soul ability charge bg.png":
 {
-	"frame": {"x":101,"y":5,"w":58,"h":61},
+	"frame": {"x":3158,"y":5,"w":58,"h":61},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":61},
@@ -106,7 +170,7 @@
 },
 "in game_soul ability charge blue.png":
 {
-	"frame": {"x":5,"y":5,"w":25,"h":27},
+	"frame": {"x":767,"y":5,"w":25,"h":27},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":27},
@@ -114,7 +178,7 @@
 },
 "in game_soul ability charge border.png":
 {
-	"frame": {"x":65,"y":5,"w":31,"h":31},
+	"frame": {"x":2728,"y":5,"w":31,"h":31},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":31},
@@ -122,7 +186,7 @@
 },
 "in game_soul ability charge red.png":
 {
-	"frame": {"x":35,"y":5,"w":25,"h":27},
+	"frame": {"x":797,"y":5,"w":25,"h":27},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":27},
@@ -130,7 +194,7 @@
 },
 "in game_soul bar bg.png":
 {
-	"frame": {"x":250,"y":139,"w":273,"h":55},
+	"frame": {"x":2880,"y":5,"w":273,"h":55},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":273,"h":55},
@@ -138,7 +202,7 @@
 },
 "in game_soul bar blue.png":
 {
-	"frame": {"x":1225,"y":5,"w":238,"h":13},
+	"frame": {"x":5,"y":5,"w":238,"h":13},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":13},
@@ -146,7 +210,7 @@
 },
 "in game_soul bar border.png":
 {
-	"frame": {"x":5,"y":139,"w":240,"h":20},
+	"frame": {"x":491,"y":5,"w":240,"h":20},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":20},
@@ -154,7 +218,7 @@
 },
 "in game_soul bar red.png":
 {
-	"frame": {"x":1468,"y":5,"w":238,"h":13},
+	"frame": {"x":248,"y":5,"w":238,"h":13},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":13},
@@ -162,19 +226,147 @@
 },
 "in game_soul change.png":
 {
-	"frame": {"x":654,"y":5,"w":119,"h":121},
+	"frame": {"x":2099,"y":73,"w":119,"h":121},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":121},
 	"sourceSize": {"w":119,"h":121}
+},
+"minus.png":
+{
+	"frame": {"x":3221,"y":5,"w":59,"h":62},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":59,"h":62},
+	"sourceSize": {"w":59,"h":62}
+},
+"music.png":
+{
+	"frame": {"x":2824,"y":5,"w":51,"h":53},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":51,"h":53},
+	"sourceSize": {"w":51,"h":53}
+},
+"music2.png":
+{
+	"frame": {"x":2764,"y":5,"w":55,"h":46},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":55,"h":46},
+	"sourceSize": {"w":55,"h":46}
+},
+"nail.png":
+{
+	"frame": {"x":736,"y":5,"w":26,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":24},
+	"sourceSize": {"w":26,"h":24}
+},
+"overlay bg.png":
+{
+	"frame": {"x":5,"y":2212,"w":1920,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
+	"sourceSize": {"w":1920,"h":1080}
+},
+"overlay2.png":
+{
+	"frame": {"x":1930,"y":2212,"w":1920,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
+	"sourceSize": {"w":1920,"h":1080}
+},
+"pause.png":
+{
+	"frame": {"x":2849,"y":73,"w":511,"h":131},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":511,"h":131},
+	"sourceSize": {"w":511,"h":131}
+},
+"plus.png":
+{
+	"frame": {"x":3384,"y":5,"w":58,"h":63},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":63},
+	"sourceSize": {"w":58,"h":63}
+},
+"restart.png":
+{
+	"frame": {"x":307,"y":247,"w":147,"h":177},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":177},
+	"sourceSize": {"w":147,"h":177}
+},
+"return.png":
+{
+	"frame": {"x":5,"y":247,"w":147,"h":172},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":172},
+	"sourceSize": {"w":147,"h":172}
+},
+"Rounded Rectangle 8 2.png":
+{
+	"frame": {"x":827,"y":5,"w":429,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":429,"h":27},
+	"sourceSize": {"w":429,"h":27}
+},
+"Rounded Rectangle 8 3.png":
+{
+	"frame": {"x":1261,"y":5,"w":429,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":429,"h":27},
+	"sourceSize": {"w":429,"h":27}
+},
+"Rounded Rectangle 8.png":
+{
+	"frame": {"x":1695,"y":5,"w":429,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":429,"h":27},
+	"sourceSize": {"w":429,"h":27}
+},
+"start button.png":
+{
+	"frame": {"x":459,"y":247,"w":422,"h":343},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":343},
+	"sourceSize": {"w":422,"h":343}
+},
+"stat.png":
+{
+	"frame": {"x":1888,"y":247,"w":1419,"h":875},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1419,"h":875},
+	"sourceSize": {"w":1419,"h":875}
+},
+"x.png":
+{
+	"frame": {"x":3365,"y":73,"w":136,"h":131},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":136,"h":131},
+	"sourceSize": {"w":136,"h":131}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
-	"image": "in game spritesheet.png",
+	"image": "ui compiled all.png",
 	"format": "RGBA8888",
-	"size": {"w":1930,"h":1366},
+	"size": {"w":3855,"h":3297},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b4b31bd6e8ff4b765de098ce2199d912:7809f6d4cf02197d1b4a59dfef7e443d:2e49993461a20d9c010ef92aee1f7b97$"
+	"smartupdate": "$TexturePacker:SmartUpdate:7a715876d5b3789f78f8f2362c1e8e1b:139acb35e24ad178671aca42cc92424b:2d7c1516394d823a467f1bbb5f7e7811$"
 }
 }
