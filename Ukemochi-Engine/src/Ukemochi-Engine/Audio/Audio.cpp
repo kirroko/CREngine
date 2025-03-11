@@ -727,6 +727,14 @@ namespace Ukemochi
         IncreaseVolume(soundIndex, -step, type); // Reuse IncreaseVolume with negative step
     }
 
+    bool Audio::CheckSFX()
+    {
+        if(pSFXChannels.size() == 0)
+            return false;
+        
+        return true;
+    }
+
     /*!***********************************************************************
     \brief
     Regular update function for the FMOD system.

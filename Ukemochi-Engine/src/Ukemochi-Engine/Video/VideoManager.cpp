@@ -17,7 +17,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/Graphics/Renderer.h"
 
-
 namespace Ukemochi {
 
     void CheckGLError(const char* file, int line)
@@ -217,16 +216,16 @@ namespace Ukemochi {
 
         glBindVertexArray(0);
 
-        std::string filename = filepath;
-        size_t lastDot = filename.find_last_of(".");
-        if (lastDot != std::string::npos) {
-            filename = filename.substr(0, lastDot);  // Remove extension
-        }
+        //std::string filename = filepath;
+        //size_t lastDot = filename.find_last_of(".");
+        //if (lastDot != std::string::npos) {
+        //    filename = filename.substr(0, lastDot);  // Remove extension
+        //}
 
-        // Add your own file extension (.wav)
-        std::string newFilename = filename + ".wav";
+        //// Add your own file extension (.wav)
+        //std::string newFilename = filename + ".wav";
 
-        ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, newFilename.c_str(), "SFX");
+        ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
 
         videos[name] = video;  // Store the video in the map
 
@@ -288,27 +287,36 @@ namespace Ukemochi {
 
         // Get the elapsed time since the last frame
         video.elapsedTime += deltaTime;
-        static double audioDuration = (double)(1.0 / video.totalFrames) * 14;
+        //static double audioDuration = (double)(1.0 / video.totalFrames) * 14;
 
-        if (video.currentFrame >= 400)
+        //if (video.currentFrame >= 400)
+        //{
+        //    if (ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
+        //    {
+        //        ECS::GetInstance().GetSystem<Audio>()->StopSFX(0);
+        //    }
+        //}
+
+        if (ECS::GetInstance().GetSystem<Audio>()->CheckSFX())
         {
-            if (ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
+            if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
             {
-                ECS::GetInstance().GetSystem<Audio>()->StopSFX(0);
+                ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
             }
         }
+
 
         // Only update the video frame if enough time has passed
         if (video.currentFrame < video.totalFrames - 1)
         {
-            if (video.elapsedTime >= audioDuration)
-            {
-                if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
-                {
-                    ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
-                }
+            //if (video.elapsedTime >= audioDuration)
+            //{
+            //    if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
+            //    {
+            //        ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
+            //    }
 
-            }
+            //}
             if (video.elapsedTime >= video.frameDuration)
             {
                 // Reset elapsed time to stay in sync with video playback

@@ -184,6 +184,8 @@ namespace Ukemochi
 
 		void DecreaseVolume(int soundIndex, float step, std::string type);
 
+        bool CheckSFX();
+
 
         /*!***********************************************************************
         \brief
