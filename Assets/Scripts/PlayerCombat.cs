@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 using Ukemochi;
 
-public class PlayerCombat
+public class PlayerCombat : BaseScript
 {
     // Mochi's Combat
     const int MAX_COMBO_HITS = 3;

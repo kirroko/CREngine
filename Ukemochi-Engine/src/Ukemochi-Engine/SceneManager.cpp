@@ -226,7 +226,6 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
-
 #ifndef _DEBUG
                 // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
@@ -264,8 +263,6 @@ namespace Ukemochi
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
-        ECS::GetInstance().GetSystem<AssetManager>()->addShader("default", "../Assets/Shaders/default.vert", "../Assets/Shaders/default.frag");
-
 		UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
@@ -413,8 +410,6 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerRunSystems()
     {
-	    //ECS::GetInstance().GetSystem<VideoManager>()->Update();
-	    
         loop_start = std::chrono::steady_clock::now();
 
 #ifdef _DEBUG
@@ -422,14 +417,6 @@ namespace Ukemochi
         if (Input::IsKeyTriggered(UME_KEY_U))
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
                 GetSystem<Renderer>()->debug_mode_enabled);
-
-        // Select entity
-        if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
-        {
-            ECS::GetInstance().GetSystem<Renderer>()->handleMouseClickOP(
-                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().x + ECS::GetInstance().GetSystem<Camera>()->position.x),
-                static_cast<int>(SceneManager::GetInstance().GetPlayScreen().y + ECS::GetInstance().GetSystem<Camera>()->position.y));
-        }
 #endif // _DEBUG
 
 #ifndef _DEBUG
@@ -489,6 +476,7 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
             UME_ENGINE_TRACE("Initializing soul manager...");
             ECS::GetInstance().GetSystem<SoulManager>()->Init();
+            ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
 			// enemy
 			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
 			//audio
@@ -515,50 +503,33 @@ namespace Ukemochi
 		//	return;
 		//}
 #endif
-        /*
-        // Audio Inputs
-        //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_P))
-        //{
-        //	audioVolume -= 0.02f;
-        //	audioVolume = audioVolume < 0.f ? 0.f : audioVolume;
-        //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
-        //}
-        //if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_O))
-        //{
-        //	audioVolume += 0.02f;
-        //	audioVolume = audioVolume > 1.f ? 1.f : audioVolume;
-        //	Audio::GetInstance().SetAudioVolume(BGM, audioVolume);
-        //}
-        */
         
-		/*if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_1)&&!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(BGM))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::BGM, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(BGM, 0.04f);
-		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_2) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(HIT))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::HIT, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(HIT, 0.04f);
-		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_3) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(READY))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::READY, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(READY, 0.04f);
-		}
-		if (Ukemochi::Input::IsKeyTriggered(GLFW_KEY_4) && !ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsPlaying(CONFIRMCLICK))
-		{
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySoundInGroup(AudioList::CONFIRMCLICK, ChannelGroups::LEVEL1);
-			ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(CONFIRMCLICK, 0.04f);
-		}*/
-
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
         if (!Application::Get().Paused())
         {
+            if (GameObjectManager::GetInstance().GetGOByTag("Player"))
+            {
+                auto& player_ref_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
+                if (player_ref_data.isHitStopActive)
+                {
+                    player_ref_data.hitStopTimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                    if (player_ref_data.hitStopTimer <= 0.0f)
+                    {
+                        player_ref_data.isHitStopActive = false;
+                        player_ref_data.hitStopTimer = 0.0f;
+                    }
+                    else
+                    {
+                        // Let the draw run
+                        SceneManagerDraw();
+                        return; // Skip the rest of the update loop to freeze game temporarily
+                    }
+                }
+            }
             // --- GAME LOGIC UPDATE ---
             sys_start = std::chrono::steady_clock::now();
-            ECS::GetInstance().GetSystem<LogicSystem>()->Update();
+            // ECS::GetInstance().GetSystem<LogicSystem>()->Update();
             ECS::GetInstance().GetSystem<PlayerManager>()->Update();
             ECS::GetInstance().GetSystem<SoulManager>()->Update();
             ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
@@ -701,14 +672,25 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneManagerFree()
     {
-		UME_ENGINE_TRACE("Destroying all game objects...");
+        UME_ENGINE_TRACE("Destroying all game objects...");
         std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
         for (auto& gameobject : list)
         {
             GameObjectManager::GetInstance().DestroyObject(gameobject->GetInstanceID());
         }
 
-		UME_ENGINE_TRACE("Resetting entity manager...");
+        // Reset stored entity IDs
+        ECS::GetInstance().GetSystem<Renderer>()->playerID = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<Collision>()->player = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<Transformation>()->soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<Transformation>()->shadow = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<DungeonManager>()->player = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->player = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->fish_ability = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->worm_ability = static_cast<EntityID>(-1);
+
+        UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
     }

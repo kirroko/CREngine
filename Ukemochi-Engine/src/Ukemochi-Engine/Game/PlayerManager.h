@@ -42,7 +42,7 @@ namespace Ukemochi
          * @return true if animation is idle, not otherwise
          */
         bool CheckIfIdle(const Animation& anim) const;
-
+    
     public:
         /**
          * @brief Update the player manager

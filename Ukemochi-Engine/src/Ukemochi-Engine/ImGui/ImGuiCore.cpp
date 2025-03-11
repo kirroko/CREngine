@@ -801,12 +801,16 @@ namespace Ukemochi
         {
             if (ImGui::Button("Play"))
             {
+                UME_ENGINE_TRACE("Initializing Transformation...");
+                ECS::GetInstance().GetSystem<Transformation>()->Init();
                 UME_ENGINE_TRACE("Initializing Collision...");
                 ECS::GetInstance().GetSystem<Collision>()->Init();
                 UME_ENGINE_TRACE("Initializing dungeon manager...");
                 ECS::GetInstance().GetSystem<DungeonManager>()->Init();
                 UME_ENGINE_TRACE("Initializing soul manager...");
                 ECS::GetInstance().GetSystem<SoulManager>()->Init();
+
+                ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
                 // enemy
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 //audio
@@ -2193,6 +2197,7 @@ namespace Ukemochi
                     animation.clips.clear();
                     animation.currentClip = "";
                 }
+                ImGui::Checkbox("Is_Playing", &animation.is_playing);
                 ImGui::Checkbox("Looping", &animation.clips[animation.currentClip].looping);
             }
         }

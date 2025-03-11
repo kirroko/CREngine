@@ -338,10 +338,10 @@ namespace Ukemochi
 	enum RenderLayer // The type of render layers
 	{
 		BACKGROUND,    // to render background objects
-		SKILL_BACK,    // to render soul skills behind dynamic and static objects
+		SUB_DYNAMIC_BACK,    // to render soul skills behind dynamic and static objects
 		DYNAMIC_BACK,  // to render player and enemy objects behind static objects
 		STATIC,		   // to render static objects
-		SKILL_FRONT,   // to render soul skills behind dynamic objects and infront of static objects
+		SUB_DYNAMIC_FRONT,   // to render soul skills behind dynamic objects and infront of static objects
 		DYNAMIC_FRONT, // to render player and enemy objects infront of static objects
 		FOREGROUND	   // to render foreground objects
 	};
@@ -378,14 +378,27 @@ namespace Ukemochi
 	{
 		int maxHealth = 100;
 		int currentHealth = 100;
+		int postInjuriesMaxHealth = 100;
 		int comboState = 0;			// Tracks current combat state 
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
-		float maxComboTimer = 5.0f; // Max time to continue combo 
+		float maxComboTimer = 5.0f; // Max time to continue combo
+		float hitStopDuration = 0.2f; // Duration of hit stop in seconds
+		float hitStopTimer = 0.0f; // Timer for hit stop
 		float playerForce = 4500.0f;
+		bool isHitStopActive = false; // Flag to check if hit stop is active
 		bool isDead = false;
 		bool canAttack = true;
 		bool comboIsAttacking = false;
+
+		/**
+		 * @brief Handle player's attack animation to stop for a certain while
+		 */
+		void HitStopAnimation()
+		{
+			hitStopTimer = hitStopDuration;
+			isHitStopActive = true;
+		}
 	};
 
 	/*!***********************************************************************

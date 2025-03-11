@@ -15,7 +15,7 @@ using Ukemochi;
 
 public enum SoulType { Empty, Fish, Worm };
 
-public class SoulManager
+public class SoulManager : BaseScript
 {
     const float MAX_SOUL_BAR = 100;
     const int MAX_SOUL_CHARGES = 3;
@@ -75,21 +75,4 @@ public class SoulManager
     {
         // Trigger worm web effect
     }
-
-    void HandleSoulDecay()
-    {
-        //soul_decay_rate += dt;
-        if (soul_decay_timer >= soul_decay_rate)
-        {
-            soul_decay_timer = 0;
-
-            if (fish_souls_charges > 0)
-                --fish_souls_charges;
-
-            if (worm_souls_charges > 0)
-                --worm_souls_charges;
-        }
-    }
-
-    void Update() => HandleSoulDecay();
 }

@@ -157,9 +157,17 @@ namespace Ukemochi
 		{
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y};  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y };  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.5f};  // Max Y stops at the object's center
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.5f };  // Max Y stops at the object's center
+		}
+		else if (tag == "Dummy")
+		{
+			// Lower half of the object (legs or bottom part)
+			box.min = { -BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y };
+			box.max = { BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.5f };
 		}
 		else if (tag == "Knife")
 		{
@@ -170,9 +178,9 @@ namespace Ukemochi
 
 			// Lower half of the object (legs or bottom part)
 			box.min = { -BOUNDING_BOX_SIZE * (1.5f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*1.25f};  // Min Y is halfway down the object 1.5f
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 1.25f };  // Min Y is halfway down the object 1.5f
 			box.max = { BOUNDING_BOX_SIZE * (1.8f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y*0.8f };  // Max Y stops at the object's center
+						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.8f };  // Max Y stops at the object's center
 		}
 		else
 		{
@@ -528,11 +536,14 @@ namespace Ukemochi
 
 		if (tag1 == "Player" && tag2 == "LeftDoor" || tag1 == "Player" && tag2 == "RightDoor") // Mochi and Doors
 		{
-			auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (audioM.GetSFXindex("LevelChange") != -1)
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
-				if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
-					audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("LevelChange") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				}
 			}
 			if (tag2 == "LeftDoor")
 				ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1); // Move to the left room
@@ -591,6 +602,8 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
+
+						player_data.HitStopAnimation();
 					}
 				}
 				else
@@ -617,7 +630,7 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
-						
+
 						if (player_sr.flipX)
 						{
 							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
@@ -628,6 +641,8 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
+
+						player_data.HitStopAnimation();
 					}
 				}
 				else
@@ -641,14 +656,16 @@ namespace Ukemochi
 				if (player_anim.current_frame == 31)
 				{
 					// Apply knockback and play sound effects
-					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<
-						AudioManager>();
 					ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 150000, trans2, rb2);
-
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(
-						audioM.GetSFXindex("Pattack3")))
+					
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
-						audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+						if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+						{
+							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						}
 					}
 					enemy_data.isKick = true;
 
@@ -679,6 +696,8 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
+
+						player_data.HitStopAnimation();
 					}
 				}
 				else
@@ -692,6 +711,233 @@ namespace Ukemochi
 				break;
 			}
 		}
+		else if (tag1 == "Knife" && tag2 == "Environment")
+		{
+			// Mochi interacting with the environment
+			// Make space and get healing items?
+
+			// Get references of the player and box
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& box_anim = ECS::GetInstance().GetComponent<Animation>(entity2);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+
+			// Skip if Mochi is not attacking
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+							}
+						}
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+
+						player_data.HitStopAnimation();
+
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+							}
+						}
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+
+						player_data.HitStopAnimation();
+
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					if (!check_collision_once)
+					{
+						if (box_anim.currentClip == "Box")
+						{
+							box_anim.SetAnimation("Box_Break");
+							box_anim.is_playing = false;
+							box_anim.current_frame = 0;
+						}
+						else if (box_anim.currentClip == "Box_Break")
+						{
+							int prev_frame = box_anim.current_frame;
+							box_anim.current_frame++;
+							if (box_anim.current_frame > 3)
+							{
+								box_anim.current_frame = 3;
+							}
+							if (prev_frame == 2 && box_anim.current_frame == 3)
+							{
+								player_data.currentHealth += 10;
+								player_data.postInjuriesMaxHealth += 10;
+								if (player_data.currentHealth > player_data.maxHealth)
+								{
+									player_data.currentHealth = player_data.maxHealth;
+								}
+								if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+								{
+									player_data.postInjuriesMaxHealth = player_data.maxHealth;
+								}
+								std::cout << "hit" << std::endl;
+							}
+						}
+
+						if (player_sr.flipX)
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+						else
+						{
+							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+							vfxhit_anim.RestartAnimation();
+						}
+
+						player_data.HitStopAnimation();
+
+						check_collision_once = true;
+					}
+					else
+						check_collision_once = false;
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			//if (player_anim.current_frame == 10 || player_anim.current_frame == 15 || player_anim.current_frame == 31)
+			//{
+			//	
+			//	if (box_anim.is_playing)
+			//	{
+			//		box_anim.SetAnimation("Box_Break");
+			//		box_anim.is_playing = false;
+			//		box_anim.current_frame = 0;
+			//		std::cout << "switch clip" << std::endl;
+			//	}
+			//	else 
+			//	{
+			//		int prev_frame = box_anim.current_frame;
+			//		box_anim.current_frame++;
+			//		std::cout << "hit" << std::endl;
+			//		if (box_anim.current_frame > 3)
+			//		{
+			//			box_anim.current_frame = 3;
+			//		}
+			//		if (prev_frame == 2 && box_anim.current_frame == 3)
+			//		{
+			//			player_data.currentHealth += 10;
+			//			player_data.postInjuriesMaxHealth += 10;
+			//			if (player_data.currentHealth > player_data.maxHealth)
+			//			{
+			//				player_data.currentHealth = player_data.maxHealth;
+
+			//			}
+			//			if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
+			//			{
+			//				player_data.postInjuriesMaxHealth = player_data.maxHealth;
+			//			}
+			//		}
+			//	}
+			//}
+			//return;
+			// Placeholder, wait for when animations is complete so that we can break the box
+			// Play Animation
+		}
 		else if (tag1 == "FishAbility" && tag2 == "Enemy") // Mochi's Fish Ability and Enemy (Enemy takes huge damage)
 		{
 			// Get references of the player and enemy
@@ -703,15 +949,10 @@ namespace Ukemochi
 
 			// Deal damage to the enemy
 			enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
-
-			// Harvest some soul whenever mochi hits an enemy
-			//ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 		}
 		else if (tag1 == "WormAbility" && tag2 == "Enemy") // Mochi's Worm Ability and Enemy (Enemy gets trap in the web)
 		{
-			// Get references of the player and enemy
-			//auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			// Get reference of the enemy
 			auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
 
 			// Trigger enemy hurt animation
@@ -720,17 +961,208 @@ namespace Ukemochi
 			// Stop the enemy's movement
 			enemy_rb.force = Vec2{ 0,0 };
 			enemy_rb.velocity = Vec2{ 0,0 };
-
-			// Deal damage to the enemy
-			//enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
-
-			// Harvest some soul whenever mochi hits an enemy
-			//ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 		}
 		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "FishAbility" && tag2 == "EnemyProjectile"
 			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile") // Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
 		{
 			// Destroy enemy's projectile
+		}
+		else if (tag1 == "Knife" && tag2 == "Dummy") // Mochi's Knife and Dummy
+		{
+			// Get references of the player and enemy
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+
+			// Skip if Mochi is not attacking
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						std::vector<int> DummyHitSounds = {
+							audioM.GetSFXindex("DuHurt1"),
+							audioM.GetSFXindex("DuHurt2"),
+							audioM.GetSFXindex("DuHurt3")
+						};
+
+						// Remove invalid (-1) sounds
+						DummyHitSounds.erase(
+							std::remove(DummyHitSounds.begin(), DummyHitSounds.end(), -1),
+							DummyHitSounds.end()
+						);
+
+						// Keep track of which sounds have been played (static at class level)
+						static std::vector<bool> dummyHitSoundsPlayed;
+
+						// Initialize if first time or size changed
+						if (dummyHitSoundsPlayed.size() != DummyHitSounds.size()) {
+							dummyHitSoundsPlayed.resize(DummyHitSounds.size(), false);
+						}
+
+						// Check if all sounds have been played
+						bool allPlayed = true;
+						for (bool played : dummyHitSoundsPlayed) {
+							if (!played) {
+								allPlayed = false;
+								break;
+							}
+						}
+
+						// If all sounds have been played, reset all to unplayed
+						if (allPlayed) {
+							std::fill(dummyHitSoundsPlayed.begin(), dummyHitSoundsPlayed.end(), false);
+						}
+
+						// Get sounds that haven't been played yet
+						std::vector<int> availableSoundIndices;
+						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+							if (!dummyHitSoundsPlayed[i]) {
+								availableSoundIndices.push_back(i);
+							}
+						}
+
+						if (!availableSoundIndices.empty()) {
+							// Random selection from available sounds
+							int randomIndex = rand() % availableSoundIndices.size();
+							int selectedSoundIndex = availableSoundIndices[randomIndex];
+							int selectedSound = DummyHitSounds[selectedSoundIndex];
+
+							// Mark this sound as played
+							dummyHitSoundsPlayed[selectedSoundIndex] = true;
+
+							// Play the selected sound
+							audioM.PlaySFX(selectedSound);
+						}
+					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						std::vector<int> DummyHitSounds = {
+							audioM.GetSFXindex("DuHurt1"),
+							audioM.GetSFXindex("DuHurt2"),
+							audioM.GetSFXindex("DuHurt3")
+						};
+
+						// Remove invalid (-1) sounds
+						DummyHitSounds.erase(
+							std::remove(DummyHitSounds.begin(), DummyHitSounds.end(), -1),
+							DummyHitSounds.end()
+						);
+
+						// Keep track of which sounds have been played (static at class level)
+						static std::vector<bool> dummyHitSoundsPlayed;
+
+						// Initialize if first time or size changed
+						if (dummyHitSoundsPlayed.size() != DummyHitSounds.size()) {
+							dummyHitSoundsPlayed.resize(DummyHitSounds.size(), false);
+						}
+
+						// Check if all sounds have been played
+						bool allPlayed = true;
+						for (bool played : dummyHitSoundsPlayed) {
+							if (!played) {
+								allPlayed = false;
+								break;
+							}
+						}
+
+						// If all sounds have been played, reset all to unplayed
+						if (allPlayed) {
+							std::fill(dummyHitSoundsPlayed.begin(), dummyHitSoundsPlayed.end(), false);
+						}
+
+						// Get sounds that haven't been played yet
+						std::vector<int> availableSoundIndices;
+						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+							if (!dummyHitSoundsPlayed[i]) {
+								availableSoundIndices.push_back(i);
+							}
+						}
+
+						if (!availableSoundIndices.empty()) {
+							// Random selection from available sounds
+							int randomIndex = rand() % availableSoundIndices.size();
+							int selectedSoundIndex = availableSoundIndices[randomIndex];
+							int selectedSound = DummyHitSounds[selectedSoundIndex];
+
+							// Mark this sound as played
+							dummyHitSoundsPlayed[selectedSoundIndex] = true;
+
+							// Play the selected sound
+							audioM.PlaySFX(selectedSound);
+						}
+					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+
+					// Play sound effects
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+						{
+							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						}
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		// Skip trigger objects
@@ -745,7 +1177,7 @@ namespace Ukemochi
 			auto& vfx_trans = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<Transform>();
 			auto& vfx_sr = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<SpriteRender>();
 			auto& vfx_anim = GameObjectManager::GetInstance().GetGOByName("Projectile_Hit_Effect")->GetComponent<Animation>();
-			
+
 			if (tag2 == "Enemy")
 			{
 				//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
@@ -756,7 +1188,7 @@ namespace Ukemochi
 			{
 				auto& bullet_data = ECS::GetInstance().GetComponent<EnemyBullet>(entity2);
 				auto& bullet_trans = ECS::GetInstance().GetComponent<Transform>(entity2);
-				
+
 				if (!bullet_data.hit)
 				{
 					if (!player_data.isDead)
@@ -772,31 +1204,15 @@ namespace Ukemochi
 							vfx_trans.position = Vector3D(player_trans.position.x + 80.0f, player_trans.position.y, 0);
 							vfx_sr.flipX = false;
 						}
-					
+
 						vfx_anim.RestartAnimation();
 						player_data.currentHealth -= 10;
 					}
 					bullet_data.hit = true;
 				}
 			}
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			// Play a sound effect on collision
-			//if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			//{
-			//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			//	
-			//	if (audioM.GetSFXindex("PlayerHurt") != -1)
-			//	{
-			//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("PlayerHurt")))
-			//			audioM.PlaySFX(audioM.GetSFXindex("PlayerHurt"));
-			//	}
-			//}
 		}
-		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Boundaries (Acts as a wall)
+		else if (tag1 == "Player" && tag2 == "Environment" || tag1 == "Player" && tag2 == "Dummy" || tag1 == "Player" && tag2 == "Boundary") // Mochi and Environment Objects / Dummy / Boundaries (Acts as a wall)
 		{
 			// STATIC AND DYNAMIC
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
@@ -821,23 +1237,9 @@ namespace Ukemochi
 			Static_Response(trans1, box1, rb1, trans2, box2, rb2);
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 		}
-		else if (tag1 == "Enemy" && tag2 == "Enemy") // Enemy and Enemy (Block each other)
-		{
-			//ECS::GetInstance().GetSystem<EnemyManager>()->EnemyCollisionResponse(entity1, entity2);
-			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans1, 15000, trans2, rb2);
-			//ECS::GetInstance().GetSystem<Physics>()->ApplyKnockback(trans2, 15000, trans1, rb1);
-
-			// STATIC AND DYNAMIC / DYNAMIC AND DYNAMIC
-			//Static_Response(trans1, box1, rb1, trans2, box2, rb2);
-			//StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
-
-			//auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			//if (audioM.GetSFXindex("HIT") != -1)
-			//{
-			//	if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("HIT")))
-			//		audioM.PlaySFX(audioM.GetSFXindex("HIT"));
-			//}
-		}
+		//else if (tag1 == "Enemy" && tag2 == "Enemy") // Enemy and Enemy (Block each other)
+		//{
+		//}
 	}
 
 	/*!***********************************************************************

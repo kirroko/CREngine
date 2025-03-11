@@ -1,18 +1,18 @@
 Base env moving_1 sprite sheet:
 
-branch 5:580 x245
+branch 5:580 x240
 
-bush 1:240 x 240
+bush 1:240 x 203
 
-bush 2:400 x 400
+bush 2:400 x 260
 
-env_base_vine_4:620 x 390
+env_base_vine_4:620 x 438
 
 env_base_vine_7:420 x 420
 
-grass 1:100 x 100
+grass 1:100 x 75
 
-grass 2:90 x 90
+grass 2:86 x 67
 
 grass 3:70 x 70
 
@@ -20,7 +20,7 @@ grass 4:100 x 100
 
 grass 5:70 x 70
 
-grass 6:240 x 89
+grass 6:240 x 69
 
 all box break animations have 5 frames the last frame is empty
 
@@ -35,7 +35,7 @@ env_base_box_3_break:131 x 200
 
 Base env moving_2 sprite sheet:
 
-bush 3:540 x 540
+bush 3:540 x 352
 
 env_base_vine_1:550 x 550
 

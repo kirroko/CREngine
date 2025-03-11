@@ -210,29 +210,33 @@ namespace Ukemochi
     void Application::StartGame()
     {
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSound();
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-        // Play BGM at 0.2 volume
-        if (audioM.GetMusicIndex("BGM") != -1)
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
         {
-            int bgmIndex = audioM.GetMusicIndex("BGM");
-            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(bgmIndex))
+            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+            // Play BGM at 0.2 volume
+            if (audioM.GetMusicIndex("BGM") != -1)
             {
-                audioM.PlayMusic(bgmIndex);
-                // Set volume for BGM
-                ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(bgmIndex, 0.2f, "Music");
+                int bgmIndex = audioM.GetMusicIndex("BGM");
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(bgmIndex))
+                {
+                    audioM.PlayMusic(bgmIndex);
+                    // Set volume for BGM
+                    ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(bgmIndex, 0.2f, "Music");
+                }
             }
-        }
 
-        // Play Wind_BGM at 0.3 volume
-        if (audioM.GetMusicIndex("Wind_BGM") != -1)
-        {
-            int windBgmIndex = audioM.GetMusicIndex("Wind_BGM");
-            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(windBgmIndex))
+            // Play Wind_BGM at 0.3 volume
+            if (audioM.GetMusicIndex("Wind_BGM") != -1)
             {
-                audioM.PlayMusic(windBgmIndex);
-                // Set volume for Wind_BGM
-                ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.3f, "Music");
+                int windBgmIndex = audioM.GetMusicIndex("Wind_BGM");
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(windBgmIndex))
+                {
+                    audioM.PlayMusic(windBgmIndex);
+                    // Set volume for Wind_BGM
+                    ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.3f, "Music");
+                }
             }
         }
 
@@ -300,12 +304,15 @@ namespace Ukemochi
         sceneManager.SceneMangerLoad();
 
         // Initialize main menu music
-        auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-        if (audioM.GetMusicIndex("BGMOG") != -1)
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
         {
-            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+            if (audioM.GetMusicIndex("BGMOG") != -1)
             {
-                audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+                {
+                    audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+                }
             }
         }
 

@@ -655,6 +655,7 @@ namespace Ukemochi
                 float currentVolume = 0.0f;
                 pMusicChannels[i]->getVolume(&currentVolume);
                 SetAudioVolume(i, currentVolume - step, "Music");
+                std::cout << "Music Master Volume set to: " << currentVolume << std::endl;
             }
         }
     }
@@ -668,6 +669,7 @@ namespace Ukemochi
                 float currentVolume = 0.0f;
                 pMusicChannels[i]->getVolume(&currentVolume);
                 SetAudioVolume(i, currentVolume + step, "Music");
+				std::cout << "Music Master Volume set to: " << currentVolume << std::endl;
             }
         }
     }

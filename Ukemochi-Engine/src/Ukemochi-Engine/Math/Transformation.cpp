@@ -2,10 +2,10 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Feb 25, 2025
+\date       Mar 09, 2025
 \brief      This file contains the definition of the Transformation system.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -63,11 +63,11 @@ namespace Ukemochi
 
 			// Compute the depth scale of the dynamic entities
 			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "Player_Shadow"
-				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile" || tag == "EnemyShadow")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 
 			// Compute the layer of the dynamic entities
-			if (tag == "Player" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy")
+			if (tag == "Player" || tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile")
 				ComputeObjectLayer(entity);
 		}
 	}
@@ -102,11 +102,13 @@ namespace Ukemochi
 
 		// Set the new scale
 		if (tag == "Knife")
-			transform.scale = { new_scale * 0.5f, new_scale * 0.75f };
+			transform.scale = { new_scale * KNIFE_SCALE_FACTOR.x, new_scale * KNIFE_SCALE_FACTOR.y };
 		else if (tag == "Soul")
-			transform.scale = { new_scale * 0.1f, new_scale * 0.1f };
+			transform.scale = { new_scale * SOUL_SCALE_FACTOR.x, new_scale * SOUL_SCALE_FACTOR.y };
+		else if (tag == "EnemyProjectile")
+			transform.scale = { new_scale * PROJECTILE_SCALE_FACTOR.x, new_scale * PROJECTILE_SCALE_FACTOR.y };
 		else if (tag == "FishAbility" || tag == "WormAbility")
-			transform.scale = { new_scale * 2.f, new_scale * 2.f };
+			transform.scale = { new_scale * SKILL_SCALE_FACTOR.x, new_scale * SKILL_SCALE_FACTOR.y };
 		else
 			transform.scale = { new_scale, new_scale };
 	}
@@ -131,7 +133,8 @@ namespace Ukemochi
 		// Search through the entity list for the nearest static object
 		for (auto const& static_entity : m_Entities)
 		{
-			if (GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Environment"
+			if ((GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Environment"
+				|| GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Dummy")
 				&& GameObjectManager::GetInstance().GetGO(static_entity)->GetActive())
 			{
 				Vec3 static_position = ECS::GetInstance().GetComponent<Transform>(static_entity).position;
@@ -155,42 +158,30 @@ namespace Ukemochi
 		// Set the layer based on whether the object is behind or infront the static objects
 		if (tag == "Player")
 		{
-			auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
-			auto& shadow_sr = ECS::GetInstance().GetComponent<SpriteRender>(shadow);
-
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
-			soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
-			shadow_sr.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
+
+			if (soul != -1)
+			{
+				auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
+				soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			}
+			if (shadow != -1)
+			{
+				auto& shadow_sr = ECS::GetInstance().GetComponent<SpriteRender>(shadow);
+				shadow_sr.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
+			}
 		}
 		else if (tag == "Enemy")
+		{
+			std::string enemy_shadow_name = GameObjectManager::GetInstance().GetGO(object)->GetName() + "_Shadow";
+			auto& shadow_sr = GameObjectManager::GetInstance().GetGOByName(enemy_shadow_name)->GetComponent<SpriteRender>();
+
+			shadow_sr.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
 			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+		}
+		else if (tag == "EnemyProjectile")
+			sprite_renderer.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
 		else if (tag == "FishAbility" || tag == "WormAbility")
-			sprite_renderer.layer = is_behind ? SKILL_BACK : SKILL_FRONT;
-	}
-
-	/*!***********************************************************************
-	\brief
-	 Increase the scale of the object.
-	\param[out] trans
-	 The transform component to scale.
-	*************************************************************************/
-	void Transformation::IncreaseScale(Transform& trans)
-	{
-		trans.scale += Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
-		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
-	}
-
-	/*!***********************************************************************
-	\brief
-	 Decrease the scale of the object.
-	\param[out] trans
-	 The transform component to scale.
-	*************************************************************************/
-	void Transformation::DecreaseScale(Transform& trans)
-	{
-		trans.scale -= Vec2{ SCALE_FACTOR, SCALE_FACTOR } * static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
-		trans.scale.x = clamp(trans.scale.x, MIN_SCALE, MAX_SCALE);
-		trans.scale.y = clamp(trans.scale.y, MIN_SCALE, MAX_SCALE);
+			sprite_renderer.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
 	}
 }

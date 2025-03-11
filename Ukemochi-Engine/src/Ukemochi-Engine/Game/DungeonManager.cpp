@@ -1,12 +1,12 @@
 /* Start Header ************************************************************************/
 /*!
 \file       DungeonManager.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu
-\date       Nov 24, 2024
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (75%)
+\co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (25%)
+\date       Mar 08, 2025
 \brief      This file contains the definition of the DungeonManager which handles the game dungeon.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -55,7 +55,7 @@ namespace Ukemochi
 			transform.position.x += offset;
 
 			if (name == str_id + "_Background")
-				rooms[room_id].position = Vec2(transform.position.x,transform.position.y);
+				rooms[room_id].position = Vec2(transform.position.x, transform.position.y);
 		}
 	}
 
@@ -70,24 +70,54 @@ namespace Ukemochi
 		// Deactivate current room
 		ActivateRoom(current_room_id, false);
 
+		// Reset the soul bars and charges when exiting the tutorial room (room 1)
+		if (current_room_id == 1)
+		{
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+			auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+
+			for (int i = 0; i < NUM_OF_SOULS; i++)
+			{
+				player_soul.soul_bars[i] = 0.f;
+				player_soul.soul_charges[i] = 0;
+
+
+				// Currently in FISH soul, switch to EMPTY soul
+				if (player_soul.current_soul == FISH && player_soul.current_soul == i)
+				{
+					player_soul.current_soul = EMPTY;
+					player_animator.SetAnimationUninterrupted("SwitchBN");
+					GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(false);
+				}
+				// Currently in WORM soul, switch to EMPTY soul
+				else if (player_soul.current_soul == WORM && player_soul.current_soul == i)
+				{
+					player_soul.current_soul = EMPTY;
+					player_animator.SetAnimationUninterrupted("SwitchRN");
+					GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(false);
+				}
+			}
+		}
+
 		// Update current room ID
 		current_room_id += next_room_id;
 
 		// Perform camera and player transition
 		if (next_room_id == -1)
 		{
-			//ECS::GetInstance().GetSystem<Camera>()->position.x -= ROOM_WIDTH;
-			//
+			// Set camera position to new room position
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
 
+			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
 			transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
 		}
 		else
 		{
-			//ECS::GetInstance().GetSystem<Camera>()->position.x += ROOM_WIDTH;
+			// Set camera position to new room position
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
 
+			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
 			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
 		}
@@ -102,27 +132,34 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::UpdateRoomProgress()
 	{
-		// Check if all enemies in the room is gone
-		//if (rooms[current_room_id].enemies.size() <= 0)
-		//	UnlockRoom();
-
+		// Check if all enemies in the room is active
 		bool enemy_alive = false;
-
 		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
 		{
 			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);
+
 			if (enemyObj->GetActive())
-			{
 				enemy_alive = true;
-			}
 		}
 
-		//hopefully unlock room will just trigger once
+		// Unlock the room if all enemies are not active
 		if (!enemy_alive)
 		{
 			UnlockRoom();
-		}
 
+			//healing to post injuries max health here
+			if (player != -1)
+			{
+				while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
+				{
+					GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
+					if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+					{
+						GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
+					}
+				}
+			}
+		}
 	}
 
 	/*!***********************************************************************
@@ -162,28 +199,23 @@ namespace Ukemochi
 					{
 						// Store the position of the room	
 						auto& transform = ECS::GetInstance().GetComponent<Transform>(entity);
-						rooms[room_id].position = Vec2(transform.position.x,transform.position.y);
+						rooms[room_id].position = Vec2(transform.position.x, transform.position.y);
 					}
 				}
-				
 			}
+
 			// Storing enemy count to check whether room is cleared (So that door remains open as to allow backtracking)
 			rooms[room_id].enemy_count = rooms[room_id].enemies.size();
 
 			// Deactivate all rooms except the current room
 			if (room_id != current_room_id)
-			{
 				ActivateRoom(room_id, false);
-			}
 			else
-			{
 				ActivateRoom(room_id, true);
-			}
-				
 		}
 
 		// Set the camera initial position
-		ECS::GetInstance().GetSystem<Camera>()->position = {-ROOM_WIDTH, 0};
+		ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
 	}
 
 	/*!***********************************************************************
@@ -201,6 +233,7 @@ namespace Ukemochi
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 			std::string room = std::to_string(room_id);
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
+
 			// Checking current enemy count in the room
 			if (rooms[room_id].enemy_count > 0)
 			{
@@ -217,7 +250,6 @@ namespace Ukemochi
 		}
 
 		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
-		
 	}
 
 	/*!***********************************************************************
@@ -226,7 +258,6 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::UnlockRoom()
 	{
-		//check for enemies
 		std::string str_id = std::to_string(current_room_id);
 
 		// Enable doors and disable blocks in the room
@@ -234,13 +265,11 @@ namespace Ukemochi
 		{
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
+
 			// Enable doors
 			if (tag == "LeftDoor" || tag == "RightDoor")
-			{
 				GameObjectManager::GetInstance().GetGO(entity)->SetActive(true);
-					
-			}
-					
+
 			// Disable blocks
 			if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
 				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
