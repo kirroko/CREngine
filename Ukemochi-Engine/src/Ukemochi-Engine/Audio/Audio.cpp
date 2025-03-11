@@ -393,10 +393,10 @@ namespace Ukemochi
     void Audio::PlaySound(int soundIndex, std::string type, float volume)
     {
         if (soundIndex < pSFX.size() || soundIndex < pMusic.size())
-
         {
             FMOD_RESULT result;
             FMOD::Channel *channel = nullptr;
+            volume = std::clamp(volume, 0.0f, 1.0f);
 
             if (type == "SFX")
             {
@@ -410,7 +410,15 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pSFXChannels[soundIndex] = channel;
-                pSFXChannels[soundIndex]->setVolume(volume);
+                if (volume <= 0.0f)
+                {
+                    pSFXChannels[soundIndex]->stop();
+                }
+                else
+                {
+                    pSFXChannels[soundIndex]->setVolume(volume);
+                }
+
 
                 // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
@@ -443,6 +451,26 @@ namespace Ukemochi
         else
         {
             std::cerr << "Invalid sound or group index!" << std::endl;
+        }
+    }
+
+    void Audio::UpdateMusicVolume(int index,float volume)
+    {
+        if (pMusicChannels[index]) {
+            bool isPlaying = false;
+            pMusicChannels[index]->isPlaying(&isPlaying); // Check if it's still playing
+            if (isPlaying) {
+                pMusicChannels[index]->setVolume(volume);
+            }
+            //else {
+            //    // Restart the music if it stopped
+            //    if (index != 0)
+            //    {
+            //        pSystem->playSound(pMusic[index], nullptr, false, &pMusicChannels[index]);
+            //        pMusicChannels[index]->setVolume(volume);
+            //    }
+
+            //}
         }
     }
 

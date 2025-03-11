@@ -106,6 +106,8 @@ namespace Ukemochi
             For SFX, the sound is played once with a specified volume.
         *************************************************************************/
         void PlaySound(int soundIndex, std::string type, float volume);
+
+        void UpdateMusicVolume(int index,float volume);
         //void PlaySound(int soundIndex, std::string type);
         /*!***********************************************************************
         \brief

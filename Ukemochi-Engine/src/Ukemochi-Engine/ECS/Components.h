@@ -845,6 +845,11 @@ namespace Ukemochi
 			for (int i = 0; i < sfx.size(); i++)
 			{
 				sfx[i].volume += amount;
+				if (sfx[i].volume <= 0.0f)
+				{
+					sfx[i].volume = 0.f;
+				}
+				sfx[i].volume = std::clamp(sfx[i].volume, 0.0f, 1.0f);
 			}
 		}
 
@@ -853,6 +858,12 @@ namespace Ukemochi
 			for (int i = 0; i < music.size(); i++)
 			{
 				music[i].volume += amount;
+				if (music[i].volume <= 0.0f)
+				{
+					music[i].volume = 0.f;
+				}
+				music[i].volume = std::clamp(music[i].volume, 0.0f, 1.0f);
+				Audio::GetInstance().UpdateMusicVolume(i, music[i].volume);
 			}
 		}
 

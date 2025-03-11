@@ -574,25 +574,27 @@ namespace Ukemochi
 			}
 			});
 
+		static float lastClickTime = 0.0f;
+
 		// Music
 		uiManager->addButton("music", glm::vec3(630.f, 350.f, 0.f), glm::vec2(51.f, 53.f), "music", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
 		uiManager->addButton("music minus", glm::vec3(710.f, 350.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			//auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
-			{
-				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
-			}*/
-			ECS::GetInstance().GetSystem<Audio>()->DecreaseMusicMasterVolume(1.f);
+			float currentTime = glfwGetTime();
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.SetMusicVolume(-0.1f);
+				lastClickTime = currentTime; // Update last click time
+			}
 			});
 
 		uiManager->addButton("music plus", glm::vec3(1210.f, 350.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			/*auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-			if (audioM.GetSFXindex("ButtonClickSound") != -1)
-			{
-				audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
-			}*/
-			ECS::GetInstance().GetSystem<Audio>()->IncreaseMusicMasterVolume(1.f);
+			float currentTime = glfwGetTime();
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.SetMusicVolume(0.1f);
+				lastClickTime = currentTime; // Update last click time
+			}
 			});
 
 		uiManager->addButton("music bar bg", glm::vec3(960.f, 350.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
@@ -607,28 +609,20 @@ namespace Ukemochi
 		uiManager->addButton("sfx", glm::vec3(630.f, 250.f, 0.f), glm::vec2(51.f, 53.f), "music2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
 		uiManager->addButton("sfx minus", glm::vec3(710.f, 250.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
+			float currentTime = glfwGetTime();
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
-				{
-					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
-				}*/
-				audioM.SetAudioVolume(0.1f);
-				//std::cout << "AudioM SFX: " << audioM.sfx.size() << std::endl;
+				audioM.SetSFXvolume(-0.1f);
+				lastClickTime = currentTime; // Update last click time
 			}
 			});
 
 		uiManager->addButton("sfx plus", glm::vec3(1210.f, 250.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
+			float currentTime = glfwGetTime();
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				/*if (audioM.GetSFXindex("ButtonClickSound") != -1)
-				{
-					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
-				}*/
-				audioM.SetAudioVolume(-0.1f);
-				//std::cout << "AudioM SFX: " << audioM.sfx.size() << std::endl;
+				audioM.SetSFXvolume(0.1f);
+				lastClickTime = currentTime; // Update last click time
 			}
 			});
 
