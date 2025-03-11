@@ -326,7 +326,7 @@
                     "Name": "Transform",
                     "Position": [-960.0, 900.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [622.0, 226.0]
+                    "Scale": [612.0, 217.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "button 1",
@@ -338,9 +338,9 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-960.0, 375.0, 0.0],
+                    "Position": [-960.0, 330.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1238.0, 411.0]
+                    "Scale": [1224.0, 409.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "button 2",

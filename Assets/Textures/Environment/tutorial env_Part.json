@@ -2,19 +2,19 @@
 
 "button 1.png":
 {
-	"frame": {"x":512,"y":5,"w":622,"h":226},
+	"frame": {"x":512,"y":5,"w":612,"h":217},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":622,"h":226},
-	"sourceSize": {"w":622,"h":226}
+	"spriteSourceSize": {"x":0,"y":0,"w":612,"h":217},
+	"sourceSize": {"w":612,"h":217}
 },
 "button 2.png":
 {
-	"frame": {"x":5,"y":1065,"w":1238,"h":411},
+	"frame": {"x":5,"y":1065,"w":1224,"h":409},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1238,"h":411},
-	"sourceSize": {"w":1238,"h":411}
+	"spriteSourceSize": {"x":0,"y":0,"w":1224,"h":409},
+	"sourceSize": {"w":1224,"h":409}
 },
 "side wall.png":
 {
@@ -37,8 +37,8 @@
 	"version": "1.0",
 	"image": "tutorial env.png",
 	"format": "RGBA8888",
-	"size": {"w":1248,"h":1481},
+	"size": {"w":1234,"h":1479},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:6861a1b493d21acf9b4f1cf4dfb7cca5:0f1a9880a808e2c9153efd05aa4c9d7a:21a62ee1599087b4b7f30f4921cc570c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:448fd731f7ec9c487e01d47744d2f0d6:5ca2f66b266031fcecfde04716fdd92e:21a62ee1599087b4b7f30f4921cc570c$"
 }
 }
