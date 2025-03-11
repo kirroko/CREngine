@@ -399,6 +399,11 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton(text_id);
 	}
 
+	void InGameGUI::RemoveText(const std::string& id)
+	{
+		ECS::GetInstance().GetSystem<Renderer>()->RemoveTextObject(id);
+	}
+
 	void InGameGUI::Render(glm::vec3& cameraPos)
 	{
 		ECS::GetInstance().GetSystem<UIButtonManager>()->render(cameraPos);
@@ -731,11 +736,25 @@ namespace Ukemochi
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>(); 
 		uiManager->addButton("stats", glm::vec3(960.f, 540.f, 0.f), glm::vec2(1419.f, 875.f), "stat", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
 			});
+
+		auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
+		CreateText("health", std::to_string(player.currentHealth), Vec2(1445.f, 585.f), 1.5f, Vec3(0.0f, 0.0f, 0.0f), "Ukemochi_numbers");
+
+		CreateText("attack", std::to_string(player.comboDamage), Vec2(1195.f, 585.f), 1.5f, Vec3(0.0f, 0.0f, 0.0f), "Ukemochi_numbers");
+
+		CreateText("armour", std::to_string(5), Vec2(1195.f, 485.f), 1.5f, Vec3(0.0f, 0.0f, 0.0f), "Ukemochi_numbers");
+
+		CreateText("movement speed", std::to_string((int)(player.playerForce / 1000.f)), Vec2(1445.f, 485.f), 1.5f, Vec3(0.0f, 0.0f, 0.0f), "Ukemochi_numbers");
 	}
 
 	void InGameGUI::HideStats()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 		uiManager->removeButton("stats");
+		
+		RemoveText("health");
+		RemoveText("attack");
+		RemoveText("armour");
+		RemoveText("movement speed");
 	}
 }

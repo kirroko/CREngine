@@ -192,6 +192,23 @@ void TextRenderer::updateTextColor(const std::string& id, const glm::vec3& color
 }
 
 /*!
+ * @brief Removes a text object from the renderer.
+ * @param id Identifier for the text object to remove.
+ */
+void TextRenderer::removeTextObject(const std::string& id)
+{
+	auto it = textObjects.find(id);
+	if (it != textObjects.end())
+	{
+		textObjects.erase(it);
+	}
+	else
+	{
+		std::cerr << "ERROR::TextRenderer: Text object not found: " << id << std::endl;
+	}
+}
+
+/*!
  * @brief Updates the position of an existing text object.
  * @param id Identifier for the text object.
  * @param newPosition New position for the text.

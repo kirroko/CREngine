@@ -163,7 +163,11 @@ public:
 	 */
 	void UpdateTextObject(const std::string& id, const std::string& newText);
 
-	void UpdateTextColor(const std::string& id, const glm::vec3& color); 
+	void UpdateTextColor(const std::string& id, const glm::vec3& color);
+
+	void RemoveTextObject(const std::string& id);
+	
+
 	/*!
 	 * @brief Create a button object in the UI renderer.
 	 */
