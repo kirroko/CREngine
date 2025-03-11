@@ -249,6 +249,7 @@ namespace Ukemochi
 
 			ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("credit button");
 			ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("exit button");
+			ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("title");
 			// Check if the StartButton SFX exists and play it
 			if (audioM.GetSFXindex("ButtonClickSound") != -1)
 			{
