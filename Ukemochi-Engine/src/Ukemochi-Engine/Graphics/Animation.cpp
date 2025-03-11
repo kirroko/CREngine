@@ -47,7 +47,7 @@ namespace Ukemochi
 
                 auto& animation = ECS::GetInstance().GetComponent<Animation>(entity);
 
-                float dt = static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+                float dt = static_cast<float>(g_FrameRateController.GetDeltaTime());
 
                 animation.update(dt);
             }
