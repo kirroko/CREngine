@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
 #include "../Game/EnemyManager.h"		  // for updating enemy list
+#include "../SceneManager.h"			  // for GetCurrScene name
 
 namespace Ukemochi
 {
@@ -215,7 +216,10 @@ namespace Ukemochi
 		}
 
 		// Set the camera initial position
-		ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
+		if (SceneManager::GetInstance().GetCurrScene() == "ALevel1")
+			ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
+		else
+			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 	}
 
 	/*!***********************************************************************

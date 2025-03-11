@@ -809,6 +809,8 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<DungeonManager>()->Init();
                 UME_ENGINE_TRACE("Initializing soul manager...");
                 ECS::GetInstance().GetSystem<SoulManager>()->Init();
+                UME_ENGINE_TRACE("Initializing in game GUI...");
+                ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 
                 ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
                 // enemy
