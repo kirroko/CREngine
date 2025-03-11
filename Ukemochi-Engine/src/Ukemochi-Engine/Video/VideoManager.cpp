@@ -301,7 +301,7 @@ namespace Ukemochi {
         {
             if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
             {
-                ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
+                ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX", 0.2f);
             }
         }
 

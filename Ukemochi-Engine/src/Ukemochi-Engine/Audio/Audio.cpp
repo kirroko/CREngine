@@ -390,7 +390,7 @@ namespace Ukemochi
        For Music, the sound is set to loop indefinitely.
        For SFX, the sound is played once with a specified volume.
     *************************************************************************/
-    void Audio::PlaySound(int soundIndex, std::string type)
+    void Audio::PlaySound(int soundIndex, std::string type, float volume)
     {
         if (soundIndex < pSFX.size() || soundIndex < pMusic.size())
 
@@ -410,7 +410,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pSFXChannels[soundIndex] = channel;
-                pSFXChannels[soundIndex]->setVolume(sfxMasterVolume);
+                pSFXChannels[soundIndex]->setVolume(volume);
 
                 // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
@@ -436,7 +436,7 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pMusicChannels[soundIndex] = channel;
-                pMusicChannels[soundIndex]->setVolume(0.2f);
+                pMusicChannels[soundIndex]->setVolume(volume);
                 // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
         }
@@ -525,7 +525,7 @@ namespace Ukemochi
 
         if (!isPlaying)
         {
-            PlaySound(0, "Music");
+            PlaySound(0, "Music", 0.2f);
         }
     }
 
@@ -679,7 +679,8 @@ namespace Ukemochi
         // Clamp volume between 0.0 and 1.0
         sfxMasterVolume = std::max(0.0f, std::min(1.0f, volume));
         std::cout << "SFX Master Volume set to: " << sfxMasterVolume << std::endl;
-
+        std::cout << "SFXChannel: " << pSFXChannels.size() << std::endl;
+        std::cout << "Number of sfx: " << numOfSFX << std::endl;
         // Update any currently playing SFX
         for (size_t i = 0; i < pSFXChannels.size(); ++i)
         {

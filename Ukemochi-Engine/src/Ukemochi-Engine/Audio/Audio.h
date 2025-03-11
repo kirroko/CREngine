@@ -105,8 +105,8 @@ namespace Ukemochi
             For Music, the sound is set to loop indefinitely.
             For SFX, the sound is played once with a specified volume.
         *************************************************************************/
-        void PlaySound(int soundIndex, std::string type);
-
+        void PlaySound(int soundIndex, std::string type, float volume);
+        //void PlaySound(int soundIndex, std::string type);
         /*!***********************************************************************
         \brief
          Play a sound in a specified group.

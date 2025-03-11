@@ -748,8 +748,9 @@ namespace Ukemochi
 		{
 			std::string audioPath;
 			std::string audioName;
+			float volume;
 
-			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) {}
+			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) { volume = 0.2f; }
 		};
 
 		std::vector<AudioSource> music; // Music category
@@ -762,7 +763,7 @@ namespace Ukemochi
 			if (index < music.size() && music[index].audioPath != "")
 			{
 				Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
-				Audio::GetInstance().PlaySound(index, "Music");
+				Audio::GetInstance().PlaySound(index, "Music", music[index].volume);
 			}
 		}
 		//stop the music audio
@@ -775,7 +776,7 @@ namespace Ukemochi
 			if (index < sfx.size() && sfx[index].audioPath != "")
 			{
 				Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
-				Audio::GetInstance().PlaySound(index, "SFX");
+				Audio::GetInstance().PlaySound(index, "SFX", sfx[index].volume);
 			}
 		}
 
@@ -839,6 +840,27 @@ namespace Ukemochi
 				sfx.erase(sfx.begin() + index);
 		}
 
+		void SetSFXvolume(float amount)
+		{
+			for (int i = 0; i < sfx.size(); i++)
+			{
+				sfx[i].volume += amount;
+			}
+		}
+
+		void SetMusicVolume(float amount)
+		{
+			for (int i = 0; i < music.size(); i++)
+			{
+				music[i].volume += amount;
+			}
+		}
+
+		void SetAudioVolume(float amount)
+		{
+			SetMusicVolume(amount);
+			SetSFXvolume(amount);
+		}
 	};
 
 	/*!***********************************************************************

@@ -29,6 +29,7 @@ namespace Ukemochi
 
 		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
+		bool show_stats = false;
 		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
 		float hoverCooldown = 0.5f;  // cooldown for hover sound
 		float hoverTimer = 0.0f;     // Tracks time since last hover sound
@@ -150,5 +151,9 @@ namespace Ukemochi
 		 Hides the defeat screen and resumes gameplay.
 		*************************************************************************/
 		void HideDefeatScreen();
+
+		void ShowStats();
+
+		void HideStats();
 	};
 }
