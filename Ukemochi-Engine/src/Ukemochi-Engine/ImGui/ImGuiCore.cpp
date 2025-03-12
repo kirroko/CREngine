@@ -1000,6 +1000,10 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<FMOD::Sound>(fullPath.string());
             }
+            else if (extension == ".ttf")
+            {
+                ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<std::string>(fullPath.string());
+            }
 
             // Remove asset from the UI list
             LoadContents(currentDirectory);

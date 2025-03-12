@@ -86,6 +86,12 @@ public:
 	void init();
 
 	/*!
+	 * @brief Continue to initializes the renderer by setting up the batch renderer.
+	 * This function should be called once before rendering any objects.
+	 */
+	void batch_init();
+
+	/*!
 	 * @brief Renders all the objects (boxes and circles) set up by the renderer.
 	 * This function is responsible for drawing each VAO and applying its corresponding texture.
 	 */
@@ -449,8 +455,6 @@ private:
 	 */
 	void renderScreenQuad();
 
-	TextRenderer* textRenderer;
-
 	GameObject* playerObject = nullptr;
 	int player = -1;
 
@@ -461,6 +465,8 @@ private:
 	
 
 public:
+	TextRenderer* textRenderer;
+
 	std::shared_ptr<BatchRenderer2D> batchRendererUI;
 	// Setter method to set the player object
 	/*void SetPlayerObject(GameObject& player)

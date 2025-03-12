@@ -111,6 +111,10 @@ public:
 	 * @brief Renders all added text objects on the screen.
 	 */
 	void renderAllText();
+	/*!
+	 * @brief Release specific font face.
+	 */
+	void releaseOneFace(const std::string& font_name);
 
 	/*!
 	 * @brief Calculates the pixel width of a string of text.
@@ -151,6 +155,7 @@ private:
 	 * @brief Releases all loaded font faces.
 	 */
 	void releaseFaces();
+
 
 };
 #endif // !TEXTRENDERER_CLASS_H
