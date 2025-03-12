@@ -297,7 +297,7 @@ namespace Ukemochi
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
 		// Add the credits background image
-		uiManager->addButton("credits", glm::vec3{ 960.f, 540.f + -(7086.f * 0.5f) + (1080.f * 0.5f) + 540.f, 0.f }, glm::vec2{ 1920.f, 7086.f },
+		uiManager->addButton("credits", glm::vec3{ 960.f, 540.f + -(6962.f * 0.5f) + (1080.f * 0.5f) + 540.f, 0.f }, glm::vec2{ 1920.f, 7086.f },
 			"credits", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
 
@@ -332,10 +332,10 @@ namespace Ukemochi
 		{
 			button->position.y += scrollSpeed * deltaTime; // Move UP
 
-			if (button->position.y >= 540.f + (7086.f * 0.5f) - (1080.f * 0.5f))
+			if (button->position.y >= 540.f + (6962.f * 0.5f) - (1080.f * 0.5f))
 			{
 				// Reset to start position
-				button->position.y = 540.f + -(7086.f * 0.5f) + (1080.f * 0.5f) + 540.f;  // Reset to bottom (screen height)
+				button->position.y = 540.f + -(6962.f * 0.5f) + (1080.f * 0.5f) + 540.f;  // Reset to bottom (screen height)
 			}
 		}
 	}
