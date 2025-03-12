@@ -14,8 +14,6 @@ namespace Ukemochi
 		hair->GetComponent<Animation>().SetAnimation("HairAtk");
 		hairHitBox = GameObjectManager::GetInstance().GetGOByTag("HitBox");
 		hairPosX = hair->GetComponent<Transform>().position.x;
-		hair->SetActive(false);
-		hairHitBox->SetActive(false);
 
 		blob = GameObjectManager::GetInstance().GetGOByTag("BlobClone");
 		blob->GetComponent<Animation>().SetAnimation("Idle");
@@ -35,6 +33,8 @@ namespace Ukemochi
 
 		if (bossCom.BossPhase == 1)
 		{
+			hair->SetActive(false);
+			hairHitBox->SetActive(false);
 			//CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
 			if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
 			{

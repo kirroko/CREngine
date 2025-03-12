@@ -604,30 +604,30 @@ namespace Ukemochi
                                     }
                                 }
                             }
-                            // WHEN COLLIDE BOX
-                            if (collidedObj->GetTag() == "Environment")
-                            {
-                                enemycomponent.dirX = collidedObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-                                enemycomponent.dirY = collidedObj->GetComponent<Transform>().position.y - enemytransform.position.y;
+                            //// WHEN COLLIDE BOX
+                            //if (collidedObj->GetTag() == "Environment")
+                            //{
+                            //    enemycomponent.dirX = collidedObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+                            //    enemycomponent.dirY = collidedObj->GetComponent<Transform>().position.y - enemytransform.position.y;
 
-                                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                                enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+                            //    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                            //    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
 
-                                // break boxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                                if (enemycomponent.timeSinceTargetReached > 3.0f)
-                                {
-                                    enemyphysic.force.x = 0;
-                                    enemyphysic.force.y = 0;
-                                    if (enemycomponent.timeSinceTargetReached > 4.0f)
-                                    {
-                                        enemycomponent.state = Enemy::MOVE;
-                                        enemycomponent.isCollide = false;
-                                        enemycomponent.kicktime = 1.f;
-                                        enemycomponent.isKick = false;
-                                        enemycomponent.timeSinceTargetReached = 0.f;
-                                    }
-                                }
-                            }
+                            //    // break boxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                            //    if (enemycomponent.timeSinceTargetReached > 3.0f)
+                            //    {
+                            //        enemyphysic.force.x = 0;
+                            //        enemyphysic.force.y = 0;
+                            //        if (enemycomponent.timeSinceTargetReached > 4.0f)
+                            //        {
+                            //            enemycomponent.state = Enemy::MOVE;
+                            //            enemycomponent.isCollide = false;
+                            //            enemycomponent.kicktime = 1.f;
+                            //            enemycomponent.isKick = false;
+                            //            enemycomponent.timeSinceTargetReached = 0.f;
+                            //        }
+                            //    }
+                            //}
                         }
                     }
 
@@ -653,6 +653,7 @@ namespace Ukemochi
                             enemycomponent.state = Enemy::MOVE;
                             enemycomponent.isCollide = false;
                             enemycomponent.timeSinceTargetReached = 0.f;
+                            break;
                         }
                         if (collidedObj == nullptr)
                             break;
@@ -1193,6 +1194,9 @@ namespace Ukemochi
                     {
                         object->GetComponent<Animation>().SetAnimation("Idle");
                     }
+                    enemyphysic.velocity.x = 0.0f;
+                    enemyphysic.velocity.y = 0.0f;
+                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
 
                     if (!enemycomponent.isWithPlayer)
                     {
