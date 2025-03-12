@@ -3812,9 +3812,9 @@
                         "Change": ["Boss Transform", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Change", 25, 0.5, 0.5, 860, 860, 860, 7740, 2580, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle1"
-                    }, {
-                        "Name": "Boss"
-                    }]
+                }, {
+                    "Name": "Boss"
+                }]
         }, {
             "Name": "6_Branch",
             "Tag": "Default",
@@ -3834,7 +3834,7 @@
             "Tag": "Hair",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [7955.0, 700.0, 0.0],
+                    "Position": [7955.0, 350.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [225.0, 225.0]
                 }, {
@@ -3845,7 +3845,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "HairAtk", 34, 0.5, 0.5, 625, 625, 625, 3750, 3750, 0.05000000074505806, false]
+                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "HairAtk", 34, 0.5, 1.0, 625, 625, 625, 3750, 3750, 0.05000000074505806, false]
                     },
                     "CurrentClip": "HairAtk"
                 }]

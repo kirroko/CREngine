@@ -1168,7 +1168,7 @@ namespace Ukemochi
             if (gameobject->HasComponent<Boss>())
             {
                 Value bosscom(rapidjson::kObjectType);
-
+                bosscom.AddMember("Name", Value("Boss", allocator), allocator);
                 componentsArray.PushBack(bosscom, allocator);
             }
 

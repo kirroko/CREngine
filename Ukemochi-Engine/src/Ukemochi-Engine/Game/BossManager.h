@@ -22,7 +22,8 @@ namespace Ukemochi
 		GameObject* hair;
 		GameObject* hairHitBox;
 		GameObject* blob;
-		Boss boss;
+		GameObject* boss;
+		Boss bossCom;
 		float blobsize;
 		int numOfBlob;
 		bool spawnBlob;

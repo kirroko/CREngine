@@ -14,6 +14,8 @@ namespace Ukemochi
 		hair->GetComponent<Animation>().SetAnimation("HairAtk");
 		hairHitBox = GameObjectManager::GetInstance().GetGOByTag("HitBox");
 		hairPosX = hair->GetComponent<Transform>().position.x;
+		hair->SetActive(false);
+		hairHitBox->SetActive(false);
 
 		blob = GameObjectManager::GetInstance().GetGOByTag("BlobClone");
 		blob->GetComponent<Animation>().SetAnimation("Idle");
@@ -23,15 +25,15 @@ namespace Ukemochi
 		numOfBlob = 0;
 
 		playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
-
-		boss = GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Boss>();
+		boss = GameObjectManager::GetInstance().GetGOByTag("Boss");
+		bossCom = GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Boss>();
 	}
 	void BossManager::UpdateBoss()
 	{
 		if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id != 6)
 			return;
 
-		if (boss.BossPhase == 1)
+		if (bossCom.BossPhase == 1)
 		{
 			//CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
 			if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
@@ -39,7 +41,7 @@ namespace Ukemochi
 				//play animation
 				GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
 				//animation finish then proceed
-				boss.BossPhase = 2;
+				bossCom.BossPhase = 2;
 			}
 			else
 			{
@@ -48,7 +50,7 @@ namespace Ukemochi
 		}
 		else
 		{
-			if (boss.health <= 0)
+			if (bossCom.health <= 0)
 			{
 				//WIN
 			}
@@ -63,9 +65,9 @@ namespace Ukemochi
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle1");
 		//attack
 		//timer end play attack
-		if (boss.waitTime < 7.f)
+		if (bossCom.waitTime < 7.f)
 		{
-			boss.waitTime += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+			bossCom.waitTime += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		}
 		else
 		{
@@ -93,7 +95,7 @@ namespace Ukemochi
 				newObject.GetComponent<Transform>().position.y = playerObj->GetComponent<Transform>().position.y;
 			}
 			spawnBlob = false;
-			boss.waitTime = 0;
+			bossCom.waitTime = 0;
 		}
 
 	}
@@ -112,29 +114,80 @@ namespace Ukemochi
 		{
 			if (!atk)
 			{
-				atk = true;
-				hair->GetComponent<Transform>().position.x = hairPosX;
+				//set hair attack
+				if (playerObj->GetComponent<Transform>().position.x > boss->GetComponent<Transform>().position.x)
+				{
+					//right
+					hair->GetComponent<SpriteRender>().flipX = true;
+					hairHitBox->GetComponent<Transform>().scale.x = -853.000f;
+
+					hair->GetComponent<Transform>().position.x = 9375;
+					hairHitBox->GetComponent<Transform>().position.x = 9200;
+					hairPosX = hair->GetComponent<Transform>().position.x;
+				}
+				else
+				{
+					//left
+					hair->GetComponent<SpriteRender>().flipX = false;
+					hairHitBox->GetComponent<Transform>().position.x = 8100;
+
+					hair->GetComponent<Transform>().position.x = 7955;
+					hairHitBox->GetComponent<Transform>().scale.x = 853.000f;
+					hairPosX = hair->GetComponent<Transform>().position.x;
+				}
+				hair->SetActive(true);
 				hair->GetComponent<Animation>().RestartAnimation();
+
+				hair->GetComponent<Transform>().position.y = playerObj->GetComponent<Rigidbody2D>().position.y;
+				hairHitBox->GetComponent<Transform>().position.y = hair->GetComponent<Transform>().position.y-50.f;
 				hairHitBox->SetActive(true);
+				atk = true;
+
 			}
 		}
 
 		if (atk)
 		{
+			std::cout << hair->GetComponent<Animation>().GetCurrentFrame() << std::endl;
 			if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
 			{
-
 				hairHitBox->SetActive(false);
 
-				if (hair->GetComponent<Transform>().position.x > hairPosX - 1000.f)
+				if (atkdelay < 4.f)
 				{
-					hair->GetComponent<Transform>().position.x -= 1;
+					atkdelay += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 				}
 				else
 				{
-					atk = false;
-					delay = 0.f;
+					if (hair->GetComponent<SpriteRender>().flipX == false)
+					{
+						if (hair->GetComponent<Transform>().position.x > hairPosX - 1000.f)
+						{
+							hair->GetComponent<Transform>().position.x -= 1;
+						}
+						else
+						{
+							atk = false;
+							delay = 0.f;
+							atkdelay = 0.f;
+						}
+					}
+					else
+					{
+						if (hair->GetComponent<Transform>().position.x < hairPosX + 1000.f)
+						{
+							hair->GetComponent<Transform>().position.x += 1;
+						}
+						else
+						{
+							atk = false;
+							delay = 0.f;
+							atkdelay = 0.f;
+						}
+					}
+
 				}
+
 			}
 		}
 
