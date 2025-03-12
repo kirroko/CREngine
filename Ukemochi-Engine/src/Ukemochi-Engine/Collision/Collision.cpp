@@ -182,6 +182,13 @@ namespace Ukemochi
 			box.max = { BOUNDING_BOX_SIZE * (1.8f * trans.scale.x) + trans.position.x,
 						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.8f };  // Max Y stops at the object's center
 		}
+		else if (tag == "EnemyProjectile")
+		{
+			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						-4.f * trans.scale.y + trans.position.y };
+			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
+						trans.scale.y + trans.position.y };
+		}
 		else
 		{
 			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,

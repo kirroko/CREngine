@@ -1574,7 +1574,7 @@ namespace Ukemochi
                                 Vec2Normalize(dir, Vec2(playerpos.x - newObject.GetComponent<Transform>().position.x,
                                                         playerpos.y - newObject.GetComponent<Transform>().position.y));
 
-                                newObject.GetComponent<Rigidbody2D>().velocity = dir * 500;
+                                newObject.GetComponent<Rigidbody2D>().velocity = dir * 800;
 
                                 float angleRad = atan2(dir.y, dir.x);
 
@@ -1593,6 +1593,12 @@ namespace Ukemochi
                                     // Apply rotation to bullet
                                     newObject.GetComponent<Transform>().rotation = -angleDeg;
                                 }
+
+                                std::cout << "MIN X" << newObject.GetComponent<BoxCollider2D>().min.x << std::endl;
+                                std::cout << "MIN Y" << newObject.GetComponent<BoxCollider2D>().min.y << std::endl;
+
+                                std::cout << "MAX X" << newObject.GetComponent<BoxCollider2D>().max.x << std::endl;
+                                std::cout << "MAX Y" << newObject.GetComponent<BoxCollider2D>().max.y << std::endl;
 
                                 newObject.AddComponent(EnemyBullet{});
                                 enemycomponent.wormshoot = true;
