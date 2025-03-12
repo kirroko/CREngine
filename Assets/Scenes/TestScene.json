@@ -1,0 +1,45 @@
+{
+    "GameObjects": [{
+            "Name": "Background",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [960.0, 384.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 770.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "cave ground",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "CenterWall",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [960.0, 875.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 412.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "cave wall 5",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "Spotlight",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-960.0, 380.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [732.0, 262.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "env_base_spotlight_1",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }]
+}

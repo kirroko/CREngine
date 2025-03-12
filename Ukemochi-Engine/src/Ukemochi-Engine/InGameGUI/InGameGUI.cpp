@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Renderer.h" // for text objects
 #include "../FrameController.h"	  // for fps text
 #include "../Factory/GameObjectManager.h"
-
+#include "../SceneManager.h"	  // for GetCurrScene name
 
 namespace Ukemochi
 {
@@ -53,10 +53,11 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight();
 
 #ifdef _DEBUG
-		CreateImage();
+		if (SceneManager::GetInstance().GetCurrScene() == "ALevel1")
+			CreateImage();
 #endif
 		// Create FPS text
-		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{1.f, 1.f, 1.f}, "Ukemochi_numbers");
+		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 	}
 
 	/*!***********************************************************************
@@ -154,9 +155,9 @@ namespace Ukemochi
 	void InGameGUI::CreateImage()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
-		Application& app = Application::Get(); 
-		int screen_width = app.GetWindow().GetWidth(); 
-		int screen_height = app.GetWindow().GetHeight(); 
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
 
 		//--Health---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
@@ -229,6 +230,7 @@ namespace Ukemochi
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 		// Main Menu
+#ifndef _DEBUG
 		uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
 			// Get the AudioManager
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -249,7 +251,7 @@ namespace Ukemochi
 		uiManager->addButton("start button", glm::vec3{ 1138.f, 538.f, 0.f }, glm::vec2{ 422.f, 343.f }, "ui_button_start", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			// Start the game
 			Application::Get().StartGame();
-			
+
 			// Get the AudioManager
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -268,6 +270,7 @@ namespace Ukemochi
 				}
 			}
 			});
+#endif
 	}
 
 	/*!***********************************************************************

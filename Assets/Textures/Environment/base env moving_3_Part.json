@@ -1,0 +1,28 @@
+{"frames": {
+
+"branch 5.png":
+{
+	"frame": {"x":0,"y":0,"w":1740,"h":1920},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1740,"h":1920},
+	"sourceSize": {"w":1740,"h":1920}
+},
+"env_base_vine_4.png":
+{
+	"frame": {"x":0,"y":1920,"w":3720,"h":1752},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":3720,"h":1752},
+	"sourceSize": {"w":3720,"h":1752}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "base env moving_3.png",
+	"format": "RGBA8888",
+	"size": {"w":3720,"h":3672},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:faf42228e5b05d822d21944663f95c89:37db3e550289b21eda91a9e92430e0dd:2eede0cd52a49dc4e4f8513d99bee903$"
+}
+}

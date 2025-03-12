@@ -337,13 +337,6 @@ namespace Ukemochi
     {
         loop_start = std::chrono::steady_clock::now();
 
-#ifdef _DEBUG
-        // Debug mode
-        if (Input::IsKeyTriggered(UME_KEY_U))
-            ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
-                GetSystem<Renderer>()->debug_mode_enabled);
-#endif // _DEBUG
-
 #ifndef _DEBUG
         static double elapsedTime = 0.0;
 	    static int current_frame_index = 0;
@@ -558,6 +551,12 @@ namespace Ukemochi
         UME_ENGINE_TRACE("Resetting entity manager...");
         ECS::GetInstance().ReloadEntityManager();
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAudioGroup(ChannelGroups::LEVEL1);
+
+        // Reset the camera position
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+
+        // Clear the button list
+        ECS::GetInstance().GetSystem<UIButtonManager>()->buttons.clear();
     }
 
     /*!***********************************************************************
