@@ -13,6 +13,7 @@ namespace Ukemochi
 		hair = GameObjectManager::GetInstance().GetGOByTag("Hair");
 		hair->GetComponent<Animation>().SetAnimation("HairAtk");
 		hairHitBox = GameObjectManager::GetInstance().GetGOByTag("HitBox");
+		hairPosX = hair->GetComponent<Transform>().position.x;
 
 		blob = GameObjectManager::GetInstance().GetGOByTag("BlobClone");
 		blob->GetComponent<Animation>().SetAnimation("Idle");
@@ -99,12 +100,53 @@ namespace Ukemochi
 	void BossManager::Phase2()
 	{
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle2");
+		static float delay = 0.f;
+		static float atkdelay = 0.f;
+		static bool atk = false;
 		//hair attack
-		if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
+		if (delay < 7.f)
 		{
-			std::cout << "RESTART" << std::endl;
-			hair->GetComponent<Animation>().RestartAnimation();
+			delay += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		}
+		else
+		{
+			if (!atk)
+			{
+				atk = true;
+				hair->GetComponent<Transform>().position.x = hairPosX;
+				hair->GetComponent<Animation>().RestartAnimation();
+				hairHitBox->SetActive(true);
+			}
+		}
+
+		if (atk)
+		{
+			if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
+			{
+
+				hairHitBox->SetActive(false);
+
+				if (hair->GetComponent<Transform>().position.x > hairPosX - 1000.f)
+				{
+					hair->GetComponent<Transform>().position.x -= 1;
+				}
+				else
+				{
+					atk = false;
+					delay = 0.f;
+				}
+			}
+		}
+
+		//if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
+		//{
+		//	std::cout << "RESTART" << std::endl;
+		//	hair->GetComponent<Animation>().RestartAnimation();
+		//}
+
+
+
+
 	}
 	void BossManager::SpawnMonster(float x, float y)
 	{

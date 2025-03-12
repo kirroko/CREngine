@@ -26,5 +26,6 @@ namespace Ukemochi
 		float blobsize;
 		int numOfBlob;
 		bool spawnBlob;
+		float hairPosX;
 	};
 }
