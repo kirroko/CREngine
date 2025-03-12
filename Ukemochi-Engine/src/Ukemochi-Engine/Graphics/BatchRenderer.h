@@ -83,8 +83,6 @@ public:
 	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer);
 	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer);
 
-	void drawVideoFrame(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, int frameIndex, float rotation, int layer);
-
 	void setActiveShader(std::shared_ptr<Shader> shader); // Update method signature
 
 	std::vector<Vertex>& getVertices() { return vertices; } // Getter for vertices

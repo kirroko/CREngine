@@ -141,9 +141,6 @@ namespace Ukemochi
 	void InGameGUI::CreateImage()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
-		Application& app = Application::Get(); 
-		int screen_width = app.GetWindow().GetWidth(); 
-		int screen_height = app.GetWindow().GetHeight(); 
 
 		//--Health---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
@@ -321,9 +318,15 @@ namespace Ukemochi
 			});
 	}
 
+	/*!***********************************************************************
+	 * @brief Updates the scrolling credits animation.
+	 *
+	 * This function moves the credits screen upwards over time.
+	 * When the credits reach the top of the screen, it resets them to the start position.
+	 *************************************************************************/
 	void InGameGUI::UpdateCredits()
 	{
-		float deltaTime = g_FrameRateController.GetDeltaTime();
+		float deltaTime = (float)g_FrameRateController.GetDeltaTime();
 
 		//static float scrollSpeed = 100.0f; // Adjust speed as needed
 
@@ -340,12 +343,18 @@ namespace Ukemochi
 		}
 	}
 
+	/*!***********************************************************************
+	 * @brief Handles the title animation, making it fall into place.
+	 *
+	 * The title starts above the screen and falls until it reaches its target position.
+	 * This function gradually moves the title downwards and clamps it to the final position.
+	 *************************************************************************/
 	void InGameGUI::UpdateTitleAnimation()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 		auto titleButton = uiManager->getButtonByID("title");
 
-		float deltaTime = g_FrameRateController.GetDeltaTime();
+		float deltaTime = (float)g_FrameRateController.GetDeltaTime();
 
 		if (!titleButton) return; // Ensure the button exists
 
@@ -374,11 +383,21 @@ namespace Ukemochi
 		ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton(text_id);
 	}
 
-	void InGameGUI::RemoveText(const std::string& id)
+	/*!***********************************************************************
+	\brief
+	 Removes a text object from the UI.
+	*************************************************************************/
+	void InGameGUI::RemoveText(const std::string& textid)
 	{
-		ECS::GetInstance().GetSystem<Renderer>()->RemoveTextObject(id);
+		ECS::GetInstance().GetSystem<Renderer>()->RemoveTextObject(textid);
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Renders all UI elements.
+	\param[in] cameraPos
+	 The camera position to correctly position UI elements.
+	*************************************************************************/
 	void InGameGUI::Render(glm::vec3& cameraPos)
 	{
 		ECS::GetInstance().GetSystem<UIButtonManager>()->render(cameraPos);
@@ -554,7 +573,7 @@ namespace Ukemochi
 		uiManager->addButton("music", glm::vec3(630.f, 350.f, 0.f), glm::vec2(51.f, 53.f), "music", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
 		uiManager->addButton("music minus", glm::vec3(710.f, 350.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			float currentTime = glfwGetTime();
+			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetMusicVolume(-0.1f);
@@ -563,7 +582,7 @@ namespace Ukemochi
 			});
 
 		uiManager->addButton("music plus", glm::vec3(1210.f, 350.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			float currentTime = glfwGetTime();
+			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetMusicVolume(0.1f);
@@ -583,7 +602,7 @@ namespace Ukemochi
 		uiManager->addButton("sfx", glm::vec3(630.f, 250.f, 0.f), glm::vec2(51.f, 53.f), "music2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
 		uiManager->addButton("sfx minus", glm::vec3(710.f, 250.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			float currentTime = glfwGetTime();
+			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetSFXvolume(-0.1f);
@@ -592,7 +611,7 @@ namespace Ukemochi
 			});
 
 		uiManager->addButton("sfx plus", glm::vec3(1210.f, 250.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, true, [this]() {
-			float currentTime = glfwGetTime();
+			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetSFXvolume(0.1f);

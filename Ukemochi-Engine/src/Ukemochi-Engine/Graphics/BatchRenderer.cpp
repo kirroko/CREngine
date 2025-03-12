@@ -431,32 +431,6 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     layerBatches[layer].push_back(v4);
 }
 
-void BatchRenderer2D::drawVideoFrame(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color,
-    int frameIndex, float rotation, int layer)
-{
-    // Ensure frameIndex is within bounds
-    // frameIndex = std::max(0, std::min(frameIndex, MAX_VIDEO_FRAMES - 1));
-
-    // Create vertices for rendering
-    glm::vec2 halfSize = size * 0.5f;
-
-    glm::vec3 pos1 = glm::vec3(position.x - halfSize.x, position.y - halfSize.y, position.z); // Bottom-left
-    glm::vec3 pos2 = glm::vec3(position.x + halfSize.x, position.y - halfSize.y, position.z); // Bottom-right
-    glm::vec3 pos3 = glm::vec3(position.x + halfSize.x, position.y + halfSize.y, position.z); // Top-right
-    glm::vec3 pos4 = glm::vec3(position.x - halfSize.x, position.y + halfSize.y, position.z); // Top-left
-
-    glm::vec2 uv1 = { 0.0f, 0.0f };
-    glm::vec2 uv2 = { 1.0f, 0.0f };
-    glm::vec2 uv3 = { 1.0f, 1.0f };
-    glm::vec2 uv4 = { 0.0f, 1.0f };
-
-    // Push vertices with video texture array ID
-    vertices.push_back({ pos1, color, {uv1}, frameIndex });
-    vertices.push_back({ pos2, color, {uv2}, frameIndex });
-    vertices.push_back({ pos3, color, {uv3}, frameIndex });
-    vertices.push_back({ pos4, color, {uv4}, frameIndex });
-}
-
 /*!***********************************************************************
 \brief
  Flushes the batched sprites and renders them in proper layer order.

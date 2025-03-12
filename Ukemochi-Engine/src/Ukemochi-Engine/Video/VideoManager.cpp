@@ -133,7 +133,7 @@ namespace Ukemochi {
 
         int width = plm_get_width(video.plm);
         int height = plm_get_height(video.plm);
-        int frameRate = plm_get_framerate(video.plm);
+        int frameRate = (int)plm_get_framerate(video.plm);
         video.totalFrames = static_cast<int>(plm_get_duration(video.plm) * frameRate); // Total frames
         // Compute the required time per frame
         video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm);
@@ -192,9 +192,6 @@ namespace Ukemochi {
             UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", video.totalFrames, storedLayers);
             return false;
         }
-
-        float videoWidth = static_cast<float>(plm_get_width(video.plm));
-        float videoHeight = static_cast<float>(plm_get_height(video.plm));
 
         float vertices[] = {
             // Positions         // Colors      // Texture Coords
@@ -298,7 +295,7 @@ namespace Ukemochi {
             return;
         }
 
-        float deltaTime = g_FrameRateController.GetDeltaTime();
+        float deltaTime = (float)g_FrameRateController.GetDeltaTime();
 #ifdef _DEBUG
         UME_ENGINE_TRACE("Decoding Video - DeltaTime: {0}", deltaTime);
 #endif
