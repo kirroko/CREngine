@@ -273,7 +273,6 @@ namespace Ukemochi
 						shadow.AddComponent<SpriteRender>(sr);
 					}
 				}
-				newObject.GetComponent<Enemy>().health = 60.f;
 				ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
 				ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
 			}
