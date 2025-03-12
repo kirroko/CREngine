@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h" // for game object tag
 #include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
 #include "../Graphics/UIButtonManager.h"  // for button effect
+#include "../Game/BossManager.h"
 
 namespace Ukemochi
 {
@@ -589,6 +590,32 @@ namespace Ukemochi
                     }
                 }
             }
+
+
+
+            if (tag == "Blob")
+            {
+                if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x < 100.f)
+                {
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 50.f;
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.y += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 50.f;
+                }
+                else
+                {
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().SetAnimation("Explode");
+
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                        //spawn monster
+                        ECS::GetInstance().GetSystem<BossManager>()->SpawnMonster(GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.x, GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.y);
+                        GameObjectManager::GetInstance().DestroyObject(entity);
+                        break;
+                    }
+                }
+            }
+
+
         }
     }
 }

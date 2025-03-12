@@ -157,6 +157,10 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
 
+        sig.reset();
+        sig.set(ECS::GetInstance().GetComponentType<Boss>());
+        ECS::GetInstance().SetSystemSignature<BossManager>(sig);
+
         //init GSM
         //GSM_Initialize(GS_ENGINE);
     }
@@ -446,6 +450,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<PlayerManager>()->Update();
             ECS::GetInstance().GetSystem<SoulManager>()->Update();
             ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemies();
+            ECS::GetInstance().GetSystem<BossManager>()->UpdateBoss();
             ECS::GetInstance().GetSystem<DungeonManager>()->UpdateRoomProgress();
             sys_end = std::chrono::steady_clock::now();
             logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
@@ -839,6 +844,13 @@ namespace Ukemochi
                             componentData["Position"][1].GetFloat(),static_cast<Enemy::EnemyTypes>(type),newObject.GetInstanceID() });
                     }
                 }
+                else if (componentName == "Boss")
+                {
+                    if (!newObject.HasComponent<Boss>())
+                    {
+                        newObject.AddComponent<Boss>({ newObject.GetInstanceID() });
+                    }
+                }
             	else if (componentName == "Player")
             	{
             		if (!newObject.HasComponent<Player>())
@@ -1151,6 +1163,12 @@ namespace Ukemochi
                 enemyComponent.AddMember("Type", enemy.type, allocator);
 
                 componentsArray.PushBack(enemyComponent, allocator);
+            }
+            if (gameobject->HasComponent<Boss>())
+            {
+                Value bosscom(rapidjson::kObjectType);
+                bosscom.AddMember("Name", Value("Boss", allocator), allocator);
+                componentsArray.PushBack(bosscom, allocator);
             }
 
         	if (gameobject->HasComponent<Player>())

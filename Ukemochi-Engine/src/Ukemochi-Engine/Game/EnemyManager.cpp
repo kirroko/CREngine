@@ -479,12 +479,74 @@ namespace Ukemochi
                             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                             {
                                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                                if (audioM.GetSFXindex("WormMove") != -1)
-                                {
-                                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("WormMove")))
-                                    {
-                                        audioM.PlaySFX(audioM.GetSFXindex("WormMove"));
+
+                                // Define all worm move sounds in a vector
+                                std::vector<int> wormMoveSounds = {
+                                    audioM.GetSFXindex("WormMove1"),
+                                    audioM.GetSFXindex("WormMove2"),
+                                    audioM.GetSFXindex("WormMove3"),
+                                    audioM.GetSFXindex("WormMove4"),
+                                    audioM.GetSFXindex("WormMove5"),
+                                    audioM.GetSFXindex("WormMove6"),
+                                    audioM.GetSFXindex("WormMove7")
+                                };
+
+                                // Remove invalid (-1) sounds
+                                wormMoveSounds.erase(
+                                    std::remove(wormMoveSounds.begin(), wormMoveSounds.end(), -1),
+                                    wormMoveSounds.end()
+                                );
+
+                                // Keep track of which sounds have been played (static at class level)
+                                static std::vector<bool> wormMoveSoundsPlayed;
+
+                                // Initialize if first time or size changed
+                                if (wormMoveSoundsPlayed.size() != wormMoveSounds.size()) {
+                                    wormMoveSoundsPlayed.resize(wormMoveSounds.size(), false);
+                                }
+
+                                // Check if all sounds have been played
+                                bool allPlayed = true;
+                                for (bool played : wormMoveSoundsPlayed) {
+                                    if (!played) {
+                                        allPlayed = false;
+                                        break;
                                     }
+                                }
+
+                                // If all sounds have been played, reset all to unplayed
+                                if (allPlayed) {
+                                    std::fill(wormMoveSoundsPlayed.begin(), wormMoveSoundsPlayed.end(), false);
+                                }
+
+                                // Get sounds that haven't been played yet
+                                std::vector<int> availableSoundIndices;
+                                for (size_t i = 0; i < wormMoveSounds.size(); i++) {
+                                    if (!wormMoveSoundsPlayed[i]) {
+                                        availableSoundIndices.push_back(i);
+                                    }
+                                }
+
+                                // Make sure there's no sound currently playing
+                                bool isAnyPlaying = false;
+                                for (int soundId : wormMoveSounds) {
+                                    if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(soundId)) {
+                                        isAnyPlaying = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!availableSoundIndices.empty() && !isAnyPlaying) {
+                                    // Random selection from available sounds
+                                    int randomIndex = rand() % availableSoundIndices.size();
+                                    int selectedSoundIndex = availableSoundIndices[randomIndex];
+                                    int selectedSound = wormMoveSounds[selectedSoundIndex];
+
+                                    // Mark this sound as played
+                                    wormMoveSoundsPlayed[selectedSoundIndex] = true;
+
+                                    // Play the selected sound
+                                    audioM.PlaySFX(selectedSound);
                                 }
                             }
                         }
@@ -604,30 +666,30 @@ namespace Ukemochi
                                     }
                                 }
                             }
-                            // WHEN COLLIDE BOX
-                            if (collidedObj->GetTag() == "Environment")
-                            {
-                                enemycomponent.dirX = collidedObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-                                enemycomponent.dirY = collidedObj->GetComponent<Transform>().position.y - enemytransform.position.y;
+                            //// WHEN COLLIDE BOX
+                            //if (collidedObj->GetTag() == "Environment")
+                            //{
+                            //    enemycomponent.dirX = collidedObj->GetComponent<Transform>().position.x - enemytransform.position.x;
+                            //    enemycomponent.dirY = collidedObj->GetComponent<Transform>().position.y - enemytransform.position.y;
 
-                                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                                enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
+                            //    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
+                            //    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
 
-                                // break boxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                                if (enemycomponent.timeSinceTargetReached > 3.0f)
-                                {
-                                    enemyphysic.force.x = 0;
-                                    enemyphysic.force.y = 0;
-                                    if (enemycomponent.timeSinceTargetReached > 4.0f)
-                                    {
-                                        enemycomponent.state = Enemy::MOVE;
-                                        enemycomponent.isCollide = false;
-                                        enemycomponent.kicktime = 1.f;
-                                        enemycomponent.isKick = false;
-                                        enemycomponent.timeSinceTargetReached = 0.f;
-                                    }
-                                }
-                            }
+                            //    // break boxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                            //    if (enemycomponent.timeSinceTargetReached > 3.0f)
+                            //    {
+                            //        enemyphysic.force.x = 0;
+                            //        enemyphysic.force.y = 0;
+                            //        if (enemycomponent.timeSinceTargetReached > 4.0f)
+                            //        {
+                            //            enemycomponent.state = Enemy::MOVE;
+                            //            enemycomponent.isCollide = false;
+                            //            enemycomponent.kicktime = 1.f;
+                            //            enemycomponent.isKick = false;
+                            //            enemycomponent.timeSinceTargetReached = 0.f;
+                            //        }
+                            //    }
+                            //}
                         }
                     }
 
@@ -653,6 +715,7 @@ namespace Ukemochi
                             enemycomponent.state = Enemy::MOVE;
                             enemycomponent.isCollide = false;
                             enemycomponent.timeSinceTargetReached = 0.f;
+                            break;
                         }
                         if (collidedObj == nullptr)
                             break;
@@ -1193,6 +1256,9 @@ namespace Ukemochi
                     {
                         object->GetComponent<Animation>().SetAnimation("Idle");
                     }
+                    enemyphysic.velocity.x = 0.0f;
+                    enemyphysic.velocity.y = 0.0f;
+                    enemyphysic.force.x = enemyphysic.force.y = 0.f;
 
                     if (!enemycomponent.isWithPlayer)
                     {
