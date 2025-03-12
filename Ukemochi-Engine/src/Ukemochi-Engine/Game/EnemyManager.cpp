@@ -722,16 +722,6 @@ namespace Ukemochi
                         // ENEMY TO COLLIDE OBJ
                         float enemyX = enemytransform.position.x;
                         float enemyY = enemytransform.position.y;
-                        float objX = collidedObj->GetComponent<Transform>().position.x;
-                        float objY = collidedObj->GetComponent<Transform>().position.y;
-                        float objWidth = collidedObj->GetComponent<Transform>().scale.x * 0.5f;
-                        float objHeight = collidedObj->GetComponent<Transform>().scale.y * 0.5f;
-
-                        // Calculate collision direction
-                        float deltaX = enemyX - objX;
-                        float deltaY = enemyY - objY;
-                        float absDeltaX = std::abs(deltaX);
-                        float absDeltaY = std::abs(deltaY);
 
                         // If enemy has line of sight to the player, reset its movement state
                         if (HasClearLineOfSight(object, playerObj->GetComponent<Transform>()))
