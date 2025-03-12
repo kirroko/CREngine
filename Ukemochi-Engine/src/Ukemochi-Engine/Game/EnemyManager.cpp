@@ -1594,12 +1594,6 @@ namespace Ukemochi
                                     newObject.GetComponent<Transform>().rotation = -angleDeg;
                                 }
 
-                                std::cout << "MIN X" << newObject.GetComponent<BoxCollider2D>().min.x << std::endl;
-                                std::cout << "MIN Y" << newObject.GetComponent<BoxCollider2D>().min.y << std::endl;
-
-                                std::cout << "MAX X" << newObject.GetComponent<BoxCollider2D>().max.x << std::endl;
-                                std::cout << "MAX Y" << newObject.GetComponent<BoxCollider2D>().max.y << std::endl;
-
                                 newObject.AddComponent(EnemyBullet{});
                                 enemycomponent.wormshoot = true;
                             }
