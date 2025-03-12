@@ -1,10 +1,10 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Renderer.cpp
-\author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
-\co-authors Hurng Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (%)
-\co-authors Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (%)
-\date       Feb 6, 2025
+\author     TAN SHUN ZHI, Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
+\co-authors HURNG KAI RUI, h.kairui, 2301278, h.kairui\@digipen.edu (%)
+\co-authors TAN SI HAN, t.sihan, 2301264, t.sihan@digipen.edu (%)
+\date       Mar 12, 2025
 \brief      This file contains the implementation of the Renderer class responsible for
 			handling OpenGL rendering, including setting up shaders, buffers, textures,
 			and rendering 2D objects like boxes and circles.
@@ -540,53 +540,6 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
  * @brief Binds textures to OpenGL texture units and sets them up in the shader.
  * @param shader The shader program to bind textures to.
  */
-//void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
-//{
-//	int texture_order_count = static_cast<int>(ECS::GetInstance().GetSystem<AssetManager>()->getTextureOrderSize());
-//	int textureCount = std::min(32, texture_order_count);
-//	std::vector<int> textureUnits(textureCount);
-//
-//	for (int i = 0; i < texture_order_count && i < 32; ++i) 
-//	{
-//		const auto& path = ECS::GetInstance().GetSystem<AssetManager>()->getTextureAtIndex(i);
-//
-//		// Skip atlas subtextures
-//		if (ECS::GetInstance().GetSystem<AssetManager>()->isTextureInAtlas(path)) 
-//		{
-//			//std::cout << "Skipping texture (handled by atlas): " << path << std::endl;
-//			continue;
-//		}
-//
-//		Texture* texture = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(path).get();
-//		if (!texture || texture->ID == 0) 
-//		{
-//			std::cerr << "Error: Failed to load texture for path: " << path << std::endl;
-//			continue;
-//		}
-//
-//		// Ensure no redundant binding
-//		if (textureIDMap.find(texture->ID) == textureIDMap.end()) 
-//		{
-//			textureIDMap[texture->ID] = i;
-//			textureUnits[i] = i;
-//
-//			glActiveTexture(GL_TEXTURE0 + i);
-//			glBindTexture(GL_TEXTURE_2D, texture->ID);
-//
-//			/*std::cout << "Binding texture:\n"
-//				<< "  Path: " << path << "\n"
-//				<< "  Texture ID: " << texture->ID << "\n"
-//				<< "  Assigned Unit: " << i << std::endl;*/
-//		}
-//		else 
-//		{
-//			textureUnits[i] = textureIDMap[texture->ID];
-//		}
-//	}
-//
-//	shader->setIntArray("textures", textureUnits.data(), textureCount);
-//}
-
 void Renderer::bindTexturesToUnits(std::shared_ptr<Shader> shader)
 {
 	// Set textureCount based on the number of unique textures, limited to 32 
@@ -1182,150 +1135,22 @@ void Renderer::CreateTextObject(const std::string& id, const std::string& label,
  */
 void Renderer::UpdateTextObject(const std::string& id, const std::string& newText) { textRenderer->updateTextObject(id, newText); }
 
+/*!
+ * @brief Updates the text of an existing text object.
+ * @param id Identifier of the text object.
+ * @param color The new text color.
+ */
 void Renderer::UpdateTextColor(const std::string& id, const glm::vec3& color){ textRenderer->updateTextColor(id, color); }
 
+/*!
+ * @brief Removes the text text object.
+ * @param id Identifier of the text object.
+ */
 void Renderer::RemoveTextObject(const std::string& id)
 {
 	textRenderer->removeTextObject(id);
 }
 
-/*!
- * @brief Create a button object in the UI renderer.
- */
-//void Renderer::CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType, std::function<void()> onClick)
-//{
-//	if (!batchRendererUI) 
-//	{
-//		std::cerr << "Error: UIRenderer is not initialized!" << std::endl;
-//		return;
-//	}
-//
-//	uiManager.addButton(id, glm::vec3(position.x, position.y, position.z), glm::vec2(size.x, size.y), sprite, glm::vec3(color.x, color.y, color.z), batchRendererUI, layer, barType, onClick);
-//}
-
-/*!
- * @brief Remove a button object in the UI renderer.
- */
-//void Renderer::RemoveButtonObject(const std::string& id) {  }
-
-/*!
- * @brief Get the list of button objects in the UI renderer.
- */
-//std::vector<UIButton>& Renderer::GetButton(const std::string& buttonID) 
-//{
-//	for (auto& button : buttons)
-//	{
-//		if(button->id == )
-//	}
-//}
-
-/*!
- * @brief Initializes animation entities, creating idle and running animations for the player entity.
- */
-void Renderer::initAnimationEntities()
-{
-	// size_t playerEntityID = GetPlayer(); // Replace with actual entity IDs from your ECS or game logic
-	//
-	// // Create animations for the player
-	// Animation idleAnimation(37, 442, 448, 4096, 4096, 0.05f, true); 
-	// Animation runAnimation(13, 461, 428, 2048, 2048, 0.1f, true); 
-	//
-	// // Add multiple animations for the player entity (idle and running animations)
-	// entity_animations[playerEntityID] = { idleAnimation, runAnimation };
-
-}
-
-/*!
- * @brief Toggles slow-motion mode by adjusting animation frame duration.
- */
-void Renderer::toggleSlowMotion()
-{
-	// Toggle slow-motion state
-	isSlowMotion = !isSlowMotion;
-
-	// Loop through all entities and adjust the frame duration for their animations
-	for (auto& entity : m_Entities)
-	{
-		auto& spriteRenderer = ECS::GetInstance().GetComponent<SpriteRender>(entity);
-		if (spriteRenderer.animated)
-		{
-			// Get the animations associated with this entity
-			// auto& animations = entity_animations[entity];
-			// for (auto& animation : animations)
-			// {
-			// 	// // Adjust the frame duration based on slow-motion state
-			// 	// if (isSlowMotion)
-			// 	// {
-			// 	// 	animation.setFrameDuration(animation.originalFrameDuration * slowMotionFactor);
-			// 	// }
-			// 	// else
-			// 	// {
-			// 	// 	animation.resetFrameDuration(); // Reset to original duration
-			// 	// }
-			// }
-		}
-	}
-}
-
-/*!
- * @brief Handles key inputs for switching between idle and running animations based on movement keys.
- */
-void Renderer::animationKeyInput()
-{
-	//std::vector<GameObject*> list = GameObjectManager::GetInstance().GetAllGOs();
-	//if (list.empty())
-	//{
-	//	return;
-	//}
-	//for (auto& GameObject : list)
-	//{
-	//	if (GetPlayer() == GameObject->GetInstanceID())
-	//	{
-	//		// auto& playerSprite = GameObject->GetComponent<SpriteRender>();
-
-	//		// File paths for the textures
-	//		std::string runningTexturePath = "../Assets/Textures/running_player_sprite_sheet.png";
-	//		std::string idleTexturePath = "../Assets/Textures/idle_player_sprite_sheet.png";
-
-	//		// if (Input::IsKeyPressed(GLFW_KEY_A)) {
-	//		// 	isFacingRight = false; // Moving left
-	//		// }
-	//		// else if (Input::IsKeyPressed(GLFW_KEY_D)) {
-	//		// 	isFacingRight = true; // Moving right
-	//		// }
-
-	//		// Check if any movement keys are pressed
-	//		// if (Input::IsKeyPressed(GLFW_KEY_W) ||
-	//		// 	Input::IsKeyPressed(GLFW_KEY_A) ||
-	//		// 	Input::IsKeyPressed(GLFW_KEY_S) ||
-	//		// 	Input::IsKeyPressed(GLFW_KEY_D))
-	//		// {
-	//		// 	// If we are not already in the running state, switch to the running texture
-	//		// 	if (playerSprite.animationIndex != 1)
-	//		// 	{
-	//		// 		playerSprite.animationIndex = 1;
-	//		// 		playerSprite.texturePath = runningTexturePath;
-	//		//
-	//		// 		// Set the animation index and texture path to indicate running state
-	//		// 		std::cout << "Switching to running animation.\n";
-	//		// 	}
-	//		// }
-	//		// else
-	//		// {
-	//		// 	// If no movement keys are pressed and we are not in the idle state, switch to the idle texture
-	//		// 	if (playerSprite.animationIndex != 0)
-	//		// 	{
-	//		// 		playerSprite.animationIndex = 0;
-	//		// 		playerSprite.texturePath = idleTexturePath;
-	//		//
-	//		// 		// Set the animation index and texture path to indicate idle state
-	//		// 		std::cout << "Switching to idle animation.\n";
-	//		// 	}
-	//		// }
-	//		break;
-	//	}
-	//}
-}
 
 /*!***********************************************************************
 \brief

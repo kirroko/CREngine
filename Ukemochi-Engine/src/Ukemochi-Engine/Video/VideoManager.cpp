@@ -2,7 +2,9 @@
 /*!
 \file       VideoManager.cpp
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
-\date       Feb 5, 2025
+\co-author  TAN SHUN ZHI, Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu
+\co-author  TAN SI HAN, t.sihan, 2301264, t.sihan\@digipen.edu
+\date       Mar 12, 2025
 \brief      This file handle video in mpeg format  
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -19,21 +21,26 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi {
 
-    void CheckGLError(const char* file, int line)
-    {
-        GLenum err;
-        while ((err = glGetError()) != GL_NO_ERROR)
-        {
-            std::cerr << "OpenGL ERROR [" << file << ":" << line << "]: " << err << std::endl;
-        }
-    }
-    #define CHECK_GL_ERROR() CheckGLError(__FILE__, __LINE__)
+    /*!***********************************************************************
+    \brief
+     Checks if a video has finished playing.
 
+    \param videoName The name of the video to check.
+    \return True if the video has finished playing, false otherwise.
+    *************************************************************************/
     bool VideoManager::IsVideoDonePlaying(const std::string& videoName)
     {
         return videos[videoName].done;
     }
 
+    /*!***********************************************************************
+    \brief
+     Renders the current frame of the selected video.
+
+    \details
+     This function retrieves the video data, applies the correct transformations,
+     sets up the OpenGL shader program, and renders the video as a textured quad.
+    *************************************************************************/
     void VideoManager::RenderVideoFrame()
     {
         if (currentVideo.empty() || videos.find(currentVideo) == videos.end()) 
@@ -99,13 +106,15 @@ namespace Ukemochi {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-    void VideoManager::Audio_Callback(plm_t* plm, plm_samples_t* frame, void* user)
-    {
-        if (frame->count > 0) {
-            Audio::GetInstance().playStereoSound(frame->interleaved, frame->count,1.f);
-        }
-    }
+    /*!***********************************************************************
+    \brief
+     Loads a video from a file and stores it in the video map.
 
+    \param name The identifier for the video.
+    \param filepath The file path to the MPEG video file.
+    \param loop A boolean indicating whether the video should loop.
+    \return True if the video was loaded successfully, false otherwise.
+    *************************************************************************/
     bool VideoManager::LoadVideo(const std::string& name, const char* filepath, bool loop)
     {
         VideoData video;
@@ -216,15 +225,6 @@ namespace Ukemochi {
 
         glBindVertexArray(0);
 
-        //std::string filename = filepath;
-        //size_t lastDot = filename.find_last_of(".");
-        //if (lastDot != std::string::npos) {
-        //    filename = filename.substr(0, lastDot);  // Remove extension
-        //}
-
-        //// Add your own file extension (.wav)
-        //std::string newFilename = filename + ".wav";
-
         ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
 
         videos[name] = video;  // Store the video in the map
@@ -232,6 +232,16 @@ namespace Ukemochi {
         return true;
     }
 
+    /*!***********************************************************************
+    \brief
+     Creates an OpenGL texture array for storing video frames.
+
+    \param videoName The name of the video associated with this texture.
+    \param width The width of each frame.
+    \param height The height of each frame.
+    \param num_frames The total number of frames in the video.
+    \return The generated OpenGL texture ID.
+    *************************************************************************/
     GLuint VideoManager::CreateVideoTexture(const std::string& videoName, int width, int height, int num_frames)
     {
         stbi_set_flip_vertically_on_load(true);
@@ -263,6 +273,15 @@ namespace Ukemochi {
       
     }
 
+    /*!***********************************************************************
+    \brief
+     Updates the video playback and renders the current frame.
+
+    \details
+     This function updates the current video’s elapsed time, checks if it should
+     progress to the next frame, and handles video looping behavior. If the video
+     is finished and not looping, it releases resources.
+    *************************************************************************/
     void VideoManager::UpdateAndRenderVideo()
     {
         if (currentVideo.empty() || videos.find(currentVideo) == videos.end()) 
@@ -287,15 +306,6 @@ namespace Ukemochi {
 
         // Get the elapsed time since the last frame
         video.elapsedTime += deltaTime;
-        //static double audioDuration = (double)(1.0 / video.totalFrames) * 14;
-
-        //if (video.currentFrame >= 400)
-        //{
-        //    if (ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
-        //    {
-        //        ECS::GetInstance().GetSystem<Audio>()->StopSFX(0);
-        //    }
-        //}
 
         if (ECS::GetInstance().GetSystem<Audio>()->CheckSFX())
         {
@@ -309,14 +319,6 @@ namespace Ukemochi {
         // Only update the video frame if enough time has passed
         if (video.currentFrame < video.totalFrames - 1)
         {
-            //if (video.elapsedTime >= audioDuration)
-            //{
-            //    if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
-            //    {
-            //        ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX");
-            //    }
-
-            //}
             if (video.elapsedTime >= video.frameDuration)
             {
                 // Reset elapsed time to stay in sync with video playback
@@ -345,6 +347,12 @@ namespace Ukemochi {
         RenderVideoFrame();
     }
 
+    /*!***********************************************************************
+    \brief
+     Sets the current active video by name.
+
+    \param name The name of the video to be set as the current video.
+    *************************************************************************/
     void VideoManager::SetCurrentVideo(const std::string& name)
     {
         if (videos.find(name) == videos.end()) 
@@ -356,13 +364,29 @@ namespace Ukemochi {
     }
 
 
+    /*!***********************************************************************
+    \brief
+     Updates the video manager.
+
+    \details
+     This function calls `UpdateAndRenderVideo()` to ensure video playback
+     continues in the update loop.
+    *************************************************************************/
     void VideoManager::Update()
     {
         UpdateAndRenderVideo();  
     }
+
+    /*!***********************************************************************
+    \brief
+     Skips the currently playing video.
+
+    \details
+     This function stops any associated audio and releases the video resources.
+    *************************************************************************/
     void VideoManager::SkipVideo()
     {
-        UME_ENGINE_TRACE("Skipping video...");
+        //UME_ENGINE_TRACE("Skipping video...");
 
         // Stop any playing audio
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
@@ -371,12 +395,18 @@ namespace Ukemochi {
         Free();
     }
 
+    /*!***********************************************************************
+    \brief
+     Frees the resources associated with the current video.
+
+    \details
+     This function deletes textures, destroys the PLM video object, and cleans up
+     allocated memory.
+    *************************************************************************/
     void VideoManager::Free()
     {
         VideoData& video = videos[currentVideo];
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
-        // Set the camera initial position
-        //ECS::GetInstance().GetSystem<Camera>()->position = { -1920, 0 };
 
         // Free PLM object
         if (video.plm)
@@ -391,10 +421,7 @@ namespace Ukemochi {
             glDeleteTextures(1, &video.textureID);
             video.textureID = 0;
         }
-        // Remove video entry from map
-        //videos.erase(currentVideo);
-        //currentVideo.clear(); // No active video
-        
+
         if (video.video_ctx)
         {
             if (video.video_ctx->rgb_buffer)
@@ -405,7 +432,5 @@ namespace Ukemochi {
         }
 
         video.done = true;
-        //delete video_ctx;
-        //delete rb;
     }
 }

@@ -2,8 +2,9 @@
 /*!
 \file       Renderer.h
 \author     TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
+\co-authors HURNG KAI RUI, h.kairui, 2301278, h.kairui\@digipen.edu (%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (%)
-\date       Sept 25, 2024
+\date       Mar 12, 2025
 \brief      This file contains the declaration of the Renderer class responsible
 			for handling OpenGL rendering, including setting up shaders, buffers,
 			textures, and rendering 2D objects like boxes and circles.
@@ -163,35 +164,39 @@ public:
 	 */
 	void UpdateTextObject(const std::string& id, const std::string& newText);
 
+	/*!
+	 * @brief Update a text object color in the text renderer.
+	 */
 	void UpdateTextColor(const std::string& id, const glm::vec3& color);
 
+	/*!
+	 * @brief Removes the text text object.
+	 */
 	void RemoveTextObject(const std::string& id);
-	
 
 	/*!
-	 * @brief Create a button object in the UI renderer.
+	 * @brief Update player bars(e.g. Health, Soul, etc.).
 	 */
-	//void CreateButtonObject(const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, bool isHealth, std::function<void()> onClick);
-	void CreateButtonObject(const std::string& id, const Vec3& position, const Vec2& size, const std::string& sprite, const Vec3& color, int layer, BarType barType = BarType::None, std::function<void()> onClick = nullptr);
-	/*!
-	 * @brief Remove a button object in the UI renderer.
-	 */
-	void RemoveButtonObject(const std::string& id);
-
-	/*!
-	 * @brief Get the list of button objects in the UI renderer.
-	 */
-	std::vector<UIButton>& GetButtonObjects();
-
-	//void updateHealthBar();
 	void updatePlayerBars();
 
+	/*!
+	 * @brief Set up framebuffer to be drawn to ImGUI.
+	 */
 	void setupFramebuffer();
 
+	/*!
+	 * @brief Enable framebuffer to be drawn to ImGUI.
+	 */
 	void beginFramebufferRender();
 
+	/*!
+	 * @brief Ends framebuffer to be drawn to ImGUI.
+	 */
 	void endFramebufferRender();
 
+	/*!
+	 * @brief Draws framebuffer to ImGUI.
+	 */
 	void renderToFramebuffer();
 
 	GLuint getTextureColorBuffer() const;
@@ -304,66 +309,6 @@ private:
 	GLfloat lastFrame = 0.0f;
 
 	/*!
-	 * @struct Animation
-	 * @brief Manages frame-based animations for entities.
-	 */
-	// struct Animation {
-	// 	int totalFrames;
-	// 	int currentFrame;
-	// 	float frameDuration;
-	// 	float originalFrameDuration; // Store the original duration
-	// 	float elapsedTime;
-	// 	int frameWidth, frameHeight, totalWidth, totalHeight;
-	// 	bool loop;
-	//
-	// 	/*!
-	// 	 * @brief Constructs an Animation object with specified parameters.
-	// 	 * @param totalFrames Total frames in the animation.
-	// 	 * @param frameWidth Width of each frame.
-	// 	 * @param frameHeight Height of each frame.
-	// 	 * @param totalWidth Width of the sprite sheet.
-	// 	 * @param totalHeight Height of the sprite sheet.
-	// 	 * @param frameDuration Duration for each frame.
-	// 	 * @param loop Whether the animation should loop (default is true).
-	// 	 */
-	// 	Animation(int totalFrames, int frameWidth, int frameHeight, int totalWidth, int totalHeight, float frameDuration, bool loop = true)
-	// 		: totalFrames(totalFrames), currentFrame(0), frameDuration(frameDuration), originalFrameDuration(frameDuration),
-	// 		elapsedTime(0.0f), frameWidth(frameWidth), frameHeight(frameHeight), totalWidth(totalWidth), totalHeight(totalHeight), loop(loop) {}
-	//
-	// 	/*!
-	// 	 * @brief Updates the animation frame based on elapsed time.
-	// 	 * @param deltaTime Time passed since the last update.
-	// 	 */
-	// 	void update(float deltaTime)
-	// 	{
-	// 		elapsedTime += deltaTime;
-	// 		if (elapsedTime >= frameDuration) {
-	//
-	// 			currentFrame++;
-	// 			if (currentFrame >= totalFrames) 
-	// 			{
-	// 				currentFrame = 0; // Loop back to the first frame
-	// 			}
-	// 			elapsedTime = 0.0f; // Reset elapsed time
-	// 		}
-	// 	}
-	// 	/*!
-	// 	 * @brief Sets a new duration for each frame.
-	// 	 * @param newDuration New frame duration (in seconds).
-	// 	 */
-	// 	void setFrameDuration(float newDuration) 
-	// 	{
-	// 		frameDuration = newDuration;
-	// 	}
-	// 	/*!
-	// 	 * @brief Resets the frame duration to its original value.
-	// 	 */
-	// 	void resetFrameDuration() 
-	// 	{
-	// 		frameDuration = originalFrameDuration;
-	// 	}
-	// };
-	/*!
 	 * @brief Stores animations for each entity by entity ID.
 	 */
 	std::unordered_map<size_t, std::vector<Animation>> entity_animations;
@@ -372,20 +317,8 @@ private:
 	float slowMotionFactor = 2.0f;
 	bool isFacingRight = false;
 
-public:
-	/*!
-	 * @brief Toggles slow-motion mode for animations.
-	 */
-	void toggleSlowMotion();
-	/*!
-	 * @brief Handles animation input from the user.
-	 */
-	void animationKeyInput();
-	/*!
-	 * @brief Initializes animations for entities.
-	 */
-	void initAnimationEntities();
 
+	
 private:
 
 	/*!

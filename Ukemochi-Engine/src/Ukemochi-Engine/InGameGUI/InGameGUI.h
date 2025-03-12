@@ -29,7 +29,7 @@ namespace Ukemochi
 
 		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
-		bool show_stats = false;
+		bool show_stats = false; // Show stats text
 		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
 		float hoverCooldown = 0.5f;  // cooldown for hover sound
 		float hoverTimer = 0.0f;     // Tracks time since last hover sound
@@ -39,7 +39,7 @@ namespace Ukemochi
 		float deathTimer = 0.f;
 		const float deathScreenDelay = 2.f;
 	public:
-		bool showCredits = false;
+		bool showCredits = false; // Show credits
 
 		/*!***********************************************************************
 		\brief
@@ -84,13 +84,29 @@ namespace Ukemochi
 		 Creates various GUI images (e.g., health bar, icons, etc.).
 		*************************************************************************/
 		void CreateImage();
-
+		
+		/*!***********************************************************************
+		\brief
+		 Creates various main menu UI (e.g., start, credits, etc.).
+		*************************************************************************/
 		void CreateMainMenuUI();
-
+		
+		/*!***********************************************************************
+		\brief
+		 Creates credit screen.
+		*************************************************************************/
 		void ShowCredits();
 
+		/*!***********************************************************************
+		\brief
+		 Updates credit screen to be able to scroll.
+		*************************************************************************/
 		void UpdateCredits();
 
+		/*!***********************************************************************
+		\brief
+		 Updates ukemochi title to have the drop down effect.
+		*************************************************************************/
 		void UpdateTitleAnimation();
 
 		/*!***********************************************************************
@@ -101,6 +117,12 @@ namespace Ukemochi
 		*************************************************************************/
 		void RemoveElement(const std::string& id);
 
+		/*!***********************************************************************
+		\brief
+		 Remove a text object.
+		\param[in] id
+		 The ID for the text object.
+		*************************************************************************/
 		void RemoveText(const std::string& id);
 
 		/*!***********************************************************************
@@ -154,12 +176,28 @@ namespace Ukemochi
 		*************************************************************************/
 		void HideDefeatScreen();
 
+		/*!***********************************************************************
+		\brief
+		 Displays the stats menu.
+		*************************************************************************/
 		void ShowStats();
 
+		/*!***********************************************************************
+		\brief
+		 Hides the stats menu and resumes gameplay.
+		*************************************************************************/
 		void HideStats();
 
+		/*!***********************************************************************
+		\brief
+		 Updates the music volume bar UI based on the current audio volume level.
+		*************************************************************************/
 		void UpdateMusicBar();
 
+		/*!***********************************************************************
+		\brief
+		 Updates the SFX volume bar UI based on the current audio volume level.
+		*************************************************************************/
 		void UpdateSFXBar();
 	};
 }

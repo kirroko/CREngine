@@ -2,7 +2,9 @@
 /*!
 \file       VideoManager.h
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu
-\date       Feb 5, 2025
+\co-author  TAN SHUN ZHI, Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu
+\co-author  TAN SI HAN, t.sihan, 2301264, t.sihan\@digipen.edu
+\date       Mar 12, 2025
 \brief      This file handle video in mpeg format 
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -18,16 +20,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Ukemochi {
     class VideoManager : public System
     {
-        struct RingBuffer
-        {
-            float *buffer;
-            size_t capacity; // in samples
-            size_t write_index;
-            size_t read_index;
+        /*!***********************************************************************
+        \brief
+         Represents the context for a video frame.
 
-            RingBuffer() : buffer(static_cast<float*>(malloc(4096))), capacity(4096), write_index(0), read_index(0)  {}
-        } ;
-
+        \details
+         This struct holds width, height, and buffer data used for video decoding.
+        *************************************************************************/
         struct VideoContext
         {
             unsigned int width;
@@ -38,6 +37,14 @@ namespace Ukemochi {
             VideoContext(const int w, const int h) : width(w), height(h), texture_crop_size(0), rgb_buffer(nullptr) {}
         };
 
+        /*!***********************************************************************
+        \brief
+         Stores metadata and state information for a video.
+
+        \details
+         This struct maintains video decoding state, texture ID, frame tracking,
+         playback timing, and looping information.
+        *************************************************************************/
         struct VideoData {
             plm_t* plm = nullptr;
             GLuint textureID = 0;
@@ -50,28 +57,36 @@ namespace Ukemochi {
             bool loop = false;
         };
 
-        RingBuffer* rb = {};
-        
-
-        std::shared_ptr<Shader> video_shader_program;
+        std::shared_ptr<Shader> video_shader_program; // Shader program used for rendering video
 
     public:
 
-        std::unordered_map<std::string, VideoData> videos; 
+        std::unordered_map<std::string, VideoData> videos; // Map of video names to their data
         std::string currentVideo; // Name of the currently playing video
 
+        /*!***********************************************************************
+        \brief
+         Checks if a video has finished playing.
+
+        \param videoName The name of the video to check.
+        \return True if the video has finished playing, false otherwise.
+        *************************************************************************/
         bool IsVideoDonePlaying(const std::string& videoName);
 
     private:
         
-        double lastFrameTime = 0.0f;
-        GLuint VAO{}, VBO{};
+        double lastFrameTime = 0.0f; // Timestamp of the last frame update
+        GLuint VAO{}, VBO{}; // OpenGL Vertex Array Object and Vertex Buffer Object
 
+        /*!***********************************************************************
+        \brief
+         Renders the current frame of the active video.
+
+        \details
+         This function retrieves the currently playing video, applies the appropriate
+         transformations, and renders the frame using OpenGL.
+        *************************************************************************/
         void RenderVideoFrame();
-
-        static void Video_Callback(plm_t *plm, plm_frame_t *frame, void *user);
-
-        static void Audio_Callback(plm_t *plm, plm_samples_t *frame, void *user);
         
         /**
          * @brief Create an OpenGL texture to store the video
