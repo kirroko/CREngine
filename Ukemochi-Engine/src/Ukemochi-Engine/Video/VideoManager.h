@@ -32,9 +32,9 @@ namespace Ukemochi {
             unsigned int width;
             unsigned int height;
             GLuint texture_crop_size;
-            uint8_t *rgb_buffer;
+            std::unique_ptr<uint8_t[]> rgb_buffer;
 
-            VideoContext(const int w, const int h) : width(w), height(h), texture_crop_size(0), rgb_buffer(nullptr) {}
+            VideoContext(const int w, const int h) : width(w), height(h), texture_crop_size(0), rgb_buffer(std::make_unique<uint8_t[]>(w* h * 3)) {}
         };
 
         /*!***********************************************************************
@@ -53,7 +53,7 @@ namespace Ukemochi {
             double frameDuration = 0.0;
             double elapsedTime = 0.0f;
             bool done = false;
-            VideoContext* video_ctx = {};
+            std::unique_ptr<VideoContext> video_ctx;
             bool loop = false;
         };
 
@@ -132,5 +132,7 @@ namespace Ukemochi {
          * @brief Release resources
          */
         void Free();
+
+        void CleanupAllVideos();
     };
 }

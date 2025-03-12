@@ -706,6 +706,7 @@ namespace Ukemochi
     {
         SceneManagerFree();
         ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
+        ECS::GetInstance().GetSystem<VideoManager>()->CleanupAllVideos();
     }
 
     /*!***********************************************************************

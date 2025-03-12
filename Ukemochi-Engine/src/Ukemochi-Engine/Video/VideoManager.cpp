@@ -151,9 +151,8 @@ namespace Ukemochi {
         video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
 
         // Allocate RGB buffer
-        video.video_ctx = new VideoContext(width, height);
-        video.video_ctx->rgb_buffer = static_cast<uint8_t*>(malloc(width * height * 3));
-
+        video.video_ctx = std::make_unique<VideoContext>(width, height);
+ 
         // **Preload all frames into the texture array**
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
         for (int i = 0; i < video.totalFrames; ++i)
@@ -163,14 +162,14 @@ namespace Ukemochi {
             if (!frame) break;
 
             // Convert to RGB
-            plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer, width * 3);
-
+            plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer.get(), width * 3);
+            
             if (!video.video_ctx->rgb_buffer) {
                 UME_ENGINE_ERROR("Error: RGB buffer is null at frame {0}", i);
             }
 
             // Upload to the 2D texture array at layer `i`
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.video_ctx->rgb_buffer);
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.video_ctx->rgb_buffer.get());
 
             UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, video.totalFrames, i);
         }
@@ -224,7 +223,7 @@ namespace Ukemochi {
 
         ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
 
-        videos[name] = video;  // Store the video in the map
+        videos[name] = std::move(video);  // Store the video in the map
 
         return true;
     }
@@ -419,15 +418,37 @@ namespace Ukemochi {
             video.textureID = 0;
         }
 
-        if (video.video_ctx)
-        {
-            if (video.video_ctx->rgb_buffer)
-            {
-                free(video.video_ctx->rgb_buffer); // Ensure correct allocation type
-            }
-            delete video.video_ctx;
-        }
-
         video.done = true;
     }
+
+    void VideoManager::CleanupAllVideos()
+    {
+        for (auto it = videos.begin(); it != videos.end(); ++it)
+        {
+            VideoData& video = it->second;
+
+            // Ensure audio is cleaned up
+            ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
+
+            // Free PLM object
+            if (video.plm)
+            {
+                plm_destroy(video.plm);
+                video.plm = nullptr;
+            }
+
+            // Delete OpenGL texture
+            if (video.textureID)
+            {
+                glDeleteTextures(1, &video.textureID);
+                video.textureID = 0;
+            }
+
+            video.done = true;
+        }
+
+        // Clear the video map after freeing all resources
+        videos.clear();
+    }
+
 }
