@@ -871,7 +871,6 @@ namespace Ukemochi
 								{
 									player_data.postInjuriesMaxHealth = player_data.maxHealth;
 								}
-								std::cout << "hit" << std::endl;
 							}
 						}
 
@@ -937,35 +936,6 @@ namespace Ukemochi
 			//return;
 			// Placeholder, wait for when animations is complete so that we can break the box
 			// Play Animation
-		}
-		else if (tag1 == "FishAbility" && tag2 == "Enemy") // Mochi's Fish Ability and Enemy (Enemy takes huge damage)
-		{
-			// Get references of the player and enemy
-			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
-
-			// Trigger enemy hurt animation
-			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-
-			// Deal damage to the enemy
-			enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
-		}
-		else if (tag1 == "WormAbility" && tag2 == "Enemy") // Mochi's Worm Ability and Enemy (Enemy gets trap in the web)
-		{
-			// Get reference of the enemy
-			auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(entity2);
-
-			// Trigger enemy hurt animation
-			ECS::GetInstance().GetComponent<Animation>(entity2).SetAnimationUninterrupted("Hurt");
-
-			// Stop the enemy's movement
-			enemy_rb.force = Vec2{ 0,0 };
-			enemy_rb.velocity = Vec2{ 0,0 };
-		}
-		else if (tag1 == "Knife" && tag2 == "EnemyProjectile" || tag1 == "FishAbility" && tag2 == "EnemyProjectile"
-			|| tag1 == "WormAbility" && tag2 == "EnemyProjectile" || tag1 == "Environment" && tag2 == "EnemyProjectile") // Mochi's Knife / Mochi's Ability / Environment Objects and Enemy's Projectile
-		{
-			// Destroy enemy's projectile
 		}
 		else if (tag1 == "Knife" && tag2 == "Dummy") // Mochi's Knife and Dummy
 		{
