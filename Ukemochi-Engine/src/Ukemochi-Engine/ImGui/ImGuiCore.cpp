@@ -1523,7 +1523,8 @@ namespace Ukemochi
             "PlayerController",
             "Audio",
             "EnemyController",
-            "PlayerSoul"
+            "PlayerSoul",
+            "Boss"
         };
 
         ImGui::Text("Add Component");
@@ -1615,6 +1616,18 @@ namespace Ukemochi
                 {
                     selectedObject->AddComponent<PlayerSoul>(PlayerSoul{});
                     modified = true;
+                }
+                break;
+            case 9: // Boss
+                if (selectedObject->GetTag() == "Boss" && !selectedObject->HasComponent<Boss>())
+                {
+                    selectedObject->AddComponent<Boss>(Boss(selectedObject->GetInstanceID()));
+                    modified = true;
+                }
+                else if (selectedObject->GetTag() != "Boss")
+                {
+                    // Show popup instead of console message
+                    ImGui::OpenPopup("Invalid Boss Tag");
                 }
                 break;
             default:
@@ -2493,6 +2506,20 @@ namespace Ukemochi
                 //        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Channel Groups must be at least 1.");
                 //    }
                 //}
+            }
+        }
+
+        if (selectedObject->HasComponent<Boss>())
+        {
+            if (ImGui::CollapsingHeader("Boss"))
+            {
+                auto& boss = selectedObject->GetComponent<Boss>();
+                ImGui::Text("Boss Component");
+                int type = static_cast<int>(boss.state);
+                if (ImGui::Combo("State", &type, "ATTACK1\0ATTACK2\0DEAD1\0DEAD2\0"))
+                {
+                    boss.state = static_cast<Boss::BossStates>(type);
+                }
             }
         }
     }

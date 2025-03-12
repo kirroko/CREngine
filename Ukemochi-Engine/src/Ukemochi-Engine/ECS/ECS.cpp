@@ -75,6 +75,7 @@ namespace Ukemochi
 		auto spriteRenderer = m_ComponentManager->GetComponentType<SpriteRender>();
 		auto script = m_ComponentManager->GetComponentType<Script>();
 		auto animation = m_ComponentManager->GetComponentType<Animation>();
+		auto enemy = m_ComponentManager->GetComponentType<Enemy>();
 		//auto button = m_ComponentManager->GetComponentType<Button>();
 
 		// Iterate through all possible components
@@ -122,6 +123,11 @@ namespace Ukemochi
 				{
 					Animation originalComponent = m_ComponentManager->GetComponent<Animation>(entity);
 					AddComponent<Animation>(newEntity, originalComponent);
+				}
+				else if (i == enemy)
+				{
+					Enemy originalComponent = m_ComponentManager->GetComponent<Enemy>(entity);
+					AddComponent<Enemy>(newEntity, originalComponent);
 				}
 				//else if(i == button)
 				//{
