@@ -37,7 +37,7 @@ namespace Ukemochi
 		float scrollSpeed = 250.f; // Pixels per second (adjust speed)
 
 		float deathTimer = 0.f;
-		const float deathScreenDelay = 3.f;
+		const float deathScreenDelay = 2.f;
 	public:
 		bool showCredits = false;
 
@@ -157,5 +157,9 @@ namespace Ukemochi
 		void ShowStats();
 
 		void HideStats();
+
+		void UpdateMusicBar();
+
+		void UpdateSFXBar();
 	};
 }

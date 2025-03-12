@@ -53,6 +53,10 @@ namespace Ukemochi
 		// Handle button inputs
 		HandleButtonInput();
 
+		UpdateMusicBar();
+
+		UpdateSFXBar();
+
 		auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
 
 		// Check if player health is 0
@@ -129,23 +133,6 @@ namespace Ukemochi
 	{
 		ECS::GetInstance().GetSystem<Renderer>()->UpdateTextObject(text_id, new_label);
 	}
-
-	/*!***********************************************************************
-	\brief
-	 Create a GUI image object.
-	\param[in] id
-	 The ID for the image object.
-	\param[in] pos
-	 The position of the image.
-	\param[in] size
-	 The size of the image.
-	\param[in] textureID
-	 The ID for the image texture.
-	*************************************************************************/
-	/*void InGameGUI::CreateImage(const std::string& id, const Vec3& pos, const Vec2& size, const std::string& spriteName, int layer, const Vec3& color, BarType barType)
-	{
-		ECS::GetInstance().GetSystem<Renderer>()->CreateButtonObject(id, pos, size, spriteName, Vec3{ 0.f, 0.f, 0.f }, layer, barType, nullptr);
-	}*/
 
 	/*!***********************************************************************
 	\brief
@@ -228,22 +215,6 @@ namespace Ukemochi
 			});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-		//// Main Menu
-		//uiManager->addButton("main menu", glm::vec3{ screen_width * 0.5f, screen_height * 0.5f , 0.f }, glm::vec2{ static_cast<float>(screen_width), static_cast<float>(screen_height) }, "ui_mainmenu", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
-		//	// Get the AudioManager
-		//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-		//	// Start playing main menu music if it exists
-		//	if (audioM.GetMusicIndex("BGMOG") != -1)
-		//	{
-		//		if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
-		//		{
-		//			audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
-		//		}
-		//	}
-		//	});
-
-		
 	}
 
 	void InGameGUI::CreateMainMenuUI()
@@ -311,6 +282,10 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Displays the credits by adding necessary UI elements.
+	*************************************************************************/
 	void InGameGUI::ShowCredits()
 	{
 		// Hide main menu buttons
@@ -327,8 +302,8 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
 
 		// Add the back button to return to main menu
-		uiManager->addButton("main menu return", glm::vec3{ 118.f, 1000.f, 0.f }, glm::vec2{ 73.f, 86.f },
-			"return", glm::vec3(1.0f, 1.0f, 1.0f),
+		uiManager->addButton("main menu return", glm::vec3{ 60.f, 1025.f, 0.f }, glm::vec2{ 73.f, 86.f },
+			"return_main", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, [this]() {
 				if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 				{
@@ -440,15 +415,15 @@ namespace Ukemochi
 			// Check if hover state has changed
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
-				//if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-				//{
-				//	auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				//	if (audioM.GetSFXindex("HoverSound") != -1)
-				//	{
-				//		audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
-				//	}
-				//}
-				//hoverTimer = hoverCooldown; // Reset cooldown timer
+				if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+				{
+					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					if (audioM.GetSFXindex("HoverSound") != -1)
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
+					}
+				}
+				hoverTimer = hoverCooldown; // Reset cooldown timer
 			}
 
 			// Update hover state
@@ -484,12 +459,6 @@ namespace Ukemochi
 		}
 		if (Input::IsKeyTriggered(UME_KEY_M))
 			Application::Get().QuitGame();
-
-		// Press enter to start game
-		if (!Application::Get().GameStarted && Input::IsKeyTriggered(UME_KEY_ENTER))
-		{
-			Application::Get().StartGame();
-		}
 
 		// Press F10 to toggle fps text
 		if (Input::IsKeyTriggered(UME_KEY_F10))
@@ -606,7 +575,7 @@ namespace Ukemochi
 			
 			});
 
-		uiManager->addButton("music bar", glm::vec3(960.f, 350.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 3", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
+		uiManager->addButton("music bar", glm::vec3(960.f, 350.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 3", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, false, []() {
 			
 			});
 
@@ -635,7 +604,7 @@ namespace Ukemochi
 
 			});
 
-		uiManager->addButton("sfx bar", glm::vec3(960.f, 250.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 3", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
+		uiManager->addButton("sfx bar", glm::vec3(960.f, 250.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 3", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, false, []() {
 
 			});
 	}
@@ -747,6 +716,10 @@ namespace Ukemochi
 		CreateText("movement speed", std::to_string((int)(player.playerForce / 1000.f)), Vec2(1445.f, 485.f), 1.5f, Vec3(0.0f, 0.0f, 0.0f), "Ukemochi_numbers");
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Removes all stats screen UI elements from the screen.
+	*************************************************************************/
 	void InGameGUI::HideStats()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
@@ -756,5 +729,83 @@ namespace Ukemochi
 		RemoveText("attack");
 		RemoveText("armour");
 		RemoveText("movement speed");
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Updates the music volume bar UI based on the current audio volume level.
+
+	\details
+	 This function retrieves the current music volume from the AudioManager
+	 and adjusts the width and position of the "music bar" UI element
+	 to visually represent the current volume level.
+
+	\remarks
+	 If the AudioManager is not found or the music list is empty, the bar
+	 remains unchanged.
+
+	*************************************************************************/
+	void InGameGUI::UpdateMusicBar()
+	{
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		// Get the button reference
+		auto musicBar = uiManager->getButtonByID("music bar");
+		if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				
+				if (musicBar)
+				{
+					float volume = audioM.music.empty() ? 0.0f : audioM.music[0].volume;  // Get the current volume
+					float maxWidth = 429.0f;  // Max width of the volume bar
+
+					// Update size and position dynamically
+					musicBar->size.x = maxWidth * volume;
+					musicBar->position.x = 960.f - (maxWidth - musicBar->size.x) * 0.5f;
+				}
+			}
+		}
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Updates the SFX volume bar UI based on the current audio volume level.
+
+	\details
+	 This function retrieves the current SFX volume from the AudioManager
+	 and adjusts the width and position of the "sfx bar" UI element
+	 to visually represent the current SFX volume level.
+
+	\remarks
+	 If the AudioManager is not found or the SFX list is empty, the bar
+	 remains unchanged.
+
+	*************************************************************************/
+	void InGameGUI::UpdateSFXBar()
+	{
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		// Get the button reference
+		auto sfxBar = uiManager->getButtonByID("sfx bar");
+		if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				if (sfxBar)
+				{
+					float volume = audioM.sfx.empty() ? 0.0f : audioM.sfx[0].volume;  // Get the current volume
+					float maxWidth = 429.0f;  // Max width of the volume bar
+
+					// Update size and position dynamically
+					sfxBar->size.x = maxWidth * volume;
+					sfxBar->position.x = 960.f - (maxWidth - sfxBar->size.x) * 0.5f;
+				}
+			}
+		}
 	}
 }
