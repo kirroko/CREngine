@@ -578,6 +578,11 @@ namespace Ukemochi
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetMusicVolume(-0.1f);
 				lastClickTime = currentTime; // Update last click time
+				// Check if the StartButton SFX exists and play it
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			});
 
@@ -587,6 +592,10 @@ namespace Ukemochi
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetMusicVolume(0.1f);
 				lastClickTime = currentTime; // Update last click time
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			});
 
@@ -607,6 +616,10 @@ namespace Ukemochi
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetSFXvolume(-0.1f);
 				lastClickTime = currentTime; // Update last click time
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			});
 
@@ -616,6 +629,10 @@ namespace Ukemochi
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.SetSFXvolume(0.1f);
 				lastClickTime = currentTime; // Update last click time
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
 			}
 			});
 
