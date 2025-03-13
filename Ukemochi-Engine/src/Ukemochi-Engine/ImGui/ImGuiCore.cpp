@@ -848,7 +848,7 @@ namespace Ukemochi
                     m_CompileError = false;
                     es_current = ENGINE_STATES::ES_PLAY;
                     UME_ENGINE_INFO("Simulation (Game is playing) started");
-                    ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                    // ECS::GetInstance().GetSystem<LogicSystem>()->Init();
                 }
                 else
                 {

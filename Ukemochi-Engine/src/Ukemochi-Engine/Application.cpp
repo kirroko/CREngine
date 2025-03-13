@@ -260,7 +260,7 @@ namespace Ukemochi
             UME_ENGINE_INFO("Simulation (Game is playing) started");
 
             // Initialize ECS systems for game mode
-            ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+            // ECS::GetInstance().GetSystem<LogicSystem>()->Init();
         }
         else
         {

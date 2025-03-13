@@ -950,16 +950,17 @@ namespace Ukemochi
 				{
 					if(!newObject.HasComponent<Script>())
 						{
-                        MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
-                            componentData["ClassName"].GetString()); 
-                        EntityID newScriptID = newObject.GetInstanceID();
-                        ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
-                        newObject.AddComponent(Script{
-                            componentData["Path"].GetString(),
-                            componentData["ClassName"].GetString(),
-                            newScript,
-                            ScriptingEngine::CreateGCHandle(newScript)
-                        });
+					        newObject.AddComponent(Script{}); // Add empty script component
+                        // MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
+                        //     componentData["ClassName"].GetString()); 
+                        // EntityID newScriptID = newObject.GetInstanceID();
+                        // ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
+                        // newObject.AddComponent(Script{
+                        //     componentData["Path"].GetString(),
+                        //     componentData["ClassName"].GetString(),
+                        //     newScript,
+                        //     ScriptingEngine::CreateGCHandle(newScript)
+                        // });
                     }
                 }
             	else if (componentName == "Animation")
