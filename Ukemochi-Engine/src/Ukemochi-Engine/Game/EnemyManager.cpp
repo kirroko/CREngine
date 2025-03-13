@@ -126,7 +126,7 @@ namespace Ukemochi
                 {
                     if (enemycomponent.waitTime > 0.f)
                     {
-                        enemycomponent.waitTime -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                        enemycomponent.waitTime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                     }
                     else
                     {
@@ -615,7 +615,7 @@ namespace Ukemochi
 
                     if (enemycomponent.kicktime > 0.f && !enemycomponent.isCollide)
                     {
-                        enemycomponent.kicktime -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                        enemycomponent.kicktime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                     }
                     else if (enemycomponent.kicktime < 0.f && !enemycomponent.isCollide)
                     {
@@ -1296,7 +1296,7 @@ namespace Ukemochi
                     break;
 
                 case Enemy::ATTACK:
-                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
                     if (enemycomponent.atktimer < 0)
                     {

@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;vendor\ImGuizmo;vendor\pl_mpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -110,7 +110,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Debug-windows-x86_64\Assets</Command>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;vendor\ImGuizmo;vendor\pl_mpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -144,7 +144,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Release-windows-x86_64\Assets</Command>
       <PrecompiledHeaderFile>PreCompile.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;UME_ENABLE_ASSERTS;GLFW_INCLUDE_NONE;UME_Dist;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\Fmod\inc;vendor\imgui;vendor\freetype\include;vendor\Mono\include;vendor\ImGuizmo;vendor\pl_mpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -240,6 +240,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
+    <ClInclude Include="src\Ukemochi-Engine\Video\VideoManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\WindowsWindow.cpp" />
@@ -296,6 +297,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\Video\VideoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Ukemochi-Engine\ECS\Component.tpp" />

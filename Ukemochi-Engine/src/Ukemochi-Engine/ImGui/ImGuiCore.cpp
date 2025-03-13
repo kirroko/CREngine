@@ -42,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/DungeonManager.h"
 #include "../Game/SoulManager.h"
 #include <../vendor/glm/glm/gtx/matrix_decompose.hpp>
+#include "../Video/VideoManager.h"
 
 namespace Ukemochi
 {
@@ -813,6 +814,7 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 
                 ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+                ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
                 // enemy
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 //audio

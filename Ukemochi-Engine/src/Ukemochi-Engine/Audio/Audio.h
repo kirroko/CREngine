@@ -18,6 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <iostream>
 #include <vector>
 #include "../ECS/Systems.h"
+//#include "../Video/VideoManager.h"
+//#include "pl_mpeg.h"
+
 
 namespace Ukemochi
 {
@@ -35,6 +38,10 @@ namespace Ukemochi
             static std::unique_ptr<Audio> instance(new Audio());
             return *instance;
         }
+
+        static FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen);
+
+        void playStereoSound(float* interleavedSamples, int sampleCount ,float speedMultiplier);
 
         /*!***********************************************************************
         \brief
@@ -98,8 +105,10 @@ namespace Ukemochi
             For Music, the sound is set to loop indefinitely.
             For SFX, the sound is played once with a specified volume.
         *************************************************************************/
-        void PlaySound(int soundIndex, std::string type);
+        void PlaySound(int soundIndex, std::string type, float volume);
 
+        void UpdateMusicVolume(int index,float volume);
+        //void PlaySound(int soundIndex, std::string type);
         /*!***********************************************************************
         \brief
          Play a sound in a specified group.
@@ -176,6 +185,8 @@ namespace Ukemochi
         void IncreaseVolume(int soundIndex, float step, std::string type);
 
 		void DecreaseVolume(int soundIndex, float step, std::string type);
+
+        bool CheckSFX();
 
 
         /*!***********************************************************************
@@ -265,6 +276,15 @@ namespace Ukemochi
 
         void RemoveSFX(int index);
 
+        /*!***********************************************************************
+        \brief
+           play audio from video
+        \param index:
+        \note
+           This function play audio from video
+        *************************************************************************/
+        //void PlayVideoAudio(plm_t* plm, plm_samples_t* frame);
+
         void StopSFX(int sfxIndex);
 
         void StopAllSFX();
@@ -278,8 +298,10 @@ namespace Ukemochi
         std::vector<FMOD::Sound *> pMusic;           // A list of loaded sounds
         std::vector<FMOD::Channel *> pMusicChannels; // A list of channels playing individual sounds
 
-        FMOD::System *pSystem; // Pointer to the FMOD system, which manages all sound operations
+        FMOD::Sound* pvideosound = nullptr;
+        FMOD::Channel*  pvideoChannel = nullptr;
 
+        FMOD::System *pSystem; // Pointer to the FMOD system, which manages all sound operations
     private:
         std::vector<FMOD::ChannelGroup *> pChannelGroups; // A list of channel groups for managing groups of sounds
         int numOfSFX;                                     // A counter to track the number of loaded sounds
@@ -289,6 +311,9 @@ namespace Ukemochi
         bool isSFXMuted = false;
         float musicVolume = 0.2f; // Default music volume
         float sfxVolume = 0.2f;   // Default SFX volume
+        float* pLockedData;           // Locked data buffer for samples
+        unsigned int pLockedDataLength;
+        static std::vector<float> pcm32Data;
         float sfxMasterVolume = 0.2f;
     };
 }
