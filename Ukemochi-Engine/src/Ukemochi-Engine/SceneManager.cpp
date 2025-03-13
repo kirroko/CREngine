@@ -260,6 +260,8 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerInit()
     {
+        UME_ENGINE_TRACE("Initializing renderer...");
+        ECS::GetInstance().GetSystem<Renderer>()->init();
         //load all assest
         UME_ENGINE_TRACE("Loading Assets...");
         ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
@@ -267,8 +269,8 @@ namespace Ukemochi
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
-		UME_ENGINE_TRACE("Initializing renderer...");
-        ECS::GetInstance().GetSystem<Renderer>()->init();
+        UME_ENGINE_TRACE("Initializing batch renderer...");
+        ECS::GetInstance().GetSystem<Renderer>()->batch_init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }

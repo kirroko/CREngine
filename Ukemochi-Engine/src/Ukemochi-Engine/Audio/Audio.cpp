@@ -527,13 +527,30 @@ namespace Ukemochi
     *************************************************************************/
     void Audio::StopAllSound()
     {
-        for (auto *channel : pSFXChannels)
+        for (auto* channel : pSFXChannels)
         {
-            channel->stop();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    channel->stop();
+                }
+            }
         }
-        for (auto *channel : pMusicChannels)
+
+        for (auto* channel : pMusicChannels)
         {
-            channel->stop();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    channel->stop();
+                }
+            }
         }
     }
 
