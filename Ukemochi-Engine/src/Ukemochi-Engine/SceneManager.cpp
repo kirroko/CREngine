@@ -345,7 +345,7 @@ namespace Ukemochi
         static bool createMenuUI = false;
 
         if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI && !ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
-            && sceneName == "ALevel1")
+            && GetCurrScene() == "ALevel1")
         {
             ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
             createMenuUI = true;
@@ -575,7 +575,7 @@ namespace Ukemochi
         static bool createMenuUI = false;
 
         if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI &&!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
-            && sceneName == "ALevel1")
+            && GetCurrScene() == "ALevel1")
         {
             ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
             createMenuUI = true;
