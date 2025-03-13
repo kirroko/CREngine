@@ -337,13 +337,13 @@ namespace Ukemochi
 
 	enum RenderLayer // The type of render layers
 	{
-		BACKGROUND,    // to render background objects
-		SUB_DYNAMIC_BACK,    // to render soul skills behind dynamic and static objects
-		DYNAMIC_BACK,  // to render player and enemy objects behind static objects
-		STATIC,		   // to render static objects
-		SUB_DYNAMIC_FRONT,   // to render soul skills behind dynamic objects and infront of static objects
-		DYNAMIC_FRONT, // to render player and enemy objects infront of static objects
-		FOREGROUND	   // to render foreground objects
+		BACKGROUND,		   // to render background objects
+		SUB_DYNAMIC_BACK,  // to render skills, projectile and shadow objects behind dynamic and static objects
+		DYNAMIC_BACK,	   // to render player and enemy objects behind static objects
+		STATIC,			   // to render static objects
+		SUB_DYNAMIC_FRONT, // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT,	   // to render player and enemy objects infront of static objects
+		FOREGROUND		   // to render foreground objects
 	};
 	struct SpriteRender
 	{
@@ -414,7 +414,7 @@ namespace Ukemochi
 
 		float skill_damages[NUM_OF_SOULS]{ 50.f, 50.f }; // The damage of the skills
 		float skill_duration = 1.f;						 // The duration of the skill
-		float skill_cooldown = 5.f;						 // The cooldown of the skill
+		float skill_cooldown = 1.f;						 // The cooldown of the skill
 		float skill_timer = 0.f;						 // The timer for skill ready
 		bool skill_ready = false;						 // The skill's ready state
 		bool is_casting = false;						 // The soul animation casting state
@@ -430,6 +430,29 @@ namespace Ukemochi
 	*************************************************************************/
 	struct Boss
 	{
+		enum BossStates
+		{
+			ATTACK1,
+			ATTACK2,
+			DEAD1,
+			DEAD2,
+
+		};
+		int BossPhase = 1;
+		EntityID ID;
+		BossStates state;
+		float health;
+		float attackPower;
+		float waitTime;
+
+		Boss() = default;
+		Boss(EntityID ID)
+			: ID(ID), state(BossStates::ATTACK1)
+		{
+			health = 60.f;
+			attackPower = 15.f;
+			waitTime = 1000.f;
+		}
 
 	};
 

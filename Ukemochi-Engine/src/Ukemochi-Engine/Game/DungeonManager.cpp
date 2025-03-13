@@ -17,6 +17,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Graphics/Camera2D.h"		  // for camera position
 #include "../Factory/GameObjectManager.h" // for game object name and tag
 #include "../Game/EnemyManager.h"		  // for updating enemy list
+#include "../Game/BossManager.h"		  // for init boss
+#include "../SceneManager.h"			  // for GetCurrScene name
 
 namespace Ukemochi
 {
@@ -133,13 +135,20 @@ namespace Ukemochi
 	void DungeonManager::UpdateRoomProgress()
 	{
 		// Check if all enemies in the room is active
-		bool enemy_alive = false;
+		enemy_alive = false;
 		for (auto enemy = rooms[current_room_id].enemies.begin(); enemy != rooms[current_room_id].enemies.end(); enemy++)
 		{
 			GameObject* enemyObj = GameObjectManager::GetInstance().GetGO(*enemy);
 
 			if (enemyObj->GetActive())
 				enemy_alive = true;
+		}
+
+		if (current_room_id == 5 && !enemy_alive)
+		{
+			//init bosss
+			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
+
 		}
 
 		// Unlock the room if all enemies are not active
@@ -215,7 +224,10 @@ namespace Ukemochi
 		}
 
 		// Set the camera initial position
-		ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
+		if (SceneManager::GetInstance().GetCurrScene() == "ALevel1")
+			ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
+		else
+			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 	}
 
 	/*!***********************************************************************
