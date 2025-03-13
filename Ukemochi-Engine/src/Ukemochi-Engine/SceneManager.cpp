@@ -569,7 +569,7 @@ namespace Ukemochi
         // --- TURN OFF GIZMO ---
 	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
-	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
+	    //ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 
         static bool createMenuUI = false;
