@@ -1006,7 +1006,7 @@ namespace Ukemochi
 
 						// Get sounds that haven't been played yet
 						std::vector<int> availableSoundIndices;
-						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+						for (int i = 0; i < DummyHitSounds.size(); i++) {
 							if (!dummyHitSoundsPlayed[i]) {
 								availableSoundIndices.push_back(i);
 							}
@@ -1085,7 +1085,7 @@ namespace Ukemochi
 
 						// Get sounds that haven't been played yet
 						std::vector<int> availableSoundIndices;
-						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+						for (int i = 0; i < DummyHitSounds.size(); i++) {
 							if (!dummyHitSoundsPlayed[i]) {
 								availableSoundIndices.push_back(i);
 							}
