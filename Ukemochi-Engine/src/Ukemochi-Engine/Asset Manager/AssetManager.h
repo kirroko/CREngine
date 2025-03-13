@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../ECS/Components.h"
 #include "../Graphics/Texture.h"
 #include "../ECS/ECS.h"
+#include "../Graphics/textRenderer.h"
 
 
 namespace Ukemochi
@@ -46,6 +47,8 @@ namespace Ukemochi
 		std::vector<FMOD::Sound*> sound_list;
 		//storage of file paths for sounds in the order they are registered
 		std::vector<std::string> sound_name_list;
+		//storage of the names of the font face
+		std::vector<std::string> font_name_list;
 		//string storing the directory of the assets folder
 		std::string asset_dir{ "../Assets" };
 
@@ -174,6 +177,18 @@ namespace Ukemochi
 		* @param std::string key_name: name of desired Sound
 		*/
 		FMOD::Sound* getSound(int key);
+
+		/*!
+		* @brief Creates a Font face and saves the name int the container in the AssetManager
+		* @param std::string file_path: file path of the font file
+		*/
+		void addFont(std::string file_path);
+
+		/*!
+		* @brief Deletes font faces stored in memory
+		* @param std::string file_path: file path of the font file
+		*/
+		void removeFont(const std::string& file_path);
 
 		/*!
 		* @brief Returns a boolean that represents if file name provided in params exists in the storage of the Asset Manager

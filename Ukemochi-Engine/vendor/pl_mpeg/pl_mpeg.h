@@ -151,6 +151,11 @@ See below for detailed the API documentation.
 extern "C" {
 #endif
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4706 )
+#pragma warning(push, 0) // Disable all warnings
+#endif
+
 // -----------------------------------------------------------------------------
 // Public Data Types
 
@@ -4349,5 +4354,8 @@ void plm_audio_idct36(int s[32][3], int ss, float *d, int dp) {
 	d[dp + 15] = t02; d[dp + 16] = 0.0;
 }
 
+#ifdef _MSC_VER
+#pragma warning(pop) // Restore warning settings
+#endif
 
 #endif // PL_MPEG_IMPLEMENTATION

@@ -26,7 +26,7 @@ namespace Ukemochi
     std::vector<float> Audio::pcm32Data;  // Use float instead of int16_t
     static size_t readPosition = 0;
 
-    FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
+    FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* , void* data, unsigned int datalen)
     {
         std::cout << "PCM Read Callback Triggered. Data Size: " << datalen << std::endl;
 
@@ -119,10 +119,10 @@ namespace Ukemochi
         // Configure FMOD sound settings
         FMOD_CREATESOUNDEXINFO exinfo = {};
         exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-        exinfo.length = totalSamples * sizeof(float);
+        exinfo.length = static_cast<unsigned int>(totalSamples * sizeof(float));
         exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
         exinfo.numchannels = 2;
-        exinfo.defaultfrequency = 48000 * speedMultiplier;  // Adjust for speed multiplier 48000
+        exinfo.defaultfrequency = static_cast<int>(48000 * speedMultiplier);  // Adjust for speed multiplier 48000
         exinfo.pcmreadcallback = pcmReadCallback; // Custom PCM read callback
 
         // Create a user-defined FMOD sound
@@ -527,13 +527,30 @@ namespace Ukemochi
     *************************************************************************/
     void Audio::StopAllSound()
     {
-        for (auto *channel : pSFXChannels)
+        for (auto* channel : pSFXChannels)
         {
-            channel->stop();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    channel->stop();
+                }
+            }
         }
-        for (auto *channel : pMusicChannels)
+
+        for (auto* channel : pMusicChannels)
         {
-            channel->stop();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    channel->stop();
+                }
+            }
         }
     }
 
@@ -676,7 +693,7 @@ namespace Ukemochi
 
     void Audio::DecreaseMusicMasterVolume(float step)
     {
-        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        for (int i = 0; i < pMusicChannels.size(); ++i)
         {
             if (pMusicChannels[i] != nullptr)
             {
@@ -690,7 +707,7 @@ namespace Ukemochi
 
     void Audio::IncreaseMusicMasterVolume(float step)
     {
-        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        for (int i = 0; i < pMusicChannels.size(); ++i)
         {
             if (pMusicChannels[i] != nullptr)
             {

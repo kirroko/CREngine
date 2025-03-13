@@ -968,6 +968,10 @@ namespace Ukemochi
                     {
                         ECS::GetInstance().GetSystem<AssetManager>()->addAsset<FMOD::Sound>(fullPath.string());
                     }
+                    else if (extension == ".ttf")
+                    {
+                        ECS::GetInstance().GetSystem<AssetManager>()->addAsset<std::string>(fullPath.string());
+                    }
 
                     // Refresh the asset list
                     assetFiles.push_back(assetPath);
@@ -1003,6 +1007,10 @@ namespace Ukemochi
             else if (extension == ".wav")
             {
                 ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<FMOD::Sound>(fullPath.string());
+            }
+            else if (extension == ".ttf")
+            {
+                ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<std::string>(fullPath.string());
             }
 
             // Remove asset from the UI list

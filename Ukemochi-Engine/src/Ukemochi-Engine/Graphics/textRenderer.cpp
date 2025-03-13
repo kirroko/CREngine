@@ -149,6 +149,19 @@ void TextRenderer::loadCharacters(FT_Face face, std::map<GLchar, Character>& cha
 }
 
 /*!
+* @brief Release specific font face.
+*/
+void TextRenderer::releaseOneFace(const std::string& font_name)
+{
+	FT_Face to_remove = fontFaces.find(font_name)->second;
+	if (to_remove)
+	{
+		FT_Done_Face(to_remove);
+		fontFaces.erase(font_name);
+	}
+}
+
+/*!
  * @brief Releases all loaded font faces from memory.
  */
 void TextRenderer::releaseFaces()
