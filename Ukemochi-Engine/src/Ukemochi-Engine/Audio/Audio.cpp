@@ -794,66 +794,66 @@ namespace Ukemochi
         pSystem->update();
 
         // Handle muting/unmuting music and SFX
-        static bool musicKeyPressed = false;
-        static bool sfxKeyPressed = false;
-        static bool decreaseKeyPressed = false;
-        static bool increaseKeyPressed = false;
-        static bool decreaseSFXKeyPressed = false;
-        static bool increaseSFXKeyPressed = false;
-
-        // Adjust music volume using '-' and '+' keys
-        if (Input::IsKeyPressed(UME_KEY_MINUS)) // Decrease volume
-        {
-            if (!decreaseKeyPressed)
-            {
-                DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
-                decreaseKeyPressed = true;
-            }
-        }
-        else
-        {
-            decreaseKeyPressed = false;
-        }
-
-        if (Input::IsKeyPressed(UME_KEY_EQUAL)) // Increase volume ('+' is usually UME_KEY_EQUAL)
-        {
-            if (!increaseKeyPressed)
-            {
-				IncreaseMusicMasterVolume(0.05f); // Increase by 5%
-                increaseKeyPressed = true;
-            }
-        }
-        else
-        {
-            increaseKeyPressed = false;
-        }
-
-        // Adjust SFX volume using '9' and '0' keys
-        if (Input::IsKeyPressed(UME_KEY_9)) // Decrease SFX volume
-        {
-            if (!decreaseSFXKeyPressed)
-            {
-                DecreaseSFXMasterVolume(0.05f); // Decrease by 5%
-                decreaseSFXKeyPressed = true;
-            }
-        }
-        else
-        {
-            decreaseSFXKeyPressed = false;
-        }
-
-        if (Input::IsKeyPressed(UME_KEY_0)) // Increase SFX volume
-        {
-            if (!increaseSFXKeyPressed)
-            {
-                IncreaseSFXMasterVolume(0.05f); // Increase by 5%
-                increaseSFXKeyPressed = true;
-            }
-        }
-        else
-        {
-            increaseSFXKeyPressed = false;
-        }
+    //     static bool musicKeyPressed = false;
+    //     static bool sfxKeyPressed = false;
+    //     static bool decreaseKeyPressed = false;
+    //     static bool increaseKeyPressed = false;
+    //     static bool decreaseSFXKeyPressed = false;
+    //     static bool increaseSFXKeyPressed = false;
+    //
+    //     // Adjust music volume using '-' and '+' keys
+    //     if (Input::IsKeyPressed(UME_KEY_MINUS)) // Decrease volume
+    //     {
+    //         if (!decreaseKeyPressed)
+    //         {
+    //             DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
+    //             decreaseKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         decreaseKeyPressed = false;
+    //     }
+    //
+    //     if (Input::IsKeyPressed(UME_KEY_EQUAL)) // Increase volume ('+' is usually UME_KEY_EQUAL)
+    //     {
+    //         if (!increaseKeyPressed)
+    //         {
+				// IncreaseMusicMasterVolume(0.05f); // Increase by 5%
+    //             increaseKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         increaseKeyPressed = false;
+    //     }
+    //
+    //     // Adjust SFX volume using '9' and '0' keys
+    //     if (Input::IsKeyPressed(UME_KEY_9)) // Decrease SFX volume
+    //     {
+    //         if (!decreaseSFXKeyPressed)
+    //         {
+    //             DecreaseSFXMasterVolume(0.05f); // Decrease by 5%
+    //             decreaseSFXKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         decreaseSFXKeyPressed = false;
+    //     }
+    //
+    //     if (Input::IsKeyPressed(UME_KEY_0)) // Increase SFX volume
+    //     {
+    //         if (!increaseSFXKeyPressed)
+    //         {
+    //             IncreaseSFXMasterVolume(0.05f); // Increase by 5%
+    //             increaseSFXKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         increaseSFXKeyPressed = false;
+    //     }
 
     }
 
