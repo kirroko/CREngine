@@ -218,7 +218,7 @@ namespace Ukemochi
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("start button", glm::vec3{ 1170.f, 508.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start_button_main", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("start button", glm::vec3{ 1175.f, 508.f, 0.f }, glm::vec2{ 422.f, 343.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -237,6 +237,10 @@ namespace Ukemochi
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("credit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("exit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("title");
+				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("nail start");
+				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("nail credit");
+				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("nail exit");
+
 				// Check if the StartButton SFX exists and play it
 				if (audioM.GetSFXindex("ButtonClickSound") != -1)
 				{
@@ -248,7 +252,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("credit button", glm::vec3{1538.f, 488.f, 0.f }, glm::vec2{ 238.f, 169.f }, "credits_button_main", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, [this]() {
+		uiManager->addButton("credit button", glm::vec3{1532.f, 488.f, 0.f }, glm::vec2{ 238.f, 169.f }, "credits button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, [this]() {
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -262,7 +266,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("exit button", glm::vec3{ 1663.f, 338.f, 0.f }, glm::vec2{ 101.f, 168.f }, "exit_button_main", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("exit button", glm::vec3{ 1663.f, 338.f, 0.f }, glm::vec2{ 101.f, 168.f }, "exit button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -277,6 +281,18 @@ namespace Ukemochi
 		uiManager->addButton("title", glm::vec3{ 1440.f, 1300.f, 0.f }, glm::vec2{ 845.6f, 380.f },
 			"logo", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
+
+		uiManager->addButton("nail start", glm::vec3{ 1175.f, 508.f, 0.f }, glm::vec2{ 26.f, 24.f },
+			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {});
+
+		uiManager->addButton("nail credit", glm::vec3{ 1532.f, 488.f, 0.f }, glm::vec2{ 26.f, 24.f },
+			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {});
+
+		uiManager->addButton("nail exit", glm::vec3{ 1652.f, 338.f, 0.f }, glm::vec2{ 26.f, 24.f },
+			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, []() {});
 	}
 
 	/*!***********************************************************************
@@ -290,17 +306,20 @@ namespace Ukemochi
 		RemoveElement("credit button"); 
 		RemoveElement("exit button"); 
 		RemoveElement("title");
+		RemoveElement("nail start");
+		RemoveElement("nail credit");
+		RemoveElement("nail exit");
 
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
 		// Add the credits background image
-		uiManager->addButton("credits", glm::vec3{ 960.f, 540.f + -(6962.f * 0.5f) + (1080.f * 0.5f) + 540.f, 0.f }, glm::vec2{ 1920.f, 7086.f },
+		uiManager->addButton("credits", glm::vec3{ 960.f, 540.f + -(6962.f * 0.5f) + (1080.f * 0.5f) + 540.f, 0.f }, glm::vec2{ 1921.f, 7086.f },
 			"credits", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {});
 
 		// Add the back button to return to main menu
 		uiManager->addButton("main menu return", glm::vec3{ 60.f, 1025.f, 0.f }, glm::vec2{ 73.f, 86.f },
-			"return_main", glm::vec3(1.0f, 1.0f, 1.0f),
+			"Group 4", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, [this]() {
 				if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 				{
