@@ -450,19 +450,19 @@ namespace Ukemochi
 			return a.second->ui_layer > b.second->ui_layer;  // Higher layer first
 			});
 
-		
+
 		// Update hover cooldown timer
 		hoverTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
 		// Handle mouse click for the highest-layer button
-		for (auto& [button_id, button] : sortedButtons) 
+		for (auto& [button_id, button] : sortedButtons)
 		{
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
 
 			// Check if hover state has changed
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
-				if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 				{
 					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 					if (audioM.GetSFXindex("HoverSound") != -1)
@@ -497,13 +497,18 @@ namespace Ukemochi
 			}
 			bool newPauseState = !Application::Get().Paused();
 			Application::Get().SetPaused(newPauseState);
-
 			if (newPauseState)
 			{
 				ShowPauseMenu();
+				// Hide stats when pausing if they were showing
+				if (show_stats)
+				{
+					show_stats = false;
+					HideStats();
+				}
 			}
-			
 		}
+
 		if (Input::IsKeyTriggered(UME_KEY_M))
 			Application::Get().QuitGame();
 
@@ -511,17 +516,15 @@ namespace Ukemochi
 		if (Input::IsKeyTriggered(UME_KEY_F10))
 			show_fps = !show_fps;
 
-		// Press P to show stats
-		if (Input::IsKeyTriggered(UME_KEY_P) && Application::Get().GameStarted)
+		// Press P to show stats - only if game is not paused
+		if (Input::IsKeyTriggered(UME_KEY_P) && Application::Get().GameStarted && !Application::Get().Paused())
 		{
 			show_stats = !show_stats;
-
 			if (show_stats)
 				ShowStats();
 			else
 				HideStats();
 		}
-		
 	}
 
 	/*!***********************************************************************
