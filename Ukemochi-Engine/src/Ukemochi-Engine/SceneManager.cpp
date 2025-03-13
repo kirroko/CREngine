@@ -342,6 +342,14 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
+        static bool createMenuUI = false;
+
+        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI)
+        {
+            ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+            createMenuUI = true;
+        }
+
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
         {	
@@ -350,6 +358,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
             }
 
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
@@ -562,6 +571,14 @@ namespace Ukemochi
 	    ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 
+        static bool createMenuUI = false;
+
+        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI)
+        {
+            ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+            createMenuUI = true;
+        }
+
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
         {
             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -571,6 +588,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
             }
 
             // Sets the video to play the cutscene
@@ -580,7 +598,6 @@ namespace Ukemochi
                 setCutscene = true;
             }
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-
 
             ECS::GetInstance().GetSystem<VideoManager>()->Update();
         }

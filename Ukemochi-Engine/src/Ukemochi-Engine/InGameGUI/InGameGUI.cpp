@@ -57,7 +57,16 @@ namespace Ukemochi
 
 		UpdateSFXBar();
 
-		auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
+		//auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
+
+		GameObject* playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
+
+		if (playerObj == nullptr)
+		{
+			return;
+		}
+
+		auto& player = playerObj->GetComponent<Player>();
 
 		// Check if player health is 0
 		if (player.currentHealth <= 0)
