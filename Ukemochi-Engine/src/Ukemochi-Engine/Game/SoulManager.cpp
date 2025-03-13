@@ -3,7 +3,7 @@
 \file       SoulManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
-\date       Mar 07, 2025
+\date       Mar 12, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h" // for game object tag
 #include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
 #include "../Graphics/UIButtonManager.h"  // for button effect
+#include "../Game/BossManager.h"
 
 namespace Ukemochi
 {
@@ -233,17 +234,18 @@ namespace Ukemochi
 
         // Use the FISH ability if there are enough FISH charges
         if (player_soul.current_soul == FISH && player_soul.soul_charges[FISH] > 0)
-            FishAbility();
+            UseFishAbility();
         // Use the WORM ability if there are enough WORM charges
         else if (player_soul.current_soul == WORM && player_soul.soul_charges[WORM] > 0)
-            WormAbility();
+            UseWormAbility();
     }
 
     /*!***********************************************************************
     \brief
      Contain the logic for the fish ability.
+     Trigger fish animations, find nearest enemy position and use soul charge.
     *************************************************************************/
-    void SoulManager::FishAbility()
+    void SoulManager::UseFishAbility()
     {
         // Play different hit sounds based on enemy type
         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -280,8 +282,9 @@ namespace Ukemochi
     /*!***********************************************************************
     \brief
      Contain the logic for the worm ability.
+     Trigger worm animations, find nearest enemy position and use soul charge.
     *************************************************************************/
-    void SoulManager::WormAbility()
+    void SoulManager::UseWormAbility()
     {
         // Play different hit sounds based on enemy type
         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -317,6 +320,42 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
+     Contain the logic for applying the fish ability.
+     Mochi's Fish Ability and Enemy (Enemy takes huge damage).
+    *************************************************************************/
+    void SoulManager::ApplyFishAbility(const EntityID& enemy)
+    {
+        // Get references of the player soul and enemy
+        auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+        auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
+
+        // Trigger enemy hurt animation
+        ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
+
+        // Deal damage to the enemy
+        enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+    }
+
+    /*!***********************************************************************
+    \brief
+     Contain the logic for applying the worm ability.
+     Mochi's Worm Ability and Enemy (Enemy gets trap in the web).
+    *************************************************************************/
+    void SoulManager::ApplyWormAbility(const EntityID& enemy)
+    {
+        // Get reference of the enemy
+        auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(enemy);
+
+        // Trigger enemy hurt animation
+        ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
+
+        // Stop the enemy's movement
+        enemy_rb.force = Vec2{ 0,0 };
+        enemy_rb.velocity = Vec2{ 0,0 };
+    }
+
+    /*!***********************************************************************
+    \brief
      Find the position of the nearest enemy relative to the player.
     \return
      The position of the nearest enemy or the player's position if no enemy exist.
@@ -347,6 +386,44 @@ namespace Ukemochi
 
         // Return the nearest enemy position
         return nearest_enemy_position;
+    }
+
+    /*!***********************************************************************
+    \brief
+     Find a list of nearby enemies within the skill range of the player's current soul ability.
+    \return
+     A vector of EntityIDs representing the enemies within the ability's range.
+    *************************************************************************/
+    std::vector<EntityID> SoulManager::FindNearbyEnemies()
+    {
+        // Get references of the player position and soul
+        Vec3 player_position = ECS::GetInstance().GetComponent<Transform>(player).position;
+        auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+
+        // Get the current skill range
+        float skill_range = 0.0f;
+        if (player_soul.current_soul == FISH)
+            skill_range = ECS::GetInstance().GetComponent<Transform>(fish_ability).scale.x;
+        else if (player_soul.current_soul == WORM)
+            skill_range = ECS::GetInstance().GetComponent<Transform>(worm_ability).scale.x;
+
+        // Search through the entity list for nearby enemies within the range
+        std::vector<EntityID> nearby_enemies;
+        for (auto const& entity : m_Entities)
+        {
+            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
+                && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+            {
+                Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                float distance = Vec3Length(enemy_position - player_position);
+
+                if (distance < skill_range)
+                    nearby_enemies.push_back(entity);
+            }
+        }
+
+        // Return list of nearby enemies
+        return nearby_enemies;
     }
 
     /*!***********************************************************************
@@ -401,7 +478,7 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
-     Handle skill effects such as skill duration and cooldown over time.
+     Handle skill effects such as applying abilties, animations and skill cooldown over time.
     *************************************************************************/
     void SoulManager::HandleSkillEffects()
     {
@@ -423,18 +500,31 @@ namespace Ukemochi
             }
         }
 
+        // Apply fish ability effect to nearby enemies while fish ability is active
+        if (GameObjectManager::GetInstance().GetGO(fish_ability)->GetActive())
+        {
+            std::vector<EntityID> nearby_enemies = FindNearbyEnemies();
+            for (EntityID enemy : nearby_enemies)
+                ApplyFishAbility(enemy);
+        }
+
+        // Apply worm ability effect to nearby enemies while worm ability is active
+        if (GameObjectManager::GetInstance().GetGO(worm_ability)->GetActive())
+        {
+            std::vector<EntityID> nearby_enemies = FindNearbyEnemies();
+            for (EntityID enemy : nearby_enemies)
+                ApplyWormAbility(enemy);
+        }
+
         // Handle the fish spawning and attacking animations, disable fish ability once completed
         auto& fish_animator = ECS::GetInstance().GetComponent<Animation>(fish_ability);
-
         if (fish_animator.currentClip == "FishAbilitySpawn" && fish_animator.current_frame == 9)
             fish_animator.SetAnimation("FishAbilityAttack");
         if (fish_animator.currentClip == "FishAbilityAttack" && fish_animator.current_frame == 9)
             GameObjectManager::GetInstance().GetGO(fish_ability)->SetActive(false);
 
-
         // Handle the worm spawning and attacking animations, disable worm ability once completed
         auto& worm_animator = ECS::GetInstance().GetComponent<Animation>(worm_ability);
-
         if (worm_animator.currentClip == "WormAbilitySpawn" && worm_animator.current_frame == 9)
             worm_animator.SetAnimation("WormAbilityAttack");
         if (worm_animator.currentClip == "WormAbilityAttack" && worm_animator.current_frame == 9)
@@ -500,6 +590,32 @@ namespace Ukemochi
                     }
                 }
             }
+
+
+
+            if (tag == "Blob")
+            {
+                if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x < 100.f)
+                {
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 50.f;
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.y += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 50.f;
+                }
+                else
+                {
+                    GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().SetAnimation("Explode");
+
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
+                    {
+                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                        //spawn monster
+                        ECS::GetInstance().GetSystem<BossManager>()->SpawnMonster(GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.x, GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.y);
+                        GameObjectManager::GetInstance().DestroyObject(entity);
+                        break;
+                    }
+                }
+            }
+
+
         }
     }
 }

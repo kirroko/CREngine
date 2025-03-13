@@ -41,7 +41,7 @@ namespace Ukemochi
 		//CreateImage();
 		CreateMainMenuUI();
 		// Create FPS text
-		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{1.f, 1.f, 1.f}, "Ukemochi_numbers");
+		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 	}
 
 	/*!***********************************************************************
