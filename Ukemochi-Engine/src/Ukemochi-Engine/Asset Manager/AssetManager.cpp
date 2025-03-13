@@ -61,6 +61,7 @@ namespace Ukemochi
 		shader_list.clear();
 		sound_list.clear();
 		sound_name_list.clear();
+		font_name_list.clear();
 	}
 
 	/*!
@@ -80,6 +81,8 @@ namespace Ukemochi
 			target_path /= "Shaders";
 		else if (asset_type == "Sound")
 			target_path /= "Audio";
+		else if (asset_type == "Font")
+			target_path /= "Fonts";
 
 		// Create directory if it doesn't exist
 		if (!std::filesystem::exists(target_path))
@@ -193,6 +196,28 @@ namespace Ukemochi
 			addSound(target_path);
 		}
 	}
+	
+	/*!
+	* @brief Adds an asset of a specific type to the asset manager.
+	* @tparam AssetType The type of the asset (e.g., Texture, Shader, Sound).
+	* @param file_path The file path of the asset to be added.
+	*/
+	template<>
+	void AssetManager::addAsset<std::string>(const std::string& file_path)
+	{
+		std::string asset_name = std::filesystem::path(file_path).filename().string();
+
+		if (copyAssetToDirectory(file_path, asset_name, "Font"))
+		{
+			std::string target_directory = asset_dir + "/Fonts";
+			std::string target_path = target_directory + "/" + asset_name;
+
+			if (!std::filesystem::exists(target_directory))
+				std::filesystem::create_directories(target_directory);
+
+			addFont(target_path);
+		}
+	}
 
 	/*!
 	* @brief Removes an asset of a specific type from the asset manager.
@@ -225,6 +250,12 @@ namespace Ukemochi
 	void AssetManager::removeAsset<FMOD::Sound>(const std::string& file_path)
 	{
 		removeSound(file_path);
+	}
+
+	template<> 
+	void AssetManager::removeAsset<std::string>(const std::string& file_path)
+	{
+		removeFont(file_path);
 	}
 
 	/*!
@@ -490,6 +521,45 @@ namespace Ukemochi
 		}
 	}
 
+	void AssetManager::addFont(std::string file_path)
+	{
+
+		std::string font_name = file_path.substr(file_path.find_last_of('/') + 1, file_path.find_first_of('.') - file_path.find_last_of('/') - 1);
+		auto it = find(font_name_list.begin(), font_name_list.end(), font_name);
+		if (it != font_name_list.end())
+		{
+			// std::cout << "Texture already exists";
+			UME_ENGINE_INFO("Font {0} already exists in list", file_path);
+			return;
+		}
+		TextRenderer* font_sys = ECS::GetInstance().GetSystem<Renderer>()->textRenderer;
+		font_sys->loadTextFont(font_name, file_path.c_str());
+		font_name_list.push_back(font_name);
+		UME_ENGINE_INFO("Font {0} added successfully", file_path);
+	}
+
+	void AssetManager::removeFont(const std::string& file_path)
+	{
+		TextRenderer* font_sys = ECS::GetInstance().GetSystem<Renderer>()->textRenderer;
+		std::string font_name = file_path.substr(file_path.find_last_of('/') + 1, file_path.find_first_of('.') - file_path.find_last_of('/') - 1);
+		
+		auto it = find(font_name_list.begin(), font_name_list.end(), font_name);
+		if (it != font_name_list.end())
+		{
+			font_name_list.erase(it);
+			font_sys->releaseOneFace(font_name);
+			if (std::filesystem::exists(file_path))
+			{
+				std::filesystem::remove(file_path);
+				UME_ENGINE_INFO("Font file {0} deleted from disk", file_path);
+			}
+
+			UME_ENGINE_INFO("Font {0} removed successfully", file_path);
+		}
+		else
+			UME_ENGINE_WARN("Font {0} not found", file_path);
+		
+	}
 	/*!
 	* @brief Returns a boolean that represents if file name provided in params exists in the storage of the Asset Manager
 	* @param std::string key_name: name of desired Texture
@@ -615,6 +685,12 @@ namespace Ukemochi
 					}
 					addShader(file_name, vertex_shader, frag_shader);
 				}
+			}
+			else if (to_load.extension() == ".ttf")
+			{
+				std::string file_path = to_load.generic_string();
+				std::replace(file_path.begin(), file_path.end(), '\\', '/');
+				addFont(file_path);
 			}
 		}
 		UME_ENGINE_INFO("Assets completed loading");
