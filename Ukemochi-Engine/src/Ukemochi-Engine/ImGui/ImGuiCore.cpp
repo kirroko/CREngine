@@ -964,6 +964,10 @@ namespace Ukemochi
                     {
                         ECS::GetInstance().GetSystem<AssetManager>()->addAsset<FMOD::Sound>(fullPath.string());
                     }
+                    else if (extension == ".ttf")
+                    {
+                        ECS::GetInstance().GetSystem<AssetManager>()->addAsset<std::string>(fullPath.string());
+                    }
 
                     // Refresh the asset list
                     assetFiles.push_back(assetPath);
