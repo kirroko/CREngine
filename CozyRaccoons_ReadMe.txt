@@ -20,9 +20,8 @@ The collider is placed at the foot of the player and enemy to showcase the depth
 USER CONTROLS
 F11 key - Toggle full screen/window modes
 F10 key - Toggle FPS display
-Enter key - To start game
-T key - To reset the game
-Escape key - To quit the game
+Escape key - To open the pause menu
+P key - To open the stats menu
 Left mouse click - Select UI buttons
 WASD keys - Move the player
 Q key - To switch between souls

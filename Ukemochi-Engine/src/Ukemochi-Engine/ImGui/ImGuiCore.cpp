@@ -813,7 +813,8 @@ namespace Ukemochi
                 UME_ENGINE_TRACE("Initializing in game GUI...");
                 ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+                if (SceneManager::GetInstance().GetCurrScene() == "ALevel1")
+                    ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
 
                 ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;

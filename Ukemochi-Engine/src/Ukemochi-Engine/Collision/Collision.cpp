@@ -102,6 +102,9 @@ namespace Ukemochi
 				// Get references of the first entity components
 				auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity1);
 				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+
+				if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity1))
+					return;
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
 
 				// Update the bounding box size
