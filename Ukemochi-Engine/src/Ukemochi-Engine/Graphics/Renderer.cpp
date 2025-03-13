@@ -131,8 +131,8 @@ void Renderer::init()
 void Renderer::batch_init()
 {
 	// Load multiple fonts into the text renderer
-	/*textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
-	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");*/
+	textRenderer->loadTextFont("Ukemochi", "../Assets/Fonts/Ukemochi_font-Regular.ttf");
+	textRenderer->loadTextFont("Ukemochi_numbers", "../Assets/Fonts/Ukemochi_numbers-Regular.ttf");
 
 	batchRenderer = std::make_unique<BatchRenderer2D>();
 	// Load shaders and create shared pointer
