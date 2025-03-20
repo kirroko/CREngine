@@ -357,8 +357,11 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
                 setCutscene = true;
             }
-            auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            }
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
             {
                 ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
@@ -368,12 +371,12 @@ namespace Ukemochi
         }
         else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
         {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
-                audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+                    audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
             }
-
             if (!setMainMenu)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
@@ -486,8 +489,11 @@ namespace Ukemochi
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
         {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            }
             // Check if the user pressed a key to skip
             if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
             {
@@ -508,10 +514,11 @@ namespace Ukemochi
         }
         else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu")) // Checks if main menu is done
         {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
-                audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+                    audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
             }
             // Sets the video to play the main menu video
             if (!setMainMenu)
