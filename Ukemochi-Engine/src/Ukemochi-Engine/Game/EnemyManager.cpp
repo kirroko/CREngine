@@ -40,17 +40,35 @@ namespace Ukemochi
             GameObject *object = GameObjectManager::GetInstance().GetGO(objectID);
             if (object->HasComponent<Enemy>())
             {
+                // Get enemy component
+                Enemy enemy = object->GetComponent<Enemy>();
+
+                int behavior = (std::rand() % 3) + 1; // Generates 1, 2, or 3
+
+                if (behavior == 1)
+                {
+                    enemy.attackRange -= 50.f;
+                }
+                else if (behavior == 2)
+                {
+                    enemy.attackRange -= 100.f;
+                }
+                else
+                {
+                    // No change
+                }
+
                 enemyObjects.push_back(object->GetInstanceID());
             }
         }
-        for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
-        {
-            GameObject *object = GameObjectManager::GetInstance().GetGO(objectID);
-            if (object->GetTag() == "WayPoint")
-            {
-                environmentObjects.push_back(object->GetInstanceID());
-            }
-        }
+        //for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
+        //{
+        //    GameObject *object = GameObjectManager::GetInstance().GetGO(objectID);
+        //    if (object->GetTag() == "WayPoint")
+        //    {
+        //        environmentObjects.push_back(object->GetInstanceID());
+        //    }
+        //}
 
         playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
     }

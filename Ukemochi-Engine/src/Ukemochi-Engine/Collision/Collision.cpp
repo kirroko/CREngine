@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/EnemyManager.h"				// for enemy data
 #include "../Game/SoulManager.h"				// for HarvestSoul
 #include "../SceneManager.h"					// for cheat mode
+#include "../Game/BossManager.h"				// for Boss
 
 namespace Ukemochi
 {
@@ -192,6 +193,13 @@ namespace Ukemochi
 						-4.f * trans.scale.y + trans.position.y };
 			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
 						trans.scale.y + trans.position.y };
+		}
+		else if(tag == "Hair")
+		{
+			box.min = { -1.5f * trans.scale.x + trans.position.x,
+						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			box.max = { 1.5f * trans.scale.x + trans.position.x,
+						BOUNDING_BOX_SIZE* trans.scale.y + trans.position.y };
 		}
 		else
 		{
@@ -948,6 +956,207 @@ namespace Ukemochi
 			// Placeholder, wait for when animations is complete so that we can break the box
 			// Play Animation
 		}
+		else if (tag1 == "Knife" && tag2 == "Hair")
+		{
+			// Get references of the player and enemy
+			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
+			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
+			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
+			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
+			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+
+			// Skip if Mochi is not attacking
+			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
+				return;
+
+			switch (player_data.comboState)
+			{
+			case 0: // First combo state
+				if (player_anim.current_frame == 10)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+
+					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						std::vector<int> DummyHitSounds = {
+							audioM.GetSFXindex("DuHurt1"),
+							audioM.GetSFXindex("DuHurt2"),
+							audioM.GetSFXindex("DuHurt3")
+						};
+
+						// Remove invalid (-1) sounds
+						DummyHitSounds.erase(
+							std::remove(DummyHitSounds.begin(), DummyHitSounds.end(), -1),
+							DummyHitSounds.end()
+						);
+
+						// Keep track of which sounds have been played (static at class level)
+						static std::vector<bool> dummyHitSoundsPlayed;
+
+						// Initialize if first time or size changed
+						if (dummyHitSoundsPlayed.size() != DummyHitSounds.size()) {
+							dummyHitSoundsPlayed.resize(DummyHitSounds.size(), false);
+						}
+
+						// Check if all sounds have been played
+						bool allPlayed = true;
+						for (bool played : dummyHitSoundsPlayed) {
+							if (!played) {
+								allPlayed = false;
+								break;
+							}
+						}
+
+						// If all sounds have been played, reset all to unplayed
+						if (allPlayed) {
+							std::fill(dummyHitSoundsPlayed.begin(), dummyHitSoundsPlayed.end(), false);
+						}
+
+						// Get sounds that haven't been played yet
+						std::vector<int> availableSoundIndices;
+						for (int i = 0; i < DummyHitSounds.size(); i++) {
+							if (!dummyHitSoundsPlayed[i]) {
+								availableSoundIndices.push_back(i);
+							}
+						}
+
+						if (!availableSoundIndices.empty()) {
+							// Random selection from available sounds
+							int randomIndex = rand() % availableSoundIndices.size();
+							int selectedSoundIndex = availableSoundIndices[randomIndex];
+							int selectedSound = DummyHitSounds[selectedSoundIndex];
+
+							// Mark this sound as played
+							dummyHitSoundsPlayed[selectedSoundIndex] = true;
+
+							// Play the selected sound
+							audioM.PlaySFX(selectedSound);
+						}
+					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 1: // Second combo state
+				if (player_anim.current_frame == 15)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						std::vector<int> DummyHitSounds = {
+							audioM.GetSFXindex("DuHurt1"),
+							audioM.GetSFXindex("DuHurt2"),
+							audioM.GetSFXindex("DuHurt3")
+						};
+
+						// Remove invalid (-1) sounds
+						DummyHitSounds.erase(
+							std::remove(DummyHitSounds.begin(), DummyHitSounds.end(), -1),
+							DummyHitSounds.end()
+						);
+
+						// Keep track of which sounds have been played (static at class level)
+						static std::vector<bool> dummyHitSoundsPlayed;
+
+						// Initialize if first time or size changed
+						if (dummyHitSoundsPlayed.size() != DummyHitSounds.size()) {
+							dummyHitSoundsPlayed.resize(DummyHitSounds.size(), false);
+						}
+
+						// Check if all sounds have been played
+						bool allPlayed = true;
+						for (bool played : dummyHitSoundsPlayed) {
+							if (!played) {
+								allPlayed = false;
+								break;
+							}
+						}
+
+						// If all sounds have been played, reset all to unplayed
+						if (allPlayed) {
+							std::fill(dummyHitSoundsPlayed.begin(), dummyHitSoundsPlayed.end(), false);
+						}
+
+						// Get sounds that haven't been played yet
+						std::vector<int> availableSoundIndices;
+						for (int i = 0; i < DummyHitSounds.size(); i++) {
+							if (!dummyHitSoundsPlayed[i]) {
+								availableSoundIndices.push_back(i);
+							}
+						}
+
+						if (!availableSoundIndices.empty()) {
+							// Random selection from available sounds
+							int randomIndex = rand() % availableSoundIndices.size();
+							int selectedSoundIndex = availableSoundIndices[randomIndex];
+							int selectedSound = DummyHitSounds[selectedSoundIndex];
+
+							// Mark this sound as played
+							dummyHitSoundsPlayed[selectedSoundIndex] = true;
+
+							// Play the selected sound
+							audioM.PlaySFX(selectedSound);
+						}
+					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				break;
+
+			case 2: // Knockback kick combo
+				if (player_anim.current_frame == 31)
+				{
+					// Harvest some soul whenever mochi hits the dummy
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
+					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
+					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+
+					// Play sound effects
+					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+					{
+						auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+						if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("Pattack3")))
+						{
+							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
+						}
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+			}
 		else if (tag1 == "Knife" && tag2 == "Dummy") // Mochi's Knife and Dummy
 		{
 			// Get references of the player and enemy
