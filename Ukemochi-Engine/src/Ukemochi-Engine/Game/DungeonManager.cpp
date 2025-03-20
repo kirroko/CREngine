@@ -156,18 +156,18 @@ namespace Ukemochi
 		{
 			UnlockRoom();
 
-			//healing to post injuries max health here
-			if (player != -1)
-			{
-				while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
-				{
-					GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
-					if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
-					{
-						GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
-					}
-				}
-			}
+			////healing to post injuries max health here
+			//if (player != -1)
+			//{
+			//	while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
+			//	{
+			//		GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
+			//		if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+			//		{
+			//			GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
+			//		}
+			//	}
+			//}
 		}
 	}
 

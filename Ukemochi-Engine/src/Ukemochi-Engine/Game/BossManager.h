@@ -29,6 +29,10 @@ namespace Ukemochi
 
 		void SpawnMonster(float x, float y);
 
+		void HairHit(GameObject* player);
+
+		void BossTakeDMG();
+
 	private:
 		GameObject* playerObj;
 		GameObject* hair;
@@ -40,5 +44,6 @@ namespace Ukemochi
 		int numOfBlob;
 		bool spawnBlob;
 		float hairPosX;
+		bool isHairAtk;
 	};
 }
