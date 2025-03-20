@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
 #include "../Graphics/UIButtonManager.h"  // for button effect
 #include "../Game/BossManager.h"
+#include "GLFW/glfw3.h"
 
 namespace Ukemochi
 {
@@ -76,7 +77,7 @@ namespace Ukemochi
         }
 
         // Soul Switch Key Press
-        if (Input::IsKeyTriggered(UME_KEY_Q))
+        if (Input::IsKeyTriggered(UME_KEY_Q) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_LEFT_BUMPER))
         {
             SwitchSouls();
 
@@ -87,7 +88,7 @@ namespace Ukemochi
         }
 
         // Soul Ability Key Press
-        if (Input::IsKeyTriggered(UME_KEY_K))
+        if (Input::IsKeyTriggered(UME_KEY_K) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
         {
             UseSoulAbility();
 

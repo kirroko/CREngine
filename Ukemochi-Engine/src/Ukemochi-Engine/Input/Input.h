@@ -70,6 +70,30 @@ namespace Ukemochi {
         \return The y coordinate of the mouse.
         */
         static float GetMouseY();
+
+		/*!
+		\brief Checks if a gamepad button is currently pressed.
+		\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).
+		\param ButtonID The button ID to check.
+		\return True if the button is pressed, false otherwise.
+		*/
+		static bool IsGamepadButtonPressed(int JoystickID, int ButtonID);
+
+		/*!
+		\brief Checks if a gamepad button is triggered (pressed for the first time).
+		\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).
+		\param ButtonID The button ID to check.
+		\return True if the button is triggered, false otherwise.
+		*/
+		static bool IsGamepadButtonTriggered(int JoystickID, int ButtonID);
+
+		/*!
+		\brief Gets the joystick axes values.
+		\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).
+		\param deadzone The deadzone value for the joystick axes.
+		\return A vector of float values representing joystick axis positions, or empty if joystick is not present.
+		*/
+		static std::vector<float> GetJoystickAxes(int JoystickID, float deadzone);
     };
 
 }

@@ -124,4 +124,103 @@ namespace Ukemochi {
 		return y;
 	}
 
+	/*!
+	\brief Checks if a gamepad button is currently pressed.
+	\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).
+	\param ButtonID The button ID to check.
+	\return True if the button is pressed, false otherwise.
+	*/
+	bool Input::IsGamepadButtonPressed(int JoystickID, int ButtonID)
+	{
+		int buttonCount;
+		const unsigned char* buttons = glfwGetJoystickButtons(JoystickID, &buttonCount);
+    
+		if (buttons == nullptr || ButtonID >= buttonCount || ButtonID < 0)
+		{
+			return false;
+		}
+    
+		return buttons[ButtonID] == GLFW_PRESS;
+	}
+
+	/*!
+	\brief Checks if a gamepad button is triggered (pressed for the first time).
+	\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).
+	\param ButtonID The button ID to check.
+	\return True if the button is triggered, false otherwise.
+	*/
+	bool Input::IsGamepadButtonTriggered(int JoystickID, int ButtonID)
+	{
+		int buttonCount;
+		const unsigned char* buttons = glfwGetJoystickButtons(JoystickID, &buttonCount);
+    
+		if (buttons == nullptr || ButtonID >= buttonCount || ButtonID < 0)
+		{
+			return false;
+		}
+    
+		// Create a unique key for this joystick/button combination
+		int uniqueKey = (JoystickID << 16) | ButtonID;
+    
+		if (buttons[ButtonID] == GLFW_PRESS && !keyPressedMap[uniqueKey])
+		{
+			keyPressedMap[uniqueKey] = true;
+			return true;
+		}
+    
+		if (buttons[ButtonID] == GLFW_RELEASE)
+		{
+			keyPressedMap[uniqueKey] = false;
+		}
+    
+		return false;
+	}
+
+	/*!
+	\brief Gets the joystick axes values.
+	\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).
+	\param deadzone The deadzone value for the joystick axes.
+	\return A vector of float values representing joystick axis positions, or empty if joystick is not present.
+	*/
+	std::vector<float> Input::GetJoystickAxes(int JoystickID, float deadzone)
+	{
+		// Clamp deadzone to valid range [0.0, 1.0]
+		deadzone = std::max(0.0f,std::min(deadzone,1.0f));
+		
+		int axesCount;
+		const float* axes = glfwGetJoystickAxes(JoystickID, &axesCount);
+    
+		if (axes == nullptr)
+		{
+			// Joystick not present or disconnected
+			UME_ENGINE_TRACE("Joystick not present or disconnected.");
+			return {};
+		}
+
+		// Convert the raw pointer to a vector with deadzone applied
+		std::vector<float> processedAxes;
+		processedAxes.reserve(axesCount);
+
+		for (int i = 0; i < axesCount; ++i)
+		{
+			float value = axes[i];
+
+			// Apply deadzone
+			if (std::abs(value) < deadzone)
+			{
+				value = 0.0f;
+			}
+			else
+			{
+				// Rescale the values outside deadzone to full range
+				// This creates a smooth transition from deadzone to max value
+				float sign = (value > 0.0f) ? 1.0f : -1.0f;
+				value = sign * (std::abs(value) - deadzone) / (1.0f - deadzone);
+			}
+
+			processedAxes.push_back(value);
+		}
+		
+		return processedAxes;
+	}
 }
