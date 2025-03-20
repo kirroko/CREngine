@@ -449,7 +449,7 @@ namespace Ukemochi
 		Boss(EntityID ID)
 			: ID(ID), state(BossStates::ATTACK1)
 		{
-			health = 60.f;
+			health = 1000.f;
 			attackPower = 15.f;
 			waitTime = 1000.f;
 		}
@@ -519,13 +519,13 @@ namespace Ukemochi
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 60.f;
+				health = 80.f;
 				attackPower = 15.f;
 				attackRange = 300.f;
 				speed = 4000.f;
 				break;
 			case Enemy::WORM:
-				health = 50.f;
+				health = 60.f;
 				attackPower = 5.f;
 				attackRange = 700.f;
 				speed = 3000.f;

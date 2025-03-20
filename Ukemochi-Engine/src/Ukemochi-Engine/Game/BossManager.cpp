@@ -144,6 +144,12 @@ namespace Ukemochi
 		static float delay = 0.f;
 		static float atkdelay = 0.f;
 		static bool atk = false;
+		Phase1();
+		if (numOfBlob >= 3)
+		{
+			numOfBlob = 0;
+		}
+
 		// hair attack
 		if (delay < 6.f)
 		{
@@ -258,6 +264,7 @@ namespace Ukemochi
 			GameObject *cloneObject;
 			GameObject* cloneObject2;
 			cloneObject2 = GameObjectManager::GetInstance().GetGOByTag("ShadowClone");
+
 			if (numOfBlob % 2 == 0)
 			{
 				cloneObject = GameObjectManager::GetInstance().GetGOByTag("Enemy");
@@ -300,6 +307,21 @@ namespace Ukemochi
 						SpriteRender sr = {"../Assets/Textures/Fish_Shadow.png", SPRITE_SHAPE::BOX, 6};
 						shadow.AddComponent<SpriteRender>(sr);
 					}
+
+					int behavior = (std::rand() % 3) + 1; // Generates 1, 2, or 3
+					if (behavior == 1)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 50.f;
+					}
+					else if (behavior == 2)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 100.f;
+					}
+					else
+					{
+						// No change
+					}
+
 					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
 					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
 					shadow.SetActive(true);
@@ -335,6 +357,21 @@ namespace Ukemochi
 						SpriteRender sr = {"../Assets/Textures/Worm_shadow.png", SPRITE_SHAPE::BOX, 6};
 						shadow.AddComponent<SpriteRender>(sr);
 					}
+
+					int behavior = (std::rand() % 3) + 1; // Generates 1, 2, or 3
+					if (behavior == 1)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 50.f;
+					}
+					else if (behavior == 2)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 100.f;
+					}
+					else
+					{
+						// No change
+					}
+
 					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
 					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
 					shadow.SetActive(true);
