@@ -26,21 +26,20 @@ namespace Ukemochi
 	class InGameGUI : public System
 	{
 	private:
-
 		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
 		bool show_stats = false; // Show stats text
 		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
 		float hoverCooldown = 0.5f;  // cooldown for hover sound
 		float hoverTimer = 0.0f;     // Tracks time since last hover sound
-		
+
 		float scrollSpeed = 250.f; // Pixels per second (adjust speed)
 
 		float deathTimer = 0.f;
 		const float deathScreenDelay = 2.f;
 	public:
 		bool showCredits = false; // Show credits
-
+		
 		/*!***********************************************************************
 		\brief
 		 Initialize the in game GUI system.
@@ -84,13 +83,13 @@ namespace Ukemochi
 		 Creates various GUI images (e.g., health bar, icons, etc.).
 		*************************************************************************/
 		void CreateImage();
-		
+
 		/*!***********************************************************************
 		\brief
 		 Creates various main menu UI (e.g., start, credits, etc.).
 		*************************************************************************/
 		void CreateMainMenuUI();
-		
+
 		/*!***********************************************************************
 		\brief
 		 Creates credit screen.

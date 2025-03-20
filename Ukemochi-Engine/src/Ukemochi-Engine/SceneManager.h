@@ -24,7 +24,7 @@ namespace Ukemochi
 	{
 	public:
 		GameObject cutscene;
-		
+		bool enable_cheatmode = false; // Toggle cheat mode
 		
 		/*!***********************************************************************
 		\brief
@@ -204,6 +204,17 @@ namespace Ukemochi
 		*************************************************************************/
 		void print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics);
 
+		/*!***********************************************************************
+		\brief
+			Toggle the debug cheat mode.
+			Cheat mode will make Mochi invulnerable and do extra damage to enemies.
+		*************************************************************************/
+		void ToggleCheatMode();
+
+		/*!***********************************************************************
+		\brief
+			Reset the game.
+		*************************************************************************/
 		void ResetGame();
 
 		// --- Frame Performance Viewer

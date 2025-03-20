@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"           // for GetCurrentNumberOfSteps, GetFixedDeltaTime
 #include "../Graphics/UIButtonManager.h"  // for button effect
 #include "../Game/BossManager.h"
+#include "../SceneManager.h"              // for cheat mode
 
 namespace Ukemochi
 {
@@ -103,8 +104,8 @@ namespace Ukemochi
             // Handle enemy projectile (placeholder)
             HandleEnemyProjectile();
 
-            // Handle soul bar decay over time
-            HandleSoulDecay();
+            if (!SceneManager::GetInstance().enable_cheatmode) // Dont decay soul if cheat mode is enabled
+                HandleSoulDecay(); // Handle soul bar decay over time
 
             // Handle skill effects over time
             HandleSkillEffects();
@@ -270,7 +271,8 @@ namespace Ukemochi
 
         // Decrease soul charge and reset skill stats
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-        --player_soul.soul_charges[player_soul.current_soul];
+        if (!SceneManager::GetInstance().enable_cheatmode) // Dont use soul charge if cheat mode is enabled
+            --player_soul.soul_charges[player_soul.current_soul];
         player_soul.skill_ready = false;
         player_soul.skill_timer = 0.f;
 
@@ -309,7 +311,8 @@ namespace Ukemochi
 
         // Decrease soul charge and reset skill stats
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-        --player_soul.soul_charges[player_soul.current_soul];
+        if (!SceneManager::GetInstance().enable_cheatmode) // Dont use soul charge if cheat mode is enabled
+            --player_soul.soul_charges[player_soul.current_soul];
         player_soul.skill_ready = false;
         player_soul.skill_timer = 0.f;
 
@@ -374,12 +377,14 @@ namespace Ukemochi
                 && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                Vec2 enemy_scale = ECS::GetInstance().GetComponent<Transform>(entity).scale;
                 float distance = Vec3Length(enemy_position - player_position);
 
                 if (distance < min_distance)
                 {
                     min_distance = distance;
-                    nearest_enemy_position = enemy_position;
+                    nearest_enemy_position.x = enemy_position.x;
+                    nearest_enemy_position.y = enemy_position.y + enemy_scale.y * 0.1f;
                 }
             }
         }

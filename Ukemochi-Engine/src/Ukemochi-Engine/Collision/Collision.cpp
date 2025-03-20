@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
 #include "../Game/EnemyManager.h"				// for enemy data
 #include "../Game/SoulManager.h"				// for HarvestSoul
+#include "../SceneManager.h"					// for cheat mode
 
 namespace Ukemochi
 {
@@ -1186,7 +1187,9 @@ namespace Ukemochi
 						}
 
 						vfx_anim.RestartAnimation();
-						player_data.currentHealth -= 10;
+
+						if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
+							player_data.currentHealth -= 10;
 					}
 					bullet_data.hit = true;
 				}
