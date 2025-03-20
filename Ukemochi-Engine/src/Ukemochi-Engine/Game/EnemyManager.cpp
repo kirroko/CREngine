@@ -126,7 +126,7 @@ namespace Ukemochi
                 {
                     if (enemycomponent.waitTime > 0.f)
                     {
-                        enemycomponent.waitTime -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                        enemycomponent.waitTime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                     }
                     else
                     {
@@ -206,7 +206,7 @@ namespace Ukemochi
 
                                 // Get sounds that haven't been played yet
                                 std::vector<int> availableSoundIndices;
-                                for (size_t i = 0; i < fishHurtSounds.size(); i++) {
+                                for (int i = 0; i < fishHurtSounds.size(); i++) {
                                     if (!hurtSoundsPlayed[i]) {
                                         availableSoundIndices.push_back(i);
                                     }
@@ -267,7 +267,7 @@ namespace Ukemochi
 
                                 // Get sounds that haven't been played yet
                                 std::vector<int> availableSoundIndices;
-                                for (size_t i = 0; i < wormHurtSounds.size(); i++) {
+                                for (int i = 0; i < wormHurtSounds.size(); i++) {
                                     if (!wormHurtSoundsPlayed[i]) {
                                         availableSoundIndices.push_back(i);
                                     }
@@ -351,7 +351,7 @@ namespace Ukemochi
 
                             // Get sounds that haven't been played yet
                             std::vector<int> availableSoundIndices;
-                            for (size_t i = 0; i < fishDeadSounds.size(); i++) {
+                            for (int i = 0; i < fishDeadSounds.size(); i++) {
                                 if (!deadSoundsPlayed[i]) {
                                     availableSoundIndices.push_back(i);
                                 }
@@ -412,7 +412,7 @@ namespace Ukemochi
 
                             // Get sounds that haven't been played yet
                             std::vector<int> availableSoundIndices;
-                            for (size_t i = 0; i < wormDeadSounds.size(); i++) {
+                            for (int i = 0; i < wormDeadSounds.size(); i++) {
                                 if (!wormDeadSoundsPlayed[i]) {
                                     availableSoundIndices.push_back(i);
                                 }
@@ -521,7 +521,7 @@ namespace Ukemochi
 
                                 // Get sounds that haven't been played yet
                                 std::vector<int> availableSoundIndices;
-                                for (size_t i = 0; i < wormMoveSounds.size(); i++) {
+                                for (int i = 0; i < wormMoveSounds.size(); i++) {
                                     if (!wormMoveSoundsPlayed[i]) {
                                         availableSoundIndices.push_back(i);
                                     }
@@ -615,7 +615,7 @@ namespace Ukemochi
 
                     if (enemycomponent.kicktime > 0.f && !enemycomponent.isCollide)
                     {
-                        enemycomponent.kicktime -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                        enemycomponent.kicktime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                     }
                     else if (enemycomponent.kicktime < 0.f && !enemycomponent.isCollide)
                     {
@@ -1296,7 +1296,7 @@ namespace Ukemochi
                     break;
 
                 case Enemy::ATTACK:
-                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
+                    enemycomponent.atktimer -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
                     if (enemycomponent.atktimer < 0)
                     {
@@ -1364,7 +1364,7 @@ namespace Ukemochi
 
                                 // Get sounds that haven't been played yet
                                 std::vector<int> availableSoundIndices;
-                                for (size_t i = 0; i < fishAttackSounds.size(); i++) {
+                                for (int i = 0; i < fishAttackSounds.size(); i++) {
                                     if (!hasBeenPlayed[i]) {
                                         availableSoundIndices.push_back(i);
                                     }
@@ -1524,7 +1524,7 @@ namespace Ukemochi
 
                                 // Get sounds that haven't been played yet
                                 std::vector<int> availableSoundIndices;
-                                for (size_t i = 0; i < WormAttackSounds.size(); i++) {
+                                for (int i = 0; i < WormAttackSounds.size(); i++) {
                                     if (!attackSoundsPlayed[i]) {
                                         availableSoundIndices.push_back(i);
                                     }

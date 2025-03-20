@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Game/DungeonManager.h"
 #include "Game/SoulManager.h"
 #include "Graphics/UIButtonManager.h"
+#include "Video/VideoManager.h"
 #include "Game/BossManager.h"
 
 namespace Ukemochi
@@ -48,7 +49,9 @@ namespace Ukemochi
 
 
 	//bool func_toggle = false;
-
+    bool setCamera = false;
+    bool setMainMenu = false;
+    bool setCutscene = false;
     /*!***********************************************************************
     \brief
         Constructor for SceneManager class.
@@ -75,6 +78,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
+	    ECS::GetInstance().RegisterComponent<VideoData>();
         ECS::GetInstance().RegisterComponent<EnemyBullet>();
         ECS::GetInstance().RegisterComponent<Boss>();
 
@@ -94,6 +98,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<EnemyManager>();
         ECS::GetInstance().RegisterSystem<SoulManager>();
         ECS::GetInstance().RegisterSystem<UIButtonManager>();
+	    ECS::GetInstance().RegisterSystem<VideoManager>();
         ECS::GetInstance().RegisterSystem<BossManager>();
 
         // TODO: Set a signature to your system
@@ -157,6 +162,11 @@ namespace Ukemochi
         sig.set(ECS::GetInstance().GetComponentType<Transform>());
         ECS::GetInstance().SetSystemSignature<UIButtonManager>(sig);
 
+	    // For VideoManager system
+	    sig.reset();
+	    sig.set(ECS::GetInstance().GetComponentType<VideoData>());
+	    ECS::GetInstance().SetSystemSignature<VideoManager>(sig);
+        
         sig.reset();
         sig.set(ECS::GetInstance().GetComponentType<Boss>());
         ECS::GetInstance().SetSystemSignature<BossManager>(sig);
@@ -182,19 +192,6 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerLoad()
     {
-        //load Asset Manager Texture
-        /*ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_mainmenu.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/running_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/idle_player_sprite_sheet.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_1.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_2.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Attack_3.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Death_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Mochi_Hurt_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_game.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-        ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/UI/ui_button_start.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);*/
-        // ECS::GetInstance().GetSystem<AssetManager>()->addTexture("../Assets/Textures/Enemy/fish-Attack_00_SS.png", ECS::GetInstance().GetSystem<AssetManager>()->order_index);
-
         //Get Scenelist
         UME_ENGINE_TRACE("Loading Scenes...");
         UseImGui::LoadScene();
@@ -221,14 +218,23 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
 #ifndef _DEBUG
-	    cutscene = GameObjectManager::GetInstance().CreateObject("!!!!!!!!!!");
-	    cutscene.AddComponent(Transform{Mtx44{},
-            Vec3{-static_cast<float>(Application::Get().GetWindow().GetWidth()) * 0.5f,static_cast<float>(Application::Get().GetWindow().GetHeight()) * 0.5f,0},
-            0,
-            Vec2{static_cast<float>(Application::Get().GetWindow().GetWidth()),static_cast<float>(Application::Get().GetWindow().GetHeight())}});
-	    cutscene.AddComponent(SpriteRender{"../Assets/Storyboard 1.png",
-        SPRITE_SHAPE::BOX,10,true,false,false});
-		es_current = ES_PLAY;
+                // We are gonna to play the intro video after everything has been loaded!
+        UME_ENGINE_TRACE("Initializing video manager...");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+        es_current = ES_PLAY;
+#else
+        // We are gonna to play the intro video after everything has been loaded!
+        UME_ENGINE_TRACE("Initializing video manager...");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
     }
 
@@ -241,6 +247,8 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerInit()
     {
+        UME_ENGINE_TRACE("Initializing renderer...");
+        ECS::GetInstance().GetSystem<Renderer>()->init();
         //load all assest
         UME_ENGINE_TRACE("Loading Assets...");
         ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
@@ -248,8 +256,8 @@ namespace Ukemochi
         // Initialize the graphics and collision system
 		UME_ENGINE_TRACE("Setting up shaders...");
         ECS::GetInstance().GetSystem<Renderer>()->setUpShaders();
-		UME_ENGINE_TRACE("Initializing renderer...");
-        ECS::GetInstance().GetSystem<Renderer>()->init();
+        UME_ENGINE_TRACE("Initializing batch renderer...");
+        ECS::GetInstance().GetSystem<Renderer>()->batch_init();
         UME_ENGINE_TRACE("Initializing in game GUI...");
         ECS::GetInstance().GetSystem<InGameGUI>()->Init();
     }
@@ -283,8 +291,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<Renderer>()->currentMode = Renderer::InteractionMode::SCALE;
             std::cout << "Switched to Scale Mode\n";
         }
-
-
+	    
         // On mouse button press
         if (Input::IsMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
         {
@@ -324,7 +331,81 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
-        SceneManagerDraw();
+        static bool createMenuUI = false;
+
+        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI && !ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
+            && GetCurrScene() == "ALevel1")
+        {
+            ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+            createMenuUI = true;
+        }
+
+
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
+        {	
+            // Check if the user pressed a key to skip
+            if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
+                ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+            }
+
+            ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+            if (!setCutscene)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
+                setCutscene = true;
+            }
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
+            {
+                ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+            }
+        }
+        else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+                    audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+            if (!setMainMenu)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                setMainMenu = true;
+            }
+
+            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
+            {
+                ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                if (ECS::GetInstance().GetSystem<InGameGUI>()->showCredits)
+                    ECS::GetInstance().GetSystem<InGameGUI>()->UpdateCredits();
+                ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
+                ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
+                ECS::GetInstance().GetSystem<InGameGUI>()->UpdateTitleAnimation();
+            }
+        }
+        else
+        {
+            // Set the camera initial position
+            if (!setCamera)
+            {
+                ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
+                setCamera = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+            }
+            SceneManagerDraw();
+        }
+        
     }
 
     /*!***********************************************************************
@@ -337,90 +418,6 @@ namespace Ukemochi
     {
         loop_start = std::chrono::steady_clock::now();
 
-#ifndef _DEBUG
-        static double elapsedTime = 0.0;
-	    static int current_frame_index = 0;
-	    elapsedTime += g_FrameRateController.GetDeltaTime();
-	    if (elapsedTime > 2.0 && Application::Get().Paused() && current_frame_index != 6)
-	    {
-	        auto& sr = cutscene.GetComponent<SpriteRender>();
-	        switch (current_frame_index)
-	        {
-	        case 1:
-	            sr.texturePath = "../Assets/Storyboard 2.png";
-	            break;
-	        case 2:
-	            sr.texturePath = "../Assets/Storyboard 3.png";
-	            break;
-	        case 3:
-	            sr.texturePath = "../Assets/Storyboard 4.png";
-	            break;
-	        case 4:
-	            sr.texturePath = "../Assets/Storyboard 5.png";
-	            break;
-	        default:
-	            break;
-	        }
-	        ++current_frame_index;
-	        elapsedTime = 0;
-	        if (current_frame_index > 5)
-	        {
-	            ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
-	            Application::Get().SetPaused(false);
-	            GameObjectManager::GetInstance().DestroyObject(cutscene.GetInstanceID());
-	        	es_current = ES_ENGINE;
-	        }
-	    }
-		// Game Inputs Quick fix
-		if (Input::IsKeyTriggered(GLFW_KEY_T))
-		{
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
-				{
-					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
-				}
-			}
-
-			LoadSaveFile(GetCurrScene() + ".json");
-
-            UME_ENGINE_TRACE("Initializing Transformation...");
-            ECS::GetInstance().GetSystem<Transformation>()->Init();
-			UME_ENGINE_TRACE("Initializing Collision...");
-			ECS::GetInstance().GetSystem<Collision>()->Init();
-			UME_ENGINE_TRACE("Initializing dungeon manager...");
-			ECS::GetInstance().GetSystem<DungeonManager>()->Init();
-            UME_ENGINE_TRACE("Initializing soul manager...");
-            ECS::GetInstance().GetSystem<SoulManager>()->Init();
-            ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
-			// enemy
-			ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
-			//audio
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
-				{
-					auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    if (audioM.GetMusicIndex("BGM") != -1)
-                    {
-                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
-                        {
-                            audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
-                        }
-                    }
-				}
-			}
-			return;
-		}
-
-		//if (Input::IsKeyTriggered(UME_KEY_ESCAPE))
-		//{
-		//	es_current = ES_QUIT;
-		//	return;
-		//}
-#endif
-        
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
         if (!Application::Get().Paused())
@@ -477,10 +474,82 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         }
         // --- TURN OFF GIZMO ---
-        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 	    // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
-		SceneManagerDraw();
+        ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
+
+        static bool createMenuUI = false;
+
+        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI &&!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
+            && GetCurrScene() == "ALevel1")
+        {
+            ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+            createMenuUI = true;
+        }
+
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+            // Check if the user pressed a key to skip
+            if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
+                ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+            }
+
+            // Sets the video to play the cutscene
+            if (!setCutscene)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
+                setCutscene = true;
+            }
+            ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+
+            ECS::GetInstance().GetSystem<VideoManager>()->Update();
+        }
+        else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu")) // Checks if main menu is done
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
+                    audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+            // Sets the video to play the main menu video
+            if (!setMainMenu)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                setMainMenu = true;
+            }
+
+            // Plays video as long as it is not done, main menu will loop
+            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+                if (ECS::GetInstance().GetSystem<InGameGUI>()->showCredits)
+                    ECS::GetInstance().GetSystem<InGameGUI>()->UpdateCredits();
+                ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
+                ECS::GetInstance().GetSystem<InGameGUI>()->UpdateTitleAnimation();
+            }
+        }
+        else
+        {
+            if (!setCamera)
+            {
+                ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
+                setCamera = true;
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+            }
+
+            SceneManagerDraw();
+        }
+
+
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
@@ -570,6 +639,7 @@ namespace Ukemochi
     {
         SceneManagerFree();
         ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
+        ECS::GetInstance().GetSystem<VideoManager>()->CleanupAllVideos();
     }
 
     /*!***********************************************************************
@@ -790,16 +860,17 @@ namespace Ukemochi
 				{
 					if(!newObject.HasComponent<Script>())
 						{
-                        MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
-                            componentData["ClassName"].GetString()); 
-                        EntityID newScriptID = newObject.GetInstanceID();
-                        ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
-                        newObject.AddComponent(Script{
-                            componentData["Path"].GetString(),
-                            componentData["ClassName"].GetString(),
-                            newScript,
-                            ScriptingEngine::CreateGCHandle(newScript)
-                        });
+					        newObject.AddComponent(Script{}); // Add empty script component
+                        // MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
+                        //     componentData["ClassName"].GetString()); 
+                        // EntityID newScriptID = newObject.GetInstanceID();
+                        // ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
+                        // newObject.AddComponent(Script{
+                        //     componentData["Path"].GetString(),
+                        //     componentData["ClassName"].GetString(),
+                        //     newScript,
+                        //     ScriptingEngine::CreateGCHandle(newScript)
+                        // });
                     }
                 }
             	else if (componentName == "Animation")
@@ -1656,4 +1727,44 @@ namespace Ukemochi
 		UME_ENGINE_INFO("Graphics: {0}%", graphics_percent);
 
 	}
+    void SceneManager::ResetGame()
+    {
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+            }
+        }
+
+        LoadSaveFile(GetCurrScene() + ".json");
+
+        //UME_ENGINE_TRACE("Initializing Transformation...");
+        ECS::GetInstance().GetSystem<Transformation>()->Init();
+        //UME_ENGINE_TRACE("Initializing Collision...");
+        ECS::GetInstance().GetSystem<Collision>()->Init();
+        //UME_ENGINE_TRACE("Initializing dungeon manager...");
+        ECS::GetInstance().GetSystem<DungeonManager>()->Init();
+        //UME_ENGINE_TRACE("Initializing soul manager...");
+        ECS::GetInstance().GetSystem<SoulManager>()->Init();
+        ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+        // enemy
+        ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+        //audio
+        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager")->HasComponent<AudioManager>())
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                if (audioM.GetMusicIndex("BGM") != -1)
+                {
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
+                    {
+                        audioM.PlayMusic(audioM.GetMusicIndex("BGM"));
+                    }
+                }
+            }
+        }
+    }
 }

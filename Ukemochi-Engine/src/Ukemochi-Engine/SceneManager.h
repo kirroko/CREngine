@@ -204,6 +204,8 @@ namespace Ukemochi
 		*************************************************************************/
 		void print_performance(std::chrono::duration<double> loop, std::chrono::duration<double> collision, std::chrono::duration<double> physics, std::chrono::duration<double> graphics);
 
+		void ResetGame();
+
 		// --- Frame Performance Viewer
 		// TODO: Quick Hack needs to be encapsulated
 		static std::chrono::duration<double> loop_time;

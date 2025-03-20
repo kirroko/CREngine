@@ -149,6 +149,19 @@ void TextRenderer::loadCharacters(FT_Face face, std::map<GLchar, Character>& cha
 }
 
 /*!
+* @brief Release specific font face.
+*/
+void TextRenderer::releaseOneFace(const std::string& font_name)
+{
+	FT_Face to_remove = fontFaces.find(font_name)->second;
+	if (to_remove)
+	{
+		FT_Done_Face(to_remove);
+		fontFaces.erase(font_name);
+	}
+}
+
+/*!
  * @brief Releases all loaded font faces from memory.
  */
 void TextRenderer::releaseFaces()
@@ -188,6 +201,23 @@ void TextRenderer::updateTextColor(const std::string& id, const glm::vec3& color
 	if (textObjects.find(id) != textObjects.end())
 	{
 		textObjects[id].color = color;
+	}
+}
+
+/*!
+ * @brief Removes a text object from the renderer.
+ * @param id Identifier for the text object to remove.
+ */
+void TextRenderer::removeTextObject(const std::string& id)
+{
+	auto it = textObjects.find(id);
+	if (it != textObjects.end())
+	{
+		textObjects.erase(it);
+	}
+	else
+	{
+		std::cerr << "ERROR::TextRenderer: Text object not found: " << id << std::endl;
 	}
 }
 

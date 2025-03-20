@@ -101,6 +101,7 @@ public:
 	 */
 	void updateTextObject(const std::string& id, const std::string& newText);
 	void updateTextColor(const std::string& id, const glm::vec3& color);
+	void removeTextObject(const std::string& id);
 	/*!
 	 * @brief Updates the position of an existing text object.
 	 * @param id Identifier for the text object.
@@ -111,6 +112,10 @@ public:
 	 * @brief Renders all added text objects on the screen.
 	 */
 	void renderAllText();
+	/*!
+	 * @brief Release specific font face.
+	 */
+	void releaseOneFace(const std::string& font_name);
 
 	/*!
 	 * @brief Calculates the pixel width of a string of text.
@@ -151,6 +156,7 @@ private:
 	 * @brief Releases all loaded font faces.
 	 */
 	void releaseFaces();
+
 
 };
 #endif // !TEXTRENDERER_CLASS_H

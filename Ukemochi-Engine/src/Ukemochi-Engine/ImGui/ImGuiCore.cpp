@@ -42,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/DungeonManager.h"
 #include "../Game/SoulManager.h"
 #include <../vendor/glm/glm/gtx/matrix_decompose.hpp>
+#include "../Video/VideoManager.h"
 
 namespace Ukemochi
 {
@@ -812,7 +813,11 @@ namespace Ukemochi
                 UME_ENGINE_TRACE("Initializing in game GUI...");
                 ECS::GetInstance().GetSystem<InGameGUI>()->Init();
 
+                if (SceneManager::GetInstance().GetCurrScene() == "ALevel1")
+                    ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+
                 ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+                ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
                 // enemy
                 ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
                 //audio
@@ -846,7 +851,7 @@ namespace Ukemochi
                     m_CompileError = false;
                     es_current = ENGINE_STATES::ES_PLAY;
                     UME_ENGINE_INFO("Simulation (Game is playing) started");
-                    ECS::GetInstance().GetSystem<LogicSystem>()->Init();
+                    // ECS::GetInstance().GetSystem<LogicSystem>()->Init();
                 }
                 else
                 {
@@ -966,6 +971,10 @@ namespace Ukemochi
                     {
                         ECS::GetInstance().GetSystem<AssetManager>()->addAsset<FMOD::Sound>(fullPath.string());
                     }
+                    else if (extension == ".ttf")
+                    {
+                        ECS::GetInstance().GetSystem<AssetManager>()->addAsset<std::string>(fullPath.string());
+                    }
 
                     // Refresh the asset list
                     assetFiles.push_back(assetPath);
@@ -1001,6 +1010,10 @@ namespace Ukemochi
             else if (extension == ".wav")
             {
                 ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<FMOD::Sound>(fullPath.string());
+            }
+            else if (extension == ".ttf")
+            {
+                ECS::GetInstance().GetSystem<AssetManager>()->removeAsset<std::string>(fullPath.string());
             }
 
             // Remove asset from the UI list

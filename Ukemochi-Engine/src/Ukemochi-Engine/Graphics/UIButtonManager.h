@@ -108,6 +108,22 @@ public:
 
     /*!***********************************************************************
     \brief
+    Updates the position of an existing button.
+
+    \param id The unique identifier of the button.
+    \param newPosition The new position for the button.
+    *************************************************************************/
+    void updateButtonPosition(const std::string& id, const glm::vec3& newPosition)
+    {
+        auto it = buttons.find(id);
+        if (it != buttons.end())
+        {
+            it->second->position = newPosition;
+        }
+    }
+
+    /*!***********************************************************************
+    \brief
     Renders all UI buttons managed by this system.
 
     \param cameraPos The current camera position to apply proper rendering transformations.

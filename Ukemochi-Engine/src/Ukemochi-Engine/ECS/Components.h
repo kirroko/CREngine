@@ -771,8 +771,9 @@ namespace Ukemochi
 		{
 			std::string audioPath;
 			std::string audioName;
+			float volume;
 
-			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) {}
+			AudioSource(std::string name, std::string path) :audioName(name), audioPath(path) { volume = 0.2f; }
 		};
 
 		std::vector<AudioSource> music; // Music category
@@ -785,7 +786,7 @@ namespace Ukemochi
 			if (index < music.size() && music[index].audioPath != "")
 			{
 				Audio::GetInstance().LoadSound(index, music[index].audioPath.c_str(), "Music");
-				Audio::GetInstance().PlaySound(index, "Music");
+				Audio::GetInstance().PlaySound(index, "Music", music[index].volume);
 			}
 		}
 		//stop the music audio
@@ -798,7 +799,7 @@ namespace Ukemochi
 			if (index < sfx.size() && sfx[index].audioPath != "")
 			{
 				Audio::GetInstance().LoadSound(index, sfx[index].audioPath.c_str(), "SFX");
-				Audio::GetInstance().PlaySound(index, "SFX");
+				Audio::GetInstance().PlaySound(index, "SFX", sfx[index].volume);
 			}
 		}
 
@@ -862,5 +863,63 @@ namespace Ukemochi
 				sfx.erase(sfx.begin() + index);
 		}
 
+		void SetSFXvolume(float amount)
+		{
+			for (int i = 0; i < sfx.size(); i++)
+			{
+				sfx[i].volume += amount;
+				if (sfx[i].volume <= 0.0f)
+				{
+					sfx[i].volume = 0.f;
+				}
+				sfx[i].volume = std::clamp(sfx[i].volume, 0.0f, 1.0f);
+			}
+		}
+
+		void SetMusicVolume(float amount)
+		{
+			for (int i = 0; i < music.size(); i++)
+			{
+				music[i].volume += amount;
+				if (music[i].volume <= 0.0f)
+				{
+					music[i].volume = 0.f;
+				}
+				music[i].volume = std::clamp(music[i].volume, 0.0f, 1.0f);
+				Audio::GetInstance().UpdateMusicVolume(i, music[i].volume);
+			}
+		}
+
+		void SetAudioVolume(float amount)
+		{
+			SetMusicVolume(amount);
+			SetSFXvolume(amount);
+		}
 	};
+
+	/*!***********************************************************************
+	\brief
+	 VideoSource component structure.
+	*************************************************************************/
+	struct VideoSource {
+		std::string videoPath;  // Path to the video file
+		std::string videoName;  // Name of the video
+
+		VideoSource(std::string path, std::string name)
+			: videoPath(std::move(path)), videoName(std::move(name)) {}
+	};
+
+	/*!***********************************************************************
+	\brief
+	 VideoData component structure. Contains categorized video sources.
+	*************************************************************************/
+	struct VideoData {
+		std::vector<VideoSource> videos;  // List of videos
+
+		VideoData()
+		{
+			videos = std::vector<VideoSource>();
+		}
+	};
+
 }

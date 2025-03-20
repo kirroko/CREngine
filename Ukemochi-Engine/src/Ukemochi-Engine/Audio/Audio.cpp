@@ -22,14 +22,147 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+
+    std::vector<float> Audio::pcm32Data;  // Use float instead of int16_t
+    static size_t readPosition = 0;
+
+    FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* , void* data, unsigned int datalen)
+    {
+        std::cout << "PCM Read Callback Triggered. Data Size: " << datalen << std::endl;
+
+        if (pcm32Data.empty()) {
+            return FMOD_ERR_INVALID_PARAM;
+        }
+
+        // Skip the first 10 sets of data (if pcm32Data is large enough)
+        size_t skipCount = 10 * 2;  // 10 sets * 2 channels
+        if (pcm32Data.size() > skipCount) {
+            readPosition = skipCount;  // Move the read position to skip the first 10 sets of data
+        }
+
+        size_t dataSizeNeeded = datalen / sizeof(float);
+        if (pcm32Data.size() < readPosition + dataSizeNeeded) {
+            pcm32Data.resize(readPosition + dataSizeNeeded);
+        }
+
+        size_t remainingData = pcm32Data.size() - readPosition;
+
+        if (remainingData < dataSizeNeeded) {
+            readPosition = 0;
+            remainingData = pcm32Data.size();
+        }
+
+        memcpy(data, pcm32Data.data() + readPosition, datalen);
+        readPosition += dataSizeNeeded;
+
+        return FMOD_OK;
+    }
+
+    void Audio::playStereoSound(float* interleavedSamples, int sampleCount, float speedMultiplier)
+    {
+        if (!pSystem) {
+            std::cerr << "FMOD system is not initialized!" << std::endl;
+            return;
+        }
+
+        if (!interleavedSamples) {
+            std::cerr << "Error: interleavedSamples is nullptr!" << std::endl;
+            return;
+        }
+
+        if (sampleCount <= 0) {
+            std::cerr << "Error: sampleCount is invalid (" << sampleCount << ")!" << std::endl;
+            return;
+        }
+
+        // Compute total samples (stereo has 2 channels)
+        size_t totalSamples = static_cast<size_t>(sampleCount) * 2;
+
+        // Ensure pcm32Data is large enough
+        pcm32Data.resize(totalSamples, 0.0f);
+
+        // Low-pass filter parameters (tuned for better smoothing)
+        float previousSampleL = 0.0f;
+        float previousSampleR = 0.0f;
+        float alpha = 0.01f;  // Adjust alpha to a smaller value to avoid high-frequency noise
+
+        // Apply a simple low-pass filter while copying samples
+        for (size_t i = 0; i < totalSamples; i += 2) {
+            // Left channel smoothing
+            pcm32Data[i] = previousSampleL + alpha * (interleavedSamples[i] - previousSampleL);
+            previousSampleL = pcm32Data[i];
+
+            // Right channel smoothing
+            pcm32Data[i + 1] = previousSampleR + alpha * (interleavedSamples[i + 1] - previousSampleR);
+            previousSampleR = pcm32Data[i + 1];
+        }
+
+        // Ensure PCM data is within range [-1.0f, 1.0f]
+        float compressionThreshold = 0.8f; // Set threshold where compression starts
+        float compressionRatio = 0.5f;    // Amount of compression, 1.0 = no compression, < 1.0 = more compression
+
+        for (auto& sample : pcm32Data) {
+            if (std::abs(sample) > compressionThreshold) {
+                // Apply compression to the sample if it exceeds the threshold
+                sample = compressionThreshold + (sample - compressionThreshold) * compressionRatio;
+            }
+            sample = std::clamp(sample, -1.0f, 1.0f);
+        }
+        
+
+        // If a sound is already playing, release it before creating a new one
+        if (pvideosound) {
+            pvideosound->release();
+            pvideosound = nullptr;
+        }
+
+        // Configure FMOD sound settings
+        FMOD_CREATESOUNDEXINFO exinfo = {};
+        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+        exinfo.length = static_cast<unsigned int>(totalSamples * sizeof(float));
+        exinfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
+        exinfo.numchannels = 2;
+        exinfo.defaultfrequency = static_cast<int>(48000 * speedMultiplier);  // Adjust for speed multiplier 48000
+        exinfo.pcmreadcallback = pcmReadCallback; // Custom PCM read callback
+
+        // Create a user-defined FMOD sound
+        FMOD_RESULT result = pSystem->createSound(
+            nullptr,  // Data is provided via callback
+            FMOD_OPENUSER | FMOD_LOOP_OFF | FMOD_3D_HEADRELATIVE,
+            &exinfo,
+            &pvideosound
+        );
+
+        if (result != FMOD_OK) {
+            std::cerr << "FMOD Error (createSound): " << result << std::endl;
+            return;
+        }
+
+        // Play the sound
+        FMOD::Channel* pChannel = nullptr;
+        result = pSystem->playSound(pvideosound, nullptr, false, &pChannel);
+        if (result != FMOD_OK) {
+            std::cerr << "FMOD Error (playSound): " << result << std::endl;
+        }
+        else {
+            std::cout << "Playing audio at " << speedMultiplier * 100 << "% speed!" << std::endl;
+        }
+        // Adjust pitch to maintain the correct playback speed without stretching
+        if (pChannel) {
+            pChannel->setPitch(speedMultiplier);  // Adjust pitch instead of frequency
+        }
+    }
+
     /*!***********************************************************************
     \brief
      Constructor for the Audio class.
      This is where system initialization and resource allocation happen.
     *************************************************************************/
     Audio::Audio()
-        : pSystem(nullptr), numOfMusic(0), numOfSFX(0)
+        : pSystem(nullptr), numOfMusic(0), numOfSFX(0),pLockedData(nullptr), pLockedDataLength(0)
     {
+        pvideosound = nullptr;
+        pvideoChannel = nullptr;
         FMOD_RESULT result;
 
         // Create FMOD system
@@ -41,12 +174,13 @@ namespace Ukemochi
         }
 
         // Initialize the FMOD system with 32 channels
-        result = pSystem->init(32, FMOD_INIT_NORMAL, nullptr);
+        result = pSystem->init(512, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
             std::cerr << "FMOD system initialization failed: " << result << std::endl;
             return;
         }
+        pSystem->setDSPBufferSize(2048, 4);
         CreateGroup();
     }
 
@@ -57,7 +191,11 @@ namespace Ukemochi
     *************************************************************************/
     Audio::~Audio()
     {
+        delete[] pLockedData;
         // Release all sounds
+        pvideosound->release();
+        pvideoChannel = nullptr;
+
         for (auto sound : pSFX)
         {
             if (sound)
@@ -252,13 +390,13 @@ namespace Ukemochi
        For Music, the sound is set to loop indefinitely.
        For SFX, the sound is played once with a specified volume.
     *************************************************************************/
-    void Audio::PlaySound(int soundIndex, std::string type)
+    void Audio::PlaySound(int soundIndex, std::string type, float volume)
     {
         if (soundIndex < pSFX.size() || soundIndex < pMusic.size())
-
         {
             FMOD_RESULT result;
             FMOD::Channel *channel = nullptr;
+            volume = std::clamp(volume, 0.0f, 1.0f);
 
             if (type == "SFX")
             {
@@ -272,7 +410,15 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pSFXChannels[soundIndex] = channel;
-                pSFXChannels[soundIndex]->setVolume(sfxMasterVolume);
+                if (volume <= 0.0f)
+                {
+                    pSFXChannels[soundIndex]->stop();
+                }
+                else
+                {
+                    pSFXChannels[soundIndex]->setVolume(volume);
+                }
+
 
                 // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
@@ -298,13 +444,33 @@ namespace Ukemochi
 
                 // Store the channel and assign it to the specific group
                 pMusicChannels[soundIndex] = channel;
-                pMusicChannels[soundIndex]->setVolume(0.2f);
+                pMusicChannels[soundIndex]->setVolume(volume);
                 // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
         }
         else
         {
             std::cerr << "Invalid sound or group index!" << std::endl;
+        }
+    }
+
+    void Audio::UpdateMusicVolume(int index,float volume)
+    {
+        if (pMusicChannels[index]) {
+            bool isPlaying = false;
+            pMusicChannels[index]->isPlaying(&isPlaying); // Check if it's still playing
+            if (isPlaying) {
+                pMusicChannels[index]->setVolume(volume);
+            }
+            //else {
+            //    // Restart the music if it stopped
+            //    if (index != 0)
+            //    {
+            //        pSystem->playSound(pMusic[index], nullptr, false, &pMusicChannels[index]);
+            //        pMusicChannels[index]->setVolume(volume);
+            //    }
+
+            //}
         }
     }
 
@@ -361,13 +527,30 @@ namespace Ukemochi
     *************************************************************************/
     void Audio::StopAllSound()
     {
-        for (auto *channel : pSFXChannels)
+        for (auto* channel : pSFXChannels)
         {
-            channel->stop();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    channel->stop();
+                }
+            }
         }
-        for (auto *channel : pMusicChannels)
+
+        for (auto* channel : pMusicChannels)
         {
-            channel->stop();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    channel->stop();
+                }
+            }
         }
     }
 
@@ -387,7 +570,7 @@ namespace Ukemochi
 
         if (!isPlaying)
         {
-            PlaySound(0, "Music");
+            PlaySound(0, "Music", 0.2f);
         }
     }
 
@@ -510,7 +693,7 @@ namespace Ukemochi
 
     void Audio::DecreaseMusicMasterVolume(float step)
     {
-        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        for (int i = 0; i < pMusicChannels.size(); ++i)
         {
             if (pMusicChannels[i] != nullptr)
             {
@@ -524,7 +707,7 @@ namespace Ukemochi
 
     void Audio::IncreaseMusicMasterVolume(float step)
     {
-        for (size_t i = 0; i < pMusicChannels.size(); ++i)
+        for (int i = 0; i < pMusicChannels.size(); ++i)
         {
             if (pMusicChannels[i] != nullptr)
             {
@@ -541,7 +724,8 @@ namespace Ukemochi
         // Clamp volume between 0.0 and 1.0
         sfxMasterVolume = std::max(0.0f, std::min(1.0f, volume));
         std::cout << "SFX Master Volume set to: " << sfxMasterVolume << std::endl;
-
+        std::cout << "SFXChannel: " << pSFXChannels.size() << std::endl;
+        std::cout << "Number of sfx: " << numOfSFX << std::endl;
         // Update any currently playing SFX
         for (size_t i = 0; i < pSFXChannels.size(); ++i)
         {
@@ -591,6 +775,14 @@ namespace Ukemochi
         IncreaseVolume(soundIndex, -step, type); // Reuse IncreaseVolume with negative step
     }
 
+    bool Audio::CheckSFX()
+    {
+        if(pSFXChannels.size() == 0)
+            return false;
+        
+        return true;
+    }
+
     /*!***********************************************************************
     \brief
     Regular update function for the FMOD system.
@@ -602,66 +794,66 @@ namespace Ukemochi
         pSystem->update();
 
         // Handle muting/unmuting music and SFX
-        static bool musicKeyPressed = false;
-        static bool sfxKeyPressed = false;
-        static bool decreaseKeyPressed = false;
-        static bool increaseKeyPressed = false;
-        static bool decreaseSFXKeyPressed = false;
-        static bool increaseSFXKeyPressed = false;
-
-        // Adjust music volume using '-' and '+' keys
-        if (Input::IsKeyPressed(UME_KEY_MINUS)) // Decrease volume
-        {
-            if (!decreaseKeyPressed)
-            {
-                DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
-                decreaseKeyPressed = true;
-            }
-        }
-        else
-        {
-            decreaseKeyPressed = false;
-        }
-
-        if (Input::IsKeyPressed(UME_KEY_EQUAL)) // Increase volume ('+' is usually UME_KEY_EQUAL)
-        {
-            if (!increaseKeyPressed)
-            {
-				IncreaseMusicMasterVolume(0.05f); // Increase by 5%
-                increaseKeyPressed = true;
-            }
-        }
-        else
-        {
-            increaseKeyPressed = false;
-        }
-
-        // Adjust SFX volume using '9' and '0' keys
-        if (Input::IsKeyPressed(UME_KEY_9)) // Decrease SFX volume
-        {
-            if (!decreaseSFXKeyPressed)
-            {
-                DecreaseSFXMasterVolume(0.05f); // Decrease by 5%
-                decreaseSFXKeyPressed = true;
-            }
-        }
-        else
-        {
-            decreaseSFXKeyPressed = false;
-        }
-
-        if (Input::IsKeyPressed(UME_KEY_0)) // Increase SFX volume
-        {
-            if (!increaseSFXKeyPressed)
-            {
-                IncreaseSFXMasterVolume(0.05f); // Increase by 5%
-                increaseSFXKeyPressed = true;
-            }
-        }
-        else
-        {
-            increaseSFXKeyPressed = false;
-        }
+    //     static bool musicKeyPressed = false;
+    //     static bool sfxKeyPressed = false;
+    //     static bool decreaseKeyPressed = false;
+    //     static bool increaseKeyPressed = false;
+    //     static bool decreaseSFXKeyPressed = false;
+    //     static bool increaseSFXKeyPressed = false;
+    //
+    //     // Adjust music volume using '-' and '+' keys
+    //     if (Input::IsKeyPressed(UME_KEY_MINUS)) // Decrease volume
+    //     {
+    //         if (!decreaseKeyPressed)
+    //         {
+    //             DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
+    //             decreaseKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         decreaseKeyPressed = false;
+    //     }
+    //
+    //     if (Input::IsKeyPressed(UME_KEY_EQUAL)) // Increase volume ('+' is usually UME_KEY_EQUAL)
+    //     {
+    //         if (!increaseKeyPressed)
+    //         {
+				// IncreaseMusicMasterVolume(0.05f); // Increase by 5%
+    //             increaseKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         increaseKeyPressed = false;
+    //     }
+    //
+    //     // Adjust SFX volume using '9' and '0' keys
+    //     if (Input::IsKeyPressed(UME_KEY_9)) // Decrease SFX volume
+    //     {
+    //         if (!decreaseSFXKeyPressed)
+    //         {
+    //             DecreaseSFXMasterVolume(0.05f); // Decrease by 5%
+    //             decreaseSFXKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         decreaseSFXKeyPressed = false;
+    //     }
+    //
+    //     if (Input::IsKeyPressed(UME_KEY_0)) // Increase SFX volume
+    //     {
+    //         if (!increaseSFXKeyPressed)
+    //         {
+    //             IncreaseSFXMasterVolume(0.05f); // Increase by 5%
+    //             increaseSFXKeyPressed = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         increaseSFXKeyPressed = false;
+    //     }
 
     }
 
@@ -802,7 +994,6 @@ namespace Ukemochi
 
         std::cout << (isSFXMuted ? "SFX muted." : "SFX unmuted.") << std::endl;
     }
-
 
     // NOT IN USED
 

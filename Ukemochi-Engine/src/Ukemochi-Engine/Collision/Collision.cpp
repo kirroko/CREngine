@@ -102,6 +102,9 @@ namespace Ukemochi
 				// Get references of the first entity components
 				auto& trans1 = ECS::GetInstance().GetComponent<Transform>(entity1);
 				auto& box1 = ECS::GetInstance().GetComponent<BoxCollider2D>(entity1);
+
+				if (!ECS::GetInstance().HasComponent<Rigidbody2D>(entity1))
+					return;
 				auto& rb1 = ECS::GetInstance().GetComponent<Rigidbody2D>(entity1);
 
 				// Update the bounding box size
@@ -1006,7 +1009,7 @@ namespace Ukemochi
 
 						// Get sounds that haven't been played yet
 						std::vector<int> availableSoundIndices;
-						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+						for (int i = 0; i < DummyHitSounds.size(); i++) {
 							if (!dummyHitSoundsPlayed[i]) {
 								availableSoundIndices.push_back(i);
 							}
@@ -1085,7 +1088,7 @@ namespace Ukemochi
 
 						// Get sounds that haven't been played yet
 						std::vector<int> availableSoundIndices;
-						for (size_t i = 0; i < DummyHitSounds.size(); i++) {
+						for (int i = 0; i < DummyHitSounds.size(); i++) {
 							if (!dummyHitSoundsPlayed[i]) {
 								availableSoundIndices.push_back(i);
 							}
