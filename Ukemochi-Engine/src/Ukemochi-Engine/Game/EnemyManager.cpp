@@ -1,6 +1,6 @@
 ﻿/* Start Header ************************************************************************/
 /*!
-\file       EnemyManager.h
+\file       EnemyManager.cpp
 \author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (90%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
 \date       Feb 05, 2024

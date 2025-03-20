@@ -519,13 +519,13 @@ namespace Ukemochi
 			switch (type)
 			{
 			case Enemy::FISH:
-				health = 60.f;
+				health = 0.f;//60.f;
 				attackPower = 15.f;
 				attackRange = 300.f;
 				speed = 4000.f;
 				break;
 			case Enemy::WORM:
-				health = 50.f;
+				health = 0.f;//50.f;
 				attackPower = 5.f;
 				attackRange = 700.f;
 				speed = 3000.f;

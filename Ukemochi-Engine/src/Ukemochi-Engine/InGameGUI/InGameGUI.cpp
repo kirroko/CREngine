@@ -488,10 +488,14 @@ namespace Ukemochi
 					break; // Stop after handling the first clickable button
 				}
 			}
+
+			// Check for controller input
+			
 		}
 
 		// Pause
-		if (Input::IsKeyTriggered(UME_KEY_ESCAPE) && Application::Get().GameStarted)
+		if ((Input::IsKeyTriggered(UME_KEY_ESCAPE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_START))
+			&& Application::Get().GameStarted)
 		{
 			auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
 			if (rButton)
@@ -509,6 +513,10 @@ namespace Ukemochi
 					show_stats = false;
 					HideStats();
 				}
+			}
+			else
+			{
+				HidePauseMenu();
 			}
 		}
 

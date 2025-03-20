@@ -24,7 +24,7 @@ namespace Ukemochi
          * @param sr player's spriteRenderer
          * @param data player's variables
          */
-        void PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const;
+        bool PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const;
         
         /**
          * @brief Handle player's animation depending on the soul(color) it is on

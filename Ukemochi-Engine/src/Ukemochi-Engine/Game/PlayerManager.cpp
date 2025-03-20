@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "PreCompile.h"
 #include "PlayerManager.h"
 
+#include "GLFW/glfw3.h"
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/ECS/ECS.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
@@ -21,29 +22,65 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
-    void PlayerManager::PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const
+    bool PlayerManager::PlayersMovement(Rigidbody2D& rb, SpriteRender& sr, const Player& data) const
     {
+        auto axes = Input::GetJoystickAxes(GLFW_JOYSTICK_1, 0.15f);
+
+        Vec2 inputForce = {.0f,.0f};
+        bool isMoving = false;
+        
         if (Input::IsKeyPressed(UME_KEY_W))
-            rb.force.y = data.playerForce;
+        {
+            inputForce.y = data.playerForce;
+            isMoving = true;
+        }
         else if (Input::IsKeyPressed(UME_KEY_S))
-            rb.force.y = -data.playerForce;
-        else
-            rb.force.y = 0.f;
+        {
+            inputForce.y = -data.playerForce;
+            isMoving = true;
+        }
 
         if (Input::IsKeyPressed(UME_KEY_A))
         {
-            rb.force.x = -data.playerForce;
+            inputForce.x = -data.playerForce;
             sr.flipX = false;
+            isMoving = true;
         }
         else if (Input::IsKeyPressed(UME_KEY_D))
         {
-            rb.force.x = data.playerForce;
+            inputForce.x = data.playerForce;
             sr.flipX = true;
+            isMoving = true;
         }
-        else
+
+        // If no keyboard input and controller is connected, use controller input
+        if (inputForce.x == 0.0f && inputForce.y == 0.0f && !axes.empty())
         {
-            rb.force.x = 0.f;
+            // Assuming axes[0] is horizontal and axes[1] is vertical
+            if (axes.size() >= 2)
+            {
+                float xAxis = axes[0];
+                float yAxis = axes[1];
+                
+                inputForce.x = xAxis * data.playerForce;
+                inputForce.y = -yAxis * data.playerForce;
+
+                // Update sprite direction based on controller input
+                if (xAxis > 0.0f)
+                    sr.flipX = true;
+                else if (xAxis < 0.0f)
+                    sr.flipX = false;
+
+                // Check if there's any jostick movement
+                if (std::abs(xAxis) > 0.0f || std::abs(yAxis) > 0.0f)
+                    isMoving = true;
+            }
         }
+
+        // Apply the calculated forces
+        rb.force = inputForce;
+
+        return isMoving;
     }
 
     std::string PlayerManager::SoulAnimation(const PlayerSoul& soulData, std::string clip) const
@@ -141,8 +178,10 @@ namespace Ukemochi
                 playerDeadSoundPlayed = false; // Reset the flag if the player is not dead
 
                 // Allow Mochi to move if not attacking or casting an ability
+                bool isMoving = false;
+                
                 if (!data.comboIsAttacking && !soulData.is_casting)
-                    PlayersMovement(rb, sr, data);
+                    isMoving = PlayersMovement(rb, sr, data);
 
                 // Move the offset player's shadow
                 if (!sr.flipX)
@@ -150,13 +189,10 @@ namespace Ukemochi
                 else
                     shadow_trans.position = Vector3D(trans.position.x + shadow_trans.scale.x * 0.25f, trans.position.y - shadow_trans.scale.y * 0.2f, trans.position.z);
 
-                if ((Input::IsKeyPressed(UME_KEY_W) || Input::IsKeyPressed(UME_KEY_S) || Input::IsKeyPressed(UME_KEY_A) || Input::IsKeyPressed(UME_KEY_D))
-                    && !data.comboIsAttacking)
+                if (isMoving && !data.comboIsAttacking)
                     anim.SetAnimation(SoulAnimation(soulData, "Running"));
-                // anim.SetAnimation("Running");
                 else
                     anim.SetAnimation(SoulAnimation(soulData, "Idle"));
-                // anim.SetAnimation("Idle");
 
                 // Play the running sound only at frame 2
                 if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -279,7 +315,7 @@ namespace Ukemochi
                     data.comboIsAttacking = false;
 
                 // Player input
-                if (Input::IsKeyTriggered(UME_KEY_J))
+                if (Input::IsKeyTriggered(UME_KEY_J) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1,GLFW_GAMEPAD_BUTTON_CROSS))
                 {
                     if (!data.comboIsAttacking)
                     {
