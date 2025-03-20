@@ -4831,6 +4831,12 @@
                     "Rotation": 0.0,
                     "Scale": [225.0, 225.0]
                 }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [0.0, 0.0],
+                    "Max": [0.0, 0.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
                     "Shape": 0,
