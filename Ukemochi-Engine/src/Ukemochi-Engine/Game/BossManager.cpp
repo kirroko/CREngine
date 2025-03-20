@@ -57,42 +57,39 @@ namespace Ukemochi
 	{
 		if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id != 6)
 			return;
+		if (!boss || !playerObj)
+		{
+			return;
+		}
+
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
-			if (!boss || !playerObj)
-			{
-				return;
-			}
-
 			if (bossCom.BossPhase == 1)
 			{
-				if (bossCom.BossPhase == 1)
+				hair->SetActive(false);
+				hairHitBox->SetActive(false);
+				// CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
+				if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
 				{
-					hair->SetActive(false);
-					hairHitBox->SetActive(false);
-					// CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
-					if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
-					{
-						// play animation
-						GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
-						// animation finish then proceed
-						bossCom.BossPhase = 2;
-					}
-					else
-					{
-						Phase1();
-					}
+					// play animation
+					GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
+					// animation finish then proceed
+					bossCom.BossPhase = 2;
 				}
 				else
 				{
-					if (bossCom.health <= 0)
-					{
-						// WIN
-					}
-					else
-					{
-						Phase2();
-					}
+					Phase1();
+				}
+			}
+			else
+			{
+				if (bossCom.health <= 0)
+				{
+					// WIN
+				}
+				else
+				{
+					Phase2();
 				}
 			}
 		}
