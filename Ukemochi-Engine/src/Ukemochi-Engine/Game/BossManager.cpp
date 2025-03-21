@@ -405,7 +405,7 @@ namespace Ukemochi
 
 		// AABB Collision check
 		if (playerRight > hairLeft && playerLeft < hairRight &&
-			playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 10) {
+			playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 10 && hair->GetComponent<Animation>().GetCurrentFrame() <= 25) {
 
 			// Collision detected, apply damage or knockback logic
 			player->GetComponent<Player>().currentHealth -= 50;
