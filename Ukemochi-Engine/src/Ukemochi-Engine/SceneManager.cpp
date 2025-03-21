@@ -499,7 +499,7 @@ namespace Ukemochi
                 audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
             }
             // Check if the user pressed a key to skip
-            if (Input::IsKeyTriggered(GLFW_KEY_SPACE))
+            if (Input::IsKeyTriggered(GLFW_KEY_SPACE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CROSS))
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
