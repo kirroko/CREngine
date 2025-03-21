@@ -148,7 +148,7 @@ namespace Ukemochi
 		{
 			//init bosss
 			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
-
+			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
 		}
 
 		// Unlock the room if all enemies are not active

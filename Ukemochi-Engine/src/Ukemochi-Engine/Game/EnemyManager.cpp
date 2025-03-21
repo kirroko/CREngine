@@ -33,7 +33,7 @@ namespace Ukemochi
         std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed the random generator
         enemyObjects.clear();
         environmentObjects.clear();
-        numEnemyTarget = 0;
+        //numEnemyTarget = 0;
 
         for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
         {

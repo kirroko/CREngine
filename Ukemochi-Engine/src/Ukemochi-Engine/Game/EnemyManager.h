@@ -107,13 +107,13 @@ namespace Ukemochi
             bool that act as a flag
         *************************************************************************/
         //bool KillEnemyFlag(bool& killTracker);
-
+        int numEnemyTarget = 0;
     private:
         GameObject *playerObj;
         std::vector<EntityID> enemyObjects;
         std::vector<EntityID> environmentObjects;
         int nearestID = -1;
-        int numEnemyTarget;
+
     };
 
 }
