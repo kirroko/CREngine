@@ -288,7 +288,8 @@ namespace Ukemochi
 					GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Enemy");
 					GameObject& shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject2, name2, "EnemyShadow");
 
-					newObject.GetComponent<Transform>().position.x = x;
+					newObject.GetComponent<Transform>().position.x = x - 100.f + i * 100.f;
+					newObject.GetComponent<Transform>().position.x = std::clamp(newObject.GetComponent<Transform>().position.x, 7740.f, 9100.f);
 					newObject.GetComponent<Transform>().position.y = y;
 
 					if (newObject.HasComponent<Enemy>())
@@ -338,7 +339,9 @@ namespace Ukemochi
 					GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Enemy");
 					GameObject& shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject2, name2, "EnemyShadow");
 
-					newObject.GetComponent<Transform>().position.x = x;
+					newObject.GetComponent<Transform>().position.x = x - 100.f + i * 100.f;
+					std::cout << newObject.GetComponent<Transform>().position.x << std::endl;
+					newObject.GetComponent<Transform>().position.x = std::clamp(newObject.GetComponent<Transform>().position.x, 7740.f, 9100.f);
 					newObject.GetComponent<Transform>().position.y = y;
 
 					if (newObject.HasComponent<Enemy>())
