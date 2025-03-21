@@ -263,7 +263,7 @@ namespace Ukemochi
 		// spawn monster
 		static int number = 0;
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			GameObject *cloneObject;
 			GameObject* cloneObject2;
