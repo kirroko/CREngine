@@ -4858,7 +4858,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -4916,7 +4916,7 @@
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 1
+                    "Type": 5
                 }]
         }, {
             "Name": "EnemyWorm_Shadow",
@@ -4930,7 +4930,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm_shadow.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 4
                 }]
         }, {
             "Name": "6_Blob",
@@ -4944,7 +4944,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Blob 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }, {
                     "Name": "Animation",
                     "Clips": {
