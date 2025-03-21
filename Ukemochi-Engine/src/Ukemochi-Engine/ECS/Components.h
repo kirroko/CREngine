@@ -498,6 +498,7 @@ namespace Ukemochi
 		bool hasDealtDamage = false;
 		bool wormshoot = false;
 		float atktimer = 0.0f;
+		bool isAtk = false;
 		bool isDead = false;
 		bool isWithPlayer = false;
 		float timeSinceTargetReached = 0.f;

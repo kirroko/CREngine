@@ -1408,7 +1408,12 @@ namespace Ukemochi
                                             // attack
                                             if (playerObj != nullptr)
                                             {
-                                                enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
+                                                if (!enemycomponent.isAtk)
+                                                {
+                                                    enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
+                                                    enemycomponent.isAtk = true;
+                                                }
+
                                                 ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(playerObj->GetInstanceID());
                                                 int injuries = (playerObj->GetComponent<Player>().postInjuriesMaxHealth - playerObj->GetComponent<Player>().currentHealth) / 2;
                                                 if (playerObj->GetComponent<Player>().postInjuriesMaxHealth > 0)
@@ -1470,11 +1475,13 @@ namespace Ukemochi
                                 enemycomponent.iswaiting = true;
                                 enemycomponent.state = enemycomponent.STANDBY;
                                 enemycomponent.atktimer = 0.f;
+                                enemycomponent.isAtk = false;
                                 break;
                             }
                             else
                             {
                                 enemycomponent.atktimer = 1.5f;
+                                enemycomponent.isAtk = false;
                             }
                         }
                     }

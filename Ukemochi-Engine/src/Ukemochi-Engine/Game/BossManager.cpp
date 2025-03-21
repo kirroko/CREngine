@@ -102,7 +102,10 @@ namespace Ukemochi
 	}
 	void BossManager::Phase1()
 	{
-		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle1");
+		if (bossCom.BossPhase == 1)
+		{
+			GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle1");
+		}
 		// attack
 		// timer end play attack
 		if (bossCom.waitTime < 5.f)
@@ -158,30 +161,31 @@ namespace Ukemochi
 			if (delay > 5.f)
 			{
 				hair->SetActive(false);
-				// set hair attack
-				if (playerObj->GetComponent<Transform>().position.x > boss->GetComponent<Transform>().position.x + 50.f)
-				{
-					// right
-					hair->GetComponent<SpriteRender>().flipX = true;
-					hairHitBox->GetComponent<Transform>().scale.x = -853.000f;
-
-					hair->GetComponent<Transform>().position.x = 9325;
-					hairHitBox->GetComponent<Transform>().position.x = 9150;
-					hairPosX = hair->GetComponent<Transform>().position.x;
-				}
-				else
-				{
-					// left
-					hair->GetComponent<SpriteRender>().flipX = false;
-					hairHitBox->GetComponent<Transform>().position.x = 8100;
-
-					hair->GetComponent<Transform>().position.x = 7955;
-					hairHitBox->GetComponent<Transform>().scale.x = 853.000f;
-					hairPosX = hair->GetComponent<Transform>().position.x;
-				}
 
 				if (!hairHitBox->GetActive())
 				{
+					// set hair attack
+					if (playerObj->GetComponent<Transform>().position.x > boss->GetComponent<Transform>().position.x + 50.f)
+					{
+						// right
+						hair->GetComponent<SpriteRender>().flipX = true;
+						hairHitBox->GetComponent<Transform>().scale.x = -853.000f;
+
+						hair->GetComponent<Transform>().position.x = 9325;
+						hairHitBox->GetComponent<Transform>().position.x = 9150;
+						hairPosX = hair->GetComponent<Transform>().position.x;
+					}
+					else
+					{
+						// left
+						hair->GetComponent<SpriteRender>().flipX = false;
+						hairHitBox->GetComponent<Transform>().position.x = 8100;
+
+						hair->GetComponent<Transform>().position.x = 7955;
+						hairHitBox->GetComponent<Transform>().scale.x = 853.000f;
+						hairPosX = hair->GetComponent<Transform>().position.x;
+					}
+
 					hair->GetComponent<Transform>().position.y = playerObj->GetComponent<Rigidbody2D>().position.y-25.f;
 					hairHitBox->GetComponent<Transform>().position.y = hair->GetComponent<Transform>().position.y - 75.f;
 					hairHitBox->SetActive(true);
