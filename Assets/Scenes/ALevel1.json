@@ -1163,7 +1163,7 @@
             "Tag": "Default",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [78.0, 228.0, 0.0],
+                    "Position": [74.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [148.0, 1080.0]
                 }, {
