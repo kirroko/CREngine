@@ -17,6 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DungeonManager.h"
 #include "../FrameController.h"
 #include "../Game/EnemyManager.h"
+#include "../Game/PlayerManager.h"
 
 namespace Ukemochi
 {
@@ -52,6 +53,8 @@ namespace Ukemochi
 		{
 			bossCom = GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Boss>();
 		}
+
+		isHairAtk = true;
 	}
 	void BossManager::UpdateBoss()
 	{
@@ -75,6 +78,7 @@ namespace Ukemochi
 					GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
 					// animation finish then proceed
 					bossCom.BossPhase = 2;
+					bossCom.waitTime = 2.f;
 				}
 				else
 				{
@@ -86,6 +90,8 @@ namespace Ukemochi
 				if (bossCom.health <= 0)
 				{
 					// WIN
+					boss->SetActive(false);
+					hair->SetActive(false);
 				}
 				else
 				{
@@ -99,7 +105,7 @@ namespace Ukemochi
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle1");
 		// attack
 		// timer end play attack
-		if (bossCom.waitTime < 7.f)
+		if (bossCom.waitTime < 5.f)
 		{
 			bossCom.waitTime += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 		}
@@ -138,12 +144,18 @@ namespace Ukemochi
 		static float delay = 0.f;
 		static float atkdelay = 0.f;
 		static bool atk = false;
+		Phase1();
+		if (numOfBlob >= 3)
+		{
+			numOfBlob = 0;
+		}
+
 		// hair attack
-		if (delay < 7.f)
+		if (delay < 6.f)
 		{
 			delay += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 
-			if (delay > 6.f)
+			if (delay > 5.f)
 			{
 				hair->SetActive(false);
 				// set hair attack
@@ -167,10 +179,14 @@ namespace Ukemochi
 					hairHitBox->GetComponent<Transform>().scale.x = 853.000f;
 					hairPosX = hair->GetComponent<Transform>().position.x;
 				}
-				hair->GetComponent<Transform>().position.y = playerObj->GetComponent<Rigidbody2D>().position.y;
-				hairHitBox->GetComponent<Transform>().position.y = hair->GetComponent<Transform>().position.y - 50.f;
 
-				hairHitBox->SetActive(true);
+				if (!hairHitBox->GetActive())
+				{
+					hair->GetComponent<Transform>().position.y = playerObj->GetComponent<Rigidbody2D>().position.y-25.f;
+					hairHitBox->GetComponent<Transform>().position.y = hair->GetComponent<Transform>().position.y - 75.f;
+					hairHitBox->SetActive(true);
+				}
+
 			}
 		}
 		else
@@ -181,17 +197,22 @@ namespace Ukemochi
 				hair->GetComponent<Animation>().RestartAnimation();
 
 				atk = true;
+				isHairAtk = false;
 			}
 		}
 
 		if (atk)
 		{
-			std::cout << hair->GetComponent<Animation>().GetCurrentFrame() << std::endl;
+			if (hairHitBox->GetActive())
+			{
+				HairHit(playerObj);
+			}
+
 			if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
 			{
 				hairHitBox->SetActive(false);
 
-				if (atkdelay < 4.f)
+				if (atkdelay < 3.f)
 				{
 					atkdelay += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
 				}
@@ -201,7 +222,7 @@ namespace Ukemochi
 					{
 						if (hair->GetComponent<Transform>().position.x > hairPosX - 1000.f)
 						{
-							hair->GetComponent<Transform>().position.x -= 150 * g_FrameRateController.GetFixedDeltaTime();
+							hair->GetComponent<Transform>().position.x -= 300 * g_FrameRateController.GetFixedDeltaTime();
 						}
 						else
 						{
@@ -214,7 +235,7 @@ namespace Ukemochi
 					{
 						if (hair->GetComponent<Transform>().position.x < hairPosX + 1000.f)
 						{
-							hair->GetComponent<Transform>().position.x += 150 * g_FrameRateController.GetFixedDeltaTime();
+							hair->GetComponent<Transform>().position.x += 300 * g_FrameRateController.GetFixedDeltaTime();
 						}
 						else
 						{
@@ -241,6 +262,9 @@ namespace Ukemochi
 		for (int i = 0; i < 3; i++)
 		{
 			GameObject *cloneObject;
+			GameObject* cloneObject2;
+			cloneObject2 = GameObjectManager::GetInstance().GetGOByTag("ShadowClone");
+
 			if (numOfBlob % 2 == 0)
 			{
 				cloneObject = GameObjectManager::GetInstance().GetGOByTag("Enemy");
@@ -252,20 +276,21 @@ namespace Ukemochi
 
 			if (cloneObject != nullptr)
 			{
-				std::string name = "6_Enemy" + std::to_string(number++);
-				std::string name2 = name + "_Shadow";
-
-				GameObject &newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Enemy");
-				GameObject &shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject, name2, "EnemyShadow");
-
-				newObject.GetComponent<Transform>().position.x = x;
-				newObject.GetComponent<Transform>().position.y = y;
-
 				if (numOfBlob % 2 == 0)
 				{
+					std::string name = "6_EnemyFish" + std::to_string(number++);
+					std::string name2 = name + "_Shadow";
+
+					GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Enemy");
+					GameObject& shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject2, name2, "EnemyShadow");
+
+					newObject.GetComponent<Transform>().position.x = x;
+					newObject.GetComponent<Transform>().position.y = y;
+
 					if (newObject.HasComponent<Enemy>())
 					{
 						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::FISH, newObject.GetInstanceID());
+						newObject.GetComponent<SpriteRender>().layer = 6;
 					}
 					else
 					{
@@ -275,19 +300,47 @@ namespace Ukemochi
 					if (shadow.HasComponent<SpriteRender>())
 					{
 						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Fish_Shadow.png";
-						shadow.GetComponent<SpriteRender>().layer = 1;
+						shadow.GetComponent<SpriteRender>().layer = 6;
 					}
 					else
 					{
-						SpriteRender sr = {"../Assets/Textures/Fish_Shadow.png", SPRITE_SHAPE::BOX, 1};
+						SpriteRender sr = {"../Assets/Textures/Fish_Shadow.png", SPRITE_SHAPE::BOX, 6};
 						shadow.AddComponent<SpriteRender>(sr);
 					}
+
+					int behavior = (std::rand() % 3) + 1; // Generates 1, 2, or 3
+					if (behavior == 1)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 50.f;
+					}
+					else if (behavior == 2)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 100.f;
+					}
+					else
+					{
+						// No change
+					}
+
+					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
+					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
+					shadow.SetActive(true);
 				}
 				else
 				{
+					std::string name = "6_EnemyWorm" + std::to_string(number++);
+					std::string name2 = name + "_Shadow";
+
+					GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Enemy");
+					GameObject& shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject2, name2, "EnemyShadow");
+
+					newObject.GetComponent<Transform>().position.x = x;
+					newObject.GetComponent<Transform>().position.y = y;
+
 					if (newObject.HasComponent<Enemy>())
 					{
 						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::WORM, newObject.GetInstanceID());
+						newObject.GetComponent<SpriteRender>().layer = 6;
 					}
 					else
 					{
@@ -297,19 +350,72 @@ namespace Ukemochi
 					if (shadow.HasComponent<SpriteRender>())
 					{
 						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Worm_shadow.png";
-						shadow.GetComponent<SpriteRender>().layer = 1;
+						shadow.GetComponent<SpriteRender>().layer = 6;
 					}
 					else
 					{
-						SpriteRender sr = {"../Assets/Textures/Worm_shadow.png", SPRITE_SHAPE::BOX, 1};
+						SpriteRender sr = {"../Assets/Textures/Worm_shadow.png", SPRITE_SHAPE::BOX, 6};
 						shadow.AddComponent<SpriteRender>(sr);
 					}
+
+					int behavior = (std::rand() % 3) + 1; // Generates 1, 2, or 3
+					if (behavior == 1)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 50.f;
+					}
+					else if (behavior == 2)
+					{
+						newObject.GetComponent<Enemy>().attackRange -= 100.f;
+					}
+					else
+					{
+						// No change
+					}
+
+					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
+					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
+					shadow.SetActive(true);
 				}
-				ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].enemies.push_back(newObject.GetInstanceID());
-				ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
+				
 			}
 		}
 
 		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
+	}
+	void BossManager::HairHit(GameObject* player)
+	{
+		// Boss hitbox
+		float hairLeft = hairHitBox->GetComponent<Transform>().position.x - 0.5f*hairHitBox->GetComponent<Transform>().scale.x;
+		float hairRight = hairHitBox->GetComponent<Transform>().position.x + 0.5f * hairHitBox->GetComponent<Transform>().scale.x;
+		float hairTop = hairHitBox->GetComponent<Transform>().position.y - 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
+		float hairBottom = hairHitBox->GetComponent<Transform>().position.y + 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
+
+		// Player hitbox
+		float playerLeft = player->GetComponent<Transform>().position.x - 0.5f * player->GetComponent<Transform>().scale.x;
+		float playerRight = player->GetComponent<Transform>().position.x + 0.5f * player->GetComponent<Transform>().scale.x;
+		float playerTop = player->GetComponent<Transform>().position.y - 0.3f * player->GetComponent<Transform>().scale.y;
+		float playerBottom = player->GetComponent<Transform>().position.y + 0.3f * player->GetComponent<Transform>().scale.y;
+
+		// AABB Collision check
+		if (playerRight > hairLeft && playerLeft < hairRight &&
+			playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 10) {
+
+			// Collision detected, apply damage or knockback logic
+			//player->GetComponent<Player>().currentHealth -= 50;
+
+			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
+
+			if (player->GetComponent<Player>().currentHealth < 0)
+				player->GetComponent<Player>().currentHealth = 0;
+			isHairAtk = true;
+		}
+	}
+	void BossManager::BossTakeDMG()
+	{
+		bossCom.health -= playerObj->GetComponent<Player>().comboDamage;
+		if (bossCom.health < 0)
+		{
+			bossCom.health = 0;
+		}
 	}
 }

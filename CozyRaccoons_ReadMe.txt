@@ -18,11 +18,12 @@ NOTE
 The collider is placed at the foot of the player and enemy to showcase the depth effect, and they will also scale up when they are nearer to the screen and scale down when they are further away.
 
 USER CONTROLS
-F11 key - Toggle full screen/window modes
+F9 key - Toggle cheat mode
 F10 key - Toggle FPS display
+F11 key - Toggle full screen/window modes
+Left mouse click - Select UI buttons
 Escape key - To open the pause menu
 P key - To open the stats menu
-Left mouse click - Select UI buttons
 WASD keys - Move the player
 Q key - To switch between souls
 J key - To use the knife attack

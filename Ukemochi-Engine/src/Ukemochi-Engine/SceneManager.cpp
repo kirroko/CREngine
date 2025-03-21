@@ -271,6 +271,8 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerUpdate()
     {
+        ToggleCheatMode(); // Enable/disable cheat mode
+
         if (Input::IsKeyTriggered(UME_KEY_U))
         {
             ECS::GetInstance().GetSystem<Renderer>()->debug_mode_enabled = static_cast<GLboolean>(!ECS::GetInstance().
@@ -417,6 +419,8 @@ namespace Ukemochi
     void SceneManager::SceneMangerRunSystems()
     {
         loop_start = std::chrono::steady_clock::now();
+
+        ToggleCheatMode(); // Enable/disable cheat mode
 
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
@@ -1727,6 +1731,60 @@ namespace Ukemochi
 		UME_ENGINE_INFO("Graphics: {0}%", graphics_percent);
 
 	}
+
+    /*!***********************************************************************
+    \brief
+        Toggle the debug cheat mode.
+        Cheat mode will make Mochi invulnerable and do extra damage to enemies.
+    *************************************************************************/
+    void SceneManager::ToggleCheatMode()
+    {
+        // Press F9 to toggle cheat mode
+        if (Input::IsKeyTriggered(UME_KEY_F9))
+        {
+            SceneManager::GetInstance().enable_cheatmode = !SceneManager::GetInstance().enable_cheatmode;
+
+            // If cheat mode is enabled
+            if (SceneManager::GetInstance().enable_cheatmode)
+            {
+                // Update cheat mode text
+                ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("cheat_text", "CHEAT MODE");
+
+                if (GameObjectManager::GetInstance().GetGOByTag("Player"))
+                {
+                    // Set player to full health and deal 2x damage
+                    auto& player_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
+                    player_data.currentHealth = player_data.maxHealth;
+                    player_data.comboDamage *= 2;
+
+                    // Set player souls to max capacity
+                    auto& player_soul = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<PlayerSoul>();
+                    for (int i = 0; i < NUM_OF_SOULS; i++)
+                    {
+                        player_soul.soul_bars[i] = MAX_SOUL_BAR;
+                        player_soul.soul_charges[i] = MAX_SOUL_CHARGES;
+                    }
+                }
+            }
+            else // If cheat mode is disabled
+            {
+                // Update cheat mode text
+                ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("cheat_text", "");
+
+                if (GameObjectManager::GetInstance().GetGOByTag("Player"))
+                {
+                    // Return player damage to normal
+                    auto& player_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
+                    player_data.comboDamage *= 0.5f;
+                }
+            }
+        }
+    }
+
+    /*!***********************************************************************
+    \brief
+        Reset the game.
+    *************************************************************************/
     void SceneManager::ResetGame()
     {
         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
