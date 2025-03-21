@@ -55,6 +55,7 @@ namespace Ukemochi
 		}
 
 		isHairAtk = true;
+		atk = false;
 	}
 	void BossManager::UpdateBoss()
 	{
@@ -146,7 +147,6 @@ namespace Ukemochi
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle2");
 		static float delay = 0.f;
 		static float atkdelay = 0.f;
-		static bool atk = false;
 		Phase1();
 		if (numOfBlob >= 3)
 		{
@@ -405,7 +405,7 @@ namespace Ukemochi
 			playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 10) {
 
 			// Collision detected, apply damage or knockback logic
-			//player->GetComponent<Player>().currentHealth -= 50;
+			player->GetComponent<Player>().currentHealth -= 50;
 
 			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
 

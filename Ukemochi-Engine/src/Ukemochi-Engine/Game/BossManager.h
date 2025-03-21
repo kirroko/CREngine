@@ -45,5 +45,6 @@ namespace Ukemochi
 		bool spawnBlob;
 		float hairPosX;
 		bool isHairAtk;
+		bool atk;
 	};
 }
