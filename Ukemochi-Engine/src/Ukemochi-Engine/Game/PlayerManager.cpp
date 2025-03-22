@@ -315,7 +315,7 @@ namespace Ukemochi
                     data.comboIsAttacking = false;
 
                 // Player input
-                if (Input::IsKeyTriggered(UME_KEY_J) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1,GLFW_GAMEPAD_BUTTON_CROSS))
+                if (Input::IsKeyTriggered(UME_KEY_J) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1,GLFW_GAMEPAD_BUTTON_CIRCLE))
                 {
                     if (!data.comboIsAttacking)
                     {

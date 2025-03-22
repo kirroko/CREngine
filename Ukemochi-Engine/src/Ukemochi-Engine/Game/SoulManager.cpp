@@ -89,7 +89,7 @@ namespace Ukemochi
         }
 
         // Soul Ability Key Press
-        if (Input::IsKeyTriggered(UME_KEY_K) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
+        if (Input::IsKeyTriggered(UME_KEY_K) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_TRIANGLE))
         {
             UseSoulAbility();
 
