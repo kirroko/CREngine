@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"
 #include "../Game/EnemyManager.h"
 #include "../Game/PlayerManager.h"
+#include "../SceneManager.h" // for cheat mode
 
 namespace Ukemochi
 {
@@ -392,7 +393,7 @@ namespace Ukemochi
 	void BossManager::HairHit(GameObject* player)
 	{
 		// Boss hitbox
-		float hairLeft = hairHitBox->GetComponent<Transform>().position.x - 0.5f*hairHitBox->GetComponent<Transform>().scale.x;
+		float hairLeft = hairHitBox->GetComponent<Transform>().position.x - 0.5f * hairHitBox->GetComponent<Transform>().scale.x;
 		float hairRight = hairHitBox->GetComponent<Transform>().position.x + 0.5f * hairHitBox->GetComponent<Transform>().scale.x;
 		float hairTop = hairHitBox->GetComponent<Transform>().position.y - 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
 		float hairBottom = hairHitBox->GetComponent<Transform>().position.y + 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
@@ -408,7 +409,8 @@ namespace Ukemochi
 			playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 10 && hair->GetComponent<Animation>().GetCurrentFrame() <= 25) {
 
 			// Collision detected, apply damage or knockback logic
-			player->GetComponent<Player>().currentHealth -= 50;
+			if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
+				player->GetComponent<Player>().currentHealth -= 50;
 
 			ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
 

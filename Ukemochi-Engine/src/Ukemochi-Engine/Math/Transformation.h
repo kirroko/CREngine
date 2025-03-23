@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Mar 09, 2025
+\date       Mar 23, 2025
 \brief      This file contains the declaration of the Transformation system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -41,12 +41,12 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Depth object scaling constant for the dynamic entities.
+         Depth object scaling constant for the entities.
         *************************************************************************/
         const Vec2 KNIFE_SCALE_FACTOR{ 0.5f, 0.75f };
         const Vec2 SOUL_SCALE_FACTOR{ 0.1f, 0.1f };
-        const Vec2 PROJECTILE_SCALE_FACTOR{ 0.15f, 0.15f };
         const Vec2 SKILL_SCALE_FACTOR{ 2.f, 2.f };
+        const Vec2 PROJECTILE_SCALE_FACTOR{ 0.15f, 0.15f };
         const DepthScaling OBJECT_SCALING{ MIN_Y_POS, MAX_Y_POS, MIN_SCALE, MAX_SCALE }; // Object scaling constant for the depth effect.
 
     public:

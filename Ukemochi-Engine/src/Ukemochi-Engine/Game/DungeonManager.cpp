@@ -3,7 +3,7 @@
 \file       DungeonManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (75%)
 \co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (25%)
-\date       Mar 08, 2025
+\date       Mar 23, 2025
 \brief      This file contains the definition of the DungeonManager which handles the game dungeon.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -73,7 +73,7 @@ namespace Ukemochi
 		ActivateRoom(current_room_id, false);
 
 		// Reset the soul bars and charges when exiting the tutorial room (room 1)
-		if (current_room_id == 1)
+		if (current_room_id == 1 && !SceneManager::GetInstance().enable_cheatmode) // Dont reset stats if cheat mode is enabled
 		{
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
@@ -82,7 +82,6 @@ namespace Ukemochi
 			{
 				player_soul.soul_bars[i] = 0.f;
 				player_soul.soul_charges[i] = 0;
-
 
 				// Currently in FISH soul, switch to EMPTY soul
 				if (player_soul.current_soul == FISH && player_soul.current_soul == i)
