@@ -254,9 +254,9 @@ namespace Ukemochi
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("nail exit");
 
 				// Check if the StartButton SFX exists and play it
-				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				if (audioM.GetSFXindex("StartButtonClickSound") != -1)
 				{
-					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+					audioM.PlaySFX(audioM.GetSFXindex("StartButtonClickSound"));
 				}
 
 				ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
@@ -282,9 +282,9 @@ namespace Ukemochi
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				if (audioM.GetSFXindex("QuitButtonClickSound") != -1)
 				{
-					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+					audioM.PlaySFX(audioM.GetSFXindex("QuitButtonClickSound"));
 				}
 				Application::Get().QuitGame();
 			}
@@ -497,6 +497,19 @@ namespace Ukemochi
 		if ((Input::IsKeyTriggered(UME_KEY_ESCAPE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_START))
 			&& Application::Get().GameStarted)
 		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				if (audioM.GetSFXindex("GenericButtonClickSound") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("GenericButtonClickSound")))
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("GenericButtonClickSound"));
+					}
+				}
+			}
+
 			auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
 			if (rButton)
 			{
@@ -530,6 +543,19 @@ namespace Ukemochi
 		// Press P to show stats - only if game is not paused
 		if (Input::IsKeyTriggered(UME_KEY_P) && Application::Get().GameStarted && !Application::Get().Paused())
 		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				if (audioM.GetSFXindex("GenericButtonClickSound") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("GenericButtonClickSound")))
+					{
+						audioM.PlaySFX(audioM.GetSFXindex("GenericButtonClickSound"));
+					}
+				}
+			}
+
 			show_stats = !show_stats;
 			if (show_stats)
 				ShowStats();
