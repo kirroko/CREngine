@@ -132,15 +132,19 @@ namespace Ukemochi {
 	*/
 	bool Input::IsGamepadButtonPressed(int JoystickID, int ButtonID)
 	{
-		int buttonCount;
-		const unsigned char* buttons = glfwGetJoystickButtons(JoystickID, &buttonCount);
-    
-		if (buttons == nullptr || ButtonID >= buttonCount || ButtonID < 0)
+		if (!glfwJoystickIsGamepad(JoystickID))
 		{
+			UME_ENGINE_ERROR("Joystick is not a gamepad.");
 			return false;
 		}
-    
-		return buttons[ButtonID] == GLFW_PRESS;
+
+		GLFWgamepadstate state;
+		if (glfwGetGamepadState(JoystickID,&state) && ButtonID >= 0 && ButtonID <= GLFW_GAMEPAD_BUTTON_LAST)
+		{
+			return state.buttons[ButtonID] == GLFW_PRESS;
+		}
+
+		return false;
 	}
 
 	/*!
@@ -151,28 +155,28 @@ namespace Ukemochi {
 	*/
 	bool Input::IsGamepadButtonTriggered(int JoystickID, int ButtonID)
 	{
-		int buttonCount;
-		const unsigned char* buttons = glfwGetJoystickButtons(JoystickID, &buttonCount);
-    
-		if (buttons == nullptr || ButtonID >= buttonCount || ButtonID < 0)
+		if (!glfwJoystickIsGamepad(JoystickID))
 		{
+			UME_ENGINE_ERROR("Joystick is not a gamepad.");
 			return false;
 		}
-    
-		// Create a unique key for this joystick/button combination
+
+		GLFWgamepadstate state;
 		int uniqueKey = (JoystickID << 16) | ButtonID;
-    
-		if (buttons[ButtonID] == GLFW_PRESS && !keyPressedMap[uniqueKey])
+		if (glfwGetGamepadState(JoystickID,&state) && ButtonID >=0 && ButtonID <= GLFW_GAMEPAD_BUTTON_LAST)
 		{
-			keyPressedMap[uniqueKey] = true;
-			return true;
+			if (state.buttons[ButtonID] == GLFW_PRESS && !keyPressedMap[uniqueKey])
+            {
+                keyPressedMap[uniqueKey] = true;
+                return true;
+            }
 		}
-    
-		if (buttons[ButtonID] == GLFW_RELEASE)
+
+		if (state.buttons[ButtonID] == GLFW_RELEASE)
 		{
 			keyPressedMap[uniqueKey] = false;
 		}
-    
+		
 		return false;
 	}
 
