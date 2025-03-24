@@ -679,6 +679,7 @@ void Renderer::render()
 	deltaTime = currentFrameTime - lastFrame;
 	lastFrame = currentFrameTime;
 
+
 	// Clear the screen
 #ifdef _DEBUG
 	beginFramebufferRender();
@@ -703,7 +704,7 @@ void Renderer::render()
 	// Render entities
 	batchRenderer->beginBatch();
 
-	
+	camera->UpdateShake(deltaTime);
 	for (auto& entity : m_Entities)
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
@@ -810,11 +811,12 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	//if (Input::IsKeyTriggered(UME_KEY_H)) //TODO: REMOVE ME!!!!!!!!
-	//	HandleInputTesting();
+	if (Input::IsKeyTriggered(UME_KEY_G))  
+	{
+		camera->StartShake(0.5f, 8.0f); // duration, magnitude
+	}
 
 	updatePlayerBars();
-
 	batchRendererUI->setActiveShader(shaderProgram);
 	shaderProgram->Activate();
 	shaderProgram->setMat4("projection", projection);

@@ -72,5 +72,47 @@ public:
 	 * @param zoomFactor The factor by which to zoom in or out.
 	 */
 	void ZoomTowardsCursor(float zoomFactor);
+
+	void StartShake(float duration, float magnitude);
+
+	void UpdateShake(float deltaTime);
+
+private:
+	struct CameraShake {
+		float duration = 0.0f;
+		float magnitude = 0.0f;
+		float timer = 0.0f;
+		glm::vec2 offset = glm::vec2(0.0f);
+
+		void Start(float d, float m) 
+		{
+			duration = d;
+			magnitude = m;
+			timer = d;
+		}
+
+		void Update(float deltaTime) 
+		{
+			if (timer > 0.0f) 
+			{
+				timer -= deltaTime;
+				float strength = magnitude * (timer / duration); // linear damping
+				float offsetX = ((float(rand()) / RAND_MAX) - 0.5f) * 2.0f * strength;
+				float offsetY = ((float(rand()) / RAND_MAX) - 0.5f) * 2.0f * strength;
+				offset = glm::vec2(offsetX, offsetY);
+			}
+			else 
+			{
+				offset = glm::vec2(0.0f);
+			}
+		}
+
+		bool IsActive() const 
+		{
+			return timer > 0.0f;
+		}
+	};
+
+	CameraShake shake;
 };
 #endif // !CAMERA_CLASS_H
