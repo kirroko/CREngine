@@ -89,7 +89,7 @@ namespace Ukemochi
         }
 
         // Soul Ability Key Press
-        if (Input::IsKeyTriggered(UME_KEY_K) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
+        if (Input::IsKeyTriggered(UME_KEY_K) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_TRIANGLE))
         {
             UseSoulAbility();
 
@@ -402,16 +402,23 @@ namespace Ukemochi
     *************************************************************************/
     std::vector<EntityID> SoulManager::FindNearbyEnemies()
     {
-        // Get references of the player position and soul
-        Vec3 player_position = ECS::GetInstance().GetComponent<Transform>(player).position;
+        // Get reference of the player soul
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 
-        // Get the current skill range
+        // Get the current skill position and range
+        Vec3 skill_position = ECS::GetInstance().GetComponent<Transform>(player).position;
         float skill_range = 0.0f;
+
         if (player_soul.current_soul == FISH)
+        {
+            skill_position = ECS::GetInstance().GetComponent<Transform>(fish_ability).position;
             skill_range = ECS::GetInstance().GetComponent<Transform>(fish_ability).scale.x;
+        }
         else if (player_soul.current_soul == WORM)
+        {
+            skill_position = ECS::GetInstance().GetComponent<Transform>(worm_ability).position;
             skill_range = ECS::GetInstance().GetComponent<Transform>(worm_ability).scale.x;
+        }
 
         // Search through the entity list for nearby enemies within the range
         std::vector<EntityID> nearby_enemies;
@@ -421,7 +428,7 @@ namespace Ukemochi
                 && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
-                float distance = Vec3Length(enemy_position - player_position);
+                float distance = Vec3Length(enemy_position - skill_position);
 
                 if (distance < skill_range)
                     nearby_enemies.push_back(entity);

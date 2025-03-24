@@ -68,6 +68,30 @@ namespace Ukemochi
             _CrtSetBreakAlloc(breakAlloc);
     }
 
+    /**
+     * @brief Load the contents of a file into a buffer.
+     * @param filepath The path to the file to load.
+     * @return The contents of the file as a buffer.
+     */
+    const char* load_file_contents(const char* filepath) {
+        FILE* file = fopen(filepath, "rb");
+        if (!file) {
+            UME_ENGINE_ERROR("Failed to open file: {0}", filepath);
+            return nullptr;
+        }
+            
+        fseek(file, 0, SEEK_END);
+        long size = ftell(file);
+        rewind(file);
+            
+        char* buffer = new char[size + 1];
+        size_t read = fread(buffer, 1, size, file);
+        buffer[read] = '\0';
+            
+        fclose(file);
+        return buffer;
+    }
+
     /*!***********************************************************************
     \brief
      Initializes the application, setting up the window, ImGui, and file watcher.
@@ -102,48 +126,55 @@ namespace Ukemochi
         imguiInstance.ImGuiInit(glfwWindow);
 
 #if _DEBUG
-        fwInstance = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
-
-        fwInstance->Start([](const std::string& path_to_watch, FileStatus status)
-        {
-            switch (status)
-            {
-                case FileStatus::created:
-                {
-                    UME_ENGINE_INFO("File created: {0}", path_to_watch);
-                    std::filesystem::path filePath(path_to_watch);
-                    if (filePath.extension() == ".cs")
-                    {
-                        ScriptingEngine::GetInstance().compile_flag = true;
-                        UME_ENGINE_INFO("Compile flag is open");
-                    }
-                    break;
-                }
-                case FileStatus::modified:
-                {
-                    UME_ENGINE_INFO("File modified: {0}", path_to_watch);
-                    std::filesystem::path filePath(path_to_watch);
-                    if (filePath.extension() == ".cs")
-                    {
-                        ScriptingEngine::GetInstance().compile_flag = true;
-                        UME_ENGINE_INFO("Compile flag is open");
-                    }
-                    break;
-                }
-                case FileStatus::erased:
-                {
-                    UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
-                    std::filesystem::path filePath(path_to_watch);
-                    if (filePath.extension() == ".cs")
-                    {
-                        ScriptingEngine::GetInstance().compile_flag = true;
-                        UME_ENGINE_INFO("Compile flag is open");
-                    }
-                    break;
-                }
-            }
-        });
+        // fwInstance = std::make_shared<FileWatcher>("..\\Assets", std::chrono::milliseconds(3000));
+        //
+        // fwInstance->Start([](const std::string& path_to_watch, FileStatus status)
+        // {
+        //     switch (status)
+        //     {
+        //         case FileStatus::created:
+        //         {
+        //             UME_ENGINE_INFO("File created: {0}", path_to_watch);
+        //             std::filesystem::path filePath(path_to_watch);
+        //             if (filePath.extension() == ".cs")
+        //             {
+        //                 ScriptingEngine::GetInstance().compile_flag = true;
+        //                 UME_ENGINE_INFO("Compile flag is open");
+        //             }
+        //             break;
+        //         }
+        //         case FileStatus::modified:
+        //         {
+        //             UME_ENGINE_INFO("File modified: {0}", path_to_watch);
+        //             std::filesystem::path filePath(path_to_watch);
+        //             if (filePath.extension() == ".cs")
+        //             {
+        //                 ScriptingEngine::GetInstance().compile_flag = true;
+        //                 UME_ENGINE_INFO("Compile flag is open");
+        //             }
+        //             break;
+        //         }
+        //         case FileStatus::erased:
+        //         {
+        //             UME_ENGINE_INFO("File deleted: {0}", path_to_watch);
+        //             std::filesystem::path filePath(path_to_watch);
+        //             if (filePath.extension() == ".cs")
+        //             {
+        //                 ScriptingEngine::GetInstance().compile_flag = true;
+        //                 UME_ENGINE_INFO("Compile flag is open");
+        //             }
+        //             break;
+        //         }
+        //     }
+        // });
 #endif
+
+        const char* mappings = load_file_contents("../Assets/gamecontrollerdb.txt");
+        if (mappings)
+        {
+            UME_ENGINE_TRACE("Loading gamepad mappings...");
+            glfwUpdateGamepadMappings(mappings);
+        }
 
         GameStarted = false;
     }
@@ -161,11 +192,11 @@ namespace Ukemochi
 
         // Ensure the thread is joined before exiting to prevent memory leaks
 #if _DEBUG
-        if (fwInstance)
-        {
-            fwInstance->Stop(); // Hypothetical method to stop monitoring
-            fwInstance.reset(); // Reset shared pointer
-        }
+        // if (fwInstance)
+        // {
+        //     fwInstance->Stop(); // Hypothetical method to stop monitoring
+        //     fwInstance.reset(); // Reset shared pointer
+        // }
 #endif
 
         ScriptingEngine::GetInstance().ShutDown();

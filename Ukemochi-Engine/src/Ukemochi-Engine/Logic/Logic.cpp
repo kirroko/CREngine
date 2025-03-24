@@ -22,7 +22,7 @@ namespace Ukemochi
      */
     LogicSystem::LogicSystem()
     {
-        ScriptingEngine::GetInstance().Init();
+        // ScriptingEngine::GetInstance().Init();
     }
 
     /**

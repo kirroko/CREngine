@@ -235,7 +235,7 @@
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-25.0, 540.0, 0.0],
+                    "Position": [-35.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -430,7 +430,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-355.0, 720.0, 0.0],
+                    "Position": [-240.0, 610.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [100.0, 155.0]
                 }, {
@@ -475,7 +475,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [-200.0, 450.0, 0.0],
+                    "Position": [-180.0, 515.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [100.0, 155.0]
                 }, {
@@ -708,7 +708,7 @@
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1895.0, 540.0, 0.0],
+                    "Position": [1885.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -1597,7 +1597,7 @@
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3815.0, 540.0, 0.0],
+                    "Position": [3805.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -1630,7 +1630,7 @@
             "Tag": "LeftDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [1945.0, 540.0, 0.0],
+                    "Position": [1955.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -2051,7 +2051,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3550.0, 170.0, 0.0],
+                    "Position": [3425.0, 220.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [160.0, 105.0]
                 }, {
@@ -2530,7 +2530,7 @@
             "Tag": "LeftDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [3865.0, 540.0, 0.0],
+                    "Position": [3875.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -2563,7 +2563,7 @@
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [5735.0, 540.0, 0.0],
+                    "Position": [5725.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -3518,7 +3518,7 @@
             "Tag": "RightDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [7655.0, 540.0, 0.0],
+                    "Position": [7645.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -3551,7 +3551,7 @@
             "Tag": "LeftDoor",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [5785.0, 540.0, 0.0],
+                    "Position": [5795.0, 540.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [50.0, 500.0]
                 }, {
@@ -3668,7 +3668,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [6300.0, 200.0, 0.0],
+                    "Position": [6250.0, 200.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [160.0, 105.0]
                 }, {
@@ -3758,7 +3758,7 @@
             "Tag": "Environment",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [7180.0, 200.0, 0.0],
+                    "Position": [7230.0, 200.0, 0.0],
                     "Rotation": 0.0,
                     "Scale": [160.0, 105.0]
                 }, {
@@ -3949,9 +3949,9 @@
             "Tag": "Boundary",
             "Components": [{
                     "Name": "Transform",
-                    "Position": [8640.0, 815.0, 0.0],
+                    "Position": [8640.0, 720.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [1920.0, 530.0]
+                    "Scale": [1920.0, 400.0]
                 }, {
                     "Name": "Rigidbody2D",
                     "Position": [0.0, 0.0, 0.0],
@@ -4175,6 +4175,88 @@
                     "Layer": 0
                 }]
         }, {
+            "Name": "6_Boss",
+            "Tag": "Boss",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [8515.0, 790.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [225.0, 225.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
+                    "Shape": 0,
+                    "Layer": 1
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Idle1": ["Boss Phase 1 Idle", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle1", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
+                        "Idle2": ["Boss Idle Phase 2", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle2", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
+                        "Change": ["Boss Transform", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Change", 25, 0.5, 0.5, 860, 860, 860, 7740, 2580, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Idle1"
+                }, {
+                    "Name": "Boss"
+                }]
+        }, {
+            "Name": "6_Branch",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [8640.0, 780.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 605.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Branch.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "6_Hair",
+            "Tag": "Hair",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [7955.0, 350.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [225.0, 225.0]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [0.0, 0.0, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [0.0, 0.0],
+                    "Max": [0.0, 0.0],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
+                    "Shape": 0,
+                    "Layer": 3
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "HairAtk", 34, 0.5, 1.0, 625, 625, 625, 3750, 3750, 0.05000000074505806, false]
+                    },
+                    "CurrentClip": "HairAtk"
+                }]
+        }, {
             "Name": "Player",
             "Tag": "Player",
             "Components": [{
@@ -4360,7 +4442,7 @@
                     "Name": "Animation",
                     "Clips": {
                         "FishAbilitySpawn": ["Blue Skill SPawning_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilitySpawn", 10, 0.5, 0.5, 100, 440, 440, 1760, 1320, 0.05000000074505806, false],
-                        "FishAbilityAttack": ["Blue Soul Attack_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilityAttack", 11, 0.5, 0.5, 100, 400, 400, 2000, 1200, 0.05000000074505806, false]
+                        "FishAbilityAttack": ["Blue Soul Attack_0000", "../Assets/Textures/Player/Skills + VFx_Part.png", "FishAbilityAttack", 11, 0.5, 0.5, 100, 400, 400, 2000, 1200, 0.10000000149011612, false]
                     },
                     "CurrentClip": "FishAbilitySpawn"
                 }]
@@ -4405,7 +4487,7 @@
                     "Name": "Animation",
                     "Clips": {
                         "WormAbilitySpawn": ["Red Soul Skill-Spawn_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilitySpawn", 15, 0.5, 0.5, 100, 370, 370, 1850, 1110, 0.05000000074505806, false],
-                        "WormAbilityAttack": ["Red Soul Skill-ATTACKING_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilityAttack", 10, 0.5, 0.5, 100, 360, 360, 1800, 720, 0.05000000074505806, false]
+                        "WormAbilityAttack": ["Red Soul Skill-ATTACKING_00", "../Assets/Textures/Player/Skills + VFx_Part.png", "WormAbilityAttack", 10, 0.5, 0.5, 100, 360, 360, 1800, 720, 0.10000000149011612, false]
                     },
                     "CurrentClip": "WormAbilitySpawn"
                 }]
@@ -4785,88 +4867,6 @@
                     "CurrentClip": "Projectile"
                 }]
         }, {
-            "Name": "6_Boss",
-            "Tag": "Boss",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [8515.0, 790.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [225.0, 225.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
-                    "Shape": 0,
-                    "Layer": 1
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Idle1": ["Boss Phase 1 Idle", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle1", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
-                        "Idle2": ["Boss Idle Phase 2", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle2", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
-                        "Change": ["Boss Transform", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Change", 25, 0.5, 0.5, 860, 860, 860, 7740, 2580, 0.05000000074505806, true]
-                    },
-                    "CurrentClip": "Idle1"
-                }, {
-                    "Name": "Boss"
-                }]
-        }, {
-            "Name": "6_Branch",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [8640.0, 780.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [1920.0, 605.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Branch.png",
-                    "Shape": 0,
-                    "Layer": 0
-                }]
-        }, {
-            "Name": "6_Hair",
-            "Tag": "Hair",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [7955.0, 350.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [225.0, 225.0]
-                }, {
-                    "Name": "Rigidbody2D",
-                    "Position": [0.0, 0.0, 0.0],
-                    "Velocity": [0.0, 0.0],
-                    "Acceleration": [0.0, 0.0],
-                    "Force": [0.0, 0.0],
-                    "Mass": 1.0,
-                    "Inverse Mass": 1.0,
-                    "Linear Drag": 0.8999999761581421,
-                    "Angle": 0.0,
-                    "Angular Velocity": 0.0,
-                    "Angular Acceleration": 0.0,
-                    "Torque": 0.0,
-                    "Inertia Mass": 1.0,
-                    "Inverse Inertia Mass": 1.0,
-                    "Angular Drag": 0.8999999761581421,
-                    "use_gravity": false,
-                    "is_kinematic": false
-                }, {
-                    "Name": "BoxCollider2D",
-                    "Min": [0.0, 0.0],
-                    "Max": [0.0, 0.0],
-                    "Collision Flag": 0,
-                    "is_trigger": false
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
-                    "Shape": 0,
-                    "Layer": 0
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "HairAtk", 34, 0.5, 1.0, 625, 625, 625, 3750, 3750, 0.05000000074505806, false]
-                    },
-                    "CurrentClip": "HairAtk"
-                }]
-        }, {
             "Name": "EnemyWorm",
             "Tag": "EnemyClone",
             "Components": [{
@@ -4916,7 +4916,7 @@
                 }, {
                     "Name": "EnemyComponent",
                     "Position": [250.0, 200.0],
-                    "Type": 1
+                    "Type": 5
                 }]
         }, {
             "Name": "EnemyWorm_Shadow",
@@ -4930,10 +4930,10 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Worm_shadow.png",
                     "Shape": 0,
-                    "Layer": 1
+                    "Layer": 4
                 }]
         }, {
-            "Name": "6_Blob",
+            "Name": "Blob",
             "Tag": "BlobClone",
             "Components": [{
                     "Name": "Transform",
@@ -4944,7 +4944,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Enemy/Blob 1_Part.png",
                     "Shape": 0,
-                    "Layer": 0
+                    "Layer": 3
                 }, {
                     "Name": "Animation",
                     "Clips": {
