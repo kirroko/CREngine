@@ -4586,7 +4586,7 @@
                             "Path": "../Assets/Audio/SFX/Enemy/FishDeadVR.wav"
                         }, {
                             "Name": "LevelChange",
-                            "Path": "../Assets/Audio/SFX/sfx_cave_enter.wav"
+                            "Path": "../Assets/Audio/SFX/Boss Level Enter_SFX.wav"
                         }, {
                             "Name": "FishMove",
                             "Path": "../Assets/Audio/SFX/Enemy/FishWalkCut.wav"
@@ -4610,7 +4610,7 @@
                             "Path": "../Assets/Audio/SFX/Enemy/WormWalk.wav"
                         }, {
                             "Name": "SwapSoul",
-                            "Path": "../Assets/Audio/SFX/Player/SwapSoul.wav"
+                            "Path": "../Assets/Audio/SFX/Player/Sward-Swap_SFX.wav"
                         }, {
                             "Name": "WormSpecial",
                             "Path": "../Assets/Audio/SFX/Player/WormSpecial.wav"

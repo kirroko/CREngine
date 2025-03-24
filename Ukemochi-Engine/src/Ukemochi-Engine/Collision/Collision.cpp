@@ -561,7 +561,17 @@ namespace Ukemochi
 
 		if (tag1 == "Player" && tag2 == "LeftDoor" || tag1 == "Player" && tag2 == "RightDoor") // Mochi and Doors
 		{
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			int currentRoomID = ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id;
+			int targetRoomIndex = currentRoomID;
+
+			if (tag2 == "LeftDoor")
+				targetRoomIndex -= 1; // Left room
+			else if (tag2 == "RightDoor")
+				targetRoomIndex += 1; // Right room
+
+			bool isEnteringBossRoom = (targetRoomIndex == 6);
+
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && isEnteringBossRoom)
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				if (audioM.GetSFXindex("LevelChange") != -1)

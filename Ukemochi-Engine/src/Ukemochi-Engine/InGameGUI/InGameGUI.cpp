@@ -757,7 +757,10 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("music bar bg", glm::vec3(960.f, 350.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
+		uiManager->addButton("music bar bg", glm::vec3(960.f, 350.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
+
+			});
+		uiManager->addButton("music bar border", glm::vec3(960.f, 350.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, false, []() {
 			
 			});
 
@@ -794,10 +797,12 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("sfx bar bg", glm::vec3(960.f, 250.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
+		uiManager->addButton("sfx bar bg", glm::vec3(960.f, 250.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {
 
 			});
+		uiManager->addButton("sfx bar border", glm::vec3(960.f, 250.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, false, []() {
 
+			});
 		uiManager->addButton("sfx bar", glm::vec3(960.f, 250.f, 0.f), glm::vec2(429.f, 27.f), "Rounded Rectangle 8 3", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 9, BarType::None, false, []() {
 
 			});
@@ -824,12 +829,14 @@ namespace Ukemochi
 		uiManager->removeButton("music minus");
 		uiManager->removeButton("music plus");
 		uiManager->removeButton("music bar bg");
+		uiManager->removeButton("music bar border");
 		uiManager->removeButton("music bar");
 
 		uiManager->removeButton("sfx");
 		uiManager->removeButton("sfx minus");
 		uiManager->removeButton("sfx plus");
 		uiManager->removeButton("sfx bar bg");
+		uiManager->removeButton("sfx bar border");
 		uiManager->removeButton("sfx bar");
 	}
 
