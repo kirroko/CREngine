@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DungeonManager.h"
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data
 #include "SoulManager.h"                        // for soul harvest
+#include "../SceneManager.h"                    // for cheat mode
 
 namespace Ukemochi
 {
@@ -1410,7 +1411,8 @@ namespace Ukemochi
                                             {
                                                 if (!enemycomponent.isAtk)
                                                 {
-                                                    enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
+                                                    if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
+                                                        enemycomponent.AttackPlayer(playerObj->GetComponent<Player>().currentHealth);
                                                     enemycomponent.isAtk = true;
                                                 }
 

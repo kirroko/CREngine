@@ -158,55 +158,61 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::UpdateBoundingBox(BoxCollider2D& box, const Transform& trans, const std::string& tag)
 	{
-		if (tag == "Player" || tag == "Enemy" || tag == "Environment")
+		if (tag == "Player" || tag == "Enemy")
 		{
-			// Lower half of the object (legs or bottom part)
-			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y };  // Min Y is halfway down the object 1.5f
-			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.5f };  // Max Y stops at the object's center
+			// Set bounding box to half in the y-axis and shifted down
+			box.min = { trans.position.x - trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y - trans.scale.y * BOUNDING_BOX_SIZE };
+			box.max = { trans.position.x + trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y - trans.scale.y * 0.25f };
+		}
+		else if (tag == "Environment")
+		{
+			// Set bounding box to half in the y-axis and shifted down
+			box.min = { trans.position.x - trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y - trans.scale.y * 0.6f };
+			box.max = { trans.position.x + trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y - trans.scale.y * 0.25f };
 		}
 		else if (tag == "Dummy")
 		{
-			// Lower half of the object (legs or bottom part)
-			box.min = { -BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y };
-			box.max = { BOUNDING_BOX_SIZE * (0.5f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.5f };
+			// Set bounding box to half in the x-axis and y-axis and shifted down
+			box.min = { trans.position.x - trans.scale.x * 0.25f,
+						trans.position.y - trans.scale.y * BOUNDING_BOX_SIZE };
+			box.max = { trans.position.x + trans.scale.x * 0.25f,
+						trans.position.y - trans.scale.y * 0.25f };
 		}
 		else if (tag == "Knife")
 		{
-			//box.min = { -BOUNDING_BOX_SIZE  * (0.6f * trans.scale.x) + trans.position.x,
-			//			-BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
-			//box.max = { BOUNDING_BOX_SIZE * (0.6f * trans.scale.x) + trans.position.x,
-			//			BOUNDING_BOX_SIZE * (0.9f * trans.scale.y) + trans.position.y };
-
-			// Lower half of the object (legs or bottom part)
-			box.min = { -BOUNDING_BOX_SIZE * (1.5f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 1.25f };  // Min Y is halfway down the object 1.5f
-			box.max = { BOUNDING_BOX_SIZE * (1.8f * trans.scale.x) + trans.position.x,
-						trans.position.y - BOUNDING_BOX_SIZE * trans.scale.y * 0.8f };  // Max Y stops at the object's center
+			// Set bounding box to be longer in the x-axis and shifted down
+			box.min = { trans.position.x - trans.scale.x * 0.75f,
+						trans.position.y - trans.scale.y * 0.625f };
+			box.max = { trans.position.x + trans.scale.x * 0.9f,
+						trans.position.y - trans.scale.y * 0.4f };
 		}
 		else if (tag == "EnemyProjectile")
 		{
-			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						-4.f * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						trans.scale.y + trans.position.y };
+			// Set bounding box to be longer in the y-axis
+			box.min = { trans.position.x - trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y - trans.scale.y * 4.f };
+			box.max = { trans.position.x + trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y + trans.scale.y * BOUNDING_BOX_SIZE };
 		}
-		else if(tag == "Hair")
+		else if (tag == "Hair")
 		{
-			box.min = { -1.5f * trans.scale.x + trans.position.x,
-						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { 1.5f * trans.scale.x + trans.position.x,
-						BOUNDING_BOX_SIZE* trans.scale.y + trans.position.y };
+			// Set bounding box to be longer in the x-axis
+			box.min = { trans.position.x - trans.scale.x * 1.5f,
+						trans.position.y - trans.scale.y * BOUNDING_BOX_SIZE };
+			box.max = { trans.position.x + trans.scale.x * 1.5f,
+						trans.position.y + trans.scale.y * BOUNDING_BOX_SIZE };
 		}
 		else
 		{
-			box.min = { -BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						-BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
-			box.max = { BOUNDING_BOX_SIZE * trans.scale.x + trans.position.x,
-						BOUNDING_BOX_SIZE * trans.scale.y + trans.position.y };
+			// Set bounding box to full AABB size
+			box.min = { trans.position.x - trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y - trans.scale.y * BOUNDING_BOX_SIZE };
+			box.max = { trans.position.x + trans.scale.x * BOUNDING_BOX_SIZE,
+						trans.position.y + trans.scale.y * BOUNDING_BOX_SIZE };
 		}
 	}
 
@@ -734,6 +740,10 @@ namespace Ukemochi
 		{
 			// Mochi interacting with the environment
 			// Make space and get healing items?
+			
+			// Skip if box is already a trigger/broken
+			if (box2.is_trigger)
+				return;
 
 			// Get references of the player and box
 			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
@@ -782,6 +792,8 @@ namespace Ukemochi
 								{
 									player_data.postInjuriesMaxHealth = player_data.maxHealth;
 								}
+
+								box2.is_trigger = true;
 							}
 						}
 
@@ -836,6 +848,8 @@ namespace Ukemochi
 								{
 									player_data.postInjuriesMaxHealth = player_data.maxHealth;
 								}
+
+								box2.is_trigger = true;
 							}
 						}
 
@@ -890,6 +904,8 @@ namespace Ukemochi
 								{
 									player_data.postInjuriesMaxHealth = player_data.maxHealth;
 								}
+
+								box2.is_trigger = true;
 							}
 						}
 
@@ -916,45 +932,6 @@ namespace Ukemochi
 			default:
 				break;
 			}
-
-			//if (player_anim.current_frame == 10 || player_anim.current_frame == 15 || player_anim.current_frame == 31)
-			//{
-			//	
-			//	if (box_anim.is_playing)
-			//	{
-			//		box_anim.SetAnimation("Box_Break");
-			//		box_anim.is_playing = false;
-			//		box_anim.current_frame = 0;
-			//		std::cout << "switch clip" << std::endl;
-			//	}
-			//	else 
-			//	{
-			//		int prev_frame = box_anim.current_frame;
-			//		box_anim.current_frame++;
-			//		std::cout << "hit" << std::endl;
-			//		if (box_anim.current_frame > 3)
-			//		{
-			//			box_anim.current_frame = 3;
-			//		}
-			//		if (prev_frame == 2 && box_anim.current_frame == 3)
-			//		{
-			//			player_data.currentHealth += 10;
-			//			player_data.postInjuriesMaxHealth += 10;
-			//			if (player_data.currentHealth > player_data.maxHealth)
-			//			{
-			//				player_data.currentHealth = player_data.maxHealth;
-
-			//			}
-			//			if (player_data.postInjuriesMaxHealth > player_data.maxHealth)
-			//			{
-			//				player_data.postInjuriesMaxHealth = player_data.maxHealth;
-			//			}
-			//		}
-			//	}
-			//}
-			//return;
-			// Placeholder, wait for when animations is complete so that we can break the box
-			// Play Animation
 		}
 		else if (tag1 == "Knife" && tag2 == "Hair")
 		{
@@ -1518,52 +1495,30 @@ namespace Ukemochi
 	*************************************************************************/
 	void Collision::Static_Response(Transform& trans1, const BoxCollider2D& box1, const Rigidbody2D& rb1, Transform& trans2, const BoxCollider2D& box2, const Rigidbody2D& rb2)
 	{
-		// STATIC AND DYNAMIC
 		// Box 1 left and box 2 right collision response
 		if (box1.collision_flag & COLLISION_LEFT && box2.collision_flag & COLLISION_RIGHT)
 		{
-			// To simulate wall collision
+			float overlap = abs(box2.max.x - box1.min.x); // Calculate overlap depth
 			if (!rb1.is_kinematic)
-				trans1.position.x = box2.max.x + trans1.scale.x * 0.5f + MIN_OFFSET; // Move box1 to the right
+				trans1.position.x += overlap + MIN_OFFSET; // Move box1 out of the collision
 			if (!rb2.is_kinematic)
-				trans2.position.x = box1.min.x - trans2.scale.x * 0.5f - MIN_OFFSET; // Move box2 to the left
+				trans2.position.x -= overlap + MIN_OFFSET; // Move box2 out of the collision
 		}
 
 		// Box 1 right and box 2 left collision response
 		if (box1.collision_flag & COLLISION_RIGHT && box2.collision_flag & COLLISION_LEFT)
 		{
-			// To simulate wall collision
+			float overlap = abs(box1.max.x - box2.min.x); // Calculate overlap depth
 			if (!rb1.is_kinematic)
-				trans1.position.x = box2.min.x - trans1.scale.x * 0.5f - MIN_OFFSET; // Move box1 to the left
+				trans1.position.x -= overlap + MIN_OFFSET; // Move box1 out of the collision
 			if (!rb2.is_kinematic)
-				trans2.position.x = box1.max.x + trans2.scale.x * 0.5f + MIN_OFFSET; // Move box2 to the right
+				trans2.position.x += overlap + MIN_OFFSET; // Move box2 out of the collision
 		}
-
-		//// Box 1 top and box 2 bottom collision response
-		//if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
-		//{
-		//	// To simulate floor/ceiling collision
-		//	if (!rb1.is_kinematic)
-		//		trans1.position.y = box2.max.y + trans1.scale.y * 0.5f + MIN_OFFSET; // Move box1 upwards
-		//	if (!rb2.is_kinematic)
-		//		trans2.position.y = box1.min.y - trans2.scale.y * 0.5f - MIN_OFFSET; // Move box2 downwards
-		//}
-
-		//// Box 1 bottom and box 2 top collision response
-		//if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
-		//{
-		//	// To simulate floor/ceiling collision
-		//	if (!rb1.is_kinematic)
-		//		trans1.position.y = box2.min.y - trans1.scale.y * 0.5f - MIN_OFFSET; // Move box1 downwards
-		//	if (!rb2.is_kinematic)
-		//		trans2.position.y = box1.max.y + trans2.scale.y * 0.5f + MIN_OFFSET; // Move box2 upwards
-		//}
-
 
 		// Box 1 top and box 2 bottom collision response
 		if (box1.collision_flag & COLLISION_TOP && box2.collision_flag & COLLISION_BOTTOM)
 		{
-			float overlap = box2.max.y - box1.min.y; // Calculate overlap depth
+			float overlap = abs(box2.max.y - box1.min.y); // Calculate overlap depth
 			if (!rb1.is_kinematic)
 				trans1.position.y += overlap + MIN_OFFSET; // Move box1 out of the collision
 			if (!rb2.is_kinematic)
@@ -1573,7 +1528,7 @@ namespace Ukemochi
 		// Box 1 bottom and box 2 top collision response
 		if (box1.collision_flag & COLLISION_BOTTOM && box2.collision_flag & COLLISION_TOP)
 		{
-			float overlap = box1.max.y - box2.min.y; // Calculate overlap depth
+			float overlap = abs(box1.max.y - box2.min.y); // Calculate overlap depth
 			if (!rb1.is_kinematic)
 				trans1.position.y -= overlap + MIN_OFFSET; // Move box1 out of the collision
 			if (!rb2.is_kinematic)

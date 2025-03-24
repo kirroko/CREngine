@@ -2,7 +2,7 @@
 /*!
 \file       Transformation.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Mar 09, 2025
+\date       Mar 23, 2025
 \brief      This file contains the definition of the Transformation system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -62,8 +62,9 @@ namespace Ukemochi
 			std::string tag = GameObjectManager::GetInstance().GetGO(entity)->GetTag();
 
 			// Compute the depth scale of the dynamic entities
-			if (tag == "Player" || tag == "Knife" || tag == "Soul" || tag == "Player_Shadow"
-				|| tag == "FishAbility" || tag == "WormAbility" || tag == "Enemy" || tag == "EnemyProjectile" || tag == "EnemyShadow")
+			if (tag == "Player" || tag == "Knife" || tag == "Player_Shadow"
+				|| tag == "Soul" || tag == "FishAbility" || tag == "WormAbility"
+				|| tag == "Enemy" || tag == "EnemyProjectile" || tag == "EnemyShadow")
 				ComputeObjectScale(entity, OBJECT_SCALING);
 
 			// Compute the layer of the dynamic entities
@@ -105,10 +106,10 @@ namespace Ukemochi
 			transform.scale = { new_scale * KNIFE_SCALE_FACTOR.x, new_scale * KNIFE_SCALE_FACTOR.y };
 		else if (tag == "Soul")
 			transform.scale = { new_scale * SOUL_SCALE_FACTOR.x, new_scale * SOUL_SCALE_FACTOR.y };
-		else if (tag == "EnemyProjectile")
-			transform.scale = { new_scale * PROJECTILE_SCALE_FACTOR.x, new_scale * PROJECTILE_SCALE_FACTOR.y };
 		else if (tag == "FishAbility" || tag == "WormAbility")
 			transform.scale = { new_scale * SKILL_SCALE_FACTOR.x, new_scale * SKILL_SCALE_FACTOR.y };
+		else if (tag == "EnemyProjectile")
+			transform.scale = { new_scale * PROJECTILE_SCALE_FACTOR.x, new_scale * PROJECTILE_SCALE_FACTOR.y };
 		else
 			transform.scale = { new_scale, new_scale };
 	}
@@ -134,7 +135,9 @@ namespace Ukemochi
 		for (auto const& static_entity : m_Entities)
 		{
 			if ((GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Environment"
-				|| GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Dummy")
+				|| GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Dummy"
+				|| GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Blob"
+				|| GameObjectManager::GetInstance().GetGO(static_entity)->GetTag() == "Hair")
 				&& GameObjectManager::GetInstance().GetGO(static_entity)->GetActive())
 			{
 				Vec3 static_position = ECS::GetInstance().GetComponent<Transform>(static_entity).position;
@@ -173,11 +176,11 @@ namespace Ukemochi
 		}
 		else if (tag == "Enemy")
 		{
+			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+
 			std::string enemy_shadow_name = GameObjectManager::GetInstance().GetGO(object)->GetName() + "_Shadow";
 			auto& shadow_sr = GameObjectManager::GetInstance().GetGOByName(enemy_shadow_name)->GetComponent<SpriteRender>();
-
 			shadow_sr.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;
-			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
 		}
 		else if (tag == "EnemyProjectile")
 			sprite_renderer.layer = is_behind ? SUB_DYNAMIC_BACK : SUB_DYNAMIC_FRONT;

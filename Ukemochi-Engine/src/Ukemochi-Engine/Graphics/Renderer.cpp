@@ -810,10 +810,8 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	if (Input::IsKeyTriggered(UME_KEY_H)) //TODO: REMOVE ME!!!!!!!!
-	{
-		HandleInputTesting();
-	}
+	//if (Input::IsKeyTriggered(UME_KEY_H)) //TODO: REMOVE ME!!!!!!!!
+	//	HandleInputTesting();
 
 	updatePlayerBars();
 
