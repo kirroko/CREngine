@@ -36,6 +36,7 @@ struct Vertex {
 	glm::vec3 color;
 	glm::vec2 texCoord;
 	GLint textureID;
+	float alpha;
 };
 
 /*!
@@ -79,8 +80,8 @@ public:
 	 * @param uvCoordinates The UV coordinates for the texture.
 	 * @param rotation The rotation angle for the sprite.
 	 */
-	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer);
-	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer);
+	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const float& alpha, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer);
+	void drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const float& alpha, const std::string& spriteName, float rotation, int layer);
 
 	void setActiveShader(std::shared_ptr<Shader> shader); // Update method signature
 

@@ -771,7 +771,7 @@ void Renderer::render()
 			float scaleFactor = TARGET_SCALE_FACTOR / spriteWorldSize.y;
 			glm::vec2 finalScale = glm::vec2(transform.scale.x, transform.scale.y) * scaleFactor;
 			finalScale.x = finalScale.y * aspectRatio;
-			batchRenderer->drawSprite(glm::vec3(renderPos, transform.position.z), finalScale, glm::vec3(spriteRenderer.color.x, spriteRenderer.color.y, spriteRenderer.color.z), mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation),spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(renderPos, transform.position.z), finalScale, glm::vec3(spriteRenderer.color.x, spriteRenderer.color.y, spriteRenderer.color.z), 1.f, mappedTextureUnit, uvCoordinates, glm::radians(transform.rotation),spriteRenderer.layer);
 		}
 		else
 		{
@@ -790,22 +790,10 @@ void Renderer::render()
 				std::swap(uvCoordinates[5], uvCoordinates[7]);
 			}
 
-			/*if (ECS::GetInstance().GetSystem<AssetManager>()->ifTextureExists(spriteRenderer.texturePath))
-			{
-				textureID = ECS::GetInstance().GetSystem<AssetManager>()->getTexture(spriteRenderer.texturePath)->ID;
-			}
-			if (textureID < 0) {
-				UME_ENGINE_WARN("Texture ID not found for {0}", spriteRenderer.texturePath);
-				continue;
-			}*/
-
-			//int mappedTextureUnit = textureIDMap[textureID];
-
 			std::string spriteName = getSpriteNameFromPath(spriteRenderer.texturePath);
-			//std::cout << spriteName << " from render() line 686" <<std::endl;
 
 			// Draw the sprite using the batch renderer, passing the updated UV coordinates
-			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
+			batchRenderer->drawSprite(glm::vec3(transform.position.x, transform.position.y, transform.position.z), glm::vec2(transform.scale.x, transform.scale.y), glm::vec3(1.0f, 1.0f, 1.0f), 1.f, spriteName, glm::radians(transform.rotation), spriteRenderer.layer);
 		}
 	}
 
@@ -875,6 +863,32 @@ void Renderer::render()
 	else if (currentMode == InteractionMode::SCALE)
 		renderScaleAxis();
 #endif // _DEBUG
+
+	//if (isTransitioningToGame)
+	//{
+	//	float alpha = transitionTimer / transitionDuration; // Fades from 1 -> 0
+
+	//	// Activate UI shader and set up projection
+	//	shaderProgram->Activate();
+	//	shaderProgram->setMat4("projection", projection);
+	//	shaderProgram->setMat4("view", glm::mat4(1.0f)); // No camera transform for UI
+
+	//	// Start UI batch
+	//	batchRendererUI->beginBatch();
+
+	//	// Draw full-screen black quad with fading alpha
+	//	batchRendererUI->drawSprite(
+	//		glm::vec3(camera->viewport_size.x / 2.f, camera->viewport_size.y / 2.f, 0.0f),              // High Z to render on top
+	//		glm::vec2(camera->viewport_size.x, camera->viewport_size.y),                      // Full screen size
+	//		glm::vec3(0.0f, 0.0f, 0.0f),                 // Black color
+	//		alpha,                                      // Fading alpha
+	//		"",                                    // Dummy texture or atlas entry (if needed)
+	//		0.0f,                                       // No rotation
+	//		15                                          // High layer if your batchRenderer uses it
+	//	);
+
+	//	batchRendererUI->endBatch();
+	//}
 
 	debug_shader_program->Deactivate();
 	// Render text, UI, or additional overlays if needed

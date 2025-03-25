@@ -119,9 +119,10 @@ void BatchRenderer2D::createVertexBuffer()
     vao->LinkAttrib(*vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color));
     vao->LinkAttrib(*vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
     vao->LinkAttribInteger(*vbo, 3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, textureID));
+    vao->LinkAttrib(*vbo, 4, 1, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, alpha));
 }
 
-void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer)
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const float& alpha, GLint textureID, const GLfloat* uvCoordinates, float rotation, int layer)
 {
     if (vertices.size() >= maxSprites * 4)
     {
@@ -170,10 +171,10 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
 
     // Create vertices
-    Vertex v1 = { pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID };
-    Vertex v2 = { pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID };
-    Vertex v3 = { pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID };
-    Vertex v4 = { pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID };
+    Vertex v1 = { pos1, color, {uvCoordinates[0], uvCoordinates[1]}, textureID, alpha };
+    Vertex v2 = { pos2, color, {uvCoordinates[2], uvCoordinates[3]}, textureID, alpha };
+    Vertex v3 = { pos3, color, {uvCoordinates[4], uvCoordinates[5]}, textureID, alpha };
+    Vertex v4 = { pos4, color, {uvCoordinates[6], uvCoordinates[7]}, textureID, alpha };
 
     // Add vertices to the appropriate layer
     layerBatches[layer].push_back(v1);
@@ -206,7 +207,7 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
  The layer at which the sprite should be rendered.
 
 *************************************************************************/
-void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const std::string& spriteName, float rotation, int layer)
+void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& size, const glm::vec3& color, const float& alpha, const std::string& spriteName, float rotation, int layer)
 {
     // Check if the batch is full and flush it
     if (vertices.size() >= maxSprites * 4)
@@ -284,10 +285,10 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
         glm::vec2 uv4 = { 0.0f, 1.0f }; // Top-left
 
         // Create vertices
-        Vertex v1 = { pos1, color, {uv1}, textureID };
-        Vertex v2 = { pos2, color, {uv2}, textureID };
-        Vertex v3 = { pos3, color, {uv3}, textureID };
-        Vertex v4 = { pos4, color, {uv4}, textureID };
+        Vertex v1 = { pos1, color, {uv1}, textureID, alpha };
+        Vertex v2 = { pos2, color, {uv2}, textureID, alpha };
+        Vertex v3 = { pos3, color, {uv3}, textureID, alpha };
+        Vertex v4 = { pos4, color, {uv4}, textureID, alpha };
 
         // Add vertices to the appropriate layer
         layerBatches[layer].push_back(v1);
@@ -355,10 +356,10 @@ void BatchRenderer2D::drawSprite(const glm::vec3& position, const glm::vec2& siz
     glm::vec3 pos4 = glm::vec3(topLeft + glm::vec2(position.x, position.y), position.z); // Top-left
 
     // Create vertices with UV coordinates from the atlas
-    Vertex v1 = { pos1, color, {uv.uMin, uv.vMin}, textureID };
-    Vertex v2 = { pos2, color, {uv.uMax, uv.vMin}, textureID };
-    Vertex v3 = { pos3, color, {uv.uMax, uv.vMax}, textureID };
-    Vertex v4 = { pos4, color, {uv.uMin, uv.vMax}, textureID };
+    Vertex v1 = { pos1, color, {uv.uMin, uv.vMin}, textureID, alpha };
+    Vertex v2 = { pos2, color, {uv.uMax, uv.vMin}, textureID, alpha };
+    Vertex v3 = { pos3, color, {uv.uMax, uv.vMax}, textureID, alpha };
+    Vertex v4 = { pos4, color, {uv.uMin, uv.vMax}, textureID, alpha };
 
     // Add vertices to the appropriate layer
     layerBatches[layer].push_back(v1);
