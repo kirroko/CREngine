@@ -819,5 +819,10 @@ public:
 	The currently active scaling axis.
 	*************************************************************************/
 	ScalingAxis scalingAxis = ScalingAxis::NONE; // Tracks the active scaling axis
+
+	bool isTransitioningToGame = false;
+	float transitionTimer = 0.0f;
+	const float transitionDuration = 2.0f; // duration in seconds
+
 };
 #endif

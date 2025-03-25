@@ -8,6 +8,8 @@ layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTex;
 // Texture ID
 layout (location = 3) in int aTexID;  // Changed from vec2 to int
+// Alpha
+layout (location = 4) in float aAlpha;
 
 // Outputs the color for the Fragment Shader
 out vec3 color;
@@ -15,7 +17,8 @@ out vec3 color;
 out vec2 texCoord;
 // Outputs the texture ID to the fragment shader
 flat out int texID;  // Use 'flat' to prevent interpolation
-
+// Outputs alpha for the Fragment Shader
+out float vAlpha;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -30,4 +33,6 @@ void main()
     texCoord = aTex;
     // Pass the texture ID to the fragment shader
     texID = aTexID;  // Passes integer texture ID without interpolation
+
+    vAlpha = aAlpha;
 }

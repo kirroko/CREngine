@@ -7,12 +7,14 @@ in vec2 texCoord;
 flat in int texID;
 uniform sampler2D textures[32];
 
+in float vAlpha;
+
 void main()
 {
 
    vec4 textureColor = texture(textures[texID], texCoord);
 
    // Multiply by color only if you want a tint; otherwise, use just the texture color
-   FragColor = textureColor * vec4(color, 1.0);
+   FragColor = textureColor * vec4(color, vAlpha);
    
 }
