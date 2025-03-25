@@ -116,6 +116,12 @@ namespace Ukemochi
 
                 auto& shadow_trans = shadow_Object->GetComponent<Transform>();
 
+                if (sr.color.y == 0.f)
+                {
+                    sr.color = Vec3(1.f, 1.f, 1.f);
+                    enemycomponent.hasDealtDamage = false;
+                }
+
                 if (object->GetName().find("Worm") != std::string::npos)
                 {
                     if (!sr.flipX)
@@ -640,6 +646,7 @@ namespace Ukemochi
                     {
                         enemycomponent.kicktime = 1.f;
                         enemycomponent.isKick = false;
+                        sr.color = Vec3(1.f, 1.f, 1.f);
                     }
 
                     // if timer reach 1s and no collision is detected enemy is back
@@ -647,6 +654,7 @@ namespace Ukemochi
                     {
                         enemycomponent.kicktime = 1.f;
                         enemycomponent.isKick = false;
+                        sr.color = Vec3(1.f, 1.f, 1.f);
                     }
 
                     if (enemycomponent.isCollide)
@@ -682,6 +690,7 @@ namespace Ukemochi
                                         enemycomponent.kicktime = 1.f;
                                         enemycomponent.isKick = false;
                                         enemycomponent.timeSinceTargetReached = 0.f;
+                                        sr.color = Vec3(1.f, 1.f, 1.f);
                                     }
                                 }
                             }
@@ -734,6 +743,7 @@ namespace Ukemochi
                             enemycomponent.state = Enemy::MOVE;
                             enemycomponent.isCollide = false;
                             enemycomponent.timeSinceTargetReached = 0.f;
+                            sr.color = Vec3(1.f, 1.f, 1.f);
                             break;
                         }
                         if (collidedObj == nullptr)
@@ -749,6 +759,7 @@ namespace Ukemochi
                             enemycomponent.isCollide = false;
                             enemycomponent.timeSinceTargetReached = 0.f;
                             enemycomponent.move = 5;
+                            sr.color = Vec3(1.f, 1.f, 1.f);
                             break;
                         }
 

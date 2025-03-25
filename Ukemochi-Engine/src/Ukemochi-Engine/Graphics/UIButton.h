@@ -145,7 +145,7 @@ public:
             }
 
             glm::vec3 screenPosition = position - cameraPosition + cameraPosition;
-            batchRenderer->drawSprite(screenPosition, size, renderColor, spriteName, 0.0f, ui_layer);
+            batchRenderer->drawSprite(screenPosition, size, renderColor, 1.f, spriteName, 0.0f, ui_layer);
         }
     }
 };

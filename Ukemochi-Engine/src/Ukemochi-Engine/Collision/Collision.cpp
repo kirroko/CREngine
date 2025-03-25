@@ -599,6 +599,7 @@ namespace Ukemochi
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			auto& enemy_sr = ECS::GetInstance().GetComponent<SpriteRender>(entity2);
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
 
@@ -626,6 +627,7 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+						enemy_sr.color = Vec3(1.f, 0.f, 0.f);
 
 						if (player_sr.flipX)
 						{
@@ -663,8 +665,8 @@ namespace Ukemochi
 
 						// Harvest some soul whenever mochi hits an enemy
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
-
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+						enemy_sr.color = Vec3(1.f, 0.f, 0.f);
 
 						if (player_sr.flipX)
 						{
@@ -720,6 +722,7 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true;
+						enemy_sr.color = Vec3(1.f, 0.f, 0.f);
 
 						if (player_sr.flipX)
 						{
@@ -731,7 +734,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 					}
 				}
@@ -775,6 +777,39 @@ namespace Ukemochi
 				{
 					if (!check_collision_once)
 					{
+						if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+						{
+							auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+							// Randomize box hit sounds
+							std::vector<int> BoxHitSounds = {
+								audioM.GetSFXindex("HitBoxSmash1"),
+								audioM.GetSFXindex("HitBoxSmash2"),
+								audioM.GetSFXindex("HitBoxSmash3"),
+								audioM.GetSFXindex("HitBoxSmash4"),
+								audioM.GetSFXindex("HitBoxSmash5"),
+								audioM.GetSFXindex("HitBoxSmash6"),
+								audioM.GetSFXindex("HitBoxSmash7"),
+								audioM.GetSFXindex("HitBoxSmash8")
+							};
+
+							// Remove invalid (-1) sounds
+							BoxHitSounds.erase(
+								std::remove(BoxHitSounds.begin(), BoxHitSounds.end(), -1),
+								BoxHitSounds.end()
+							);
+
+							if (!BoxHitSounds.empty())
+							{
+								// Randomly select a hit sound
+								int randomIndex = rand() % BoxHitSounds.size();
+								int selectedSound = BoxHitSounds[randomIndex];
+
+								// Play the selected sound
+								audioM.PlaySFX(selectedSound);
+							}
+						}
+
 						if (box_anim.currentClip == "Box")
 						{
 							box_anim.SetAnimation("Box_Break");
@@ -832,6 +867,38 @@ namespace Ukemochi
 				{
 					if (!check_collision_once)
 					{
+						if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+						{
+							auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+							// Randomize box hit sounds
+							std::vector<int> BoxHitSounds = {
+								audioM.GetSFXindex("HitBoxSmash1"),
+								audioM.GetSFXindex("HitBoxSmash2"),
+								audioM.GetSFXindex("HitBoxSmash3"),
+								audioM.GetSFXindex("HitBoxSmash4"),
+								audioM.GetSFXindex("HitBoxSmash5"),
+								audioM.GetSFXindex("HitBoxSmash6"),
+								audioM.GetSFXindex("HitBoxSmash7"),
+								audioM.GetSFXindex("HitBoxSmash8")
+							};
+
+							// Remove invalid (-1) sounds
+							BoxHitSounds.erase(
+								std::remove(BoxHitSounds.begin(), BoxHitSounds.end(), -1),
+								BoxHitSounds.end()
+							);
+
+							if (!BoxHitSounds.empty())
+							{
+								// Randomly select a hit sound
+								int randomIndex = rand() % BoxHitSounds.size();
+								int selectedSound = BoxHitSounds[randomIndex];
+
+								// Play the selected sound
+								audioM.PlaySFX(selectedSound);
+							}
+						}
 						if (box_anim.currentClip == "Box")
 						{
 							box_anim.SetAnimation("Box_Break");
@@ -901,6 +968,68 @@ namespace Ukemochi
 							if (box_anim.current_frame > 3)
 							{
 								box_anim.current_frame = 3;
+							}
+							if (box_anim.current_frame = 3)
+							{
+								if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+								{
+									auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+									std::vector<int> BoxSmashSounds = {
+										audioM.GetSFXindex("BoxSmash1"),
+										audioM.GetSFXindex("BoxSmash2"),
+										audioM.GetSFXindex("BoxSmash3"),
+										audioM.GetSFXindex("BoxSmash4")
+									};
+
+									// Remove invalid (-1) sounds
+									BoxSmashSounds.erase(
+										std::remove(BoxSmashSounds.begin(), BoxSmashSounds.end(), -1),
+										BoxSmashSounds.end()
+									);
+
+									// Keep track of which sounds have been played (static at class level)
+									static std::vector<bool> boxSmashSoundsPlayed;
+
+									// Initialize if first time or size changed
+									if (boxSmashSoundsPlayed.size() != BoxSmashSounds.size()) {
+										boxSmashSoundsPlayed.resize(BoxSmashSounds.size(), false);
+									}
+
+									// Check if all sounds have been played
+									bool allPlayed = true;
+									for (bool played : boxSmashSoundsPlayed) {
+										if (!played) {
+											allPlayed = false;
+											break;
+										}
+									}
+
+									// If all sounds have been played, reset all to unplayed
+									if (allPlayed) {
+										std::fill(boxSmashSoundsPlayed.begin(), boxSmashSoundsPlayed.end(), false);
+									}
+
+									// Get sounds that haven't been played yet
+									std::vector<int> availableSoundIndices;
+									for (int i = 0; i < BoxSmashSounds.size(); i++) {
+										if (!boxSmashSoundsPlayed[i]) {
+											availableSoundIndices.push_back(i);
+										}
+									}
+
+									if (!availableSoundIndices.empty()) {
+										// Random selection from available sounds
+										int randomIndex = rand() % availableSoundIndices.size();
+										int selectedSoundIndex = availableSoundIndices[randomIndex];
+										int selectedSound = BoxSmashSounds[selectedSoundIndex];
+
+										// Mark this sound as played
+										boxSmashSoundsPlayed[selectedSoundIndex] = true;
+
+										// Play the selected sound
+										audioM.PlaySFX(selectedSound);
+									}
+								}
 							}
 							if (prev_frame == 2 && box_anim.current_frame == 3)
 							{
@@ -952,6 +1081,7 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+			auto& boss_sr = ECS::GetInstance().GetComponent<SpriteRender>(entity2);
 
 			// Skip if Mochi is not attacking
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
@@ -967,6 +1097,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
 					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+					boss_sr.color = Vec3(1.f, 0.f, 0.f);
 
 					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
@@ -1037,6 +1168,10 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+				}
+				else
+				{
+					boss_sr.color = Vec3(1.f, 1.f, 1.f);
 				}
 				break;
 
@@ -1047,6 +1182,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+					boss_sr.color = Vec3(1.f, 0.f, 0.f);
 
 					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
@@ -1118,6 +1254,10 @@ namespace Ukemochi
 						vfxhit_anim.RestartAnimation();
 					}
 				}
+				else
+				{
+					boss_sr.color = Vec3(1.f, 1.f, 1.f);
+				}
 				break;
 
 			case 2: // Knockback kick combo
@@ -1127,6 +1267,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+					boss_sr.color = Vec3(1.f, 0.f, 0.f);
 
 					// Play sound effects
 					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -1137,6 +1278,21 @@ namespace Ukemochi
 							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
 						}
 					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				else
+				{
+					boss_sr.color = Vec3(1.f, 1.f, 1.f);
 				}
 				break;
 

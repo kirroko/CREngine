@@ -335,9 +335,11 @@ namespace Ukemochi
 
         // Trigger enemy hurt animation
         ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
-
         // Deal damage to the enemy
-        enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+        if (!enemy_data.wasHit){
+            enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+            ECS::GetInstance().GetComponent<SpriteRender>(enemy).color = Vec3(1.f, 0.f, 0.f);
+        }
     }
 
     /*!***********************************************************************
@@ -616,6 +618,24 @@ namespace Ukemochi
                 else
                 {
                     GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().SetAnimation("Explode");
+
+					if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 5)
+					{
+                        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                        {
+                            auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                            AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                            // Check if the blob spawn audio exists and is not already playing
+                            if (audio.GetSFXindex("BlobExplode") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("BlobExplode")))
+                                {
+                                    audio.PlaySFX(audio.GetSFXindex("BlobExplode"));
+                                }
+                            }
+                        }
+					}
 
                     if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
                     {

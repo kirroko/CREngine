@@ -249,6 +249,7 @@ namespace Ukemochi
 				Application::Get().StartGame();
 				Application::Get().SetPaused(false);
 
+				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("start button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("credit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("exit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("title");
@@ -264,6 +265,8 @@ namespace Ukemochi
 
 				// ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
+				ECS::GetInstance().GetSystem<Renderer>()->transitionTimer = ECS::GetInstance().GetSystem<Renderer>()->transitionDuration;
+				ECS::GetInstance().GetSystem<Renderer>()->isTransitioningToGame = true;
 			}
 			});
 
@@ -572,11 +575,7 @@ namespace Ukemochi
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
 			{
 				if (button->onClick)
-				{
 					button->onClick();
-					button->isHovered = false;
-					
-				}
 			}
 		}
 		
@@ -630,10 +629,7 @@ namespace Ukemochi
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
 			{
 				if (button->onClick)
-				{
 					button->onClick();
-					button->isHovered = false;
-				}
 			}
 		}
 
@@ -796,7 +792,6 @@ namespace Ukemochi
 					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
 				this->HidePauseMenu();
-				// SceneManager::GetInstance().ResetGame();
 				Application::Get().GameStarted = false;
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
