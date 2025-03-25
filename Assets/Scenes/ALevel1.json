@@ -4834,6 +4834,42 @@
                             "Name": "WormMove7",
                             "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Walk/Worm Sand Drag_5.wav"
                         }, {
+                            "Name": "BoxSmash1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Wood Crate Smash_1.wav"
+                        }, {
+                            "Name": "BoxSmash2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Wood Crate Smash_2.wav"
+                        }, {
+                            "Name": "BoxSmash3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Wood Crate Smash_3.wav"
+                        }, {
+                            "Name": "BoxSmash4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Wood Crate Smash_4.wav"
+                        }, {
+                            "Name": "HitBoxSmash1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_1.wav"
+                        }, {
+                            "Name": "HitBoxSmash2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_4.wav"
+                        }, {
+                            "Name": "HitBoxSmash3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_2.wav"
+                        }, {
+                            "Name": "HitBoxSmash4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_3.wav"
+                        }, {
+                            "Name": "HitBoxSmash5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_5.wav"
+                        }, {
+                            "Name": "HitBoxSmash6",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_7.wav"
+                        }, {
+                            "Name": "HitBoxSmash7",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_6.wav"
+                        }, {
+                            "Name": "HitBoxSmash8",
+                            "Path": "../Assets/Audio/SFX/Enemy/Box/Hit_Wood Crate Smash_8.wav"
+                        }, {
                             "Name": "BlobExplode",
                             "Path": "../Assets/Audio/SFX/Enemy/Boss/Cacoon Explode_SFX.wav"
                         }]
