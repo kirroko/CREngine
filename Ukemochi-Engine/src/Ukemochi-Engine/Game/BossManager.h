@@ -40,6 +40,7 @@ namespace Ukemochi
 		GameObject* blob;
 		GameObject* boss;
 		Boss bossCom;
+		SpriteRender hairSR;
 		float blobsize;
 		int numOfBlob;
 		bool spawnBlob;

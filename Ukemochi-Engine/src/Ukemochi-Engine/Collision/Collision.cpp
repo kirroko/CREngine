@@ -954,6 +954,7 @@ namespace Ukemochi
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
+			auto& boss_sr = ECS::GetInstance().GetComponent<SpriteRender>(entity2);
 
 			// Skip if Mochi is not attacking
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
@@ -969,6 +970,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 
 					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+					boss_sr.color = Vec3(1.f, 0.f, 0.f);
 
 					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
@@ -1039,6 +1041,10 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+				}
+				else
+				{
+					boss_sr.color = Vec3(1.f, 1.f, 1.f);
 				}
 				break;
 
@@ -1049,6 +1055,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+					boss_sr.color = Vec3(1.f, 0.f, 0.f);
 
 					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 					{
@@ -1120,6 +1127,10 @@ namespace Ukemochi
 						vfxhit_anim.RestartAnimation();
 					}
 				}
+				else
+				{
+					boss_sr.color = Vec3(1.f, 1.f, 1.f);
+				}
 				break;
 
 			case 2: // Knockback kick combo
@@ -1129,6 +1140,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(FISH, 5.f);
 					ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(WORM, 5.f);
 					ECS::GetInstance().GetSystem<BossManager>()->BossTakeDMG();
+					boss_sr.color = Vec3(1.f, 0.f, 0.f);
 
 					// Play sound effects
 					if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -1139,6 +1151,21 @@ namespace Ukemochi
 							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
 						}
 					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+				}
+				else
+				{
+					boss_sr.color = Vec3(1.f, 1.f, 1.f);
 				}
 				break;
 
