@@ -226,6 +226,45 @@ namespace Ukemochi
 
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Removes a in game UI objects.
+	*************************************************************************/
+	void InGameGUI::RemoveGameUI()
+	{
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		// Health UI
+		uiManager->removeButton("health bar bg");
+		uiManager->removeButton("health bar");
+		uiManager->removeButton("health bar border");
+		uiManager->removeButton("health bar icon");
+
+		// Blue soul UI
+		uiManager->removeButton("blue soul bar bg");
+		uiManager->removeButton("blue soul bar");
+		uiManager->removeButton("blue soul bar border");
+		uiManager->removeButton("blue fire");
+		uiManager->removeButton("blue soul ability charge bg");
+		uiManager->removeButton("blue soul ability charge bar");
+		uiManager->removeButton("blue soul ability charge border");
+
+		// Red soul UI
+		uiManager->removeButton("red soul bar bg");
+		uiManager->removeButton("red soul bar");
+		uiManager->removeButton("red soul bar border");
+		uiManager->removeButton("red fire");
+		uiManager->removeButton("red soul ability charge bg");
+		uiManager->removeButton("red soul ability charge bar");
+		uiManager->removeButton("red soul ability charge border");
+
+		// Misc UI
+		uiManager->removeButton("soul change");
+		uiManager->removeButton("game ability");
+		uiManager->removeButton("pause button");
+	}
+
+
 	void InGameGUI::CreateMainMenuUI()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
