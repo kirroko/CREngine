@@ -675,8 +675,8 @@ void Renderer::render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Get the current time
-	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());  // This will return time in seconds
-	deltaTime = currentFrameTime - lastFrame;
+	GLfloat currentFrameTime = static_cast<GLfloat>(glfwGetTime());
+	deltaTime = currentFrameTime - lastFrame; // prevent large jump
 	lastFrame = currentFrameTime;
 
 
@@ -705,6 +705,16 @@ void Renderer::render()
 	batchRenderer->beginBatch();
 
 	camera->UpdateShake(deltaTime);
+
+	if (isTransitioningToGame)
+	{
+		transitionTimer -= glm::min(deltaTime, 0.05f);
+		if (transitionTimer <= 0.0f)
+		{
+			isTransitioningToGame = false;
+		}
+	}
+
 	for (auto& entity : m_Entities)
 	{
 		if (!GameObjectManager::GetInstance().GetGO(entity)->GetActive())
@@ -864,31 +874,32 @@ void Renderer::render()
 		renderScaleAxis();
 #endif // _DEBUG
 
-	//if (isTransitioningToGame)
-	//{
-	//	float alpha = transitionTimer / transitionDuration; // Fades from 1 -> 0
+	if (isTransitioningToGame)
+	{
+		float t = 1.0f - (transitionTimer / transitionDuration);
+		float eased = (t == 0.0f) ? 0.0f : pow(2.0f, 10.0f * (t - 1.0f));
+		float alpha = 1.0f - eased;
 
-	//	// Activate UI shader and set up projection
-	//	shaderProgram->Activate();
-	//	shaderProgram->setMat4("projection", projection);
-	//	shaderProgram->setMat4("view", glm::mat4(1.0f)); // No camera transform for UI
+		// Activate UI shader and set up projection
+		shaderProgram->Activate();
+		shaderProgram->setMat4("projection", projection); 
+		shaderProgram->setMat4("view", glm::mat4(1.0f)); // No camera transform for UI
 
-	//	// Start UI batch
-	//	batchRendererUI->beginBatch();
+		// Start UI batch
+		batchRendererUI->beginBatch();
 
-	//	// Draw full-screen black quad with fading alpha
-	//	batchRendererUI->drawSprite(
-	//		glm::vec3(camera->viewport_size.x / 2.f, camera->viewport_size.y / 2.f, 0.0f),              // High Z to render on top
-	//		glm::vec2(camera->viewport_size.x, camera->viewport_size.y),                      // Full screen size
-	//		glm::vec3(0.0f, 0.0f, 0.0f),                 // Black color
-	//		alpha,                                      // Fading alpha
-	//		"",                                    // Dummy texture or atlas entry (if needed)
-	//		0.0f,                                       // No rotation
-	//		15                                          // High layer if your batchRenderer uses it
-	//	);
-
-	//	batchRendererUI->endBatch();
-	//}
+		// Draw full-screen black quad with fading alpha
+		batchRendererUI->drawSprite(
+			glm::vec3(camera->viewport_size.x / 2.f, camera->viewport_size.y / 2.f, 0.0f),              // High Z to render on top
+			glm::vec2(camera->viewport_size.x, camera->viewport_size.y),                      // Full screen size
+			glm::vec3(0.0f, 0.0f, 0.0f),                 // Black color
+			alpha,                                      // Fading alpha
+			"black",                                    // Dummy texture or atlas entry (if needed)
+			0.0f,                                       // No rotation
+			15                                          // High layer if your batchRenderer uses it
+		);
+		batchRendererUI->endBatch();
+	}
 
 	debug_shader_program->Deactivate();
 	// Render text, UI, or additional overlays if needed

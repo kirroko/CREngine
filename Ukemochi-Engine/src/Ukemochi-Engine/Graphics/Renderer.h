@@ -822,7 +822,7 @@ public:
 
 	bool isTransitioningToGame = false;
 	float transitionTimer = 0.0f;
-	const float transitionDuration = 1.0f; // duration in seconds
+	const float transitionDuration = 2.0f; // duration in seconds
 
 };
 #endif

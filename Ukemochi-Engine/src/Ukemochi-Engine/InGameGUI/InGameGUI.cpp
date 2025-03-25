@@ -284,7 +284,7 @@ namespace Ukemochi
 
 				// Start the game
 				Application::Get().StartGame();
-
+				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("start button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("credit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("exit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("title");
@@ -300,6 +300,8 @@ namespace Ukemochi
 
 				ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
+				ECS::GetInstance().GetSystem<Renderer>()->transitionTimer = ECS::GetInstance().GetSystem<Renderer>()->transitionDuration;
+				ECS::GetInstance().GetSystem<Renderer>()->isTransitioningToGame = true;
 			}
 			});
 
