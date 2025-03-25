@@ -617,6 +617,24 @@ namespace Ukemochi
                 {
                     GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().SetAnimation("Explode");
 
+					if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 5)
+					{
+                        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                        {
+                            auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
+                            AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                            // Check if the blob spawn audio exists and is not already playing
+                            if (audio.GetSFXindex("BlobExplode") != -1)
+                            {
+                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("BlobExplode")))
+                                {
+                                    audio.PlaySFX(audio.GetSFXindex("BlobExplode"));
+                                }
+                            }
+                        }
+					}
+
                     if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
                     {
                         GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
