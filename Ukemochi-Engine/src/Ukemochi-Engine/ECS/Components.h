@@ -355,6 +355,8 @@ namespace Ukemochi
 
 		bool flipX = false;
 		bool flipY = false;
+
+		Vec3 color{1.f,1.f,1.f};
 	};
 
 	/*!***********************************************************************
