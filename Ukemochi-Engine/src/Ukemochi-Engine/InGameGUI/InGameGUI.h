@@ -126,6 +126,12 @@ namespace Ukemochi
 
 		/*!***********************************************************************
 		\brief
+		 Removes various GUI images (e.g., health bar, icons, etc.).
+		*************************************************************************/
+		void RemoveGameUI();
+
+		/*!***********************************************************************
+		\brief
 		 Renders the GUI elements based on the current camera position.
 		\param[in] cameraPos
 		 The current position of the camera.

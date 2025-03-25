@@ -340,8 +340,8 @@ namespace Ukemochi
         {
             ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
             createMenuUI = true;
+            Application::Get().SetPaused(true);
         }
-
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
         {	
@@ -351,6 +351,7 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
                 ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+                Application::Get().SetPaused(true);
             }
 
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
@@ -489,6 +490,7 @@ namespace Ukemochi
         {
             ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
             createMenuUI = true;
+            Application::Get().SetPaused(true);
         }
 
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
@@ -504,6 +506,7 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
                 ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = true;
                 ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+                Application::Get().SetPaused(true);
             }
 
             // Sets the video to play the cutscene

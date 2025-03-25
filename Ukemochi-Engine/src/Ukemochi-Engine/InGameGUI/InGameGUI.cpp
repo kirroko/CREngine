@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Factory/GameObjectManager.h"
 #include "../Video/VideoManager.h"
 #include "../SceneManager.h"
+#include "Ukemochi-Engine/Game/DungeonManager.h"
 
 namespace Ukemochi
 {
@@ -244,7 +245,9 @@ namespace Ukemochi
 				}
 
 				// Start the game
+				SceneManager::GetInstance().ResetGame();
 				Application::Get().StartGame();
+				Application::Get().SetPaused(false);
 
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("credit button");
 				ECS::GetInstance().GetSystem<UIButtonManager>()->removeButton("exit button");
@@ -259,12 +262,12 @@ namespace Ukemochi
 					audioM.PlaySFX(audioM.GetSFXindex("StartButtonClickSound"));
 				}
 
-				ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
+				// ECS::GetInstance().GetSystem<VideoManager>()->SkipVideo();
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = true;
 			}
 			});
 
-		uiManager->addButton("credit button", glm::vec3{1532.f, 488.f, 0.f }, glm::vec2{ 238.f, 169.f }, "credits button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, [this]() {
+		uiManager->addButton("credit button", glm::vec3{1532.f, 488.f, 0.f }, glm::vec2{ 238.f, 169.f }, "credits button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, true, [this]() {
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -426,6 +429,44 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	Removes various GUI images (e.g., health bar, icons, etc.).
+	*************************************************************************/
+	void InGameGUI::RemoveGameUI()
+	{
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		// Health UI
+		uiManager->removeButton("health bar bg");
+		uiManager->removeButton("health bar");
+		uiManager->removeButton("health bar border");
+		uiManager->removeButton("health bar icon");
+
+		// Blue soul UI
+		uiManager->removeButton("blue soul bar bg");
+		uiManager->removeButton("blue soul bar");
+		uiManager->removeButton("blue soul bar border");
+		uiManager->removeButton("blue fire");
+		uiManager->removeButton("blue soul ability charge bg");
+		uiManager->removeButton("blue soul ability charge bar");
+		uiManager->removeButton("blue soul ability charge border");
+
+		// Red soul UI
+		uiManager->removeButton("red soul bar bg");
+		uiManager->removeButton("red soul bar");
+		uiManager->removeButton("red soul bar border");
+		uiManager->removeButton("red fire");
+		uiManager->removeButton("red soul ability charge bg");
+		uiManager->removeButton("red soul ability charge bar");
+		uiManager->removeButton("red soul ability charge border");
+
+		// Misc UI
+		uiManager->removeButton("soul change");
+		uiManager->removeButton("game ability");
+		uiManager->removeButton("pause button");
+	}
+
+	/*!***********************************************************************
+	\brief
 	 Renders all UI elements.
 	\param[in] cameraPos
 	 The camera position to correctly position UI elements.
@@ -453,8 +494,7 @@ namespace Ukemochi
 		std::sort(sortedButtons.begin(), sortedButtons.end(), [](const auto& a, const auto& b) {
 			return a.second->ui_layer > b.second->ui_layer;  // Higher layer first
 			});
-
-
+		
 		// Update hover cooldown timer
 		hoverTimer -= static_cast<float>(g_FrameRateController.GetDeltaTime());
 
@@ -463,7 +503,7 @@ namespace Ukemochi
 		for (auto& [button_id, button] : sortedButtons)
 		{
 			button->isHovered = IsInside(Vec2(button->position.x, button->position.y), Vec2(button->size.x, button->size.y));
-
+			
 			// Check if hover state has changed
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && !buttonHoverState[button_id] && hoverTimer <= 0.0f)
 			{
@@ -496,7 +536,7 @@ namespace Ukemochi
 		if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && !sortedButtons.empty() && !showCredits)
 		{
 			// track the currently selected button
-			static int mainMenuSelection = 0;
+			static int mainMenuSelection = 2;
 			static const int MAIN_MENU_ITEMS = 3;
 
 			// Handle D-pad or analog stick navigation?
@@ -515,6 +555,11 @@ namespace Ukemochi
 				movedSelection = true;
 			}
 
+			// Visually highlight the selected button and handle actions
+			auto buttonName = sortedButtons[mainMenuSelection].first;
+			auto& button = sortedButtons[mainMenuSelection].second;
+			button->isHovered = true;
+			
 			// Play hover sound when selection moves
 			if (movedSelection && GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -523,25 +568,23 @@ namespace Ukemochi
 					audioM.PlaySFX(audioM.GetSFXindex("HoverSound"));
 			}
 
-			// Visually highlight the selected button and handle actions
-			auto buttonName = sortedButtons[mainMenuSelection].first;
-			auto& button = sortedButtons[mainMenuSelection].second;
-			button->isHovered = true;
-			buttonHoverState[buttonName] = button->isHovered;
-
 			// Check for gamepad button press
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
 			{
 				if (button->onClick)
+				{
 					button->onClick();
+					button->isHovered = false;
+					
+				}
 			}
 		}
 		
 		// Gamepad UI navigation for pause menu
-		if (Application::Get().Paused() && !sortedButtons.empty())
+		if (Application::Get().Paused() && !sortedButtons.empty() && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
 		{
 			// Track the currently selected button
-			static int pauseMenuSelection = 0;
+			static int pauseMenuSelection = 3;
 			static const int PAUSE_MENU_ITEMS = 6;
 
 			// Handle D-pad or analog stick navigation?
@@ -581,13 +624,16 @@ namespace Ukemochi
 			auto buttonName = sortedButtons[pauseMenuSelection].first;
 			auto& button = sortedButtons[pauseMenuSelection].second;
 			button->isHovered = true;
-			buttonHoverState[buttonName] = button->isHovered;
+			// buttonHoverState[buttonName] = button->isHovered;
 
 			// Check for gamepad button press
 			if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene") && button->isHovered && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CIRCLE))
 			{
 				if (button->onClick)
+				{
 					button->onClick();
+					button->isHovered = false;
+				}
 			}
 		}
 
@@ -746,8 +792,18 @@ namespace Ukemochi
 				if (audioM.GetSFXindex("ButtonClickSound") != -1)
 				{
 					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
-				Application::Get().QuitGame();
+				this->HidePauseMenu();
+				// SceneManager::GetInstance().ResetGame();
+				Application::Get().GameStarted = false;
+				Application::Get().SetPaused(true);
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
+				RemoveGameUI();
+				CreateMainMenuUI();
 			}
 			});
 
@@ -883,7 +939,7 @@ namespace Ukemochi
 		// Restart
 		uiManager->addButton("restart button", glm::vec3(810.f, 350.f, 0.f), glm::vec2(147.f, 177.f), "restart", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, [this]() {
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(50)); 
+			std::this_thread::sleep_for(std::chrono::milliseconds(500)); 
 			this->HideDefeatScreen();
 
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -901,8 +957,22 @@ namespace Ukemochi
 			});
 
 		// Exit
-		uiManager->addButton("exit button defeat", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 175.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, []() {
-			Application::Get().QuitGame();
+		uiManager->addButton("exit button defeat", glm::vec3(1160.f, 350.f, 0.f), glm::vec2(145.f, 175.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 6, BarType::None, true, [this]() {
+			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
+				this->HidePauseMenu();
+				CreateMainMenuUI();
+				Application::Get().SetPaused(true);
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
+				RemoveGameUI();
+			}
 			});
 	}
 

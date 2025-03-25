@@ -1,5 +1,6 @@
 PROJECT SETTINGS
 Make sure the start-up project is targeted at Ukemochi-Game project solution.
+Make sure to run the MakeProject.bat (which runs the premake5 with just a double click)
 
 REQUIRED ITEMS
 - .NET desktop development (.NET Framework 4.7.2)
