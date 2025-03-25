@@ -696,7 +696,7 @@ namespace Ukemochi
 		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 7);
 		
 		// Resume
-		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 172.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+		uiManager->addButton("resume button", glm::vec3(810.f, 550.f, 0.f), glm::vec2(147.f, 172.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
 			
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -713,7 +713,7 @@ namespace Ukemochi
 			});
 
 		// Exit
-		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 175.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+		uiManager->addButton("exit button", glm::vec3(1110.f, 550.f, 0.f), glm::vec2(145.f, 175.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -730,7 +730,7 @@ namespace Ukemochi
 		// Music
 		uiManager->addButton("music", glm::vec3(630.f, 350.f, 0.f), glm::vec2(51.f, 53.f), "music", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
-		uiManager->addButton("music minus", glm::vec3(710.f, 350.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+		uiManager->addButton("music minus", glm::vec3(710.f, 350.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -744,7 +744,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("music plus", glm::vec3(1210.f, 350.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+		uiManager->addButton("music plus", glm::vec3(1210.f, 350.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -771,7 +771,7 @@ namespace Ukemochi
 		// SFX
 		uiManager->addButton("sfx", glm::vec3(630.f, 250.f, 0.f), glm::vec2(51.f, 53.f), "music2", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
-		uiManager->addButton("sfx minus", glm::vec3(710.f, 250.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+		uiManager->addButton("sfx minus", glm::vec3(710.f, 250.f, 0.f), glm::vec2(59.f, 62.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -784,7 +784,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("sfx plus", glm::vec3(1210.f, 250.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 10, BarType::None, true, [this]() {
+		uiManager->addButton("sfx plus", glm::vec3(1210.f, 250.f, 0.f), glm::vec2(58.f, 63.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
