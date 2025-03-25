@@ -599,6 +599,7 @@ namespace Ukemochi
 			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
 			auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
+			auto& enemy_sr = ECS::GetInstance().GetComponent<SpriteRender>(entity2);
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
 
@@ -626,6 +627,7 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+						enemy_sr.color = Vec3(1.f, 0.f, 0.f);
 
 						if (player_sr.flipX)
 						{
@@ -663,8 +665,8 @@ namespace Ukemochi
 
 						// Harvest some soul whenever mochi hits an enemy
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
-
 						enemy_data.hasDealtDamage = true; // Prevent multiple applications
+						enemy_sr.color = Vec3(1.f, 0.f, 0.f);
 
 						if (player_sr.flipX)
 						{
@@ -720,6 +722,7 @@ namespace Ukemochi
 						ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemy_data.type), 5.f);
 
 						enemy_data.hasDealtDamage = true;
+						enemy_sr.color = Vec3(1.f, 0.f, 0.f);
 
 						if (player_sr.flipX)
 						{
@@ -731,7 +734,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 					}
 				}

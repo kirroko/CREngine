@@ -335,9 +335,11 @@ namespace Ukemochi
 
         // Trigger enemy hurt animation
         ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
-
         // Deal damage to the enemy
-        enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+        if (!enemy_data.wasHit){
+            enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+            ECS::GetInstance().GetComponent<SpriteRender>(enemy).color = Vec3(1.f, 0.f, 0.f);
+        }
     }
 
     /*!***********************************************************************
