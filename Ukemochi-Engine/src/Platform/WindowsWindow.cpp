@@ -309,24 +309,6 @@ namespace Ukemochi {
 							}
 						}
 					}
-					else
-					{
-						if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-						{
-							auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-							// Stop in-game BGM if playing
-							if (audioM.GetMusicIndex("BGM") != -1 && Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGM")))
-							{
-								audioM.StopMusic(audioM.GetMusicIndex("BGM"));
-							}
-							// Play main menu BGM if not already playing
-							if (audioM.GetMusicIndex("BGMOG") != -1 && !Audio::GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
-							{
-								audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
-							}
-						}
-					}
 #endif // !_DEBUG
 				}
 			});	}

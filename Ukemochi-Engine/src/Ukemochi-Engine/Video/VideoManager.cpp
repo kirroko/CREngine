@@ -221,7 +221,7 @@ namespace Ukemochi {
 
         glBindVertexArray(0);
 
-        ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
 
         videos[name] = std::move(video);  // Store the video in the map
 
@@ -298,16 +298,16 @@ namespace Ukemochi {
 #ifdef _DEBUG
         UME_ENGINE_TRACE("Decoding Video - DeltaTime: {0}", deltaTime);
 #endif
-        Audio::GetInstance().Update(); // Update audio
+        ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update(); // Update audio
 
         // Get the elapsed time since the last frame
         video.elapsedTime += deltaTime;
 
-        if (ECS::GetInstance().GetSystem<Audio>()->CheckSFX())
+        if (ECS::GetInstance().GetSystem<Audio>()->GetInstance().CheckSFX())
         {
-            if (!ECS::GetInstance().GetSystem<Audio>()->IsSFXPlaying(0))
+            if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(0))
             {
-                ECS::GetInstance().GetSystem<Audio>()->PlaySound(0, "SFX", 0.2f);
+                ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySound(0, "SFX", 0.2f);
             }
         }
 
