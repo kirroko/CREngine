@@ -33,10 +33,9 @@ Camera::Camera(glm::vec2 viewportSize) : position(0.0f, 0.0f), zoom(1.0f), viewp
  */
 glm::mat4 Camera::getCameraViewMatrix()
 {
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-position, 0.0f));
-
+	glm::vec2 effectivePosition = position + shake.offset;
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-effectivePosition, 0.0f));
 	view = glm::scale(view, glm::vec3(zoom, zoom, 1.0f));
-
 	return view;
 }
 
@@ -124,4 +123,14 @@ void Camera::ZoomTowardsCursor(float zoomFactor)
 
 	// Restrict zoom level to avoid flipping or extreme values
 	zoom = glm::clamp(zoom, 0.1f, 3.0f);
+}
+
+void Camera::StartShake(float duration, float magnitude) 
+{
+	shake.Start(duration, magnitude);
+}
+
+void Camera::UpdateShake(float deltaTime) 
+{
+	shake.Update(deltaTime);
 }

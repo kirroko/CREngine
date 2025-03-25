@@ -133,10 +133,7 @@ namespace Ukemochi {
 	bool Input::IsGamepadButtonPressed(int JoystickID, int ButtonID)
 	{
 		if (!glfwJoystickIsGamepad(JoystickID))
-		{
-			UME_ENGINE_ERROR("Joystick is not a gamepad.");
 			return false;
-		}
 
 		GLFWgamepadstate state;
 		if (glfwGetGamepadState(JoystickID,&state) && ButtonID >= 0 && ButtonID <= GLFW_GAMEPAD_BUTTON_LAST)
@@ -156,10 +153,7 @@ namespace Ukemochi {
 	bool Input::IsGamepadButtonTriggered(int JoystickID, int ButtonID)
 	{
 		if (!glfwJoystickIsGamepad(JoystickID))
-		{
-			UME_ENGINE_ERROR("Joystick is not a gamepad.");
 			return false;
-		}
 
 		GLFWgamepadstate state;
 		int uniqueKey = (JoystickID << 16) | ButtonID;
@@ -197,7 +191,7 @@ namespace Ukemochi {
 		if (axes == nullptr)
 		{
 			// Joystick not present or disconnected
-			UME_ENGINE_TRACE("Joystick not present or disconnected.");
+			// UME_ENGINE_WARN("Joystick not present or disconnected.");
 			return {};
 		}
 
