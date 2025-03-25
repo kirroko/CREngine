@@ -4606,6 +4606,15 @@
                             "Name": "ButtonClickSound",
                             "Path": "../Assets/Audio/SFX/MainMenu/MenuHoverOverSFX 2.wav"
                         }, {
+                            "Name": "StartButtonClickSound",
+                            "Path": "../Assets/Audio/SFX/MainMenu/Start Game-Knife Slash_SFX.wav"
+                        }, {
+                            "Name": "QuitButtonClickSound",
+                            "Path": "../Assets/Audio/SFX/MainMenu/Menu-Quit.wav"
+                        }, {
+                            "Name": "GenericButtonClickSound",
+                            "Path": "../Assets/Audio/SFX/MainMenu/Generic Button press_SFX.wav"
+                        }, {
                             "Name": "WormMove",
                             "Path": "../Assets/Audio/SFX/Enemy/WormWalk.wav"
                         }, {
@@ -4824,6 +4833,9 @@
                         }, {
                             "Name": "WormMove7",
                             "Path": "../Assets/Audio/SFX/Enemy/Worm/Worm Walk/Worm Sand Drag_5.wav"
+                        }, {
+                            "Name": "BlobExplode",
+                            "Path": "../Assets/Audio/SFX/Enemy/Boss/Cacoon Explode_SFX.wav"
                         }]
                 }]
         }, {
