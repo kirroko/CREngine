@@ -35,6 +35,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Graphics/UIButtonManager.h"
 #include "Video/VideoManager.h"
 #include "Game/BossManager.h"
+#include "Job/JobSystem.h"
 
 namespace Ukemochi
 {
@@ -247,6 +248,8 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneMangerInit()
     {
+	    UME_ENGINE_TRACE("Initializing job system...");
+	    job::Initialize();
         UME_ENGINE_TRACE("Initializing renderer...");
         ECS::GetInstance().GetSystem<Renderer>()->init();
         //load all assest
@@ -644,6 +647,9 @@ namespace Ukemochi
     *************************************************************************/
     void SceneManager::SceneManagerUnload()
     {
+	    // Shutting down job system
+	    job::Shutdown();
+	    
         SceneManagerFree();
         ECS::GetInstance().GetSystem<Renderer>()->cleanUp();
         ECS::GetInstance().GetSystem<VideoManager>()->CleanupAllVideos();

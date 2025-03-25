@@ -20,6 +20,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Ukemochi {
     class VideoManager : public System
     {
+        // Job system for video decoding
+        struct VideoDecodeJobParams
+        {
+            char* filename;
+            uint8_t* rgb_buffer;
+            double frameDuration;
+            int width;
+            unsigned int frameIndex;
+        };
+        
         /*!***********************************************************************
         \brief
          Represents the context for a video frame.

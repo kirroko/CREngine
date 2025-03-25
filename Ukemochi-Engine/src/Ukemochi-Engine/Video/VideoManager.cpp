@@ -16,8 +16,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define PL_MPEG_IMPLEMENTATION
 #include "VideoManager.h"
 
+#include <complex.h>
+
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/Graphics/Renderer.h"
+#include "Ukemochi-Engine/Job/JobSystem.h"
 
 namespace Ukemochi {
 
@@ -137,7 +140,6 @@ namespace Ukemochi {
         video.totalFrames = static_cast<int>(plm_get_duration(video.plm) * frameRate); // Total frames
         // Compute the required time per frame
         video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm);
-        
         video.loop = loop;
 
 #ifdef _DEBUG
@@ -151,27 +153,85 @@ namespace Ukemochi {
         video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
 
         // Allocate RGB buffer
-        video.video_ctx = std::make_unique<VideoContext>(width, height);
- 
-        // **Preload all frames into the texture array**
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+        // video.video_ctx = std::make_unique<VideoContext>(width, height);
+
+        std::vector<std::unique_ptr<uint8_t[]>> frameBuffers(video.totalFrames); // store frame data
+        for (int i = 0; i < video.totalFrames; ++i)
+            frameBuffers[i] = std::make_unique<uint8_t[]>(width * height * 3);
+
+        static auto frame_to_rgb = [](uintptr_t param)
+        {
+            VideoDecodeJobParams* jobParams = reinterpret_cast<VideoDecodeJobParams*>(param);
+            plm_t* plm = plm_create_with_filename(jobParams->filename); // decoder
+            if (!plm)
+            {
+                UME_ENGINE_ERROR("Failed to load video: {0}", jobParams->filename);
+                return;
+            }
+            if (!plm_probe(plm, 5000 * 1024))
+            {
+                UME_ENGINE_ERROR("No MPEG video or audio streams found in {0}", jobParams->filename);
+                return;
+            }
+
+            double frameTime = jobParams->frameIndex * jobParams->frameDuration;
+            plm_seek(plm, frameTime, 1);
+
+            plm_frame_t* frame = plm_decode_video(plm);
+            if (frame)
+                plm_frame_to_rgb(frame, jobParams->rgb_buffer, jobParams->width * 3);
+            else
+                UME_ENGINE_ERROR("Failed to decode video");
+            plm_destroy(plm);
+        };
+
+        // Pre-allocate job parameters and declarations
+        std::vector<VideoDecodeJobParams> jobParams(video.totalFrames);
+        std::vector<job::Declaration> jobDecls(video.totalFrames);
+        
+        // Crafting the jobs
         for (int i = 0; i < video.totalFrames; ++i)
         {
             // Decode the next frame
-            plm_frame_t* frame = plm_decode_video(video.plm);
-            if (!frame) break;
+            jobParams[i].filename = const_cast<char*>(filepath);
+            jobParams[i].rgb_buffer = frameBuffers[i].get();
+            jobParams[i].width = width;
+            jobParams[i].frameIndex = i;
+            jobParams[i].frameDuration = video.frameDuration;
 
-            // Convert to RGB
-            plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer.get(), width * 3);
-            
-            if (!video.video_ctx->rgb_buffer) {
-                UME_ENGINE_ERROR("Error: RGB buffer is null at frame {0}", i);
+            jobDecls[i].m_pEntry = frame_to_rgb;
+            jobDecls[i].m_param = reinterpret_cast<uintptr_t>(&jobParams[i]);
+            jobDecls[i].m_priority = job::Priority::NORMAL;
+        }
+
+        auto startTime = std::chrono::high_resolution_clock::now();
+        job::KickJobsAndWait(static_cast<int>(jobDecls.size()), jobDecls.data());
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+        UME_ENGINE_INFO("Job completed in {0}ms", duration.count());
+
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+        const int BATCH_SIZE = 16;
+        // Upload frames in batches, gives the GPU driver a chance to optimize the uploads and prevents potential pipeline stalls
+        for (int i = 0; i < video.totalFrames; i += BATCH_SIZE)
+        {
+            // Calculate end of this batch (or last frame)
+            int end = std::min(i + BATCH_SIZE, video.totalFrames);
+    
+            // Upload this batch of frames
+            for (int j = i; j < end; j++)
+            {
+                if (frameBuffers[j])
+                {  // Check that buffer exists and has data
+                    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, j,
+                        width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, frameBuffers[j].get());
+                }
+                else
+                {
+                    UME_ENGINE_ERROR("Missing frame data at index {0}", j);
+                }
+                UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2} in batch {3}/{4}", j + 1, video.totalFrames, j, i / BATCH_SIZE, video.totalFrames/BATCH_SIZE);
             }
-
-            // Upload to the 2D texture array at layer `i`
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.video_ctx->rgb_buffer.get());
-
-            UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, video.totalFrames, i);
         }
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
@@ -274,7 +334,7 @@ namespace Ukemochi {
      Updates the video playback and renders the current frame.
 
     \details
-     This function updates the current video’s elapsed time, checks if it should
+     This function updates the current videoï¿½s elapsed time, checks if it should
      progress to the next frame, and handles video looping behavior. If the video
      is finished and not looping, it releases resources.
     *************************************************************************/
@@ -334,7 +394,7 @@ namespace Ukemochi {
             }
             else
             {
-                Free(); // Free resources if not looping 
+                // Free(); // Free resources if not looping 
                 return;
             }
         }
