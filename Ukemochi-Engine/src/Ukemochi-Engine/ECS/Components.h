@@ -440,7 +440,7 @@ namespace Ukemochi
 			DEAD2,
 
 		};
-		int BossPhase = 1;
+		int BossPhase = 0;
 		EntityID ID;
 		BossStates state;
 		float health;

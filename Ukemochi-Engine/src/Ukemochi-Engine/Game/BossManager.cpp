@@ -73,10 +73,27 @@ namespace Ukemochi
 
 		for (int step = 0; step < g_FrameRateController.GetCurrentNumberOfSteps(); ++step)
 		{
-			if (bossCom.BossPhase == 1)
+			if (bossCom.BossPhase == 0)
 			{
-				hair->SetActive(false);
-				hairHitBox->SetActive(false);
+				if (hair)
+				{
+					hair->SetActive(false);
+				}
+				if (hairHitBox)
+				{
+					hairHitBox->SetActive(false);
+				}
+			}
+			else if (bossCom.BossPhase == 1)
+			{
+				if (hair)
+				{
+					hair->SetActive(false);
+				}
+				if (hairHitBox)
+				{
+					hairHitBox->SetActive(false);
+				}
 				// CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
 				if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
 				{
@@ -91,7 +108,7 @@ namespace Ukemochi
 					Phase1();
 				}
 			}
-			else
+			else if (bossCom.BossPhase == 2)
 			{
 				if (bossCom.health <= 0)
 				{
@@ -455,5 +472,10 @@ namespace Ukemochi
 		{
 			bossCom.health = 0;
 		}
+	}
+	void BossManager::SetBossPharse(int state)
+	{
+		bossCom.BossPhase = state;
+		std::clamp(bossCom.BossPhase, 0, 2);
 	}
 }

@@ -33,6 +33,8 @@ namespace Ukemochi
 
 		void BossTakeDMG();
 
+		void SetBossPharse(int state);
+
 	private:
 		GameObject* playerObj;
 		GameObject* hair;
