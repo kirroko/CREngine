@@ -473,7 +473,7 @@ namespace Ukemochi
 			bossCom.health = 0;
 		}
 	}
-	void BossManager::SetBossPharse(int state)
+	void BossManager::SetBossPhase(int state)
 	{
 		bossCom.BossPhase = state;
 		std::clamp(bossCom.BossPhase, 0, 2);

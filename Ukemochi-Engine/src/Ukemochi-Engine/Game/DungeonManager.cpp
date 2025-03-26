@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/EnemyManager.h"		  // for updating enemy list
 #include "../Game/BossManager.h"		  // for init boss
 #include "../SceneManager.h"			  // for GetCurrScene name
+#include "../Video/VideoManager.h"		  // for boss cutscene
 
 namespace Ukemochi
 {
@@ -103,25 +104,6 @@ namespace Ukemochi
 		// Update current room ID
 		current_room_id += next_room_id;
 
-		// Play boss cutscene and init boss when entering the boss room (room 6)
-		if (current_room_id == 6)
-		{
-			// Play boss enter SFX
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				if (audioM.GetSFXindex("LevelChange") != -1)
-				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
-						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
-				}
-			}
-
-			// Init boss
-			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
-			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
-		}
-
 		// Perform camera and player transition
 		if (next_room_id == -1)
 		{
@@ -140,6 +122,33 @@ namespace Ukemochi
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
 			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
+		}
+
+		// Play boss cutscene and init boss when entering the boss room (room 6)
+		if (current_room_id == 6)
+		{
+			// Play the before boss cutscene
+			//ECS::GetInstance().GetSystem<InGameGUI>()->RemoveGameUI();
+			//ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+			//ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done = false;
+			//ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("after_boss"); // temp
+
+			//ECS::GetInstance().GetSystem<BossManager>()->SetBossPhase(1);
+
+			// Play boss enter SFX
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("LevelChange") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				}
+			}
+
+			// Init boss
+			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
+			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
 		}
 
 		// Activate current room

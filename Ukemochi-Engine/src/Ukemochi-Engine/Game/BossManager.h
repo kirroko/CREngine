@@ -33,7 +33,7 @@ namespace Ukemochi
 
 		void BossTakeDMG();
 
-		void SetBossPharse(int state);
+		void SetBossPhase(int state);
 
 	private:
 		GameObject* playerObj;
