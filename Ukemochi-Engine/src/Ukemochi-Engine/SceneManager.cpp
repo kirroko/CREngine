@@ -338,6 +338,7 @@ namespace Ukemochi
 
         static bool createMenuUI = false;
 
+	    // cut scene played till the end
         if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI && !ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
             && GetCurrScene() == "ALevel1")
         {
@@ -346,6 +347,7 @@ namespace Ukemochi
             Application::Get().SetPaused(true);
         }
 
+	    // Cut scene skip
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene"))
         {	
             // Check if the user pressed a key to skip
@@ -488,6 +490,7 @@ namespace Ukemochi
 
         static bool createMenuUI = false;
 
+	    // Video played to the end
         if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI &&!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
             && GetCurrScene() == "ALevel1")
         {
@@ -496,6 +499,7 @@ namespace Ukemochi
             Application::Get().SetPaused(true);
         }
 
+	    // Video skipped
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
         {
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))

@@ -124,6 +124,15 @@ namespace Ukemochi {
 		return y;
 	}
 
+	/**
+	 * @brief check if joystick/gamepad is connected, GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16
+	 * @return true if gamepad detected, false if not
+	 */
+	bool Input::isJoystickPresent()
+	{
+		return glfwJoystickPresent(GLFW_JOYSTICK_1) == 1;
+	}
+
 	/*!
 	\brief Checks if a gamepad button is currently pressed.
 	\param JoystickID The ID of the joystick (GLFW_JOYSTICK_1 through GLFW_JOYSTICK_16).

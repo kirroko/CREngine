@@ -536,7 +536,7 @@ namespace Ukemochi
 		}
 
 		// Gamepad UI navigation for main menu
-		if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && !sortedButtons.empty() && !showCredits)
+		if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && !sortedButtons.empty() && !showCredits && Input::isJoystickPresent())
 		{
 			// track the currently selected button
 			static int mainMenuSelection = 2;
@@ -580,7 +580,7 @@ namespace Ukemochi
 		}
 		
 		// Gamepad UI navigation for pause menu
-		if (Application::Get().Paused() && !sortedButtons.empty() && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu"))
+		if (Application::Get().Paused() && !sortedButtons.empty() && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && Input::isJoystickPresent())
 		{
 			// Track the currently selected button
 			static int pauseMenuSelection = 3;
@@ -634,7 +634,7 @@ namespace Ukemochi
 		}
 
 		// Gamepad UI navigation for Credits
-		if (showCredits && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CROSS))
+		if (showCredits && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CROSS) && Input::isJoystickPresent())
 		{
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -791,14 +791,15 @@ namespace Ukemochi
 					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
 					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
+				// Application::Get().GameStarted = false;
 				this->HidePauseMenu();
-				Application::Get().GameStarted = false;
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
 				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
 				RemoveGameUI();
 				CreateMainMenuUI();
+				std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Prevent double clicking
 			}
 			});
 
@@ -959,14 +960,17 @@ namespace Ukemochi
 				if (audioM.GetSFXindex("ButtonClickSound") != -1)
 				{
 					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
 				this->HidePauseMenu();
-				CreateMainMenuUI();
+				Application::Get().GameStarted = false;
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
 				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
 				RemoveGameUI();
+				CreateMainMenuUI();
 			}
 			});
 	}

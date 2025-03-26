@@ -394,6 +394,7 @@ namespace Ukemochi {
             }
             else
             {
+                video.done = true;
                 // Free(); // Free resources if not looping 
                 return;
             }
