@@ -2,23 +2,31 @@
 
 "Fish Attack.png":
 {
-	"frame": {"x":400,"y":0,"w":1750,"h":1750},
+	"frame": {"x":1820,"y":1750,"w":1750,"h":1750},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1750,"h":1750},
 	"sourceSize": {"w":1750,"h":1750}
 },
-"Fish Death.png":
+"Fish Death 2.png":
 {
-	"frame": {"x":0,"y":1750,"w":2000,"h":1000},
+	"frame": {"x":0,"y":750,"w":2000,"h":1000},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1000},
 	"sourceSize": {"w":2000,"h":1000}
 },
+"Fish Flame.png":
+{
+	"frame": {"x":460,"y":0,"w":960,"h":480},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":480},
+	"sourceSize": {"w":960,"h":480}
+},
 "Fish HUrt.png":
 {
-	"frame": {"x":0,"y":0,"w":400,"h":400},
+	"frame": {"x":60,"y":0,"w":400,"h":400},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":400,"h":400},
@@ -26,7 +34,7 @@
 },
 "Fish Idle.png":
 {
-	"frame": {"x":2150,"y":0,"w":1820,"h":1040},
+	"frame": {"x":0,"y":1750,"w":1820,"h":1040},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1820,"h":1040},
@@ -34,19 +42,27 @@
 },
 "Fish Walk.png":
 {
-	"frame": {"x":2000,"y":1750,"w":2000,"h":750},
+	"frame": {"x":1420,"y":0,"w":2000,"h":750},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":750},
 	"sourceSize": {"w":2000,"h":750}
+},
+"White EXP Sprite.png":
+{
+	"frame": {"x":0,"y":0,"w":60,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+	"sourceSize": {"w":60,"h":60}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "Fish.png",
 	"format": "RGBA8888",
-	"size": {"w":4000,"h":2750},
+	"size": {"w":3570,"h":3500},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:270261cb8bde79ff8faed21f3a333189:e85d67213e80abf2da883ad954d8d6f8:24b7027770b0854c0d8c9b03d40a3aa9$"
+	"smartupdate": "$TexturePacker:SmartUpdate:d76eb469ad1c257822409566b6ca6dcd:0af7a16db106931ff298592f610633a4:24b7027770b0854c0d8c9b03d40a3aa9$"
 }
 }
