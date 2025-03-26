@@ -561,25 +561,6 @@ namespace Ukemochi
 
 		if (tag1 == "Player" && tag2 == "LeftDoor" || tag1 == "Player" && tag2 == "RightDoor") // Mochi and Doors
 		{
-			int currentRoomID = ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id;
-			int targetRoomIndex = currentRoomID;
-
-			if (tag2 == "LeftDoor")
-				targetRoomIndex -= 1; // Left room
-			else if (tag2 == "RightDoor")
-				targetRoomIndex += 1; // Right room
-
-			bool isEnteringBossRoom = (targetRoomIndex == 6);
-
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && isEnteringBossRoom)
-			{
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				if (audioM.GetSFXindex("LevelChange") != -1)
-				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
-						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
-				}
-			}
 			if (tag2 == "LeftDoor")
 				ECS::GetInstance().GetSystem<DungeonManager>()->SwitchToRoom(-1); // Move to the left room
 			else if (tag2 == "RightDoor")
@@ -639,7 +620,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 					}
 				}
@@ -678,7 +658,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 					}
 				}
@@ -852,7 +831,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 
 						check_collision_once = true;
@@ -940,7 +918,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 
 						check_collision_once = true;
@@ -969,7 +946,7 @@ namespace Ukemochi
 							{
 								box_anim.current_frame = 3;
 							}
-							if (box_anim.current_frame = 3)
+							if (box_anim.current_frame == 3)
 							{
 								if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 								{
@@ -1058,7 +1035,6 @@ namespace Ukemochi
 							vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 							vfxhit_anim.RestartAnimation();
 						}
-
 						player_data.HitStopAnimation();
 
 						check_collision_once = true;
@@ -1168,6 +1144,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					player_data.HitStopAnimation();
 				}
 				else
 				{
@@ -1253,6 +1230,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					player_data.HitStopAnimation();
 				}
 				else
 				{
@@ -1289,6 +1267,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					player_data.HitStopAnimation();
 				}
 				else
 				{
@@ -1392,6 +1371,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					player_data.HitStopAnimation();
 				}
 				break;
 
@@ -1471,6 +1451,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					player_data.HitStopAnimation();
 				}
 				break;
 
@@ -1490,6 +1471,18 @@ namespace Ukemochi
 							audioM.PlaySFX(audioM.GetSFXindex("Pattack3"));
 						}
 					}
+
+					if (player_sr.flipX)
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x + 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					else
+					{
+						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
+						vfxhit_anim.RestartAnimation();
+					}
+					player_data.HitStopAnimation();
 				}
 				break;
 

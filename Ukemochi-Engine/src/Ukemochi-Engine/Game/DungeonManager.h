@@ -48,6 +48,7 @@ namespace Ukemochi
 		std::unordered_map<int, Room> rooms; // Map of room IDs to room data
 		int current_room_id;				 // ID of the current active room
 		//int current_room_wave;			 // Current Wave of enemies in the current room
+		bool enemy_alive = false;
 
 		/*!***********************************************************************
 		\brief
@@ -79,7 +80,6 @@ namespace Ukemochi
 		*************************************************************************/
 		void UpdateRoomProgress();
 
-		bool enemy_alive = false;
 	private:
 		/*!***********************************************************************
 		\brief

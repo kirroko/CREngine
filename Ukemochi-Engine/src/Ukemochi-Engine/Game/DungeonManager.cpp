@@ -103,6 +103,25 @@ namespace Ukemochi
 		// Update current room ID
 		current_room_id += next_room_id;
 
+		// Play boss cutscene and init boss when entering the boss room (room 6)
+		if (current_room_id == 6)
+		{
+			// Play boss enter SFX
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("LevelChange") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				}
+			}
+
+			// Init boss
+			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
+			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
+		}
+
 		// Perform camera and player transition
 		if (next_room_id == -1)
 		{
@@ -143,31 +162,22 @@ namespace Ukemochi
 				enemy_alive = true;
 		}
 
-		if (current_room_id == 5 && !enemy_alive)
-		{
-			//init bosss
-			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
-			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
-		}
-
 		// Unlock the room if all enemies are not active
 		if (!enemy_alive)
-		{
 			UnlockRoom();
 
-			////healing to post injuries max health here
-			//if (player != -1)
-			//{
-			//	while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
-			//	{
-			//		GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
-			//		if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
-			//		{
-			//			GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
-			//		}
-			//	}
-			//}
-		}
+		////healing to post injuries max health here
+		//if (player != -1)
+		//{
+		//	while (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth < GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth && current_room_id != 1)
+		//	{
+		//		GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth += 2;
+		//		if (GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth > GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth)
+		//		{
+		//			GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().currentHealth = GameObjectManager::GetInstance().GetGO(player)->GetComponent<Player>().postInjuriesMaxHealth;
+		//		}
+		//	}
+		//}
 	}
 
 	/*!***********************************************************************
