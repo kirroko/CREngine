@@ -4096,6 +4096,44 @@
                     "Layer": 0
                 }]
         }, {
+            "Name": "6_Branch",
+            "Tag": "Default",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [8640.0, 780.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [1920.0, 605.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Branch.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }]
+        }, {
+            "Name": "6_Boss",
+            "Tag": "Boss",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [8515.0, 790.0, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [225.0, 225.0]
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
+                    "Shape": 0,
+                    "Layer": 0
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Idle1": ["Boss Phase 1 Idle", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle1", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
+                        "Idle2": ["Boss Idle Phase 2", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle2", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
+                        "Change": ["Boss Transform", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Change", 25, 0.5, 0.5, 860, 860, 860, 7740, 2580, 0.05000000074505806, true]
+                    },
+                    "CurrentClip": "Idle1"
+                }, {
+                    "Name": "Boss"
+                }]
+        }, {
             "Name": "6_Ane1",
             "Tag": "Default",
             "Components": [{
@@ -4176,44 +4214,6 @@
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "hair hitbox",
-                    "Shape": 0,
-                    "Layer": 0
-                }]
-        }, {
-            "Name": "6_Boss",
-            "Tag": "Boss",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [8515.0, 790.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [225.0, 225.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Boss Stuff_Part.png",
-                    "Shape": 0,
-                    "Layer": 1
-                }, {
-                    "Name": "Animation",
-                    "Clips": {
-                        "Idle1": ["Boss Phase 1 Idle", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle1", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
-                        "Idle2": ["Boss Idle Phase 2", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Idle2", 15, 0.5, 0.5, 860, 860, 860, 3440, 3440, 0.05000000074505806, true],
-                        "Change": ["Boss Transform", "../Assets/Textures/Enemy/Boss Stuff_Part.png", "Change", 25, 0.5, 0.5, 860, 860, 860, 7740, 2580, 0.05000000074505806, true]
-                    },
-                    "CurrentClip": "Idle1"
-                }, {
-                    "Name": "Boss"
-                }]
-        }, {
-            "Name": "6_Branch",
-            "Tag": "Default",
-            "Components": [{
-                    "Name": "Transform",
-                    "Position": [8640.0, 780.0, 0.0],
-                    "Rotation": 0.0,
-                    "Scale": [1920.0, 605.0]
-                }, {
-                    "Name": "SpriteRender",
-                    "Sprite": "../Assets/Textures/Enemy/Branch.png",
                     "Shape": 0,
                     "Layer": 0
                 }]
