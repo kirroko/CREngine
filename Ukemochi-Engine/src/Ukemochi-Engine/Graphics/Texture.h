@@ -41,16 +41,18 @@ public:
 	 */
 	int width, height;
 
-	/*!
+	/**
 	 * @brief Constructor that loads and creates an OpenGL texture from an image file.
-	 * @param image The path to the image file to load as a texture.
-	 * @param texType The type of texture (e.g., GL_TEXTURE_2D).
+	 * @param bytes The image data to load as a texture.
+	* @param texType The type of texture (e.g., GL_TEXTURE_2D).
 	 * @param slot The texture unit slot to bind the texture to (e.g., GL_TEXTURE0).
 	 * @param format The format of the image data (e.g., GL_RGBA or GL_RGB).
 	 * @param pixelType The data type of the image's pixel data (e.g., GL_UNSIGNED_BYTE).
+	 * @param widthImg Image width
+	 * @param heightImg Image height
 	 */
-	Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
-
+	Texture(unsigned char* bytes, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int widthImg,
+	        int heightImg);
 	// Assigns a texture unit to a texture
 	void texUnit(Shader* shader, const char* uniform, GLuint unit);
 

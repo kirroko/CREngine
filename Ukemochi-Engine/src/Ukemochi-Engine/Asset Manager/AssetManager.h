@@ -30,6 +30,17 @@ namespace Ukemochi
 	class AssetManager : public Ukemochi::System
 	{
 	private:
+		struct TextureLoadJobData
+		{
+			std::string imagePath{};	// image file path
+			unsigned char* bytes;	// image data
+			int widthImg = 0;
+			int heightImg = 0;
+			int numColCh = 0;
+		};
+
+		std::vector<std::shared_ptr<TextureLoadJobData>> textureLoadingContexts;
+		
 		//std::map<std::string, std::shared_ptr<SpriteRender>> sprite_list;
 		//std::map<std::string, std::shared_ptr<FMOD::Sound>> audio_list;
 
@@ -76,7 +87,7 @@ namespace Ukemochi
 
 		std::vector<std::string> getAtlasJSONData(const std::string& jsonPath);
 
-		void loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath);
+		// void loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath);
 
 		void debugPrintSpriteData() const;
 
@@ -211,6 +222,17 @@ namespace Ukemochi
 		* @brief Returns size_t value representing the number of textures stored in the AssetManager
 		*/
 		std::string& getTextureAtIndex(int index);
+
+
+		/**
+		 * @brief Call after all textures are loaded
+		 */
+		void LoadAllTexture();
+
+		/*!
+		 * @brief Async texture loading
+		 */
+		void AsyncTextureLoad();
 
 		/*!
 		* @brief An overarching function that is called at the start to read through the Asset folder

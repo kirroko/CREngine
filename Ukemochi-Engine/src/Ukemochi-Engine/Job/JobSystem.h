@@ -124,9 +124,22 @@ namespace Ukemochi::job
     void KickJobs(int count, const Declaration aDecl[]);
 
     /**
+     * @brief Check if all jobs are completed without blocking
+     * @return true if all jobs are completed, false otherwise
+     */
+    bool AreJobsCompleted();
+
+    /**
      * @brief Wait for all jobs to complete
      */
     void WaitForCounter();
+
+    /**
+     * @brief Wait for all jobs to complete with a timeout
+     * @param ms The timeout in milliseconds
+     * @return true if all jobs completed, false otherwise
+     */
+    bool WaitForCounterWithTimeout(uint32_t ms);
 
     // kick jobs and wait for completion
     /**

@@ -29,6 +29,24 @@ namespace Ukemochi {
             int width;
             unsigned int frameIndex;
         };
+
+        struct VideoLoadingContext
+        {
+            std::vector<VideoDecodeJobParams> jobParams;
+            std::vector<std::unique_ptr<uint8_t[]>> rgb_buffer;
+
+            VideoLoadingContext() = default;
+
+            VideoLoadingContext(int totalFrames, int width, int height)
+            {
+                jobParams.resize(totalFrames);
+                rgb_buffer.resize(totalFrames);
+                for (int i = 0; i < totalFrames; ++i)
+                {
+                    rgb_buffer[i] = std::make_unique<uint8_t[]>(width * height * 3);
+                }
+            }
+        };
         
         /*!***********************************************************************
         \brief
@@ -60,15 +78,19 @@ namespace Ukemochi {
             GLuint textureID = 0;
             int currentFrame = 0;
             int totalFrames = 0;
+            unsigned int width;
+            unsigned int height;
             double frameDuration = 0.0;
             double elapsedTime = 0.0f;
+            // std::unique_ptr<VideoContext> video_ctx;
+            VideoLoadingContext loadingContext;
             bool done = false;
-            std::unique_ptr<VideoContext> video_ctx;
             bool loop = false;
         };
 
         std::shared_ptr<Shader> video_shader_program; // Shader program used for rendering video
 
+        
     public:
 
         std::unordered_map<std::string, VideoData> videos; // Map of video names to their data
@@ -124,9 +146,12 @@ namespace Ukemochi {
         /**
          * @brief Load the MPEG file
          * @param filepath filepath to the video
+         * @param async whether to load asynchronously (Kick off a thread wait later)
          * @return a pointer to MPEGStream
          */
-        bool LoadVideo(const std::string& name, const char* filepath, bool loop);
+        bool LoadVideo(const std::string& name, const char* filepath, bool loop, bool async);
+
+        bool FinishLoadingVideo(const VideoData& video);
         
         /**
          * @brief Update video player system

@@ -344,7 +344,7 @@ namespace Ukemochi
             {
                 if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
                 {
-                    audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
+                    // audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
                 }
             }
         }
@@ -373,14 +373,14 @@ namespace Ukemochi
             // play
             else if (es_current == ENGINE_STATES::ES_PLAY)
             {
-                if (!IsPaused)
-                {
+                // if (!IsPaused)
+                // {
                     sceneManager.SceneMangerUpdateCamera(deltaTime);
                     //Run all the systems using ECS
                     //************ Update & Draw ************
                     sceneManager.SceneMangerRunSystems();
                     //************ Update & Draw ************
-                }
+                // }
             }
 
 #ifdef _DEBUG
