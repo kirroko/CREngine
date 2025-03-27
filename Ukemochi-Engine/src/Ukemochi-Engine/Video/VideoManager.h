@@ -78,6 +78,9 @@ namespace Ukemochi {
         double lastFrameTime = 0.0f; // Timestamp of the last frame update
         GLuint VAO{}, VBO{}; // OpenGL Vertex Array Object and Vertex Buffer Object
 
+        std::queue<GLubyte*> frameQueue;
+        std::mutex frameQueueMutex;
+
         /*!***********************************************************************
         \brief
          Renders the current frame of the active video.

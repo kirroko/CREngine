@@ -153,30 +153,81 @@ namespace Ukemochi {
         // Allocate RGB buffer
         video.video_ctx = std::make_unique<VideoContext>(width, height);
  
-        // **Preload all frames into the texture array**
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
-        for (int i = 0; i < video.totalFrames; ++i)
-        {
-            // Decode the next frame
-            plm_frame_t* frame = plm_decode_video(video.plm);
-            if (!frame) break;
+        //// **Preload all frames into the texture array**
+        //glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+        //for (int i = 0; i < video.totalFrames; ++i)
+        //{
+        //    // Decode the next frame
+        //    plm_frame_t* frame = plm_decode_video(video.plm);
+        //    if (!frame) break;
 
-            // Convert to RGB
-            plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer.get(), width * 3);
-            
-            if (!video.video_ctx->rgb_buffer) {
-                UME_ENGINE_ERROR("Error: RGB buffer is null at frame {0}", i);
+        //    // Convert to RGB
+        //    plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer.get(), width * 3);
+        //    
+        //    if (!video.video_ctx->rgb_buffer) {
+        //        UME_ENGINE_ERROR("Error: RGB buffer is null at frame {0}", i);
+        //    }
+
+        //    // Upload to the 2D texture array at layer `i`
+        //    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.video_ctx->rgb_buffer.get());
+
+        //    UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, video.totalFrames, i);
+        //}
+
+        std::thread decoding([&]()
+            {
+                for (int i{}; i < video.totalFrames; i++)
+                {
+                    // Decode next frame
+                    plm_frame_t* frame = plm_decode_video(video.plm);
+                    if (!frame)
+                        break;
+                    
+                    // Convert frame into RGB Buffer
+                    plm_frame_to_rgb(frame, video.video_ctx->rgb_buffer.get(), width * 3);
+
+                    // Push Frame into thread safe queue
+                    {
+                        std::lock_guard<std::mutex> lock(frameQueueMutex);
+                        frameQueue.push(video.video_ctx->rgb_buffer.get());
+                    }
+
+                    UME_ENGINE_INFO("Decoded frame {0}/{1}", i + 1, video.totalFrames);
+                }
+            });
+
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+
+        int batch = 10;
+        int upload_frame = 0;
+
+        while (upload_frame < batch)
+        {
+            std::vector<GLubyte*> frame_to_load;
+            {
+                std::lock_guard<std::mutex> lock(frameQueueMutex);
+                while (!frameQueue.empty() && frame_to_load.size() < batch)
+                {
+                    frame_to_load.push_back(frameQueue.front());
+                    frameQueue.pop();   
+                }
             }
 
-            // Upload to the 2D texture array at layer `i`
-            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.video_ctx->rgb_buffer.get());
-
-            UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", i + 1, video.totalFrames, i);
+            if (!frame_to_load.empty())
+            {
+                for (size_t i{}; i < frame_to_load.size(); i++)
+                {
+                    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, upload_frame + i, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, frame_to_load[i]);
+                    UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2}", upload_frame + i + 1, video.totalFrames, upload_frame + i);
+                }
+                upload_frame += frame_to_load.size();
+            }
         }
+
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
         // Disable looping for playback
-        plm_set_loop(video.plm, false); // Handled manually in `UpdateAndRenderVideo()
+        plm_set_loop(video.plm, false); // Handled manually in `UpdateAndRenderVideo;
 
         int storedLayers = 0;
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
