@@ -10,11 +10,11 @@
 },
 "button 2.png":
 {
-	"frame": {"x":5,"y":1065,"w":1224,"h":409},
+	"frame": {"x":5,"y":1065,"w":1220,"h":409},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1224,"h":409},
-	"sourceSize": {"w":1224,"h":409}
+	"spriteSourceSize": {"x":0,"y":0,"w":1220,"h":409},
+	"sourceSize": {"w":1220,"h":409}
 },
 "side wall.png":
 {
@@ -37,8 +37,8 @@
 	"version": "1.0",
 	"image": "tutorial env.png",
 	"format": "RGBA8888",
-	"size": {"w":1234,"h":1479},
+	"size": {"w":1230,"h":1479},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:448fd731f7ec9c487e01d47744d2f0d6:5ca2f66b266031fcecfde04716fdd92e:21a62ee1599087b4b7f30f4921cc570c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2ba600ee9a29d727500f9a6c5cef2fd5:340c5329611709283785d51ee7e9de9b:21a62ee1599087b4b7f30f4921cc570c$"
 }
 }

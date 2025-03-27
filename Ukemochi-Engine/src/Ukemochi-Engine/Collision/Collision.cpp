@@ -2,7 +2,7 @@
 /*!
 \file       Collision.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Mar 02, 2025
+\date       Mar 27, 2025
 \brief      This file contains the definition of the Collision system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -1286,6 +1286,7 @@ namespace Ukemochi
 			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
 			auto& player_anim = ECS::GetInstance().GetComponent<Animation>(player);
+			auto& dummy_anim = ECS::GetInstance().GetComponent<Animation>(entity2);
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
 
@@ -1371,6 +1372,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					dummy_anim.RestartAnimation();
 					player_data.HitStopAnimation();
 				}
 				break;
@@ -1451,6 +1453,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					dummy_anim.RestartAnimation();
 					player_data.HitStopAnimation();
 				}
 				break;
@@ -1482,6 +1485,7 @@ namespace Ukemochi
 						vfxhit_trans.position = Vector3D(player_trans.position.x - 150.0f, player_trans.position.y, 0);
 						vfxhit_anim.RestartAnimation();
 					}
+					dummy_anim.RestartAnimation();
 					player_data.HitStopAnimation();
 				}
 				break;
