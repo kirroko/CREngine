@@ -201,7 +201,7 @@ namespace Ukemochi {
         int batch = 10;
         int upload_frame = 0;
 
-        while (upload_frame < batch)
+        while (upload_frame < video.totalFrames)
         {
             std::vector<GLubyte*> frame_to_load;
             {
@@ -256,9 +256,7 @@ namespace Ukemochi {
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
+      
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -275,6 +273,9 @@ namespace Ukemochi {
         ECS::GetInstance().GetSystem<Audio>()->LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
 
         videos[name] = std::move(video);  // Store the video in the map
+
+
+        decoding.join();
 
         return true;
     }
