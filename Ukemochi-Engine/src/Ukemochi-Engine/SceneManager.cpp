@@ -220,11 +220,15 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
 #ifndef _DEBUG
-                // We are gonna to play the intro video after everything has been loaded!
+        // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, true))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false, true))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
         es_current = ES_PLAY;
@@ -235,7 +239,10 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false, false))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
+            UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
     }
@@ -398,8 +405,8 @@ namespace Ukemochi
             if (!setMainMenu)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
-                setMainMenu = true;
-            }
+                // setMainMenu = true;
+            } 
 
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done)
             {
@@ -440,7 +447,7 @@ namespace Ukemochi
 
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
-        if (!Application::Get().Paused())
+        if (!Application::Get().Paused() && !ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
         {
             if (GameObjectManager::GetInstance().GetGOByTag("Player"))
             {
@@ -613,6 +620,11 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<Renderer>()->RenderMainMenuUI();
                 ECS::GetInstance().GetSystem<InGameGUI>()->UpdateTitleAnimation();
             }
+        }
+        else if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6
+            && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
+        {
+            ECS::GetInstance().GetSystem<VideoManager>()->Update();
         }
         else
         {

@@ -26,6 +26,30 @@ namespace Ukemochi {
 
     /*!***********************************************************************
     \brief
+     Checks if a video is playing.
+
+    \return True if the video is playing, false otherwise.
+    *************************************************************************/
+    bool VideoManager::IsVideoPlaying() const
+    {
+        // Check is a video is selected
+        if (currentVideo.empty())
+            return false;
+
+        // Find the video in the map
+        auto it = videos.find(currentVideo);
+        if (it == videos.end())
+            return false;
+
+        // Get reference to the video data
+        const VideoData& video = it->second;
+
+        // Check if the video is still playing
+        return (video.plm != nullptr && !video.done && video.currentFrame < video.totalFrames);
+    }
+
+    /*!***********************************************************************
+    \brief
      Checks if a video has finished playing.
 
     \param videoName The name of the video to check.
@@ -127,6 +151,7 @@ namespace Ukemochi {
             UME_ENGINE_ERROR("Failed to load video: {0}", filepath);
             return false;
         }
+
         if (!plm_probe(video.plm, 5000 * 1024))
         {
             UME_ENGINE_ERROR("No MPEG video or audio streams found in {0}", filepath);
@@ -447,7 +472,7 @@ namespace Ukemochi {
         {
             if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(0))
             {
-                // ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySound(0, "SFX", 0.2f);
+                //ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySound(0, "SFX", 0.2f);
             }
         }
 

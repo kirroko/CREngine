@@ -33,7 +33,9 @@ namespace Ukemochi
 
 		void BossTakeDMG();
 
-		void SetBossPharse(int state);
+		void SetBossPhase(int state);
+
+		int GetBossPhase();
 
 	private:
 		GameObject* playerObj;

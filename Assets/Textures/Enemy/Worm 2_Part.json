@@ -1,8 +1,24 @@
 {"frames": {
 
+"Dummy Wobble.png":
+{
+	"frame": {"x":0,"y":0,"w":2000,"h":1200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":2000,"h":1200},
+	"sourceSize": {"w":2000,"h":1200}
+},
+"Worm Flame.png":
+{
+	"frame": {"x":0,"y":1200,"w":960,"h":480},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":480},
+	"sourceSize": {"w":960,"h":480}
+},
 "Worm Hurt.png":
 {
-	"frame": {"x":0,"y":0,"w":700,"h":700},
+	"frame": {"x":960,"y":1200,"w":700,"h":700},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":700,"h":700},
@@ -10,7 +26,7 @@
 },
 "Worm Idle.png":
 {
-	"frame": {"x":0,"y":700,"w":1860,"h":1240},
+	"frame": {"x":0,"y":1900,"w":1860,"h":1240},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1860,"h":1240},
@@ -21,8 +37,8 @@
 	"version": "1.0",
 	"image": "Worm 2.png",
 	"format": "RGBA8888",
-	"size": {"w":1860,"h":1940},
+	"size": {"w":2000,"h":3140},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:6f20c2a0bf8fb6d7285bc05176addde3:2318ac3abcf462078eda41806b0f76bc:d4edaf886be930a75546ab906e2bc7e7$"
+	"smartupdate": "$TexturePacker:SmartUpdate:3359ab6e84698f41665c03efed65354a:2444c87c051484194e29327862c951fa:d4edaf886be930a75546ab906e2bc7e7$"
 }
 }

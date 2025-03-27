@@ -2,7 +2,7 @@
 /*!
 \file       DungeonManager.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
-\date       Mar 23, 2025
+\date       Mar 27, 2025
 \brief      This file contains the declaration of the DungeonManager which handles the game dungeon.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -48,7 +48,9 @@ namespace Ukemochi
 		std::unordered_map<int, Room> rooms; // Map of room IDs to room data
 		int current_room_id;				 // ID of the current active room
 		//int current_room_wave;			 // Current Wave of enemies in the current room
-		bool enemy_alive = false;
+		bool enemy_alive = false;			 // Flag to indicate if there are any enemies in the room left
+		bool start_boss = false;			 // Flag to indicate boss fight has started
+		bool end_boss = false;				 // Flag to indicate boss fight has ended
 
 		/*!***********************************************************************
 		\brief
@@ -102,5 +104,11 @@ namespace Ukemochi
 		 Unlock the room by enabling doors and disabling blocks.
 		*************************************************************************/
 		void UnlockRoom();
+
+		/*!***********************************************************************
+		\brief
+		 Reset the player's stats when exiting the tutorial room.
+		*************************************************************************/
+		void ExitTutorialRoom();
 	};
 }

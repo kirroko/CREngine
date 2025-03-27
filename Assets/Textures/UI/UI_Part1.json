@@ -2,15 +2,15 @@
 
 "back.png":
 {
-	"frame": {"x":157,"y":253,"w":997,"h":868},
+	"frame": {"x":5,"y":255,"w":1312,"h":790},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":997,"h":868},
-	"sourceSize": {"w":997,"h":868}
+	"spriteSourceSize": {"x":0,"y":0,"w":1312,"h":790},
+	"sourceSize": {"w":1312,"h":790}
 },
 "defeat bg.png":
 {
-	"frame": {"x":5,"y":1133,"w":1920,"h":1080},
+	"frame": {"x":1322,"y":255,"w":1920,"h":1080},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
@@ -18,43 +18,19 @@
 },
 "defeat.png":
 {
-	"frame": {"x":2223,"y":73,"w":499,"h":129},
+	"frame": {"x":2411,"y":73,"w":499,"h":129},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":499,"h":129},
 	"sourceSize": {"w":499,"h":129}
 },
-"dmg number_10.png":
-{
-	"frame": {"x":1527,"y":73,"w":119,"h":106},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":106},
-	"sourceSize": {"w":119,"h":106}
-},
-"dmg number_20_blue.png":
-{
-	"frame": {"x":1779,"y":73,"w":155,"h":109},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":155,"h":109},
-	"sourceSize": {"w":155,"h":109}
-},
-"dmg number_20_red.png":
-{
-	"frame": {"x":1939,"y":73,"w":155,"h":109},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":155,"h":109},
-	"sourceSize": {"w":155,"h":109}
-},
 "exit.png":
 {
-	"frame": {"x":3658,"y":73,"w":145,"h":175},
+	"frame": {"x":3347,"y":73,"w":122,"h":154},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":145,"h":175},
-	"sourceSize": {"w":145,"h":175}
+	"spriteSourceSize": {"x":0,"y":0,"w":122,"h":154},
+	"sourceSize": {"w":122,"h":154}
 },
 "fire blue collect.png":
 {
@@ -72,9 +48,25 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":63},
 	"sourceSize": {"w":45,"h":63}
 },
+"how to play.png":
+{
+	"frame": {"x":3196,"y":73,"w":146,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":146,"h":150},
+	"sourceSize": {"w":146,"h":150}
+},
+"howtoplay.png":
+{
+	"frame": {"x":5,"y":1340,"w":1920,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
+	"sourceSize": {"w":1920,"h":1080}
+},
 "in game_abilities.png":
 {
-	"frame": {"x":1651,"y":73,"w":123,"h":107},
+	"frame": {"x":2159,"y":73,"w":123,"h":107},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":123,"h":107},
@@ -82,7 +74,7 @@
 },
 "in game_blue fire.png":
 {
-	"frame": {"x":1269,"y":73,"w":65,"h":71},
+	"frame": {"x":1901,"y":73,"w":65,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
@@ -90,7 +82,7 @@
 },
 "in game_border shadow.png":
 {
-	"frame": {"x":1930,"y":1133,"w":1920,"h":1080},
+	"frame": {"x":1930,"y":1340,"w":1920,"h":1080},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
@@ -114,7 +106,7 @@
 },
 "in game_health bar icon.png":
 {
-	"frame": {"x":2727,"y":73,"w":117,"h":129},
+	"frame": {"x":2915,"y":73,"w":117,"h":129},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":117,"h":129},
@@ -128,9 +120,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
 	"sourceSize": {"w":627,"h":66}
 },
+"in game_health bar_red.png":
+{
+	"frame": {"x":1269,"y":73,"w":627,"h":66},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":627,"h":66},
+	"sourceSize": {"w":627,"h":66}
+},
 "in game_pause.png":
 {
-	"frame": {"x":1409,"y":73,"w":113,"h":92},
+	"frame": {"x":2041,"y":73,"w":113,"h":92},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":113,"h":92},
@@ -138,7 +138,7 @@
 },
 "in game_red fire.png":
 {
-	"frame": {"x":1339,"y":73,"w":65,"h":71},
+	"frame": {"x":1971,"y":73,"w":65,"h":71},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":71},
@@ -210,7 +210,7 @@
 },
 "in game_soul change.png":
 {
-	"frame": {"x":2099,"y":73,"w":119,"h":121},
+	"frame": {"x":2287,"y":73,"w":119,"h":121},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":119,"h":121},
@@ -242,7 +242,7 @@
 },
 "overlay bg.png":
 {
-	"frame": {"x":5,"y":2218,"w":1920,"h":1080},
+	"frame": {"x":5,"y":2425,"w":1920,"h":1080},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
@@ -250,19 +250,11 @@
 },
 "overlay2.png":
 {
-	"frame": {"x":1930,"y":2218,"w":1920,"h":1080},
+	"frame": {"x":1930,"y":2425,"w":1920,"h":1080},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1080},
 	"sourceSize": {"w":1920,"h":1080}
-},
-"pause.png":
-{
-	"frame": {"x":2849,"y":73,"w":511,"h":131},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":511,"h":131},
-	"sourceSize": {"w":511,"h":131}
 },
 "plus.png":
 {
@@ -274,7 +266,7 @@
 },
 "restart.png":
 {
-	"frame": {"x":5,"y":253,"w":147,"h":177},
+	"frame": {"x":3474,"y":73,"w":147,"h":177},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":177},
@@ -282,11 +274,11 @@
 },
 "return.png":
 {
-	"frame": {"x":3506,"y":73,"w":147,"h":172},
+	"frame": {"x":3037,"y":73,"w":154,"h":148},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":172},
-	"sourceSize": {"w":147,"h":172}
+	"spriteSourceSize": {"x":0,"y":0,"w":154,"h":148},
+	"sourceSize": {"w":154,"h":148}
 },
 "Rounded Rectangle 8 2.png":
 {
@@ -311,30 +303,14 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":429,"h":27},
 	"sourceSize": {"w":429,"h":27}
-},
-"stat.png":
-{
-	"frame": {"x":1159,"y":253,"w":1419,"h":875},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1419,"h":875},
-	"sourceSize": {"w":1419,"h":875}
-},
-"x.png":
-{
-	"frame": {"x":3365,"y":73,"w":136,"h":131},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":136,"h":131},
-	"sourceSize": {"w":136,"h":131}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "rest of ui.png",
 	"format": "RGBA8888",
-	"size": {"w":3855,"h":3303},
+	"size": {"w":3855,"h":3510},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e284ce78c3906be6e297b47dede14ad0:92cefc73583c2f09163fb0fdd9f14c93:34ec4dfb5ae1ff30bb22cbe256853295$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e5161593c7d634d22b0c8ba067b1bea3:39d12af6cdcd732e4421239bbc1d3d6e:34ec4dfb5ae1ff30bb22cbe256853295$"
 }
 }

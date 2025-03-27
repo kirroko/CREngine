@@ -3,7 +3,7 @@
 \file       DungeonManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (75%)
 \co-author	Pek Jun Kai Gerald, p.junkaigerald, 2301334, p.junkaigerald\@digipen.edu (25%)
-\date       Mar 23, 2025
+\date       Mar 27, 2025
 \brief      This file contains the definition of the DungeonManager which handles the game dungeon.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -19,6 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/EnemyManager.h"		  // for updating enemy list
 #include "../Game/BossManager.h"		  // for init boss
 #include "../SceneManager.h"			  // for GetCurrScene name
+#include "../Video/VideoManager.h"		  // for boss cutscene
 
 namespace Ukemochi
 {
@@ -32,6 +33,9 @@ namespace Ukemochi
 		current_room_id = 1;
 		//current_room_wave = WAVE_NUMBER;
 		player = static_cast<EntityID>(-1);
+
+		start_boss = false;
+		end_boss = false;
 
 		InitDungeon();
 	}
@@ -73,54 +77,11 @@ namespace Ukemochi
 		ActivateRoom(current_room_id, false);
 
 		// Reset the soul bars and charges when exiting the tutorial room (room 1)
-		if (current_room_id == 1 && !SceneManager::GetInstance().enable_cheatmode) // Dont reset stats if cheat mode is enabled
-		{
-			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-			auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
-
-			for (int i = 0; i < NUM_OF_SOULS; i++)
-			{
-				player_soul.soul_bars[i] = 0.f;
-				player_soul.soul_charges[i] = 0;
-
-				// Currently in FISH soul, switch to EMPTY soul
-				if (player_soul.current_soul == FISH && player_soul.current_soul == i)
-				{
-					player_soul.current_soul = EMPTY;
-					player_animator.SetAnimationUninterrupted("SwitchBN");
-					GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(false);
-				}
-				// Currently in WORM soul, switch to EMPTY soul
-				else if (player_soul.current_soul == WORM && player_soul.current_soul == i)
-				{
-					player_soul.current_soul = EMPTY;
-					player_animator.SetAnimationUninterrupted("SwitchRN");
-					GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(false);
-				}
-			}
-		}
+		if (current_room_id == 1)
+			ExitTutorialRoom();
 
 		// Update current room ID
 		current_room_id += next_room_id;
-
-		// Play boss cutscene and init boss when entering the boss room (room 6)
-		if (current_room_id == 6)
-		{
-			// Play boss enter SFX
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-				if (audioM.GetSFXindex("LevelChange") != -1)
-				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
-						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
-				}
-			}
-
-			// Init boss
-			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
-			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
-		}
 
 		// Perform camera and player transition
 		if (next_room_id == -1)
@@ -140,6 +101,13 @@ namespace Ukemochi
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
 			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
+		}
+
+		// Play boss cutscene when entering the boss room (room 6)
+		if (current_room_id == 6)
+		{
+			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
 		}
 
 		// Activate current room
@@ -165,6 +133,39 @@ namespace Ukemochi
 		// Unlock the room if all enemies are not active
 		if (!enemy_alive)
 			UnlockRoom();
+
+		// Move camera back to boss room and start boss fight
+		if (current_room_id == 6 && !start_boss && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("before_boss"))
+		{
+			// Set camera to room position
+			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
+			
+			// Init boss
+			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
+			ECS::GetInstance().GetSystem<BossManager>()->SetBossPhase(1);
+			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
+
+			// Play boss enter SFX
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("LevelChange") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				}
+			}
+
+			start_boss = true;
+		}
+
+		// What happens after boss fight
+		if (current_room_id == 6 && !end_boss && ECS::GetInstance().GetSystem<BossManager>()->GetBossPhase() == 3
+			&& ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("after_boss"))
+		{
+			//ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
+			end_boss = true;
+		}
 
 		////healing to post injuries max health here
 		//if (player != -1)
@@ -294,6 +295,40 @@ namespace Ukemochi
 			// Disable blocks
 			if (name == str_id + "_LeftBlock" || name == str_id + "_RightBlock")
 				GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+		}
+	}
+
+	/*!***********************************************************************
+	\brief
+	 Reset the player's stats when exiting the tutorial room.
+	*************************************************************************/
+	void DungeonManager::ExitTutorialRoom()
+	{
+		if (current_room_id == 1 && !SceneManager::GetInstance().enable_cheatmode) // Dont reset stats if cheat mode is enabled
+		{
+			auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+			auto& player_animator = ECS::GetInstance().GetComponent<Animation>(player);
+
+			for (int i = 0; i < NUM_OF_SOULS; i++)
+			{
+				player_soul.soul_bars[i] = 0.f;
+				player_soul.soul_charges[i] = 0;
+
+				// Currently in FISH soul, switch to EMPTY soul
+				if (player_soul.current_soul == FISH && player_soul.current_soul == i)
+				{
+					player_soul.current_soul = EMPTY;
+					player_animator.SetAnimationUninterrupted("SwitchBN");
+					GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(false);
+				}
+				// Currently in WORM soul, switch to EMPTY soul
+				else if (player_soul.current_soul == WORM && player_soul.current_soul == i)
+				{
+					player_soul.current_soul = EMPTY;
+					player_animator.SetAnimationUninterrupted("SwitchRN");
+					GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(false);
+				}
+			}
 		}
 	}
 }

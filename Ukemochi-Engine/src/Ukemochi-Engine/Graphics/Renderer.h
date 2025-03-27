@@ -824,5 +824,8 @@ public:
 	float transitionTimer = 0.0f;
 	const float transitionDuration = 2.0f; // duration in seconds
 
+private:
+	float trailingHealthPercentage = 1.0f;
+
 };
 #endif

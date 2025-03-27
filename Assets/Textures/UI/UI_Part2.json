@@ -2,19 +2,19 @@
 
 "credits button.png":
 {
-	"frame": {"x":5,"y":5,"w":238,"h":169},
+	"frame": {"x":5,"y":5,"w":238,"h":182},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":169},
-	"sourceSize": {"w":238,"h":169}
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":182},
+	"sourceSize": {"w":238,"h":182}
 },
 "credits.png":
 {
-	"frame": {"x":248,"y":5,"w":960,"h":3481},
+	"frame": {"x":248,"y":5,"w":960,"h":3896},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":3481},
-	"sourceSize": {"w":960,"h":3481}
+	"spriteSourceSize": {"x":0,"y":0,"w":960,"h":3896},
+	"sourceSize": {"w":960,"h":3896}
 },
 "exit button.png":
 {
@@ -32,9 +32,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":177},
 	"sourceSize": {"w":147,"h":177}
 },
+"how to play button.png":
+{
+	"frame": {"x":1471,"y":5,"w":237,"h":216},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":237,"h":216},
+	"sourceSize": {"w":237,"h":216}
+},
 "logo.png":
 {
-	"frame": {"x":5,"y":3491,"w":1057,"h":475},
+	"frame": {"x":1713,"y":5,"w":1057,"h":475},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1057,"h":475},
@@ -42,7 +50,7 @@
 },
 "nail.png":
 {
-	"frame": {"x":1067,"y":3491,"w":26,"h":24},
+	"frame": {"x":2775,"y":5,"w":26,"h":24},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":24},
@@ -50,7 +58,7 @@
 },
 "start button.png":
 {
-	"frame": {"x":1098,"y":3491,"w":422,"h":343},
+	"frame": {"x":2806,"y":5,"w":422,"h":343},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":343},
@@ -61,8 +69,8 @@
 	"version": "1.0",
 	"image": "main menu.png",
 	"format": "RGBA8888",
-	"size": {"w":1525,"h":3971},
+	"size": {"w":3233,"h":3906},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:1d1f5556722c3ff1bb7ab194307459c6:d4da4ce200d3b84c1f148c8444fcbe2f:1fed6e43413a7b4876ed6edb434224e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:4298111918136f2dd4d54dbc3fa0b5b3:fa0ed25a2dda4aae2b8655a1fa954dab:1fed6e43413a7b4876ed6edb434224e3$"
 }
 }

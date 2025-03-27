@@ -3,7 +3,7 @@
 \file       SoulManager.cpp
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
-\date       Mar 12, 2025
+\date       Mar 27, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
@@ -329,16 +329,26 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::ApplyFishAbility(const EntityID& enemy)
     {
-        // Get references of the player soul and enemy
-        auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
-        auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
+        if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Enemy")
+        {
+            // Get references of the player soul and enemy
+            auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
+            auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
 
-        // Trigger enemy hurt animation
-        ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
-        // Deal damage to the enemy
-        if (!enemy_data.wasHit){
-            enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
-            ECS::GetInstance().GetComponent<SpriteRender>(enemy).color = Vec3(1.f, 0.f, 0.f);
+            // Trigger enemy hurt animation
+            ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
+
+            // Deal damage to the enemy
+            if (!enemy_data.wasHit) {
+                enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
+                ECS::GetInstance().GetComponent<SpriteRender>(enemy).color = Vec3(1.f, 0.f, 0.f);
+            }
+        }
+        else if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Dummy")
+        {
+            // Trigger dummy hit animation
+            auto& dummy_anim = ECS::GetInstance().GetComponent<Animation>(enemy);
+            dummy_anim.RestartAnimation();
         }
     }
 
@@ -349,15 +359,24 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::ApplyWormAbility(const EntityID& enemy)
     {
-        // Get reference of the enemy
-        auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(enemy);
+        if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Enemy")
+        {
+            // Get reference of the enemy
+            auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(enemy);
 
-        // Trigger enemy hurt animation
-        ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
+            // Trigger enemy hurt animation
+            ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
 
-        // Stop the enemy's movement
-        enemy_rb.force = Vec2{ 0,0 };
-        enemy_rb.velocity = Vec2{ 0,0 };
+            // Stop the enemy's movement
+            enemy_rb.force = Vec2{ 0,0 };
+            enemy_rb.velocity = Vec2{ 0,0 };
+        }
+        else if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Dummy")
+        {
+            // Trigger dummy hit animation
+            auto& dummy_anim = ECS::GetInstance().GetComponent<Animation>(enemy);
+            dummy_anim.RestartAnimation();
+        }
     }
 
     /*!***********************************************************************
@@ -426,7 +445,8 @@ namespace Ukemochi
         std::vector<EntityID> nearby_enemies;
         for (auto const& entity : m_Entities)
         {
-            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
+            if ((GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
+                || GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy")
                 && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;

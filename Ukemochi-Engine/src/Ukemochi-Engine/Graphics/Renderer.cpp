@@ -212,8 +212,13 @@ void Renderer::updatePlayerBars()
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 
+	const float lerpSpeed = 1.5f;
+	trailingHealthPercentage = glm::mix(trailingHealthPercentage, healthPercentage, lerpSpeed * deltaTime);
+	trailingHealthPercentage = glm::clamp(trailingHealthPercentage, 0.0f, 1.0f);
+
 	std::unordered_map<BarType, float> barUpdates = { 
 		{BarType::Health, healthPercentage}, 
+		{BarType::Trailing_Health, trailingHealthPercentage},
 		{BarType::Blue_Soul, blueSoul}, 
 		{BarType::Red_Soul, redSoul},
 		{BarType::Blue_Charge_Bar, blueCharge},
