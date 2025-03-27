@@ -204,5 +204,9 @@ namespace Ukemochi
 		 Updates the SFX volume bar UI based on the current audio volume level.
 		*************************************************************************/
 		void UpdateSFXBar();
+
+		void showHowToPlay();
+
+		void removeHowToPlayScreen();
 	};
 }

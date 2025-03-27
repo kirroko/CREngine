@@ -19,26 +19,28 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define STB_IMAGE_IMPLEMENTATION
 #include "../vendor/stb/stb_image.h"
 
- /*!
-  * @brief Constructor that loads and creates an OpenGL texture from an image file.
-  *        The texture is assigned to a specific texture unit and configured with filtering and wrapping options.
-  * @param image The path to the image file to load as a texture.
-  * @param texType The type of texture (e.g., GL_TEXTURE_2D).
-  * @param slot The texture unit slot to bind the texture to (e.g., GL_TEXTURE0).
-  * @param format The format of the image data (e.g., GL_RGBA or GL_RGB).
-  * @param pixelType The data type of the image's pixel data (e.g., GL_UNSIGNED_BYTE).
-  */
-Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) : ID(0)
+/**
+ * @brief Constructor that loads and creates an OpenGL texture from an image file.
+ * @param bytes The image data to load as a texture.
+* @param texType The type of texture (e.g., GL_TEXTURE_2D).
+ * @param slot The texture unit slot to bind the texture to (e.g., GL_TEXTURE0).
+ * @param format The format of the image data (e.g., GL_RGBA or GL_RGB).
+ * @param pixelType The data type of the image's pixel data (e.g., GL_UNSIGNED_BYTE).
+ * @param widthImg Image width
+ * @param heightImg Image height
+ */
+Texture::Texture(unsigned char* bytes, GLenum texType, GLenum slot, GLenum format, GLenum pixelType, int widthImg, int heightImg) : ID(0)
 {
 	// Assigns the type of the texture ot the texture object
 	type = texType;
+	
+	// // Stores the width, height, and the number of color channels of the image
+	// int widthImg, heightImg, numColCh;
+	// // Flips the image so it appears right side up
+	// stbi_set_flip_vertically_on_load(true);
+	// // Reads the image from a file and stores it in bytes
+	// unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 
-	// Stores the width, height, and the number of color channels of the image
-	int widthImg, heightImg, numColCh;
-	// Flips the image so it appears right side up
-	stbi_set_flip_vertically_on_load(true);
-	// Reads the image from a file and stores it in bytes
-	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);

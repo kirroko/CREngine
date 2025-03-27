@@ -212,8 +212,13 @@ void Renderer::updatePlayerBars()
 	float blueCharge = static_cast<float>(soul.soul_charges[SoulType::FISH]) / MAX_SOUL_CHARGES;
 	float redCharge = static_cast<float>(soul.soul_charges[SoulType::WORM]) / MAX_SOUL_CHARGES;
 
+	const float lerpSpeed = 1.5f;
+	trailingHealthPercentage = glm::mix(trailingHealthPercentage, healthPercentage, lerpSpeed * deltaTime);
+	trailingHealthPercentage = glm::clamp(trailingHealthPercentage, 0.0f, 1.0f);
+
 	std::unordered_map<BarType, float> barUpdates = { 
 		{BarType::Health, healthPercentage}, 
+		{BarType::Trailing_Health, trailingHealthPercentage},
 		{BarType::Blue_Soul, blueSoul}, 
 		{BarType::Red_Soul, redSoul},
 		{BarType::Blue_Charge_Bar, blueCharge},
@@ -525,13 +530,13 @@ void Renderer::setUpTextures(const std::string& texturePath, int& textureIndex)
 		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
 		GLenum format = (extension == "png") ? GL_RGBA : GL_RGB;
-		Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + textureIndex, format, GL_UNSIGNED_BYTE);
+		// Texture* texture = new Texture(texturePath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + textureIndex, format, GL_UNSIGNED_BYTE); // Not in use? 2025/03/27
 
 		// Set the texture to the specific index in the shader array
 		std::string uniformName = "textures[" + std::to_string(textureIndex) + "]";
-		texture->texUnit(shaderProgram.get(), uniformName.c_str(), textureIndex);
+		// texture->texUnit(shaderProgram.get(), uniformName.c_str(), textureIndex);
 
-		textureCache[texturePath] = texture;
+		// textureCache[texturePath] = texture;
 		texturePathsOrder.push_back(texturePath);
 
 		textureIndex++;
