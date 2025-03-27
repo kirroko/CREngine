@@ -158,6 +158,8 @@ namespace Ukemochi
 		//--Health---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		uiManager->addButton("health bar bg", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
+		uiManager->addButton("health bar red", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar_red", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Trailing_Health, false, []() {
+			});
 		uiManager->addButton("health bar", glm::vec3(353.f, 1000.f, 0.f), glm::vec2(627.f, 66.f), "in game_health bar", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Health, false, []() {
 			});
 		uiManager->addButton("health bar border", glm::vec3(356.f, 1003.f, 0.f), glm::vec2(598.f, 36.f), "in game_health bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
@@ -440,6 +442,7 @@ namespace Ukemochi
 
 		// Health UI
 		uiManager->removeButton("health bar bg");
+		uiManager->removeButton("health bar red");
 		uiManager->removeButton("health bar");
 		uiManager->removeButton("health bar border");
 		uiManager->removeButton("health bar icon");
@@ -983,14 +986,15 @@ namespace Ukemochi
 					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
 					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
-				this->HidePauseMenu();
+				this->HideDefeatScreen();
+				this->RemoveGameUI();
 				Application::Get().GameStarted = false;
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
 				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
-				RemoveGameUI();
-				CreateMainMenuUI();
+				
+				this->CreateMainMenuUI();
 			}
 			});
 	}
