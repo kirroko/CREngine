@@ -28,6 +28,7 @@ Defines the types of UI bars that can be used in the game.
 enum class BarType{
     None,
     Health,
+    Trailing_Health,
     Blue_Soul,
     Red_Soul,
     Blue_Charge_Bar,
