@@ -25,6 +25,8 @@ namespace Ukemochi
     public:
         EntityID player;       // Keep track of the player ID
         EntityID soul;         // Keep track of the floating soul ID
+        EntityID UI_red_soul;  // Keep track of the UI red soul ID
+        EntityID UI_blue_soul; // Keep track of the UI blue soul ID
         EntityID fish_ability; // Keep track of the player's fish ability ID
         EntityID worm_ability; // Keep track of the player's worm ability ID
 

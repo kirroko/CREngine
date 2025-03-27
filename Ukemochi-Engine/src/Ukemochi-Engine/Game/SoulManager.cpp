@@ -30,8 +30,8 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::Init()
     {
-        // Find the player, fish ability and worm abilty entities
-        player = fish_ability = worm_ability = static_cast<EntityID>(-1);
+        // Find the player, souls, fish ability and worm abilty entities
+        player = soul = UI_red_soul = UI_blue_soul = fish_ability = worm_ability = static_cast<EntityID>(-1);
         for (auto const& entity : m_Entities)
         {
             if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
@@ -41,6 +41,16 @@ namespace Ukemochi
             else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Soul")
             {
                 soul = entity; // Floating soul ID is found
+                GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "UI_Red_Soul")
+            {
+                UI_red_soul = entity; // Red soul ID is found
+                GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "UI_Blue_Soul")
+            {
+                UI_blue_soul = entity; // Blue soul ID is found
                 GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
             }
             else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility")
@@ -64,8 +74,8 @@ namespace Ukemochi
     *************************************************************************/
     void SoulManager::Update()
     {
-        // Check if player, floating soul, fish and worm IDs is valid
-        if (player == -1 || soul == -1 || fish_ability == -1 || worm_ability == -1)
+        // Check if player, souls, fish and worm IDs is valid
+        if (player == -1 || soul == -1 || UI_red_soul == -1 || UI_blue_soul == -1 || fish_ability == -1 || worm_ability == -1)
             return;
 
         // Check if player is alive
@@ -139,7 +149,17 @@ namespace Ukemochi
 
         // Gain a soul charge if the soul bar is filled
         if (player_soul.soul_bars[soul_type] >= MAX_SOUL_BAR && player_soul.soul_charges[soul_type] < MAX_SOUL_CHARGES)
+        {
             ++player_soul.soul_charges[soul_type];
+
+            // Enable floating/red/blue soul
+            if (player_soul.current_soul == soul_type)
+                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+            if (soul_type == FISH)
+                GameObjectManager::GetInstance().GetGO(UI_blue_soul)->SetActive(true);
+            else if (soul_type == WORM)
+                GameObjectManager::GetInstance().GetGO(UI_red_soul)->SetActive(true);
+        }
     }
 
     /*!***********************************************************************
@@ -172,14 +192,20 @@ namespace Ukemochi
                 player_soul.current_soul = FISH;
                 player_animator.SetAnimationUninterrupted("SwitchNB");
                 soul_animator.SetAnimation("BlueFlame");
-                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                if (player_soul.soul_charges[FISH] > 0)
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                else
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
             else if (player_soul.soul_bars[WORM] > 0)
             {
                 player_soul.current_soul = WORM;
                 player_animator.SetAnimationUninterrupted("SwitchNR");
                 soul_animator.SetAnimation("RedFlame");
-                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                if (player_soul.soul_charges[WORM] > 0)
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                else
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
         }
         // Currently in FISH soul, switch to WORM soul if available else EMPTY soul
@@ -190,7 +216,10 @@ namespace Ukemochi
                 player_soul.current_soul = WORM;
                 player_animator.SetAnimationUninterrupted("SwitchBR");
                 soul_animator.SetAnimation("RedFlame");
-                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                if (player_soul.soul_charges[WORM] > 0)
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                else
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
             else
             {
@@ -207,7 +236,10 @@ namespace Ukemochi
                 player_soul.current_soul = FISH;
                 player_animator.SetAnimationUninterrupted("SwitchRB");
                 soul_animator.SetAnimation("BlueFlame");
-                GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                if (player_soul.soul_charges[FISH] > 0)
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(true);
+                else
+                    GameObjectManager::GetInstance().GetGO(soul)->SetActive(false);
             }
             else
             {
@@ -273,7 +305,11 @@ namespace Ukemochi
         // Decrease soul charge and reset skill stats
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
         if (!SceneManager::GetInstance().enable_cheatmode) // Dont use soul charge if cheat mode is enabled
+        {
             --player_soul.soul_charges[player_soul.current_soul];
+            GameObjectManager::GetInstance().GetGO(soul)->SetActive(false); // Disable floating soul
+            GameObjectManager::GetInstance().GetGO(UI_blue_soul)->SetActive(false); // Disable blue soul
+        }
         player_soul.skill_ready = false;
         player_soul.skill_timer = 0.f;
 
@@ -313,7 +349,11 @@ namespace Ukemochi
         // Decrease soul charge and reset skill stats
         auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
         if (!SceneManager::GetInstance().enable_cheatmode) // Dont use soul charge if cheat mode is enabled
+        {
             --player_soul.soul_charges[player_soul.current_soul];
+            GameObjectManager::GetInstance().GetGO(soul)->SetActive(false); // Disable floating soul
+            GameObjectManager::GetInstance().GetGO(UI_red_soul)->SetActive(false); // Disable red soul
+        }
         player_soul.skill_ready = false;
         player_soul.skill_timer = 0.f;
 
