@@ -172,13 +172,13 @@ namespace Ukemochi
 		uiManager->addButton("blue soul bar bg", glm::vec3(300.f, 937.f, 0.f), glm::vec2(409.5f, 55.f), "in game_soul bar bg", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("blue soul bar", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 13.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::Blue_Soul, false, []() {
+		uiManager->addButton("blue soul bar", glm::vec3(300.f, 943.f, 0.f), glm::vec2(357.f, 13.f), "in game_soul bar blue", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::Blue_Soul, false, []() {
 			});
 
-		uiManager->addButton("blue soul bar border", glm::vec3(302.f, 941.f, 0.f), glm::vec2(360.f, 20.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
+		uiManager->addButton("blue soul bar border", glm::vec3(302.f, 941.f, 0.f), glm::vec2(360.f, 20.f), "in game_soul bar border", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 2, BarType::None, false, []() {
+		uiManager->addButton("blue fire", glm::vec3(130.f, 943.f, 0.f), glm::vec2(65.f, 71.f), "in game_blue fire", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {
 			});
 
 		// Ability bar
