@@ -1,24 +1,24 @@
 {"frames": {
 
-"Worm Death.png":
-{
-	"frame": {"x":0,"y":0,"w":3960,"h":1080},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":3960,"h":1080},
-	"sourceSize": {"w":3960,"h":1080}
-},
 "Worm Attack.png":
 {
-	"frame": {"x":0,"y":1080,"w":1900,"h":1900},
+	"frame": {"x":1860,"y":0,"w":1900,"h":1900},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1900,"h":1900},
 	"sourceSize": {"w":1900,"h":1900}
 },
+"Worm Death 2.png":
+{
+	"frame": {"x":0,"y":1900,"w":3960,"h":1080},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":3960,"h":1080},
+	"sourceSize": {"w":3960,"h":1080}
+},
 "Worm Walk.png":
 {
-	"frame": {"x":1900,"y":1080,"w":1860,"h":1550},
+	"frame": {"x":0,"y":0,"w":1860,"h":1550},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1860,"h":1550},
@@ -31,6 +31,6 @@
 	"format": "RGBA8888",
 	"size": {"w":3960,"h":2980},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:95bcd2022dd21773e856fb65d1aa4583:111e7d1782c84cba2ffdc220b35cc80f:4956c3d1448ac3840b95a5770ab172e2$"
+	"smartupdate": "$TexturePacker:SmartUpdate:0bd57cab1fd11ce43240879b197e1c6e:1973b4c67357af6013a7d053c4dc47ea:4956c3d1448ac3840b95a5770ab172e2$"
 }
 }
