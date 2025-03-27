@@ -35,6 +35,8 @@ namespace Ukemochi
 
 		void SetBossPhase(int state);
 
+		int GetBossPhase();
+
 	private:
 		GameObject* playerObj;
 		GameObject* hair;

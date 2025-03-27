@@ -53,7 +53,6 @@ namespace Ukemochi
     bool setCamera = false;
     bool setMainMenu = false;
     bool setCutscene = false;
-    bool setAfterBoss = false;
     /*!***********************************************************************
     \brief
         Constructor for SceneManager class.
@@ -220,11 +219,13 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
 #ifndef _DEBUG
-                // We are gonna to play the intro video after everything has been loaded!
+        // We are gonna to play the intro video after everything has been loaded!
         UME_ENGINE_TRACE("Initializing video manager...");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
@@ -236,6 +237,8 @@ namespace Ukemochi
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true))
+            UME_ENGINE_ERROR("Video didn't load properly!");
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false))
             UME_ENGINE_ERROR("Video didn't load properly!");
@@ -434,7 +437,7 @@ namespace Ukemochi
 
         // --- UI UPDATE ---
         ECS::GetInstance().GetSystem<InGameGUI>()->Update(); // Update UI inputs
-        if (!Application::Get().Paused())
+        if (!Application::Get().Paused() && !ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
         {
             if (GameObjectManager::GetInstance().GetGOByTag("Player"))
             {
@@ -503,13 +506,6 @@ namespace Ukemochi
             Application::Get().SetPaused(true);
         }
 
-        //if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6 && !ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done)
-        //{
-        //    ECS::GetInstance().GetSystem<Renderer>()->beginFramebufferRender();
-        //    ECS::GetInstance().GetSystem<VideoManager>()->Update();
-        //    ECS::GetInstance().GetSystem<Renderer>()->endFramebufferRender();
-        //}
-
 	    // Video skipped
         if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
         {
@@ -562,21 +558,10 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<InGameGUI>()->UpdateTitleAnimation();
             }
         }
-        else if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6 && !ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("after_boss"))
+        else if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6
+            && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
         {
-            // Sets the video to play the main menu video
-            if (!setAfterBoss)
-            {
-                ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("after_boss");
-                setAfterBoss = true;
-            }
-            ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-
-            // Plays video as long as it is not done, main menu will loop
-            if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done)
-            {
-                ECS::GetInstance().GetSystem<VideoManager>()->Update();
-            }
+            ECS::GetInstance().GetSystem<VideoManager>()->Update();
         }
         else
         {

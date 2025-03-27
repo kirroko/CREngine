@@ -18,7 +18,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../FrameController.h"
 #include "../Game/EnemyManager.h"
 #include "../Game/PlayerManager.h"
-#include "../SceneManager.h" // for cheat mode
+#include "../SceneManager.h"	   // for cheat mode
+#include "../Graphics/Camera2D.h"  // for camera position
+#include "../Video/VideoManager.h" // for boss cutscene
 
 namespace Ukemochi
 {
@@ -115,11 +117,20 @@ namespace Ukemochi
 					// WIN
 					boss->SetActive(false);
 					hair->SetActive(false);
+					bossCom.BossPhase = 3;
+
+					// Play after boss cutscene
+					ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+					ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("after_boss");
 				}
 				else
 				{
 					Phase2();
 				}
+			}
+			else if (bossCom.BossPhase == 3)
+			{
+				// After death phase
 			}
 		}
 	}
@@ -151,11 +162,11 @@ namespace Ukemochi
 		{
 			// spawn blob blob
 			static int number = 0;
-			GameObject *cloneObject = GameObjectManager::GetInstance().GetGOByTag("BlobClone");
+			GameObject* cloneObject = GameObjectManager::GetInstance().GetGOByTag("BlobClone");
 			if (cloneObject != nullptr)
 			{
 				std::string name = "blob" + std::to_string(number++);
-				GameObject &newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Blob");
+				GameObject& newObject = GameObjectManager::GetInstance().CloneObject(*cloneObject, name, "Blob");
 
 				newObject.GetComponent<Transform>().position.x = playerObj->GetComponent<Transform>().position.x;
 				newObject.GetComponent<Transform>().position.y = playerObj->GetComponent<Transform>().position.y;
@@ -213,7 +224,7 @@ namespace Ukemochi
 						hairPosX = hair->GetComponent<Transform>().position.x;
 					}
 
-					hair->GetComponent<Transform>().position.y = playerObj->GetComponent<Rigidbody2D>().position.y-25.f;
+					hair->GetComponent<Transform>().position.y = playerObj->GetComponent<Rigidbody2D>().position.y - 25.f;
 					hairHitBox->GetComponent<Transform>().position.y = hair->GetComponent<Transform>().position.y - 75.f;
 					hairHitBox->SetActive(true);
 				}
@@ -292,7 +303,7 @@ namespace Ukemochi
 
 		for (int i = 0; i < 2; i++)
 		{
-			GameObject *cloneObject;
+			GameObject* cloneObject;
 			GameObject* cloneObject2;
 			cloneObject2 = GameObjectManager::GetInstance().GetGOByTag("ShadowClone");
 
@@ -326,7 +337,7 @@ namespace Ukemochi
 					}
 					else
 					{
-						newObject.AddComponent(Enemy{x, y, Enemy::FISH, newObject.GetInstanceID()});
+						newObject.AddComponent(Enemy{ x, y, Enemy::FISH, newObject.GetInstanceID() });
 					}
 
 					if (shadow.HasComponent<SpriteRender>())
@@ -336,7 +347,7 @@ namespace Ukemochi
 					}
 					else
 					{
-						SpriteRender sr = {"../Assets/Textures/Fish_Shadow.png", SPRITE_SHAPE::BOX, 6};
+						SpriteRender sr = { "../Assets/Textures/Fish_Shadow.png", SPRITE_SHAPE::BOX, 6 };
 						shadow.AddComponent<SpriteRender>(sr);
 					}
 
@@ -378,7 +389,7 @@ namespace Ukemochi
 					}
 					else
 					{
-						newObject.AddComponent(Enemy{x, y, Enemy::WORM, newObject.GetInstanceID()});
+						newObject.AddComponent(Enemy{ x, y, Enemy::WORM, newObject.GetInstanceID() });
 					}
 
 					if (shadow.HasComponent<SpriteRender>())
@@ -388,7 +399,7 @@ namespace Ukemochi
 					}
 					else
 					{
-						SpriteRender sr = {"../Assets/Textures/Worm_shadow.png", SPRITE_SHAPE::BOX, 6};
+						SpriteRender sr = { "../Assets/Textures/Worm_shadow.png", SPRITE_SHAPE::BOX, 6 };
 						shadow.AddComponent<SpriteRender>(sr);
 					}
 
@@ -410,7 +421,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<DungeonManager>()->rooms[6].entities.push_back(newObject.GetInstanceID());
 					shadow.SetActive(true);
 				}
-				
+
 			}
 		}
 
@@ -477,5 +488,9 @@ namespace Ukemochi
 	{
 		bossCom.BossPhase = state;
 		std::clamp(bossCom.BossPhase, 0, 2);
+	}
+	int BossManager::GetBossPhase()
+	{
+		return bossCom.BossPhase;
 	}
 }

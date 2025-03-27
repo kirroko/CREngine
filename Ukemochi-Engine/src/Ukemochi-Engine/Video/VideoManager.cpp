@@ -26,6 +26,30 @@ namespace Ukemochi {
 
     /*!***********************************************************************
     \brief
+     Checks if a video is playing.
+
+    \return True if the video is playing, false otherwise.
+    *************************************************************************/
+    bool VideoManager::IsVideoPlaying() const
+    {
+        // Check is a video is selected
+        if (currentVideo.empty())
+            return false;
+
+        // Find the video in the map
+        auto it = videos.find(currentVideo);
+        if (it == videos.end())
+            return false;
+
+        // Get reference to the video data
+        const VideoData& video = it->second;
+
+        // Check if the video is still playing
+        return (video.plm != nullptr && !video.done && video.currentFrame < video.totalFrames);
+    }
+
+    /*!***********************************************************************
+    \brief
      Checks if a video has finished playing.
 
     \param videoName The name of the video to check.

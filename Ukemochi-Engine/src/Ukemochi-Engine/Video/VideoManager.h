@@ -76,6 +76,14 @@ namespace Ukemochi {
 
         /*!***********************************************************************
         \brief
+         Checks if a video is playing.
+
+        \return True if the video is playing, false otherwise.
+        *************************************************************************/
+        bool IsVideoPlaying() const;
+
+        /*!***********************************************************************
+        \brief
          Checks if a video has finished playing.
 
         \param videoName The name of the video to check.
@@ -84,7 +92,6 @@ namespace Ukemochi {
         bool IsVideoDonePlaying(const std::string& videoName);
 
     private:
-        
         double lastFrameTime = 0.0f; // Timestamp of the last frame update
         GLuint VAO{}, VBO{}; // OpenGL Vertex Array Object and Vertex Buffer Object
 
