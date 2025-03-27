@@ -158,7 +158,10 @@ namespace Ukemochi {
          */
         bool LoadVideo(const std::string& name, const char* filepath, bool loop, bool async);
 
-        bool FinishLoadingVideo(const VideoData& video);
+        /**
+        * @brief Finish the load by sending data to GPU
+        */
+        bool FinishLoadingVideo(VideoData& video);
         
         /**
          * @brief Update video player system

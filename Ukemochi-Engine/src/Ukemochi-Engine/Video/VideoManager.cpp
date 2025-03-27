@@ -310,14 +310,14 @@ namespace Ukemochi {
 
         glBindVertexArray(0);
 
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
+
 
         videos[name] = std::move(video);  // Store the video in the map
 
         return true;
     }
 
-    bool VideoManager::FinishLoadingVideo(const VideoData& video)
+    bool VideoManager::FinishLoadingVideo(VideoData& video)
     {
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
         const int BATCH_SIZE = 16;
@@ -334,6 +334,9 @@ namespace Ukemochi {
                 {  // Check that buffer exists and has data
                     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, j,
                         video.width, video.height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.loadingContext.rgb_buffer[j].get());
+
+                    // Free memory immediately after uploading to GPU
+                    video.loadingContext.rgb_buffer[j].reset(); 
                 }
                 else
                 {
@@ -567,6 +570,8 @@ namespace Ukemochi {
     *************************************************************************/
     void VideoManager::Free()
     {
+        if (currentVideo.empty()) return;
+
         VideoData& video = videos[currentVideo];
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
 
@@ -583,6 +588,12 @@ namespace Ukemochi {
             glDeleteTextures(1, &video.textureID);
             video.textureID = 0;
         }
+
+        for (auto& buffer : video.loadingContext.rgb_buffer)
+            buffer.reset();
+
+        video.loadingContext.rgb_buffer.clear();
+        video.loadingContext.jobParams.clear();
 
         video.done = true;
     }

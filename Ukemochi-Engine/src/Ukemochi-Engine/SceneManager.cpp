@@ -230,7 +230,7 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };        
         es_current = ES_PLAY;
 #else
         // We are gonna to play the intro video after everything has been loaded!
@@ -266,6 +266,7 @@ namespace Ukemochi
 	        UME_ENGINE_ERROR("Video didn't load properly!");
 #endif
         UME_ENGINE_TRACE("Loading Assets...");
+        //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(0, "../Assets/Video/intro-cutscene.wav", "Music");
         ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
 	    ECS::GetInstance().GetSystem<AssetManager>()->AsyncTextureLoad();
 #ifdef _DEBUG
@@ -553,13 +554,15 @@ namespace Ukemochi
                         ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = true;
                         ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"]);
                         ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"]);
+                        ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"]);
+                        ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"]);
                         ECS::GetInstance().GetSystem<AssetManager>()->LoadAllTexture(); // Load all texture after async
                         ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = false;
                         ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
                         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                         {
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                            audioM.PlaySFX(0); // Cutscene audio
+							//audioM.PlayMusic(0);
                         }
                         Application::Get().SetPaused(false);
                         UME_ENGINE_TRACE("All jobs completed, ending loading screen");
@@ -589,6 +592,11 @@ namespace Ukemochi
             // Sets the video to play the cutscene
             if (!setCutscene)
             {
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                    //audioM.PlayMusic(0);
+                }
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
                 setCutscene = true;
             }
