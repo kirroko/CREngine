@@ -640,6 +640,8 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<DungeonManager>()->player = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->player = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->UI_red_soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->UI_blue_soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->fish_ability = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->worm_ability = static_cast<EntityID>(-1);
 
@@ -1789,6 +1791,14 @@ namespace Ukemochi
                         player_soul.soul_bars[i] = MAX_SOUL_BAR;
                         player_soul.soul_charges[i] = MAX_SOUL_CHARGES;
                     }
+
+                    // Enable floating, red and blue souls
+                    if (player_soul.current_soul == FISH || player_soul.current_soul == WORM)
+                        GameObjectManager::GetInstance().GetGOByTag("Soul")->SetActive(true);
+                    if (GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul"))
+                        GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul")->SetActive(true);
+                    if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
+                        GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul")->SetActive(true);
                 }
             }
             else // If cheat mode is disabled
