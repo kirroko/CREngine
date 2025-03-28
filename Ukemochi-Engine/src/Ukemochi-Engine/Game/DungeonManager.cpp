@@ -173,6 +173,19 @@ namespace Ukemochi
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.StopMusic(audioM.GetMusicIndex("PreBoss_BGM"));
+				// Play BGM at 0.2 volume
+				if (audioM.GetMusicIndex("BGM") != -1)
+				{
+					int bgmIndex = audioM.GetMusicIndex("BGM");
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(bgmIndex))
+					{
+						audioM.PlayMusic(bgmIndex);
+						// Set volume for BGM
+						ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(bgmIndex, 0.2f, "Music");
+					}
+				}
+
 				if (audioM.GetSFXindex("LevelChange") != -1)
 				{
 					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
@@ -187,6 +200,11 @@ namespace Ukemochi
 		if (current_room_id == 6 && !end_boss && ECS::GetInstance().GetSystem<BossManager>()->GetBossPhase() == 3
 			&& ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("after_boss"))
 		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.StopMusic(audioM.GetMusicIndex("AfterBoss_BGM"));
+			}
 			//ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
 			end_boss = true;
 		}

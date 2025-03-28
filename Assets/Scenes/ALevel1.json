@@ -4582,6 +4582,12 @@
                             "Name": "Wind_BGM",
                             "Path": "../Assets/Audio/BGM/Cold_Wind.wav"
                         }, {
+                            "Name": "PreBoss_BGM",
+                            "Path": "../Assets/Audio/BGM/Pre-Boss_CutScene BGM.wav"
+                        }, {
+                            "Name": "AfterBoss_BGM",
+                            "Path": "../Assets/Audio/BGM/Post-Boss_EndCutScene BGM.wav"
+                        }, {
                             "Name": "BGMOG",
                             "Path": "../Assets/Audio/BGM/By_ProfBGM_GAME.wav"
                         }],
