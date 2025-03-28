@@ -386,7 +386,7 @@ namespace Ukemochi
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+                audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
             }
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
             {
