@@ -838,8 +838,8 @@ namespace Ukemochi
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
 				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
 				RemoveGameUI();
-				CreateMainMenuUI();
 				this->HidePauseMenu();
+				CreateMainMenuUI();
 				std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Prevent double clicking
 			}
 			});
