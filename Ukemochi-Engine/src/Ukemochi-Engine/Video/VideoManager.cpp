@@ -493,7 +493,7 @@ namespace Ukemochi {
                     {
                         audioM.PlayMusic(windBgmIndex);
                         // Set volume for Wind_BGM
-                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.8f, "Music");
+                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.4f, "Music");
                     }
                 }
             }
