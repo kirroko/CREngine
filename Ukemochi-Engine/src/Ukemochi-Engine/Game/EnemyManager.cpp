@@ -326,7 +326,7 @@ namespace Ukemochi
                 }
 
                 // When enemy health reaches 0
-                if (enemycomponent.health <= 0.f && enemycomponent.state != Enemy::DEAD && !enemycomponent.isDead) // Add !isDead check
+                if (enemycomponent.health <= 0.f && enemycomponent.state != Enemy::DEAD) // Add !isDead check
                 {
                     // Play death sound immediately when health hits 0
                     if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -643,7 +643,7 @@ namespace Ukemochi
 
                 if (enemycomponent.isDead && object->GetActive())
                 {
-                    if (anim.currentClip == "Flame" && anim.current_frame == 26)
+                    if (anim.currentClip == "Flame" && anim.current_frame == 25)
                     {
                         object->SetActive(false);
                     }
