@@ -591,11 +591,29 @@ namespace Ukemochi
                 }
 
                 // If the enemy is in DEAD state, remove it from the list after processing DeadState
-                if (enemycomponent.state == Enemy::DEAD)
+                if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
                 {
                     if (object->GetComponent<Animation>().currentClip != "Death")
                     {
                         object->GetComponent<Animation>().SetAnimation("Death");
+                    }
+
+                    if (anim.currentClip == "Death")
+                    {
+                        if (enemycomponent.type == Enemy::FISH && anim.current_frame == 29)
+                        {
+                            anim.SetAnimation("Flame");
+                            GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
+                            enemycomponent.isDead = true;
+                        }
+
+                        if (enemycomponent.type == Enemy::WORM && anim.current_frame == 27)
+                        {
+                            anim.SetAnimation("Flame");
+                            GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
+                            enemycomponent.isDead = true;
+                        }
+                           
                     }
 
                     if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -613,10 +631,6 @@ namespace Ukemochi
 
                     // Harvest the soul of the dead enemy
                     ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 20.f);
-
-                    object->SetActive(false);
-                    GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
-                    enemycomponent.isDead = true;
                     if (enemycomponent.isWithPlayer && numEnemyTarget >= 1)
                     {
                         numEnemyTarget--;
@@ -625,12 +639,20 @@ namespace Ukemochi
                             numEnemyTarget = 0;
                         }
                     }
+                }
+
+                if (enemycomponent.isDead && object->GetActive())
+                {
+                    if (anim.currentClip == "Flame" && anim.current_frame == 26)
+                    {
+                        object->SetActive(false);
+                    }
+                    //Put your dead stuff here
                     ++it;
                     continue;
                 }
 
                 // PLAYER KICK ENEMY
-
                 if (enemycomponent.isKick)
                 {
                     if (object->GetComponent<Animation>().currentClip == "Hurt" && object->GetComponent<Animation>().current_frame == 3)
