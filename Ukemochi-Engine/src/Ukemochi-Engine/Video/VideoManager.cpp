@@ -507,6 +507,45 @@ namespace Ukemochi {
             }
         }
 
+        if (ECS::GetInstance().GetSystem<VideoManager>()->currentVideo == "before_boss")
+        {
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+                    // Play BGM at 0.4 volume
+                    if (audioM.GetMusicIndex("PreBoss_BGM") != -1)
+                    {
+                        int PreBoss_BGMIndex = audioM.GetMusicIndex("PreBoss_BGM");
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(PreBoss_BGMIndex))
+                        {
+                            audioM.PlayMusic(PreBoss_BGMIndex);
+                            // Set volume for Wind_BGM
+                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(PreBoss_BGMIndex, 0.4f, "Music");
+                        }
+                    }
+                }
+        }
+
+        if (ECS::GetInstance().GetSystem<VideoManager>()->currentVideo == "after_boss")
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                // Play BGM at 0.4 volume
+                if (audioM.GetMusicIndex("AfterBoss_BGM") != -1)
+                {
+                    int AfterBoss_BGMIndex = audioM.GetMusicIndex("AfterBoss_BGM");
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(AfterBoss_BGMIndex))
+                    {
+                        audioM.PlayMusic(AfterBoss_BGMIndex);
+                        // Set volume for Wind_BGM
+                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(AfterBoss_BGMIndex, 0.4f, "Music");
+                    }
+                }
+            }
+        }
         // Only update the video frame if enough time has passed
         if (video.currentFrame < video.totalFrames - 1)
         {
