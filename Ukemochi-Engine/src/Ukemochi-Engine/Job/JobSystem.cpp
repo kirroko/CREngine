@@ -93,7 +93,7 @@ ThreadPool::~ThreadPool()
 }
 
 /**
- * @brief Enqueue a job
+ * @brief Enqueue a job, job are copied into the queue
  * @param job The job to enqueue
  */
 void ThreadPool::EnqueueJob(const Declaration& job)
@@ -155,6 +155,15 @@ void Ukemochi::job::KickJobs(int count, const Declaration aDecl[])
 }
 
 /**
+ * @brief Check if all jobs are completed without blocking
+ * @return true if all jobs are completed, false otherwise
+ */
+bool Ukemochi::job::AreJobsCompleted()
+{
+    return g_jobCounter.count <= 0;
+}
+
+/**
  * @brief Wait for all jobs to complete
  */
 void Ukemochi::job::WaitForCounter()
@@ -163,6 +172,20 @@ void Ukemochi::job::WaitForCounter()
     g_jobCounter.condition.wait(lock, []()
     {
        return g_jobCounter.count.load() == 0; 
+    });
+}
+
+/**
+ * @brief Wait for all jobs to complete with a timeout
+ * @param ms The timeout in milliseconds
+ * @return true if all jobs completed, false otherwise
+ */
+bool Ukemochi::job::WaitForCounterWithTimeout(uint32_t ms)
+{
+    std::unique_lock<std::mutex> lock(g_jobCounter.mutex);
+    return g_jobCounter.condition.wait_for(lock, std::chrono::milliseconds(ms), []()
+    {
+        return g_jobCounter.count <= 0;
     });
 }
 

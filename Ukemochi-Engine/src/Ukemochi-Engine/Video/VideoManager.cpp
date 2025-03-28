@@ -142,7 +142,7 @@ namespace Ukemochi {
     \param loop A boolean indicating whether the video should loop.
     \return True if the video was loaded successfully, false otherwise.
     *************************************************************************/
-    bool VideoManager::LoadVideo(const std::string& name, const char* filepath, bool loop)
+    bool VideoManager::LoadVideo(const std::string& name, const char* filepath, bool loop, bool async)
     {
         VideoData video;
         video.plm = plm_create_with_filename(filepath);
@@ -161,9 +161,10 @@ namespace Ukemochi {
         int width = plm_get_width(video.plm);
         int height = plm_get_height(video.plm);
         int frameRate = (int)plm_get_framerate(video.plm);
+        video.width = width;
+        video.height = height;
         video.totalFrames = static_cast<int>(plm_get_duration(video.plm) * frameRate); // Total frames
-        // Compute the required time per frame
-        video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm);
+        video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm); // Compute the required time per frame
         video.loop = loop;
 
 #ifdef _DEBUG
@@ -176,13 +177,9 @@ namespace Ukemochi {
         // Allocate storage for texture array
         video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
 
-        // Allocate RGB buffer
-        // video.video_ctx = std::make_unique<VideoContext>(width, height);
-
-        std::vector<std::unique_ptr<uint8_t[]>> frameBuffers(video.totalFrames); // store frame data
-        for (int i = 0; i < video.totalFrames; ++i)
-            frameBuffers[i] = std::make_unique<uint8_t[]>(width * height * 3);
-
+        // Allocate the context on the heap, contains the buffer and jobParams
+        auto context = std::make_shared<VideoLoadingContext>(video.totalFrames, width, height);
+ 
         static auto frame_to_rgb = [](uintptr_t param)
         {
             VideoDecodeJobParams* jobParams = reinterpret_cast<VideoDecodeJobParams*>(param);
@@ -210,24 +207,32 @@ namespace Ukemochi {
         };
 
         // Pre-allocate job parameters and declarations
-        std::vector<VideoDecodeJobParams> jobParams(video.totalFrames);
         std::vector<job::Declaration> jobDecls(video.totalFrames);
         
         // Crafting the jobs
         for (int i = 0; i < video.totalFrames; ++i)
         {
             // Decode the next frame
-            jobParams[i].filename = const_cast<char*>(filepath);
-            jobParams[i].rgb_buffer = frameBuffers[i].get();
-            jobParams[i].width = width;
-            jobParams[i].frameIndex = i;
-            jobParams[i].frameDuration = video.frameDuration;
+            context->jobParams[i].filename = const_cast<char*>(filepath);
+            context->jobParams[i].rgb_buffer = context->rgb_buffer[i].get();
+            context->jobParams[i].width = width;
+            context->jobParams[i].frameIndex = i;
+            context->jobParams[i].frameDuration = video.frameDuration;
 
             jobDecls[i].m_pEntry = frame_to_rgb;
-            jobDecls[i].m_param = reinterpret_cast<uintptr_t>(&jobParams[i]);
+            jobDecls[i].m_param = reinterpret_cast<uintptr_t>(&context->jobParams[i]);
             jobDecls[i].m_priority = job::Priority::NORMAL;
         }
 
+        if (async)
+        {
+            Application::Get().SetPaused(true); // Don't run the system, render video loading till done.
+            job::KickJobs(static_cast<int>(jobDecls.size()), jobDecls.data());
+            video.loadingContext = std::move(*context);
+            videos[name] = std::move(video);
+            return true;
+        }
+        
         auto startTime = std::chrono::high_resolution_clock::now();
         job::KickJobsAndWait(static_cast<int>(jobDecls.size()), jobDecls.data());
         auto endTime = std::chrono::high_resolution_clock::now();
@@ -245,10 +250,10 @@ namespace Ukemochi {
             // Upload this batch of frames
             for (int j = i; j < end; j++)
             {
-                if (frameBuffers[j])
+                if (context->rgb_buffer[j])
                 {  // Check that buffer exists and has data
                     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, j,
-                        width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, frameBuffers[j].get());
+                        width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, context->rgb_buffer[j].get());
                 }
                 else
                 {
@@ -305,9 +310,88 @@ namespace Ukemochi {
 
         glBindVertexArray(0);
 
-        ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(0, "../Assets/Video/intro-cutscene.wav", "SFX");
+
 
         videos[name] = std::move(video);  // Store the video in the map
+
+        return true;
+    }
+
+    bool VideoManager::FinishLoadingVideo(VideoData& video)
+    {
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+        const int BATCH_SIZE = 16;
+        // Upload frames in batches, gives the GPU driver a chance to optimize the uploads and prevents potential pipeline stalls
+        for (int i = 0; i < video.totalFrames; i += BATCH_SIZE)
+        {
+            // Calculate end of this batch (or last frame)
+            int end = std::min(i + BATCH_SIZE, video.totalFrames);
+    
+            // Upload this batch of frames
+            for (int j = i; j < end; j++)
+            {
+                if (video.loadingContext.rgb_buffer[j])
+                {  // Check that buffer exists and has data
+                    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, j,
+                        video.width, video.height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.loadingContext.rgb_buffer[j].get());
+
+                    // Free memory immediately after uploading to GPU
+                    video.loadingContext.rgb_buffer[j].reset(); 
+                }
+                else
+                {
+                    UME_ENGINE_ERROR("Missing frame data at index {0}", j);
+                }
+                UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2} in batch {3}/{4}", j + 1, video.totalFrames, j, i / BATCH_SIZE, video.totalFrames/BATCH_SIZE);
+            }
+        }
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        // Disable looping for playback
+        plm_set_loop(video.plm, false); // Handled manually in `UpdateAndRenderVideo()
+
+        int storedLayers = 0;
+        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &storedLayers);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        UME_ENGINE_INFO("Total stored frames in OpenGL texture array: {0}", storedLayers);
+
+        // Debug check
+        if (storedLayers != video.totalFrames)
+        {
+            UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", video.totalFrames, storedLayers);
+            return false;
+        }
+
+        float vertices[] = {
+            // Positions         // Colors      // Texture Coords
+            -0.5f, -0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 1.0f,  // Bottom-left (Y flipped)
+             0.5f, -0.5f, 0.0f,  1.0f,1.0f,1.0f,   1.0f, 1.0f,  // Bottom-right (Y flipped)
+             0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   1.0f, 0.0f,  // Top-right (Y flipped)
+
+            -0.5f, -0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 1.0f,  // Bottom-left (Y flipped)
+             0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   1.0f, 0.0f,  // Top-right (Y flipped)
+            -0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 0.0f   // Top-left (Y flipped)
+        };
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // Color
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
+        glEnableVertexAttribArray(2);
+
+        glBindVertexArray(0);
 
         return true;
     }
@@ -486,6 +570,8 @@ namespace Ukemochi {
     *************************************************************************/
     void VideoManager::Free()
     {
+        if (currentVideo.empty()) return;
+
         VideoData& video = videos[currentVideo];
         ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
 
@@ -502,6 +588,12 @@ namespace Ukemochi {
             glDeleteTextures(1, &video.textureID);
             video.textureID = 0;
         }
+
+        for (auto& buffer : video.loadingContext.rgb_buffer)
+            buffer.reset();
+
+        video.loadingContext.rgb_buffer.clear();
+        video.loadingContext.jobParams.clear();
 
         video.done = true;
     }

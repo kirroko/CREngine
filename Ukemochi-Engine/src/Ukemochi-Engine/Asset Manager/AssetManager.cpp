@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "AssetManager.h"
 #include "../include/rapidjson/istreamwrapper.h"
 #include "../include/rapidjson/document.h"
+#include "Ukemochi-Engine/Job/JobSystem.h"
 
 namespace Ukemochi
 {
@@ -264,55 +265,49 @@ namespace Ukemochi
 	*/
 	void AssetManager::addTexture(std::string file_path)
 	{
-		// Skip if the texture is part of an atlas
-		/*if (isTextureInAtlas(file_path))
-		{
-			UME_ENGINE_INFO("Skipping atlas subtexture: {0}", file_path);
-			return;
-		}*/
-
 		if (texture_list.find(file_path) != texture_list.end())
 		{
-			// std::cout << "Texture already exists";
 			UME_ENGINE_INFO("Texture {0} already exists in list", file_path);
 			return;
-		}
-		else
-		{
-			//std::cout << "Adding texture: " << file_path << " /from addTexture() line 85" << std::endl;
 		}
 
 		std::string extention = file_path.substr(file_path.find_last_of('.') + 1);
 		std::transform(extention.begin(), extention.end(), extention.begin(), ::tolower);
+		
+		auto context = std::make_shared<TextureLoadJobData>();
+		context->imagePath = file_path;
+		stbi_set_flip_vertically_on_load(true);
+		static auto stbLoadTexture = [](uintptr_t param)
+		{
+			TextureLoadJobData* data = reinterpret_cast<TextureLoadJobData*>(param);
+			// UME_ENGINE_TRACE("Ayo where my data at {0} ?", data->imagePath);
+			data->bytes = stbi_load(data->imagePath.c_str(), &data->widthImg, &data->heightImg, &data->numColCh, 0);
+			//unsigned char* image = stbi_load(data->imagePath.c_str(), &data->widthImg, &data->heightImg, &data->numColCh, 0);
+			//data->bytes = new unsigned char[data->widthImg * data->heightImg * data->numColCh];
+			//memcpy_s(data->bytes, data->widthImg * data->heightImg * data->numColCh, image, data->widthImg * data->heightImg * data->numColCh);
+			//stbi_image_free(image);
+		};
 
-		GLenum file_render;
-		if (extention.compare("png") == 0)
-		{
-			file_render = GL_RGBA;
-		}
-		else if (extention.compare("jpeg") == 0 || extention.compare("jpg") == 0)
-		{
-			file_render = GL_RGB;
-		}
-		else
-		{
-			file_render = GL_RGB;
-		}
+		job::Declaration jobDeclaration;
+		jobDeclaration.m_pEntry = stbLoadTexture;
+		jobDeclaration.m_param = reinterpret_cast<uintptr_t>(context.get());
+		jobDeclaration.m_priority = job::Priority::NORMAL;
 
+		job::KickJob(jobDeclaration);
+		textureLoadingContexts.push_back(context); // Here we store the context to process the texture later
+		// Each add kicks the job to load the texture then we poll the job system to check if the texture is loaded
+		// The polling will happen on the main thread so by the time it reaches there, ideally the texture will be done loading
+		// We will create the texture object in the main thread and populate the texture_list
+		
 		// Load and store the texture with the determined format
-		std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(texture_list_size), file_render, GL_UNSIGNED_BYTE));
-		//textures.push_back(texture);
-		//textures_enabled.push_back(true);
-		std::string uniformName = "textures[" + std::to_string(texture_list_size) + "]";
-		texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(texture_list_size));
-
-		//texture_list[file_path] = texture;
-		texture_list.emplace(std::make_pair(file_path, texture));
-		texture_order.push_back(file_path);
-		texture_list_size++;
-		UME_ENGINE_INFO("Texture {0} added successfully", file_path);
-
-		//std::cout << "Loaded texture: " << file_path << ", Texture ID: " << texture->ID << std::endl;
+		// std::shared_ptr<Texture> texture(new Texture(file_path.c_str(), GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(texture_list_size), file_render, GL_UNSIGNED_BYTE));
+		// std::string uniformName = "textures[" + std::to_string(texture_list_size) + "]";
+		// texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(texture_list_size));
+		//
+		// texture_list.emplace(std::make_pair(file_path, texture));
+		// texture_order.push_back(file_path);
+		// texture_list_size++;
+		// UME_ENGINE_INFO("Texture {0} added successfully", file_path);
 	}
 
 	/*!
@@ -594,6 +589,56 @@ namespace Ukemochi
 		return texture_list_size;
 	}
 
+	/**
+	 * @brief Async texture loading
+	 */
+	void AssetManager::AsyncTextureLoad()
+	{
+		for (auto const& dir : std::filesystem::recursive_directory_iterator(asset_dir))
+		{
+			if (dir.is_directory())
+				continue;
+
+			//file is a file
+			const std::filesystem::path& to_load = dir.path();
+			std::string visualize = to_load.generic_string();
+
+			if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
+			{
+				std::string file_path = to_load.generic_string();
+				std::replace(file_path.begin(), file_path.end(), '\\', '/');
+				if (isAtlasTexture(file_path))
+				{
+					std::string sheetName = file_path.substr(file_path.find_last_of('/') + 1);
+					sheetName = sheetName.substr(0, sheetName.find_last_of('.')); // Remove extension
+
+					// Handle atlas texture
+					std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
+					parseAtlasJSON(json_path, sheetName);
+				}
+				else
+				{
+					addTexture(file_path);
+				}
+			}
+		}
+	}
+	
+	void AssetManager::LoadAllTexture()
+	{
+		for (auto& data : textureLoadingContexts)
+		{
+			std::shared_ptr<Texture> texture(new Texture(data->bytes, GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(texture_list_size), GL_RGBA, GL_UNSIGNED_BYTE, data->widthImg, data->heightImg));
+			std::string uniformName = "textures[" + std::to_string(texture_list_size) + "]";
+			texture->texUnit(shader_list.find("default")->second.get(), uniformName.c_str(), static_cast<GLuint>(texture_list_size));
+
+			texture_list.emplace(std::make_pair(data->imagePath, texture));
+			texture_order.push_back(data->imagePath);
+			texture_list_size++;
+			UME_ENGINE_INFO("Texture {0} added successfully", data->imagePath);
+		}
+	}
+
 	/*!
 	* @brief An overarching function that is called at the start to read through the Asset folder
 	* and creates the respective objects based on the file extention
@@ -611,32 +656,33 @@ namespace Ukemochi
 			//file is a file
 			const std::filesystem::path& to_load = dir.path();
 			std::string visualize = to_load.generic_string();
-			if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
-			{
-				std::string file_path = to_load.generic_string();
-				std::replace(file_path.begin(), file_path.end(), '\\', '/');
-				if (isAtlasTexture(file_path))
-				{
-					// Derive sheetName from file_path
-					std::string sheetName = file_path.substr(file_path.find_last_of('/') + 1);
-					sheetName = sheetName.substr(0, sheetName.find_last_of('.')); // Remove extension
 
-					// Handle atlas texture
-					std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
-					parseAtlasJSON(json_path, sheetName); 
-				}
-				else
-				{
-					// Handle regular texture
-					addTexture(file_path);
-				}
-			}
-			else if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
+			if (to_load.extension() == ".mp3" || to_load.extension() == ".wav")
 			{
 				std::string file_path = to_load.generic_string();
 				std::replace(file_path.begin(), file_path.end(), '\\', '/');
 				addSound(file_path);
 			}
+			// else if (to_load.extension() == ".jpeg" || to_load.extension() == ".jpg" || to_load.extension() == ".png")
+			// {
+			// 	std::string file_path = to_load.generic_string();
+			// 	std::replace(file_path.begin(), file_path.end(), '\\', '/');
+			// 	if (isAtlasTexture(file_path))
+			// 	{
+			// 		// Derive sheetName from file_path
+			// 		std::string sheetName = file_path.substr(file_path.find_last_of('/') + 1);
+			// 		sheetName = sheetName.substr(0, sheetName.find_last_of('.')); // Remove extension
+			//
+			// 		// Handle atlas texture
+			// 		std::string json_path = file_path.substr(0, file_path.find_last_of('.')) + ".json";
+			// 		parseAtlasJSON(json_path, sheetName);
+			// 	}
+			// 	else
+			// 	{
+			// 		// Handle regular texture
+			// 		addTexture(file_path);
+			// 	}
+			// }
 			else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
 			{
 				std::string holder = to_load.filename().generic_string();
@@ -881,10 +927,11 @@ namespace Ukemochi
 	\param[in] atlasPath
 	 The file path of the sprite sheet texture.
 	*************************************************************************/
-	void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
-	{
-		spriteSheets[sheetName] = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	}
+	// void AssetManager::loadSpriteSheet(const std::string& sheetName, const std::string& atlasPath)
+	// {
+	// 	// Not in use? 2025/3/27
+	// 	// spriteSheets[sheetName] = std::make_unique<Texture>(atlasPath.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	// }
 
 	/*!***********************************************************************
 	\brief

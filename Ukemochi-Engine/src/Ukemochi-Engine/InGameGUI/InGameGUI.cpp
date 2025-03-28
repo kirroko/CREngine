@@ -832,14 +832,14 @@ namespace Ukemochi
 					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
 					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
-				// Application::Get().GameStarted = false;
-				this->HidePauseMenu();
 				Application::Get().SetPaused(true);
+				Application::Get().GameStarted = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
 				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
 				RemoveGameUI();
 				CreateMainMenuUI();
+				this->HidePauseMenu();
 				std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Prevent double clicking
 			}
 			});

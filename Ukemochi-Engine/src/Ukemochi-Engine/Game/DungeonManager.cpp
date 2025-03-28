@@ -92,6 +92,18 @@ namespace Ukemochi
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
 			transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
+
+			// Set red and blue soul positions to new room position
+			if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
+			{
+				auto& blue_soul_transform = GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul")->GetComponent<Transform>();
+				blue_soul_transform.position.x -= ROOM_WIDTH;
+			}
+			if (GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul"))
+			{
+				auto& red_soul_transform = GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul")->GetComponent<Transform>();
+				red_soul_transform.position.x -= ROOM_WIDTH;
+			}
 		}
 		else
 		{
@@ -101,6 +113,18 @@ namespace Ukemochi
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
 			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
+
+			// Set red and blue soul positions to new room position
+			if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
+			{
+				auto& blue_soul_transform = GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul")->GetComponent<Transform>();
+				blue_soul_transform.position.x += ROOM_WIDTH;
+			}
+			if (GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul"))
+			{
+				auto& red_soul_transform = GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul")->GetComponent<Transform>();
+				red_soul_transform.position.x += ROOM_WIDTH;
+			}
 		}
 
 		// Play boss cutscene when entering the boss room (room 6)
@@ -313,6 +337,12 @@ namespace Ukemochi
 			{
 				player_soul.soul_bars[i] = 0.f;
 				player_soul.soul_charges[i] = 0;
+
+				// Disable red and blue souls
+				if (GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul"))
+					GameObjectManager::GetInstance().GetGOByTag("UI_Red_Soul")->SetActive(false);
+				if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
+					GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul")->SetActive(false);
 
 				// Currently in FISH soul, switch to EMPTY soul
 				if (player_soul.current_soul == FISH && player_soul.current_soul == i)
