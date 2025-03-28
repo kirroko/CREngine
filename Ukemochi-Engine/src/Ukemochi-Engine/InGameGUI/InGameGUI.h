@@ -208,5 +208,7 @@ namespace Ukemochi
 		void showHowToPlay();
 
 		void removeHowToPlayScreen();
+
+		void showHowToPlayMainMenu();
 	};
 }
