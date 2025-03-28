@@ -226,7 +226,7 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false, true))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
@@ -239,7 +239,7 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false, false))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
@@ -1853,7 +1853,7 @@ namespace Ukemochi
                     // Set player to full health and deal 2x damage
                     auto& player_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
                     player_data.currentHealth = player_data.maxHealth;
-                    player_data.comboDamage *= 2;
+                    player_data.comboDamage *= 5;
 
                     // Set player souls to max capacity
                     auto& player_soul = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<PlayerSoul>();
@@ -1881,7 +1881,7 @@ namespace Ukemochi
                 {
                     // Return player damage to normal
                     auto& player_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
-                    player_data.comboDamage *= 0.5f;
+                    player_data.comboDamage /= 5;
                 }
             }
         }
