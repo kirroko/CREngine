@@ -4901,6 +4901,21 @@
                             "Name": "BossAttack3",
                             "Path": "../Assets/Audio/SFX/Enemy/Boss/Boss Attack_Slightly Wet_SFX_3.wav"
                         }, {
+                            "Name": "BossAttackVO1",
+                            "Path": "../Assets/Audio/SFX/Enemy/Boss/Boss Attack_VO_1.wav"
+                        }, {
+                            "Name": "BossAttackVO2",
+                            "Path": "../Assets/Audio/SFX/Enemy/Boss/Boss Attack_VO_2.wav"
+                        }, {
+                            "Name": "BossAttackVO3",
+                            "Path": "../Assets/Audio/SFX/Enemy/Boss/Boss Attack_VO_3.wav"
+                        }, {
+                            "Name": "BossAttackVO4",
+                            "Path": "../Assets/Audio/SFX/Enemy/Boss/Boss Attack_VO_4.wav"
+                        }, {
+                            "Name": "BossAttackVO5",
+                            "Path": "../Assets/Audio/SFX/Enemy/Boss/Boss Attack_VO_5.wav"
+                        }, {
                             "Name": "BlobExplode",
                             "Path": "../Assets/Audio/SFX/Enemy/Boss/Cacoon Explode_SFX.wav"
                         }]
