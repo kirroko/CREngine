@@ -507,6 +507,7 @@ namespace Ukemochi
 		bool wasHit = false;  // New flag for hit detection
 		float waitTime = 0.f;
 		bool iswaiting = false;
+		bool isKilled =false;
 		int move = 5;
 
 		Enemy() = default;

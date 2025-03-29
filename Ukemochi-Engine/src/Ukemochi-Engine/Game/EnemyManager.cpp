@@ -176,7 +176,7 @@ namespace Ukemochi
                 if (enemycomponent.wasHit)
                 {
                     // Only play hit sound if this hit wasn't fatal (health > 0)
-                    if (enemycomponent.health > 0)
+                    if (enemycomponent.health > 0 && enemycomponent.state != Enemy::DEAD)
                     {
                         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                         {
@@ -465,7 +465,6 @@ namespace Ukemochi
                             }
                         }
                     }
-
                     enemycomponent.state = Enemy::DEAD;
                     //enemycomponent.isDead = true; // Mark as dead immediately
                 }
@@ -616,7 +615,7 @@ namespace Ukemochi
                            
                     }
 
-                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && !enemycomponent.isKilled)
                     {
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                         // dont overlap kick sound
@@ -627,6 +626,7 @@ namespace Ukemochi
                                 audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
                             }
                         }
+                        enemycomponent.isKilled = true;
                     }
 
                     // Harvest the soul of the dead enemy
