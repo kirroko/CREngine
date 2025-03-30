@@ -85,6 +85,7 @@ namespace Ukemochi {
             // std::unique_ptr<VideoContext> video_ctx;
             VideoLoadingContext loadingContext;
             bool done = false;
+            bool loaded = false;
             bool loop = false;
         };
 
@@ -112,6 +113,13 @@ namespace Ukemochi {
         \return True if the video has finished playing, false otherwise.
         *************************************************************************/
         bool IsVideoDonePlaying(const std::string& videoName);
+
+		/**
+		 * @brief Check if video exist
+		 * @param videoName name of the video
+		 * @return true if video exist
+		 */
+        bool VideoExist(const std::string& videoName);
 
     private:
         double lastFrameTime = 0.0f; // Timestamp of the last frame update

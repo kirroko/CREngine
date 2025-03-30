@@ -626,6 +626,9 @@ namespace Ukemochi
 	
 	void AssetManager::LoadAllTexture()
 	{
+		static bool loaded = false;
+		if (loaded)
+			return;
 		for (auto& data : textureLoadingContexts)
 		{
 			std::shared_ptr<Texture> texture(new Texture(data->bytes, GL_TEXTURE_2D, GL_TEXTURE0 + static_cast<int>(texture_list_size), GL_RGBA, GL_UNSIGNED_BYTE, data->widthImg, data->heightImg));
@@ -637,6 +640,7 @@ namespace Ukemochi
 			texture_list_size++;
 			UME_ENGINE_INFO("Texture {0} added successfully", data->imagePath);
 		}
+		loaded = true;
 	}
 
 	/*!

@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/BossManager.h"		  // for init boss
 #include "../SceneManager.h"			  // for GetCurrScene name
 #include "../Video/VideoManager.h"		  // for boss cutscene
+#include "Ukemochi-Engine/Application.h"
 
 namespace Ukemochi
 {
@@ -127,11 +128,22 @@ namespace Ukemochi
 			}
 		}
 
-		// Play boss cutscene when entering the boss room (room 6)
+		// Load before boss cutscene when entering the boss room (room 6)
 		if (current_room_id == 6)
 		{
 			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+			if (ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].loaded)
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+			else
+			{
+				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
+					UME_ENGINE_ERROR("Video didn't load properly!");
+				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
+				    UME_ENGINE_ERROR("Video didn't load properly!");
+				Application::Get().SetPaused(true);
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
+			}
 		}
 
 		// Activate current room
@@ -161,6 +173,9 @@ namespace Ukemochi
 		// Move camera back to boss room and start boss fight
 		if (current_room_id == 6 && !start_boss && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("before_boss"))
 		{
+			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss"); // Select just in case
+			ECS::GetInstance().GetSystem<VideoManager>()->Free(); // Free current video
+
 			// Set camera to room position
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
 			

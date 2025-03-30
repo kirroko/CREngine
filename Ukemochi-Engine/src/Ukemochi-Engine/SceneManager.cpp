@@ -226,10 +226,10 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
-            UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
-            UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };        
         es_current = ES_PLAY;
 #else
@@ -539,6 +539,8 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
                 // Poll job system complete status every second while loading screen is active
                 static float jobPollTimer = 0.0f;
+                static bool cutscene = false;
+                static bool bossRoom = false;
                 jobPollTimer += static_cast<float>(g_FrameRateController.GetDeltaTime());
                 if (jobPollTimer >= 1.0f)
                 {
@@ -557,8 +559,19 @@ namespace Ukemochi
                         ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"]);
                         ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"]);
                         ECS::GetInstance().GetSystem<AssetManager>()->LoadAllTexture(); // Load all texture after async
-                        ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = false;
-                        ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                        if (!cutscene)
+                        {
+                            /*ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = false;*/
+							ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+							cutscene = true;
+                        }
+                        else if (!bossRoom)
+                        {
+							ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
+                            ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+							Application::Get().SetPaused(false);
+                            bossRoom = true;
+                        }
                         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                         {
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();

@@ -61,6 +61,16 @@ namespace Ukemochi {
         return videos[videoName].done;
     }
 
+    /**
+     * @brief Check if video exist
+     * @param videoName name of the video
+     * @return true if video exist
+     */
+	bool VideoManager::VideoExist(const std::string& videoName)
+	{
+		return videos.find(videoName) != videos.end();
+	}
+
     /*!***********************************************************************
     \brief
      Renders the current frame of the selected video.
@@ -320,6 +330,13 @@ namespace Ukemochi {
 
     bool VideoManager::FinishLoadingVideo(VideoData& video)
     {
+        if (!video.plm)
+            return false;
+        if (video.loaded)
+            return true;
+
+        video.loaded = true;
+
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
         const int BATCH_SIZE = 16;
         // Upload frames in batches, gives the GPU driver a chance to optimize the uploads and prevents potential pipeline stalls
