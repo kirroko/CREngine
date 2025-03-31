@@ -685,52 +685,75 @@ namespace Ukemochi
 			// }
 			else if (to_load.extension() == ".vert" || to_load.extension() == ".frag")
 			{
+				static bool skip_file = false;
+				if (skip_file)
+				{
+					skip_file = false;
+					continue;
+				}
 				std::string holder = to_load.filename().generic_string();
-				std::string file_name = holder.substr(0, holder.find_first_of("."));
+				std::string file_name = holder.substr(0, holder.find_first_of('.'));
+				std::string vertex_shader = to_load.generic_string();
+				std::string frag_shader = to_load.generic_string();
 
 				if (to_load.extension() == ".vert")
-				{
-					std::string vertex_shader = to_load.generic_string();
-					std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
-					std::string frag_shader{};
-					for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
-					{
-						std::filesystem::path checker = match_shader.path();
-						std::string holder2 = checker.filename().generic_string();
-						std::string check_name = holder2.substr(0, holder.find_first_of("."));
-
-						check_name;
-						if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
-						{
-							frag_shader = checker.generic_string();
-							std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
-							break;
-						}
-					}
-					addShader(file_name, vertex_shader, frag_shader);
-				}
+					frag_shader = frag_shader.substr(0, frag_shader.find_last_of('.')) + ".frag";
 				else
-				{
-					std::string frag_shader = to_load.generic_string();
-					std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
-					std::string vertex_shader{};
+					vertex_shader = vertex_shader.substr(0, vertex_shader.find_last_of('.')) + ".vert";
 
-					for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
-					{
-						std::filesystem::path checker = match_shader.path();
-						std::string holder2 = checker.filename().generic_string();
-						std::string check_name = holder2.substr(0, holder.find_first_of("."));
+				skip_file = true;
+				
+				// std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
+				// vertex_shader = vertex_shader.substr(0, vertex_shader.find_first_of('.')) + ".vert";
+				// std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
+				// frag_shader = frag_shader.substr(0, frag_shader.find_first_of('.')) + ".frag";
+				
+				addShader(file_name,vertex_shader,frag_shader);
+				
 
-						check_name;
-						if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
-						{
-							vertex_shader = checker.generic_string();
-							std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
-							break;
-						}
-					}
-					addShader(file_name, vertex_shader, frag_shader);
-				}
+				// if (to_load.extension() == ".vert")
+				// {
+				// 	std::string vertex_shader = to_load.generic_string();
+				// 	std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
+				// 	std::string frag_shader{};
+				// 	for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
+				// 	{
+				// 		std::filesystem::path checker = match_shader.path();
+				// 		std::string holder2 = checker.filename().generic_string();
+				// 		std::string check_name = holder2.substr(0, holder.find_first_of("."));
+				//
+				// 		check_name;
+				// 		if (checker.extension() == ".frag" && file_name.compare(check_name) == 0)
+				// 		{
+				// 			frag_shader = checker.generic_string();
+				// 			std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
+				// 			break;
+				// 		}
+				// 	}
+				// 	addShader(file_name, vertex_shader, frag_shader);
+				// }
+				// else
+				// {
+				// 	std::string frag_shader = to_load.generic_string();
+				// 	std::replace(frag_shader.begin(), frag_shader.end(), '\\', '/');
+				// 	std::string vertex_shader{};
+				//
+				// 	for (auto const& match_shader : std::filesystem::recursive_directory_iterator(asset_dir))
+				// 	{
+				// 		std::filesystem::path checker = match_shader.path();
+				// 		std::string holder2 = checker.filename().generic_string();
+				// 		std::string check_name = holder2.substr(0, holder.find_first_of("."));
+				//
+				// 		check_name;
+				// 		if (checker.extension() == ".vert" && file_name.compare(check_name) == 0)
+				// 		{
+				// 			vertex_shader = checker.generic_string();
+				// 			std::replace(vertex_shader.begin(), vertex_shader.end(), '\\', '/');
+				// 			break;
+				// 		}
+				// 	}
+				// 	addShader(file_name, vertex_shader, frag_shader);
+				// }
 			}
 			else if (to_load.extension() == ".ttf")
 			{
