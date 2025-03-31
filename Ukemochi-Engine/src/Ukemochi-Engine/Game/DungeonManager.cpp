@@ -92,7 +92,10 @@ namespace Ukemochi
 
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
-			transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
+			if (current_room_id == 6)
+				transform.position.x = rooms[current_room_id].position.x;
+			else
+				transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
 
 			// Set red and blue soul positions to new room position
 			if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
@@ -113,7 +116,10 @@ namespace Ukemochi
 
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
-			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
+			if (current_room_id == 6)
+				transform.position.x = rooms[current_room_id].position.x;
+			else
+				transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
 
 			// Set red and blue soul positions to new room position
 			if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
@@ -139,7 +145,7 @@ namespace Ukemochi
 				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
 					UME_ENGINE_ERROR("Video didn't load properly!");
 				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
-				    UME_ENGINE_ERROR("Video didn't load properly!");
+					UME_ENGINE_ERROR("Video didn't load properly!");
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
