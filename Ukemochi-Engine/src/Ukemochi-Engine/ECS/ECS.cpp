@@ -76,6 +76,7 @@ namespace Ukemochi
 		auto script = m_ComponentManager->GetComponentType<Script>();
 		auto animation = m_ComponentManager->GetComponentType<Animation>();
 		auto enemy = m_ComponentManager->GetComponentType<Enemy>();
+		auto soulOrb = m_ComponentManager->GetComponentType<SoulOrb>();
 		//auto button = m_ComponentManager->GetComponentType<Button>();
 
 		// Iterate through all possible components
@@ -128,6 +129,11 @@ namespace Ukemochi
 				{
 					Enemy originalComponent = m_ComponentManager->GetComponent<Enemy>(entity);
 					AddComponent<Enemy>(newEntity, originalComponent);
+				}
+				else if (i == soulOrb)
+				{
+					SoulOrb originalComponent = m_ComponentManager->GetComponent<SoulOrb>(entity);
+					AddComponent<SoulOrb>(newEntity, originalComponent);
 				}
 				//else if(i == button)
 				//{

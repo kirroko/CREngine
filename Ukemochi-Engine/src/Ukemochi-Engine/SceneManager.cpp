@@ -80,6 +80,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
+        ECS::GetInstance().RegisterComponent<SoulOrb>();
 	    ECS::GetInstance().RegisterComponent<VideoData>();
         ECS::GetInstance().RegisterComponent<EnemyBullet>();
         ECS::GetInstance().RegisterComponent<Boss>();
@@ -726,6 +727,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->UI_red_soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->UI_blue_soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->soul_orb_clone = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->fish_ability = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->worm_ability = static_cast<EntityID>(-1);
 
@@ -1085,6 +1087,15 @@ namespace Ukemochi
                         newObject.AddComponent(std::move(player_soul));
                     }
                 }
+                else if (componentName == "SoulOrb")
+                {
+                    if (!newObject.HasComponent<SoulOrb>())
+                    {
+                        SoulOrb soul_orb;
+                        soul_orb.orb_type = static_cast<SoulType>(componentData["OrbType"].GetInt());
+                        newObject.AddComponent(std::move(soul_orb));
+                    }
+                }
                 else if (componentName == "Audio")
                 {
                     if (!newObject.HasComponent<AudioManager>())
@@ -1406,6 +1417,17 @@ namespace Ukemochi
                 playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
 
                 componentsArray.PushBack(playerSoulComponent, allocator);
+            }
+
+            if (gameobject->HasComponent<SoulOrb>())
+            {
+                Value soulOrbComponent(rapidjson::kObjectType);
+                soulOrbComponent.AddMember("Name", "SoulOrb", allocator);
+
+                const auto& soulOrb = gameobject->GetComponent<SoulOrb>();
+                soulOrbComponent.AddMember("OrbType", soulOrb.orb_type, allocator);
+
+                componentsArray.PushBack(soulOrbComponent, allocator);
             }
 
             if (gameobject->HasComponent<AudioManager>()) {

@@ -23,12 +23,13 @@ namespace Ukemochi
     class SoulManager : public System
     {
     public:
-        EntityID player;       // Keep track of the player ID
-        EntityID soul;         // Keep track of the floating soul ID
-        EntityID UI_red_soul;  // Keep track of the UI red soul ID
-        EntityID UI_blue_soul; // Keep track of the UI blue soul ID
-        EntityID fish_ability; // Keep track of the player's fish ability ID
-        EntityID worm_ability; // Keep track of the player's worm ability ID
+        EntityID player;         // Keep track of the player ID
+        EntityID soul;           // Keep track of the floating soul ID
+        EntityID UI_red_soul;    // Keep track of the UI red soul ID
+        EntityID UI_blue_soul;   // Keep track of the UI blue soul ID
+        EntityID soul_orb_clone; // Keep track of the soul orb clone ID
+        EntityID fish_ability;   // Keep track of the player's fish ability ID
+        EntityID worm_ability;   // Keep track of the player's worm ability ID
 
         /*!***********************************************************************
         \brief
@@ -51,6 +52,18 @@ namespace Ukemochi
          The amount of soul to harvest.
         *************************************************************************/
         void HarvestSoul(const SoulType soul_type, const float amount);
+
+        /*!***********************************************************************
+        \brief
+         Spawn a soul orb based on the enemy's position.
+        \param[in] soul_type
+         The type of soul to harvest (e.g., FISH, WORM).
+        \param[in] amount
+         The amount of soul to harvest.
+        \param[in] spawn_position
+         The position of the dead enemy.
+        *************************************************************************/
+        void SpawnSoulOrb(const SoulType soul_type, const float amount, const Vec3 spawn_position);
 
     private:
         /*!***********************************************************************
@@ -126,6 +139,12 @@ namespace Ukemochi
          Handle the floating soul which follows the player's position.
         *************************************************************************/
         void HandleFloatingSoul();
+
+        /*!***********************************************************************
+        \brief
+         Handle the movement and harvesting of the enemy soul orbs.
+        *************************************************************************/
+        void HandleOrbs();
 
         /*!***********************************************************************
         \brief

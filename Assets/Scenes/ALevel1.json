@@ -1308,7 +1308,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.03999999910593033, false],
+                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
                         "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
                         "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
@@ -1375,7 +1375,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.03999999910593033, false],
+                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
                         "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
                         "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
@@ -1442,7 +1442,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.03999999910593033, false],
+                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
                         "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
                         "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
@@ -2248,7 +2248,7 @@
                         "Death": ["Worm Death 2", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, false],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
-                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.05000000074505806, false],
+                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
@@ -2315,7 +2315,7 @@
                         "Death": ["Worm Death 2", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, false],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
-                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.05000000074505806, false],
+                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
@@ -2382,7 +2382,7 @@
                         "Death": ["Worm Death 2", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, false],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
-                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.05000000074505806, false],
+                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
@@ -3169,7 +3169,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.03999999910593033, false],
+                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
                         "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
                         "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
@@ -3236,7 +3236,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.03999999910593033, false],
+                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
                         "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
                         "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
@@ -3307,7 +3307,7 @@
                         "Death": ["Worm Death 2", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, false],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
-                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.05000000074505806, false],
+                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
@@ -3374,7 +3374,7 @@
                         "Death": ["Worm Death 2", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, false],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
-                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.05000000074505806, false],
+                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
@@ -5004,7 +5004,7 @@
                         "Death": ["Worm Death 2", "../Assets/Textures/Enemy/Worm 1_Part.png", "Death", 28, 0.5, 0.5, 100, 360, 360, 3960, 1080, 0.05000000074505806, false],
                         "Hurt": ["Worm Hurt", "../Assets/Textures/Enemy/Worm 2_Part.png", "Hurt", 4, 0.5, 0.5, 100, 350, 350, 700, 700, 0.05000000074505806, true],
                         "Walk": ["Worm Walk", "../Assets/Textures/Enemy/Worm 1_Part.png", "Walk", 30, 0.5, 0.5, 90, 310, 310, 1860, 1550, 0.05000000074505806, true],
-                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 25, 120, 120, 960, 480, 0.05000000074505806, false],
+                        "Flame": ["Worm Flame", "../Assets/Textures/Enemy/Worm 2_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.03500000014901161, false],
                         "Idle": ["Worm Idle", "../Assets/Textures/Enemy/Worm 2_Part.png", "Idle", 24, 0.5, 0.5, 90, 310, 310, 1860, 1240, 0.05000000074505806, true]
                     },
                     "CurrentClip": "Idle"
@@ -5049,18 +5049,21 @@
                     "CurrentClip": "Idle"
                 }]
         }, {
-            "Name": "Orb",
+            "Name": "OrbClone",
             "Tag": "OrbClone",
             "Components": [{
                     "Name": "Transform",
                     "Position": [0.0, 0.0, 0.0],
                     "Rotation": 0.0,
-                    "Scale": [100.0, 100.0]
+                    "Scale": [50.0, 50.0]
                 }, {
                     "Name": "SpriteRender",
                     "Sprite": "White EXP Sprite",
                     "Shape": 0,
                     "Layer": 5
+                }, {
+                    "Name": "SoulOrb",
+                    "OrbType": -1
                 }]
         }, {
             "Name": "UI_Red_Soul",

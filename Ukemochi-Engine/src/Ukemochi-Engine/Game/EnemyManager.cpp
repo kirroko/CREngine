@@ -629,8 +629,6 @@ namespace Ukemochi
                         enemycomponent.isKilled = true;
                     }
 
-                    // Harvest the soul of the dead enemy
-                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 20.f);
                     if (enemycomponent.isWithPlayer && numEnemyTarget >= 1)
                     {
                         numEnemyTarget--;
@@ -646,8 +644,8 @@ namespace Ukemochi
                     if (anim.currentClip == "Flame" && anim.current_frame == 25)
                     {
                         object->SetActive(false);
+                        ECS::GetInstance().GetSystem<SoulManager>()->SpawnSoulOrb(static_cast<SoulType>(enemycomponent.type), 20.f, enemytransform.position);
                     }
-                    //Put your dead stuff here
                     ++it;
                     continue;
                 }
