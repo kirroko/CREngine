@@ -428,6 +428,18 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 Soul orb component structure.
+	*************************************************************************/
+	struct SoulOrb
+	{
+		SoulType orb_type = EMPTY;  // The type of soul orb to harvest
+		float soul_amount{};		// The amount of soul to harvest
+		float orb_speed{ 600.f };	// The speed of the orb
+		Vec3 target_position{};	    // The target position to go to
+	};
+
+	/*!***********************************************************************
+	\brief
 	 Boss component structure.
 	*************************************************************************/
 	struct Boss
@@ -507,6 +519,7 @@ namespace Ukemochi
 		bool wasHit = false;  // New flag for hit detection
 		float waitTime = 0.f;
 		bool iswaiting = false;
+		bool isKilled =false;
 		int move = 5;
 
 		Enemy() = default;

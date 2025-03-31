@@ -80,6 +80,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
+        ECS::GetInstance().RegisterComponent<SoulOrb>();
 	    ECS::GetInstance().RegisterComponent<VideoData>();
         ECS::GetInstance().RegisterComponent<EnemyBullet>();
         ECS::GetInstance().RegisterComponent<Boss>();
@@ -226,10 +227,10 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, true))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false, true))
-            UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
-            UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };        
         es_current = ES_PLAY;
 #else
@@ -239,7 +240,7 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/main_menu_video.mpeg", false, false))
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
@@ -386,7 +387,7 @@ namespace Ukemochi
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+                audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
             }
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
             {
@@ -539,6 +540,8 @@ namespace Ukemochi
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
                 // Poll job system complete status every second while loading screen is active
                 static float jobPollTimer = 0.0f;
+                static bool cutscene = false;
+                static bool bossRoom = false;
                 jobPollTimer += static_cast<float>(g_FrameRateController.GetDeltaTime());
                 if (jobPollTimer >= 1.0f)
                 {
@@ -557,8 +560,19 @@ namespace Ukemochi
                         ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"]);
                         ECS::GetInstance().GetSystem<VideoManager>()->FinishLoadingVideo(ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"]);
                         ECS::GetInstance().GetSystem<AssetManager>()->LoadAllTexture(); // Load all texture after async
-                        ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = false;
-                        ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                        if (!cutscene)
+                        {
+                            /*ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = false;*/
+							ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+							cutscene = true;
+                        }
+                        else if (!bossRoom)
+                        {
+							ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
+                            ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+							Application::Get().SetPaused(false);
+                            bossRoom = true;
+                        }
                         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                         {
                             auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -713,6 +727,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->UI_red_soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->UI_blue_soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->soul_orb_clone = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->fish_ability = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->worm_ability = static_cast<EntityID>(-1);
 
@@ -1072,6 +1087,15 @@ namespace Ukemochi
                         newObject.AddComponent(std::move(player_soul));
                     }
                 }
+                else if (componentName == "SoulOrb")
+                {
+                    if (!newObject.HasComponent<SoulOrb>())
+                    {
+                        SoulOrb soul_orb;
+                        soul_orb.orb_type = static_cast<SoulType>(componentData["OrbType"].GetInt());
+                        newObject.AddComponent(std::move(soul_orb));
+                    }
+                }
                 else if (componentName == "Audio")
                 {
                     if (!newObject.HasComponent<AudioManager>())
@@ -1393,6 +1417,17 @@ namespace Ukemochi
                 playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
 
                 componentsArray.PushBack(playerSoulComponent, allocator);
+            }
+
+            if (gameobject->HasComponent<SoulOrb>())
+            {
+                Value soulOrbComponent(rapidjson::kObjectType);
+                soulOrbComponent.AddMember("Name", "SoulOrb", allocator);
+
+                const auto& soulOrb = gameobject->GetComponent<SoulOrb>();
+                soulOrbComponent.AddMember("OrbType", soulOrb.orb_type, allocator);
+
+                componentsArray.PushBack(soulOrbComponent, allocator);
             }
 
             if (gameobject->HasComponent<AudioManager>()) {
@@ -1853,7 +1888,7 @@ namespace Ukemochi
                     // Set player to full health and deal 2x damage
                     auto& player_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
                     player_data.currentHealth = player_data.maxHealth;
-                    player_data.comboDamage *= 2;
+                    player_data.comboDamage *= 5;
 
                     // Set player souls to max capacity
                     auto& player_soul = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<PlayerSoul>();
@@ -1881,7 +1916,7 @@ namespace Ukemochi
                 {
                     // Return player damage to normal
                     auto& player_data = GameObjectManager::GetInstance().GetGOByName("Player")->GetComponent<Player>();
-                    player_data.comboDamage *= 0.5f;
+                    player_data.comboDamage /= 5;
                 }
             }
         }

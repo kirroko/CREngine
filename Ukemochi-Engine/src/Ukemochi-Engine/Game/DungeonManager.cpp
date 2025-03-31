@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/BossManager.h"		  // for init boss
 #include "../SceneManager.h"			  // for GetCurrScene name
 #include "../Video/VideoManager.h"		  // for boss cutscene
+#include "Ukemochi-Engine/Application.h"
 
 namespace Ukemochi
 {
@@ -91,7 +92,10 @@ namespace Ukemochi
 
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
-			transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
+			if (current_room_id == 6)
+				transform.position.x = rooms[current_room_id].position.x;
+			else
+				transform.position.x = rooms[current_room_id].position.x + PLAYER_OFFSET;
 
 			// Set red and blue soul positions to new room position
 			if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
@@ -112,7 +116,10 @@ namespace Ukemochi
 
 			// Set player position to new room position
 			auto& transform = ECS::GetInstance().GetComponent<Transform>(player);
-			transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
+			if (current_room_id == 6)
+				transform.position.x = rooms[current_room_id].position.x;
+			else
+				transform.position.x = rooms[current_room_id].position.x - PLAYER_OFFSET;
 
 			// Set red and blue soul positions to new room position
 			if (GameObjectManager::GetInstance().GetGOByTag("UI_Blue_Soul"))
@@ -127,11 +134,22 @@ namespace Ukemochi
 			}
 		}
 
-		// Play boss cutscene when entering the boss room (room 6)
+		// Load before boss cutscene when entering the boss room (room 6)
 		if (current_room_id == 6)
 		{
 			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+			if (ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].loaded)
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+			else
+			{
+				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
+					UME_ENGINE_ERROR("Video didn't load properly!");
+				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
+					UME_ENGINE_ERROR("Video didn't load properly!");
+				Application::Get().SetPaused(true);
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
+			}
 		}
 
 		// Activate current room
@@ -161,6 +179,9 @@ namespace Ukemochi
 		// Move camera back to boss room and start boss fight
 		if (current_room_id == 6 && !start_boss && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("before_boss"))
 		{
+			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss"); // Select just in case
+			ECS::GetInstance().GetSystem<VideoManager>()->Free(); // Free current video
+
 			// Set camera to room position
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
 			
@@ -173,6 +194,19 @@ namespace Ukemochi
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.StopMusic(audioM.GetMusicIndex("PreBoss_BGM"));
+				// Play BGM at 0.2 volume
+				if (audioM.GetMusicIndex("BGM") != -1)
+				{
+					int bgmIndex = audioM.GetMusicIndex("BGM");
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(bgmIndex))
+					{
+						audioM.PlayMusic(bgmIndex);
+						// Set volume for BGM
+						ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(bgmIndex, 0.2f, "Music");
+					}
+				}
+
 				if (audioM.GetSFXindex("LevelChange") != -1)
 				{
 					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
@@ -187,6 +221,11 @@ namespace Ukemochi
 		if (current_room_id == 6 && !end_boss && ECS::GetInstance().GetSystem<BossManager>()->GetBossPhase() == 3
 			&& ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("after_boss"))
 		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.StopMusic(audioM.GetMusicIndex("AfterBoss_BGM"));
+			}
 			//ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
 			end_boss = true;
 		}

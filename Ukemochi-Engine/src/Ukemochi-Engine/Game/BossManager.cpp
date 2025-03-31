@@ -243,6 +243,154 @@ namespace Ukemochi
 			}
 		}
 
+		if (boss->GetComponent<Animation>().GetCurrentFrame() == 15)
+		{
+			if (rand() % 100 < 30 && GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				// Play different hit sounds based on enemy type
+
+				std::vector<int> bossAttackVOsounds = {
+				audioM.GetSFXindex("BossAttackVO1"),
+				audioM.GetSFXindex("BossAttackVO2"),
+				audioM.GetSFXindex("BossAttackVO3"),
+				audioM.GetSFXindex("BossAttackVO4"),
+				audioM.GetSFXindex("BossAttackVO5")
+				};
+
+				// Remove invalid (-1) sounds
+				bossAttackVOsounds.erase(
+					std::remove(bossAttackVOsounds.begin(), bossAttackVOsounds.end(), -1),
+					bossAttackVOsounds.end()
+				);
+
+				// If no valid sounds found, try to use the original as fallback
+				if (bossAttackVOsounds.empty()) {
+					int bossAttackVOOriginal = audioM.GetSFXindex("BossAttack1");
+					if (bossAttackVOOriginal != -1) {
+						bossAttackVOsounds.push_back(bossAttackVOOriginal);
+					}
+				}
+
+				// Keep track of which sounds have been played (static at class level)
+				static std::vector<bool> bossAttackVOSoundsPlayed;
+
+				// Initialize if first time or size changed
+				if (bossAttackVOSoundsPlayed.size() != bossAttackVOsounds.size()) {
+					bossAttackVOSoundsPlayed.resize(bossAttackVOsounds.size(), false);
+				}
+
+				// Check if all sounds have been played
+				bool allPlayed = true;
+				for (bool played : bossAttackVOSoundsPlayed) {
+					if (!played) {
+						allPlayed = false;
+						break;
+					}
+				}
+
+				// If all sounds have been played, reset all to unplayed
+				if (allPlayed) {
+					std::fill(bossAttackVOSoundsPlayed.begin(), bossAttackVOSoundsPlayed.end(), false);
+				}
+
+				// Get sounds that haven't been played yet
+				std::vector<int> availableSoundIndices;
+				for (int i = 0; i < bossAttackVOsounds.size(); i++) {
+					if (!bossAttackVOSoundsPlayed[i]) {
+						availableSoundIndices.push_back(i);
+					}
+				}
+
+				if (!availableSoundIndices.empty()) {
+					// Random selection from available sounds
+					int randomIndex = rand() % availableSoundIndices.size();
+					int selectedSoundIndex = availableSoundIndices[randomIndex];
+					int selectedSound = bossAttackVOsounds[selectedSoundIndex];
+
+					// Mark this sound as played
+					bossAttackVOSoundsPlayed[selectedSoundIndex] = true;
+
+					// Play the selected sound
+					audioM.PlaySFX(selectedSound);
+
+				}
+			}
+		}
+
+		if (hair->GetComponent<Animation>().GetCurrentFrame() == 8)
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                  auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                  // Play different hit sounds based on enemy type
+                           
+                  std::vector<int> bossSmacksounds = {
+                  audioM.GetSFXindex("BossAttack1"),
+                  audioM.GetSFXindex("BossAttack2"),
+                  audioM.GetSFXindex("BossAttack3")
+                  };
+
+                // Remove invalid (-1) sounds
+                bossSmacksounds.erase(
+                    std::remove(bossSmacksounds.begin(), bossSmacksounds.end(), -1),
+                    bossSmacksounds.end()
+                );
+
+                // If no valid sounds found, try to use the original as fallback
+                if (bossSmacksounds.empty()) {
+                    int bossSmackOriginal = audioM.GetSFXindex("BossAttack1");
+                    if (bossSmackOriginal != -1) {
+                        bossSmacksounds.push_back(bossSmackOriginal);
+                    }
+                }
+
+                // Keep track of which sounds have been played (static at class level)
+                static std::vector<bool> bossSmackSoundsPlayed;
+
+                // Initialize if first time or size changed
+                if (bossSmackSoundsPlayed.size() != bossSmacksounds.size()) {
+                    bossSmackSoundsPlayed.resize(bossSmacksounds.size(), false);
+                }
+
+                // Check if all sounds have been played
+                bool allPlayed = true;
+                for (bool played : bossSmackSoundsPlayed) {
+                    if (!played) {
+                        allPlayed = false;
+                        break;
+                    }
+                }
+
+                // If all sounds have been played, reset all to unplayed
+                if (allPlayed) {
+                    std::fill(bossSmackSoundsPlayed.begin(), bossSmackSoundsPlayed.end(), false);
+                }
+
+                // Get sounds that haven't been played yet
+                std::vector<int> availableSoundIndices;
+                for (int i = 0; i < bossSmacksounds.size(); i++) {
+                    if (!bossSmackSoundsPlayed[i]) {
+                        availableSoundIndices.push_back(i);
+                    }
+                }
+
+				if (!availableSoundIndices.empty()) {
+					// Random selection from available sounds
+					int randomIndex = rand() % availableSoundIndices.size();
+					int selectedSoundIndex = availableSoundIndices[randomIndex];
+					int selectedSound = bossSmacksounds[selectedSoundIndex];
+
+					// Mark this sound as played
+					bossSmackSoundsPlayed[selectedSoundIndex] = true;
+
+					// Play the selected sound
+					audioM.PlaySFX(selectedSound);
+
+				}
+			}
+		}
+
 		if (atk)
 		{
 			if (hairHitBox->GetActive())

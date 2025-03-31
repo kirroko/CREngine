@@ -176,7 +176,7 @@ namespace Ukemochi
                 if (enemycomponent.wasHit)
                 {
                     // Only play hit sound if this hit wasn't fatal (health > 0)
-                    if (enemycomponent.health > 0)
+                    if (enemycomponent.health > 0 && enemycomponent.state != Enemy::DEAD)
                     {
                         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                         {
@@ -326,7 +326,7 @@ namespace Ukemochi
                 }
 
                 // When enemy health reaches 0
-                if (enemycomponent.health <= 0.f && !enemycomponent.isDead) // Add !isDead check
+                if (enemycomponent.health <= 0.f && enemycomponent.state != Enemy::DEAD) // Add !isDead check
                 {
                     // Play death sound immediately when health hits 0
                     if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -465,9 +465,8 @@ namespace Ukemochi
                             }
                         }
                     }
-
                     enemycomponent.state = Enemy::DEAD;
-                    enemycomponent.isDead = true; // Mark as dead immediately
+                    //enemycomponent.isDead = true; // Mark as dead immediately
                 }
                 else
                 {
@@ -591,14 +590,32 @@ namespace Ukemochi
                 }
 
                 // If the enemy is in DEAD state, remove it from the list after processing DeadState
-                if (enemycomponent.state == Enemy::DEAD)
+                if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
                 {
                     if (object->GetComponent<Animation>().currentClip != "Death")
                     {
                         object->GetComponent<Animation>().SetAnimation("Death");
                     }
 
-                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                    if (anim.currentClip == "Death")
+                    {
+                        if (enemycomponent.type == Enemy::FISH && anim.current_frame == 29)
+                        {
+                            anim.SetAnimation("Flame");
+                            GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
+                            enemycomponent.isDead = true;
+                        }
+
+                        if (enemycomponent.type == Enemy::WORM && anim.current_frame == 27)
+                        {
+                            anim.SetAnimation("Flame");
+                            GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
+                            enemycomponent.isDead = true;
+                        }
+                           
+                    }
+
+                    if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && !enemycomponent.isKilled)
                     {
                         auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                         // dont overlap kick sound
@@ -609,14 +626,9 @@ namespace Ukemochi
                                 audioM.PlaySFX(audioM.GetSFXindex("EnemyKilled"));
                             }
                         }
+                        enemycomponent.isKilled = true;
                     }
 
-                    // Harvest the soul of the dead enemy
-                    ECS::GetInstance().GetSystem<SoulManager>()->HarvestSoul(static_cast<SoulType>(enemycomponent.type), 20.f);
-
-                    object->SetActive(false);
-                    GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
-                    enemycomponent.isDead = true;
                     if (enemycomponent.isWithPlayer && numEnemyTarget >= 1)
                     {
                         numEnemyTarget--;
@@ -625,12 +637,20 @@ namespace Ukemochi
                             numEnemyTarget = 0;
                         }
                     }
+                }
+
+                if (enemycomponent.isDead && object->GetActive())
+                {
+                    if (anim.currentClip == "Flame" && anim.current_frame == 25)
+                    {
+                        object->SetActive(false);
+                        ECS::GetInstance().GetSystem<SoulManager>()->SpawnSoulOrb(static_cast<SoulType>(enemycomponent.type), 20.f, enemytransform.position);
+                    }
                     ++it;
                     continue;
                 }
 
                 // PLAYER KICK ENEMY
-
                 if (enemycomponent.isKick)
                 {
                     if (object->GetComponent<Animation>().currentClip == "Hurt" && object->GetComponent<Animation>().current_frame == 3)

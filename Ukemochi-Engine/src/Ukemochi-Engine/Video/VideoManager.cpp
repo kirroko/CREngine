@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/FrameController.h"
 #include "Ukemochi-Engine/Graphics/Renderer.h"
 #include "Ukemochi-Engine/Job/JobSystem.h"
+#include "Ukemochi-Engine/Factory/GameObjectManager.h"
 
 namespace Ukemochi {
 
@@ -59,6 +60,16 @@ namespace Ukemochi {
     {
         return videos[videoName].done;
     }
+
+    /**
+     * @brief Check if video exist
+     * @param videoName name of the video
+     * @return true if video exist
+     */
+	bool VideoManager::VideoExist(const std::string& videoName)
+	{
+		return videos.find(videoName) != videos.end();
+	}
 
     /*!***********************************************************************
     \brief
@@ -321,6 +332,13 @@ namespace Ukemochi {
 
     bool VideoManager::FinishLoadingVideo(VideoData& video)
     {
+        if (!video.plm)
+            return false;
+        if (video.loaded)
+            return true;
+
+        video.loaded = true;
+
         glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
         const int BATCH_SIZE = 16;
         // Upload frames in batches, gives the GPU driver a chance to optimize the uploads and prevents potential pipeline stalls
@@ -482,8 +500,73 @@ namespace Ukemochi {
                 //ECS::GetInstance().GetSystem<Audio>()->GetInstance().PlaySound(0, "SFX", 0.2f);
             }
         }
+		if (ECS::GetInstance().GetSystem<VideoManager>()->currentVideo == "cutscene")
+		{
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
+                // Play BGM at 0.2 volume
+                if (audioM.GetMusicIndex("Wind_BGM") != -1)
+                {
+                    int windBgmIndex = audioM.GetMusicIndex("Wind_BGM");
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(windBgmIndex))
+                    {
+                        audioM.PlayMusic(windBgmIndex);
+                        // Set volume for Wind_BGM
+                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.4f, "Music");
+                    }
+                }
+            }
+		}
+        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done)
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
+            }
+        }
 
+        if (ECS::GetInstance().GetSystem<VideoManager>()->currentVideo == "before_boss")
+        {
+                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                {
+                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+                    // Play BGM at 0.4 volume
+                    if (audioM.GetMusicIndex("PreBoss_BGM") != -1)
+                    {
+                        int PreBoss_BGMIndex = audioM.GetMusicIndex("PreBoss_BGM");
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(PreBoss_BGMIndex))
+                        {
+                            audioM.PlayMusic(PreBoss_BGMIndex);
+                            // Set volume for Wind_BGM
+                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(PreBoss_BGMIndex, 0.4f, "Music");
+                        }
+                    }
+                }
+        }
+
+        if (ECS::GetInstance().GetSystem<VideoManager>()->currentVideo == "after_boss")
+        {
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+                // Play BGM at 0.4 volume
+                if (audioM.GetMusicIndex("AfterBoss_BGM") != -1)
+                {
+                    int AfterBoss_BGMIndex = audioM.GetMusicIndex("AfterBoss_BGM");
+                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(AfterBoss_BGMIndex))
+                    {
+                        audioM.PlayMusic(AfterBoss_BGMIndex);
+                        // Set volume for Wind_BGM
+                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(AfterBoss_BGMIndex, 0.4f, "Music");
+                    }
+                }
+            }
+        }
         // Only update the video frame if enough time has passed
         if (video.currentFrame < video.totalFrames - 1)
         {
@@ -558,8 +641,8 @@ namespace Ukemochi {
         //UME_ENGINE_TRACE("Skipping video...");
 
         // Stop any playing audio
-        ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
-
+        //ECS::GetInstance().GetSystem<Audio>()->DeleteSound(0, "SFX");
+		ECS::GetInstance().GetSystem<Audio>()->GetInstance().StopAllSound();
         // Free video resources
         Free();
     }

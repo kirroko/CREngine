@@ -584,6 +584,11 @@ namespace Ukemochi
 			auto& vfxhit_trans = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Transform>();
 			auto& vfxhit_anim = GameObjectManager::GetInstance().GetGOByName("Hit_Effect")->GetComponent<Animation>();
 
+			if (enemy_data.state == Enemy::DEAD)
+			{
+				return;
+			}
+
 			// Skip if Mochi is not attacking
 			if (player_anim.currentClip != "Attack" && player_anim.currentClip != "bAttack" && player_anim.currentClip != "rAttack")
 				return;

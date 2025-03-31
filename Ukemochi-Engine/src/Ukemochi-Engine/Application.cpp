@@ -174,6 +174,7 @@ namespace Ukemochi
         {
             UME_ENGINE_TRACE("Loading gamepad mappings...");
             glfwUpdateGamepadMappings(mappings);
+            delete[] mappings;
         }
 
         GameStarted = false;
