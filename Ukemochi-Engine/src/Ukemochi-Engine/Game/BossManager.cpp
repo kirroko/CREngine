@@ -125,6 +125,7 @@ namespace Ukemochi
 				}
 				else
 				{
+					ECS::GetInstance().GetSystem<Camera>()->UpdateShake(g_FrameRateController.GetFixedDeltaTime());
 					Phase2();
 				}
 			}
@@ -594,6 +595,9 @@ namespace Ukemochi
 		{
 			if (playerRight > hairLeft && playerLeft < hairRight &&
 				playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12) {
+
+				//camera shake
+				ECS::GetInstance().GetSystem<Camera>()->StartShake(1.f, 10);
 
 				// Collision detected, apply damage or knockback logic
 				if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
