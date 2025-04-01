@@ -483,8 +483,7 @@ namespace Ukemochi
         // Search through the entity list for the nearest enemy
         for (auto const& entity : m_Entities)
         {
-            if ((GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
-                || GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy")
+            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
                 && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<Enemy>())
@@ -503,7 +502,19 @@ namespace Ukemochi
                         }
                     }
                 }
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy")
+            {
+                Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                Vec2 enemy_scale = ECS::GetInstance().GetComponent<Transform>(entity).scale;
+                float distance = Vec3Length(enemy_position - player_position);
 
+                if (distance < min_distance)
+                {
+                    min_distance = distance;
+                    nearest_enemy_position.x = enemy_position.x;
+                    nearest_enemy_position.y = enemy_position.y + enemy_scale.y * 0.1f;
+                }
             }
         }
 
