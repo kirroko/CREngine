@@ -507,6 +507,7 @@ namespace Ukemochi
 		float waitTime = 0.f;
 		bool iswaiting = false;
 		bool isKilled =false;
+		bool deadsound = false;
 		int move = 5;
 
 		Enemy() = default;
