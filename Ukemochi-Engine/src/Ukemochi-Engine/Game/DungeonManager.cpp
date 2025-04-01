@@ -137,13 +137,18 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 			if (ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].loaded)
+			{
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+			}
 			else
 			{
 				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
 					UME_ENGINE_ERROR("Video didn't load properly!");
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
 				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
 					UME_ENGINE_ERROR("Video didn't load properly!");
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done = false;
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
@@ -224,7 +229,18 @@ namespace Ukemochi
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.StopMusic(audioM.GetMusicIndex("AfterBoss_BGM"));
 			}
-			//ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
+
+			Application::Get().SetPaused(true);
+			Application::Get().GameStarted = false;
+
+			ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
+			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+			ECS::GetInstance().GetSystem<Camera>()->position = { 0,0 };
+			ECS::GetInstance().GetSystem<InGameGUI>()->RemoveGameUI();
+			ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+			ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
+			ECS::GetInstance().GetSystem<InGameGUI>()->showCredits = true;
+
 			end_boss = true;
 		}
 

@@ -39,8 +39,6 @@ namespace Ukemochi
 		int screen_width = app.GetWindow().GetWidth();
 		int screen_height = app.GetWindow().GetHeight();
 
-		//CreateImage();
-		//CreateMainMenuUI();
 		// Create FPS text
 		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 

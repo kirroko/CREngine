@@ -660,7 +660,6 @@ namespace Ukemochi
             SceneManagerDraw();
         }
 
-
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
@@ -1948,6 +1947,7 @@ namespace Ukemochi
         //UME_ENGINE_TRACE("Initializing soul manager...");
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+        ECS::GetInstance().GetSystem<InGameGUI>()->Init();
         // enemy
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
         //audio
@@ -1965,5 +1965,7 @@ namespace Ukemochi
                 }
             }
         }
+
+        enable_cheatmode = false;
     }
 }

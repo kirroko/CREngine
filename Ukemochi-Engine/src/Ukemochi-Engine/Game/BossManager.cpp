@@ -59,6 +59,8 @@ namespace Ukemochi
 		if (boss && boss->HasComponent<Boss>())
 		{
 			bossCom = GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Boss>();
+			bossCom.health = 1000.f;
+			bossCom.BossPhase = 0;
 		}
 
 		isHairAtk = true;
@@ -117,12 +119,11 @@ namespace Ukemochi
 					// WIN
 					boss->SetActive(false);
 					hair->SetActive(false);
-
-					ECS::GetInstance().GetSystem<EnemyManager>()->ClearEnemies();
 					bossCom.BossPhase = 3;
 
 					// Play after boss cutscene
 					ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+					ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done = false;
 					ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("after_boss");
 				}
 				else
