@@ -240,10 +240,10 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
-            UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
-            UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
     }
