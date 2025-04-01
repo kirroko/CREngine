@@ -538,6 +538,27 @@ namespace Ukemochi
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
+
+                static bool firstTimer = true;
+                if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6 && firstTimer)
+                {
+                    static bool delayFrame = true;
+                    if (delayFrame)
+                    {
+                        delayFrame = false;
+                        return;
+                    }
+
+                    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo(
+                        "before_boss", "../Assets/Video/all_1.mpeg", false, true))
+                        UME_ENGINE_ERROR("Video didn't load properly!");
+                    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo(
+                        "after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
+                        UME_ENGINE_ERROR("Video didn't load properly!");
+
+                    firstTimer = false;
+                }
+
                 // Poll job system complete status every second while loading screen is active
                 static float jobPollTimer = 0.0f;
                 static bool cutscene = false;

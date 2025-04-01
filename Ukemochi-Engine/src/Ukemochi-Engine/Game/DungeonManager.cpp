@@ -140,10 +140,6 @@ namespace Ukemochi
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
 			else
 			{
-				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
-					UME_ENGINE_ERROR("Video didn't load properly!");
-				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
-					UME_ENGINE_ERROR("Video didn't load properly!");
 				Application::Get().SetPaused(true);
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
