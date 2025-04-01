@@ -454,7 +454,7 @@ namespace Ukemochi
 
             // Trigger enemy hurt animation
             if (enemy_data.health > 0)
-                ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimation("Hurt");
+                ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
 
             // Stop the enemy's movement
             enemy_rb.force = Vec2{ 0,0 };

@@ -1886,7 +1886,7 @@ namespace Ukemochi
             for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
             {
                 GameObject *object = GameObjectManager::GetInstance().GetGO(*it);
-                if (object->GetComponent<Enemy>().state == Enemy::DEAD)
+                if (!object->GetActive())
                 {
                     GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
                 }

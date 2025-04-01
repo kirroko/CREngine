@@ -240,6 +240,7 @@ namespace Ukemochi
 			{
 				hair->SetActive(true);
 				hair->GetComponent<Animation>().RestartAnimation();
+				hairSR.color = Vec3(1.f, 1.f, 1.f);
 
 				atk = true;
 				isHairAtk = false;
