@@ -117,6 +117,8 @@ namespace Ukemochi
 					// WIN
 					boss->SetActive(false);
 					hair->SetActive(false);
+
+					ECS::GetInstance().GetSystem<EnemyManager>()->ClearEnemies();
 					bossCom.BossPhase = 3;
 
 					// Play after boss cutscene
@@ -390,6 +392,8 @@ namespace Ukemochi
 
 				}
 			}
+			//camera shake
+			ECS::GetInstance().GetSystem<Camera>()->StartShake(1.f, 10);
 		}
 
 		if (atk)
@@ -595,9 +599,6 @@ namespace Ukemochi
 		{
 			if (playerRight > hairLeft && playerLeft < hairRight &&
 				playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12) {
-
-				//camera shake
-				ECS::GetInstance().GetSystem<Camera>()->StartShake(1.f, 10);
 
 				// Collision detected, apply damage or knockback logic
 				if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
