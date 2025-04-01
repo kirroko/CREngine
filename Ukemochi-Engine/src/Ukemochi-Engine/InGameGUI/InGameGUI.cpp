@@ -4,7 +4,7 @@
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (50%)
 \co-author	TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu (40%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
-\date       Feb 6, 2025
+\date       Apr 1, 2025
 \brief      This file contains the definition of the in game GUI system which handles GUI
 			elements such as text, images and buttons within the game.
 
@@ -40,9 +40,9 @@ namespace Ukemochi
 		int screen_height = app.GetWindow().GetHeight();
 
 		// Create FPS text
-		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.82f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
+		CreateText("fps_text", "", Vec2{ screen_width * 0.92f, screen_height * 0.925f }, 1.5f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi_numbers");
 
-		// Create cheatmode text
+		// Create cheat mode text
 		CreateText("cheat_text", "", Vec2{ screen_width * 0.75f, screen_height * 0.925f }, 1.25f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi");
 	}
 
@@ -98,7 +98,7 @@ namespace Ukemochi
 			int fps = static_cast<int>(g_FrameRateController.GetFPS());
 			glm::vec3 fpsColor;
 
-			if (fps > 60)
+			if (fps >= 60)
 				fpsColor = glm::vec3(0.0f, 1.0f, 0.0f);  // Green
 			else if (fps >= 30)
 				fpsColor = glm::vec3(1.0f, 1.0f, 0.0f);  // Yellow
@@ -222,8 +222,8 @@ namespace Ukemochi
 		uiManager->addButton("game ability", glm::vec3(1675.f, 100.f, 0.f), glm::vec2(119.f, 121.f), "in game_abilities", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
 			});
 
-		uiManager->addButton("pause button", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
-			});
+		//uiManager->addButton("pause button", glm::vec3(1825.f, 1000.f, 0.f), glm::vec2(119.f, 121.f), "in game_pause", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 1, BarType::None, false, []() {
+		//	});
 		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	}
@@ -487,7 +487,7 @@ namespace Ukemochi
 		// Misc UI
 		uiManager->removeButton("soul change");
 		uiManager->removeButton("game ability");
-		uiManager->removeButton("pause button");
+		//uiManager->removeButton("pause button");
 	}
 
 	/*!***********************************************************************
@@ -567,7 +567,6 @@ namespace Ukemochi
 			// Handle D-pad or analog stick navigation?
 			bool movedSelection = false;
 
-			// Navigation with D-pad
 			// Navigation with D-pad
 			if (Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT))
 			{
@@ -691,11 +690,10 @@ namespace Ukemochi
 				}
 			}
 
-			auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
-			if (rButton)
-			{
-				rButton->triggerDarkenEffect();
-			}
+			//auto& rButton = ECS::GetInstance().GetSystem<UIButtonManager>()->buttons["pause button"];
+			//if (rButton)
+			//	rButton->triggerDarkenEffect();
+
 			bool newPauseState = !Application::Get().Paused();
 			Application::Get().SetPaused(newPauseState);
 			if (newPauseState)
@@ -722,27 +720,27 @@ namespace Ukemochi
 			show_fps = !show_fps;
 
 		// Press P to show stats - only if game is not paused
-		if (Input::IsKeyTriggered(UME_KEY_P) && Application::Get().GameStarted && !Application::Get().Paused())
-		{
-			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-			{
-				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+		//if (Input::IsKeyTriggered(UME_KEY_P) && Application::Get().GameStarted && !Application::Get().Paused())
+		//{
+		//	if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+		//	{
+		//		auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-				if (audioM.GetSFXindex("GenericButtonClickSound") != -1)
-				{
-					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("GenericButtonClickSound")))
-					{
-						audioM.PlaySFX(audioM.GetSFXindex("GenericButtonClickSound"));
-					}
-				}
-			}
+		//		if (audioM.GetSFXindex("GenericButtonClickSound") != -1)
+		//		{
+		//			if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("GenericButtonClickSound")))
+		//			{
+		//				audioM.PlaySFX(audioM.GetSFXindex("GenericButtonClickSound"));
+		//			}
+		//		}
+		//	}
 
-			show_stats = !show_stats;
-			if (show_stats)
-				ShowStats();
-			else
-				HideStats();
-		}
+		//	show_stats = !show_stats;
+		//	if (show_stats)
+		//		ShowStats();
+		//	else
+		//		HideStats();
+		//}
 	}
 
 	/*!***********************************************************************

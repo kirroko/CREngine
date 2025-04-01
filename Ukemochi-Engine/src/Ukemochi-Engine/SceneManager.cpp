@@ -846,36 +846,7 @@ namespace Ukemochi
             std::string name = gameObjectData["Name"].GetString();
             std::string tag = gameObjectData["Tag"].GetString();
 
-            //if (tag == "Button")
-            //{
-            //    // Get the screen width and height
-            //    Application& app = Application::Get();
-            //    int screen_width = app.GetWindow().GetWidth();
-            //    int screen_height = app.GetWindow().GetHeight();
-
-            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-            //                                                          Vec2{screen_width * 0.1f, screen_height * 0.9f},
-            //                                                          1.f, Vec3{1.f, 1.f, 1.f}, "Ukemochi");
-
-            //    Button buttonComponent;
-            //    buttonComponent.on_click = []()
-            //    {
-            //        std::cout << "PRESSED" << std::endl;
-            //        ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
-            //    };
-            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(
-            //        name, tag, "pause_btn", "", Vec2{screen_width * 0.05f, screen_height * 0.8f}, 1.f,
-            //        Vec3{1.f, 1.f, 1.f}, "Ukemochi",
-            //        Vec2{75.f, 75.f}, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
-            //    continue;
-            //    //newObject.AddComponent(buttonComponent);
-            //    //newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
-            //    //ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-            //    //Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
-            //}
-
             // Create a new GameObject and add it to the scene
-
             GameObject& newObject = GameObjectManager::GetInstance().CreateObject(name, tag);
             //GameObject newObject = GameObject(entity,name, tag);
 
@@ -955,7 +926,6 @@ namespace Ukemochi
                     );
                     int collisionFlag = componentData["Collision Flag"].GetInt();
                     bool isTrigger = componentData["is_trigger"].GetBool();
-                    //std::string collisionTag = componentData["Tag"].GetString();
                     if (!newObject.HasComponent<BoxCollider2D>())
                     {
                         newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger});
@@ -985,13 +955,6 @@ namespace Ukemochi
                         SpriteRender sr = { texturePath, shape, layer };
                         newObject.AddComponent<SpriteRender>(sr);
                     }
-
-                    //ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
-					// if (tag == "Player")
-					// {
-					// 	newObject.GetComponent<SpriteRender>().animated = true;
-					// 	newObject.GetComponent<SpriteRender>().animationIndex = 1;
-					// }
 				}
 				else if (componentName == "Script")
 				{
@@ -1168,7 +1131,6 @@ namespace Ukemochi
             }
         }
 
-        // std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
         UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
     }
 
@@ -1284,9 +1246,7 @@ namespace Ukemochi
                 boxColliderComponent.AddMember("Max", max, allocator);
 
                 boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
-
                 boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-                //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
                 componentsArray.PushBack(boxColliderComponent, allocator);
             }
@@ -1637,9 +1597,7 @@ namespace Ukemochi
             boxColliderComponent.AddMember("Max", max, allocator);
 
             boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
-
             boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-            //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
             componentsArray.PushBack(boxColliderComponent, allocator);
         }
