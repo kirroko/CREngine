@@ -503,7 +503,8 @@ namespace Ukemochi
                     }
                 }
             }
-            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy")
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy"
+                && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
                 Vec2 enemy_scale = ECS::GetInstance().GetComponent<Transform>(entity).scale;
