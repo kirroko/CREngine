@@ -420,13 +420,15 @@ namespace Ukemochi
             auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
             auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
 
-            // Trigger enemy hurt animation
-            ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
-
             // Deal damage to the enemy
-            if (!enemy_data.wasHit) {
+            if (!enemy_data.wasHit)
+            {
                 enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
                 ECS::GetInstance().GetComponent<SpriteRender>(enemy).color = Vec3(1.f, 0.f, 0.f);
+
+                // Trigger enemy hurt animation
+                if (enemy_data.health > 0)
+                    ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimation("Hurt");
             }
         }
         else if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Dummy")
@@ -448,9 +450,11 @@ namespace Ukemochi
         {
             // Get reference of the enemy
             auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(enemy);
+            auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
 
             // Trigger enemy hurt animation
-            ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
+            if (enemy_data.health > 0)
+                ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimation("Hurt");
 
             // Stop the enemy's movement
             enemy_rb.force = Vec2{ 0,0 };
