@@ -104,7 +104,6 @@ namespace Ukemochi
                 // skip non active enemy
                 if (object->GetActive() == false)
                 {
-                    GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
                     it++;
                     continue;
                 }

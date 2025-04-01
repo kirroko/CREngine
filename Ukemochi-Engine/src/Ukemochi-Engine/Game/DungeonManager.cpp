@@ -320,6 +320,7 @@ namespace Ukemochi
 				if (enemy.health <= 0)
 				{
 					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+					GameObjectManager::GetInstance().GetGOByName(GameObjectManager::GetInstance().GetGO(entity)->GetName() + "_Shadow")->SetActive(false);
 					continue;
 				}
 			}
