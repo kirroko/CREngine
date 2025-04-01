@@ -596,6 +596,7 @@ namespace Ukemochi
                 if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
                 {
                     enemyphysic.velocity = Vec2();
+                    enemyphysic.force = Vec2{};
                     if (object->GetComponent<Animation>().currentClip != "Death")
                     {
                         object->GetComponent<Animation>().SetAnimation("Death");

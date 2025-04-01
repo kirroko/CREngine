@@ -313,6 +313,17 @@ namespace Ukemochi
 	{
 		for (auto& entity : rooms[room_id].entities)
 		{
+			// Dont activate enemy if its dead
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
+			{
+				auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity);
+				if (enemy.health <= 0)
+				{
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+					continue;
+				}
+			}
+
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 			std::string room = std::to_string(room_id);
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
