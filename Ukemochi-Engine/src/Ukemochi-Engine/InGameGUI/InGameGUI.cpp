@@ -87,6 +87,7 @@ namespace Ukemochi
 
 				// Show the defeat screen
 				showDefeatScreen();
+				player.currentHealth = 1;
 				deathTimer = 0.f;
 			}
 		}
@@ -1013,6 +1014,8 @@ namespace Ukemochi
 				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
 				
 				this->CreateMainMenuUI();
+				this->HideDefeatScreen();
+				std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Prevent double clicking
 			}
 			});
 	}
