@@ -764,7 +764,6 @@ namespace Ukemochi
             }
 
 
-
             if (tag == "Blob")
             {
                 if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x < 100.f)
@@ -804,8 +803,6 @@ namespace Ukemochi
                     }
                 }
             }
-
-
         }
     }
 }

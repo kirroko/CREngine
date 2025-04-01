@@ -4,10 +4,10 @@
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
-\date       Jan 24, 2025
+\date       Apr 1, 2025
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -31,7 +31,7 @@ namespace Ukemochi
 	{
 		Mtx44 transform_matrix;
 		Vec3 position;
-		float rotation = 0.f; // TODO: Change to Quaternion?
+		float rotation = 0.f;
 		Vec2 scale;
 	};
 
@@ -75,7 +75,6 @@ namespace Ukemochi
 
 		int collision_flag{};	// Track the collision flags
 		bool is_trigger{false}; // If true, act as a trigger
-		// bool enabled{ true };// If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -99,33 +98,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 GUI Text component structure.
-	*************************************************************************/
-	// struct Text
-	//{
-	//	//std::string label;	   // The text on the textbox
-	//	//Vec2 initial_pos{};	   // The initial position of the textbox
-	//	//std::string alignment; // The text alignment (left, middle, right)
-	//	//std::string font;	   // The text font
-	//	//int font_size;		   // The text font size
-	// };
-
-	/*!***********************************************************************
-	\brief
-	 GUI Button component structure.
-	*************************************************************************/
-	// struct Button
-	//{
-	//	//std::function<void()> on_click; // The event to trigger on click
-	//	//bool interactable{ true };		// Is the button interactable
-	//
-	//	//std::string label{};			// The text on the button
-	//	//Vec2 initial_pos{};				// The initial position of the button
-	// };
-
-	/*!***********************************************************************
-	\brief
-	 SpriteRender component structure.
+	 Sprite shape enumeration.
 	*************************************************************************/
 	enum class SPRITE_SHAPE
 	{
@@ -133,6 +106,10 @@ namespace Ukemochi
 		CIRCLE = 1
 	}; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
+	/*!***********************************************************************
+	\brief
+	 AnimationClip structure.
+	*************************************************************************/
 	struct AnimationClip
 	{
 		std::string spriteName{};		// Name of the spritesheet inside the atlas texture
@@ -154,10 +131,11 @@ namespace Ukemochi
 		// 	: name(std::move(name)), textureID(textureID), total_frames(total_frames), pixel_width(pixel_width), pixel_height(pixel_height), total_width(total_width), total_height(total_height), frame_time(frameTime), looping(looping) {}
 	};
 
-	/*!
-	 * @struct Animation
-	 * @brief Manages frame-based animations for entities.
-	 */
+	/*!***********************************************************************
+	\brief
+	 Animation component structure.
+	 Manages frame-based animations for entities.
+	*************************************************************************/
 	struct Animation
 	{
 		std::unordered_map<std::string, AnimationClip> clips; // Animation clips
@@ -335,6 +313,10 @@ namespace Ukemochi
 
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Render layer enumeration.
+	*************************************************************************/
 	enum RenderLayer // The type of render layers
 	{
 		BACKGROUND,		   // to render background objects
@@ -345,6 +327,11 @@ namespace Ukemochi
 		DYNAMIC_FRONT,	   // to render player and enemy objects infront of static objects
 		FOREGROUND		   // to render foreground objects
 	};
+
+	/*!***********************************************************************
+	\brief
+	 SpriteRender component structure.
+	*************************************************************************/
 	struct SpriteRender
 	{
 		std::string texturePath{};				// The path acting as a key to the texture

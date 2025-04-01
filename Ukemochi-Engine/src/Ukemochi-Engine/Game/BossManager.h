@@ -3,10 +3,10 @@
 /*!
 \file       BossManager.h
 \author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu
-\date       Sept 20, 2024
+\date       Sept 20, 2025
 \brief      This file contains the declaration of the BossManager class and related methods.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */

@@ -6,7 +6,7 @@
 \brief      This file contains the declaration of the job system.
             This file is used to manage the job system for the engine using thread pools
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */

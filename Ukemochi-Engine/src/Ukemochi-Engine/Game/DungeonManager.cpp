@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Game/BossManager.h"		  // for init boss
 #include "../SceneManager.h"			  // for GetCurrScene name
 #include "../Video/VideoManager.h"		  // for boss cutscene
-#include "Ukemochi-Engine/Application.h"
+#include "Ukemochi-Engine/Application.h"  // for pause
 
 namespace Ukemochi
 {
@@ -30,9 +30,7 @@ namespace Ukemochi
 	*************************************************************************/
 	void DungeonManager::Init()
 	{
-		//change when proper room structure is done
 		current_room_id = 1;
-		//current_room_wave = WAVE_NUMBER;
 		player = static_cast<EntityID>(-1);
 
 		start_boss = false;
