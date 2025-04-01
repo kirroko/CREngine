@@ -125,6 +125,7 @@ namespace Ukemochi
 					ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 					ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done = false;
 					ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("after_boss");
+					ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].currentFrame = 0;
 				}
 				else
 				{

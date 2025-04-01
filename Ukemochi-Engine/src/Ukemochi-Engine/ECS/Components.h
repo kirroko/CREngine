@@ -324,7 +324,8 @@ namespace Ukemochi
 		DYNAMIC_BACK,	   // to render player and enemy objects behind static objects
 		STATIC,			   // to render static objects
 		SUB_DYNAMIC_FRONT, // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
-		DYNAMIC_FRONT,	   // to render player and enemy objects infront of static objects
+		DYNAMIC_FRONT,	   // to render enemy objects infront of static objects
+		PLAYER_DYNAMIC_FRONT, // to render player infront of static objects
 		FOREGROUND		   // to render foreground objects
 	};
 

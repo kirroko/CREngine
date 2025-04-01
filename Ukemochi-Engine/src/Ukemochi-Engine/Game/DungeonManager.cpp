@@ -138,14 +138,16 @@ namespace Ukemochi
 			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 			if (ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].loaded)
 			{
-				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].currentFrame = 0;
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
 			}
 			else
 			{
 				Application::Get().SetPaused(true);
-				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].currentFrame = 0;
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 			}
 		}
 
@@ -176,8 +178,8 @@ namespace Ukemochi
 		// Move camera back to boss room and start boss fight
 		if (current_room_id == 6 && !start_boss && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("before_boss"))
 		{
-			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss"); // Select just in case
-			ECS::GetInstance().GetSystem<VideoManager>()->Free(); // Free current video
+			//ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss"); // Select just in case
+			//ECS::GetInstance().GetSystem<VideoManager>()->Free(); // Free current video
 
 			// Set camera to room position
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;

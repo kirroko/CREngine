@@ -575,7 +575,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock wall 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "1_Rock8",
@@ -589,7 +589,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "1_Rock5",
@@ -603,7 +603,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "1_RightBlock",
@@ -617,7 +617,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 2",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_TopBound",
@@ -1204,7 +1204,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock wall 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_LeftWallFront",
@@ -1218,7 +1218,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "cave wall 3",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_RightBlock",
@@ -1232,7 +1232,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 2",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_LeftBlock_Permanent",
@@ -1246,7 +1246,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_Bush3",
@@ -1260,7 +1260,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -1280,7 +1280,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_Rock8",
@@ -1294,7 +1294,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_Rock5",
@@ -1308,7 +1308,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "2_EnemyFish1",
@@ -2154,7 +2154,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock wall 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "3_LeftWallFront",
@@ -2168,7 +2168,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "cave wall 3",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "3_RightBlock",
@@ -2182,7 +2182,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 2",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "3_LeftBlock",
@@ -2196,7 +2196,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "3_Bush3",
@@ -2210,7 +2210,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -2230,7 +2230,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "3_Rock5",
@@ -2244,7 +2244,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "3_EnemyWorm1",
@@ -3065,7 +3065,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock wall 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_LeftWallFront",
@@ -3079,7 +3079,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "cave wall 3",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_RightBlock",
@@ -3093,7 +3093,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 2",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_LeftBlock",
@@ -3107,7 +3107,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_Bush3",
@@ -3121,7 +3121,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Environment/base env moving_2_Part.png",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -3141,7 +3141,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_Rock8",
@@ -3155,7 +3155,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 8",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_Rock5",
@@ -3169,7 +3169,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock 5",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "4_EnemyFish1",
@@ -3958,7 +3958,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "rock wall 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "5_LeftWallFront",
@@ -3972,7 +3972,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "cave wall 3",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "5_RightBlock",
@@ -3986,7 +3986,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 2",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "5_LeftBlock",
@@ -4000,7 +4000,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "block 1",
                     "Shape": 0,
-                    "Layer": 6
+                    "Layer": 7
                 }]
         }, {
             "Name": "6_TopBound",
@@ -4350,7 +4350,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 6
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -4450,7 +4450,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Mochi 1_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 6
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -4974,7 +4974,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 6
                 }, {
                     "Name": "Animation",
                     "Clips": {
@@ -4994,7 +4994,7 @@
                     "Name": "SpriteRender",
                     "Sprite": "../Assets/Textures/Player/Skills + VFx_Part.png",
                     "Shape": 0,
-                    "Layer": 5
+                    "Layer": 6
                 }, {
                     "Name": "Animation",
                     "Clips": {
