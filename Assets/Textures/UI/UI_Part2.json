@@ -2,11 +2,11 @@
 
 "credits button.png":
 {
-	"frame": {"x":5,"y":5,"w":238,"h":182},
+	"frame": {"x":5,"y":5,"w":238,"h":91},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":182},
-	"sourceSize": {"w":238,"h":182}
+	"spriteSourceSize": {"x":0,"y":0,"w":238,"h":91},
+	"sourceSize": {"w":238,"h":91}
 },
 "credits.png":
 {
@@ -18,15 +18,15 @@
 },
 "exit button.png":
 {
-	"frame": {"x":1213,"y":5,"w":101,"h":168},
+	"frame": {"x":1213,"y":5,"w":118,"h":103},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":101,"h":168},
-	"sourceSize": {"w":101,"h":168}
+	"spriteSourceSize": {"x":0,"y":0,"w":118,"h":103},
+	"sourceSize": {"w":118,"h":103}
 },
 "Group 4.png":
 {
-	"frame": {"x":1319,"y":5,"w":147,"h":177},
+	"frame": {"x":1336,"y":5,"w":147,"h":177},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":147,"h":177},
@@ -34,15 +34,15 @@
 },
 "how to play button.png":
 {
-	"frame": {"x":1471,"y":5,"w":237,"h":216},
+	"frame": {"x":1488,"y":5,"w":237,"h":108},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":237,"h":216},
-	"sourceSize": {"w":237,"h":216}
+	"spriteSourceSize": {"x":0,"y":0,"w":237,"h":108},
+	"sourceSize": {"w":237,"h":108}
 },
 "logo.png":
 {
-	"frame": {"x":1713,"y":5,"w":1057,"h":475},
+	"frame": {"x":1730,"y":5,"w":1057,"h":475},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1057,"h":475},
@@ -50,7 +50,7 @@
 },
 "nail.png":
 {
-	"frame": {"x":2775,"y":5,"w":26,"h":24},
+	"frame": {"x":2792,"y":5,"w":26,"h":24},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":24},
@@ -58,19 +58,19 @@
 },
 "start button.png":
 {
-	"frame": {"x":2806,"y":5,"w":422,"h":343},
+	"frame": {"x":2823,"y":5,"w":422,"h":205},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":343},
-	"sourceSize": {"w":422,"h":343}
+	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":205},
+	"sourceSize": {"w":422,"h":205}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "main menu.png",
 	"format": "RGBA8888",
-	"size": {"w":3233,"h":3906},
+	"size": {"w":3250,"h":3906},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:4298111918136f2dd4d54dbc3fa0b5b3:fa0ed25a2dda4aae2b8655a1fa954dab:1fed6e43413a7b4876ed6edb434224e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:0953853dc60fc5fac0f7d66f100a6286:2f0d4984b444c46727d00d223415bf55:1fed6e43413a7b4876ed6edb434224e3$"
 }
 }

@@ -1,0 +1,20 @@
+{"frames": {
+
+"Boss Idle Phase 2.png":
+{
+	"frame": {"x":0,"y":0,"w":3440,"h":3440},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":3440,"h":3440},
+	"sourceSize": {"w":3440,"h":3440}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Boss Idle Phase 2.png",
+	"format": "RGBA8888",
+	"size": {"w":3440,"h":3440},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:1770e0fd9934901748dd3958fc0c4b7e:6555f379827d74c68cb71f813391dded:0a82a871d7793e8a968912c33f3055da$"
+}
+}

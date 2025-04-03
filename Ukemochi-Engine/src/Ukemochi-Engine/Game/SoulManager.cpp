@@ -428,7 +428,7 @@ namespace Ukemochi
 
                 // Trigger enemy hurt animation
                 if (enemy_data.health > 0)
-                    ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimation("Hurt");
+                    ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
             }
         }
         else if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Dummy")
@@ -454,7 +454,7 @@ namespace Ukemochi
 
             // Trigger enemy hurt animation
             if (enemy_data.health > 0)
-                ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimation("Hurt");
+                ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
 
             // Stop the enemy's movement
             enemy_rb.force = Vec2{ 0,0 };
@@ -483,8 +483,27 @@ namespace Ukemochi
         // Search through the entity list for the nearest enemy
         for (auto const& entity : m_Entities)
         {
-            if ((GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
-                || GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy")
+            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
+                && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+            {
+                if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<Enemy>())
+                {
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Enemy>().health > 0.f)
+                    {
+                        Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                        Vec2 enemy_scale = ECS::GetInstance().GetComponent<Transform>(entity).scale;
+                        float distance = Vec3Length(enemy_position - player_position);
+
+                        if (distance < min_distance)
+                        {
+                            min_distance = distance;
+                            nearest_enemy_position.x = enemy_position.x;
+                            nearest_enemy_position.y = enemy_position.y + enemy_scale.y * 0.1f;
+                        }
+                    }
+                }
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy"
                 && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;

@@ -104,6 +104,7 @@ namespace Ukemochi
                 // skip non active enemy
                 if (object->GetActive() == false)
                 {
+                    GameObjectManager::GetInstance().GetGOByName(object->GetName() + "_Shadow")->SetActive(false);
                     it++;
                     continue;
                 }
@@ -173,7 +174,7 @@ namespace Ukemochi
                 }
 
                 // Handle enemy hit state and sound effects
-                if (enemycomponent.wasHit)
+                if (enemycomponent.wasHit && enemycomponent.state != Enemy::DEAD)
                 {
                     // Only play hit sound if this hit wasn't fatal (health > 0)
                     if (enemycomponent.health > 0 && enemycomponent.state != Enemy::DEAD)
@@ -326,7 +327,7 @@ namespace Ukemochi
                 }
 
                 // When enemy health reaches 0
-                if (enemycomponent.health <= 0.f && enemycomponent.state != Enemy::DEAD) // Add !isDead check
+                if (enemycomponent.health <= 0.f && !enemycomponent.deadsound) // Add !isDead check
                 {
                     // Play death sound immediately when health hits 0
                     if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -466,11 +467,8 @@ namespace Ukemochi
                         }
                     }
                     enemycomponent.state = Enemy::DEAD;
+                    enemycomponent.deadsound = true;
                     //enemycomponent.isDead = true; // Mark as dead immediately
-                }
-                else
-                {
-                    object->SetActive(true);
                 }
 
                 // Animation and sound synchronization
@@ -592,6 +590,8 @@ namespace Ukemochi
                 // If the enemy is in DEAD state, remove it from the list after processing DeadState
                 if (enemycomponent.state == Enemy::DEAD && !enemycomponent.isDead)
                 {
+                    enemyphysic.velocity = Vec2();
+                    enemyphysic.force = Vec2{};
                     if (object->GetComponent<Animation>().currentClip != "Death")
                     {
                         object->GetComponent<Animation>().SetAnimation("Death");
@@ -651,7 +651,7 @@ namespace Ukemochi
                 }
 
                 // PLAYER KICK ENEMY
-                if (enemycomponent.isKick)
+                if (enemycomponent.isKick && enemycomponent.state != Enemy::DEAD)
                 {
                     if (object->GetComponent<Animation>().currentClip == "Hurt" && object->GetComponent<Animation>().current_frame == 3)
                     {
@@ -1887,7 +1887,7 @@ namespace Ukemochi
             for (auto it = enemyObjects.begin(); it != enemyObjects.end();)
             {
                 GameObject *object = GameObjectManager::GetInstance().GetGO(*it);
-                if (object->GetComponent<Enemy>().state == Enemy::DEAD)
+                if (!object->GetActive())
                 {
                     GameObjectManager::GetInstance().DestroyObject(object->GetInstanceID());
                 }

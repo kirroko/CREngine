@@ -26,11 +26,11 @@
 },
 "exit.png":
 {
-	"frame": {"x":3347,"y":73,"w":122,"h":154},
+	"frame": {"x":3037,"y":73,"w":122,"h":145},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":122,"h":154},
-	"sourceSize": {"w":122,"h":154}
+	"spriteSourceSize": {"x":0,"y":0,"w":122,"h":145},
+	"sourceSize": {"w":122,"h":145}
 },
 "fire blue collect.png":
 {
@@ -50,7 +50,7 @@
 },
 "how to play.png":
 {
-	"frame": {"x":3196,"y":73,"w":146,"h":150},
+	"frame": {"x":3323,"y":73,"w":146,"h":150},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":146,"h":150},
@@ -274,7 +274,7 @@
 },
 "return.png":
 {
-	"frame": {"x":3037,"y":73,"w":154,"h":148},
+	"frame": {"x":3164,"y":73,"w":154,"h":148},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":154,"h":148},
@@ -311,6 +311,6 @@
 	"format": "RGBA8888",
 	"size": {"w":3855,"h":3510},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e5161593c7d634d22b0c8ba067b1bea3:39d12af6cdcd732e4421239bbc1d3d6e:34ec4dfb5ae1ff30bb22cbe256853295$"
+	"smartupdate": "$TexturePacker:SmartUpdate:6b09be3b3a66e2f8ddba577847014e1f:858c84a1eccf072e20de653a6a9fd125:34ec4dfb5ae1ff30bb22cbe256853295$"
 }
 }

@@ -319,13 +319,14 @@ namespace Ukemochi
 	*************************************************************************/
 	enum RenderLayer // The type of render layers
 	{
-		BACKGROUND,		   // to render background objects
-		SUB_DYNAMIC_BACK,  // to render skills, projectile and shadow objects behind dynamic and static objects
-		DYNAMIC_BACK,	   // to render player and enemy objects behind static objects
-		STATIC,			   // to render static objects
-		SUB_DYNAMIC_FRONT, // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
-		DYNAMIC_FRONT,	   // to render player and enemy objects infront of static objects
-		FOREGROUND		   // to render foreground objects
+		BACKGROUND,			  // to render background objects
+		SUB_DYNAMIC_BACK,	  // to render skills, projectile and shadow objects behind dynamic and static objects
+		DYNAMIC_BACK,		  // to render player and enemy objects behind static objects
+		STATIC,				  // to render static objects
+		SUB_DYNAMIC_FRONT,	  // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT,		  // to render enemy objects infront of static objects
+		PLAYER_DYNAMIC_FRONT, // to render player infront of static objects
+		FOREGROUND			  // to render foreground objects
 	};
 
 	/*!***********************************************************************
@@ -372,7 +373,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
 		float maxComboTimer = 5.0f; // Max time to continue combo
-		float hitStopDuration = 0.15f; // Duration of hit stop in seconds
+		float hitStopDuration = 0.05f; // Duration of hit stop in seconds
 		float hitStopTimer = 0.0f; // Timer for hit stop
 		float playerForce = 4500.0f;
 		bool isHitStopActive = false; // Flag to check if hit stop is active
@@ -507,6 +508,7 @@ namespace Ukemochi
 		float waitTime = 0.f;
 		bool iswaiting = false;
 		bool isKilled =false;
+		bool deadsound = false;
 		int move = 5;
 
 		Enemy() = default;

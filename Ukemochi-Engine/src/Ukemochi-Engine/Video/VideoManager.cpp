@@ -682,7 +682,8 @@ namespace Ukemochi {
         video.loadingContext.rgb_buffer.clear();
         video.loadingContext.jobParams.clear();
 
-        video.done = true;
+        video.done = false;
+        videos[currentVideo].loaded = false;
     }
 
     void VideoManager::CleanupAllVideos()

@@ -137,16 +137,17 @@ namespace Ukemochi
 		{
 			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 			if (ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].loaded)
+			{
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].currentFrame = 0;
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
+			}
 			else
 			{
-				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, true))
-					UME_ENGINE_ERROR("Video didn't load properly!");
-				if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
-					UME_ENGINE_ERROR("Video didn't load properly!");
 				Application::Get().SetPaused(true);
-				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].currentFrame = 0;
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 			}
 		}
 
@@ -177,8 +178,8 @@ namespace Ukemochi
 		// Move camera back to boss room and start boss fight
 		if (current_room_id == 6 && !start_boss && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("before_boss"))
 		{
-			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss"); // Select just in case
-			ECS::GetInstance().GetSystem<VideoManager>()->Free(); // Free current video
+			//ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss"); // Select just in case
+			//ECS::GetInstance().GetSystem<VideoManager>()->Free(); // Free current video
 
 			// Set camera to room position
 			ECS::GetInstance().GetSystem<Camera>()->position.x = rooms[current_room_id].position.x - ROOM_WIDTH * 0.5f;
@@ -224,7 +225,18 @@ namespace Ukemochi
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 				audioM.StopMusic(audioM.GetMusicIndex("AfterBoss_BGM"));
 			}
-			//ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
+
+			Application::Get().SetPaused(true);
+			Application::Get().GameStarted = false;
+
+			ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
+			ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+			ECS::GetInstance().GetSystem<Camera>()->position = { 0,0 };
+			ECS::GetInstance().GetSystem<InGameGUI>()->RemoveGameUI();
+			ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
+			ECS::GetInstance().GetSystem<InGameGUI>()->ShowCredits();
+			ECS::GetInstance().GetSystem<InGameGUI>()->showCredits = true;
+
 			end_boss = true;
 		}
 
@@ -313,6 +325,18 @@ namespace Ukemochi
 	{
 		for (auto& entity : rooms[room_id].entities)
 		{
+			// Dont activate enemy if its dead
+			if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy")
+			{
+				auto& enemy = ECS::GetInstance().GetComponent<Enemy>(entity);
+				if (enemy.health <= 0)
+				{
+					GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+					GameObjectManager::GetInstance().GetGOByName(GameObjectManager::GetInstance().GetGO(entity)->GetName() + "_Shadow")->SetActive(false);
+					continue;
+				}
+			}
+
 			GameObjectManager::GetInstance().GetGO(entity)->SetActive(activate);
 			std::string room = std::to_string(room_id);
 			std::string name = GameObjectManager::GetInstance().GetGO(entity)->GetName();
