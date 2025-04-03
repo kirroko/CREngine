@@ -37,27 +37,27 @@ namespace Ukemochi {
 												// Set the log pattern with color, time, logger name, and message
 
 		// Create console sink
-		auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-		console_sink->set_level(spdlog::level::trace);
+		//auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		//console_sink->set_level(spdlog::level::trace);
 
-		// Create file sink
-		auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs.txt", true);
-		file_sink->set_level(spdlog::level::trace);
+		//// Create file sink
+		//auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs.txt", true);
+		//file_sink->set_level(spdlog::level::trace);
 
-		//s_EngineLogger = spdlog::stdout_color_mt("Cozy Raccoon"); // Create engine logger
-		//s_EngineLogger->set_level(spdlog::level::trace); // Set level to trace
-		//s_ClientLogger = spdlog::stdout_color_mt("Game"); // Create client logger
-		//s_ClientLogger->set_level(spdlog::level::trace);  // Set level to trace
+		s_EngineLogger = spdlog::stdout_color_mt("Cozy Raccoon"); // Create engine logger
+		s_EngineLogger->set_level(spdlog::level::trace); // Set level to trace
+		s_ClientLogger = spdlog::stdout_color_mt("Game"); // Create client logger
+		s_ClientLogger->set_level(spdlog::level::trace);  // Set level to trace
 				// Create engine logger with both console and file sinks
-		s_EngineLogger = std::make_shared<spdlog::logger>("Cozy Raccoon", spdlog::sinks_init_list{ console_sink, file_sink });
-		s_EngineLogger->set_level(spdlog::level::trace);
+		//s_EngineLogger = std::make_shared<spdlog::logger>("Cozy Raccoon", spdlog::sinks_init_list{ console_sink, file_sink });
+		//s_EngineLogger->set_level(spdlog::level::trace);
 
-		// Create client logger with both console and file sinks
-		s_ClientLogger = std::make_shared<spdlog::logger>("Game", spdlog::sinks_init_list{ console_sink, file_sink });
-		s_ClientLogger->set_level(spdlog::level::trace);
+		//// Create client logger with both console and file sinks
+		//s_ClientLogger = std::make_shared<spdlog::logger>("Game", spdlog::sinks_init_list{ console_sink, file_sink });
+		//s_ClientLogger->set_level(spdlog::level::trace);
 
 		// Register loggers
-		spdlog::register_logger(s_EngineLogger);
-		spdlog::register_logger(s_ClientLogger);
+		//spdlog::register_logger(s_EngineLogger);
+		//spdlog::register_logger(s_ClientLogger);
 	}
 }
