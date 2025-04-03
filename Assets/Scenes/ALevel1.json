@@ -4310,7 +4310,7 @@
                 }, {
                     "Name": "Animation",
                     "Clips": {
-                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Hair Attack_Part.png", "HairAtk", 34, 0.5, 1.0, 625, 625, 625, 3750, 3750, 0.05000000074505806, true]
+                        "HairAtk": ["Hair 1_Attack", "../Assets/Textures/Enemy/Hair Attack_Part.png", "HairAtk", 34, 0.5, 1.0, 625, 625, 625, 3750, 3750, 0.05000000074505806, false]
                     },
                     "CurrentClip": "HairAtk"
                 }]
