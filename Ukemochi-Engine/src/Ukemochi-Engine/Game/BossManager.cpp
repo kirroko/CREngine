@@ -489,7 +489,7 @@ namespace Ukemochi
 					if (newObject.HasComponent<Enemy>())
 					{
 						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::FISH, newObject.GetInstanceID());
-						newObject.GetComponent<SpriteRender>().layer = 6;
+						newObject.GetComponent<SpriteRender>().layer = DYNAMIC_FRONT;
 					}
 					else
 					{
@@ -499,7 +499,7 @@ namespace Ukemochi
 					if (shadow.HasComponent<SpriteRender>())
 					{
 						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Fish_Shadow.png";
-						shadow.GetComponent<SpriteRender>().layer = 6;
+						shadow.GetComponent<SpriteRender>().layer = SUB_DYNAMIC_FRONT;
 					}
 					else
 					{
@@ -541,7 +541,7 @@ namespace Ukemochi
 					if (newObject.HasComponent<Enemy>())
 					{
 						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::WORM, newObject.GetInstanceID());
-						newObject.GetComponent<SpriteRender>().layer = 6;
+						newObject.GetComponent<SpriteRender>().layer = DYNAMIC_FRONT;
 					}
 					else
 					{
@@ -551,7 +551,7 @@ namespace Ukemochi
 					if (shadow.HasComponent<SpriteRender>())
 					{
 						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Worm_shadow.png";
-						shadow.GetComponent<SpriteRender>().layer = 6;
+						shadow.GetComponent<SpriteRender>().layer = SUB_DYNAMIC_FRONT;
 					}
 					else
 					{

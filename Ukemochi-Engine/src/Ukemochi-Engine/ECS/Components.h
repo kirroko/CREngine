@@ -319,14 +319,14 @@ namespace Ukemochi
 	*************************************************************************/
 	enum RenderLayer // The type of render layers
 	{
-		BACKGROUND,		   // to render background objects
-		SUB_DYNAMIC_BACK,  // to render skills, projectile and shadow objects behind dynamic and static objects
-		DYNAMIC_BACK,	   // to render player and enemy objects behind static objects
-		STATIC,			   // to render static objects
-		SUB_DYNAMIC_FRONT, // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
-		DYNAMIC_FRONT,	   // to render enemy objects infront of static objects
+		BACKGROUND,			  // to render background objects
+		SUB_DYNAMIC_BACK,	  // to render skills, projectile and shadow objects behind dynamic and static objects
+		DYNAMIC_BACK,		  // to render player and enemy objects behind static objects
+		STATIC,				  // to render static objects
+		SUB_DYNAMIC_FRONT,	  // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT,		  // to render enemy objects infront of static objects
 		PLAYER_DYNAMIC_FRONT, // to render player infront of static objects
-		FOREGROUND		   // to render foreground objects
+		FOREGROUND			  // to render foreground objects
 	};
 
 	/*!***********************************************************************
