@@ -506,15 +506,18 @@ namespace Ukemochi {
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
 
-                // Play BGM at 0.2 volume
-                if (audioM.GetMusicIndex("Wind_BGM") != -1)
+                if (Application::Get().IsPaused == false)
                 {
-                    int windBgmIndex = audioM.GetMusicIndex("Wind_BGM");
-                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(windBgmIndex))
+                    // Play BGM at 0.2 volume
+                    if (audioM.GetMusicIndex("Wind_BGM") != -1)
                     {
-                        audioM.PlayMusic(windBgmIndex);
-                        // Set volume for Wind_BGM
-                        ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.4f, "Music");
+                        int windBgmIndex = audioM.GetMusicIndex("Wind_BGM");
+                        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(windBgmIndex))
+                        {
+                            audioM.PlayMusic(windBgmIndex);
+                            // Set volume for Wind_BGM
+                            ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(windBgmIndex, 0.4f, "Music");
+                        }
                     }
                 }
             }
@@ -541,7 +544,6 @@ namespace Ukemochi {
                         if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(PreBoss_BGMIndex))
                         {
                             audioM.PlayMusic(PreBoss_BGMIndex);
-                            // Set volume for Wind_BGM
                             ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(PreBoss_BGMIndex, 0.4f, "Music");
                         }
                     }
@@ -553,7 +555,7 @@ namespace Ukemochi {
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
+                audioM.StopMusic(audioM.GetMusicIndex("BGM"));
                 // Play BGM at 0.4 volume
                 if (audioM.GetMusicIndex("AfterBoss_BGM") != -1)
                 {
@@ -561,7 +563,6 @@ namespace Ukemochi {
                     if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(AfterBoss_BGMIndex))
                     {
                         audioM.PlayMusic(AfterBoss_BGMIndex);
-                        // Set volume for Wind_BGM
                         ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(AfterBoss_BGMIndex, 0.4f, "Music");
                     }
                 }

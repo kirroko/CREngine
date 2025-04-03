@@ -607,7 +607,7 @@ namespace Ukemochi
         }
         else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
 #else
-	    if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
 #endif
         {
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -636,12 +636,14 @@ namespace Ukemochi
                 setCutscene = true;
             }
             ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
-
-            ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            if (Application::Get().IsPaused == false)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            }
         }
         else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu")) // Checks if main menu is done
         {
-            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && Application::Get().IsPaused == false)
             {
                 auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
                 if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))

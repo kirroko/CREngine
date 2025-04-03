@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Application.h"
 #include "Ukemochi-Engine/Audio/Audio.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
+#include "Ukemochi-Engine/InGameGUI/InGameGUI.h"
 #include <glad/glad.h>
 
 namespace Ukemochi {
@@ -285,6 +286,11 @@ namespace Ukemochi {
 				if (iconified) // Window is minimized
 				{
 					Application::Get().IsPaused = true;
+					Application::Get().SetPaused(true);
+					if (Application::Get().GameStarted)
+					{
+						ECS::GetInstance().GetSystem<InGameGUI>()->ShowPauseMenu();
+					}
 					Audio::GetInstance().StopAllSound();
 				}
 				else // Window is restored

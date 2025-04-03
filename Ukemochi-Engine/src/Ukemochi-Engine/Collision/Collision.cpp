@@ -934,6 +934,34 @@ namespace Ukemochi
 				{
 					if (!check_collision_once)
 					{
+						if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+						{
+							auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+							// Randomize box smash sounds (using case 2's sounds)
+							std::vector<int> BoxSmashSounds = {
+								audioM.GetSFXindex("BoxSmash1"),
+								audioM.GetSFXindex("BoxSmash2"),
+								audioM.GetSFXindex("BoxSmash3"),
+								audioM.GetSFXindex("BoxSmash4")
+							};
+
+							// Remove invalid (-1) sounds
+							BoxSmashSounds.erase(
+								std::remove(BoxSmashSounds.begin(), BoxSmashSounds.end(), -1),
+								BoxSmashSounds.end()
+							);
+
+							if (!BoxSmashSounds.empty())
+							{
+								// Randomly select a hit sound
+								int randomIndex = rand() % BoxSmashSounds.size();
+								int selectedSound = BoxSmashSounds[randomIndex];
+
+								// Play the selected sound
+								audioM.PlaySFX(selectedSound);
+							}
+						}
 						if (box_anim.currentClip == "Box")
 						{
 							box_anim.SetAnimation("Box_Break");
@@ -947,68 +975,6 @@ namespace Ukemochi
 							if (box_anim.current_frame > 3)
 							{
 								box_anim.current_frame = 3;
-							}
-							if (box_anim.current_frame == 3)
-							{
-								if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-								{
-									auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-									std::vector<int> BoxSmashSounds = {
-										audioM.GetSFXindex("BoxSmash1"),
-										audioM.GetSFXindex("BoxSmash2"),
-										audioM.GetSFXindex("BoxSmash3"),
-										audioM.GetSFXindex("BoxSmash4")
-									};
-
-									// Remove invalid (-1) sounds
-									BoxSmashSounds.erase(
-										std::remove(BoxSmashSounds.begin(), BoxSmashSounds.end(), -1),
-										BoxSmashSounds.end()
-									);
-
-									// Keep track of which sounds have been played (static at class level)
-									static std::vector<bool> boxSmashSoundsPlayed;
-
-									// Initialize if first time or size changed
-									if (boxSmashSoundsPlayed.size() != BoxSmashSounds.size()) {
-										boxSmashSoundsPlayed.resize(BoxSmashSounds.size(), false);
-									}
-
-									// Check if all sounds have been played
-									bool allPlayed = true;
-									for (bool played : boxSmashSoundsPlayed) {
-										if (!played) {
-											allPlayed = false;
-											break;
-										}
-									}
-
-									// If all sounds have been played, reset all to unplayed
-									if (allPlayed) {
-										std::fill(boxSmashSoundsPlayed.begin(), boxSmashSoundsPlayed.end(), false);
-									}
-
-									// Get sounds that haven't been played yet
-									std::vector<int> availableSoundIndices;
-									for (int i = 0; i < BoxSmashSounds.size(); i++) {
-										if (!boxSmashSoundsPlayed[i]) {
-											availableSoundIndices.push_back(i);
-										}
-									}
-
-									if (!availableSoundIndices.empty()) {
-										// Random selection from available sounds
-										int randomIndex = rand() % availableSoundIndices.size();
-										int selectedSoundIndex = availableSoundIndices[randomIndex];
-										int selectedSound = BoxSmashSounds[selectedSoundIndex];
-
-										// Mark this sound as played
-										boxSmashSoundsPlayed[selectedSoundIndex] = true;
-
-										// Play the selected sound
-										audioM.PlaySFX(selectedSound);
-									}
-								}
 							}
 							if (prev_frame == 2 && box_anim.current_frame == 3)
 							{
