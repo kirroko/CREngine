@@ -1537,7 +1537,8 @@ namespace Ukemochi
             "Audio",
             "EnemyController",
             "PlayerSoul",
-            "Boss"
+            "Boss",
+            "SoulOrb"
         };
 
         ImGui::Text("Add Component");
@@ -1641,6 +1642,13 @@ namespace Ukemochi
                 {
                     // Show popup instead of console message
                     ImGui::OpenPopup("Invalid Boss Tag");
+                }
+                break;
+            case 10: // Soul Orb
+                if (!selectedObject->HasComponent<SoulOrb>())
+                {
+                    selectedObject->AddComponent<SoulOrb>(SoulOrb{});
+                    modified = true;
                 }
                 break;
             default:
@@ -1773,6 +1781,16 @@ namespace Ukemochi
                 if (ImGui::Button("Remove Player Soul Component"))
                 {
                     selectedObject->RemoveComponent<PlayerSoul>();
+                    modified = true;
+                }
+                ImGui::Spacing();
+            }
+
+            if (selectedObject->HasComponent<SoulOrb>())
+            {
+                if (ImGui::Button("Remove Soul Orb Component"))
+                {
+                    selectedObject->RemoveComponent<SoulOrb>();
                     modified = true;
                 }
                 ImGui::Spacing();
@@ -2249,6 +2267,15 @@ namespace Ukemochi
                 ImGui::Text("Player Soul Component");
                 ImGui::InputFloat("Skill Cooldown", &playerSoul.skill_cooldown);
                 ImGui::InputFloat("Skill Duration", &playerSoul.skill_duration);
+            }
+        }
+
+        if (selectedObject->HasComponent<SoulOrb>())
+        {
+            if (ImGui::CollapsingHeader("SoulOrb"))
+            {
+                auto& soulOrb = selectedObject->GetComponent<SoulOrb>();
+                ImGui::Text("Soul Orb Component");
             }
         }
 

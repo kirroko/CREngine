@@ -31,7 +31,7 @@ namespace Ukemochi
     void SoulManager::Init()
     {
         // Find the player, souls, fish ability and worm abilty entities
-        player = soul = UI_red_soul = UI_blue_soul = fish_ability = worm_ability = static_cast<EntityID>(-1);
+        player = soul = UI_red_soul = UI_blue_soul = soul_orb_clone = fish_ability = worm_ability = static_cast<EntityID>(-1);
         for (auto const& entity : m_Entities)
         {
             if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Player")
@@ -52,6 +52,10 @@ namespace Ukemochi
             {
                 UI_blue_soul = entity; // Blue soul ID is found
                 GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "OrbClone")
+            {
+                soul_orb_clone = entity; // Soul orb clone ID is found
             }
             else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "FishAbility")
             {
@@ -75,7 +79,8 @@ namespace Ukemochi
     void SoulManager::Update()
     {
         // Check if player, souls, fish and worm IDs is valid
-        if (player == -1 || soul == -1 || UI_red_soul == -1 || UI_blue_soul == -1 || fish_ability == -1 || worm_ability == -1)
+        if (player == -1 || soul == -1 || UI_red_soul == -1 || UI_blue_soul == -1
+            || soul_orb_clone == -1 || fish_ability == -1 || worm_ability == -1)
             return;
 
         // Check if player is alive
@@ -123,6 +128,9 @@ namespace Ukemochi
 
             // Handle floating soul
             HandleFloatingSoul();
+
+            // Handle soul orbs
+            HandleOrbs();
         }
     }
 
@@ -159,6 +167,43 @@ namespace Ukemochi
                 GameObjectManager::GetInstance().GetGO(UI_blue_soul)->SetActive(true);
             else if (soul_type == WORM)
                 GameObjectManager::GetInstance().GetGO(UI_red_soul)->SetActive(true);
+        }
+    }
+
+    /*!***********************************************************************
+    \brief
+     Spawn a soul orb based on the enemy's position.
+    \param[in] soul_type
+     The type of soul to harvest (e.g., FISH, WORM).
+    \param[in] amount
+     The amount of soul to harvest.
+    \param[in] spawn_position
+     The position of the dead enemy.
+    *************************************************************************/
+    void SoulManager::SpawnSoulOrb(const SoulType soul_type, const float amount, const Vec3 spawn_position)
+    {
+        // Check if the souls IDs is valid
+        if (UI_red_soul == -1 || UI_blue_soul == -1 || soul_orb_clone == -1)
+            return;
+
+        GameObject* orb_clone = GameObjectManager::GetInstance().GetGO(soul_orb_clone);
+        if (orb_clone != nullptr)
+        {
+            GameObject& new_orb = GameObjectManager::GetInstance().CloneObject(*orb_clone, "Orb", "Orb");
+
+            // Set the orb's soul type, amount and target position
+            new_orb.GetComponent<SoulOrb>().orb_type = soul_type;
+            new_orb.GetComponent<SoulOrb>().soul_amount = amount;
+            if (soul_type == FISH)
+                new_orb.GetComponent<SoulOrb>().target_position = ECS::GetInstance().GetComponent<Transform>(UI_blue_soul).position;
+            else if (soul_type == WORM)
+                new_orb.GetComponent<SoulOrb>().target_position = ECS::GetInstance().GetComponent<Transform>(UI_red_soul).position;
+
+            // Set the orb's initial position to the enemy's death position
+            new_orb.GetComponent<Transform>().position = spawn_position;
+
+            // Activate the orb and add it to the entity list
+            new_orb.SetActive(true);
         }
     }
 
@@ -375,13 +420,15 @@ namespace Ukemochi
             auto& player_soul = ECS::GetInstance().GetComponent<PlayerSoul>(player);
             auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
 
-            // Trigger enemy hurt animation
-            ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
-
             // Deal damage to the enemy
-            if (!enemy_data.wasHit) {
+            if (!enemy_data.wasHit)
+            {
                 enemy_data.TakeDamage(player_soul.skill_damages[player_soul.current_soul]);
                 ECS::GetInstance().GetComponent<SpriteRender>(enemy).color = Vec3(1.f, 0.f, 0.f);
+
+                // Trigger enemy hurt animation
+                if (enemy_data.health > 0)
+                    ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
             }
         }
         else if (GameObjectManager::GetInstance().GetGO(enemy)->GetTag() == "Dummy")
@@ -403,9 +450,11 @@ namespace Ukemochi
         {
             // Get reference of the enemy
             auto& enemy_rb = ECS::GetInstance().GetComponent<Rigidbody2D>(enemy);
+            auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(enemy);
 
             // Trigger enemy hurt animation
-            ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
+            if (enemy_data.health > 0)
+                ECS::GetInstance().GetComponent<Animation>(enemy).SetAnimationUninterrupted("Hurt");
 
             // Stop the enemy's movement
             enemy_rb.force = Vec2{ 0,0 };
@@ -434,8 +483,27 @@ namespace Ukemochi
         // Search through the entity list for the nearest enemy
         for (auto const& entity : m_Entities)
         {
-            if ((GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
-                || GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy")
+            if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Enemy"
+                && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
+            {
+                if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<Enemy>())
+                {
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Enemy>().health > 0.f)
+                    {
+                        Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
+                        Vec2 enemy_scale = ECS::GetInstance().GetComponent<Transform>(entity).scale;
+                        float distance = Vec3Length(enemy_position - player_position);
+
+                        if (distance < min_distance)
+                        {
+                            min_distance = distance;
+                            nearest_enemy_position.x = enemy_position.x;
+                            nearest_enemy_position.y = enemy_position.y + enemy_scale.y * 0.1f;
+                        }
+                    }
+                }
+            }
+            else if (GameObjectManager::GetInstance().GetGO(entity)->GetTag() == "Dummy"
                 && GameObjectManager::GetInstance().GetGO(entity)->GetActive())
             {
                 Vec3 enemy_position = ECS::GetInstance().GetComponent<Transform>(entity).position;
@@ -633,6 +701,54 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
+     Handle the movement and harvesting of the enemy soul orbs.
+    *************************************************************************/
+    void SoulManager::HandleOrbs()
+    {
+        float min_distance = 30.f; // The minimum distance to harvest the soul
+        float frequency = 5.0f; // Controls how fast it oscillates
+        float amplitude = 12.0f; // Controls how far it oscillates
+        static float orb_time_elapsed = 0.0f; // Track time for oscillation
+
+        for (EntityID orb : m_Entities)
+        {
+            if (GameObjectManager::GetInstance().GetGO(orb)->GetTag() == "Orb" && GameObjectManager::GetInstance().GetGO(orb)->GetActive())
+            {
+                auto& orb_position = ECS::GetInstance().GetComponent<Transform>(orb).position;
+                auto& soul_orb = ECS::GetInstance().GetComponent<SoulOrb>(orb);
+
+                Vec3 direction = soul_orb.target_position - orb_position;
+                float distance = Vec3Length(direction);
+
+                // Harvest and destroy soul orb when its close enough
+                if (distance < min_distance)
+                {
+                    HarvestSoul(soul_orb.orb_type, soul_orb.soul_amount);
+                    GameObjectManager::GetInstance().GetGO(orb)->SetActive(false);
+                    continue;
+                }
+
+                // Normalize direction
+                Vec3Normalize(direction, direction);
+
+                // Get perpendicular direction for oscillation
+                Vec3 perp_direction = Vec3(-direction.y, direction.x, 0);
+
+                // Apply S-curve movement using a sine wave
+                float sine_offset = sin(orb_time_elapsed * frequency) * amplitude;
+                Vec3 s_curve_offset = perp_direction * sine_offset; // Apply oscillation perpendicular to movement
+
+                // Move towards the target position
+                orb_position += (direction * soul_orb.orb_speed * static_cast<float>(g_FrameRateController.GetFixedDeltaTime())) + s_curve_offset;
+            }
+        }
+
+        // Increment time for sine wave
+        orb_time_elapsed += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
+    }
+
+    /*!***********************************************************************
+    \brief
      Handle the enemy projectile logic (placeholder).
     *************************************************************************/
     void SoulManager::HandleEnemyProjectile()
@@ -667,7 +783,6 @@ namespace Ukemochi
             }
 
 
-
             if (tag == "Blob")
             {
                 if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x < 100.f)
@@ -679,8 +794,8 @@ namespace Ukemochi
                 {
                     GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().SetAnimation("Explode");
 
-					if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 5)
-					{
+                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 5)
+                    {
                         if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
                         {
                             auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
@@ -695,7 +810,7 @@ namespace Ukemochi
                                 }
                             }
                         }
-					}
+                    }
 
                     if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
                     {
@@ -707,8 +822,6 @@ namespace Ukemochi
                     }
                 }
             }
-
-
         }
     }
 }

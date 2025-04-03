@@ -3,10 +3,10 @@
 \file       BossManager.cpp
 \author     Tan Si Han, t.sihan, 2301264, t.sihan@digipen.edu (90%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
-\date       Feb 05, 2024
+\date       Feb 05, 2025
 \brief      This file contains the definition of the BossManager class and related methods.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -59,6 +59,8 @@ namespace Ukemochi
 		if (boss && boss->HasComponent<Boss>())
 		{
 			bossCom = GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Boss>();
+			bossCom.health = 1000.f;
+			bossCom.BossPhase = 0;
 		}
 
 		isHairAtk = true;
@@ -121,10 +123,13 @@ namespace Ukemochi
 
 					// Play after boss cutscene
 					ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+					ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].done = false;
 					ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("after_boss");
+					ECS::GetInstance().GetSystem<VideoManager>()->videos["after_boss"].currentFrame = 0;
 				}
 				else
 				{
+					ECS::GetInstance().GetSystem<Camera>()->UpdateShake(g_FrameRateController.GetFixedDeltaTime());
 					Phase2();
 				}
 			}
@@ -237,6 +242,7 @@ namespace Ukemochi
 			{
 				hair->SetActive(true);
 				hair->GetComponent<Animation>().RestartAnimation();
+				hairSR.color = Vec3(1.f, 1.f, 1.f);
 
 				atk = true;
 				isHairAtk = false;
@@ -389,6 +395,8 @@ namespace Ukemochi
 
 				}
 			}
+			//camera shake
+			ECS::GetInstance().GetSystem<Camera>()->StartShake(1.f, 10);
 		}
 
 		if (atk)
@@ -481,7 +489,7 @@ namespace Ukemochi
 					if (newObject.HasComponent<Enemy>())
 					{
 						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::FISH, newObject.GetInstanceID());
-						newObject.GetComponent<SpriteRender>().layer = 6;
+						newObject.GetComponent<SpriteRender>().layer = DYNAMIC_FRONT;
 					}
 					else
 					{
@@ -491,7 +499,7 @@ namespace Ukemochi
 					if (shadow.HasComponent<SpriteRender>())
 					{
 						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Fish_Shadow.png";
-						shadow.GetComponent<SpriteRender>().layer = 6;
+						shadow.GetComponent<SpriteRender>().layer = SUB_DYNAMIC_FRONT;
 					}
 					else
 					{
@@ -533,7 +541,7 @@ namespace Ukemochi
 					if (newObject.HasComponent<Enemy>())
 					{
 						newObject.GetComponent<Enemy>() = Enemy(x, y, Enemy::WORM, newObject.GetInstanceID());
-						newObject.GetComponent<SpriteRender>().layer = 6;
+						newObject.GetComponent<SpriteRender>().layer = DYNAMIC_FRONT;
 					}
 					else
 					{
@@ -543,7 +551,7 @@ namespace Ukemochi
 					if (shadow.HasComponent<SpriteRender>())
 					{
 						shadow.GetComponent<SpriteRender>().texturePath = "../Assets/Textures/Worm_shadow.png";
-						shadow.GetComponent<SpriteRender>().layer = 6;
+						shadow.GetComponent<SpriteRender>().layer = SUB_DYNAMIC_FRONT;
 					}
 					else
 					{

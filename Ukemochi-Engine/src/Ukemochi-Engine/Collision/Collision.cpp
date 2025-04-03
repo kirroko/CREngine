@@ -732,11 +732,8 @@ namespace Ukemochi
 				break;
 			}
 		}
-		else if (tag1 == "Knife" && tag2 == "Environment")
+		else if (tag1 == "Knife" && tag2 == "Environment") // Mochi's Knife and Environment (Mochi heals from breaking boxes)
 		{
-			// Mochi interacting with the environment
-			// Make space and get healing items?
-			
 			// Skip if box is already a trigger/broken
 			if (box2.is_trigger)
 				return;
@@ -1053,9 +1050,9 @@ namespace Ukemochi
 				break;
 			}
 		}
-		else if (tag1 == "Knife" && tag2 == "Hair")
+		else if (tag1 == "Knife" && tag2 == "Hair") // Mochi's Knife and Boss Hair (Boss hair takes damage)
 		{
-			// Get references of the player and enemy
+			// Get references of the player and enemy boss
 			auto& player_trans = ECS::GetInstance().GetComponent<Transform>(player);
 			auto& player_sr = ECS::GetInstance().GetComponent<SpriteRender>(player);
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
@@ -1504,7 +1501,7 @@ namespace Ukemochi
 		if (box1.is_trigger || box2.is_trigger)
 			return;
 
-		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile") // Mochi and Enemy / Enemy's Projectile (Mochi takes damage and knockback)
+		if (tag1 == "Player" && tag2 == "Enemy" || tag1 == "Player" && tag2 == "EnemyProjectile") // Mochi and Enemy / Enemy's Projectile (Mochi takes damage)
 		{
 			// Get references of the player and enemy
 			auto& player_data = ECS::GetInstance().GetComponent<Player>(player);
@@ -1515,9 +1512,7 @@ namespace Ukemochi
 
 			if (tag2 == "Enemy")
 			{
-				//auto& enemy_data = ECS::GetInstance().GetComponent<Enemy>(entity2);
 				// Deal damage to the player
-				//enemy_data.AttackPlayer(player_data.currentHealth);
 			}
 			else if (tag2 == "EnemyProjectile" && ECS::GetInstance().HasComponent<EnemyBullet>(entity2))
 			{
@@ -1575,8 +1570,6 @@ namespace Ukemochi
 			StaticDynamic_Response(trans1, box1, rb1, trans2, box2, rb2, firstTimeOfCollision);
 		}
 		//else if (tag1 == "Enemy" && tag2 == "Enemy") // Enemy and Enemy (Block each other)
-		//{
-		//}
 	}
 
 	/*!***********************************************************************

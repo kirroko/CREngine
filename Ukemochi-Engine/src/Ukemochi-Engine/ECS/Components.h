@@ -4,10 +4,10 @@
 \author     WONG JUN YU, Kean, junyukean.wong, 2301234, junyukean.wong\@digipen.edu (50%)
 \co-authors Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (25%)
 \co-authors Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (10%)
-\date       Jan 24, 2025
+\date       Apr 1, 2025
 \brief      Here is where we store all the different components that are needed to be added or removed (i.e Transform, Sprite, etc).
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -31,7 +31,7 @@ namespace Ukemochi
 	{
 		Mtx44 transform_matrix;
 		Vec3 position;
-		float rotation = 0.f; // TODO: Change to Quaternion?
+		float rotation = 0.f;
 		Vec2 scale;
 	};
 
@@ -75,7 +75,6 @@ namespace Ukemochi
 
 		int collision_flag{};	// Track the collision flags
 		bool is_trigger{false}; // If true, act as a trigger
-		// bool enabled{ true };// If true, box collision is enabled
 	};
 
 	/*!***********************************************************************
@@ -99,33 +98,7 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
-	 GUI Text component structure.
-	*************************************************************************/
-	// struct Text
-	//{
-	//	//std::string label;	   // The text on the textbox
-	//	//Vec2 initial_pos{};	   // The initial position of the textbox
-	//	//std::string alignment; // The text alignment (left, middle, right)
-	//	//std::string font;	   // The text font
-	//	//int font_size;		   // The text font size
-	// };
-
-	/*!***********************************************************************
-	\brief
-	 GUI Button component structure.
-	*************************************************************************/
-	// struct Button
-	//{
-	//	//std::function<void()> on_click; // The event to trigger on click
-	//	//bool interactable{ true };		// Is the button interactable
-	//
-	//	//std::string label{};			// The text on the button
-	//	//Vec2 initial_pos{};				// The initial position of the button
-	// };
-
-	/*!***********************************************************************
-	\brief
-	 SpriteRender component structure.
+	 Sprite shape enumeration.
 	*************************************************************************/
 	enum class SPRITE_SHAPE
 	{
@@ -133,6 +106,10 @@ namespace Ukemochi
 		CIRCLE = 1
 	}; // Enum for the shape of the sprite, THIS FOLLOWS THE GRAPHICS RENDERER
 
+	/*!***********************************************************************
+	\brief
+	 AnimationClip structure.
+	*************************************************************************/
 	struct AnimationClip
 	{
 		std::string spriteName{};		// Name of the spritesheet inside the atlas texture
@@ -154,10 +131,11 @@ namespace Ukemochi
 		// 	: name(std::move(name)), textureID(textureID), total_frames(total_frames), pixel_width(pixel_width), pixel_height(pixel_height), total_width(total_width), total_height(total_height), frame_time(frameTime), looping(looping) {}
 	};
 
-	/*!
-	 * @struct Animation
-	 * @brief Manages frame-based animations for entities.
-	 */
+	/*!***********************************************************************
+	\brief
+	 Animation component structure.
+	 Manages frame-based animations for entities.
+	*************************************************************************/
 	struct Animation
 	{
 		std::unordered_map<std::string, AnimationClip> clips; // Animation clips
@@ -335,16 +313,26 @@ namespace Ukemochi
 
 	};
 
+	/*!***********************************************************************
+	\brief
+	 Render layer enumeration.
+	*************************************************************************/
 	enum RenderLayer // The type of render layers
 	{
-		BACKGROUND,		   // to render background objects
-		SUB_DYNAMIC_BACK,  // to render skills, projectile and shadow objects behind dynamic and static objects
-		DYNAMIC_BACK,	   // to render player and enemy objects behind static objects
-		STATIC,			   // to render static objects
-		SUB_DYNAMIC_FRONT, // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
-		DYNAMIC_FRONT,	   // to render player and enemy objects infront of static objects
-		FOREGROUND		   // to render foreground objects
+		BACKGROUND,			  // to render background objects
+		SUB_DYNAMIC_BACK,	  // to render skills, projectile and shadow objects behind dynamic and static objects
+		DYNAMIC_BACK,		  // to render player and enemy objects behind static objects
+		STATIC,				  // to render static objects
+		SUB_DYNAMIC_FRONT,	  // to render skills, projectile and shadow objects behind dynamic objects and infront of static objects
+		DYNAMIC_FRONT,		  // to render enemy objects infront of static objects
+		PLAYER_DYNAMIC_FRONT, // to render player infront of static objects
+		FOREGROUND			  // to render foreground objects
 	};
+
+	/*!***********************************************************************
+	\brief
+	 SpriteRender component structure.
+	*************************************************************************/
 	struct SpriteRender
 	{
 		std::string texturePath{};				// The path acting as a key to the texture
@@ -424,6 +412,18 @@ namespace Ukemochi
 		float soul_decay_amount = 10.f;					 // The amount of soul to decay
 		float soul_decay_rate = 5.f;					 // The rate of decay for the soul bar
 		float soul_decay_timer = 0.f;					 // The timer for soul decay
+	};
+
+	/*!***********************************************************************
+	\brief
+	 Soul orb component structure.
+	*************************************************************************/
+	struct SoulOrb
+	{
+		SoulType orb_type = EMPTY;  // The type of soul orb to harvest
+		float soul_amount{};		// The amount of soul to harvest
+		float orb_speed{ 600.f };	// The speed of the orb
+		Vec3 target_position{};	    // The target position to go to
 	};
 
 	/*!***********************************************************************
@@ -508,6 +508,7 @@ namespace Ukemochi
 		float waitTime = 0.f;
 		bool iswaiting = false;
 		bool isKilled =false;
+		bool deadsound = false;
 		int move = 5;
 
 		Enemy() = default;

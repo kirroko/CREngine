@@ -3,11 +3,11 @@
 \file       InGameGUI.h
 \author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu
 \co-author	TAN Shun Zhi Tomy, t.shunzhitomy, 2301341, t.shunzhitomy\@digipen.edu
-\date       Feb 6, 2025
+\date       Apr 1, 2025
 \brief      This file contains the declaration of the in game GUI system which handles GUI
 			elements such as text, images and buttons within the game.
 
-Copyright (C) 2024 DigiPen Institute of Technology.
+Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */

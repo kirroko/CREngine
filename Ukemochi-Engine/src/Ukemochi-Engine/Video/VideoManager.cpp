@@ -270,7 +270,9 @@ namespace Ukemochi {
                 {
                     UME_ENGINE_ERROR("Missing frame data at index {0}", j);
                 }
+#ifdef _DEBUG
                 UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2} in batch {3}/{4}", j + 1, video.totalFrames, j, i / BATCH_SIZE, video.totalFrames/BATCH_SIZE);
+#endif
             }
         }
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
@@ -360,7 +362,9 @@ namespace Ukemochi {
                 {
                     UME_ENGINE_ERROR("Missing frame data at index {0}", j);
                 }
+#ifdef _DEBUG
                 UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2} in batch {3}/{4}", j + 1, video.totalFrames, j, i / BATCH_SIZE, video.totalFrames/BATCH_SIZE);
+#endif
             }
         }
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
@@ -678,7 +682,8 @@ namespace Ukemochi {
         video.loadingContext.rgb_buffer.clear();
         video.loadingContext.jobParams.clear();
 
-        video.done = true;
+        video.done = false;
+        videos[currentVideo].loaded = false;
     }
 
     void VideoManager::CleanupAllVideos()

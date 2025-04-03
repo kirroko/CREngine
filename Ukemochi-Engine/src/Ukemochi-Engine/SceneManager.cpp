@@ -80,6 +80,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterComponent<Enemy>();
         ECS::GetInstance().RegisterComponent<AudioManager>();
         ECS::GetInstance().RegisterComponent<PlayerSoul>();
+        ECS::GetInstance().RegisterComponent<SoulOrb>();
 	    ECS::GetInstance().RegisterComponent<VideoData>();
         ECS::GetInstance().RegisterComponent<EnemyBullet>();
         ECS::GetInstance().RegisterComponent<Boss>();
@@ -239,10 +240,10 @@ namespace Ukemochi
             UME_ENGINE_ERROR("Video didn't load properly!");
         if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
             UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
-            UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
-            UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
         ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
     }
@@ -537,6 +538,27 @@ namespace Ukemochi
             if (!ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
+
+                static bool firstTimer = true;
+                if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6 && firstTimer)
+                {
+                    static bool delayFrame = true;
+                    if (delayFrame)
+                    {
+                        delayFrame = false;
+                        return;
+                    }
+
+                    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo(
+                        "before_boss", "../Assets/Video/all_1.mpeg", false, true))
+                        UME_ENGINE_ERROR("Video didn't load properly!");
+                    if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo(
+                        "after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, true))
+                        UME_ENGINE_ERROR("Video didn't load properly!");
+
+                    firstTimer = false;
+                }
+
                 // Poll job system complete status every second while loading screen is active
                 static float jobPollTimer = 0.0f;
                 static bool cutscene = false;
@@ -659,7 +681,6 @@ namespace Ukemochi
             SceneManagerDraw();
         }
 
-
 		sys_end = std::chrono::steady_clock::now();
 		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
@@ -726,6 +747,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<SoulManager>()->soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->UI_red_soul = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->UI_blue_soul = static_cast<EntityID>(-1);
+        ECS::GetInstance().GetSystem<SoulManager>()->soul_orb_clone = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->fish_ability = static_cast<EntityID>(-1);
         ECS::GetInstance().GetSystem<SoulManager>()->worm_ability = static_cast<EntityID>(-1);
 
@@ -824,36 +846,7 @@ namespace Ukemochi
             std::string name = gameObjectData["Name"].GetString();
             std::string tag = gameObjectData["Tag"].GetString();
 
-            //if (tag == "Button")
-            //{
-            //    // Get the screen width and height
-            //    Application& app = Application::Get();
-            //    int screen_width = app.GetWindow().GetWidth();
-            //    int screen_height = app.GetWindow().GetHeight();
-
-            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateText("text1", "pls click a button",
-            //                                                          Vec2{screen_width * 0.1f, screen_height * 0.9f},
-            //                                                          1.f, Vec3{1.f, 1.f, 1.f}, "Ukemochi");
-
-            //    Button buttonComponent;
-            //    buttonComponent.on_click = []()
-            //    {
-            //        std::cout << "PRESSED" << std::endl;
-            //        ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!");
-            //    };
-            //    ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(
-            //        name, tag, "pause_btn", "", Vec2{screen_width * 0.05f, screen_height * 0.8f}, 1.f,
-            //        Vec3{1.f, 1.f, 1.f}, "Ukemochi",
-            //        Vec2{75.f, 75.f}, "../Assets/Textures/UI/pause.png", buttonComponent.on_click);
-            //    continue;
-            //    //newObject.AddComponent(buttonComponent);
-            //    //newObject.AddComponent(Button{ [this]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); } });
-            //    //ECS::GetInstance().GetSystem<InGameGUI>()->CreateButtonOBJ(newObject, "pause_btn", "", Vec2{ screen_width * 0.05f, screen_height * 0.8f }, 1.f, Vec3{ 1.f, 1.f, 1.f }, "Ukemochi",
-            //    //Vec2{ 75.f, 75.f }, "../Assets/Textures/UI/pause.png", [newObject]() { ECS::GetInstance().GetSystem<InGameGUI>()->UpdateText("text1", "pause button clicked!"); });
-            //}
-
             // Create a new GameObject and add it to the scene
-
             GameObject& newObject = GameObjectManager::GetInstance().CreateObject(name, tag);
             //GameObject newObject = GameObject(entity,name, tag);
 
@@ -933,7 +926,6 @@ namespace Ukemochi
                     );
                     int collisionFlag = componentData["Collision Flag"].GetInt();
                     bool isTrigger = componentData["is_trigger"].GetBool();
-                    //std::string collisionTag = componentData["Tag"].GetString();
                     if (!newObject.HasComponent<BoxCollider2D>())
                     {
                         newObject.AddComponent<BoxCollider2D>({min, max, collisionFlag, isTrigger});
@@ -963,13 +955,6 @@ namespace Ukemochi
                         SpriteRender sr = { texturePath, shape, layer };
                         newObject.AddComponent<SpriteRender>(sr);
                     }
-
-                    //ECS::GetInstance().GetSystem<AssetManager>()->addTexture(newObject.GetComponent<SpriteRender>().texturePath);
-					// if (tag == "Player")
-					// {
-					// 	newObject.GetComponent<SpriteRender>().animated = true;
-					// 	newObject.GetComponent<SpriteRender>().animationIndex = 1;
-					// }
 				}
 				else if (componentName == "Script")
 				{
@@ -1085,6 +1070,15 @@ namespace Ukemochi
                         newObject.AddComponent(std::move(player_soul));
                     }
                 }
+                else if (componentName == "SoulOrb")
+                {
+                    if (!newObject.HasComponent<SoulOrb>())
+                    {
+                        SoulOrb soul_orb;
+                        soul_orb.orb_type = static_cast<SoulType>(componentData["OrbType"].GetInt());
+                        newObject.AddComponent(std::move(soul_orb));
+                    }
+                }
                 else if (componentName == "Audio")
                 {
                     if (!newObject.HasComponent<AudioManager>())
@@ -1137,7 +1131,6 @@ namespace Ukemochi
             }
         }
 
-        // std::cout << "Scene loaded successfully from file: " << file_path << std::endl;
         UME_ENGINE_INFO("Scene loaded successfully from file: {0}", file_path);
     }
 
@@ -1253,9 +1246,7 @@ namespace Ukemochi
                 boxColliderComponent.AddMember("Max", max, allocator);
 
                 boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
-
                 boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-                //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
                 componentsArray.PushBack(boxColliderComponent, allocator);
             }
@@ -1406,6 +1397,17 @@ namespace Ukemochi
                 playerSoulComponent.AddMember("SoulDecayTimer", playerSoul.soul_decay_timer, allocator);
 
                 componentsArray.PushBack(playerSoulComponent, allocator);
+            }
+
+            if (gameobject->HasComponent<SoulOrb>())
+            {
+                Value soulOrbComponent(rapidjson::kObjectType);
+                soulOrbComponent.AddMember("Name", "SoulOrb", allocator);
+
+                const auto& soulOrb = gameobject->GetComponent<SoulOrb>();
+                soulOrbComponent.AddMember("OrbType", soulOrb.orb_type, allocator);
+
+                componentsArray.PushBack(soulOrbComponent, allocator);
             }
 
             if (gameobject->HasComponent<AudioManager>()) {
@@ -1595,9 +1597,7 @@ namespace Ukemochi
             boxColliderComponent.AddMember("Max", max, allocator);
 
             boxColliderComponent.AddMember("Collision Flag", boxCollider.collision_flag, allocator);
-
             boxColliderComponent.AddMember("is_trigger", boxCollider.is_trigger, allocator);
-            //boxColliderComponent.AddMember("Tag", Value(boxCollider.tag.c_str(), allocator), allocator);
 
             componentsArray.PushBack(boxColliderComponent, allocator);
         }
@@ -1926,6 +1926,7 @@ namespace Ukemochi
         //UME_ENGINE_TRACE("Initializing soul manager...");
         ECS::GetInstance().GetSystem<SoulManager>()->Init();
         ECS::GetInstance().GetSystem<Renderer>()->finding_player_ID();
+        ECS::GetInstance().GetSystem<InGameGUI>()->Init();
         // enemy
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
         //audio
@@ -1943,5 +1944,7 @@ namespace Ukemochi
                 }
             }
         }
+
+        enable_cheatmode = false;
     }
 }

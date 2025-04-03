@@ -161,12 +161,12 @@ namespace Ukemochi
 		// Set the layer based on whether the object is behind or infront the static objects
 		if (tag == "Player")
 		{
-			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+			sprite_renderer.layer = is_behind ? DYNAMIC_BACK : PLAYER_DYNAMIC_FRONT;
 
 			if (soul != -1)
 			{
 				auto& soul_sr = ECS::GetInstance().GetComponent<SpriteRender>(soul);
-				soul_sr.layer = is_behind ? DYNAMIC_BACK : DYNAMIC_FRONT;
+				soul_sr.layer = is_behind ? DYNAMIC_BACK : PLAYER_DYNAMIC_FRONT;
 			}
 			if (shadow != -1)
 			{
