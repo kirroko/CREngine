@@ -1,0 +1,20 @@
+{"frames": {
+
+"Hair 1_Attack.png":
+{
+	"frame": {"x":0,"y":0,"w":3750,"h":3750},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":3750,"h":3750},
+	"sourceSize": {"w":3750,"h":3750}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Hair Attack.png",
+	"format": "RGBA8888",
+	"size": {"w":3750,"h":3750},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0675e59fad72cd7a0cd288364d21c7ed:3420a93adc25ec8da490acfe0b46ffb1:afde614f0ee4582180e2f8b97b3360ff$"
+}
+}

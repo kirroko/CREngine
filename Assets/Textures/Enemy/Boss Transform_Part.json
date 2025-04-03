@@ -1,0 +1,20 @@
+{"frames": {
+
+"boss for naomi-Phase 2_00.png":
+{
+	"frame": {"x":0,"y":0,"w":3440,"h":3440},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":3440,"h":3440},
+	"sourceSize": {"w":3440,"h":3440}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Boss Transform.png",
+	"format": "RGBA8888",
+	"size": {"w":3440,"h":3440},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2790f52d7e91d53ec0f282f351e1fa92:363c19404d61913b51a95c3b0243cb55:a0e125cfe8f163222de43835d22d1adf$"
+}
+}
