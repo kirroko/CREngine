@@ -287,7 +287,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("exit button", glm::vec3{ 1663.f, 298.f, 0.f }, glm::vec2{ 118.f, 103.f }, "exit button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, true, []() {
+		uiManager->addButton("exit button", glm::vec3{ 1703.f, 308.f, 0.f }, glm::vec2{ 118.f, 103.f }, "exit button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, true, []() {
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -323,7 +323,7 @@ namespace Ukemochi
 			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, []() {});
 
-		uiManager->addButton("nail exit", glm::vec3{ 1652.f, 338.f, 0.f }, glm::vec2{ 26.f, 24.f },
+		uiManager->addButton("nail exit", glm::vec3{ 1692.f, 348.f, 0.f }, glm::vec2{ 26.f, 24.f },
 			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
 			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, false, []() {});
 

@@ -373,7 +373,7 @@ namespace Ukemochi
 		int comboDamage = 10;
 		float comboTimer = 0.0f;	// Tracks time since last attack
 		float maxComboTimer = 5.0f; // Max time to continue combo
-		float hitStopDuration = 0.15f; // Duration of hit stop in seconds
+		float hitStopDuration = 0.05f; // Duration of hit stop in seconds
 		float hitStopTimer = 0.0f; // Timer for hit stop
 		float playerForce = 4500.0f;
 		bool isHitStopActive = false; // Flag to check if hit stop is active
