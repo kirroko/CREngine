@@ -594,14 +594,14 @@ namespace Ukemochi
 		// Player hitbox
 		float playerLeft = player->GetComponent<Transform>().position.x - 0.5f * player->GetComponent<Transform>().scale.x;
 		float playerRight = player->GetComponent<Transform>().position.x + 0.5f * player->GetComponent<Transform>().scale.x;
-		float playerTop = player->GetComponent<Transform>().position.y - 0.3f * player->GetComponent<Transform>().scale.y;
+		float playerTop = player->GetComponent<Transform>().position.y;// -0.3f * player->GetComponent<Transform>().scale.y;
 		float playerBottom = player->GetComponent<Transform>().position.y + 0.3f * player->GetComponent<Transform>().scale.y;
 
 		// AABB Collision check
 		if (!hair->GetComponent<SpriteRender>().flipX)
 		{
-			if (playerRight > hairLeft && playerLeft < hairRight &&
-				playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12) {
+			if (playerRight > hairLeft && playerLeft > hairRight &&
+				playerBottom < hairTop && playerTop > hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12) {
 
 				// Collision detected, apply damage or knockback logic
 				if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
