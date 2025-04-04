@@ -5003,8 +5003,61 @@
                     "CurrentClip": "Projectile"
                 }]
         }, {
+            "Name": "EnemyFish",
+            "Tag": "FishClone",
+            "Components": [{
+                    "Name": "Transform",
+                    "Position": [-5202.0, -491.86175537109375, 0.0],
+                    "Rotation": 0.0,
+                    "Scale": [181.42857360839844, 181.42857360839844]
+                }, {
+                    "Name": "Rigidbody2D",
+                    "Position": [1163.6776123046875, 676.6694946289063, 0.0],
+                    "Velocity": [0.0, 0.0],
+                    "Acceleration": [0.0, 0.0],
+                    "Force": [0.0, 0.0],
+                    "Mass": 1.0,
+                    "Inverse Mass": 1.0,
+                    "Linear Drag": 0.8999999761581421,
+                    "Angle": 0.0,
+                    "Angular Velocity": 0.0,
+                    "Angular Acceleration": 0.0,
+                    "Torque": 0.0,
+                    "Inertia Mass": 1.0,
+                    "Inverse Inertia Mass": 1.0,
+                    "Angular Drag": 0.8999999761581421,
+                    "use_gravity": false,
+                    "is_kinematic": false
+                }, {
+                    "Name": "BoxCollider2D",
+                    "Min": [1084.2841796875, 537.7310180664063],
+                    "Max": [1243.071044921875, 815.6079711914063],
+                    "Collision Flag": 0,
+                    "is_trigger": false
+                }, {
+                    "Name": "SpriteRender",
+                    "Sprite": "../Assets/Textures/Enemy/Fish_Part.png",
+                    "Shape": 0,
+                    "Layer": 2
+                }, {
+                    "Name": "Animation",
+                    "Clips": {
+                        "Hurt": ["Fish HUrt", "../Assets/Textures/Enemy/Fish_Part.png", "Hurt", 4, 0.5, 0.5, 40, 200, 200, 400, 400, 0.03999999910593033, true],
+                        "Walk": ["Fish Walk", "../Assets/Textures/Enemy/Fish_Part.png", "Walk", 21, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 750, 0.03999999910593033, true],
+                        "Flame": ["Fish Flame", "../Assets/Textures/Enemy/Fish_Part.png", "Flame", 26, 0.5, 0.5, 15, 120, 120, 960, 480, 0.02500000037252903, false],
+                        "Idle": ["Fish Idle", "../Assets/Textures/Enemy/Fish_Part.png", "Idle", 24, 0.5, 0.6499999761581421, 70, 260, 260, 1820, 1040, 0.03999999910593033, true],
+                        "Death": ["Fish Death 2", "../Assets/Textures/Enemy/Fish_Part.png", "Death", 30, 0.5, 0.6499999761581421, 65, 250, 250, 2000, 1000, 0.03500000014901161, false],
+                        "Attack": ["Fish Attack", "../Assets/Textures/Enemy/Fish_Part.png", "Attack", 24, 0.5, 0.6499999761581421, 130, 350, 350, 1750, 1750, 0.03999999910593033, true]
+                    },
+                    "CurrentClip": "Idle"
+                }, {
+                    "Name": "EnemyComponent",
+                    "Position": [250.0, 200.0],
+                    "Type": 0
+                }]
+        },{
             "Name": "EnemyWorm",
-            "Tag": "EnemyClone",
+            "Tag": "WormClone",
             "Components": [{
                     "Name": "Transform",
                     "Position": [-5202.0, -491.86175537109375, 0.0],

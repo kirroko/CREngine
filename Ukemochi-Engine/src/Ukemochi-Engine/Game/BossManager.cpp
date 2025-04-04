@@ -465,11 +465,11 @@ namespace Ukemochi
 
 			if (numOfBlob % 2 == 0)
 			{
-				cloneObject = GameObjectManager::GetInstance().GetGOByTag("Enemy");
+				cloneObject = GameObjectManager::GetInstance().GetGOByTag("FishClone");
 			}
 			else
 			{
-				cloneObject = GameObjectManager::GetInstance().GetGOByTag("EnemyClone");
+				cloneObject = GameObjectManager::GetInstance().GetGOByTag("WormClone");
 			}
 
 			if (cloneObject != nullptr)
