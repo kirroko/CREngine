@@ -190,7 +190,7 @@ namespace Ukemochi
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle2");
 		static float delay = 0.f;
 		static float atkdelay = 0.f;
-		//Phase1();
+		Phase1();
 		if (numOfBlob >= 3)
 		{
 			numOfBlob = 0;
