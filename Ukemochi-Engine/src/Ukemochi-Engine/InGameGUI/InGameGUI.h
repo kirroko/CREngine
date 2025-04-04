@@ -39,6 +39,7 @@ namespace Ukemochi
 		const float deathScreenDelay = 2.f;
 	public:
 		bool showCredits = false; // Show credits
+		bool showHowPlay = false; // Show how to play
 		
 		/*!***********************************************************************
 		\brief
