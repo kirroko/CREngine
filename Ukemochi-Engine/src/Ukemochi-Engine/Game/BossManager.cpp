@@ -190,7 +190,7 @@ namespace Ukemochi
 		GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimation("Idle2");
 		static float delay = 0.f;
 		static float atkdelay = 0.f;
-		Phase1();
+		//Phase1();
 		if (numOfBlob >= 3)
 		{
 			numOfBlob = 0;
@@ -587,51 +587,56 @@ namespace Ukemochi
 	{
 		// Boss hitbox
 		float hairLeft = hairHitBox->GetComponent<Transform>().position.x - 0.5f * hairHitBox->GetComponent<Transform>().scale.x;
-		float hairRight = hairHitBox->GetComponent<Transform>().position.x + 0.5f * hairHitBox->GetComponent<Transform>().scale.x;
-		float hairTop = hairHitBox->GetComponent<Transform>().position.y - 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
-		float hairBottom = hairHitBox->GetComponent<Transform>().position.y + 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
+		float hairRight = hairHitBox->GetComponent<Transform>().position.x + 0.4f * hairHitBox->GetComponent<Transform>().scale.x;
+		float hairTop = hairHitBox->GetComponent<Transform>().position.y+100.f + 0.5f * hairHitBox->GetComponent<Transform>().scale.y;
+		float hairBottom = hairHitBox->GetComponent<Transform>().position.y+100.f - 0.55f * hairHitBox->GetComponent<Transform>().scale.y;
 
 		// Player hitbox
 		float playerLeft = player->GetComponent<Transform>().position.x - 0.5f * player->GetComponent<Transform>().scale.x;
 		float playerRight = player->GetComponent<Transform>().position.x + 0.5f * player->GetComponent<Transform>().scale.x;
-		float playerTop = player->GetComponent<Transform>().position.y - 0.3f * player->GetComponent<Transform>().scale.y;
-		float playerBottom = player->GetComponent<Transform>().position.y + 0.3f * player->GetComponent<Transform>().scale.y;
+		float playerTop = player->GetComponent<Transform>().position.y;// +0.3f * player->GetComponent<Transform>().scale.y;
+		float playerBottom = player->GetComponent<Transform>().position.y - 0.25f * player->GetComponent<Transform>().scale.y;
 
-		// AABB Collision check
-		if (!hair->GetComponent<SpriteRender>().flipX)
+
+		if (!isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12)
 		{
-			if (playerRight > hairLeft && playerLeft < hairRight &&
-				playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12) {
+			if (hair->GetComponent<SpriteRender>().flipX) //on right
+			{
+				if (playerRight < hairLeft && playerLeft > hairRight-200.f && playerTop < hairTop && playerBottom > hairBottom)
+				{
+					// Collision detected, apply damage or knockback logic
+					if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
+						player->GetComponent<Player>().currentHealth -= 30;
 
-				// Collision detected, apply damage or knockback logic
-				if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
-					player->GetComponent<Player>().currentHealth -= 50;
+					ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
 
-				ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
+					if (player->GetComponent<Player>().currentHealth < 0)
+						player->GetComponent<Player>().currentHealth = 0;
 
-				if (player->GetComponent<Player>().currentHealth < 0)
-					player->GetComponent<Player>().currentHealth = 0;
-				isHairAtk = true;
+					isHairAtk = true;
+				}
+
+			}
+			else
+			{
+				if (playerRight > hairLeft && playerLeft < hairRight && playerTop < hairTop && playerBottom > hairBottom)
+				{
+					// Collision detected, apply damage or knockback logic
+					if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
+						player->GetComponent<Player>().currentHealth -= 30;
+
+					ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
+
+					if (player->GetComponent<Player>().currentHealth < 0)
+						player->GetComponent<Player>().currentHealth = 0;
+
+					isHairAtk = true;
+
+				}
 			}
 		}
-		else
-		{
-			if (playerRight < hairLeft && playerLeft < hairRight &&
-				playerBottom > hairTop && playerTop < hairBottom && !isHairAtk && hair->GetComponent<Animation>().GetCurrentFrame() >= 9 && hair->GetComponent<Animation>().GetCurrentFrame() <= 12) {
-
-				// Collision detected, apply damage or knockback logic
-				if (!SceneManager::GetInstance().enable_cheatmode) // Dont take dmg if cheat mode is enabled
-					player->GetComponent<Player>().currentHealth -= 50;
-
-				ECS::GetInstance().GetSystem<PlayerManager>()->OnCollisionEnter(hairHitBox->GetInstanceID());
-
-				if (player->GetComponent<Player>().currentHealth < 0)
-					player->GetComponent<Player>().currentHealth = 0;
-				isHairAtk = true;
-			}
-		}
-
 	}
+
 	void BossManager::BossTakeDMG()
 	{
 		bossCom.health -= playerObj->GetComponent<Player>().comboDamage;
