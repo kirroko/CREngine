@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Ukemochi-Engine/Audio/Audio.h"
 #include "Ukemochi-Engine/Factory/GameObjectManager.h"
 #include "Ukemochi-Engine/InGameGUI/InGameGUI.h"
+#include "Ukemochi-Engine/Video/VideoManager.h"
 #include <glad/glad.h>
 
 namespace Ukemochi {
@@ -286,17 +287,22 @@ namespace Ukemochi {
 				if (iconified) // Window is minimized
 				{
 					Application::Get().IsPaused = true;
-					Application::Get().SetPaused(true);
 					if (Application::Get().GameStarted)
 					{
 						ECS::GetInstance().GetSystem<InGameGUI>()->ShowPauseMenu();
 					}
+					Application::Get().SetPaused(true);
 					Audio::GetInstance().StopAllSound();
 				}
 				else // Window is restored
 				{
 					Application::Get().IsPaused = false;
 #ifndef _DEBUG
+					if (ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
+					{
+						ECS::GetInstance().GetSystem<InGameGUI>()->HidePauseMenu();
+						Application::Get().SetPaused(false);
+					}
 					if (Application::Get().GameStarted)
 					{
 						if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))

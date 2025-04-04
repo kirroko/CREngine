@@ -669,7 +669,11 @@ namespace Ukemochi
         else if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id == 6
             && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
         {
-            ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            if (Application::Get().IsPaused == false)
+            {
+                ECS::GetInstance().GetSystem<VideoManager>()->Update();
+            }
+            //ECS::GetInstance().GetSystem<VideoManager>()->Update();
         }
         else
         {
