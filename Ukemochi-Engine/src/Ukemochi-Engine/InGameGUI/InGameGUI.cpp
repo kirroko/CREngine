@@ -232,7 +232,7 @@ namespace Ukemochi
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
 
-		uiManager->addButton("start button", glm::vec3{ 1175.f, 438.f, 0.f }, glm::vec2{ 422.f, 205.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, true, []() {
+		uiManager->addButton("start button", glm::vec3{ 1175.f, 438.f, 0.f }, glm::vec2{ 422.f, 205.f }, "start button", glm::vec3(1.0f, 1.0f, 1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, true, []() {
 			
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -307,7 +307,8 @@ namespace Ukemochi
 				{
 					audioM.PlaySFX(audioM.GetSFXindex("QuitButtonClickSound"));
 				}
-				this->showHowToPlayMainMenu(); 
+				this->showHowPlay = true;
+				this->showHowToPlayMainMenu();
 			}
 			});
 
@@ -321,15 +322,15 @@ namespace Ukemochi
 
 		uiManager->addButton("nail credit", glm::vec3{ 1532.f, 480.f, 0.f }, glm::vec2{ 26.f, 24.f },
 			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
-			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, []() {});
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {});
 
 		uiManager->addButton("nail exit", glm::vec3{ 1692.f, 348.f, 0.f }, glm::vec2{ 26.f, 24.f },
 			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
-			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 5, BarType::None, false, []() {});
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {});
 
 		uiManager->addButton("nail how to play", glm::vec3{ 1195.f, 300.f, 0.f }, glm::vec2{ 26.f, 24.f },
 			"nail", glm::vec3(1.0f, 1.0f, 1.0f),
-			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 4, BarType::None, false, []() {});
+			ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 3, BarType::None, false, []() {});
 	}
 
 	/*!***********************************************************************
@@ -558,11 +559,11 @@ namespace Ukemochi
 		}
 
 		// Gamepad UI navigation for main menu
-		if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && !sortedButtons.empty() && !showCredits && Input::isJoystickPresent())
+		if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && !sortedButtons.empty() && !showCredits && !showHowPlay && Input::isJoystickPresent())
 		{
 			// track the currently selected button
-			static int mainMenuSelection = 2;
-			static const int MAIN_MENU_ITEMS = 3;
+			static int mainMenuSelection = 0;
+			static const int MAIN_MENU_ITEMS = 4;
 
 			// Handle D-pad or analog stick navigation?
 			bool movedSelection = false;
@@ -599,24 +600,25 @@ namespace Ukemochi
 					button->onClick();
 			}
 		}
+
 		
 		// Gamepad UI navigation for pause menu
 		if (Application::Get().Paused() && !sortedButtons.empty() && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu") && Input::isJoystickPresent())
 		{
 			// Track the currently selected button
-			static int pauseMenuSelection = 3;
-			static const int PAUSE_MENU_ITEMS = 6;
+			static int pauseMenuSelection = 0;
+			static const int PAUSE_MENU_ITEMS = 7;
 
 			// Handle D-pad or analog stick navigation?
 			bool movedSelection = false;
 
 			// Navigation with D-pad
-			if (Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_DPAD_LEFT))
+			if (Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT))
 			{
 				pauseMenuSelection = (pauseMenuSelection + 1) % PAUSE_MENU_ITEMS;
 				movedSelection = true;
 			}
-			else if (Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT))
+			else if (Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_DPAD_LEFT))
 			{
 				pauseMenuSelection = (pauseMenuSelection - 1 + PAUSE_MENU_ITEMS) % PAUSE_MENU_ITEMS;
 				movedSelection = true;
@@ -651,6 +653,28 @@ namespace Ukemochi
 			{
 				if (button->onClick)
 					button->onClick();
+			}
+		}
+
+		// Gamepad UI navigation for how to play
+		if (showHowPlay && Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_CROSS) && Input::isJoystickPresent())
+		{
+
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+
+				// Check if the StartButton SFX exists and play it
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+				}
+				removeHowToPlayScreen();
+				if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("main_menu")) // if we are in main menu
+					CreateMainMenuUI();
+				else
+					ShowPauseMenu();
+				showHowPlay = false;
 			}
 		}
 
@@ -785,7 +809,7 @@ namespace Ukemochi
 		uiManager->addButton("pause", glm::vec3(screen_width * 0.5f, (screen_height * 0.5f) + 200.f, 0.f), glm::vec2(511.f, 131.f), "pause", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 7);
 		
 		// Resume
-		uiManager->addButton("resume button", glm::vec3(950.f, 575.f, 0.f), glm::vec2(154.f, 148.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
+		uiManager->addButton("resume button", glm::vec3(950.f, 575.f, 0.f), glm::vec2(154.f, 148.f), "return", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 17, BarType::None, true, [this]() {
 			
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -802,7 +826,7 @@ namespace Ukemochi
 			});
 
 		// How to play
-		uiManager->addButton("how to play button", glm::vec3(1150.f, 575.f, 0.f), glm::vec2(146.f, 150.f), "how to play", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
+		uiManager->addButton("how to play button", glm::vec3(1150.f, 575.f, 0.f), glm::vec2(146.f, 150.f), "how to play", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 16, BarType::None, true, [this]() {
 
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
@@ -815,11 +839,12 @@ namespace Ukemochi
 				}
 				this->HidePauseMenu();
 				this->showHowToPlay();
+				this->showHowPlay = true;
 			}
 			});
 
 		// Exit
-		uiManager->addButton("exit button pause", glm::vec3(1350.f, 575.f, 0.f), glm::vec2(122.f, 154.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
+		uiManager->addButton("exit button pause", glm::vec3(1350.f, 575.f, 0.f), glm::vec2(122.f, 154.f), "exit", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 15, BarType::None, true, [this]() {
 			if(GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
 			{
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -846,7 +871,7 @@ namespace Ukemochi
 		// Music
 		uiManager->addButton("music", glm::vec3(910.f, 430.f, 0.f), glm::vec2(43.f, 45.f), "music", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 8, BarType::None, false, []() {});
 
-		uiManager->addButton("music minus", glm::vec3(1440.f, 430.f, 0.f), glm::vec2(49.f, 52.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
+		uiManager->addButton("music minus", glm::vec3(1440.f, 430.f, 0.f), glm::vec2(49.f, 52.f), "minus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 13, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -860,7 +885,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("music plus", glm::vec3(1370.f, 430.f, 0.f), glm::vec2(49.f, 52.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
+		uiManager->addButton("music plus", glm::vec3(1370.f, 430.f, 0.f), glm::vec2(49.f, 52.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 14, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -900,7 +925,7 @@ namespace Ukemochi
 			}
 			});
 
-		uiManager->addButton("sfx plus", glm::vec3(1370.f, 350.f, 0.f), glm::vec2(49.f, 52.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 11, BarType::None, true, [this]() {
+		uiManager->addButton("sfx plus", glm::vec3(1370.f, 350.f, 0.f), glm::vec2(49.f, 52.f), "plus", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 12, BarType::None, true, [this]() {
 			float currentTime = (float)glfwGetTime();
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager") && (currentTime - lastClickTime) > 0.2f) {
 				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
@@ -1215,6 +1240,7 @@ namespace Ukemochi
 				}
 				this->removeHowToPlayScreen();
 				this->CreateMainMenuUI();
+				this->showHowPlay = false;
 			}
 			});
 	}
