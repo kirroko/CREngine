@@ -24,27 +24,25 @@ namespace Ukemochi {
         struct VideoDecodeJobParams
         {
             char* filename;
-            uint8_t* rgb_buffer;
+			uint8_t* y_buffer;
+			uint8_t* cr_buffer;
+			uint8_t* cb_buffer;
+
             double frameDuration;
-            int width;
+            unsigned int width;
+            unsigned int height;
             unsigned int frameIndex;
         };
 
         struct VideoLoadingContext
         {
             std::vector<VideoDecodeJobParams> jobParams;
-            std::vector<std::unique_ptr<uint8_t[]>> rgb_buffer;
 
             VideoLoadingContext() = default;
 
-            VideoLoadingContext(int totalFrames, int width, int height)
+            VideoLoadingContext(int totalFrames)
             {
                 jobParams.resize(totalFrames);
-                rgb_buffer.resize(totalFrames);
-                for (int i = 0; i < totalFrames; ++i)
-                {
-                    rgb_buffer[i] = std::make_unique<uint8_t[]>(width * height * 3);
-                }
             }
         };
         
@@ -84,6 +82,7 @@ namespace Ukemochi {
             double elapsedTime = 0.0f;
             // std::unique_ptr<VideoContext> video_ctx;
             VideoLoadingContext loadingContext;
+            GLuint tex_y, tex_cb, tex_cr;
             bool done = false;
             bool loaded = false;
             bool loop = false;

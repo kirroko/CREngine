@@ -97,6 +97,7 @@ namespace Ukemochi {
 #endif
         // Activate shader
         ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->Activate();
+		auto shaderID = ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID;
 
         // Get projection and view matrices from the camera
         glm::mat4 projection = ECS::GetInstance().GetSystem<Camera>()->getCameraProjectionMatrix();
@@ -129,19 +130,38 @@ namespace Ukemochi {
 
         // Bind VAO
         glBindVertexArray(VAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
-        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "videoTextures"), 0); 
 
-        glUniform1i(glGetUniformLocation(ECS::GetInstance().GetSystem<Renderer>()->video_shader_program->ID, "frameIndex"),
-            video.currentFrame);
+        // Update textures
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, video.tex_y);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, video.loadingContext.jobParams[video.currentFrame].width, video.loadingContext.jobParams[video.currentFrame].height, GL_RED, GL_UNSIGNED_BYTE, video.loadingContext.jobParams[video.currentFrame].y_buffer);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cb);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, video.loadingContext.jobParams[video.currentFrame].width / 2, video.loadingContext.jobParams[video.currentFrame].height / 2, GL_RED, GL_UNSIGNED_BYTE, video.loadingContext.jobParams[video.currentFrame].cb_buffer);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, video.loadingContext.jobParams[video.currentFrame].width / 2, video.loadingContext.jobParams[video.currentFrame].height / 2, GL_RED, GL_UNSIGNED_BYTE, video.loadingContext.jobParams[video.currentFrame].cr_buffer);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, video.tex_y);
+        glUniform1i(glGetUniformLocation(shaderID, "tex_y"), 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cb);
+        glUniform1i(glGetUniformLocation(shaderID, "tex_cb"), 1);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cr);
+        glUniform1i(glGetUniformLocation(shaderID, "tex_cr"), 2);
 
         // Draw the quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
         
         // Unbind
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        //glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
     /*!***********************************************************************
@@ -169,11 +189,9 @@ namespace Ukemochi {
             return false;
         }
 
-        int width = plm_get_width(video.plm);
-        int height = plm_get_height(video.plm);
         int frameRate = (int)plm_get_framerate(video.plm);
-        video.width = width;
-        video.height = height;
+        video.width = plm_get_width(video.plm);
+        video.height = plm_get_height(video.plm);
         video.totalFrames = static_cast<int>(plm_get_duration(video.plm) * frameRate); // Total frames
         video.frameDuration = (double)(1.0 / video.totalFrames) * plm_get_duration(video.plm); // Compute the required time per frame
         video.loop = loop;
@@ -186,10 +204,10 @@ namespace Ukemochi {
 #endif
 
         // Allocate storage for texture array
-        video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
+        //video.textureID = CreateVideoTexture(name, width, height, video.totalFrames);
 
         // Allocate the context on the heap, contains the buffer and jobParams
-        auto context = std::make_shared<VideoLoadingContext>(video.totalFrames, width, height);
+        auto context = std::make_shared<VideoLoadingContext>(video.totalFrames);
  
         static auto frame_to_rgb = [](uintptr_t param)
         {
@@ -209,11 +227,23 @@ namespace Ukemochi {
             double frameTime = jobParams->frameIndex * jobParams->frameDuration;
             plm_seek(plm, frameTime, 1);
 
-            plm_frame_t* frame = plm_decode_video(plm);
-            if (frame)
-                plm_frame_to_rgb(frame, jobParams->rgb_buffer, jobParams->width * 3);
+            if (plm_frame_t* frame = plm_decode_video(plm))
+            {
+                jobParams->width = frame->y.width;
+				jobParams->height = frame->y.height;
+                jobParams->y_buffer = new uint8_t[frame->y.width * frame->y.height];
+                jobParams->cr_buffer = new uint8_t[frame->cr.width * frame->cr.height];
+                jobParams->cb_buffer = new uint8_t[frame->cb.width * frame->cb.height];
+                // Store Y plane
+                memcpy(jobParams->y_buffer, frame->y.data, frame->y.width * frame->y.height);
+                // Store Cr plane
+                memcpy(jobParams->cr_buffer, frame->cr.data, frame->cr.width * frame->cr.height);
+                // Store Cb plane
+                memcpy(jobParams->cb_buffer, frame->cb.data, frame->cb.width * frame->cb.height);
+            }
             else
                 UME_ENGINE_ERROR("Failed to decode video");
+
             plm_destroy(plm);
         };
 
@@ -225,8 +255,7 @@ namespace Ukemochi {
         {
             // Decode the next frame
             context->jobParams[i].filename = const_cast<char*>(filepath);
-            context->jobParams[i].rgb_buffer = context->rgb_buffer[i].get();
-            context->jobParams[i].width = width;
+            context->jobParams[i].width = video.width;
             context->jobParams[i].frameIndex = i;
             context->jobParams[i].frameDuration = video.frameDuration;
 
@@ -243,56 +272,32 @@ namespace Ukemochi {
             videos[name] = std::move(video);
             return true;
         }
-        
-        auto startTime = std::chrono::high_resolution_clock::now();
+
         job::KickJobsAndWait(static_cast<int>(jobDecls.size()), jobDecls.data());
-        auto endTime = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
-        UME_ENGINE_INFO("Job completed in {0}ms", duration.count());
 
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
-        const int BATCH_SIZE = 16;
-        // Upload frames in batches, gives the GPU driver a chance to optimize the uploads and prevents potential pipeline stalls
-        for (int i = 0; i < video.totalFrames; i += BATCH_SIZE)
-        {
-            // Calculate end of this batch (or last frame)
-            int end = std::min(i + BATCH_SIZE, video.totalFrames);
-    
-            // Upload this batch of frames
-            for (int j = i; j < end; j++)
-            {
-                if (context->rgb_buffer[j])
-                {  // Check that buffer exists and has data
-                    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, j,
-                        width, height, 1, GL_RGB, GL_UNSIGNED_BYTE, context->rgb_buffer[j].get());
-                }
-                else
-                {
-                    UME_ENGINE_ERROR("Missing frame data at index {0}", j);
-                }
-#ifdef _DEBUG
-                UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2} in batch {3}/{4}", j + 1, video.totalFrames, j, i / BATCH_SIZE, video.totalFrames/BATCH_SIZE);
-#endif
-            }
-        }
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        // Initialization
+        glGenTextures(1, &video.tex_y);
+        glBindTexture(GL_TEXTURE_2D, video.tex_y);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, context->jobParams[0].width, context->jobParams[0].height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-        // Disable looping for playback
-        plm_set_loop(video.plm, false); // Handled manually in `UpdateAndRenderVideo()
+        glGenTextures(1, &video.tex_cb);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cb);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, context->jobParams[0].width / 2, context->jobParams[0].height / 2, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-        int storedLayers = 0;
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &storedLayers);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glGenTextures(1, &video.tex_cr);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, context->jobParams[0].width / 2, context->jobParams[0].height / 2, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        UME_ENGINE_INFO("Total stored frames in OpenGL texture array: {0}", storedLayers);
-
-        // Debug check
-        if (storedLayers != video.totalFrames)
-        {
-            UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", video.totalFrames, storedLayers);
-            return false;
-        }
+        // Unbind textures
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         float vertices[] = {
             // Positions         // Colors      // Texture Coords
@@ -305,8 +310,6 @@ namespace Ukemochi {
             -0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 0.0f   // Top-left (Y flipped)
         };
 
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
@@ -323,8 +326,7 @@ namespace Ukemochi {
 
         glBindVertexArray(0);
 
-
-
+		video.loadingContext = std::move(*context); // Store the context in the video data
         videos[name] = std::move(video);  // Store the video in the map
 
         return true;
@@ -339,52 +341,29 @@ namespace Ukemochi {
 
         video.loaded = true;
 
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
-        const int BATCH_SIZE = 16;
-        // Upload frames in batches, gives the GPU driver a chance to optimize the uploads and prevents potential pipeline stalls
-        for (int i = 0; i < video.totalFrames; i += BATCH_SIZE)
-        {
-            // Calculate end of this batch (or last frame)
-            int end = std::min(i + BATCH_SIZE, video.totalFrames);
-    
-            // Upload this batch of frames
-            for (int j = i; j < end; j++)
-            {
-                if (video.loadingContext.rgb_buffer[j])
-                {  // Check that buffer exists and has data
-                    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, j,
-                        video.width, video.height, 1, GL_RGB, GL_UNSIGNED_BYTE, video.loadingContext.rgb_buffer[j].get());
+        // Initialization
+        glGenTextures(1, &video.tex_y);
+        glBindTexture(GL_TEXTURE_2D, video.tex_y);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, video.loadingContext.jobParams[0].width, video.loadingContext.jobParams[0].height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
-                    // Free memory immediately after uploading to GPU
-                    video.loadingContext.rgb_buffer[j].reset(); 
-                }
-                else
-                {
-                    UME_ENGINE_ERROR("Missing frame data at index {0}", j);
-                }
-#ifdef _DEBUG
-                UME_ENGINE_INFO("Uploaded frame {0}/{1} to texture array layer {2} in batch {3}/{4}", j + 1, video.totalFrames, j, i / BATCH_SIZE, video.totalFrames/BATCH_SIZE);
-#endif
-            }
-        }
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glGenTextures(1, &video.tex_cb);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cb);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, video.loadingContext.jobParams[0].width / 2, video.loadingContext.jobParams[0].height / 2, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
-        // Disable looping for playback
-        plm_set_loop(video.plm, false); // Handled manually in `UpdateAndRenderVideo()
+        glGenTextures(1, &video.tex_cr);
+        glBindTexture(GL_TEXTURE_2D, video.tex_cr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, video.loadingContext.jobParams[0].width / 2, video.loadingContext.jobParams[0].height / 2, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        int storedLayers = 0;
-        glBindTexture(GL_TEXTURE_2D_ARRAY, video.textureID);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, 0, GL_TEXTURE_DEPTH, &storedLayers);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-        UME_ENGINE_INFO("Total stored frames in OpenGL texture array: {0}", storedLayers);
-
-        // Debug check
-        if (storedLayers != video.totalFrames)
-        {
-            UME_ENGINE_ERROR("Mismatch! Expected {0} frames, but OpenGL stored {1}.", video.totalFrames, storedLayers);
-            return false;
-        }
+        // Unbind textures
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         float vertices[] = {
             // Positions         // Colors      // Texture Coords
@@ -397,8 +376,6 @@ namespace Ukemochi {
             -0.5f,  0.5f, 0.0f,  1.0f,1.0f,1.0f,   0.0f, 0.0f   // Top-left (Y flipped)
         };
 
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
@@ -677,10 +654,17 @@ namespace Ukemochi {
             video.textureID = 0;
         }
 
-        for (auto& buffer : video.loadingContext.rgb_buffer)
-            buffer.reset();
+		for (auto& jobParam : video.loadingContext.jobParams)
+		{
+			delete[] jobParam.y_buffer;
+			delete[] jobParam.cr_buffer;
+			delete[] jobParam.cb_buffer;
+		}
 
-        video.loadingContext.rgb_buffer.clear();
+        //for (auto& buffer : video.loadingContext.rgb_buffer)
+        //    buffer.reset();
+
+        //video.loadingContext.rgb_buffer.clear();
         video.loadingContext.jobParams.clear();
 
         video.done = false;
