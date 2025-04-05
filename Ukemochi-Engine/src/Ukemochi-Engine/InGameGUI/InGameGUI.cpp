@@ -55,22 +55,16 @@ namespace Ukemochi
 		// Handle button inputs
 		HandleButtonInput();
 
+		// Update sound bars
 		UpdateMusicBar();
-
 		UpdateSFXBar();
 
-		//auto& player = ECS::GetInstance().GetComponent<Player>(ECS::GetInstance().GetSystem<Renderer>()->getPlayerID());
-
 		GameObject* playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
-
 		if (playerObj == nullptr)
-		{
 			return;
-		}
-
-		auto& player = playerObj->GetComponent<Player>();
 
 		// Check if player health is 0
+		auto& player = playerObj->GetComponent<Player>();
 		if (player.currentHealth <= 0)
 		{
 			// Start the timer
@@ -228,6 +222,10 @@ namespace Ukemochi
 
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Creates various main menu UI (e.g., start, credits, etc.).
+	*************************************************************************/
 	void InGameGUI::CreateMainMenuUI()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
@@ -736,9 +734,6 @@ namespace Ukemochi
 			}
 		}
 
-		// if (Input::IsKeyTriggered(UME_KEY_M)) // ????
-		// 	Application::Get().QuitGame();
-
 		// Press F10 to toggle fps text
 		if (Input::IsKeyTriggered(UME_KEY_F10))
 			show_fps = !show_fps;
@@ -1174,6 +1169,10 @@ namespace Ukemochi
 		}
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Displays the how to play menu.
+	*************************************************************************/
 	void InGameGUI::showHowToPlay()
 	{
 		Application& app = Application::Get();
@@ -1200,6 +1199,10 @@ namespace Ukemochi
 			});
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Hides the how to play menu.
+	*************************************************************************/
 	void InGameGUI::removeHowToPlayScreen()
 	{
 		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
@@ -1207,6 +1210,10 @@ namespace Ukemochi
 		uiManager->removeButton("how to play screen return");
 	}
 
+	/*!***********************************************************************
+	\brief
+	 Displays the how to play menu from main menu.
+	*************************************************************************/
 	void InGameGUI::showHowToPlayMainMenu()
 	{
 		Application& app = Application::Get();

@@ -816,10 +816,10 @@ void Renderer::render()
 
 	batchRenderer->endBatch();
 
-	if (Input::IsKeyTriggered(UME_KEY_G))  
-	{
-		camera->StartShake(0.5f, 8.0f); // duration, magnitude
-	}
+	//if (Input::IsKeyTriggered(UME_KEY_G))
+	//{
+	//	camera->StartShake(0.5f, 8.0f); // duration, magnitude
+	//}
 
 	updatePlayerBars();
 	batchRendererUI->setActiveShader(shaderProgram);

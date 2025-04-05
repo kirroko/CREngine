@@ -478,11 +478,11 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
-    Terminates the game by setting the engine state to quit.
+     Terminates the game by setting the engine state to quit.
     \details
-    This function updates the engine state (`es_current`) to `ES_QUIT`,
-    indicating that the game should close. It ensures a clean exit from
-    the application loop.
+     This function updates the engine state (`es_current`) to `ES_QUIT`,
+     indicating that the game should close. It ensures a clean exit from
+     the application loop.
     *************************************************************************/
     void Application::QuitGame()
     {

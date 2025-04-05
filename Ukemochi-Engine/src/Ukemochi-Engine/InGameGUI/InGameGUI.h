@@ -40,7 +40,7 @@ namespace Ukemochi
 	public:
 		bool showCredits = false; // Show credits
 		bool showHowPlay = false; // Show how to play
-		
+
 		/*!***********************************************************************
 		\brief
 		 Initialize the in game GUI system.
@@ -170,8 +170,6 @@ namespace Ukemochi
 		*************************************************************************/
 		bool IsInside(const Vec2& pos, const Vec2& size);
 
-
-
 		/*!***********************************************************************
 		\brief
 		 Displays the defeat screen when the player loses.
@@ -208,10 +206,22 @@ namespace Ukemochi
 		*************************************************************************/
 		void UpdateSFXBar();
 
+		/*!***********************************************************************
+		\brief
+		 Displays the how to play menu.
+		*************************************************************************/
 		void showHowToPlay();
 
+		/*!***********************************************************************
+		\brief
+		 Hides the how to play menu.
+		*************************************************************************/
 		void removeHowToPlayScreen();
 
+		/*!***********************************************************************
+		\brief
+		 Displays the how to play menu from main menu.
+		*************************************************************************/
 		void showHowToPlayMainMenu();
 	};
 }

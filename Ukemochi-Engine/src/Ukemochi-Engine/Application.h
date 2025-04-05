@@ -119,9 +119,30 @@ namespace Ukemochi {
 		bool GameStarted = false; // Has the game started?
 		bool IsPaused = false; // Is the game paused?
 
+		/*!***********************************************************************
+		\brief
+		 Check whether the game is currently paused.
+		\return
+		 True if the game is paused, false otherwise.
+		*************************************************************************/
 		bool Paused() const { return pause; }
+
+		/*!***********************************************************************
+		\brief
+		 Set the game's paused state.
+		\param paused
+		 True to pause the game, false to resume.
+		*************************************************************************/
 		void SetPaused(bool paused) { pause = paused; }
 
+		/*!***********************************************************************
+		\brief
+		 Terminates the game by setting the engine state to quit.
+		\details
+		 This function updates the engine state (`es_current`) to `ES_QUIT`,
+		 indicating that the game should close. It ensures a clean exit from
+		 the application loop.
+		*************************************************************************/
 		void QuitGame();
 
 	private:
