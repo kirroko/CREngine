@@ -47,6 +47,12 @@ namespace Ukemochi
         *************************************************************************/
         bool HasClearLineOfSight(GameObject* enemy, const Transform& player);
 
+        /*!***********************************************************************
+        \brief
+            check enemy infront got object
+        \details
+            This method is called to update each enemy's behavior and logic during the game's update phase.
+        *************************************************************************/
         bool IsObstacleInFront(float startX, float startY, float dirX, float dirY, float range);
 
         /*!***********************************************************************

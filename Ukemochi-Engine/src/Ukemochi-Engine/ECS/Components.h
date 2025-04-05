@@ -432,6 +432,7 @@ namespace Ukemochi
 	*************************************************************************/
 	struct Boss
 	{
+		//not in used
 		enum BossStates
 		{
 			ATTACK1,
@@ -630,7 +631,6 @@ namespace Ukemochi
 					prevObject = nearestObj;
 					nearestObj = -1;
 				}
-				//std::cout << "Enemy already at the target position.\n";
 				return;
 			}
 
@@ -650,7 +650,6 @@ namespace Ukemochi
 			self.position.y += dy * movespeed * deltaTime;
 			posX = self.position.x;
 			posY = self.position.y;
-			//std::cout << "Enemy Position: (" << posX << ", " << posY << ")" << std::endl;
 		}
 
 		// Check if the enemy can attack the player
@@ -674,9 +673,6 @@ namespace Ukemochi
 				return true;
 			}
 			return false;
-			//float distance = dx * dx + dy * dy;
-
-			//return distance <= attackRange * attackRange;
 		}
 
 		//wrap to target when collide
@@ -695,8 +691,6 @@ namespace Ukemochi
 			// If close enough to the target, snap to it and stop wrapping
 			if (radius < 100.f) // Threshold for "reaching" the target
 			{
-				//enemyTransform.position.x = targetX;
-				//enemyTransform.position.y = targetY;
 				isCollide = false;
 				nearestObj = -1;
 				return;
@@ -758,12 +752,6 @@ namespace Ukemochi
 		float lifetime = 5.0f;
 		bool hit = false;
 		EnemyBullet() = default;
-
-		// Constructor
-		//EnemyBullet()
-		//{
-
-		//}
 	};
 
 	/*!***********************************************************************

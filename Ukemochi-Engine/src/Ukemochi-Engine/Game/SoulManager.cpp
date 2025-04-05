@@ -1,8 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       SoulManager.cpp
-\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (90%)
+\author     Lum Ko Sand, kosand.lum, 2301263, kosand.lum\@digipen.edu (87%)
 \co-authors HURNG Kai Rui, h.kairui, 2301278, h.kairui\@digipen.edu (10%)
+            Tan Si Han, t.sihan, 2301264, t.sihan\@digipen.edu (3%)
 \date       Mar 27, 2025
 \brief      This file contains the definition of the SoulManager which handles the soul system.
 
@@ -749,7 +750,7 @@ namespace Ukemochi
 
     /*!***********************************************************************
     \brief
-     Handle the enemy projectile logic (placeholder).
+     Handle the enemy projectile & boss logic (placeholder).
     *************************************************************************/
     void SoulManager::HandleEnemyProjectile()
     {
@@ -763,7 +764,7 @@ namespace Ukemochi
 
             if (tag == "EnemyProjectile")
             {
-                if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>())
+                if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<EnemyBullet>()) // safety check
                 {
                     if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().hit)//if bullet hit detroy
                     {
@@ -772,6 +773,7 @@ namespace Ukemochi
                         break;
                     }
 
+                    //life time
                     GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime -= static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
                     if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<EnemyBullet>().lifetime < 0.f)
                     {
@@ -785,6 +787,7 @@ namespace Ukemochi
 
             if (tag == "Blob")
             {
+                //scale up
                 if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x < 100.f)
                 {
                     GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().scale.x += static_cast<float>(g_FrameRateController.GetFixedDeltaTime()) * 50.f;
@@ -796,30 +799,39 @@ namespace Ukemochi
 
                     if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 5)
                     {
-                        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+                        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))//safety check
                         {
                             auto audioObj = GameObjectManager::GetInstance().GetGOByTag("AudioManager");
-                            AudioManager& audio = audioObj->GetComponent<AudioManager>();
 
-                            // Check if the blob spawn audio exists and is not already playing
-                            if (audio.GetSFXindex("BlobExplode") != -1)
+                            if (audioObj->HasComponent<AudioManager>()) //safety check
                             {
-                                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("BlobExplode")))
+                                AudioManager& audio = audioObj->GetComponent<AudioManager>();
+
+                                // Check if the blob spawn audio exists and is not already playing
+                                if (audio.GetSFXindex("BlobExplode") != -1)
                                 {
-                                    audio.PlaySFX(audio.GetSFXindex("BlobExplode"));
+                                    if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audio.GetSFXindex("BlobExplode")))
+                                    {
+                                        audio.PlaySFX(audio.GetSFXindex("BlobExplode"));
+                                    }
                                 }
                             }
+
                         }
                     }
 
-                    if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
+                    if (GameObjectManager::GetInstance().GetGO(entity)->HasComponent<Animation>()) //safety check
                     {
-                        GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
-                        //spawn monster
-                        ECS::GetInstance().GetSystem<BossManager>()->SpawnMonster(GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.x, GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.y);
-                        GameObjectManager::GetInstance().DestroyObject(entity);
-                        break;
+                        if (GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Animation>().GetCurrentFrame() == 19)
+                        {
+                            GameObjectManager::GetInstance().GetGO(entity)->SetActive(false);
+                            //spawn monster
+                            ECS::GetInstance().GetSystem<BossManager>()->SpawnMonster(GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.x, GameObjectManager::GetInstance().GetGO(entity)->GetComponent<Transform>().position.y);
+                            GameObjectManager::GetInstance().DestroyObject(entity);
+                            break;
+                        }
                     }
+
                 }
             }
         }
