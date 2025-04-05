@@ -89,7 +89,7 @@ namespace Ukemochi {
 #endif // _DEBUG
 
 #ifndef _DEBUG
-		m_Data.IsFullScreen = false;
+		m_Data.IsFullScreen = true;
 #endif // !_DEBUG
 
 		m_Data.PrevWidth = props.Width;
