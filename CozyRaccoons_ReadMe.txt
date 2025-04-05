@@ -21,13 +21,16 @@ USER CONTROLS
 F9 key - Toggle cheat mode
 F10 key - Toggle FPS display
 F11 key - Toggle full screen/window modes
-Left mouse click - Select UI buttons
-Escape key - To open the pause menu
-P key - To open the stats menu
-WASD keys - Move the player
-Q key - To switch between souls
-J key - To use the knife attack
-K key - To use soul ability
+
+DPAD UP,DOWN,LEFT,RIGHT (gamepad) - Navigate between UI buttons
+Left mouse click / CIRCLE (gamepad) - To select UI buttons
+Escape key / START (gamepad) - To open the pause menu
+CROSS (gamepad) - To cancel/close the menus
+
+WASD keys / JOYSTICK 1 (gamepad) - Move the player
+Q key / LEFT BUMPER (gamepad) - To switch between souls
+J key / CIRCLE (gamepad) - To use the knife attack
+K key / TRIANGLE (gamepad) - To use soul ability
 
 EDITOR CONTROLS
 Arrow keys - Move the camera
