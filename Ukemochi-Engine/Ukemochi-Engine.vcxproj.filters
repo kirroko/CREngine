@@ -413,7 +413,6 @@
     <ClCompile Include="src\Ukemochi-Engine\Video\VideoManager.cpp">
       <Filter>Ukemochi-Engine\Video</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ukemochi-Engine\Game\TEST.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Game\BossManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Job\JobSystem.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\SplashScreen.cpp" />

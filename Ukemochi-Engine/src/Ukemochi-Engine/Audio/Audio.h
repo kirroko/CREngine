@@ -107,15 +107,19 @@ namespace Ukemochi
         *************************************************************************/
         void PlaySound(int soundIndex, std::string type, float volume);
 
-        void UpdateMusicVolume(int index,float volume);
-        //void PlaySound(int soundIndex, std::string type);
         /*!***********************************************************************
         \brief
-         Play a sound in a specified group.
-         \param soundIndex: Index of the sound to play.
-         \param groupIndex: Index of the group in which the sound should be played.
-        *************************************************************************/
-        // void PlaySoundInGroup(int soundIndex, int groupIndex);
+            Update the music volume
+        \param int
+            The index of the sound to be played.
+        \param float
+            the volume
+        \return
+            None.
+        \note
+            adjust the music volume
+         *************************************************************************/
+        void UpdateMusicVolume(int index,float volume);
 
         /*!***********************************************************************
         \brief
@@ -155,14 +159,6 @@ namespace Ukemochi
 
         /*!***********************************************************************
         \brief
-         Toggle a sound in a group (play or pause).
-         \param soundIndex: Index of the sound to toggle.
-         \param groupIndex: Index of the group where the sound resides.
-        *************************************************************************/
-        // void ToggleSoundInGroup(int soundIndex, int groupIndex);
-
-        /*!***********************************************************************
-        \brief
             Set the volume of a specific sound (SFX or Music).
         \param soundIndex: The index of the sound to adjust the volume.
         \param volume: The volume level to set (range: 0.0f to 1.0f).
@@ -174,18 +170,95 @@ namespace Ukemochi
         *************************************************************************/
         void SetAudioVolume(int soundIndex, float volume, std::string type);
 
+        /*!***********************************************************************
+        \brief
+            Set the volume of all sound (Music).
+        \param float: the amount to reduce the volume ("Music").
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
         void DecreaseMusicMasterVolume(float step);
+
+        /*!***********************************************************************
+        \brief
+            Set the volume of all sound (Music).
+        \param float: the amount to increase the volume ("Music").
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
         void IncreaseMusicMasterVolume(float step);
 
+        /*!***********************************************************************
+        \brief
+            Set the volume of all sound (SFX).
+        \param float: the amount to set the volume ("SFX").
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
         void SetSFXMasterVolume(float volume);
        
+        /*!***********************************************************************
+        \brief
+            Set the volume of all sound (SFX).
+        \param float: the amount to increase the volume ("SFX").
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
 		void IncreaseSFXMasterVolume(float step);
+
+        /*!***********************************************************************
+        \brief
+            Set the volume of all sound (SFX).
+        \param float: the amount to decrease the volume ("SFX").
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
 		void DecreaseSFXMasterVolume(float step);
 
+        /*!***********************************************************************
+        \brief
+            Increase volume
+        \param int: the sound index
+        \param float: amout of volume to increase
+        \param string: type of audio ("SFX","Music")
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
         void IncreaseVolume(int soundIndex, float step, std::string type);
 
+        /*!***********************************************************************
+        \brief
+            decrease volume
+        \param int: the sound index
+        \param float: amout of volume to decrease
+        \param string: type of audio ("SFX","Music")
+        \return
+            None.
+        \note
+            Adjusts the volume of all sound.
+        *************************************************************************/
 		void DecreaseVolume(int soundIndex, float step, std::string type);
 
+        /*!***********************************************************************
+        \brief
+            check SFX size
+        \return
+            true if there SFX
+        \note
+            check SFX size
+        *************************************************************************/
         bool CheckSFX();
 
 
@@ -251,7 +324,6 @@ namespace Ukemochi
         \note
             This function checks the playing state of a specific music channel by index.
         *************************************************************************/
-
         bool IsMusicPlaying(int soundIndex);
 
         /*!***********************************************************************
@@ -262,7 +334,6 @@ namespace Ukemochi
             This function removes a music track and its corresponding channel from the list.
             If the list contains only one music track, both the track and channel are cleared.
         *************************************************************************/
-
         void RemoveMusic(int index);
 
         /*!***********************************************************************
@@ -273,23 +344,46 @@ namespace Ukemochi
            This function removes an SFX and its corresponding channel from the list.
            If the list contains only one SFX, both the SFX and channel are cleared.
         *************************************************************************/
-
         void RemoveSFX(int index);
+
 
         /*!***********************************************************************
         \brief
-           play audio from video
-        \param index:
+            Stop a sound effect based on its index.
+        \param sfxIndex
+            The index of the sound effect to be stopped.
+        \return
+            None.
         \note
-           This function play audio from video
+            Stops the sound effect if it is currently playing.
         *************************************************************************/
-        //void PlayVideoAudio(plm_t* plm, plm_samples_t* frame);
-
         void StopSFX(int sfxIndex);
 
+        /*!***********************************************************************
+        \brief
+            Stop all sound effects currently playing.
+        \param None.
+        \return
+            None.
+        \note
+            Stops all active sound effects.
+        *************************************************************************/
         void StopAllSFX();
 
+        /*!***********************************************************************
+        \brief
+           Mute Music audio
+        \note
+           This function mute all Music
+        *************************************************************************/
         void MuteMusic();
+
+        /*!***********************************************************************
+        \brief
+           Mute SFX audio
+        \note
+           This function mute all SFX
+        *************************************************************************/
         void MuteSFX();
 
         std::vector<FMOD::Sound *> pSFX;           // A list of loaded sounds

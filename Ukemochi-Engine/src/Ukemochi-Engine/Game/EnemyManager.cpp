@@ -62,14 +62,6 @@ namespace Ukemochi
                 enemyObjects.push_back(object->GetInstanceID());
             }
         }
-        //for (EntityID objectID : ECS::GetInstance().GetSystem<DungeonManager>()->rooms[ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id].entities)
-        //{
-        //    GameObject *object = GameObjectManager::GetInstance().GetGO(objectID);
-        //    if (object->GetTag() == "WayPoint")
-        //    {
-        //        environmentObjects.push_back(object->GetInstanceID());
-        //    }
-        //}
 
         playerObj = GameObjectManager::GetInstance().GetGOByTag("Player");
     }
@@ -468,7 +460,6 @@ namespace Ukemochi
                     }
                     enemycomponent.state = Enemy::DEAD;
                     enemycomponent.deadsound = true;
-                    //enemycomponent.isDead = true; // Mark as dead immediately
                 }
 
                 // Animation and sound synchronization
@@ -578,8 +569,6 @@ namespace Ukemochi
                 // animation
                 if (enemycomponent.dirX < 0)
                 {
-                    // auto& anim = ECS::GetInstance().GetComponent<Animation>(object->GetInstanceID());
-                    // anim.SetAnimation("Running");
                     sr.flipX = false;
                 }
                 else if (enemycomponent.dirX > 0)
@@ -714,30 +703,6 @@ namespace Ukemochi
                                     }
                                 }
                             }
-                            //// WHEN COLLIDE BOX
-                            //if (collidedObj->GetTag() == "Environment")
-                            //{
-                            //    enemycomponent.dirX = collidedObj->GetComponent<Transform>().position.x - enemytransform.position.x;
-                            //    enemycomponent.dirY = collidedObj->GetComponent<Transform>().position.y - enemytransform.position.y;
-
-                            //    enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                            //    enemyphysic.force.y = enemycomponent.dirY * enemycomponent.speed;
-
-                            //    // break boxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                            //    if (enemycomponent.timeSinceTargetReached > 3.0f)
-                            //    {
-                            //        enemyphysic.force.x = 0;
-                            //        enemyphysic.force.y = 0;
-                            //        if (enemycomponent.timeSinceTargetReached > 4.0f)
-                            //        {
-                            //            enemycomponent.state = Enemy::MOVE;
-                            //            enemycomponent.isCollide = false;
-                            //            enemycomponent.kicktime = 1.f;
-                            //            enemycomponent.isKick = false;
-                            //            enemycomponent.timeSinceTargetReached = 0.f;
-                            //        }
-                            //    }
-                            //}
                         }
                     }
 
@@ -748,7 +713,6 @@ namespace Ukemochi
                 // ENEMY COLLISION RESPONSE
                 if (enemycomponent.isCollide)
                 {
-                    // Start the timer for 1 second if not already running //////////////////////////////////REMOVE THIS
                     if (enemycomponent.timeSinceTargetReached < 1.0f)
                     {
                         enemycomponent.timeSinceTargetReached += static_cast<float>(g_FrameRateController.GetFixedDeltaTime());
@@ -786,7 +750,6 @@ namespace Ukemochi
                         // Collision handling
                         if (enemytransform.position.y > collidedObj->GetComponent<Transform>().position.y + collidedObj->GetComponent<Transform>().scale.x * 0.25f) // top
                         {
-                            // std::cout << "ENEMY TOP SIDE" << std::endl;
                             enemyphysic.force.y = 0; // Stop vertical movement
 
                             // check where player
@@ -795,20 +758,17 @@ namespace Ukemochi
                                 if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) // right
                                 {
                                     enemycomponent.move = 6;
-                                    std::cout << "ENEMY TOP SIDE MOVE RIGHT" << std::endl;
                                     enemycomponent.dirX = 1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) // left
                                 {
                                     enemycomponent.move = 4;
-                                    std::cout << "ENEMY TOP SIDE MOVE LEFT" << std::endl;
                                     enemycomponent.dirX = -1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else
                                 {
-                                    std::cout << "ENEMY TOP SIDE MOVE TOP" << std::endl;
                                     enemycomponent.move = 8;
                                     enemyphysic.force.y = enemycomponent.speed;
                                 }
@@ -818,20 +778,17 @@ namespace Ukemochi
                                 if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) // left
                                 {
                                     enemycomponent.move = 4;
-                                    // std::cout << "ENEMY TOP SIDE MOVE LEFT" << std::endl;
                                     enemycomponent.dirX = -1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) // right
                                 {
                                     enemycomponent.move = 6;
-                                    // std::cout << "ENEMY TOP SIDE MOVE RIGHT" << std::endl;
                                     enemycomponent.dirX = 1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else
                                 {
-                                    // std::cout << "ENEMY TOP SIDE MOVE TOP" << std::endl;
                                     enemycomponent.move = 8;
                                     enemyphysic.force.y = enemycomponent.speed;
                                 }
@@ -839,7 +796,6 @@ namespace Ukemochi
                         }
                         else if (enemytransform.position.y < collidedObj->GetComponent<Transform>().position.y - collidedObj->GetComponent<Transform>().scale.x * 0.5f) // btm
                         {
-                            // std::cout << "ENEMY BTM SIDE" << std::endl;
                             enemyphysic.force.y = 0; // Stop vertical movement
 
                             // check where player
@@ -848,20 +804,17 @@ namespace Ukemochi
                                 if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) // left
                                 {
                                     enemycomponent.move = 4;
-                                    // std::cout << "ENEMY Bottom SIDE MOVE LEFT" << std::endl;
                                     enemycomponent.dirX = -1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) // right
                                 {
                                     enemycomponent.move = 6;
-                                    // std::cout << "ENEMY Bottom SIDE MOVE RIGHT" << std::endl;
                                     enemycomponent.dirX = 1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else
                                 {
-                                    // std::cout << "ENEMY Bottom SIDE MOVE BTM" << std::endl;
                                     enemycomponent.move = 2;
                                     enemyphysic.force.y = -enemycomponent.speed;
                                 }
@@ -871,20 +824,18 @@ namespace Ukemochi
                                 if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) // right
                                 {
                                     enemycomponent.move = 6;
-                                    // std::cout << "ENEMY Bottom SIDE MOVE RIGHT" << std::endl;
                                     enemycomponent.dirX = 1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) // left
                                 {
                                     enemycomponent.move = 4;
-                                    // std::cout << "ENEMY Bottom SIDE MOVE LEFT" << std::endl;
                                     enemycomponent.dirX = -1.0f;
                                     enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
                                 }
                                 else
                                 {
-                                    // std::cout << "ENEMY Bottom SIDE MOVE BTM" << std::endl;
+ 
                                     enemycomponent.move = 2;
                                     enemyphysic.force.y = -enemycomponent.speed;
                                 }
@@ -895,7 +846,6 @@ namespace Ukemochi
                             enemyphysic.force.x = 0;                                                                                                                   // Stop horizontal movement
                             if (enemytransform.position.x > collidedObj->GetComponent<Transform>().position.x + collidedObj->GetComponent<Transform>().scale.x * 0.5f) // right
                             {
-                                std::cout << "ENEMY RIGHT SIDE" << std::endl;
                                 // if right side try move up / down
                                 //  5 = center (not moving) , 8 is up , 4 is left , 6 is right , 2 is down
                                 if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 8) // Move up if possible
@@ -920,7 +870,6 @@ namespace Ukemochi
                             }
                             else if (enemytransform.position.x < collidedObj->GetComponent<Transform>().position.y - collidedObj->GetComponent<Transform>().scale.x * 0.5f) // left
                             {
-                                std::cout << "ENEMY LEFT SIDE" << std::endl;
                                 if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 8) // Move up if possible
                                 {
                                     // std::cout << "ENEMY LEFT SIDE MOVE TOP" << std::endl;
@@ -943,283 +892,6 @@ namespace Ukemochi
                             }
                         }
 
-                        //// Collision handling
-                        // if (absDeltaX > absDeltaY)  // More horizontal collision
-                        //{
-                        //     enemyphysic.force.y = 0;  // Stop horizontal movement
-                        //     if (deltaY > 0)  // Enemy is on top of the object
-                        //     {
-                        //         std::cout << "ENEMY TOP SIDE" << std::endl;
-                        //         //check where player
-                        //         if (playerObj->GetComponent<Transform>().position.x > enemytransform.position.x) // player on right
-                        //         {
-                        //             if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) //right
-                        //             {
-                        //                 enemycomponent.move = 6;
-                        //                 std::cout << "ENEMY TOP SIDE MOVE RIGHT" << std::endl;
-                        //                 enemycomponent.dirX = 1.0f;
-                        //                 enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //             }
-                        //             else if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) //left
-                        //             {
-                        //                 enemycomponent.move = 4;
-                        //                 std::cout << "ENEMY TOP SIDE MOVE LEFT" << std::endl;
-                        //                 enemycomponent.dirX = -1.0f;
-                        //                 enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //             }
-                        //             else
-                        //             {
-                        //                 std::cout << "ENEMY TOP SIDE MOVE TOP" << std::endl;
-                        //                 enemycomponent.move = 8;
-                        //                 enemyphysic.force.y = enemycomponent.speed;
-                        //             }
-                        //         }
-                        //         else
-                        //         {
-                        //             if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) //left
-                        //             {
-                        //                 enemycomponent.move = 4;
-                        //                 std::cout << "ENEMY TOP SIDE MOVE LEFT" << std::endl;
-                        //                 enemycomponent.dirX = -1.0f;
-                        //                 enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //             }
-                        //             else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) //right
-                        //             {
-                        //                 enemycomponent.move = 6;
-                        //                 std::cout << "ENEMY TOP SIDE MOVE RIGHT" << std::endl;
-                        //                 enemycomponent.dirX = 1.0f;
-                        //                 enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //             }
-                        //             else
-                        //             {
-                        //                 std::cout << "ENEMY TOP SIDE MOVE TOP" << std::endl;
-                        //                 enemycomponent.move = 8;
-                        //                 enemyphysic.force.y = enemycomponent.speed;
-                        //             }
-                        //         }
-
-                        //    }
-                        //    else if (deltaY < 0)// Enemy is on bottom of the object
-                        //    {
-                        //        std::cout << "ENEMY Bottom SIDE" << std::endl;
-                        //        //check where player
-                        //        if (playerObj->GetComponent<Transform>().position.x < enemytransform.position.x) // player on left
-                        //        {
-                        //            if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) //left
-                        //            {
-                        //                enemycomponent.move = 4;
-                        //                std::cout << "ENEMY Bottom SIDE MOVE LEFT" << std::endl;
-                        //                enemycomponent.dirX = -1.0f;
-                        //                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //            }
-                        //            else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) //right
-                        //            {
-                        //                enemycomponent.move = 6;
-                        //                std::cout << "ENEMY Bottom SIDE MOVE RIGHT" << std::endl;
-                        //                enemycomponent.dirX = 1.0f;
-                        //                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //            }
-                        //            else
-                        //            {
-                        //                std::cout << "ENEMY Bottom SIDE MOVE BTM" << std::endl;
-                        //                enemycomponent.move = 2;
-                        //                enemyphysic.force.y = -enemycomponent.speed;
-                        //            }
-                        //        }
-                        //        else
-                        //        {
-                        //            if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 6) //right
-                        //            {
-                        //                enemycomponent.move = 6;
-                        //                std::cout << "ENEMY Bottom SIDE MOVE RIGHT" << std::endl;
-                        //                enemycomponent.dirX = 1.0f;
-                        //                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //            }
-                        //            else if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 4) //left
-                        //            {
-                        //                enemycomponent.move = 4;
-                        //                std::cout << "ENEMY Bottom SIDE MOVE LEFT" << std::endl;
-                        //                enemycomponent.dirX = -1.0f;
-                        //                enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //            }
-                        //            else
-                        //            {
-                        //                std::cout << "ENEMY Bottom SIDE MOVE BTM" << std::endl;
-                        //                enemycomponent.move = 2;
-                        //                enemyphysic.force.y = -enemycomponent.speed;
-                        //            }
-                        //        }
-                        //    }
-
-                        //}
-                        // else // vertical collision
-                        //{
-                        //    enemyphysic.force.x = 0;  // Stop vertical movement
-
-                        //     if (enemytransform.position.y > collidedObj->GetComponent<Transform>().position.y + 0.25f * collidedObj->GetComponent<Transform>().scale.y ||
-                        //        enemytransform.position.y < collidedObj->GetComponent<Transform>().position.y - 0.5f * collidedObj->GetComponent<Transform>().scale.y)
-                        //     {
-                        //         std::cout << "ENEMY OUTSIDE" << std::endl;
-                        //        enemycomponent.state = Enemy::MOVE;
-                        //        enemycomponent.isCollide = false;
-                        //        enemycomponent.timeSinceTargetReached = 0.f;
-                        //        enemycomponent.move = 5;
-                        //        break;
-                        //     }
-
-                        //    if (deltaX < 0)  // Enemy is on the right side of the object
-                        //    {
-                        //        std::cout << "ENEMY RIGHT SIDE" << std::endl;
-                        //        //if right side try move up / down
-                        //        // 5 = center (not moving) , 8 is up , 4 is left , 6 is right , 2 is down
-                        //        if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 100.0f)&& enemycomponent.move == 5 || enemycomponent.move == 8) // Move up if possible
-                        //        {
-                        //            std::cout << "ENEMY RIGHT SIDE MOVE TOP" << std::endl;
-                        //            enemycomponent.move = 8;
-                        //            enemyphysic.force.y = enemycomponent.speed;
-                        //        }
-                        //        else if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 2) // Move down if possible
-                        //        {
-                        //            enemycomponent.move = 2;
-                        //            std::cout << "ENEMY RIGHT SIDE MOVE BTM" << std::endl;
-                        //            enemyphysic.force.y = -enemycomponent.speed;
-                        //        }
-                        //        else
-                        //        {
-                        //            enemycomponent.move = 6;
-                        //            std::cout << "ENEMY RIGHT SIDE MOVE RIGHT" << std::endl;
-                        //            enemycomponent.dirX = 1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //        //if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 100.0f)) //left
-                        //        //{
-                        //        //    std::cout << "LEFT" << std::endl;
-                        //        //}
-                        //        //if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 100.0f)) //right
-                        //        //{
-                        //        //    std::cout << "RIGHT" << std::endl;
-                        //        //}
-                        //        //if (!IsObstacleInFront(enemyX, enemyY, 0, 1.f, 100.0f))//TOP
-                        //        //{
-                        //        //    std::cout << "TOP" << std::endl;
-                        //        //}
-                        //        //if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 100.0f))//BTM
-                        //        //{
-                        //        //    std::cout << "BTM" << std::endl;
-                        //        //}
-                        //    }
-                        //    else if (deltaX > 0)// Enemy is on the left side of the object
-                        //    {
-                        //        std::cout << "ENEMY LEFT SIDE" << std::endl;
-                        //        if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 8) // Move up if possible
-                        //        {
-                        //            std::cout << "ENEMY LEFT SIDE MOVE TOP" << std::endl;
-                        //            enemycomponent.move = 8;
-                        //            enemyphysic.force.y = enemycomponent.speed;
-                        //        }
-                        //        else if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 100.0f) && enemycomponent.move == 5 || enemycomponent.move == 2) // Move down if possible
-                        //        {
-                        //            enemycomponent.move = 2;
-                        //            std::cout << "ENEMY LEFT SIDE MOVE BTM" << std::endl;
-                        //            enemyphysic.force.y = -enemycomponent.speed;
-                        //        }
-                        //        else
-                        //        {
-                        //            enemycomponent.move = 4;
-                        //            std::cout << "ENEMY LEFT SIDE MOVE LEFT" << std::endl;
-                        //            enemycomponent.dirX = -1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //    }
-
-                        //}
-
-                        //// Collision handling
-                        // if (absDeltaX > absDeltaY)  // More horizontal collision
-                        //{
-                        //     enemyphysic.force.x = 0;  // Stop horizontal movement
-
-                        //    if (deltaY > 0)  // Enemy is on top of the object
-                        //    {
-                        //        if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 1000.0f)) // Move right if possible
-                        //        {
-                        //            enemycomponent.dirX = 1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //        else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 1000.0f)) // Move left if possible
-                        //        {
-                        //            enemycomponent.dirX = -1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //        else // Both left and right blocked, force up movement
-                        //        {
-                        //            enemyphysic.force.y = enemycomponent.speed;  // Move up
-                        //        }
-                        //    }
-                        //    else if (deltaY < 0)  // Enemy is at the bottom of the object
-                        //    {
-                        //        if (!IsObstacleInFront(enemyX, enemyY, 1.0f, 0, 1000.0f)) // Move right if possible
-                        //        {
-                        //            enemycomponent.dirX = 1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //        else if (!IsObstacleInFront(enemyX, enemyY, -1.0f, 0, 1000.0f)) // Move left if possible
-                        //        {
-                        //            enemycomponent.dirX = -1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //        else // Both left and right blocked, force down movement
-                        //        {
-                        //            enemyphysic.force.y = -enemycomponent.speed;  // Move down
-                        //        }
-                        //    }
-                        //}
-                        // else  // More vertical collision
-                        //{
-                        //    enemyphysic.force.y = 0;  // Stop vertical movement
-
-                        //    if (enemytransform.position.y < collidedObj->GetComponent<Transform>().position.y - 0.5f * collidedObj->GetComponent<Transform>().scale.y ||
-                        //        enemytransform.position.y > collidedObj->GetComponent<Transform>().position.y + 0.5f * collidedObj->GetComponent<Transform>().scale.y)
-                        //    {
-                        //        enemycomponent.state = Enemy::MOVE;
-                        //        enemycomponent.isCollide = false;
-                        //        enemycomponent.timeSinceTargetReached = 0.f;
-                        //        break;
-                        //    }
-
-                        //    if (deltaX < 0)  // Enemy is on the left side of the object
-                        //    {
-                        //        if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 1000.0f)) // Move up if possible
-                        //        {
-                        //            enemyphysic.force.y = enemycomponent.speed;
-                        //        }
-                        //        else if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 1000.0f)) // Move down if possible
-                        //        {
-                        //            enemyphysic.force.y = -enemycomponent.speed;
-                        //        }
-                        //        else // Both up and down blocked, force movement to the left
-                        //        {
-                        //            enemycomponent.dirX = -1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //    }
-                        //    else if (deltaX > 0)  // Enemy is on the right side of the object
-                        //    {
-                        //        if (!IsObstacleInFront(enemyX, enemyY, 0, 1.0f, 1000.0f)) // Move up if possible
-                        //        {
-                        //            enemyphysic.force.y = enemycomponent.speed;
-                        //        }
-                        //        else if (!IsObstacleInFront(enemyX, enemyY, 0, -1.0f, 1000.0f)) // Move down if possible
-                        //        {
-                        //            enemyphysic.force.y = -enemycomponent.speed;
-                        //        }
-                        //        else // Both up and down blocked, force movement to the right
-                        //        {
-                        //            enemycomponent.dirX = 1.0f;
-                        //            enemyphysic.force.x = enemycomponent.dirX * enemycomponent.speed;
-                        //        }
-                        //    }
-                        //}
                     }
                     ++it;
                     continue;
@@ -1464,42 +1136,6 @@ namespace Ukemochi
                                 }
                             }
                         }
-                        //if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 7)
-                        //{
-                        //    // SFX for fish in air
-                        //    auto &audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-
-                        //    // Create an array to hold our fish jump/air sound indices
-                        //    std::vector<int> fishAirSounds;
-
-                        //    // Add all available fish air sounds to the array
-                        //    int fishAir1 = audioM.GetSFXindex("FishAir1");
-                        //    if (fishAir1 != -1)
-                        //        fishAirSounds.push_back(fishAir1);
-
-                        //    int fishAir2 = audioM.GetSFXindex("FishAir2");
-                        //    if (fishAir2 != -1)
-                        //        fishAirSounds.push_back(fishAir2);
-
-                        //    // Add the original sound as fallback if you have one
-                        //    int fishAirOriginal = audioM.GetSFXindex("FishAir");
-                        //    if (fishAirOriginal != -1)
-                        //        fishAirSounds.push_back(fishAirOriginal);
-
-                        //    // If we have fish air sounds available, play a random one
-                        //    if (!fishAirSounds.empty())
-                        //    {
-                        //        // Generate a random index into our array of sounds
-                        //        int randomIndex = rand() % fishAirSounds.size();
-                        //        int selectedSoundIndex = fishAirSounds[randomIndex];
-
-                        //        // Check if the selected sound is already playing
-                        //        if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(selectedSoundIndex))
-                        //        {
-                        //            audioM.PlaySFX(selectedSoundIndex);
-                        //        }
-                        //    }
-                        //}
 
                         if (object->GetComponent<Animation>().currentClip == "Attack" && object->GetComponent<Animation>().current_frame == 22)
                         {
@@ -1654,7 +1290,12 @@ namespace Ukemochi
             }
         }
     }
-
+    /*!***********************************************************************
+    \brief
+        Raytracing for enemy to see player
+    \details
+        This method is called to update each enemy's behavior and logic during the game's update phase.
+    *************************************************************************/
     bool EnemyManager::HasClearLineOfSight(GameObject *enemy, const Transform &player)
     {
         // Calculate direction without Normalize()
@@ -1692,13 +1333,18 @@ namespace Ukemochi
         return true;
     }
 
+    /*!***********************************************************************
+    \brief
+        check enemy infront got object
+    \details
+        This method is called to update each enemy's behavior and logic during the game's update phase.
+    *************************************************************************/
     bool EnemyManager::IsObstacleInFront(float startX, float startY, float dirX, float dirY, float range)
     {
         // Normalize direction vector (important for consistent checks)
         float length = std::sqrt(dirX * dirX + dirY * dirY);
         if (length == 0)
         {
-            std::cout << "Invalid direction vector (0,0)!" << std::endl;
             return false;
         }
         // if (length == 0) return false; // Avoid division by zero
@@ -1761,8 +1407,6 @@ namespace Ukemochi
             enemyComponent.isCollide = true;
             enemyComponent.timeSinceTargetReached = 1.f;
             enemyComponent.collideObj = static_cast<int>(objID);
-            // enemyComponent.prevObject = static_cast<int>(enemyComponent.nearestObj);
-            // enemyComponent.nearestObj = static_cast<int>(objID);
         }
     }
 

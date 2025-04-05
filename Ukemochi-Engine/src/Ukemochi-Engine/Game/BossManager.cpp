@@ -24,6 +24,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Ukemochi
 {
+	/*!***********************************************************************
+	\brief
+	   Init Boss for boss stage
+	\note
+	   Init Boss before the boss stage
+	*************************************************************************/
 	void BossManager::InitBoss()
 	{
 
@@ -66,6 +72,13 @@ namespace Ukemochi
 		isHairAtk = true;
 		atk = false;
 	}
+
+	/*!***********************************************************************
+	\brief
+	   Update Boss for boss stage
+	\note
+	   Update Boss before the boss stage
+	*************************************************************************/
 	void BossManager::UpdateBoss()
 	{
 		if (ECS::GetInstance().GetSystem<DungeonManager>()->current_room_id != 6)
@@ -98,8 +111,8 @@ namespace Ukemochi
 				{
 					hairHitBox->SetActive(false);
 				}
-				// CHANGE TO IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
-				if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 4)
+				//IF THERE NO ENEMY LEFT AND NUM OF BLOB MORE THAN 2
+				if (!ECS::GetInstance().GetSystem<DungeonManager>()->enemy_alive && numOfBlob >= 3)
 				{
 					// play animation
 					GameObjectManager::GetInstance().GetGOByTag("Boss")->GetComponent<Animation>().SetAnimationUninterrupted("Change");
@@ -139,6 +152,13 @@ namespace Ukemochi
 			}
 		}
 	}
+
+	/*!***********************************************************************
+	\brief
+	   Update Boss for boss phase 1 
+	\note
+	   Update Boss before the boss phase 1
+	*************************************************************************/
 	void BossManager::Phase1()
 	{
 		if (bossCom.BossPhase == 1)
@@ -180,6 +200,13 @@ namespace Ukemochi
 			bossCom.waitTime = 0;
 		}
 	}
+
+	/*!***********************************************************************
+	\brief
+	   Update Boss for boss phase 2
+	\note
+	   Update Boss before the boss phase 2
+	*************************************************************************/
 	void BossManager::Phase2()
 	{
 		if (hairSR.color.y == 0.f)
@@ -445,13 +472,18 @@ namespace Ukemochi
 				}
 			}
 		}
-
-		// if (hair->GetComponent<Animation>().GetCurrentFrame() == 33)
-		//{
-		//	std::cout << "RESTART" << std::endl;
-		//	hair->GetComponent<Animation>().RestartAnimation();
-		// }
 	}
+
+	/*!***********************************************************************
+	\brief
+	   Spawn Monster when blob explode
+	\param x
+		position x for the monster
+	\param y
+		position y for the monster
+	\note
+	    Spawn Monster when blob explode
+	*************************************************************************/
 	void BossManager::SpawnMonster(float x, float y)
 	{
 		// spawn monster
@@ -534,7 +566,7 @@ namespace Ukemochi
 					GameObject& shadow = GameObjectManager::GetInstance().CloneObject(*cloneObject2, name2, "EnemyShadow");
 
 					newObject.GetComponent<Transform>().position.x = x - 100.f + i * 100.f;
-					std::cout << newObject.GetComponent<Transform>().position.x << std::endl;
+
 					newObject.GetComponent<Transform>().position.x = std::clamp(newObject.GetComponent<Transform>().position.x, 7740.f, 9100.f);
 					newObject.GetComponent<Transform>().position.y = y;
 
@@ -583,6 +615,15 @@ namespace Ukemochi
 
 		ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
 	}
+
+	/*!***********************************************************************
+	\brief
+	   Hair collision check with player
+	\param player
+		ptr to the player obj
+	\note
+		collision check between player and hair
+	*************************************************************************/
 	void BossManager::HairHit(GameObject* player)
 	{
 		// Boss hitbox
@@ -637,6 +678,12 @@ namespace Ukemochi
 		}
 	}
 
+	/*!***********************************************************************
+	\brief
+	   boss take dmg from player
+	\note
+		collision response when player hit boss
+	*************************************************************************/
 	void BossManager::BossTakeDMG()
 	{
 		bossCom.health -= playerObj->GetComponent<Player>().comboDamage;
@@ -645,11 +692,29 @@ namespace Ukemochi
 			bossCom.health = 0;
 		}
 	}
+
+	/*!***********************************************************************
+	\brief
+	   boss set phase
+	\param state
+		the state for the boss to set
+	\note
+		boss set phase between 0 - 2
+	*************************************************************************/
 	void BossManager::SetBossPhase(int state)
 	{
 		bossCom.BossPhase = state;
 		std::clamp(bossCom.BossPhase, 0, 2);
 	}
+
+	/*!***********************************************************************
+	\brief
+	   getter function
+	\return int
+		the state for the boss
+	\note
+		retrun boss state
+	*************************************************************************/
 	int BossManager::GetBossPhase()
 	{
 		return bossCom.BossPhase;

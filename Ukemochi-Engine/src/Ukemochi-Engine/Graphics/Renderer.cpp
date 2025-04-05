@@ -1,9 +1,9 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Renderer.cpp
-\author     TAN SHUN ZHI, Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (%)
-\co-authors HURNG KAI RUI, h.kairui, 2301278, h.kairui\@digipen.edu (%)
-\co-authors TAN SI HAN, t.sihan, 2301264, t.sihan@digipen.edu (%)
+\author     TAN SHUN ZHI, Tomy, t.shunzhitomy, 2301341, t.shunzhitomy@digipen.edu (90%)
+\co-authors HURNG KAI RUI, h.kairui, 2301278, h.kairui\@digipen.edu (5%)
+\co-authors TAN SI HAN, t.sihan, 2301264, t.sihan@digipen.edu (5%)
 \date       Mar 12, 2025
 \brief      This file contains the implementation of the Renderer class responsible for
 			handling OpenGL rendering, including setting up shaders, buffers, textures,

@@ -28,7 +28,6 @@ namespace Ukemochi
 
     FMOD_RESULT F_CALLBACK Audio::pcmReadCallback(FMOD_SOUND* , void* data, unsigned int datalen)
     {
-        std::cout << "PCM Read Callback Triggered. Data Size: " << datalen << std::endl;
 
         if (pcm32Data.empty()) {
             return FMOD_ERR_INVALID_PARAM;
@@ -143,9 +142,6 @@ namespace Ukemochi
         result = pSystem->playSound(pvideosound, nullptr, false, &pChannel);
         if (result != FMOD_OK) {
             std::cerr << "FMOD Error (playSound): " << result << std::endl;
-        }
-        else {
-            std::cout << "Playing audio at " << speedMultiplier * 100 << "% speed!" << std::endl;
         }
         // Adjust pitch to maintain the correct playback speed without stretching
         if (pChannel) {
@@ -419,8 +415,6 @@ namespace Ukemochi
                     pSFXChannels[soundIndex]->setVolume(volume);
                 }
 
-
-                // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
             else if (type == "Music")
             {
@@ -445,7 +439,6 @@ namespace Ukemochi
                 // Store the channel and assign it to the specific group
                 pMusicChannels[soundIndex] = channel;
                 pMusicChannels[soundIndex]->setVolume(volume);
-                // std::cout << "Sound " << soundIndex << " is playing in group " << soundIndex << std::endl;
             }
         }
         else
@@ -454,6 +447,18 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Update the music volume
+    \param int
+        The index of the sound to be played.
+    \param float
+        the volume
+    \return
+        None.
+    \note
+        adjust the music volume
+     *************************************************************************/
     void Audio::UpdateMusicVolume(int index,float volume)
     {
         if (pMusicChannels[index]) {
@@ -462,15 +467,6 @@ namespace Ukemochi
             if (isPlaying) {
                 pMusicChannels[index]->setVolume(volume);
             }
-            //else {
-            //    // Restart the music if it stopped
-            //    if (index != 0)
-            //    {
-            //        pSystem->playSound(pMusic[index], nullptr, false, &pMusicChannels[index]);
-            //        pMusicChannels[index]->setVolume(volume);
-            //    }
-
-            //}
         }
     }
 
@@ -574,16 +570,16 @@ namespace Ukemochi
         }
     }
 
-    /*!***********************************************************************
-\brief
-    Stop a sound effect based on its index.
-\param sfxIndex
-    The index of the sound effect to be stopped.
-\return
-    None.
-\note
-    Stops the sound effect if it is currently playing.
-*************************************************************************/
+        /*!***********************************************************************
+    \brief
+        Stop a sound effect based on its index.
+    \param sfxIndex
+        The index of the sound effect to be stopped.
+    \return
+        None.
+    \note
+        Stops the sound effect if it is currently playing.
+    *************************************************************************/
     void Audio::StopSFX(int sfxIndex)
     {
         if (sfxIndex < 0 || sfxIndex >= numOfSFX)
@@ -600,7 +596,6 @@ namespace Ukemochi
             if (isPlaying)
             {
                 pSFXChannels[sfxIndex]->stop();  // Stop the sound effect if it's playing
-                std::cout << "Stopped SFX at index " << sfxIndex << std::endl;
             }
         }
         else
@@ -625,40 +620,6 @@ namespace Ukemochi
             StopSFX(static_cast<int>(i));  // Stop each individual SFX
         }
     }
-
-
-
-    /*!***********************************************************************
-    \brief
-    Toggle a sound in a group (play or pause).
-    \param soundIndex: Index of the sound to toggle.
-    \param groupIndex: Index of the group where the sound resides.
-    *************************************************************************/
-    // void Audio::ToggleSoundInGroup(int soundIndex, int groupIndex)
-    //{
-    //     if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
-    //     {
-    //         bool isPlaying = false;
-
-    //        if (pChannels[soundIndex] != nullptr)
-    //        {
-    //            pChannels[soundIndex]->isPlaying(&isPlaying);
-    //        }
-
-    //        if (isPlaying)
-    //        {
-    //            StopSound(soundIndex);  // Stop the sound if it's currently playing
-    //        }
-    //        else
-    //        {
-    //            PlaySoundInGroup(soundIndex, groupIndex);  // Play the sound in the specified group if it's not playing
-    //        }
-    //    }
-    //    else
-    //    {
-    //        std::cerr << "Invalid sound or group index!" << std::endl;
-    //    }
-    //}
 
     /*!***********************************************************************
     \brief
@@ -691,6 +652,15 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Set the volume of all sound (Music).
+    \param float: the amount to reduce the volume ("Music").
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::DecreaseMusicMasterVolume(float step)
     {
         for (int i = 0; i < pMusicChannels.size(); ++i)
@@ -700,11 +670,19 @@ namespace Ukemochi
                 float currentVolume = 0.0f;
                 pMusicChannels[i]->getVolume(&currentVolume);
                 SetAudioVolume(i, currentVolume - step, "Music");
-                std::cout << "Music Master Volume set to: " << currentVolume << std::endl;
             }
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Set the volume of all sound (Music).
+    \param float: the amount to increase the volume ("Music").
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::IncreaseMusicMasterVolume(float step)
     {
         for (int i = 0; i < pMusicChannels.size(); ++i)
@@ -714,18 +692,23 @@ namespace Ukemochi
                 float currentVolume = 0.0f;
                 pMusicChannels[i]->getVolume(&currentVolume);
                 SetAudioVolume(i, currentVolume + step, "Music");
-				std::cout << "Music Master Volume set to: " << currentVolume << std::endl;
             }
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Set the volume of all sound (SFX).
+    \param float: the amount to set the volume ("SFX").
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::SetSFXMasterVolume(float volume)
     {
         // Clamp volume between 0.0 and 1.0
         sfxMasterVolume = std::max(0.0f, std::min(1.0f, volume));
-        std::cout << "SFX Master Volume set to: " << sfxMasterVolume << std::endl;
-        std::cout << "SFXChannel: " << pSFXChannels.size() << std::endl;
-        std::cout << "Number of sfx: " << numOfSFX << std::endl;
         // Update any currently playing SFX
         for (size_t i = 0; i < pSFXChannels.size(); ++i)
         {
@@ -741,16 +724,45 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        Set the volume of all sound (SFX).
+    \param float: the amount to increase the volume ("SFX").
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::IncreaseSFXMasterVolume(float step)
     {
         SetSFXMasterVolume(sfxMasterVolume + step);
     }
 
+    /*!***********************************************************************
+    \brief
+        Set the volume of all sound (SFX).
+    \param float: the amount to decrease the volume ("SFX").
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::DecreaseSFXMasterVolume(float step)
     {
         SetSFXMasterVolume(sfxMasterVolume - step);
     }
 
+    /*!***********************************************************************
+    \brief
+        Increase volume
+    \param int: the sound index
+    \param float: amout of volume to increase
+    \param string: type of audio ("SFX","Music")
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::IncreaseVolume(int soundIndex, float step, std::string type)
     {
         float currentVolume = 0.0f;
@@ -759,22 +771,39 @@ namespace Ukemochi
         {
             pSFXChannels[soundIndex]->getVolume(&currentVolume);
             SetAudioVolume(soundIndex, currentVolume + step, "SFX");
-            std::cout << "Current SFX Volume: " << currentVolume << std::endl;
         }
         else if (type == "Music" && soundIndex < pMusicChannels.size() && pMusicChannels[soundIndex] != nullptr)
         {
             pMusicChannels[soundIndex]->getVolume(&currentVolume);
-            std::cout << "Current Music Volume: " << currentVolume << std::endl;
             SetAudioVolume(soundIndex, currentVolume + step, "Music");
 
         }
     }
 
+    /*!***********************************************************************
+    \brief
+        decrease volume
+    \param int: the sound index
+    \param float: amout of volume to decrease
+    \param string: type of audio ("SFX","Music")
+    \return
+        None.
+    \note
+        Adjusts the volume of all sound.
+    *************************************************************************/
     void Audio::DecreaseVolume(int soundIndex, float step, std::string type)
     {
         IncreaseVolume(soundIndex, -step, type); // Reuse IncreaseVolume with negative step
     }
 
+    /*!***********************************************************************
+    \brief
+        check SFX size
+    \return
+        true if there SFX
+    \note
+        check SFX size
+    *************************************************************************/
     bool Audio::CheckSFX()
     {
         if(pSFXChannels.size() == 0)
@@ -792,69 +821,6 @@ namespace Ukemochi
     {
         // Update the FMOD system regularly
         pSystem->update();
-
-        // Handle muting/unmuting music and SFX
-    //     static bool musicKeyPressed = false;
-    //     static bool sfxKeyPressed = false;
-    //     static bool decreaseKeyPressed = false;
-    //     static bool increaseKeyPressed = false;
-    //     static bool decreaseSFXKeyPressed = false;
-    //     static bool increaseSFXKeyPressed = false;
-    //
-    //     // Adjust music volume using '-' and '+' keys
-    //     if (Input::IsKeyPressed(UME_KEY_MINUS)) // Decrease volume
-    //     {
-    //         if (!decreaseKeyPressed)
-    //         {
-    //             DecreaseMusicMasterVolume(0.05f); // Decrease by 5%
-    //             decreaseKeyPressed = true;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         decreaseKeyPressed = false;
-    //     }
-    //
-    //     if (Input::IsKeyPressed(UME_KEY_EQUAL)) // Increase volume ('+' is usually UME_KEY_EQUAL)
-    //     {
-    //         if (!increaseKeyPressed)
-    //         {
-				// IncreaseMusicMasterVolume(0.05f); // Increase by 5%
-    //             increaseKeyPressed = true;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         increaseKeyPressed = false;
-    //     }
-    //
-    //     // Adjust SFX volume using '9' and '0' keys
-    //     if (Input::IsKeyPressed(UME_KEY_9)) // Decrease SFX volume
-    //     {
-    //         if (!decreaseSFXKeyPressed)
-    //         {
-    //             DecreaseSFXMasterVolume(0.05f); // Decrease by 5%
-    //             decreaseSFXKeyPressed = true;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         decreaseSFXKeyPressed = false;
-    //     }
-    //
-    //     if (Input::IsKeyPressed(UME_KEY_0)) // Increase SFX volume
-    //     {
-    //         if (!increaseSFXKeyPressed)
-    //         {
-    //             IncreaseSFXMasterVolume(0.05f); // Increase by 5%
-    //             increaseSFXKeyPressed = true;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         increaseSFXKeyPressed = false;
-    //     }
-
     }
 
     /*!***********************************************************************
@@ -963,6 +929,12 @@ namespace Ukemochi
         }
     }
 
+    /*!***********************************************************************
+    \brief
+       Mute Music audio
+    \note
+       This function mute all Music
+    *************************************************************************/
     void Audio::MuteMusic()
     {
         isMusicMuted = !isMusicMuted; // Toggle mute state
@@ -975,10 +947,14 @@ namespace Ukemochi
                 channel->setVolume(isMusicMuted ? 0.0f : musicVolume);
             }
         }
-
-        std::cout << (isMusicMuted ? "Music muted." : "Music unmuted.") << std::endl;
     }
 
+    /*!***********************************************************************
+    \brief
+       Mute SFX audio
+    \note
+       This function mute all SFX
+    *************************************************************************/
     void Audio::MuteSFX()
     {
         isSFXMuted = !isSFXMuted; // Toggle mute state
@@ -991,12 +967,9 @@ namespace Ukemochi
                 channel->setVolume(isSFXMuted ? 0.0f : sfxVolume);
             }
         }
-
-        std::cout << (isSFXMuted ? "SFX muted." : "SFX unmuted.") << std::endl;
     }
 
     // NOT IN USED
-
     /*!***********************************************************************
     \brief
         Create a new ChannelGroup for managing sound channels.
@@ -1041,7 +1014,7 @@ namespace Ukemochi
         }
     }
 
-        // NOT IN USED
+    // NOT IN USED
     /*!***********************************************************************
     \brief
     Set the volume for an entire group of sounds.
@@ -1055,39 +1028,6 @@ namespace Ukemochi
             pChannelGroups[groupIndex]->setVolume(volume); // Set the volume for the specific group
         }
     }
-
-    /*!***********************************************************************
-    \brief
-    Play a sound in a specified group.
-    \param soundIndex: Index of the sound to play.
-    \param groupIndex: Index of the group in which the sound should be played.
-    *************************************************************************/
-    // void Audio::PlaySoundInGroup(int soundIndex, int groupIndex)
-    //{
-    //     if (soundIndex < numOfAudios && groupIndex < pChannelGroups.size())
-    //     {
-    //         FMOD_RESULT result;
-    //         FMOD::Channel* channel = nullptr;
-
-    //        // Play the sound
-    //        result = pSystem->playSound(pSounds[soundIndex], nullptr, false, &channel);
-    //        if (result != FMOD_OK)
-    //        {
-    //            std::cerr << "Failed to play sound: " << result << std::endl;
-    //            return;
-    //        }
-
-    //        // Store the channel and assign it to the specific group
-    //        pChannels[soundIndex] = channel;
-    //        pChannels[soundIndex]->setChannelGroup(pChannelGroups[groupIndex]);
-
-    //        std::cout << "Sound " << soundIndex << " is playing in group " << groupIndex << std::endl;
-    //    }
-    //    else
-    //    {
-    //        std::cerr << "Invalid sound or group index!" << std::endl;
-    //    }
-    //}
 
     // NOT IN USED
     /*!***********************************************************************
