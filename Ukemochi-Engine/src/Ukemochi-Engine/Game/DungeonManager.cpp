@@ -133,6 +133,7 @@ namespace Ukemochi
 		}
 
 		// Load before boss cutscene when entering the boss room (room 6)
+#ifndef _DEBUG
 		if (current_room_id == 6)
 		{
 			ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
@@ -150,6 +151,41 @@ namespace Ukemochi
 				ECS::GetInstance().GetSystem<VideoManager>()->videos["loading"].done = false;
 			}
 		}
+#else
+		if (current_room_id == 6) // Skip cutscene in debug mode
+		{
+			// Init boss
+			ECS::GetInstance().GetSystem<BossManager>()->InitBoss();
+			ECS::GetInstance().GetSystem<BossManager>()->SetBossPhase(1);
+			ECS::GetInstance().GetSystem<EnemyManager>()->numEnemyTarget = 0;
+
+			// Play boss enter SFX
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.StopMusic(audioM.GetMusicIndex("PreBoss_BGM"));
+				// Play BGM at 0.2 volume
+				if (audioM.GetMusicIndex("BGM") != -1)
+				{
+					int bgmIndex = audioM.GetMusicIndex("BGM");
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(bgmIndex))
+					{
+						audioM.PlayMusic(bgmIndex);
+						// Set volume for BGM
+						ECS::GetInstance().GetSystem<Audio>()->GetInstance().SetAudioVolume(bgmIndex, 0.2f, "Music");
+					}
+				}
+
+				if (audioM.GetSFXindex("LevelChange") != -1)
+				{
+					if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsSFXPlaying(audioM.GetSFXindex("LevelChange")))
+						audioM.PlaySFX(audioM.GetSFXindex("LevelChange"));
+				}
+			}
+
+			start_boss = true;
+		}
+#endif
 
 		// Activate current room
 		ActivateRoom(current_room_id, true);
@@ -175,6 +211,7 @@ namespace Ukemochi
 		if (!enemy_alive)
 			UnlockRoom();
 
+#ifndef _DEBUG
 		// Move camera back to boss room and start boss fight
 		if (current_room_id == 6 && !start_boss && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("before_boss"))
 		{
@@ -239,6 +276,20 @@ namespace Ukemochi
 
 			end_boss = true;
 		}
+#else
+		if (current_room_id == 6 && !end_boss && ECS::GetInstance().GetSystem<BossManager>()->GetBossPhase() == 3)
+		{
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				audioM.StopMusic(audioM.GetMusicIndex("AfterBoss_BGM"));
+			}
+
+			Application::Get().SetPaused(true);
+			Application::Get().GameStarted = false;
+			end_boss = true;
+		}
+#endif
 
 		////healing to post injuries max health here
 		//if (player != -1)

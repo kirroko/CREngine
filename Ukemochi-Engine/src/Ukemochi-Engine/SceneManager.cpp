@@ -235,16 +235,16 @@ namespace Ukemochi
         es_current = ES_PLAY;
 #else
         // We are gonna to play the intro video after everything has been loaded!
-        UME_ENGINE_TRACE("Initializing video manager...");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false, false))
-            UME_ENGINE_ERROR("Video didn't load properly!");
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
-            UME_ENGINE_ERROR("Video didn't load properly!");
+        //UME_ENGINE_TRACE("Initializing video manager...");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("cutscene", "../Assets/Video/intro-cutscene.mpeg", false, false))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
+        //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("main_menu", "../Assets/Video/main_menu_video.mpeg", true, false))
+        //    UME_ENGINE_ERROR("Video didn't load properly!");
         //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("before_boss", "../Assets/Video/all_1.mpeg", false, false))
         //    UME_ENGINE_ERROR("Video didn't load properly!");
         //if (!ECS::GetInstance().GetSystem<VideoManager>()->LoadVideo("after_boss", "../Assets/Video/after-boss-cutscene.mpeg", false, false))
         //    UME_ENGINE_ERROR("Video didn't load properly!");
-        ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
+        //ECS::GetInstance().GetSystem<Camera>()->position = { 0, 0 };
 #endif
     }
 
@@ -356,8 +356,8 @@ namespace Ukemochi
 
         ECS::GetInstance().GetSystem<Audio>()->GetInstance().Update();
 
+#ifndef _DEBUG
         static bool createMenuUI = false;
-
 	    // cut scene played till the end
         if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI && !ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
             && GetCurrScene() == "ALevel1")
@@ -432,7 +432,9 @@ namespace Ukemochi
             }
             SceneManagerDraw();
         }
-        
+#else
+        SceneManagerDraw();
+#endif
     }
 
     /*!***********************************************************************
@@ -480,7 +482,7 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<DungeonManager>()->UpdateRoomProgress();
             sys_end = std::chrono::steady_clock::now();
             logic_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
-            
+
             // --- PHYSICS UPDATE ---
             sys_start = std::chrono::steady_clock::now();
             ECS::GetInstance().GetSystem<Physics>()->UpdatePhysics(); // Update the entities physics
@@ -503,14 +505,14 @@ namespace Ukemochi
             ECS::GetInstance().GetSystem<AnimationSystem>()->Update();
         }
         // --- TURN OFF GIZMO ---
-	    // --- RENDERER UPDATE ---
+        // --- RENDERER UPDATE ---
         sys_start = std::chrono::steady_clock::now();
         ECS::GetInstance().GetSystem<Renderer>()->resetGizmo();
 
+#ifndef _DEBUG
         static bool createMenuUI = false;
-
-	    // Cutscene Video played to the end logic
-        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI &&!ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
+        // Cutscene Video played to the end logic
+        if (ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done && !createMenuUI && !ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done
             && GetCurrScene() == "ALevel1")
         {
             ECS::GetInstance().GetSystem<InGameGUI>()->CreateMainMenuUI();
@@ -518,16 +520,15 @@ namespace Ukemochi
             Application::Get().SetPaused(true);
         }
 
-	    // Other video logic here
-#ifndef _DEBUG
-	    if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("loading")) // Checks if loading video is done
+        // Other video logic here
+        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("loading")) // Checks if loading video is done
         {
-	        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-	        {
-	            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-	            audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
-	        }
-	        
+            if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+            {
+                auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+                audioM.StopMusic(audioM.GetMusicIndex("BGMOG"));
+            }
+
             if (!setLoading)
             {
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("loading");
@@ -584,20 +585,15 @@ namespace Ukemochi
                         if (!cutscene)
                         {
                             /*ECS::GetInstance().GetSystem<VideoManager>()->videos["cutscene"].done = false;*/
-							ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
-							cutscene = true;
+                            ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+                            cutscene = true;
                         }
                         else if (!bossRoom)
                         {
-							ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
+                            ECS::GetInstance().GetSystem<VideoManager>()->videos["before_boss"].done = false;
                             ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("before_boss");
-							Application::Get().SetPaused(false);
+                            Application::Get().SetPaused(false);
                             bossRoom = true;
-                        }
-                        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-                        {
-                            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-							//audioM.PlayMusic(0);
                         }
                         Application::Get().SetPaused(false);
                         UME_ENGINE_TRACE("All jobs completed, ending loading screen");
@@ -606,9 +602,6 @@ namespace Ukemochi
             }
         }
         else if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
-#else
-        if (!ECS::GetInstance().GetSystem<VideoManager>()->IsVideoDonePlaying("cutscene")) // Checks if cutscene is done playing
-#endif
         {
             if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
             {
@@ -627,11 +620,6 @@ namespace Ukemochi
             // Sets the video to play the cutscene
             if (!setCutscene)
             {
-                if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-                {
-                    auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-                    //audioM.PlayMusic(0);
-                }
                 ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("cutscene");
                 setCutscene = true;
             }
@@ -670,10 +658,7 @@ namespace Ukemochi
             && ECS::GetInstance().GetSystem<VideoManager>()->IsVideoPlaying())
         {
             if (Application::Get().IsPaused == false)
-            {
                 ECS::GetInstance().GetSystem<VideoManager>()->Update();
-            }
-            //ECS::GetInstance().GetSystem<VideoManager>()->Update();
         }
         else
         {
@@ -686,13 +671,16 @@ namespace Ukemochi
 
             SceneManagerDraw();
         }
+#else
+        SceneManagerDraw();
+#endif
 
-		sys_end = std::chrono::steady_clock::now();
-		graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
+        sys_end = std::chrono::steady_clock::now();
+        graphics_time = std::chrono::duration_cast<std::chrono::duration<double>>(sys_end - sys_start);
 
-		loop_end = std::chrono::steady_clock::now();
-		loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
-	}
+        loop_end = std::chrono::steady_clock::now();
+        loop_time = std::chrono::duration_cast<std::chrono::duration<double>>(loop_end - loop_start);
+    }
 
     /*!***********************************************************************
     \brief
