@@ -225,6 +225,8 @@ public:
 	std::shared_ptr<Shader> shaderProgram;
 
 	std::shared_ptr<Shader> video_shader_program;
+
+	std::shared_ptr<Shader> splash_screen_shader_program;
 private:
 	/*!
 	 * @brief Vector storing the pointers to VAOs (Vertex Array Objects) used for rendering.

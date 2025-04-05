@@ -270,10 +270,9 @@ namespace Ukemochi
         //ECS::GetInstance().GetSystem<Audio>()->GetInstance().LoadSound(0, "../Assets/Video/intro-cutscene.wav", "Music");
         ECS::GetInstance().GetSystem<AssetManager>()->loadAssetsFromFolder();
 	    ECS::GetInstance().GetSystem<AssetManager>()->AsyncTextureLoad();
-#ifdef _DEBUG
 	    job::WaitForCounter();
 	    ECS::GetInstance().GetSystem<AssetManager>()->LoadAllTexture();
-#endif
+
 
 
         // Initialize the graphics and collision system

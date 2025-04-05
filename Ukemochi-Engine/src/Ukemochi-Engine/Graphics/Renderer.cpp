@@ -629,6 +629,8 @@ void Renderer::setUpShaders()
 	object_picking_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("object_picking");
 
 	video_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("video_rendering");
+
+	splash_screen_shader_program = ECS::GetInstance().GetSystem<AssetManager>()->getShader("splash_screen");
 	
 	pointShader = std::make_unique<Shader>("../Assets/Shaders/point.vert", "../Assets/Shaders/point.frag");
 }

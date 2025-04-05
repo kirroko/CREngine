@@ -241,6 +241,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClInclude Include="src\Ukemochi-Engine\Physics\Physics.h" />
     <ClInclude Include="src\Ukemochi-Engine\SceneManager.h" />
     <ClInclude Include="src\Ukemochi-Engine\Serialization\Serialization.h" />
+    <ClInclude Include="src\Ukemochi-Engine\SplashScreen.h" />
     <ClInclude Include="src\Ukemochi-Engine\Video\VideoManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +300,7 @@ xcopy /Q /E /Y /I ..\Assets ..\bin\Dist-windows-x86_64\Assets</Command>
     <ClCompile Include="src\Ukemochi-Engine\Physics\Physics.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\SceneManager.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Serialization\Serialization.cpp" />
+    <ClCompile Include="src\Ukemochi-Engine\SplashScreen.cpp" />
     <ClCompile Include="src\Ukemochi-Engine\Video\VideoManager.cpp" />
   </ItemGroup>
   <ItemGroup>

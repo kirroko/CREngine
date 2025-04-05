@@ -41,6 +41,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Factory/GameObjectManager.h"
 #include <crtdbg.h> // To check for memory leaks
 
+#include "SplashScreen.h"
+
 namespace Ukemochi
 {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
@@ -330,25 +332,16 @@ namespace Ukemochi
     *************************************************************************/
     void Application::GameLoop() // run
     {
-        // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
         EnableMemoryLeakChecking();
 
         SceneManager sceneManager = SceneManager::GetInstance();
         sceneManager.SceneMangerInit();
         sceneManager.SceneMangerLoad();
-
-        // Initialize main menu music
-        if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
-        {
-            auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
-            if (audioM.GetMusicIndex("BGMOG") != -1)
-            {
-                if (!ECS::GetInstance().GetSystem<Audio>()->GetInstance().IsMusicPlaying(audioM.GetMusicIndex("BGMOG")))
-                {
-                    // audioM.PlayMusic(audioM.GetMusicIndex("BGMOG"));
-                }
-            }
-        }
+#ifndef _DEBUG
+		SplashScreen splashScreen;
+        splashScreen.SplashScreenLoad();
+		splashScreen.SplashScreenInit();
+#endif
 
         while (es_current != ENGINE_STATES::ES_QUIT)
         {
@@ -356,6 +349,19 @@ namespace Ukemochi
             glClear(GL_COLOR_BUFFER_BIT);
 
             UpdateFPS();
+
+#ifndef _DEBUG
+	        if (!splashScreen.IsSplashScreenDone())
+	        {
+				splashScreen.SplashScreenUpdate();
+	            splashScreen.SplashScreenRender();
+
+                DrawFPS();
+
+                m_Window->OnUpdate();
+                continue;
+	        }
+#endif
 
             // engine
             if (es_current == ENGINE_STATES::ES_ENGINE)
