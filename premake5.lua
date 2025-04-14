@@ -70,7 +70,6 @@ project "Ukemochi-Engine"
 		"%{IncludeDir.Mono}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.PLMpeg}"
-
 	}
 	
 	libdirs
@@ -88,8 +87,7 @@ project "Ukemochi-Engine"
 		"ImGui",
 		"ImGuizmo",
 		"opengl32.lib",
-		"freetype",
-		"mono-2.0-sgen.lib",
+		"freetype"
 		-- "PLMpeg"
 	}
 	filter "system:windows"
@@ -114,8 +112,7 @@ project "Ukemochi-Engine"
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. fmod_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
 			("{COPY} " .. freetype_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"),
-			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
-			{"{COPY} ./vendor/Mono/lib/4.5 ../bin/" .. outputdir .. "/Ukemochi-Game/Mono/lib/4.5"}, -- Copy the mono library
+			-- {"{COPY} ./vendor/Mono/lib/4.5 ../bin/" .. outputdir .. "/Ukemochi-Game/Mono/lib/4.5"}, -- Copy the mono library
 			("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets")								-- Copy the assets(Editor's assets) 
 		}
 
@@ -190,15 +187,15 @@ project "Ukemochi-Game"
         -- Copy the Ukemochi-Engine DLL before the build 
 		"{COPY} ../bin/" .. outputdir .. "/Ukemochi-Engine/ukemochi-engine.dll ../bin/" .. outputdir .. "/Ukemochi-Game", 
 		"{COPY} " .. fmod_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game" ,
-		"{COPY} " .. freetype_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game",
-		"{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game",
-		"{COPY} ./Resources/Scripts/ ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
+		"{COPY} " .. freetype_dll .. " ../bin/" .. outputdir .. "/Ukemochi-Game"
+		-- "{COPY} " .. Mono_dll .. " ../bin/" .. outputdir.. "/Ukemochi-Game"
+		-- "{COPY} ./Resources/Scripts/ ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
 	}
 
-	postbuildcommands
-	{
-		"{COPY} ./Resources/Scripts/Ukemochi-Scripting.dll" .. " ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
-	}
+	-- postbuildcommands
+	-- {
+	-- 	"{COPY} ./Resources/Scripts/Ukemochi-Scripting.dll" .. " ../bin/" .. outputdir .. "/Ukemochi-Game/Resources/Scripts"
+	-- }
 	
 	filter "system:windows"
 		cppdialect "C++17"

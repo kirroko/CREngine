@@ -28,7 +28,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "../Application.h"
 
-#include "../Logic/Logic.h"
 #include "../Factory/Factory.h"
 #include "../ECS/ECS.h"
 
@@ -837,26 +836,10 @@ namespace Ukemochi
                 }
 
                 // Recompile scripts and display popup that its compiling. Remove popup when done
-                if (ScriptingEngine::GetInstance().compile_flag)
-                {
-                    UME_ENGINE_INFO("Begin Script reloading");
-                    ScriptingEngine::GetInstance().compile_flag = false;
-                    ScriptingEngine::GetInstance().Reload();
-                    // TODO: Compile runs on the main thread, hence imGUI cannot draw pop-up here...
-                }
 
-                if (!ScriptingEngine::ScriptHasError)
-                {
-                    SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-                    m_CompileError = false;
-                    es_current = ENGINE_STATES::ES_PLAY;
-                    UME_ENGINE_INFO("Simulation (Game is playing) started");
-                    // ECS::GetInstance().GetSystem<LogicSystem>()->Init();
-                }
-                else
-                {
-                    m_CompileError = true;
-                }
+                SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
+                es_current = ENGINE_STATES::ES_PLAY;
+                UME_ENGINE_INFO("Simulation (Game is playing) started");
 
                 // Disable main menu screen
                 ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("main_menu");
@@ -2171,17 +2154,17 @@ namespace Ukemochi
                             if (extension == ".cs")
                             {
                                 // Valid file type, update script path
-                                strncpy(scriptPathBuffer, draggedScript.c_str(), sizeof(scriptPathBuffer));
-                                scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
-                                script.scriptPath = draggedScript;
-                                script.scriptName = filePath.stem().string();
-                                MonoObject *newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
-                                    script.scriptName);
-                                EntityID newScriptID = selectedObject->GetInstanceID();
-                                ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
-                                script.instance = newScript;
-                                script.handle = ScriptingEngine::CreateGCHandle(newScript);
-                                modified = true;
+                                //strncpy(scriptPathBuffer, draggedScript.c_str(), sizeof(scriptPathBuffer));
+                                //scriptPathBuffer[sizeof(scriptPathBuffer) - 1] = '\0'; // Ensure null termination
+                                //script.scriptPath = draggedScript;
+                                //script.scriptName = filePath.stem().string();
+                                //MonoObject *newScript = ScriptingEngine::GetInstance().InstantiateClientClass(
+                                //    script.scriptName);
+                                //EntityID newScriptID = selectedObject->GetInstanceID();
+                                //ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
+                                //script.instance = newScript;
+                                //script.handle = ScriptingEngine::CreateGCHandle(newScript);
+                                //modified = true;
                             }
                             else
                             {

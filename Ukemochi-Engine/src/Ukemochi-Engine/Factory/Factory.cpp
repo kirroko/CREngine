@@ -40,7 +40,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Factory.h"
 
 #include "GameObjectManager.h"
-#include "../Logic/Scripting.h"
 
 namespace Ukemochi
 {
@@ -133,15 +132,15 @@ namespace Ukemochi
 				}
 				else if(component == "Script")
 				{
-					MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(comps["ClassName"].GetString());
-					EntityID newScriptID = go.GetInstanceID();
-					ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
-					go.AddComponent(Script{
-						comps["Path"].GetString(),
-						comps["ClassName"].GetString(),
-						newScript,
-						ScriptingEngine::CreateGCHandle(newScript)
-						});
+					//MonoObject* newScript = ScriptingEngine::GetInstance().InstantiateClientClass(comps["ClassName"].GetString());
+					//EntityID newScriptID = go.GetInstanceID();
+					//ScriptingEngine::SetMonoFieldValueULL(newScript, "_id", &newScriptID);
+					//go.AddComponent(Script{
+					//	comps["Path"].GetString(),
+					//	comps["ClassName"].GetString(),
+					//	newScript,
+					//	ScriptingEngine::CreateGCHandle(newScript)
+					//	});
 				}
 				else if (component == "Animation")
 				{

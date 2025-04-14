@@ -33,9 +33,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Audio/Audio.h"
 #include "ImGui/ImGuiCore.h"
 #include "SceneManager.h"
-#include "Logic/Scripting.h"
-#include "FileWatcher.h"
-#include "Logic/Logic.h"
 #include "Game/DungeonManager.h"
 #include "Game/EnemyManager.h"
 #include "Factory/GameObjectManager.h"
@@ -201,8 +198,6 @@ namespace Ukemochi
         //     fwInstance.reset(); // Reset shared pointer
         // }
 #endif
-
-        ScriptingEngine::GetInstance().ShutDown();
     }
 
     /*!***********************************************************************
@@ -276,30 +271,9 @@ namespace Ukemochi
 
         // enemy
         ECS::GetInstance().GetSystem<EnemyManager>()->UpdateEnemyList();
-        // Recompile scripts if needed
-        if (ScriptingEngine::GetInstance().compile_flag)
-        {
-            UME_ENGINE_INFO("Begin Script reloading");
-            ScriptingEngine::GetInstance().compile_flag = false;
-            ScriptingEngine::GetInstance().Reload();
-        }
 
-        // Only start if there are no script errors
-        if (!ScriptingEngine::ScriptHasError)
-        {
-            // Save the current scene state
-            //SceneManager::GetInstance().SaveScene(SceneManager::GetInstance().GetCurrScene());
-            //m_CompileError = false;
-            es_current = ENGINE_STATES::ES_PLAY;
-            UME_ENGINE_INFO("Simulation (Game is playing) started");
-
-            // Initialize ECS systems for game mode
-            // ECS::GetInstance().GetSystem<LogicSystem>()->Init();
-        }
-        else
-        {
-            //m_CompileError = true;
-        }
+        es_current = ENGINE_STATES::ES_PLAY;
+        UME_ENGINE_INFO("Simulation (Game is playing) started");
 
         // Disable main menu screen
         ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("main menu");

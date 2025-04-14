@@ -19,7 +19,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Transformation.h"
 #include "Graphics/Renderer.h"
 #include "Serialization/Serialization.h"
-#include "Logic/Logic.h"
 #include "Graphics/Camera2D.h"
 #include "Factory/Factory.h"
 #include "Factory/GameObjectManager.h"
@@ -90,7 +89,7 @@ namespace Ukemochi
         ECS::GetInstance().RegisterSystem<Collision>();
         ECS::GetInstance().RegisterSystem<Transformation>();
         ECS::GetInstance().RegisterSystem<Renderer>();
-        ECS::GetInstance().RegisterSystem<LogicSystem>();
+        //ECS::GetInstance().RegisterSystem<LogicSystem>();
         ECS::GetInstance().RegisterSystem<Camera>();
         ECS::GetInstance().RegisterSystem<InGameGUI>();
         ECS::GetInstance().RegisterSystem<Audio>();
@@ -126,9 +125,9 @@ namespace Ukemochi
         ECS::GetInstance().SetSystemSignature<Collision>(sig);
 
         // For Logic system
-        sig.reset();
-        sig.set(ECS::GetInstance().GetComponentType<Script>());
-        ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
+        //sig.reset();
+        //sig.set(ECS::GetInstance().GetComponentType<Script>());
+        //ECS::GetInstance().SetSystemSignature<LogicSystem>(sig);
 
         // For in game GUI system
         sig.reset();

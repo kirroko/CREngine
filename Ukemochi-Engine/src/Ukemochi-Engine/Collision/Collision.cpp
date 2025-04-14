@@ -18,7 +18,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Audio/Audio.h"						// for Audio sound effects
 #include "../Application.h"						// for screen size
 #include "../Factory/GameObjectManager.h"		// for game object tag
-#include "Ukemochi-Engine/Logic/Scripting.h"	// for invoking OnCollisonEnter2D
 #include "../Game/DungeonManager.h"				// for room size and current room ID
 #include "../Physics/Physics.h"					// for knockback effect
 #include "Ukemochi-Engine/Game/PlayerManager.h" // for player data

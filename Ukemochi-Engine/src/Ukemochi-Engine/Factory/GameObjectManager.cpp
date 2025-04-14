@@ -13,8 +13,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "PreCompile.h"
 #include "GameObjectManager.h"
+
 #include "Factory.h"
-#include "Ukemochi-Engine/Logic/Logic.h"
 
 using namespace Ukemochi;
 
@@ -72,7 +72,7 @@ void GameObjectManager::DestroyObject(EntityID id)
     if(ECS::GetInstance().HasComponent<Script>(id))
     {
         ECS::GetInstance().GetComponent<Script>(id).instance = nullptr;
-        ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(id).handle);
+        //ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(id).handle);
     }
     GameObjectFactory::DestroyObject(*m_GOs[id]);
     m_GOs.erase(id);
@@ -153,11 +153,11 @@ void GameObjectManager::InitAllHandles() const
     {
         if(ECS::GetInstance().HasComponent<Script>(go.first))
         {
-            auto& script = ECS::GetInstance().GetComponent<Script>(go.first);
-            script.instance = ScriptingEngine::GetInstance().InstantiateClientClass(script.scriptName);
-            EntityID id = go.first;
-            ScriptingEngine::SetMonoFieldValueULL(static_cast<MonoObject*>(script.instance), "_id", &id);
-            script.handle = ScriptingEngine::CreateGCHandle(static_cast<MonoObject*>(script.instance));
+            //auto& script = ECS::GetInstance().GetComponent<Script>(go.first);
+            //script.instance = ScriptingEngine::GetInstance().InstantiateClientClass(script.scriptName);
+            //EntityID id = go.first;
+            //ScriptingEngine::SetMonoFieldValueULL(static_cast<MonoObject*>(script.instance), "_id", &id);
+            //script.handle = ScriptingEngine::CreateGCHandle(static_cast<MonoObject*>(script.instance));
         }
     }
 }
@@ -172,7 +172,7 @@ void GameObjectManager::ReleaseAllHandles() const
         if(ECS::GetInstance().HasComponent<Script>(go.first))
         {
             ECS::GetInstance().GetComponent<Script>(go.first).instance = nullptr;
-            ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(go.first).handle);
+            //ScriptingEngine::DestroyGCHandle(ECS::GetInstance().GetComponent<Script>(go.first).handle);
         }
     }
 }
