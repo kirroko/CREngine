@@ -279,7 +279,7 @@ namespace Ukemochi
         ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("main menu");
         ECS::GetInstance().GetSystem<InGameGUI>()->RemoveElement("start button");
 
-        ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+        ECS::GetInstance().GetSystem<InGameGUI>()->CreateGameUI();
 
         GameStarted = true;
     }

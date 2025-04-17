@@ -48,17 +48,9 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":1057,"h":475},
 	"sourceSize": {"w":1057,"h":475}
 },
-"nail.png":
-{
-	"frame": {"x":2792,"y":5,"w":26,"h":24},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":24},
-	"sourceSize": {"w":26,"h":24}
-},
 "start button.png":
 {
-	"frame": {"x":2823,"y":5,"w":422,"h":205},
+	"frame": {"x":2792,"y":5,"w":422,"h":205},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":422,"h":205},
@@ -69,8 +61,8 @@
 	"version": "1.0",
 	"image": "main menu.png",
 	"format": "RGBA8888",
-	"size": {"w":3250,"h":3906},
+	"size": {"w":3219,"h":3906},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:0953853dc60fc5fac0f7d66f100a6286:2f0d4984b444c46727d00d223415bf55:1fed6e43413a7b4876ed6edb434224e3$"
+	"smartupdate": "$TexturePacker:SmartUpdate:26956da058266d7ccd038517fd1186d1:62811663983771ee37f239209d02e0b3:1fed6e43413a7b4876ed6edb434224e3$"
 }
 }

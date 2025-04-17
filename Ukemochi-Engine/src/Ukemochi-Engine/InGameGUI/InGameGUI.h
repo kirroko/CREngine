@@ -29,6 +29,7 @@ namespace Ukemochi
 		EntityID id = (EntityID)(-1);
 		bool show_fps = false; // Show FPS debug text
 		bool show_stats = false; // Show stats text
+		bool show_confirmation = false; // Show confirmation
 		std::unordered_map<std::string, bool> buttonHoverState; // Tracks whether a button was hovered last frame
 		float hoverCooldown = 0.5f;  // cooldown for hover sound
 		float hoverTimer = 0.0f;     // Tracks time since last hover sound
@@ -83,7 +84,7 @@ namespace Ukemochi
 		\brief
 		 Creates various GUI images (e.g., health bar, icons, etc.).
 		*************************************************************************/
-		void CreateImage();
+		void CreateGameUI();
 
 		/*!***********************************************************************
 		\brief
@@ -223,5 +224,17 @@ namespace Ukemochi
 		 Displays the how to play menu from main menu.
 		*************************************************************************/
 		void showHowToPlayMainMenu();
+
+		/*!***********************************************************************
+		\brief
+		 Displays the confirmation menu.
+		*************************************************************************/
+		void ShowConfirmation();
+
+		/*!***********************************************************************
+		\brief
+		 Hides the confirmation menu.
+		*************************************************************************/
+		void HideConfirmation();
 	};
 }

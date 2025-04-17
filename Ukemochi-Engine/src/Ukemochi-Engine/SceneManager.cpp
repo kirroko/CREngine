@@ -426,7 +426,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
                 setCamera = true;
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateGameUI();
             }
             SceneManagerDraw();
         }
@@ -664,7 +664,7 @@ namespace Ukemochi
             {
                 ECS::GetInstance().GetSystem<Camera>()->position = { -ROOM_WIDTH, 0 };
                 setCamera = true;
-                ECS::GetInstance().GetSystem<InGameGUI>()->CreateImage();
+                ECS::GetInstance().GetSystem<InGameGUI>()->CreateGameUI();
             }
 
             SceneManagerDraw();
