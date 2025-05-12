@@ -227,9 +227,15 @@ namespace Ukemochi
 
 		/*!***********************************************************************
 		\brief
-		 Displays the confirmation menu.
+		 Displays the confirmation menu in pause menu.
 		*************************************************************************/
-		void ShowConfirmation();
+		void ShowConfirmationPauseMenu();
+
+		/*!***********************************************************************
+		\brief
+		 Displays the confirmation menu in main menu.
+		*************************************************************************/
+		void ShowConfirmationMainMenu();
 
 		/*!***********************************************************************
 		\brief

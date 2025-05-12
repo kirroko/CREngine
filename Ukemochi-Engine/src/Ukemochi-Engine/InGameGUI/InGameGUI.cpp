@@ -288,7 +288,7 @@ namespace Ukemochi
 				{
 					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
 				}
-				this->ShowConfirmation();
+				this->ShowConfirmationMainMenu();
 				show_confirmation = true;
 			}
 			});
@@ -693,7 +693,7 @@ namespace Ukemochi
 		}
 		
 		// Pause
-		if ((Input::IsKeyTriggered(UME_KEY_ESCAPE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_START))
+		if (!showHowPlay && (Input::IsKeyTriggered(UME_KEY_ESCAPE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_START))
 			&& Application::Get().GameStarted)
 		{
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
@@ -846,14 +846,8 @@ namespace Ukemochi
 					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
 					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
 				}
-				Application::Get().SetPaused(true);
-				Application::Get().GameStarted = false;
-				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
-				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
-				ECS::GetInstance().GetSystem<Camera>()->position = {0,0};
-				RemoveGameUI();
-				this->HidePauseMenu();
-				CreateMainMenuUI();
+				this->ShowConfirmationPauseMenu();
+				show_confirmation = true;
 				std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Prevent double clicking
 			}
 			});
@@ -1192,6 +1186,7 @@ namespace Ukemochi
 				}
 				this->removeHowToPlayScreen();
 				this->ShowPauseMenu();
+				this->showHowPlay = false;
 			}
 			});
 	}
@@ -1247,9 +1242,65 @@ namespace Ukemochi
 
 	/*!***********************************************************************
 	\brief
+	 Displays the confirmation menu in pause menu.
+	*************************************************************************/
+	void InGameGUI::ShowConfirmationPauseMenu()
+	{
+		Application& app = Application::Get();
+		int screen_width = app.GetWindow().GetWidth();
+		int screen_height = app.GetWindow().GetHeight();
+		auto uiManager = ECS::GetInstance().GetSystem<UIButtonManager>();
+
+		uiManager->addButton("confirmation overlay", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2((float)screen_width, (float)screen_height), "overlay bg", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 17);
+		uiManager->addButton("confirmation", glm::vec3(screen_width * 0.5f, screen_height * 0.5f, 0.f), glm::vec2(949.f, 583.f), "u sure", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 17);
+
+		// Yes
+		uiManager->addButton("yes button", glm::vec3(screen_width * 0.5f - 150.f, screen_height * 0.5f - 100.f, 0.f), glm::vec2(125.f, 146.f), "yes", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 27, BarType::None, true, [this]() {
+
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+				{
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+					audioM.StopMusic(audioM.GetMusicIndex("BGM"));
+					audioM.StopMusic(audioM.GetMusicIndex("Wind_BGM"));
+				}
+				Application::Get().SetPaused(true);
+				Application::Get().GameStarted = false;
+				ECS::GetInstance().GetSystem<VideoManager>()->videos["main_menu"].done = false;
+				ECS::GetInstance().GetSystem<VideoManager>()->SetCurrentVideo("main_menu");
+				ECS::GetInstance().GetSystem<Camera>()->position = { 0,0 };
+				RemoveGameUI();
+				this->HidePauseMenu();
+				CreateMainMenuUI();
+				this->HideConfirmation();
+				show_confirmation = false;
+				std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Prevent double clicking
+			}
+			});
+
+		// No
+		uiManager->addButton("no button", glm::vec3(screen_width * 0.5f + 150.f, screen_height * 0.5f - 100.f, 0.f), glm::vec2(125.f, 139.f), "no", glm::vec3(1.0f), ECS::GetInstance().GetSystem<Renderer>()->batchRendererUI, 27, BarType::None, true, [this]() {
+
+			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
+			{
+				auto& audioM = GameObjectManager::GetInstance().GetGOByTag("AudioManager")->GetComponent<AudioManager>();
+				if (audioM.GetSFXindex("ButtonClickSound") != -1)
+					audioM.PlaySFX(audioM.GetSFXindex("ButtonClickSound"));
+
+				this->HideConfirmation();
+				show_confirmation = false;
+				std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Prevent double clicking
+			}
+			});
+	}
+
+	/*!***********************************************************************
+	\brief
 	 Displays the confirmation menu.
 	*************************************************************************/
-	void InGameGUI::ShowConfirmation()
+	void InGameGUI::ShowConfirmationMainMenu()
 	{
 		Application& app = Application::Get();
 		int screen_width = app.GetWindow().GetWidth();
