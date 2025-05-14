@@ -21,6 +21,7 @@ namespace Ukemochi
 		std::shared_ptr<Texture> splashTex;
 		std::shared_ptr<Texture> logoTex;
 		std::shared_ptr<Texture> titleTex;
+		std::shared_ptr<Texture> fmodTex;
 
 		GLuint VAO{}, VBO{};
 
@@ -28,11 +29,13 @@ namespace Ukemochi
 		const float splash_timer = 2.0f;
 		const float game_fade_timer = 1.f;
 		float splash_alpha = 1.f;
+		float fmod_alpha = 0.f;
 		float title_alpha = 0.f;
 		float logo_alpha = 0.f;
 		float spd = 1.f;
 
 		bool school = false;
+		bool fmodLogo = false;
 		bool logo = false;
 		bool animation = false;
 	public:

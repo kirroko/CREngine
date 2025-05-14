@@ -41,6 +41,9 @@ void SplashScreen::SplashScreenLoad()
 	titleTex = ECS::GetInstance().GetSystem<AssetManager>()->getTexture("../Assets/Textures/game_logo.png");
 	if (titleTex->ID <= 0)
 		UME_ENGINE_ERROR("TitleTex missing!");
+	fmodTex = ECS::GetInstance().GetSystem<AssetManager>()->getTexture("../Assets/Textures/FMOD_Logo_White.png");
+	if (fmodTex->ID <= 0)
+		UME_ENGINE_ERROR("FmodTex missing!");
 }
 
 /*!***********************************************************************
@@ -111,6 +114,10 @@ void SplashScreen::SplashScreenUpdate()
 	if (!school) {
 		updateAlpha(splash_alpha, splash_timer, school);
 	}
+	else if (!fmodLogo)
+	{
+		updateAlpha(fmod_alpha, splash_timer, fmodLogo);
+	}
 	else if (!logo) {
 		updateAlpha(logo_alpha, game_fade_timer, logo);
 	}
@@ -162,6 +169,11 @@ void SplashScreen::SplashScreenRender()
 		width = splashTex->width;
 		height = splashTex->height;
 	}
+	else if (!fmodLogo)
+	{
+		width = fmodTex->width;
+		height = fmodTex->height;
+	}
 	else if (!logo)
 	{
 		width = logoTex->width;
@@ -191,6 +203,11 @@ void SplashScreen::SplashScreenRender()
 	{
 		glBindTexture(GL_TEXTURE_2D, splashTex->ID);
 		shader->setFloat("alpha", splash_alpha);
+	}
+	else if (!fmodLogo)
+	{
+		glBindTexture(GL_TEXTURE_2D, fmodTex->ID);
+		shader->setFloat("alpha", fmod_alpha);
 	}
 	else if (!logo)
 	{
