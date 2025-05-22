@@ -693,7 +693,7 @@ namespace Ukemochi
 		}
 		
 		// Pause
-		if (!showHowPlay && (Input::IsKeyTriggered(UME_KEY_ESCAPE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_START))
+		if (!showHowPlay && !show_confirmation && (Input::IsKeyTriggered(UME_KEY_ESCAPE) || Input::IsGamepadButtonTriggered(GLFW_JOYSTICK_1, GLFW_GAMEPAD_BUTTON_START))
 			&& Application::Get().GameStarted)
 		{
 			if (GameObjectManager::GetInstance().GetGOByTag("AudioManager"))
